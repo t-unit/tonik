@@ -58,7 +58,7 @@ class ClassModel extends Model with NamedModel {
   String toString() => 'ClassModel{name: $name, properties: $properties}';
 }
 
-class EnumModel extends Model with NamedModel {
+class EnumModel<T> extends Model with NamedModel {
   const EnumModel({
     required this.values,
     required super.context,
@@ -67,7 +67,7 @@ class EnumModel extends Model with NamedModel {
 
   @override
   final String? name;
-  final Set<PrimitiveModel> values;
+  final Set<T> values;
 
   @override
   String toString() => 'EnumModel{name: $name, values: $values}';
