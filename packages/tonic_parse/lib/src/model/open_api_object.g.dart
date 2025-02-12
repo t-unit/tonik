@@ -13,7 +13,7 @@ OpenApiObject _$OpenApiObjectFromJson(Map<String, dynamic> json) =>
           ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
           .toList(),
       paths: (json['paths'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, ReferenceWrapper<PathItem>.fromJson(e)),
+        (k, e) => MapEntry(k, PathItem.fromJson(e as Map<String, dynamic>)),
       ),
       components: json['components'] == null
           ? null

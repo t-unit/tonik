@@ -9,6 +9,7 @@ part 'path_item.g.dart';
 @JsonSerializable()
 class PathItem {
   PathItem({
+    required this.ref,
     required this.summary,
     required this.description,
     required this.get,
@@ -26,6 +27,7 @@ class PathItem {
   factory PathItem.fromJson(Map<String, dynamic> json) =>
       _$PathItemFromJson(json);
 
+  final String? ref;
   final String? summary;
   final String? description;
   final Operation? get;

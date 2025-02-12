@@ -24,7 +24,7 @@ class OpenApiObject {
 
   final Info info;
   final List<Server>? servers;
-  final Map<String, ReferenceWrapper<PathItem>> paths;
+  final Map<String, PathItem> paths;
   final Components? components;
   final List<Tag>? tags;
 
