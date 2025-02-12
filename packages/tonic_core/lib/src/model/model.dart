@@ -61,6 +61,7 @@ class ClassModel extends Model with NamedModel {
 class EnumModel<T> extends Model with NamedModel {
   const EnumModel({
     required this.values,
+    required this.isNullable,
     required super.context,
     this.name,
   });
@@ -68,9 +69,11 @@ class EnumModel<T> extends Model with NamedModel {
   @override
   final String? name;
   final Set<T> values;
+  final bool isNullable;
 
   @override
-  String toString() => 'EnumModel{name: $name, values: $values}';
+  String toString() =>
+      'EnumModel{name: $name, values: $values isNullable: $isNullable}';
 }
 
 class AllOfModel extends Model with NamedModel {

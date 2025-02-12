@@ -88,13 +88,13 @@ class ModelImporter {
       'string' when schema.format == 'decimal' || schema.format == 'currency' =>
         DecimalModel(context: context),
       'string' when schema.enumerated != null =>
-        _parseEnum<String>(schema.enumerated!, context: context),
+        _parseEnum<String>(name, schema.enumerated!, context: context),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
         DoubleModel(context: context),
       'number' => NumberModel(context: context),
       'integer' when schema.enumerated != null =>
-        _parseEnum<int>(schema.enumerated!, context: context),
+        _parseEnum<int>(name, schema.enumerated!, context: context),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
       _ => _parseClassModel(name, schema, context),
@@ -159,16 +159,26 @@ class ModelImporter {
     return model;
   }
 
-  EnumModel<T> _parseEnum<T>(List<dynamic> values, {required Context context}) {
-    final stringValues = values.whereType<T>().toSet();
+  EnumModel<T> _parseEnum<T>(String? name, List<dynamic> values,
+      {required Context context}) {
+    final typedValues = values.whereType<T>().toSet();
+    final hasNull = values.any((value) => value == null);
 
-    if (stringValues.length != values.length) {
+    // Warn if there are non-matching values in the enum.
+    // Ignore [null] values, as we indicate nullability with [isNullable].
+    if (!hasNull && typedValues.length != values.length ||
+        hasNull && (typedValues.length + 1) != values.length) {
       log.warning(
         'Found non-matching values in enum for $context. '
         'Ignoring non-matching values.',
       );
     }
 
-    return EnumModel(context: context, values: stringValues);
+    return EnumModel(
+      context: context,
+      values: typedValues,
+      isNullable: hasNull,
+      name: name,
+    );
   }
 }

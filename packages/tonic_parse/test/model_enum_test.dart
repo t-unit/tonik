@@ -34,6 +34,10 @@ void main() {
           'type': 'string',
           'enum': ['a', 'b', 'c'],
         },
+        'NullableEnum': {
+          'type': 'string',
+          'enum': ['a', 'b', 'c', null],
+        },
       },
     },
   };
@@ -73,9 +77,27 @@ void main() {
 
   test('imports enum for string', () {
     final api = Importer().import(fileContent);
-    final model = api.models.last;
+    final model = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'SimpleEnum',
+    );
 
     expect(model, isA<EnumModel<String>>());
     expect((model as EnumModel).values, ['a', 'b', 'c']);
+  });
+
+  test('parses nullability for enum', () {
+    final api = Importer().import(fileContent);
+    final nullable = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'NullableEnum',
+    );
+
+    expect(nullable, isA<EnumModel<String>>());
+    expect((nullable as EnumModel).isNullable, isTrue);
+
+    final required = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'SimpleEnum',
+    );
+    expect(required, isA<EnumModel<String>>());
+    expect((required as EnumModel).isNullable, isFalse);
   });
 }
