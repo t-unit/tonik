@@ -2,7 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:tonic_parse/src/model/components.dart';
 import 'package:tonic_parse/src/model/info.dart';
 import 'package:tonic_parse/src/model/path_item.dart';
-import 'package:tonic_parse/src/model/reference.dart';
 import 'package:tonic_parse/src/model/server.dart';
 import 'package:tonic_parse/src/model/tag.dart';
 

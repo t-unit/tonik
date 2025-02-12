@@ -159,8 +159,11 @@ class ModelImporter {
     return model;
   }
 
-  EnumModel<T> _parseEnum<T>(String? name, List<dynamic> values,
-      {required Context context}) {
+  EnumModel<T> _parseEnum<T>(
+    String? name,
+    List<dynamic> values, {
+    required Context context,
+  }) {
     final typedValues = values.whereType<T>().toSet();
     final hasNull = values.any((value) => value == null);
 
