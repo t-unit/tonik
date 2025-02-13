@@ -1,6 +1,7 @@
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model_importer.dart';
+import 'package:tonic_parse/src/operation_importer.dart';
 import 'package:tonic_parse/src/server_importer.dart';
 
 class Importer {
@@ -13,6 +14,8 @@ class Importer {
       description: openApiObject.info.description,
       models: ModelImporter(openApiObject).import(),
       servers: ServerImporter(openApiObject: openApiObject).import(),
+      taggedOperations:
+          OperationImporter(openApiObject: openApiObject).import(),
     );
   }
 }

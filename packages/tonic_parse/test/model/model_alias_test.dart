@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
-import 'package:tonic_parse/src/importer.dart';
+import 'package:tonic_parse/tonic_parse.dart';
 
 void main() {
   const simpleAlias = {
