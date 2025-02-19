@@ -16,7 +16,7 @@ class ModelImporter {
   static Context get rootContext =>
       Context.initial().pushAll(['components', 'schemas']);
 
-  Set<Model> import() {
+  void import() {
     models = <Model>{};
 
     final context = rootContext;
@@ -32,8 +32,16 @@ class ModelImporter {
         models.add(model);
       }
     }
+  }
 
-    return models;
+  Model importSchema(ReferenceWrapper<Schema> schema, Context context) {
+    final model = _parseSchemaWrapper(null, schema, context);
+
+    if (model is! PrimitiveModel && model is! AliasModel) {
+      models.add(model);
+    }
+
+    return model is AliasModel ? model.model : model;
   }
 
   Model _parseSchemaWrapper(

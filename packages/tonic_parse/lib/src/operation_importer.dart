@@ -14,7 +14,10 @@ class OperationImporter {
 
   late Set<core.TaggedOperations> _operations;
 
-  Set<core.TaggedOperations> import() {
+  Set<core.TaggedOperations> get taggedOperations =>
+      _operations.where((to) => to.operations.isNotEmpty).toSet();
+
+  void import() {
     _operations = {
       if (openApiObject.tags != null)
         ...openApiObject.tags!.map(
@@ -55,8 +58,6 @@ class OperationImporter {
       _handleOperation(pathItem.options, context);
       _handleOperation(pathItem.trace, context);
     }
-
-    return _operations.where((to) => to.operations.isNotEmpty).toSet();
   }
 
   void _handleOperation(Operation? operation, core.Context context) {

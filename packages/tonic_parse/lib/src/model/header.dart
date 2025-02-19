@@ -12,10 +12,8 @@ class Header {
     required this.description,
     required this.isRequired,
     required this.isDeprecated,
-    required this.allowEmptyValue,
     required this.style,
     required this.explode,
-    required this.allowReserved,
     required this.schema,
     required this.content,
   });
@@ -23,12 +21,12 @@ class Header {
   factory Header.fromJson(Map<String, dynamic> json) => _$HeaderFromJson(json);
 
   final String? description;
+  @JsonKey(name: 'required')
   final bool? isRequired;
+  @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
-  final bool? allowEmptyValue;
   final SerializationStyle? style;
   final bool? explode;
-  final bool? allowReserved;
   final ReferenceWrapper<Schema>? schema;
   final Map<String, MediaType>? content;
 
@@ -37,7 +35,6 @@ class Header {
   @override
   String toString() =>
       'Header{description: $description, isRequired: $isRequired, '
-      'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
-      'style: $style, explode: $explode, allowReserved: $allowReserved, '
+      'isDeprecated: $isDeprecated, style: $style, explode: $explode, '
       'schema: $schema, content: $content}';
 }

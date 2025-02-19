@@ -8,12 +8,10 @@ part of 'header.dart';
 
 Header _$HeaderFromJson(Map<String, dynamic> json) => Header(
       description: json['description'] as String?,
-      isRequired: json['isRequired'] as bool?,
-      isDeprecated: json['isDeprecated'] as bool?,
-      allowEmptyValue: json['allowEmptyValue'] as bool?,
+      isRequired: json['required'] as bool?,
+      isDeprecated: json['deprecated'] as bool?,
       style: $enumDecodeNullable(_$SerializationStyleEnumMap, json['style']),
       explode: json['explode'] as bool?,
-      allowReserved: json['allowReserved'] as bool?,
       schema: json['schema'] == null
           ? null
           : ReferenceWrapper<Schema>.fromJson(json['schema']),
@@ -24,12 +22,10 @@ Header _$HeaderFromJson(Map<String, dynamic> json) => Header(
 
 Map<String, dynamic> _$HeaderToJson(Header instance) => <String, dynamic>{
       'description': instance.description,
-      'isRequired': instance.isRequired,
-      'isDeprecated': instance.isDeprecated,
-      'allowEmptyValue': instance.allowEmptyValue,
+      'required': instance.isRequired,
+      'deprecated': instance.isDeprecated,
       'style': _$SerializationStyleEnumMap[instance.style],
       'explode': instance.explode,
-      'allowReserved': instance.allowReserved,
       'schema': instance.schema,
       'content': instance.content,
     };
