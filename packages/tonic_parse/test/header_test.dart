@@ -48,6 +48,18 @@ void main() {
           'description': 'Header with schema',
           'required': true,
         },
+        'withContent': {
+          'content': {
+            'application/json': {
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'test': {'type': 'string'}
+                }
+              }
+            }
+          }
+        },
       },
     },
   };
@@ -67,6 +79,7 @@ void main() {
   final rateLimit = headers.firstWhereOrNull((h) => h.name == 'rateLimit');
   final content = headers.firstWhereOrNull((h) => h.name == 'content');
   final withSchema = headers.firstWhereOrNull((h) => h.name == 'withSchema');
+  final withContent = headers.firstWhereOrNull((h) => h.name == 'withContent');
 
   test('import explode', () {
     expect(simple?.explode, isFalse);
@@ -111,5 +124,10 @@ void main() {
         model?.properties.firstWhere((p) => p.name == 'value');
     expect(valueProperty?.model, isA<IntegerModel>());
     expect(valueProperty?.isRequired, isFalse);
+  });
+
+  test('falls back to string model for header with content', () {
+    expect(withContent, isNotNull);
+    expect(withContent?.model, isA<StringModel>());
   });
 }

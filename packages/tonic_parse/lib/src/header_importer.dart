@@ -43,26 +43,14 @@ class HeaderImporter {
             final core.Model model;
             if (header.schema != null) {
               model = modelImporter.importSchema(header.schema!, context);
-            } else if (header.content?.isNotEmpty ?? false) {
-              final mediaType = header.content!.entries.first;
-              final schema = header.content!.entries.first.value.schema;
-
-              if (schema == null) {
-                throw ArgumentError(
-                  'No schema provided for header ${entry.key}',
-                );
-              }
-
-              log.info(
-                'Importing header ${entry.key} with media type '
-                '${mediaType.key}. Encoding is ignored, using simple instead.',
-              );
-
-              model = modelImporter.importSchema(schema, context);
             } else {
-              throw ArgumentError(
-                'No schema or content provided for header ${entry.key}',
+              log.warning(
+                'No schema provided for header ${entry.key}. '
+                'Complex content via content property is ignored. '
+                'Using string model instead.',
               );
+
+              model = core.StringModel(context: context);
             }
 
             return core.Header(
