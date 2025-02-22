@@ -1,8 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:tonic_core/src/model/header.dart';
-import 'package:tonic_core/src/model/model.dart';
-import 'package:tonic_core/src/model/server.dart';
-import 'package:tonic_core/src/model/tagged_operations.dart';
+import 'package:tonic_core/tonic_core.dart';
 
 @immutable
 class ApiDocument {
@@ -12,7 +9,7 @@ class ApiDocument {
     required this.models,
     required this.headers,
     required this.servers,
-    required this.taggedOperations,
+    required this.operations,
     this.description,
   });
 
@@ -24,10 +21,26 @@ class ApiDocument {
   final Set<Header> headers;
   final Set<Server> servers;
 
-  final Set<TaggedOperations> taggedOperations;
+  final Set<Operation> operations;
+
+  Map<Tag, Set<Operation>> get operationsByTag {
+    final taggedOperations = <Tag, Set<Operation>>{};
+
+    for (final operation in operations) {
+      for (final tag in operation.tags) {
+        taggedOperations.update(
+          tag,
+          (ops) => ops..add(operation),
+          ifAbsent: () => {operation},
+        );
+      }
+    }
+
+    return taggedOperations;
+  }
 
   @override
   String toString() => 'ApiDocument{title: $title, description: $description, '
       'version: $version, models: $models, headers: $headers, '
-      'servers: $servers, taggedOperations: $taggedOperations}';
+      'servers: $servers, operations: $operations}';
 }

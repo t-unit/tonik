@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonic_core/tonic_core.dart' as core;
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model/operation.dart';
+import 'package:tonic_parse/src/model/tag.dart';
 
 class OperationImporter {
   OperationImporter({required this.openApiObject});
@@ -12,73 +14,50 @@ class OperationImporter {
   final OpenApiObject openApiObject;
   final log = Logger('OperationImporter');
 
-  late Set<core.TaggedOperations> _operations;
-
-  Set<core.TaggedOperations> get taggedOperations =>
-      _operations.where((to) => to.operations.isNotEmpty).toSet();
+  late Set<core.Operation> operations;
+  late Set<core.Tag> validTags;
 
   void import() {
-    _operations = {
-      if (openApiObject.tags != null)
-        ...openApiObject.tags!.map(
-          (tag) => core.TaggedOperations(
-            tagName: tag.name,
-            tagDescription: tag.description,
-            operations: {},
-          ),
-        ),
-      core.TaggedOperations(
-        tagName: null,
-        tagDescription: null,
-        operations: {},
-      ),
+    validTags = {
+      for (final tag in openApiObject.tags ?? <Tag>[])
+        core.Tag(name: tag.name, description: tag.description),
     };
 
-    for (final MapEntry(key: path, value: pathItem)
-        in openApiObject.paths.entries) {
-      final context = rootContext.push(path);
+    operations = <core.Operation>{};
 
-      if (pathItem.ref != null) {
-        log.warning(
-          'Ignoring reference to ${pathItem.ref} of path $path. '
-          'Feature not supported.',
-        );
-      }
+    for (final pathEntry in openApiObject.paths.entries) {
+      final pathItem = pathEntry.value;
+      final context = rootContext.push(pathEntry.key);
 
-      if (pathItem.servers?.isNotEmpty ?? false) {
-        log.warning('Ignoring servers of path $path. Feature not supported.');
-      }
-
-      _handleOperation(pathItem.get, context);
-      _handleOperation(pathItem.put, context);
-      _handleOperation(pathItem.post, context);
-      _handleOperation(pathItem.delete, context);
-      _handleOperation(pathItem.patch, context);
-      _handleOperation(pathItem.head, context);
-      _handleOperation(pathItem.options, context);
-      _handleOperation(pathItem.trace, context);
+      _addOperation('get', pathItem.get, context);
+      _addOperation('put', pathItem.put, context);
+      _addOperation('post', pathItem.post, context);
+      _addOperation('delete', pathItem.delete, context);
+      _addOperation('patch', pathItem.patch, context);
+      _addOperation('head', pathItem.head, context);
+      _addOperation('options', pathItem.options, context);
+      _addOperation('trace', pathItem.trace, context);
     }
   }
 
-  void _handleOperation(Operation? operation, core.Context context) {
+  void _addOperation(
+    String method,
+    Operation? operation,
+    core.Context context,
+  ) {
     if (operation == null) return;
 
-    final stringTags = operation.tags ?? [];
-    final operationsToAdd = _operations
-        .where((t) => stringTags.any((tag) => tag == t.tagName))
-        .toList();
+    final tags = operation.tags
+        ?.map((name) => validTags.firstWhereOrNull((tag) => tag.name == name))
+        .nonNulls
+        .toSet();
 
-    if (operationsToAdd.isEmpty) {
-      operationsToAdd.add(_operations.firstWhere((to) => to.tagName == null));
-    }
-
-    final coreOperation = core.Operation(
-      operationId: operation.operationId,
-      context: context,
+    operations.add(
+      core.Operation(
+        operationId: operation.operationId,
+        context: context.push(method),
+        tags: tags ?? {},
+      ),
     );
-
-    for (final to in operationsToAdd) {
-      to.operations.add(coreOperation);
-    }
   }
 }

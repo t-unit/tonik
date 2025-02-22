@@ -3,7 +3,7 @@ class Context {
 
   Context._(this.path);
 
-  List<String> path;
+  final List<String> path;
 
   Context push(String name) {
     final newPath = List.of(path)..add(name);

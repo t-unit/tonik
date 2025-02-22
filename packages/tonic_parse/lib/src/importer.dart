@@ -28,7 +28,7 @@ class Importer {
       models: modelImporter.models,
       headers: headerImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),
-      taggedOperations: operationImporter.taggedOperations,
+      operations: operationImporter.operations,
     );
   }
 }

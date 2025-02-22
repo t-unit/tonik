@@ -9,4 +9,15 @@ class Server {
 
   @override
   String toString() => 'Server{url: $url, description: $description}';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Server &&
+          runtimeType == other.runtimeType &&
+          url == other.url &&
+          description == other.description;
+
+  @override
+  int get hashCode => Object.hash(url, description);
 }
