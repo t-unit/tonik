@@ -18,7 +18,7 @@ class ApiDocument {
   final String version;
 
   final Set<Model> models;
-  final Set<Header> headers;
+  final Set<ResponseHeader> headers;
   final Set<Server> servers;
 
   final Set<Operation> operations;

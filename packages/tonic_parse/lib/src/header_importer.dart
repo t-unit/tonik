@@ -13,7 +13,7 @@ class HeaderImporter {
   final ModelImporter modelImporter;
   final log = Logger('HeaderImporter');
 
-  late Set<core.Header> headers;
+  late Set<core.ResponseHeader> headers;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['components', 'headers']);
@@ -31,7 +31,8 @@ class HeaderImporter {
     }
   }
 
-  core.Header _importHeader(String name, ReferenceWrapper<Header> wrapper) {
+  core.ResponseHeader _importHeader(
+      String name, ReferenceWrapper<Header> wrapper) {
     switch (wrapper) {
       case Reference<Header>():
         if (!wrapper.ref.startsWith('#/components/headers/')) {
@@ -53,7 +54,7 @@ class HeaderImporter {
           orElse: () => _importHeader(refName, refHeader),
         );
 
-        return core.HeaderAlias(name: name, header: existing);
+        return core.ResponseHeaderAlias(name: name, header: existing);
 
       case InlinedObject<Header>():
         final header = wrapper.object;
@@ -82,7 +83,7 @@ class HeaderImporter {
             'Advanced features via "content" are not supported.',
           );
         }
-        return core.HeaderObject(
+        return core.ResponseHeaderObject(
           name: name,
           description: header.description,
           explode: header.explode ?? false,

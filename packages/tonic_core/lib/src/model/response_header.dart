@@ -1,17 +1,17 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 
-sealed class Header {
-  const Header({required this.name});
+sealed class ResponseHeader {
+  const ResponseHeader({required this.name});
 
   final String name;
 }
 
 @immutable
-class HeaderAlias extends Header {
-  const HeaderAlias({required super.name, required this.header});
+class ResponseHeaderAlias extends ResponseHeader {
+  const ResponseHeaderAlias({required super.name, required this.header});
 
-  final Header header;
+  final ResponseHeader header;
 
   @override
   String toString() => 'HeaderAlias{name: $name, header: $header}';
@@ -19,7 +19,7 @@ class HeaderAlias extends Header {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HeaderAlias &&
+      other is ResponseHeaderAlias &&
           runtimeType == other.runtimeType &&
           name == other.name &&
           header == other.header;
@@ -29,8 +29,8 @@ class HeaderAlias extends Header {
 }
 
 @immutable
-class HeaderObject extends Header {
-  const HeaderObject({
+class ResponseHeaderObject extends ResponseHeader {
+  const ResponseHeaderObject({
     required super.name,
     required this.description,
     required this.explode,
@@ -54,7 +54,7 @@ class HeaderObject extends Header {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HeaderObject &&
+      other is ResponseHeaderObject &&
           runtimeType == other.runtimeType &&
           name == other.name &&
           description == other.description &&

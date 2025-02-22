@@ -82,25 +82,25 @@ void main() {
 
   final headers = headerImporter.headers;
   final simple = headers
-      .whereType<HeaderObject>()
+      .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'simple');
   final rateLimit = headers
-      .whereType<HeaderObject>()
+      .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'rateLimit');
   final content = headers
-      .whereType<HeaderObject>()
+      .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'content');
   final withSchema = headers
-      .whereType<HeaderObject>()
+      .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'withSchema');
   final withContent = headers
-      .whereType<HeaderObject>()
+      .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'withContent');
   final reference = headers
-      .whereType<HeaderAlias>()
+      .whereType<ResponseHeaderAlias>()
       .firstWhereOrNull((h) => h.name == 'reference');
   final referenceReference = headers
-      .whereType<HeaderAlias>()
+      .whereType<ResponseHeaderAlias>()
       .firstWhereOrNull((h) => h.name == 'referenceReference');
 
   test('import explode', () {
@@ -160,8 +160,9 @@ void main() {
 
   test('imports nested reference', () {
     expect(referenceReference, isNotNull);
-    expect(referenceReference?.header, isA<HeaderAlias>());
-    expect((referenceReference?.header as HeaderAlias?)?.header.name, 'simple');
+    expect(referenceReference?.header, isA<ResponseHeaderAlias>());
+    expect((referenceReference?.header as ResponseHeaderAlias?)?.header.name,
+        'simple');
   });
 
   test('does not duplicate headers when importing references', () {
