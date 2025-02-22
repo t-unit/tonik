@@ -1,10 +1,37 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 
+sealed class Header {
+  const Header({required this.name});
+
+  final String name;
+}
+
 @immutable
-class Header {
-  const Header({
-    required this.name,
+class HeaderAlias extends Header {
+  const HeaderAlias({required super.name, required this.header});
+
+  final Header header;
+
+  @override
+  String toString() => 'HeaderAlias{name: $name, header: $header}';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HeaderAlias &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          header == other.header;
+
+  @override
+  int get hashCode => Object.hash(name, header);
+}
+
+@immutable
+class HeaderObject extends Header {
+  const HeaderObject({
+    required super.name,
     required this.description,
     required this.explode,
     required this.model,
@@ -12,7 +39,6 @@ class Header {
     required this.isDeprecated,
   });
 
-  final String name;
   final String? description;
   final bool explode;
   final Model model;
@@ -21,14 +47,14 @@ class Header {
   final bool isDeprecated;
 
   @override
-  String toString() => 'Header{name: $name, description: $description, '
+  String toString() => 'HeaderObject{name: $name, description: $description, '
       'explode: $explode, model: $model, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated}';
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Header &&
+      other is HeaderObject &&
           runtimeType == other.runtimeType &&
           name == other.name &&
           description == other.description &&

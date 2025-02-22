@@ -18,8 +18,8 @@ void main() {
         'simple': {
           'schema': {'type': 'string'},
         },
-        'schema': {'type': 'string'},
         'rateLimit': {
+          'schema': {'type': 'string'},
           'explode': false,
           'required': false,
           'deprecated': true,
@@ -48,17 +48,23 @@ void main() {
           'description': 'Header with schema',
           'required': true,
         },
+        'reference': {
+          r'$ref': '#/components/headers/simple',
+        },
+        'referenceReference': {
+          r'$ref': '#/components/headers/reference',
+        },
         'withContent': {
           'content': {
             'application/json': {
               'schema': {
                 'type': 'object',
                 'properties': {
-                  'test': {'type': 'string'}
-                }
-              }
-            }
-          }
+                  'test': {'type': 'string'},
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -75,11 +81,27 @@ void main() {
   headerImporter.import();
 
   final headers = headerImporter.headers;
-  final simple = headers.firstWhereOrNull((h) => h.name == 'simple');
-  final rateLimit = headers.firstWhereOrNull((h) => h.name == 'rateLimit');
-  final content = headers.firstWhereOrNull((h) => h.name == 'content');
-  final withSchema = headers.firstWhereOrNull((h) => h.name == 'withSchema');
-  final withContent = headers.firstWhereOrNull((h) => h.name == 'withContent');
+  final simple = headers
+      .whereType<HeaderObject>()
+      .firstWhereOrNull((h) => h.name == 'simple');
+  final rateLimit = headers
+      .whereType<HeaderObject>()
+      .firstWhereOrNull((h) => h.name == 'rateLimit');
+  final content = headers
+      .whereType<HeaderObject>()
+      .firstWhereOrNull((h) => h.name == 'content');
+  final withSchema = headers
+      .whereType<HeaderObject>()
+      .firstWhereOrNull((h) => h.name == 'withSchema');
+  final withContent = headers
+      .whereType<HeaderObject>()
+      .firstWhereOrNull((h) => h.name == 'withContent');
+  final reference = headers
+      .whereType<HeaderAlias>()
+      .firstWhereOrNull((h) => h.name == 'reference');
+  final referenceReference = headers
+      .whereType<HeaderAlias>()
+      .firstWhereOrNull((h) => h.name == 'referenceReference');
 
   test('import explode', () {
     expect(simple?.explode, isFalse);
@@ -129,5 +151,24 @@ void main() {
   test('falls back to string model for header with content', () {
     expect(withContent, isNotNull);
     expect(withContent?.model, isA<StringModel>());
+  });
+
+  test('imports reference', () {
+    expect(reference, isNotNull);
+    expect(reference?.header.name, 'simple');
+  });
+
+  test('imports nested reference', () {
+    expect(referenceReference, isNotNull);
+    expect(referenceReference?.header, isA<HeaderAlias>());
+    expect((referenceReference?.header as HeaderAlias?)?.header.name, 'simple');
+  });
+
+  test('does not duplicate headers when importing references', () {
+    final simple = headers.where((h) => h.name == 'simple');
+    final reference = headers.where((h) => h.name == 'reference');
+
+    expect(simple, hasLength(1));
+    expect(reference, hasLength(1));
   });
 }

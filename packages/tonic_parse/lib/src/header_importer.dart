@@ -19,51 +19,77 @@ class HeaderImporter {
       core.Context.initial().pushAll(['components', 'headers']);
 
   void import() {
+    headers = {};
     final headerMap = openApiObject.components?.headers ?? {};
 
-    headers = headerMap.entries
-        .map(
-          (entry) {
-            final context = rootContext.push(entry.key);
+    for (final entry in headerMap.entries) {
+      final name = entry.key;
+      final header = entry.value;
 
-            final value = entry.value;
-            final (header, isReference) = switch (value) {
-              Reference<Header>() => throw UnimplementedError(),
-              InlinedObject<Header>() => (value.object, false),
-            };
+      final imported = _importHeader(name, header);
+      headers.add(imported);
+    }
+  }
 
-            if ((header.style ?? SerializationStyle.simple) !=
+  core.Header _importHeader(String name, ReferenceWrapper<Header> wrapper) {
+    switch (wrapper) {
+      case Reference<Header>():
+        if (!wrapper.ref.startsWith('#/components/headers/')) {
+          throw UnimplementedError(
+            'Only local header references are supported, found ${wrapper.ref}',
+          );
+        }
+
+        final refName = wrapper.ref.split('/').last;
+        final refHeader = openApiObject.components?.headers?[refName];
+
+        if (refHeader == null) {
+          throw ArgumentError('Header $refName not found');
+        }
+
+        // Check if we already imported this header
+        final existing = headers.firstWhere(
+          (h) => h.name == refName,
+          orElse: () => _importHeader(refName, refHeader),
+        );
+
+        return core.HeaderAlias(name: name, header: existing);
+
+      case InlinedObject<Header>():
+        final header = wrapper.object;
+
+        if (header.schema == null && header.content == null) {
+          throw ArgumentError(
+            'Header $name must have either schema or content',
+          );
+        }
+
+        if (header.schema != null &&
+            (header.style ?? SerializationStyle.simple) !=
                 SerializationStyle.simple) {
-              log.warning(
-                'Unsupported serialization style ${header.style} for header '
-                '${entry.key}! Ignoring provided style.',
-              );
-            }
+          throw ArgumentError(
+            'Headers must have serialization style "simple".',
+          );
+        }
 
-            final core.Model model;
-            if (header.schema != null) {
-              model = modelImporter.importSchema(header.schema!, context);
-            } else {
-              log.warning(
-                'No schema provided for header ${entry.key}. '
-                'Complex content via content property is ignored. '
-                'Using string model instead.',
-              );
+        final model = header.schema != null
+            ? modelImporter.importSchema(header.schema!, rootContext.push(name))
+            : core.StringModel(context: rootContext.push(name));
 
-              model = core.StringModel(context: context);
-            }
-
-            return core.Header(
-              name: entry.key,
-              description: header.description,
-              explode: header.explode ?? false,
-              model: model,
-              isRequired: header.isRequired ?? false,
-              isDeprecated: header.isDeprecated ?? false,
-            );
-          },
-        )
-        .whereType<core.Header>()
-        .toSet();
+        if (header.schema == null) {
+          log.warning(
+            'Header $name has no schema, using string model. '
+            'Advanced features via "content" are not supported.',
+          );
+        }
+        return core.HeaderObject(
+          name: name,
+          description: header.description,
+          explode: header.explode ?? false,
+          model: model,
+          isRequired: header.isRequired ?? false,
+          isDeprecated: header.isDeprecated ?? false,
+        );
+    }
   }
 }
