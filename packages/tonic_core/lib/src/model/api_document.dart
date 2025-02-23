@@ -10,6 +10,7 @@ class ApiDocument {
     required this.headers,
     required this.servers,
     required this.operations,
+    required this.responses,
     this.description,
   });
 
@@ -22,6 +23,7 @@ class ApiDocument {
   final Set<Server> servers;
 
   final Set<Operation> operations;
+  final Set<Response> responses;
 
   Map<Tag, Set<Operation>> get operationsByTag {
     final taggedOperations = <Tag, Set<Operation>>{};
@@ -42,5 +44,5 @@ class ApiDocument {
   @override
   String toString() => 'ApiDocument{title: $title, description: $description, '
       'version: $version, models: $models, headers: $headers, '
-      'servers: $servers, operations: $operations}';
+      'servers: $servers, operations: $operations, responses: $responses}';
 }

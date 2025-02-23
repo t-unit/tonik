@@ -1,9 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
-import 'package:tonic_parse/src/header_importer.dart';
-import 'package:tonic_parse/src/model/open_api_object.dart';
-import 'package:tonic_parse/src/model_importer.dart';
+import 'package:tonic_parse/tonic_parse.dart';
 
 void main() {
   const fileContent = {
@@ -70,17 +68,9 @@ void main() {
     },
   };
 
-  final openApiObject = OpenApiObject.fromJson(fileContent);
-  final modelImporter = ModelImporter(openApiObject);
-  final headerImporter = HeaderImporter(
-    openApiObject: openApiObject,
-    modelImporter: modelImporter,
-  );
+  final api = Importer().import(fileContent);
 
-  modelImporter.import();
-  headerImporter.import();
-
-  final headers = headerImporter.headers;
+  final headers = api.headers;
   final simple = headers
       .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'simple');
@@ -155,14 +145,17 @@ void main() {
 
   test('imports reference', () {
     expect(reference, isNotNull);
-    expect(reference?.header.name, 'simple');
+    final target = reference?.header as ResponseHeaderObject?;
+    expect(target?.name, 'simple');
   });
 
   test('imports nested reference', () {
     expect(referenceReference, isNotNull);
     expect(referenceReference?.header, isA<ResponseHeaderAlias>());
-    expect((referenceReference?.header as ResponseHeaderAlias?)?.header.name,
-        'simple');
+
+    final target = (referenceReference?.header as ResponseHeaderAlias?)?.header
+        as ResponseHeaderObject?;
+    expect(target?.name, 'simple');
   });
 
   test('does not duplicate headers when importing references', () {

@@ -3,6 +3,7 @@ import 'package:tonic_parse/src/header_importer.dart';
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model_importer.dart';
 import 'package:tonic_parse/src/operation_importer.dart';
+import 'package:tonic_parse/src/response_importer.dart';
 import 'package:tonic_parse/src/server_importer.dart';
 
 class Importer {
@@ -14,10 +15,15 @@ class Importer {
       openApiObject: openApiObject,
       modelImporter: modelImporter,
     );
+    final responseImporter = ResponseImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+      headerImporter: headerImporter,
+    );
 
     modelImporter.import();
     headerImporter.import();
-
+    responseImporter.import();
     final operationImporter = OperationImporter(openApiObject: openApiObject)
       ..import();
 
@@ -29,6 +35,7 @@ class Importer {
       headers: headerImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),
       operations: operationImporter.operations,
+      responses: responseImporter.responses,
     );
   }
 }

@@ -41,7 +41,7 @@ class ModelImporter {
       models.add(model);
     }
 
-    return model is AliasModel ? model.model : model;
+    return model;
   }
 
   Model _parseSchemaWrapper(

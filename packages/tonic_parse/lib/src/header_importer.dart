@@ -26,13 +26,37 @@ class HeaderImporter {
       final name = entry.key;
       final header = entry.value;
 
-      final imported = _importHeader(name, header);
+      final imported = _importHeader(
+        name: name,
+        wrapper: header,
+        context: rootContext.push(name),
+      );
       headers.add(imported);
     }
   }
 
-  core.ResponseHeader _importHeader(
-      String name, ReferenceWrapper<Header> wrapper) {
+  core.ResponseHeader importInlineHeader({
+    required ReferenceWrapper<Header> wrapper,
+    required core.Context context,
+  }) {
+    final header = _importHeader(
+      name: null,
+      wrapper: wrapper,
+      context: context,
+    );
+
+    if (header is core.ResponseHeaderObject) {
+      headers.add(header);
+    }
+
+    return header is core.ResponseHeaderAlias ? header.header : header;
+  }
+
+  core.ResponseHeader _importHeader({
+    required String? name,
+    required ReferenceWrapper<Header> wrapper,
+    required core.Context context,
+  }) {
     switch (wrapper) {
       case Reference<Header>():
         if (!wrapper.ref.startsWith('#/components/headers/')) {
@@ -51,17 +75,25 @@ class HeaderImporter {
         // Check if we already imported this header
         final existing = headers.firstWhere(
           (h) => h.name == refName,
-          orElse: () => _importHeader(refName, refHeader),
+          orElse: () => _importHeader(
+            name: refName,
+            wrapper: refHeader,
+            context: context,
+          ),
         );
 
-        return core.ResponseHeaderAlias(name: name, header: existing);
+        return core.ResponseHeaderAlias(
+          name: name,
+          header: existing,
+          context: context,
+        );
 
       case InlinedObject<Header>():
         final header = wrapper.object;
 
         if (header.schema == null && header.content == null) {
           throw ArgumentError(
-            'Header $name must have either schema or content',
+            'Header ${name ?? context.path} must have either schema or content',
           );
         }
 
@@ -74,8 +106,8 @@ class HeaderImporter {
         }
 
         final model = header.schema != null
-            ? modelImporter.importSchema(header.schema!, rootContext.push(name))
-            : core.StringModel(context: rootContext.push(name));
+            ? modelImporter.importSchema(header.schema!, context)
+            : core.StringModel(context: context);
 
         if (header.schema == null) {
           log.warning(
@@ -90,6 +122,7 @@ class HeaderImporter {
           model: model,
           isRequired: header.isRequired ?? false,
           isDeprecated: header.isDeprecated ?? false,
+          context: context,
         );
     }
   }

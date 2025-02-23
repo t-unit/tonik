@@ -27,13 +27,6 @@ class AliasModel extends Model with NamedModel {
   String toString() => 'AliasModel{name: $name, model: $model}';
 }
 
-class UndefinedModel extends Model with NamedModel {
-  const UndefinedModel({required super.context, required this.name});
-
-  @override
-  final String name;
-}
-
 class ListModel extends Model {
   const ListModel({required this.content, required super.context});
 

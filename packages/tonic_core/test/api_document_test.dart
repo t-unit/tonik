@@ -11,6 +11,7 @@ void main() {
         headers: {},
         servers: {},
         operations: {},
+        responses: {},
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -36,6 +37,7 @@ void main() {
         headers: const {},
         servers: const {},
         operations: {fooOperation, barOperation},
+        responses: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -66,6 +68,7 @@ void main() {
             tags: {const Tag(name: 'foo')},
           ),
         },
+        responses: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
