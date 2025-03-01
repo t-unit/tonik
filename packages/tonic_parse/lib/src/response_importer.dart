@@ -50,7 +50,8 @@ class ResponseImporter {
       case Reference<Response>():
         if (!wrapper.ref.startsWith('#/components/responses/')) {
           throw UnimplementedError(
-            'Only local response references are supported, found ${wrapper.ref}',
+            'Only local response references are supported, '
+            'found ${wrapper.ref}',
           );
         }
 
