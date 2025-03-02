@@ -55,7 +55,6 @@ void main() {
 
     final objectModel = inlineAllOf.models.last;
     expect(objectModel, isA<ClassModel>());
-
     expect(api.models, contains(objectModel));
     expect(api.models.contains(stringModel), isFalse);
   });

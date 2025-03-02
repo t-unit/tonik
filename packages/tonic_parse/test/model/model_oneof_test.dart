@@ -36,6 +36,26 @@ void main() {
             {'type': 'string'},
           ],
         },
+        'Discriminator': {
+          'oneOf': [
+            {r'$ref': '#/components/schemas/Reference'},
+            {r'$ref': '#/components/schemas/InlineOneOf'},
+          ],
+          'discriminator': {
+            'propertyName': 'disc',
+            'mapping': {
+              'inline': '#/components/schemas/InlineOneOf',
+              'ref': '#/components/schemas/Reference',
+            },
+          },
+        },
+        'SimpleDiscriminator': {
+          'oneOf': [
+            {r'$ref': '#/components/schemas/Reference'},
+            {r'$ref': '#/components/schemas/InlineOneOf'},
+          ],
+          'discriminator': {'propertyName': 'name'},
+        },
       },
     },
   };
@@ -51,13 +71,15 @@ void main() {
     expect((inlineOneOf as OneOfModel).models, hasLength(2));
 
     final stringModel = inlineOneOf.models.first;
-    expect(stringModel, isA<StringModel>());
+    expect(stringModel.model, isA<StringModel>());
+    expect(stringModel.discriminatorValue, isNull);
 
     final objectModel = inlineOneOf.models.last;
-    expect(objectModel, isA<ClassModel>());
+    expect(objectModel.model, isA<ClassModel>());
+    expect(objectModel.discriminatorValue, isNull);
 
-    expect(api.models, contains(objectModel));
-    expect(api.models.contains(stringModel), isFalse);
+    expect(api.models, contains(objectModel.model));
+    expect(api.models.contains(stringModel.model), isFalse);
   });
 
   test('Imports oneOf with reference', () {
@@ -71,10 +93,52 @@ void main() {
     expect((referenceOneOf as OneOfModel).models, hasLength(2));
 
     final referenceModel = referenceOneOf.models.first;
-    expect(referenceModel, isA<ClassModel>());
-    expect((referenceModel as ClassModel).name, 'Reference');
+    expect(referenceModel.model, isA<ClassModel>());
+    expect((referenceModel.model as ClassModel).name, 'Reference');
+    expect(referenceModel.discriminatorValue, isNull);
 
     final stringModel = referenceOneOf.models.last;
-    expect(stringModel, isA<StringModel>());
+    expect(stringModel.model, isA<StringModel>());
+    expect(stringModel.discriminatorValue, isNull);
+  });
+
+  test('Imports oneOf with discriminator', () {
+    final api = Importer().import(fileContent);
+
+    final discriminator = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'Discriminator',
+    );
+
+    expect(discriminator, isA<OneOfModel>());
+    expect((discriminator as OneOfModel).models, hasLength(2));
+    expect(discriminator.discriminator, 'disc');
+
+    final refModel = discriminator.models.first;
+    expect(refModel.model, isA<ClassModel>());
+    expect(refModel.discriminatorValue, 'ref');
+
+    final inlineModel = discriminator.models.last;
+    expect(inlineModel.model, isA<OneOfModel>());
+    expect(inlineModel.discriminatorValue, 'inline');
+  });
+
+  test('Imports oneOf with discriminator but no mapping', () {
+    final api = Importer().import(fileContent);
+
+    final simpleDiscriminator = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'SimpleDiscriminator',
+    );
+
+    expect(simpleDiscriminator, isA<OneOfModel>());
+    expect((simpleDiscriminator as OneOfModel).models, hasLength(2));
+    expect(simpleDiscriminator.discriminator, 'name');
+
+    final refModel = simpleDiscriminator.models.first;
+    expect(refModel.model, isA<ClassModel>());
+    expect(refModel.discriminatorValue, 'Reference');
+
+    final inlineModel = simpleDiscriminator.models.last;
+    expect(inlineModel.model, isA<OneOfModel>());
+    expect(inlineModel.discriminatorValue, 'InlineOneOf');
   });
 }

@@ -84,34 +84,42 @@ class AllOfModel extends Model with NamedModel {
   String toString() => 'AllOfModel{models: $models}';
 }
 
+typedef DiscriminatedModel = ({String? discriminatorValue, Model model});
+
 class OneOfModel extends Model with NamedModel {
   const OneOfModel({
     required this.models,
     required this.name,
+    required this.discriminator,
     required super.context,
   });
 
   @override
   final String? name;
-  final Set<Model> models;
+  final Set<DiscriminatedModel> models;
+  final String? discriminator;
 
   @override
-  String toString() => 'OneOfModel{models: $models}';
+  String toString() =>
+      'OneOfModel{models: $models, discriminator: $discriminator}';
 }
 
 class AnyOfModel extends Model with NamedModel {
   const AnyOfModel({
     required this.models,
     required this.name,
+    required this.discriminator,
     required super.context,
   });
 
   @override
   final String? name;
-  final Set<Model> models;
+  final Set<DiscriminatedModel> models;
+  final String? discriminator;
 
   @override
-  String toString() => 'AnyOfModel{models: $models}';
+  String toString() =>
+      'AnyOfModel{models: $models, discriminator: $discriminator}';
 }
 
 sealed class PrimitiveModel extends Model {

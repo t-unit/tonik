@@ -129,24 +129,70 @@ class ModelImporter {
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
+    final modelContext = context.push('allOf');
     final models = schema.allOf!.map(
-      (schema) => _parseSchemaWrapper(null, schema, context.push('allOf')),
+      (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
     );
-    return AllOfModel(models: models.toSet(), context: context, name: name);
+    return AllOfModel(
+      models: models.toSet(),
+      context: context,
+      name: name,
+    );
   }
 
   OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
+    final modelContext = context.push('oneOf');
     final models = schema.oneOf!.map(
-      (schema) => _parseSchemaWrapper(null, schema, context.push('oneOf')),
+      (oneOfSchema) => (
+        discriminatorValue: _getDiscriminatorValue(
+          schema: schema,
+          innerSchema: oneOfSchema,
+        ),
+        model: _parseSchemaWrapper(null, oneOfSchema, modelContext),
+      ),
     );
-    return OneOfModel(models: models.toSet(), context: context, name: name);
+
+    return OneOfModel(
+      models: models.toSet(),
+      context: context,
+      name: name,
+      discriminator: schema.discriminator?.propertyName,
+    );
   }
 
   AnyOfModel _parseAnyOf(String? name, Schema schema, Context context) {
+    final modelContext = context.push('anyOf');
     final models = schema.anyOf!.map(
-      (schema) => _parseSchemaWrapper(null, schema, context.push('anyOf')),
+      (anyOfSchema) => (
+        discriminatorValue: _getDiscriminatorValue(
+          schema: schema,
+          innerSchema: anyOfSchema,
+        ),
+        model: _parseSchemaWrapper(null, anyOfSchema, modelContext),
+      ),
     );
-    return AnyOfModel(models: models.toSet(), context: context, name: name);
+    return AnyOfModel(
+      models: models.toSet(),
+      context: context,
+      name: name,
+      discriminator: schema.discriminator?.propertyName,
+    );
+  }
+
+  String? _getDiscriminatorValue({
+    required Schema schema,
+    required ReferenceWrapper<Schema> innerSchema,
+  }) {
+    if (innerSchema is Reference &&
+        schema.discriminator?.propertyName != null) {
+      final ref = (innerSchema as Reference).ref;
+      final discriminatorEntry =
+          schema.discriminator?.mapping?.entries.firstWhereOrNull(
+        (entry) => entry.value == ref,
+      );
+      return discriminatorEntry?.key ?? ref.split('/').last;
+    }
+    return null;
   }
 
   ClassModel _parseClassModel(String? name, Schema schema, Context context) {
