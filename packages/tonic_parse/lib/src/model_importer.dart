@@ -93,6 +93,14 @@ class ModelImporter {
       return _parseAllOf(name, schema, context);
     }
 
+    if (schema.oneOf != null) {
+      return _parseOneOf(name, schema, context);
+    }
+
+    if (schema.anyOf != null) {
+      return _parseAnyOf(name, schema, context);
+    }
+
     var model = switch (schema.type) {
       'string' when schema.format == 'date-time' =>
         DateTimeModel(context: context),
@@ -125,6 +133,20 @@ class ModelImporter {
       (schema) => _parseSchemaWrapper(null, schema, context.push('allOf')),
     );
     return AllOfModel(models: models.toSet(), context: context, name: name);
+  }
+
+  OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
+    final models = schema.oneOf!.map(
+      (schema) => _parseSchemaWrapper(null, schema, context.push('oneOf')),
+    );
+    return OneOfModel(models: models.toSet(), context: context, name: name);
+  }
+
+  AnyOfModel _parseAnyOf(String? name, Schema schema, Context context) {
+    final models = schema.anyOf!.map(
+      (schema) => _parseSchemaWrapper(null, schema, context.push('anyOf')),
+    );
+    return AnyOfModel(models: models.toSet(), context: context, name: name);
   }
 
   ClassModel _parseClassModel(String? name, Schema schema, Context context) {

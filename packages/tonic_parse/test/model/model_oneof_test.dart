@@ -19,8 +19,8 @@ void main() {
             'bar': {'type': 'number'},
           },
         },
-        'InlineAllOf': {
-          'allOf': [
+        'InlineOneOf': {
+          'oneOf': [
             {'type': 'string'},
             {
               'type': 'object',
@@ -30,8 +30,8 @@ void main() {
             },
           ],
         },
-        'ReferenceAllOf': {
-          'allOf': [
+        'ReferenceOneOf': {
+          'oneOf': [
             {r'$ref': '#/components/schemas/Reference'},
             {'type': 'string'},
           ],
@@ -40,41 +40,41 @@ void main() {
     },
   };
 
-  test('Imports allOf with inline schema', () {
+  test('Imports oneOf with inline schema', () {
     final api = Importer().import(fileContent);
 
-    final inlineAllOf = api.models.firstWhere(
-      (m) => m is NamedModel && m.name == 'InlineAllOf',
+    final inlineOneOf = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'InlineOneOf',
     );
 
-    expect(inlineAllOf, isA<AllOfModel>());
-    expect((inlineAllOf as AllOfModel).models, hasLength(2));
+    expect(inlineOneOf, isA<OneOfModel>());
+    expect((inlineOneOf as OneOfModel).models, hasLength(2));
 
-    final stringModel = inlineAllOf.models.first;
+    final stringModel = inlineOneOf.models.first;
     expect(stringModel, isA<StringModel>());
 
-    final objectModel = inlineAllOf.models.last;
+    final objectModel = inlineOneOf.models.last;
     expect(objectModel, isA<ClassModel>());
 
     expect(api.models, contains(objectModel));
     expect(api.models.contains(stringModel), isFalse);
   });
 
-  test('Imports allOf with reference', () {
+  test('Imports oneOf with reference', () {
     final api = Importer().import(fileContent);
 
-    final referenceAllOf = api.models.firstWhere(
-      (m) => m is NamedModel && m.name == 'ReferenceAllOf',
+    final referenceOneOf = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'ReferenceOneOf',
     );
 
-    expect(referenceAllOf, isA<AllOfModel>());
-    expect((referenceAllOf as AllOfModel).models, hasLength(2));
+    expect(referenceOneOf, isA<OneOfModel>());
+    expect((referenceOneOf as OneOfModel).models, hasLength(2));
 
-    final referenceModel = referenceAllOf.models.first;
+    final referenceModel = referenceOneOf.models.first;
     expect(referenceModel, isA<ClassModel>());
     expect((referenceModel as ClassModel).name, 'Reference');
 
-    final stringModel = referenceAllOf.models.last;
+    final stringModel = referenceOneOf.models.last;
     expect(stringModel, isA<StringModel>());
   });
 }
