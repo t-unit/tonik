@@ -110,7 +110,8 @@ void main() {
     );
 
     expect(inlineBodyResponse, isNotNull);
-    expect(inlineBodyResponse?.body, isA<StringModel>());
+    expect(inlineBodyResponse?.body?.model, isA<StringModel>());
+    expect(inlineBodyResponse?.body?.rawContentType, 'application/json');
   });
 
   test('imports response with reference body', () {
@@ -120,8 +121,11 @@ void main() {
     );
 
     expect(referenceBodyResponse, isNotNull);
-    expect(referenceBodyResponse?.body, isA<AliasModel>());
-    expect((referenceBodyResponse?.body as AliasModel?)?.name, 'MySchema');
+    expect(referenceBodyResponse?.body?.model, isA<AliasModel>());
+    expect(
+      (referenceBodyResponse?.body?.model as AliasModel?)?.name,
+      'MySchema',
+    );
   });
 
   test('imports response with inline header', () {
@@ -159,7 +163,11 @@ void main() {
     );
 
     expect(jsonLikeResponse, isNotNull);
-    expect(jsonLikeResponse?.body, isA<StringModel>());
+    expect(jsonLikeResponse?.body?.model, isA<StringModel>());
+    expect(
+      jsonLikeResponse?.body?.rawContentType,
+      'alto-endpointcost+json',
+    );
   });
 
   test('imports response with invalid body content type as json', () {
@@ -169,6 +177,10 @@ void main() {
     );
 
     expect(invalidResponse, isNotNull);
-    expect(invalidResponse?.body, isA<NumberModel>());
+    expect(invalidResponse?.body?.model, isA<NumberModel>());
+    expect(
+      invalidResponse?.body?.rawContentType,
+      'concise-problem-details+cbor',
+    );
   });
 }

@@ -15,7 +15,7 @@ class Response {
   final String name;
   final Context context;
   final Map<String, ResponseHeader> headers;
-  final Model? body;
+  final ResponseBody? body;
   final String description;
 
   @override
@@ -43,4 +43,34 @@ class Response {
   String toString() =>
       'Response(name: $name, context: $context, headers: $headers, '
       'description: $description, body: $body)';
+}
+
+enum ContentType { json }
+
+@immutable
+class ResponseBody {
+  const ResponseBody({
+    required this.model,
+    required this.rawContentType,
+    required this.contentType,
+  });
+
+  final Model model;
+  final String rawContentType;
+  final ContentType contentType;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ResponseBody) return false;
+    return model == other.model &&
+        rawContentType == other.rawContentType &&
+        contentType == other.contentType;
+  }
+
+  @override
+  int get hashCode => Object.hash(model, rawContentType);
+
+  @override
+  String toString() => 'ResponseBody(model: $model, contentType: $contentType)';
 }

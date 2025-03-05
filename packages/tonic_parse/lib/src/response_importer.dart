@@ -81,30 +81,39 @@ class ResponseImporter {
           }
         }
 
-        core.Model? body;
+        core.ResponseBody? body;
         if (response.content != null) {
           final mediaTypes = response.content!;
 
           // Try to find application/json first
-          var mediaType = mediaTypes['application/json'];
+          var mediaType = mediaTypes.entries
+              .firstWhereOrNull((entry) => entry.key == 'application/json');
 
           // If not found, look for any JSON-like content type
-          mediaType ??= mediaTypes.entries
-              .firstWhereOrNull(
-                (entry) => entry.key.toLowerCase().contains('json'),
-              )
-              ?.value;
+          mediaType ??= mediaTypes.entries.firstWhereOrNull(
+            (entry) => entry.key.toLowerCase().contains('json'),
+          );
 
           // If no json media type is found, use the first one
           if (mediaType == null) {
             log.warning('No JSON media type found for response $name');
-            mediaType = mediaTypes.entries.firstOrNull?.value;
+            mediaType = mediaTypes.entries.firstOrNull;
           }
 
-          if (mediaType?.schema != null) {
-            body = modelImporter.importSchema(
-              mediaType!.schema!,
+          if (mediaType?.value.schema != null) {
+            final model = modelImporter.importSchema(
+              mediaType!.value.schema!,
               context.push('content'),
+            );
+            body = core.ResponseBody(
+              model: model,
+              rawContentType: mediaType.key,
+              contentType: core.ContentType.json,
+            );
+          } else if (mediaType != null) {
+            log.warning(
+              'No schema found for response $name. '
+              'Ignoring response body for ${mediaType.key}',
             );
           }
         }
