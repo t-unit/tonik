@@ -8,10 +8,11 @@ void main() {
         title: 'Test',
         version: '1.0.0',
         models: {},
-        headers: {},
+        responseHeaders: {},
         servers: {},
         operations: {},
         responses: {},
+        requestHeaders: {},
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -34,10 +35,11 @@ void main() {
         title: 'Test',
         version: '1.0.0',
         models: const {},
-        headers: const {},
+        responseHeaders: const {},
         servers: const {},
         operations: {fooOperation, barOperation},
         responses: const {},
+        requestHeaders: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -58,7 +60,7 @@ void main() {
         title: 'Test',
         version: '1.0.0',
         models: const {},
-        headers: const {},
+        responseHeaders: const {},
         servers: const {},
         operations: {
           twoTagOperation,
@@ -69,6 +71,7 @@ void main() {
           ),
         },
         responses: const {},
+        requestHeaders: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];

@@ -7,7 +7,8 @@ class ApiDocument {
     required this.title,
     required this.version,
     required this.models,
-    required this.headers,
+    required this.responseHeaders,
+    required this.requestHeaders,
     required this.servers,
     required this.operations,
     required this.responses,
@@ -19,7 +20,8 @@ class ApiDocument {
   final String version;
 
   final Set<Model> models;
-  final Set<ResponseHeader> headers;
+  final Set<ResponseHeader> responseHeaders;
+  final Set<RequestHeader> requestHeaders;
   final Set<Server> servers;
 
   final Set<Operation> operations;
@@ -43,6 +45,7 @@ class ApiDocument {
 
   @override
   String toString() => 'ApiDocument{title: $title, description: $description, '
-      'version: $version, models: $models, headers: $headers, '
-      'servers: $servers, operations: $operations, responses: $responses}';
+      'version: $version, models: $models, responseHeaders: $responseHeaders, '
+      'requestHeaders: $requestHeaders, servers: $servers, '
+      'operations: $operations, responses: $responses}';
 }

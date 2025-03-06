@@ -70,7 +70,7 @@ void main() {
 
   final api = Importer().import(fileContent);
 
-  final headers = api.headers;
+  final headers = api.responseHeaders;
   final simple = headers
       .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'simple');

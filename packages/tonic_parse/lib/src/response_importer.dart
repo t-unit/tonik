@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonic_core/tonic_core.dart' as core;
-import 'package:tonic_parse/src/header_importer.dart';
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model/reference.dart';
 import 'package:tonic_parse/src/model/response.dart';
 import 'package:tonic_parse/src/model_importer.dart';
+import 'package:tonic_parse/src/response_header_importer.dart';
 
 class ResponseImporter {
   ResponseImporter({
@@ -16,7 +16,7 @@ class ResponseImporter {
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
-  final HeaderImporter headerImporter;
+  final ResponseHeaderImporter headerImporter;
   final log = Logger('ResponseImporter');
 
   late Set<core.Response> responses;

@@ -6,8 +6,11 @@ import 'package:tonic_parse/src/model/reference.dart';
 import 'package:tonic_parse/src/model/serialization_style.dart';
 import 'package:tonic_parse/src/model_importer.dart';
 
-class HeaderImporter {
-  HeaderImporter({required this.openApiObject, required this.modelImporter});
+class ResponseHeaderImporter {
+  ResponseHeaderImporter({
+    required this.openApiObject,
+    required this.modelImporter,
+  });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;

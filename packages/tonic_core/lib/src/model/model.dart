@@ -27,13 +27,20 @@ class AliasModel extends Model with NamedModel {
   String toString() => 'AliasModel{name: $name, model: $model}';
 }
 
-class ListModel extends Model {
-  const ListModel({required this.content, required super.context});
+class ListModel extends Model with NamedModel {
+  const ListModel({
+    required this.content,
+    required super.context,
+    this.name,
+  });
 
   final Model content;
 
   @override
-  String toString() => 'ListModel{content: $content}';
+  final String? name;
+
+  @override
+  String toString() => 'ListModel{name: $name, content: $content}';
 }
 
 class ClassModel extends Model with NamedModel {

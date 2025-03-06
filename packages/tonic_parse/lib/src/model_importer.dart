@@ -117,6 +117,7 @@ class ModelImporter {
         _parseEnum<int>(name, schema.enumerated!, context: context),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
+      'array' => _parseArray(name, schema, context),
       _ => _parseClassModel(name, schema, context),
     };
 
@@ -126,6 +127,17 @@ class ModelImporter {
     }
 
     return model;
+  }
+
+  ListModel _parseArray(String? name, Schema schema, Context context) {
+    final items = schema.items;
+    if (items == null) {
+      throw ArgumentError('Array schema $schema has no items');
+    }
+
+    final modelContext = context.push('array');
+    final content = _parseSchemaWrapper(null, items, modelContext);
+    return ListModel(content: content, context: context, name: name);
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {

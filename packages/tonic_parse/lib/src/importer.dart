@@ -1,8 +1,9 @@
 import 'package:tonic_core/tonic_core.dart';
-import 'package:tonic_parse/src/header_importer.dart';
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model_importer.dart';
 import 'package:tonic_parse/src/operation_importer.dart';
+import 'package:tonic_parse/src/request_header_importer.dart';
+import 'package:tonic_parse/src/response_header_importer.dart';
 import 'package:tonic_parse/src/response_importer.dart';
 import 'package:tonic_parse/src/server_importer.dart';
 
@@ -11,31 +12,38 @@ class Importer {
     final openApiObject = OpenApiObject.fromJson(fileContent);
 
     final modelImporter = ModelImporter(openApiObject);
-    final headerImporter = HeaderImporter(
+    final responseHeaderImporter = ResponseHeaderImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
     );
     final responseImporter = ResponseImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
-      headerImporter: headerImporter,
+      headerImporter: responseHeaderImporter,
+    );
+    final operationImporter = OperationImporter(openApiObject: openApiObject);
+    final requestHeaderImporter = RequestHeaderImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
     );
 
     modelImporter.import();
-    headerImporter.import();
+    responseHeaderImporter.import();
     responseImporter.import();
-    final operationImporter = OperationImporter(openApiObject: openApiObject)
-      ..import();
+    requestHeaderImporter.import();
+
+    operationImporter.import();
 
     return ApiDocument(
       title: openApiObject.info.title,
       version: openApiObject.info.version,
       description: openApiObject.info.description,
       models: modelImporter.models,
-      headers: headerImporter.headers,
+      responseHeaders: responseHeaderImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),
       operations: operationImporter.operations,
       responses: responseImporter.responses,
+      requestHeaders: requestHeaderImporter.headers,
     );
   }
 }
