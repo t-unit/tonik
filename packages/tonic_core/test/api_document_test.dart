@@ -13,6 +13,7 @@ void main() {
         operations: {},
         responses: {},
         requestHeaders: {},
+        queryParameters: {},
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -40,6 +41,7 @@ void main() {
         operations: {fooOperation, barOperation},
         responses: const {},
         requestHeaders: const {},
+        queryParameters: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -72,6 +74,7 @@ void main() {
         },
         responses: const {},
         requestHeaders: const {},
+        queryParameters: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];

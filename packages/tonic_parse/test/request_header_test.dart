@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_parse/tonic_parse.dart';
@@ -88,6 +89,22 @@ void main() {
         },
         'colorReference': {
           r'$ref': '#/components/parameters/colorMatrix',
+        },
+        'header': {
+          'name': 'X-Header',
+          'in': 'header',
+          'schema': {'type': 'string'},
+        },
+        'headerReference': {
+          r'$ref': '#/components/parameters/header',
+        },
+        'queryParameter': {
+          'name': 'query',
+          'in': 'query',
+          'schema': {'type': 'string'},
+        },
+        'queryReference': {
+          r'$ref': '#/components/parameters/queryParameter',
         },
       },
       'schemas': {
@@ -203,6 +220,7 @@ void main() {
         .firstWhere((h) => h.name == 'colorSchema');
 
     expect(header.rawName, 'X-Color-Schema');
+    expect(header.encoding, ParameterEncoding.simple);
     expect(header.model, isA<ClassModel>());
 
     final model = header.model as ClassModel;
@@ -231,5 +249,13 @@ void main() {
 
     expect(matrix, hasLength(1));
     expect(reference, hasLength(1));
+  });
+
+  test('does not import query references as headers', () {
+    final reference = headers
+        .whereType<RequestHeaderAlias>()
+        .firstWhereOrNull((h) => h.name == 'queryReference');
+
+    expect(reference, isNull);
   });
 }
