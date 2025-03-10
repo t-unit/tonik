@@ -31,6 +31,7 @@ class Operation {
   final List<ReferenceWrapper<Parameter>>? parameters;
   final ReferenceWrapper<RequestBody>? requestBody;
   final Map<String, ReferenceWrapper<Response>> responses;
+  @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
   final List<Server>? servers;
 

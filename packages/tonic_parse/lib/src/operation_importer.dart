@@ -29,21 +29,21 @@ class OperationImporter {
       final pathItem = pathEntry.value;
       final context = rootContext.push(pathEntry.key);
 
-      _addOperation('get', pathItem.get, context);
-      _addOperation('put', pathItem.put, context);
-      _addOperation('post', pathItem.post, context);
-      _addOperation('delete', pathItem.delete, context);
-      _addOperation('patch', pathItem.patch, context);
-      _addOperation('head', pathItem.head, context);
-      _addOperation('options', pathItem.options, context);
-      _addOperation('trace', pathItem.trace, context);
+      _addOperation(pathItem.get, context, core.HttpMethod.get);
+      _addOperation(pathItem.put, context, core.HttpMethod.put);
+      _addOperation(pathItem.post, context, core.HttpMethod.post);
+      _addOperation(pathItem.delete, context, core.HttpMethod.delete);
+      _addOperation(pathItem.patch, context, core.HttpMethod.patch);
+      _addOperation(pathItem.head, context, core.HttpMethod.head);
+      _addOperation(pathItem.options, context, core.HttpMethod.options);
+      _addOperation(pathItem.trace, context, core.HttpMethod.trace);
     }
   }
 
   void _addOperation(
-    String method,
     Operation? operation,
     core.Context context,
+    core.HttpMethod httpMethod,
   ) {
     if (operation == null) return;
 
@@ -54,9 +54,16 @@ class OperationImporter {
 
     operations.add(
       core.Operation(
+        method: httpMethod,
         operationId: operation.operationId,
-        context: context.push(method),
+        context: context.push(httpMethod.name),
         tags: tags ?? {},
+        isDeprecated: operation.isDeprecated ?? false,
+        summary: operation.summary,
+        description: operation.description,
+        headers: {},
+        queryParameters: {},
+        pathParameters: {},
       ),
     );
   }

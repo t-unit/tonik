@@ -20,7 +20,7 @@ Operation _$OperationFromJson(Map<String, dynamic> json) => Operation(
       responses: (json['responses'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(k, ReferenceWrapper<Response>.fromJson(e)),
       ),
-      isDeprecated: json['isDeprecated'] as bool?,
+      isDeprecated: json['deprecated'] as bool?,
       servers: (json['servers'] as List<dynamic>?)
           ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -34,6 +34,6 @@ Map<String, dynamic> _$OperationToJson(Operation instance) => <String, dynamic>{
       'parameters': instance.parameters,
       'requestBody': instance.requestBody,
       'responses': instance.responses,
-      'isDeprecated': instance.isDeprecated,
+      'deprecated': instance.isDeprecated,
       'servers': instance.servers,
     };

@@ -25,12 +25,26 @@ void main() {
         operationId: 'test',
         context: Context.initial().push('test'),
         tags: {const Tag(name: 'foo')},
+        summary: null,
+        description: null,
+        isDeprecated: false,
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
       );
 
       final barOperation = Operation(
         operationId: 'test2',
         context: Context.initial().push('test'),
         tags: {const Tag(name: 'bar')},
+        summary: null,
+        description: null,
+        isDeprecated: false,
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
       );
 
       final document = ApiDocument(
@@ -58,6 +72,13 @@ void main() {
         operationId: 'test',
         context: Context.initial().push('test'),
         tags: {const Tag(name: 'foo'), const Tag(name: 'bar')},
+        summary: null,
+        description: null,
+        isDeprecated: false,
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
       );
 
       final document = ApiDocument(
@@ -72,6 +93,13 @@ void main() {
             operationId: 'test',
             context: Context.initial().push('test'),
             tags: {const Tag(name: 'foo')},
+            summary: null,
+            description: null,
+            isDeprecated: false,
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
           ),
         },
         responses: const {},
