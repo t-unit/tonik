@@ -45,6 +45,7 @@ class Importer {
       responses: responseImporter.responses,
       requestHeaders: parameterImporter.headers,
       queryParameters: parameterImporter.queryParameters,
+      pathParameters: parameterImporter.pathParameters,
     );
   }
 }

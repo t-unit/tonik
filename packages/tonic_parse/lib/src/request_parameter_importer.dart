@@ -14,10 +14,11 @@ class RequestParameterImporter {
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
-  final log = Logger('HeaderImporter');
+  final log = Logger('RequestParameterImporter');
 
   late Set<core.RequestHeader> headers;
   late Set<core.QueryParameter> queryParameters;
+  late Set<core.PathParameter> pathParameters;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['components', 'parameters']);
@@ -25,6 +26,7 @@ class RequestParameterImporter {
   void import() {
     headers = {};
     queryParameters = {};
+    pathParameters = {};
     final parameterMap = openApiObject.components?.parameters ?? {};
 
     for (final entry in parameterMap.entries) {
@@ -41,6 +43,8 @@ class RequestParameterImporter {
         headers.add(header);
       } else if (imported case final core.QueryParameter query) {
         queryParameters.add(query);
+      } else if (imported case final core.PathParameter path) {
+        pathParameters.add(path);
       }
     }
   }
@@ -107,7 +111,24 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.path:
-              throw UnimplementedError();
+              // Check if we already imported this path parameter
+              final existing = pathParameters.firstWhere(
+                (p) =>
+                    (p is core.PathParameterAlias && p.name == refName) ||
+                    (p is core.PathParameterObject && p.name == refName),
+                orElse: () => _importParameter(
+                  name: refName,
+                  wrapper: refParameter,
+                  context: context,
+                ) as core.PathParameter,
+              );
+
+              return core.PathParameterAlias(
+                name: name ?? refName,
+                parameter: existing,
+                context: context,
+              );
+
             case ParameterLocation.cookie:
               log.warning(
                 'Cookie parameters are not supported: $name. '
@@ -162,7 +183,20 @@ class RequestParameterImporter {
             );
 
           case ParameterLocation.path:
-            throw UnimplementedError();
+            return core.PathParameterObject(
+              name: name,
+              rawName: parameter.name,
+              description: parameter.description,
+              encoding:
+                  _getEncoding(parameter.style ?? SerializationStyle.simple),
+              explode: parameter.explode ?? false,
+              model: model,
+              isRequired: parameter.isRequired ?? false,
+              isDeprecated: parameter.isDeprecated ?? false,
+              allowEmptyValue: parameter.allowEmptyValue ?? false,
+              context: context,
+            );
+
           case ParameterLocation.cookie:
             log.warning(
               'Cookie parameters are not supported: $name. '

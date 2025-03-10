@@ -5,6 +5,7 @@ export 'src/model/api_document.dart';
 export 'src/model/model.dart';
 export 'src/model/operation.dart';
 export 'src/model/parameter_encoding.dart';
+export 'src/model/path_parameter.dart';
 export 'src/model/query_parameter.dart';
 export 'src/model/request_header.dart';
 export 'src/model/response.dart';

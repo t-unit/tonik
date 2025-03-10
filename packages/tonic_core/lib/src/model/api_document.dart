@@ -13,6 +13,7 @@ class ApiDocument {
     required this.operations,
     required this.responses,
     required this.queryParameters,
+    required this.pathParameters,
     this.description,
   });
 
@@ -24,6 +25,7 @@ class ApiDocument {
   final Set<ResponseHeader> responseHeaders;
   final Set<RequestHeader> requestHeaders;
   final Set<QueryParameter> queryParameters;
+  final Set<PathParameter> pathParameters;
 
   final Set<Server> servers;
 
@@ -50,6 +52,6 @@ class ApiDocument {
   String toString() => 'ApiDocument{title: $title, description: $description, '
       'version: $version, models: $models, responseHeaders: $responseHeaders, '
       'requestHeaders: $requestHeaders, servers: $servers, '
-      'queryParameters: $queryParameters, operations: $operations, '
-      'responses: $responses}';
+      'queryParameters: $queryParameters, pathParameters: $pathParameters, '
+      'operations: $operations, responses: $responses}';
 }

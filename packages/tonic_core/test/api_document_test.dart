@@ -14,6 +14,7 @@ void main() {
         responses: {},
         requestHeaders: {},
         queryParameters: {},
+        pathParameters: {},
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -42,6 +43,7 @@ void main() {
         responses: const {},
         requestHeaders: const {},
         queryParameters: const {},
+        pathParameters: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -75,6 +77,7 @@ void main() {
         responses: const {},
         requestHeaders: const {},
         queryParameters: const {},
+        pathParameters: const {},
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
