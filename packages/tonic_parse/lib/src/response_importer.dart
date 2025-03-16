@@ -32,7 +32,7 @@ class ResponseImporter {
       final name = entry.key;
       final response = entry.value;
 
-      final imported = _importResponse(
+      final imported = importResponse(
         name: name,
         wrapper: response,
         context: rootContext.push(name),
@@ -41,8 +41,8 @@ class ResponseImporter {
     }
   }
 
-  core.Response _importResponse({
-    required String name,
+  core.Response importResponse({
+    required String? name,
     required ReferenceWrapper<Response> wrapper,
     required core.Context context,
   }) {
@@ -62,7 +62,7 @@ class ResponseImporter {
           throw ArgumentError('Response $refName not found');
         }
 
-        return _importResponse(
+        return importResponse(
           name: refName,
           wrapper: refResponse,
           context: context,

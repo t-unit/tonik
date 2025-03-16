@@ -28,6 +28,7 @@ class Importer {
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,
       parameterImporter: parameterImporter,
+      responseImporter: responseImporter,
     );
 
     modelImporter.import();

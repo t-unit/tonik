@@ -4,16 +4,21 @@ import 'package:tonic_core/tonic_core.dart' as core;
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model/operation.dart';
 import 'package:tonic_parse/src/model/path_item.dart';
+import 'package:tonic_parse/src/model/reference.dart';
+import 'package:tonic_parse/src/model/response.dart';
 import 'package:tonic_parse/src/model/tag.dart';
 import 'package:tonic_parse/src/request_parameter_importer.dart';
+import 'package:tonic_parse/src/response_importer.dart';
 
 class OperationImporter {
   OperationImporter({
     required this.openApiObject,
     required this.parameterImporter,
+    required this.responseImporter,
   });
 
   final RequestParameterImporter parameterImporter;
+  final ResponseImporter responseImporter;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['paths']);
@@ -52,6 +57,50 @@ class OperationImporter {
     }
   }
 
+  Map<core.ResponseStatus, core.ResponseBody> _importResponses(
+    Map<String, ReferenceWrapper<Response>> responses,
+    core.Context context,
+  ) {
+    final result = <core.ResponseStatus, core.ResponseBody>{};
+
+    for (final entry in responses.entries) {
+      final statusCode = entry.key;
+      final response = entry.value;
+
+      final importedResponse = responseImporter.importResponse(
+        name: null,
+        wrapper: response,
+        context: context.push('responses').push(statusCode),
+      );
+
+      if (importedResponse.body == null) continue;
+
+      final status = _parseResponseStatus(statusCode);
+      result[status] = importedResponse.body!;
+    }
+
+    return result;
+  }
+
+  core.ResponseStatus _parseResponseStatus(String status) {
+    if (status == 'default') {
+      return const core.DefaultResponseStatus();
+    }
+
+    // Check for range pattern (e.g., '4XX', '5XX')
+    final rangeMatch = RegExp(r'^([1-5])XX$').firstMatch(status);
+    if (rangeMatch != null) {
+      final rangeStart = int.parse('${rangeMatch.group(1)}00');
+      return core.RangeResponseStatus(
+        min: rangeStart,
+        max: rangeStart + 99,
+      );
+    }
+
+    // Parse as explicit status code
+    return core.ExplicitResponseStatus(statusCode: int.parse(status));
+  }
+
   void _addOperation(
     Operation? operation,
     core.Context context,
@@ -72,6 +121,11 @@ class OperationImporter {
     final (headers, queryParams, pathParams) =
         parameterImporter.importOperationParameters(allParameters);
 
+    final responses = _importResponses(
+      operation.responses,
+      context.push(httpMethod.name),
+    );
+
     operations.add(
       core.Operation(
         method: httpMethod,
@@ -84,7 +138,7 @@ class OperationImporter {
         headers: headers,
         queryParameters: queryParams,
         pathParameters: pathParams,
-        responses: const {},
+        responses: responses,
       ),
     );
   }
