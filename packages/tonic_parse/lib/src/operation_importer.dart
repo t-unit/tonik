@@ -84,6 +84,7 @@ class OperationImporter {
         headers: headers,
         queryParameters: queryParams,
         pathParameters: pathParams,
+        responses: const {},
       ),
     );
   }

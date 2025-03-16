@@ -12,7 +12,7 @@ class Response {
     this.body,
   });
 
-  final String name;
+  final String? name;
   final Context context;
   final Map<String, ResponseHeader> headers;
   final ResponseBody? body;

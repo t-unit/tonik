@@ -32,6 +32,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        responses: const {},
       );
 
       final barOperation = Operation(
@@ -45,6 +46,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        responses: const {},
       );
 
       final document = ApiDocument(
@@ -79,6 +81,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        responses: const {},
       );
 
       final document = ApiDocument(
@@ -100,6 +103,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            responses: const {},
           ),
         },
         responses: const {},
