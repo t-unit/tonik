@@ -26,7 +26,8 @@ class Schema {
 
   factory Schema.fromJson(Map<String, dynamic> json) => _$SchemaFromJson(json);
 
-  final String? type;
+  @_SchemaTypeConverter()
+  final List<String> type;
   final String? format;
   final List<String>? required;
   @JsonKey(name: 'enum')
@@ -57,4 +58,23 @@ class Schema {
       'not: $not, items: $items, properties: $properties, description: '
       '$description, isNullable: $isNullable, discriminator: $discriminator, '
       'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems}';
+}
+
+class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {
+  const _SchemaTypeConverter();
+
+  @override
+  List<String> fromJson(dynamic json) {
+    if (json == null) return [];
+    if (json is String) return [json];
+    if (json is List) return json.cast<String>();
+    throw FormatException('Invalid type value: $json');
+  }
+
+  @override
+  dynamic toJson(List<String> types) {
+    if (types.isEmpty) return null;
+    if (types.length == 1) return types.first;
+    return types;
+  }
 }

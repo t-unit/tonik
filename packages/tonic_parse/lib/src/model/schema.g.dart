@@ -7,7 +7,7 @@ part of 'schema.dart';
 // **************************************************************************
 
 Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
-      type: json['type'] as String?,
+      type: const _SchemaTypeConverter().fromJson(json['type']),
       format: json['format'] as String?,
       required: (json['required'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -42,7 +42,7 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
     );
 
 Map<String, dynamic> _$SchemaToJson(Schema instance) => <String, dynamic>{
-      'type': instance.type,
+      'type': const _SchemaTypeConverter().toJson(instance.type),
       'format': instance.format,
       'required': instance.required,
       'enum': instance.enumerated,

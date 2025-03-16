@@ -101,20 +101,36 @@ class ModelImporter {
       return _parseAnyOf(name, schema, context);
     }
 
-    var model = switch (schema.type) {
+    // Check if the type array includes 'null'
+    final hasNullType = schema.type.contains('null');
+    final types = schema.type.where((t) => t != 'null').toList();
+
+    if (types.length > 1) {
+      return _parseMultiType(types, schema, hasNullType, context, name);
+    }
+
+    var model = switch (types.firstOrNull) {
       'string' when schema.format == 'date-time' =>
         DateTimeModel(context: context),
       'string' when schema.format == 'date' => DateModel(context: context),
       'string' when schema.format == 'decimal' || schema.format == 'currency' =>
         DecimalModel(context: context),
-      'string' when schema.enumerated != null =>
-        _parseEnum<String>(name, schema.enumerated!, context: context),
+      'string' when schema.enumerated != null => _parseEnum<String>(
+          name,
+          schema.enumerated!,
+          schema.isNullable ?? hasNullType,
+          context,
+        ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
         DoubleModel(context: context),
       'number' => NumberModel(context: context),
-      'integer' when schema.enumerated != null =>
-        _parseEnum<int>(name, schema.enumerated!, context: context),
+      'integer' when schema.enumerated != null => _parseEnum<int>(
+          name,
+          schema.enumerated!,
+          schema.isNullable ?? hasNullType,
+          context,
+        ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
       'array' => _parseArray(name, schema, context),
@@ -129,6 +145,45 @@ class ModelImporter {
     return model;
   }
 
+  OneOfModel _parseMultiType(
+    List<String> types,
+    Schema schema,
+    bool hasNullType,
+    Context context,
+    String? name,
+  ) {
+    final models = types.map((type) {
+      final singleTypeSchema = Schema(
+        type: [type],
+        format: schema.format,
+        required: schema.required,
+        enumerated: schema.enumerated,
+        allOf: schema.allOf,
+        anyOf: schema.anyOf,
+        oneOf: schema.oneOf,
+        not: schema.not,
+        items: schema.items,
+        properties: schema.properties,
+        description: schema.description,
+        isNullable: schema.isNullable ?? hasNullType,
+        discriminator: schema.discriminator,
+        isDeprecated: schema.isDeprecated,
+        uniqueItems: schema.uniqueItems,
+      );
+      return (
+        discriminatorValue: null,
+        model: _parseSchema(null, singleTypeSchema, context),
+      );
+    });
+
+    return OneOfModel(
+      models: models.toSet(),
+      name: name,
+      discriminator: null,
+      context: context,
+    );
+  }
+
   ListModel _parseArray(String? name, Schema schema, Context context) {
     final items = schema.items;
     if (items == null) {
@@ -137,7 +192,11 @@ class ModelImporter {
 
     final modelContext = context.push('array');
     final content = _parseSchemaWrapper(null, items, modelContext);
-    return ListModel(content: content, context: context, name: name);
+    return ListModel(
+      content: content,
+      context: context,
+      name: name,
+    );
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
@@ -233,8 +292,9 @@ class ModelImporter {
       bool isNullable;
       bool isDeprecated;
       if (propertySchema is InlinedObject<Schema>) {
-        isNullable = propertySchema.object.isNullable ?? false;
-        isDeprecated = propertySchema.object.isDeprecated ?? false;
+        final schema = propertySchema.object;
+        isNullable = schema.isNullable ?? schema.type.contains('null');
+        isDeprecated = schema.isDeprecated ?? false;
       } else {
         isNullable = false;
         isDeprecated = false;
@@ -260,9 +320,10 @@ class ModelImporter {
 
   EnumModel<T> _parseEnum<T>(
     String? name,
-    List<dynamic> values, {
-    required Context context,
-  }) {
+    List<dynamic> values,
+    bool isNullable,
+    Context context,
+  ) {
     final typedValues = values.whereType<T>().toSet();
     final hasNull = values.any((value) => value == null);
 
@@ -277,9 +338,9 @@ class ModelImporter {
     }
 
     return EnumModel(
-      context: context,
       values: typedValues,
-      isNullable: hasNull,
+      isNullable: isNullable || hasNull,
+      context: context,
       name: name,
     );
   }

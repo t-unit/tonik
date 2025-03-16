@@ -20,7 +20,7 @@ void main() {
       schemas: {
         'TestModel': InlinedObject(
           Schema(
-            type: 'object',
+            type: ['object'],
             format: null,
             required: [],
             enumerated: null,
@@ -48,7 +48,7 @@ void main() {
 
   final inlinePrimitive = InlinedObject(
     Schema(
-      type: 'string',
+      type: ['string'],
       format: 'string',
       required: [],
       enumerated: null,
@@ -68,7 +68,7 @@ void main() {
 
   final inlineClass = InlinedObject(
     Schema(
-      type: 'object',
+      type: ['object'],
       format: null,
       required: [],
       enumerated: null,
