@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Alway comment in sentences
+
+Do start comments with a capitalized letter. End the comment with a dot or colon.
+
+
+## ❌ Don't
+
+```dart
+// this is a comment
+```
+
+## ✅ Do
+
+```dart
+// This is a comment.
+```
+
+```dart
+// Following is cleanup:
+```

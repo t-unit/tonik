@@ -21,10 +21,13 @@ class Importer {
       modelImporter: modelImporter,
       headerImporter: responseHeaderImporter,
     );
-    final operationImporter = OperationImporter(openApiObject: openApiObject);
     final parameterImporter = RequestParameterImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+    );
+    final operationImporter = OperationImporter(
+      openApiObject: openApiObject,
+      parameterImporter: parameterImporter,
     );
 
     modelImporter.import();

@@ -3,10 +3,17 @@ import 'package:logging/logging.dart';
 import 'package:tonic_core/tonic_core.dart' as core;
 import 'package:tonic_parse/src/model/open_api_object.dart';
 import 'package:tonic_parse/src/model/operation.dart';
+import 'package:tonic_parse/src/model/path_item.dart';
 import 'package:tonic_parse/src/model/tag.dart';
+import 'package:tonic_parse/src/request_parameter_importer.dart';
 
 class OperationImporter {
-  OperationImporter({required this.openApiObject});
+  OperationImporter({
+    required this.openApiObject,
+    required this.parameterImporter,
+  });
+
+  final RequestParameterImporter parameterImporter;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['paths']);
@@ -29,14 +36,19 @@ class OperationImporter {
       final pathItem = pathEntry.value;
       final context = rootContext.push(pathEntry.key);
 
-      _addOperation(pathItem.get, context, core.HttpMethod.get);
-      _addOperation(pathItem.put, context, core.HttpMethod.put);
-      _addOperation(pathItem.post, context, core.HttpMethod.post);
-      _addOperation(pathItem.delete, context, core.HttpMethod.delete);
-      _addOperation(pathItem.patch, context, core.HttpMethod.patch);
-      _addOperation(pathItem.head, context, core.HttpMethod.head);
-      _addOperation(pathItem.options, context, core.HttpMethod.options);
-      _addOperation(pathItem.trace, context, core.HttpMethod.trace);
+      _addOperation(pathItem.get, context, core.HttpMethod.get, pathItem);
+      _addOperation(pathItem.put, context, core.HttpMethod.put, pathItem);
+      _addOperation(pathItem.post, context, core.HttpMethod.post, pathItem);
+      _addOperation(pathItem.delete, context, core.HttpMethod.delete, pathItem);
+      _addOperation(pathItem.patch, context, core.HttpMethod.patch, pathItem);
+      _addOperation(pathItem.head, context, core.HttpMethod.head, pathItem);
+      _addOperation(
+        pathItem.options,
+        context,
+        core.HttpMethod.options,
+        pathItem,
+      );
+      _addOperation(pathItem.trace, context, core.HttpMethod.trace, pathItem);
     }
   }
 
@@ -44,6 +56,7 @@ class OperationImporter {
     Operation? operation,
     core.Context context,
     core.HttpMethod httpMethod,
+    PathItem pathItem,
   ) {
     if (operation == null) return;
 
@@ -51,6 +64,13 @@ class OperationImporter {
         ?.map((name) => validTags.firstWhereOrNull((tag) => tag.name == name))
         .nonNulls
         .toSet();
+
+    final pathParameters = pathItem.parameters ?? [];
+    final operationParameters = operation.parameters ?? [];
+    final allParameters = [...pathParameters, ...operationParameters];
+
+    final (headers, queryParams, pathParams) =
+        parameterImporter.importOperationParameters(allParameters);
 
     operations.add(
       core.Operation(
@@ -61,9 +81,9 @@ class OperationImporter {
         isDeprecated: operation.isDeprecated ?? false,
         summary: operation.summary,
         description: operation.description,
-        headers: {},
-        queryParameters: {},
-        pathParameters: {},
+        headers: headers,
+        queryParameters: queryParams,
+        pathParameters: pathParams,
       ),
     );
   }

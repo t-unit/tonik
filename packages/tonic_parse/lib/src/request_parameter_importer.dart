@@ -49,6 +49,51 @@ class RequestParameterImporter {
     }
   }
 
+  (
+    Set<core.RequestHeader> headers,
+    Set<core.QueryParameter> queryParameters,
+    Set<core.PathParameter> pathParameters,
+  ) importOperationParameters(
+    List<ReferenceWrapper<Parameter>> parameters,
+  ) {
+    final localHeaders = <core.RequestHeader>{};
+    final localQueryParameters = <core.QueryParameter>{};
+    final localPathParameters = <core.PathParameter>{};
+
+    for (final wrapper in parameters) {
+      final imported = _importParameter(
+        name: null,
+        wrapper: wrapper,
+        context: rootContext,
+      );
+
+      if (imported case final core.RequestHeader header) {
+        if (header is core.RequestHeaderObject) {
+          headers.add(header);
+          localHeaders.add(header);
+        } else if (header is core.RequestHeaderAlias) {
+          localHeaders.add(header.header);
+        }
+      } else if (imported case final core.QueryParameter query) {
+        if (query is core.QueryParameterObject) {
+          queryParameters.add(query);
+          localQueryParameters.add(query);
+        } else if (query is core.QueryParameterAlias) {
+          localQueryParameters.add(query.parameter);
+        }
+      } else if (imported case final core.PathParameter path) {
+        if (path is core.PathParameterObject) {
+          pathParameters.add(path);
+          localPathParameters.add(path);
+        } else if (path is core.PathParameterAlias) {
+          localPathParameters.add(path.parameter);
+        }
+      }
+    }
+
+    return (localHeaders, localQueryParameters, localPathParameters);
+  }
+
   dynamic _importParameter({
     required String? name,
     required ReferenceWrapper<Parameter> wrapper,
@@ -73,7 +118,7 @@ class RequestParameterImporter {
         if (refParameter is InlinedObject<Parameter>) {
           switch (refParameter.object.location) {
             case ParameterLocation.header:
-              // Check if we already imported this header
+              // Check if we already imported this header.
               final existing = headers.firstWhere(
                 (h) =>
                     (h is core.RequestHeaderAlias && h.name == refName) ||
@@ -92,7 +137,7 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.query:
-              // Check if we already imported this query parameter
+              // Check if we already imported this query parameter.
               final existing = queryParameters.firstWhere(
                 (q) =>
                     (q is core.QueryParameterAlias && q.name == refName) ||
@@ -111,7 +156,7 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.path:
-              // Check if we already imported this path parameter
+              // Check if we already imported this path parameter.
               final existing = pathParameters.firstWhere(
                 (p) =>
                     (p is core.PathParameterAlias && p.name == refName) ||

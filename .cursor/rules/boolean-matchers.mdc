@@ -1,0 +1,27 @@
+---
+description: 
+globs: *test.dart
+alwaysApply: false
+---
+ # Use isTrue and isFalse matchers
+
+When writing tests, prefer using `isTrue` and `isFalse` matchers instead of `equals(true)` or `equals(false)`.
+
+## ❌ Don't
+
+```dart
+expect(value, equals(true));
+expect(value, equals(false));
+```
+
+```dart
+expect(value, true);
+expect(value, false);
+```
+
+## ✅ Do
+
+```dart
+expect(value, isTrue);
+expect(value, isFalse);
+```
