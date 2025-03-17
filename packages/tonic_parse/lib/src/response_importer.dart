@@ -86,8 +86,9 @@ class ResponseImporter {
           final mediaTypes = response.content!;
 
           // Try to find application/json first
-          var mediaType = mediaTypes.entries
-              .firstWhereOrNull((entry) => entry.key == 'application/json');
+          var mediaType = mediaTypes.entries.firstWhereOrNull(
+            (entry) => entry.key == 'application/json',
+          );
 
           // If not found, look for any JSON-like content type
           mediaType ??= mediaTypes.entries.firstWhereOrNull(

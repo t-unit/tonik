@@ -28,11 +28,7 @@ class AliasModel extends Model with NamedModel {
 }
 
 class ListModel extends Model with NamedModel {
-  const ListModel({
-    required this.content,
-    required super.context,
-    this.name,
-  });
+  const ListModel({required this.content, required super.context, this.name});
 
   final Model content;
 

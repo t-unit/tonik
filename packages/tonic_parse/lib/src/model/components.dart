@@ -30,7 +30,8 @@ class Components {
   // We ignore the examples, securitySchemes, links and callbacks properties.
 
   @override
-  String toString() => 'Components{schemas: $schemas, responses: $responses, '
+  String toString() =>
+      'Components{schemas: $schemas, responses: $responses, '
       'parameters: $parameters, requestBodies: $requestBodies, '
       'headers: $headers}';
 }

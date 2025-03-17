@@ -5,5 +5,5 @@ enum ParameterEncoding {
   form,
   spaceDelimited,
   pipeDelimited,
-  deepObject;
+  deepObject,
 }

@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': {
       '/test': {
         'get': {
@@ -18,9 +15,7 @@ void main() {
           'description': 'This is a test GET operation',
           'deprecated': false,
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
         'post': {
@@ -29,9 +24,7 @@ void main() {
           'description': 'This is a test POST operation',
           'deprecated': true,
           'responses': {
-            '201': {
-              'description': 'Created response',
-            },
+            '201': {'description': 'Created response'},
           },
         },
         'put': {
@@ -39,9 +32,7 @@ void main() {
           'summary': 'Put test operation',
           'description': 'This is a test PUT operation',
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
       },

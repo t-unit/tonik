@@ -5,10 +5,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -67,9 +64,7 @@ void main() {
   test('imports enum for int32', () {
     final api = Importer().import(fileContent);
     final model = api.models.first as ClassModel;
-    final int32Property = model.properties.firstWhere(
-      (p) => p.name == 'int32',
-    );
+    final int32Property = model.properties.firstWhere((p) => p.name == 'int32');
 
     expect(int32Property.model, isA<EnumModel<int>>());
     expect((int32Property.model as EnumModel).values, [1, 2, 3]);

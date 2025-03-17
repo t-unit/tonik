@@ -91,10 +91,7 @@ class OperationImporter {
     final rangeMatch = RegExp(r'^([1-5])XX$').firstMatch(status);
     if (rangeMatch != null) {
       final rangeStart = int.parse('${rangeMatch.group(1)}00');
-      return core.RangeResponseStatus(
-        min: rangeStart,
-        max: rangeStart + 99,
-      );
+      return core.RangeResponseStatus(min: rangeStart, max: rangeStart + 99);
     }
 
     // Parse as explicit status code
@@ -109,17 +106,20 @@ class OperationImporter {
   ) {
     if (operation == null) return;
 
-    final tags = operation.tags
-        ?.map((name) => validTags.firstWhereOrNull((tag) => tag.name == name))
-        .nonNulls
-        .toSet();
+    final tags =
+        operation.tags
+            ?.map(
+              (name) => validTags.firstWhereOrNull((tag) => tag.name == name),
+            )
+            .nonNulls
+            .toSet();
 
     final pathParameters = pathItem.parameters ?? [];
     final operationParameters = operation.parameters ?? [];
     final allParameters = [...pathParameters, ...operationParameters];
 
-    final (headers, queryParams, pathParams) =
-        parameterImporter.importOperationParameters(allParameters);
+    final (headers, queryParams, pathParams) = parameterImporter
+        .importOperationParameters(allParameters);
 
     final responses = _importResponses(
       operation.responses,

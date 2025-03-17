@@ -53,9 +53,8 @@ class RequestParameterImporter {
     Set<core.RequestHeader> headers,
     Set<core.QueryParameter> queryParameters,
     Set<core.PathParameter> pathParameters,
-  ) importOperationParameters(
-    List<ReferenceWrapper<Parameter>> parameters,
-  ) {
+  )
+  importOperationParameters(List<ReferenceWrapper<Parameter>> parameters) {
     final localHeaders = <core.RequestHeader>{};
     final localQueryParameters = <core.QueryParameter>{};
     final localPathParameters = <core.PathParameter>{};
@@ -123,11 +122,14 @@ class RequestParameterImporter {
                 (h) =>
                     (h is core.RequestHeaderAlias && h.name == refName) ||
                     (h is core.RequestHeaderObject && h.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.RequestHeader,
+                orElse:
+                    () =>
+                        _importParameter(
+                              name: refName,
+                              wrapper: refParameter,
+                              context: context,
+                            )
+                            as core.RequestHeader,
               );
 
               return core.RequestHeaderAlias(
@@ -142,11 +144,14 @@ class RequestParameterImporter {
                 (q) =>
                     (q is core.QueryParameterAlias && q.name == refName) ||
                     (q is core.QueryParameterObject && q.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.QueryParameter,
+                orElse:
+                    () =>
+                        _importParameter(
+                              name: refName,
+                              wrapper: refParameter,
+                              context: context,
+                            )
+                            as core.QueryParameter,
               );
 
               return core.QueryParameterAlias(
@@ -161,11 +166,14 @@ class RequestParameterImporter {
                 (p) =>
                     (p is core.PathParameterAlias && p.name == refName) ||
                     (p is core.PathParameterObject && p.name == refName),
-                orElse: () => _importParameter(
-                  name: refName,
-                  wrapper: refParameter,
-                  context: context,
-                ) as core.PathParameter,
+                orElse:
+                    () =>
+                        _importParameter(
+                              name: refName,
+                              wrapper: refParameter,
+                              context: context,
+                            )
+                            as core.PathParameter,
               );
 
               return core.PathParameterAlias(
@@ -201,8 +209,9 @@ class RequestParameterImporter {
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding:
-                  _getEncoding(parameter.style ?? SerializationStyle.simple),
+              encoding: _getEncoding(
+                parameter.style ?? SerializationStyle.simple,
+              ),
               explode: parameter.explode ?? false,
               model: model,
               isRequired: parameter.isRequired ?? false,
@@ -216,8 +225,9 @@ class RequestParameterImporter {
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding:
-                  _getEncoding(parameter.style ?? SerializationStyle.form),
+              encoding: _getEncoding(
+                parameter.style ?? SerializationStyle.form,
+              ),
               explode: parameter.explode ?? false,
               model: model,
               isRequired: parameter.isRequired ?? false,
@@ -232,8 +242,9 @@ class RequestParameterImporter {
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding:
-                  _getEncoding(parameter.style ?? SerializationStyle.simple),
+              encoding: _getEncoding(
+                parameter.style ?? SerializationStyle.simple,
+              ),
               explode: parameter.explode ?? false,
               model: model,
               isRequired: parameter.isRequired ?? false,

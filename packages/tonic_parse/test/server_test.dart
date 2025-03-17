@@ -4,34 +4,23 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const simpleServer = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'servers': [
-      {
-        'url': 'https://api.example.com',
-      },
+      {'url': 'https://api.example.com'},
     ],
   };
 
   const complexServer = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'servers': [
       {
         'url': 'https://api.example.com',
         'description': 'Test server description',
       },
-      {
-        'url': 'https://dev.example.com',
-        'description': 'Dev server',
-      },
+      {'url': 'https://dev.example.com', 'description': 'Dev server'},
     ],
   };
 

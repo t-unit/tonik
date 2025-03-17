@@ -5,5 +5,5 @@ enum SerializationStyle {
   simple,
   spaceDelimited,
   pipeDelimited,
-  deepObject
+  deepObject,
 }

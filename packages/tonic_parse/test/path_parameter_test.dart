@@ -240,9 +240,9 @@ void main() {
   });
 
   test('imports reference path parameter', () {
-    final parameter = pathParameters
-        .whereType<PathParameterAlias>()
-        .firstWhere((p) => p.name == 'userIdReference');
+    final parameter = pathParameters.whereType<PathParameterAlias>().firstWhere(
+      (p) => p.name == 'userIdReference',
+    );
 
     final reference = pathParameters
         .whereType<PathParameterObject>()

@@ -65,7 +65,8 @@ class QueryParameterObject extends QueryParameter {
   final ParameterEncoding encoding;
 
   @override
-  String toString() => 'QueryParameter{name: $name, rawName: $rawName, '
+  String toString() =>
+      'QueryParameter{name: $name, rawName: $rawName, '
       'description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'allowReserved: $allowReserved, explode: $explode, '
@@ -90,16 +91,16 @@ class QueryParameterObject extends QueryParameter {
 
   @override
   int get hashCode => Object.hash(
-        name,
-        description,
-        isRequired,
-        isDeprecated,
-        allowEmptyValue,
-        allowReserved,
-        explode,
-        model,
-        encoding,
-        context,
-        rawName,
-      );
+    name,
+    description,
+    isRequired,
+    isDeprecated,
+    allowEmptyValue,
+    allowReserved,
+    explode,
+    model,
+    encoding,
+    context,
+    rawName,
+  );
 }

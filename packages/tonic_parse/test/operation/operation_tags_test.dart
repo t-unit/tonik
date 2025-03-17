@@ -6,22 +6,11 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'tags': [
-      {
-        'name': 'info',
-        'description': 'Info operations',
-      },
-      {
-        'name': 'test',
-        'description': 'Test operations',
-      },
-      {
-        'name': 'post',
-      },
+      {'name': 'info', 'description': 'Info operations'},
+      {'name': 'test', 'description': 'Test operations'},
+      {'name': 'post'},
     ],
     'paths': {
       '/info': {
@@ -29,18 +18,14 @@ void main() {
           'operationId': 'getInfo',
           'tags': ['info'],
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
         'post': {
           'operationId': 'postInfo',
           'tags': ['info', 'post'],
           'responses': {
-            '201': {
-              'description': 'Created response',
-            },
+            '201': {'description': 'Created response'},
           },
         },
       },
@@ -49,26 +34,20 @@ void main() {
           'operationId': 'getTest',
           'tags': ['test'],
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
         'trace': {
           'operationId': 'traceTest',
           'tags': ['trace'],
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
         'delete': {
           'operationId': 'deleteTest',
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
       },
@@ -108,12 +87,10 @@ void main() {
 
     expect(
       post?.tags,
-      containsAll(
-        [
-          const Tag(name: 'post'),
-          const Tag(name: 'info', description: 'Info operations'),
-        ],
-      ),
+      containsAll([
+        const Tag(name: 'post'),
+        const Tag(name: 'info', description: 'Info operations'),
+      ]),
     );
   });
 
@@ -124,9 +101,7 @@ void main() {
       (o) => o.operationId == 'postInfo',
     );
 
-    final postTag = getInfo?.tags.firstWhereOrNull(
-      (tag) => tag.name == 'post',
-    );
+    final postTag = getInfo?.tags.firstWhereOrNull((tag) => tag.name == 'post');
 
     expect(postTag, isNotNull);
     expect(postTag?.description, isNull);

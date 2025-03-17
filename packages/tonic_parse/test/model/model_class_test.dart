@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const simple = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -17,17 +14,9 @@ void main() {
           'type': 'object',
           'required': ['name'],
           'properties': {
-            'name': {
-              'type': 'string',
-            },
-            'age': {
-              'type': 'integer',
-              'deprecated': true,
-            },
-            'isActive': {
-              'type': 'boolean',
-              'nullable': true,
-            },
+            'name': {'type': 'string'},
+            'age': {'type': 'integer', 'deprecated': true},
+            'isActive': {'type': 'boolean', 'nullable': true},
           },
         },
       },
@@ -36,19 +25,14 @@ void main() {
 
   const recursive = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
         'SimpleModel': {
           'type': 'object',
           'properties': {
-            'nested': {
-              r'$ref': '#/components/schemas/SimpleModel',
-            },
+            'nested': {r'$ref': '#/components/schemas/SimpleModel'},
           },
         },
       },
@@ -57,27 +41,20 @@ void main() {
 
   const reference = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
         'SimpleModel': {
           'type': 'object',
           'properties': {
-            'nested': {
-              r'$ref': '#/components/schemas/Referenced',
-            },
+            'nested': {r'$ref': '#/components/schemas/Referenced'},
           },
         },
         'Referenced': {
           'type': 'object',
           'properties': {
-            'name': {
-              'type': 'string',
-            },
+            'name': {'type': 'string'},
           },
         },
       },
@@ -86,10 +63,7 @@ void main() {
 
   const inlineReference = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -99,9 +73,7 @@ void main() {
             'nested': {
               'type': 'object',
               'properties': {
-                'name': {
-                  'type': 'string',
-                },
+                'name': {'type': 'string'},
               },
             },
           },
@@ -112,10 +84,7 @@ void main() {
 
   const nestedInlineReference = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -128,9 +97,7 @@ void main() {
                 'name': {
                   'type': 'object',
                   'properties': {
-                    'name': {
-                      'type': 'string',
-                    },
+                    'name': {'type': 'string'},
                   },
                 },
               },
@@ -210,10 +177,12 @@ void main() {
     final nested = model.properties.firstWhere((p) => p.name == 'nested');
     expect(nested.model, isA<ClassModel>());
     expect((nested.model as ClassModel).name, isNull);
-    expect(
-      nested.model.context.path,
-      ['components', 'schemas', 'SimpleModel', 'nested'],
-    );
+    expect(nested.model.context.path, [
+      'components',
+      'schemas',
+      'SimpleModel',
+      'nested',
+    ]);
 
     final referenced = api.models.last as ClassModel;
     expect(referenced.name, isNull);
@@ -226,9 +195,7 @@ void main() {
 
     final classModels = api.models.whereType<ClassModel>();
 
-    final model = classModels.firstWhereOrNull(
-      (m) => m.name == 'SimpleModel',
-    );
+    final model = classModels.firstWhereOrNull((m) => m.name == 'SimpleModel');
     expect(model?.name, 'SimpleModel');
 
     final nested = model?.properties.first.model;
@@ -240,9 +207,12 @@ void main() {
     expect(classModels, contains(nestedNested));
 
     expect((nestedNested as ClassModel).name, isNull);
-    expect(
-      nestedNested.context.path,
-      ['components', 'schemas', 'SimpleModel', 'nested', 'name'],
-    );
+    expect(nestedNested.context.path, [
+      'components',
+      'schemas',
+      'SimpleModel',
+      'nested',
+      'name',
+    ]);
   });
 }

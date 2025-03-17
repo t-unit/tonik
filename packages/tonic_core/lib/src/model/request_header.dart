@@ -62,7 +62,8 @@ class RequestHeaderObject extends RequestHeader {
   final ParameterEncoding encoding;
 
   @override
-  String toString() => 'RequestHeader{name: $name, rawName: $rawName, '
+  String toString() =>
+      'RequestHeader{name: $name, rawName: $rawName, '
       'description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'explode: $explode, model: $model, encoding: $encoding}';
@@ -85,15 +86,15 @@ class RequestHeaderObject extends RequestHeader {
 
   @override
   int get hashCode => Object.hash(
-        name,
-        description,
-        isRequired,
-        isDeprecated,
-        allowEmptyValue,
-        explode,
-        model,
-        encoding,
-        context,
-        rawName,
-      );
+    name,
+    description,
+    isRequired,
+    isDeprecated,
+    allowEmptyValue,
+    explode,
+    model,
+    encoding,
+    context,
+    rawName,
+  );
 }

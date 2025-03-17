@@ -92,13 +92,4 @@ class RangeResponseStatus extends ResponseStatus {
   String toString() => 'RangeResponseStatus(min: $min, max: $max)';
 }
 
-enum HttpMethod {
-  get,
-  post,
-  put,
-  delete,
-  patch,
-  head,
-  options,
-  trace;
-}
+enum HttpMethod { get, post, put, delete, patch, head, options, trace }

@@ -54,7 +54,8 @@ class ResponseHeaderObject extends ResponseHeader {
   final bool isDeprecated;
 
   @override
-  String toString() => 'HeaderObject{name: $name, description: $description, '
+  String toString() =>
+      'HeaderObject{name: $name, description: $description, '
       'explode: $explode, model: $model, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, context: $context}';
 
@@ -73,12 +74,12 @@ class ResponseHeaderObject extends ResponseHeader {
 
   @override
   int get hashCode => Object.hash(
-        name,
-        description,
-        explode,
-        model,
-        isRequired,
-        isDeprecated,
-        context,
-      );
+    name,
+    description,
+    explode,
+    model,
+    isRequired,
+    isDeprecated,
+    context,
+  );
 }

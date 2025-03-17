@@ -5,10 +5,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.1.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -18,10 +15,7 @@ void main() {
             'stringOrNumber': {
               'type': ['string', 'number'],
             },
-            'nullableString': {
-              'type': 'string',
-              'nullable': true,
-            },
+            'nullableString': {'type': 'string', 'nullable': true},
             'nullableStringViaType': {
               'type': ['string', 'null'],
             },
@@ -40,16 +34,12 @@ void main() {
             },
             'nullableArray': {
               'type': 'array',
-              'items': {
-                'type': 'string',
-              },
+              'items': {'type': 'string'},
               'nullable': true,
             },
             'nullableArrayViaType': {
               'type': ['array', 'null'],
-              'items': {
-                'type': 'string',
-              },
+              'items': {'type': 'string'},
             },
             'arrayWithNullableItems': {
               'type': 'array',
@@ -68,8 +58,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final stringOrNumber =
-        model.properties.firstWhere((p) => p.name == 'stringOrNumber');
+    final stringOrNumber = model.properties.firstWhere(
+      (p) => p.name == 'stringOrNumber',
+    );
     expect(stringOrNumber.model, isA<OneOfModel>());
     expect(stringOrNumber.isRequired, isTrue);
     expect(stringOrNumber.isNullable, isFalse);
@@ -86,8 +77,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final nullableString =
-        model.properties.firstWhere((p) => p.name == 'nullableString');
+    final nullableString = model.properties.firstWhere(
+      (p) => p.name == 'nullableString',
+    );
     expect(nullableString.model, isA<StringModel>());
     expect(nullableString.isRequired, isFalse);
     expect(nullableString.isNullable, isTrue);
@@ -97,8 +89,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final nullableString =
-        model.properties.firstWhere((p) => p.name == 'nullableStringViaType');
+    final nullableString = model.properties.firstWhere(
+      (p) => p.name == 'nullableStringViaType',
+    );
     expect(nullableString.model, isA<StringModel>());
     expect(nullableString.isRequired, isFalse);
     expect(nullableString.isNullable, isTrue);
@@ -108,8 +101,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final nullableMultiType =
-        model.properties.firstWhere((p) => p.name == 'nullableMultiType');
+    final nullableMultiType = model.properties.firstWhere(
+      (p) => p.name == 'nullableMultiType',
+    );
     expect(nullableMultiType.model, isA<OneOfModel>());
     expect(nullableMultiType.isRequired, isFalse);
     expect(nullableMultiType.isNullable, isTrue);
@@ -126,8 +120,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final nullableMultiType = model.properties
-        .firstWhere((p) => p.name == 'nullableMultiTypeViaType');
+    final nullableMultiType = model.properties.firstWhere(
+      (p) => p.name == 'nullableMultiTypeViaType',
+    );
     expect(nullableMultiType.model, isA<OneOfModel>());
     expect(nullableMultiType.isRequired, isFalse);
     expect(nullableMultiType.isNullable, isTrue);
@@ -144,8 +139,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final multiTypeArray =
-        model.properties.firstWhere((p) => p.name == 'multiTypeArray');
+    final multiTypeArray = model.properties.firstWhere(
+      (p) => p.name == 'multiTypeArray',
+    );
     expect(multiTypeArray.model, isA<ListModel>());
     expect(multiTypeArray.isRequired, isFalse);
     expect(multiTypeArray.isNullable, isFalse);
@@ -165,8 +161,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final nullableArray =
-        model.properties.firstWhere((p) => p.name == 'nullableArray');
+    final nullableArray = model.properties.firstWhere(
+      (p) => p.name == 'nullableArray',
+    );
     expect(nullableArray.model, isA<ListModel>());
     expect(nullableArray.isRequired, isFalse);
     expect(nullableArray.isNullable, isTrue);
@@ -179,8 +176,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final nullableArray =
-        model.properties.firstWhere((p) => p.name == 'nullableArrayViaType');
+    final nullableArray = model.properties.firstWhere(
+      (p) => p.name == 'nullableArrayViaType',
+    );
     expect(nullableArray.model, isA<ListModel>());
     expect(nullableArray.isRequired, isFalse);
     expect(nullableArray.isNullable, isTrue);
@@ -193,8 +191,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final arrayWithNullableItems =
-        model.properties.firstWhere((p) => p.name == 'arrayWithNullableItems');
+    final arrayWithNullableItems = model.properties.firstWhere(
+      (p) => p.name == 'arrayWithNullableItems',
+    );
     expect(arrayWithNullableItems.model, isA<ListModel>());
     expect(arrayWithNullableItems.isRequired, isFalse);
     expect(arrayWithNullableItems.isNullable, isFalse);

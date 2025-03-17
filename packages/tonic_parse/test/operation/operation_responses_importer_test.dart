@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   final fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': {
       '/test': {
         'get': {
@@ -19,9 +16,7 @@ void main() {
               'description': 'Successful response',
               'content': {
                 'application/json': {
-                  'schema': {
-                    'type': 'string',
-                  },
+                  'schema': {'type': 'string'},
                 },
               },
             },
@@ -57,9 +52,7 @@ void main() {
                 },
               },
             },
-            '201': {
-              r'$ref': '#/components/responses/CreatedResponse',
-            },
+            '201': {r'$ref': '#/components/responses/CreatedResponse'},
           },
         },
         'delete': {

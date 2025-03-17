@@ -5,62 +5,25 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
         'SimpleModel': {
           'type': 'object',
           'properties': {
-            'string': {
-              'type': 'string',
-              'nullable': true,
-            },
-            'integer': {
-              'type': 'integer',
-              'deprecated': true,
-            },
-            'int32': {
-              'type': 'integer',
-              'format': 'int32',
-            },
-            'int64': {
-              'type': 'integer',
-              'format': 'int64',
-            },
-            'number': {
-              'type': 'number',
-            },
-            'float': {
-              'type': 'number',
-              'format': 'float',
-            },
-            'double': {
-              'type': 'number',
-              'format': 'double',
-            },
-            'decimal': {
-              'type': 'string',
-              'format': 'decimal',
-            },
-            'decimal-alt': {
-              'type': 'string',
-              'format': 'currency',
-            },
-            'boolean': {
-              'type': 'boolean',
-            },
-            'date': {
-              'type': 'string',
-              'format': 'date',
-            },
-            'dateTime': {
-              'type': 'string',
-              'format': 'date-time',
-            },
+            'string': {'type': 'string', 'nullable': true},
+            'integer': {'type': 'integer', 'deprecated': true},
+            'int32': {'type': 'integer', 'format': 'int32'},
+            'int64': {'type': 'integer', 'format': 'int64'},
+            'number': {'type': 'number'},
+            'float': {'type': 'number', 'format': 'float'},
+            'double': {'type': 'number', 'format': 'double'},
+            'decimal': {'type': 'string', 'format': 'decimal'},
+            'decimal-alt': {'type': 'string', 'format': 'currency'},
+            'boolean': {'type': 'boolean'},
+            'date': {'type': 'string', 'format': 'date'},
+            'dateTime': {'type': 'string', 'format': 'date-time'},
           },
         },
       },
@@ -132,8 +95,9 @@ void main() {
     final decimal = model.properties.firstWhere((p) => p.name == 'decimal');
     expect(decimal.model, isA<DecimalModel>());
 
-    final decimalAlt =
-        model.properties.firstWhere((p) => p.name == 'decimal-alt');
+    final decimalAlt = model.properties.firstWhere(
+      (p) => p.name == 'decimal-alt',
+    );
     expect(decimalAlt.model, isA<DecimalModel>());
   });
 

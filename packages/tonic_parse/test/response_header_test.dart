@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'headers': {
@@ -34,24 +31,16 @@ void main() {
           'schema': {
             'type': 'object',
             'properties': {
-              'id': {
-                'type': 'string',
-              },
-              'value': {
-                'type': 'integer',
-              },
+              'id': {'type': 'string'},
+              'value': {'type': 'integer'},
             },
             'required': ['id'],
           },
           'description': 'Header with schema',
           'required': true,
         },
-        'reference': {
-          r'$ref': '#/components/headers/simple',
-        },
-        'referenceReference': {
-          r'$ref': '#/components/headers/reference',
-        },
+        'reference': {r'$ref': '#/components/headers/simple'},
+        'referenceReference': {r'$ref': '#/components/headers/reference'},
         'withContent': {
           'content': {
             'application/json': {
@@ -71,24 +60,24 @@ void main() {
   final api = Importer().import(fileContent);
 
   final headers = api.responseHeaders;
-  final simple = headers
-      .whereType<ResponseHeaderObject>()
-      .firstWhereOrNull((h) => h.name == 'simple');
-  final rateLimit = headers
-      .whereType<ResponseHeaderObject>()
-      .firstWhereOrNull((h) => h.name == 'rateLimit');
-  final content = headers
-      .whereType<ResponseHeaderObject>()
-      .firstWhereOrNull((h) => h.name == 'content');
-  final withSchema = headers
-      .whereType<ResponseHeaderObject>()
-      .firstWhereOrNull((h) => h.name == 'withSchema');
+  final simple = headers.whereType<ResponseHeaderObject>().firstWhereOrNull(
+    (h) => h.name == 'simple',
+  );
+  final rateLimit = headers.whereType<ResponseHeaderObject>().firstWhereOrNull(
+    (h) => h.name == 'rateLimit',
+  );
+  final content = headers.whereType<ResponseHeaderObject>().firstWhereOrNull(
+    (h) => h.name == 'content',
+  );
+  final withSchema = headers.whereType<ResponseHeaderObject>().firstWhereOrNull(
+    (h) => h.name == 'withSchema',
+  );
   final withContent = headers
       .whereType<ResponseHeaderObject>()
       .firstWhereOrNull((h) => h.name == 'withContent');
-  final reference = headers
-      .whereType<ResponseHeaderAlias>()
-      .firstWhereOrNull((h) => h.name == 'reference');
+  final reference = headers.whereType<ResponseHeaderAlias>().firstWhereOrNull(
+    (h) => h.name == 'reference',
+  );
   final referenceReference = headers
       .whereType<ResponseHeaderAlias>()
       .firstWhereOrNull((h) => h.name == 'referenceReference');
@@ -132,8 +121,9 @@ void main() {
     expect(idProperty?.model, isA<StringModel>());
     expect(idProperty?.isRequired, isTrue);
 
-    final valueProperty =
-        model?.properties.firstWhere((p) => p.name == 'value');
+    final valueProperty = model?.properties.firstWhere(
+      (p) => p.name == 'value',
+    );
     expect(valueProperty?.model, isA<IntegerModel>());
     expect(valueProperty?.isRequired, isFalse);
   });
@@ -153,8 +143,9 @@ void main() {
     expect(referenceReference, isNotNull);
     expect(referenceReference?.header, isA<ResponseHeaderAlias>());
 
-    final target = (referenceReference?.header as ResponseHeaderAlias?)?.header
-        as ResponseHeaderObject?;
+    final target =
+        (referenceReference?.header as ResponseHeaderAlias?)?.header
+            as ResponseHeaderObject?;
     expect(target?.name, 'simple');
   });
 

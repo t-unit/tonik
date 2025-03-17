@@ -23,6 +23,7 @@ class Response {
   // We ignore the links property.
 
   @override
-  String toString() => 'Response{description: $description, headers: $headers, '
+  String toString() =>
+      'Response{description: $description, headers: $headers, '
       'content: $content}';
 }

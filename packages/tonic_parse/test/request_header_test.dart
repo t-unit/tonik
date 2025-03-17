@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.4',
-    'info': {
-      'title': 'Header Encoding API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Header Encoding API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'parameters': {
@@ -83,29 +80,21 @@ void main() {
         'colorSchema': {
           'name': 'X-Color-Schema',
           'in': 'header',
-          'schema': {
-            r'$ref': '#/components/schemas/Color',
-          },
+          'schema': {r'$ref': '#/components/schemas/Color'},
         },
-        'colorReference': {
-          r'$ref': '#/components/parameters/colorMatrix',
-        },
+        'colorReference': {r'$ref': '#/components/parameters/colorMatrix'},
         'header': {
           'name': 'X-Header',
           'in': 'header',
           'schema': {'type': 'string'},
         },
-        'headerReference': {
-          r'$ref': '#/components/parameters/header',
-        },
+        'headerReference': {r'$ref': '#/components/parameters/header'},
         'queryParameter': {
           'name': 'query',
           'in': 'query',
           'schema': {'type': 'string'},
         },
-        'queryReference': {
-          r'$ref': '#/components/parameters/queryParameter',
-        },
+        'queryReference': {r'$ref': '#/components/parameters/queryParameter'},
       },
       'schemas': {
         'Color': {
@@ -124,9 +113,9 @@ void main() {
   final headers = api.requestHeaders;
 
   test('imports matrix style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorMatrix');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorMatrix',
+    );
 
     expect(header.rawName, 'X-Color-Matrix');
     expect(header.encoding, ParameterEncoding.matrix);
@@ -139,9 +128,9 @@ void main() {
   });
 
   test('imports label style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorLabel');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorLabel',
+    );
 
     expect(header.rawName, 'X-Color-Label');
     expect(header.encoding, ParameterEncoding.label);
@@ -154,9 +143,9 @@ void main() {
   });
 
   test('imports simple style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorSimple');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorSimple',
+    );
 
     expect(header.rawName, 'X-Color-Simple');
     expect(header.encoding, ParameterEncoding.simple);
@@ -165,9 +154,9 @@ void main() {
   });
 
   test('imports form style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorForm');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorForm',
+    );
 
     expect(header.rawName, 'X-Color-Form');
     expect(header.encoding, ParameterEncoding.form);
@@ -176,9 +165,9 @@ void main() {
   });
 
   test('imports spaceDelimited style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorSpaceDelimited');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorSpaceDelimited',
+    );
 
     expect(header.rawName, 'X-Color-Space');
     expect(header.encoding, ParameterEncoding.spaceDelimited);
@@ -188,9 +177,9 @@ void main() {
   });
 
   test('imports pipeDelimited style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorPipeDelimited');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorPipeDelimited',
+    );
 
     expect(header.rawName, 'X-Color-Pipe');
     expect(header.encoding, ParameterEncoding.pipeDelimited);
@@ -200,9 +189,9 @@ void main() {
   });
 
   test('imports deepObject style header', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorDeepObject');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorDeepObject',
+    );
 
     expect(header.rawName, 'X-Color-Deep');
     expect(header.encoding, ParameterEncoding.deepObject);
@@ -215,9 +204,9 @@ void main() {
   });
 
   test('imports header with schema reference', () {
-    final header = headers
-        .whereType<RequestHeaderObject>()
-        .firstWhere((h) => h.name == 'colorSchema');
+    final header = headers.whereType<RequestHeaderObject>().firstWhere(
+      (h) => h.name == 'colorSchema',
+    );
 
     expect(header.rawName, 'X-Color-Schema');
     expect(header.encoding, ParameterEncoding.simple);
@@ -229,9 +218,9 @@ void main() {
   });
 
   test('imports header reference', () {
-    final header = headers
-        .whereType<RequestHeaderAlias>()
-        .firstWhere((h) => h.name == 'colorReference');
+    final header = headers.whereType<RequestHeaderAlias>().firstWhere(
+      (h) => h.name == 'colorReference',
+    );
 
     final target = header.header as RequestHeaderObject;
     expect(target.name, 'colorMatrix');
@@ -240,21 +229,21 @@ void main() {
   });
 
   test('does not duplicate headers when importing references', () {
-    final matrix = headers
-        .whereType<RequestHeaderObject>()
-        .where((h) => h.name == 'colorMatrix');
-    final reference = headers
-        .whereType<RequestHeaderAlias>()
-        .where((h) => h.name == 'colorReference');
+    final matrix = headers.whereType<RequestHeaderObject>().where(
+      (h) => h.name == 'colorMatrix',
+    );
+    final reference = headers.whereType<RequestHeaderAlias>().where(
+      (h) => h.name == 'colorReference',
+    );
 
     expect(matrix, hasLength(1));
     expect(reference, hasLength(1));
   });
 
   test('does not import query references as headers', () {
-    final reference = headers
-        .whereType<RequestHeaderAlias>()
-        .firstWhereOrNull((h) => h.name == 'queryReference');
+    final reference = headers.whereType<RequestHeaderAlias>().firstWhereOrNull(
+      (h) => h.name == 'queryReference',
+    );
 
     expect(reference, isNull);
   });

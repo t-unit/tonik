@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': {
       '/users/{userId}/items/{itemId}': {
         'parameters': [
@@ -40,9 +37,7 @@ void main() {
             {r'$ref': '#/components/parameters/Authorization'},
           ],
           'responses': {
-            '200': {
-              'description': 'Successful response',
-            },
+            '200': {'description': 'Successful response'},
           },
         },
       },
@@ -88,13 +83,15 @@ void main() {
         api.pathParameters.whereType<PathParameterObject>().toList();
     expect(pathParams, hasLength(2));
 
-    final userIdParam =
-        pathParams.firstWhereOrNull((p) => p.rawName == 'userId');
+    final userIdParam = pathParams.firstWhereOrNull(
+      (p) => p.rawName == 'userId',
+    );
     expect(userIdParam?.isRequired, true);
     expect(userIdParam?.description, 'ID of the user');
 
-    final itemIdParam =
-        pathParams.firstWhereOrNull((p) => p.rawName == 'itemId');
+    final itemIdParam = pathParams.firstWhereOrNull(
+      (p) => p.rawName == 'itemId',
+    );
     expect(itemIdParam?.isRequired, true);
     expect(itemIdParam?.description, 'ID of the item');
   });
@@ -106,14 +103,16 @@ void main() {
         api.queryParameters.whereType<QueryParameterObject>().toList();
     expect(queryParams, hasLength(2));
 
-    final includeDeletedParam =
-        queryParams.firstWhereOrNull((p) => p.rawName == 'include-deleted');
+    final includeDeletedParam = queryParams.firstWhereOrNull(
+      (p) => p.rawName == 'include-deleted',
+    );
     expect(includeDeletedParam?.isRequired, false);
     expect(includeDeletedParam?.description, 'Include deleted items');
     expect(includeDeletedParam?.model, isA<BooleanModel>());
 
-    final fieldsParam =
-        queryParams.firstWhereOrNull((p) => p.rawName == 'fields');
+    final fieldsParam = queryParams.firstWhereOrNull(
+      (p) => p.rawName == 'fields',
+    );
     expect(fieldsParam?.isRequired, false);
     expect(fieldsParam?.description, 'Fields to include in response');
     expect(fieldsParam?.model, isA<ListModel>());
@@ -127,14 +126,16 @@ void main() {
         api.requestHeaders.whereType<RequestHeaderObject>().toList();
     expect(headerParams, hasLength(2));
 
-    final apiVersionHeader =
-        headerParams.firstWhereOrNull((h) => h.rawName == 'api-version');
+    final apiVersionHeader = headerParams.firstWhereOrNull(
+      (h) => h.rawName == 'api-version',
+    );
     expect(apiVersionHeader?.isRequired, true);
     expect(apiVersionHeader?.description, 'API Version header');
     expect(apiVersionHeader?.model, isA<StringModel>());
 
-    final authHeader =
-        headerParams.firstWhereOrNull((h) => h.rawName == 'authorization');
+    final authHeader = headerParams.firstWhereOrNull(
+      (h) => h.rawName == 'authorization',
+    );
     expect(authHeader?.isRequired, true);
     expect(authHeader?.description, 'Bearer token');
     expect(authHeader?.model, isA<StringModel>());
@@ -157,13 +158,15 @@ void main() {
     expect(pathParamNames, containsAll(['userId', 'itemId']));
 
     // Verify path parameter properties
-    final userIdParam =
-        pathParams?.firstWhereOrNull((p) => p.rawName == 'userId');
+    final userIdParam = pathParams?.firstWhereOrNull(
+      (p) => p.rawName == 'userId',
+    );
     expect(userIdParam?.isRequired, true);
     expect(userIdParam?.description, 'ID of the user');
 
-    final itemIdParam =
-        pathParams?.firstWhereOrNull((p) => p.rawName == 'itemId');
+    final itemIdParam = pathParams?.firstWhereOrNull(
+      (p) => p.rawName == 'itemId',
+    );
     expect(itemIdParam?.isRequired, true);
     expect(itemIdParam?.description, 'ID of the item');
 
@@ -177,13 +180,15 @@ void main() {
     expect(queryParamNames, containsAll(['include-deleted', 'fields']));
 
     // Verify query parameter properties
-    final includeDeletedParam =
-        queryParams?.firstWhereOrNull((p) => p.rawName == 'include-deleted');
+    final includeDeletedParam = queryParams?.firstWhereOrNull(
+      (p) => p.rawName == 'include-deleted',
+    );
     expect(includeDeletedParam?.isRequired, false);
     expect(includeDeletedParam?.description, 'Include deleted items');
 
-    final fieldsParam =
-        queryParams?.firstWhereOrNull((p) => p.rawName == 'fields');
+    final fieldsParam = queryParams?.firstWhereOrNull(
+      (p) => p.rawName == 'fields',
+    );
     expect(fieldsParam?.isRequired, false);
     expect(fieldsParam?.description, 'Fields to include in response');
 
@@ -197,13 +202,15 @@ void main() {
     expect(headerParamNames, containsAll(['api-version', 'authorization']));
 
     // Verify header parameter properties
-    final apiVersionHeader =
-        headerParams?.firstWhereOrNull((h) => h.rawName == 'api-version');
+    final apiVersionHeader = headerParams?.firstWhereOrNull(
+      (h) => h.rawName == 'api-version',
+    );
     expect(apiVersionHeader?.isRequired, true);
     expect(apiVersionHeader?.description, 'API Version header');
 
-    final authHeader =
-        headerParams?.firstWhereOrNull((h) => h.rawName == 'authorization');
+    final authHeader = headerParams?.firstWhereOrNull(
+      (h) => h.rawName == 'authorization',
+    );
     expect(authHeader?.isRequired, true);
     expect(authHeader?.description, 'Bearer token');
   });

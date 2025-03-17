@@ -60,7 +60,8 @@ class PathParameterObject extends PathParameter {
   final ParameterEncoding encoding;
 
   @override
-  String toString() => 'PathParameterObject{name: $name, '
+  String toString() =>
+      'PathParameterObject{name: $name, '
       'description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'explode: $explode, model: $model, encoding: $encoding}';
@@ -83,15 +84,15 @@ class PathParameterObject extends PathParameter {
 
   @override
   int get hashCode => Object.hash(
-        rawName,
-        name,
-        description,
-        isRequired,
-        isDeprecated,
-        allowEmptyValue,
-        explode,
-        model,
-        encoding,
-        context,
-      );
+    rawName,
+    name,
+    description,
+    isRequired,
+    isDeprecated,
+    allowEmptyValue,
+    explode,
+    model,
+    encoding,
+    context,
+  );
 }

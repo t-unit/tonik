@@ -4,10 +4,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const simpleInfo = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
   };
 

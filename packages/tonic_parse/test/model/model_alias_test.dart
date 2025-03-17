@@ -5,38 +5,24 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const simpleAlias = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
-        'SimpleModel': {
-          'type': 'string',
-        },
+        'SimpleModel': {'type': 'string'},
       },
     },
   };
 
   const nestedAlias = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
-        'SimpleModel': {
-          'type': 'string',
-        },
-        'NestedModel': {
-          r'$ref': '#/components/schemas/SimpleModel',
-        },
-        'DoubleNestedModel': {
-          r'$ref': '#/components/schemas/NestedModel',
-        },
+        'SimpleModel': {'type': 'string'},
+        'NestedModel': {r'$ref': '#/components/schemas/SimpleModel'},
+        'DoubleNestedModel': {r'$ref': '#/components/schemas/NestedModel'},
       },
     },
   };

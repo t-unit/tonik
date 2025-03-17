@@ -4,11 +4,7 @@ part 'info.g.dart';
 
 @JsonSerializable()
 class Info {
-  Info({
-    required this.title,
-    required this.description,
-    required this.version,
-  });
+  Info({required this.title, required this.description, required this.version});
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
 

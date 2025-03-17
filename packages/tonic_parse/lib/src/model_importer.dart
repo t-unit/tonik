@@ -7,7 +7,7 @@ import 'package:tonic_parse/src/model/schema.dart';
 
 class ModelImporter {
   ModelImporter(OpenApiObject openApiObject)
-      : _schemas = openApiObject.components?.schemas ?? {};
+    : _schemas = openApiObject.components?.schemas ?? {};
 
   final Map<String, ReferenceWrapper<Schema>> _schemas;
   late Set<Model> models;
@@ -65,7 +65,8 @@ class ModelImporter {
           throw ArgumentError('Schema $ref not found for $name');
         }
 
-        var model = models.firstWhereOrNull(
+        var model =
+            models.firstWhereOrNull(
               (model) => model is NamedModel && model.name == refName,
             ) ??
             _parseSchemaWrapper(refName, ref, rootContext);
@@ -110,27 +111,28 @@ class ModelImporter {
     }
 
     var model = switch (types.firstOrNull) {
-      'string' when schema.format == 'date-time' =>
-        DateTimeModel(context: context),
+      'string' when schema.format == 'date-time' => DateTimeModel(
+        context: context,
+      ),
       'string' when schema.format == 'date' => DateModel(context: context),
       'string' when schema.format == 'decimal' || schema.format == 'currency' =>
         DecimalModel(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
-          name,
-          schema.enumerated!,
-          schema.isNullable ?? hasNullType,
-          context,
-        ),
+        name,
+        schema.enumerated!,
+        schema.isNullable ?? hasNullType,
+        context,
+      ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
         DoubleModel(context: context),
       'number' => NumberModel(context: context),
       'integer' when schema.enumerated != null => _parseEnum<int>(
-          name,
-          schema.enumerated!,
-          schema.isNullable ?? hasNullType,
-          context,
-        ),
+        name,
+        schema.enumerated!,
+        schema.isNullable ?? hasNullType,
+        context,
+      ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
       'array' => _parseArray(name, schema, context),
@@ -192,11 +194,7 @@ class ModelImporter {
 
     final modelContext = context.push('array');
     final content = _parseSchemaWrapper(null, items, modelContext);
-    return ListModel(
-      content: content,
-      context: context,
-      name: name,
-    );
+    return ListModel(content: content, context: context, name: name);
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
@@ -204,11 +202,7 @@ class ModelImporter {
     final models = schema.allOf!.map(
       (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
     );
-    return AllOfModel(
-      models: models.toSet(),
-      context: context,
-      name: name,
-    );
+    return AllOfModel(models: models.toSet(), context: context, name: name);
   }
 
   OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
@@ -257,10 +251,8 @@ class ModelImporter {
     if (innerSchema is Reference &&
         schema.discriminator?.propertyName != null) {
       final ref = (innerSchema as Reference).ref;
-      final discriminatorEntry =
-          schema.discriminator?.mapping?.entries.firstWhereOrNull(
-        (entry) => entry.value == ref,
-      );
+      final discriminatorEntry = schema.discriminator?.mapping?.entries
+          .firstWhereOrNull((entry) => entry.value == ref);
       return discriminatorEntry?.key ?? ref.split('/').last;
     }
     return null;
@@ -277,8 +269,10 @@ class ModelImporter {
     );
 
     if (schema.not != null) {
-      log.warning('Found not schema for $name. The not keyword is not '
-          'supported and will be ignored.');
+      log.warning(
+        'Found not schema for $name. The not keyword is not '
+        'supported and will be ignored.',
+      );
     }
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {

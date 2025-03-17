@@ -5,10 +5,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   const fileContent = {
     'openapi': '3.0.0',
-    'info': {
-      'title': 'Test API',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test API', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -57,27 +54,27 @@ void main() {
   final api = Importer().import(fileContent);
 
   test('imports string list model', () {
-    final model = api.models
-        .whereType<ListModel>()
-        .firstWhere((m) => m.name == 'StringList');
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'StringList',
+    );
 
     expect(model, isA<ListModel>());
     expect(model.content, isA<StringModel>());
   });
 
   test('imports integer list model', () {
-    final model = api.models
-        .whereType<ListModel>()
-        .firstWhere((m) => m.name == 'IntegerList');
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'IntegerList',
+    );
 
     expect(model, isA<ListModel>());
     expect(model.content, isA<IntegerModel>());
   });
 
   test('imports inline object list model', () {
-    final model = api.models
-        .whereType<ListModel>()
-        .firstWhere((m) => m.name == 'UserList');
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'UserList',
+    );
 
     expect(model, isA<ListModel>());
     expect(model.content, isA<ClassModel>());
@@ -93,9 +90,9 @@ void main() {
   });
 
   test('imports reference object list model', () {
-    final model = api.models
-        .whereType<ListModel>()
-        .firstWhere((m) => m.name == 'UserReferenceList');
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'UserReferenceList',
+    );
 
     expect(model, isA<ListModel>());
     expect(model.content, isA<ClassModel>());
@@ -105,9 +102,9 @@ void main() {
   });
 
   test('imports mixed list model', () {
-    final model = api.models
-        .whereType<ListModel>()
-        .firstWhere((m) => m.name == 'MixedList');
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'MixedList',
+    );
 
     expect(model, isA<ListModel>());
     expect(model.content, isA<OneOfModel>());

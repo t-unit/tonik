@@ -7,12 +7,12 @@ part of 'request_body.dart';
 // **************************************************************************
 
 RequestBody _$RequestBodyFromJson(Map<String, dynamic> json) => RequestBody(
-      description: json['description'] as String?,
-      content: (json['content'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
-      ),
-      isRequired: json['isRequired'] as bool?,
-    );
+  description: json['description'] as String?,
+  content: (json['content'] as Map<String, dynamic>).map(
+    (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
+  ),
+  isRequired: json['isRequired'] as bool?,
+);
 
 Map<String, dynamic> _$RequestBodyToJson(RequestBody instance) =>
     <String, dynamic>{

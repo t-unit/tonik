@@ -2,10 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class Tag {
-  const Tag({
-    required this.name,
-    this.description,
-  });
+  const Tag({required this.name, this.description});
 
   final String name;
   final String? description;

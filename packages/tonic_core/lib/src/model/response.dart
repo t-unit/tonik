@@ -33,11 +33,11 @@ class Response {
 
   @override
   int get hashCode => Object.hash(
-        name,
-        const MapEquality<String, ResponseHeader>().hash(headers),
-        body,
-        description,
-      );
+    name,
+    const MapEquality<String, ResponseHeader>().hash(headers),
+    body,
+    description,
+  );
 
   @override
   String toString() =>

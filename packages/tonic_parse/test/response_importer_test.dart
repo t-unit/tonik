@@ -6,10 +6,7 @@ import 'package:tonic_parse/tonic_parse.dart';
 void main() {
   final fileContent = {
     'openapi': '3.1.0',
-    'info': {
-      'title': 'Test',
-      'version': '1.0.0',
-    },
+    'info': {'title': 'Test', 'version': '1.0.0'},
     'paths': <String, dynamic>{},
     'components': {
       'schemas': {
@@ -21,9 +18,7 @@ void main() {
         },
       },
       'responses': {
-        'SimpleResponse': {
-          'description': 'A simple response',
-        },
+        'SimpleResponse': {'description': 'A simple response'},
         'InlineBodyResponse': {
           'description': 'A response with inline body',
           'content': {
@@ -36,9 +31,7 @@ void main() {
           'description': 'A response with a reference to a body',
           'content': {
             'application/json': {
-              'schema': {
-                r'$ref': '#/components/schemas/MySchema',
-              },
+              'schema': {r'$ref': '#/components/schemas/MySchema'},
             },
           },
         },
@@ -81,9 +74,7 @@ void main() {
             },
           },
         },
-        'ReferenceResponse': {
-          r'$ref': '#/components/responses/SimpleResponse',
-        },
+        'ReferenceResponse': {r'$ref': '#/components/responses/SimpleResponse'},
         'DoubleReferenceResponse': {
           r'$ref': '#/components/responses/ReferenceResponse',
         },
@@ -164,10 +155,7 @@ void main() {
 
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse?.body?.model, isA<StringModel>());
-    expect(
-      jsonLikeResponse?.body?.rawContentType,
-      'alto-endpointcost+json',
-    );
+    expect(jsonLikeResponse?.body?.rawContentType, 'alto-endpointcost+json');
   });
 
   test('imports response with invalid body content type as json', () {

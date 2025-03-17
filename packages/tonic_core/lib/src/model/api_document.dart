@@ -49,7 +49,8 @@ class ApiDocument {
   }
 
   @override
-  String toString() => 'ApiDocument{title: $title, description: $description, '
+  String toString() =>
+      'ApiDocument{title: $title, description: $description, '
       'version: $version, models: $models, responseHeaders: $responseHeaders, '
       'requestHeaders: $requestHeaders, servers: $servers, '
       'queryParameters: $queryParameters, pathParameters: $pathParameters, '
