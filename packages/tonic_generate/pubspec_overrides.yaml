@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: tonic_core
+dependency_overrides:
+  tonic_core:
+    path: ../tonic_core
