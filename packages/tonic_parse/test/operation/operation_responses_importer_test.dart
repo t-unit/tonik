@@ -93,7 +93,7 @@ void main() {
     final successResponse =
         getOperation?.responses[const ExplicitResponseStatus(statusCode: 200)];
     expect(successResponse, isNotNull);
-    expect(successResponse?.model, isA<StringModel>());
+    expect(successResponse?.body?.model, isA<StringModel>());
   });
 
   test('imports default response correctly', () {
@@ -107,7 +107,7 @@ void main() {
     final defaultResponse =
         getOperation?.responses[const DefaultResponseStatus()];
     expect(defaultResponse, isNotNull);
-    expect(defaultResponse?.model, isA<ClassModel>());
+    expect(defaultResponse?.body?.model, isA<ClassModel>());
   });
 
   test('imports response range correctly', () {
@@ -121,7 +121,7 @@ void main() {
     final rangeResponse =
         postOperation?.responses[const RangeResponseStatus(min: 400, max: 499)];
     expect(rangeResponse, isNotNull);
-    expect(rangeResponse?.model, isA<ClassModel>());
+    expect(rangeResponse?.body?.model, isA<ClassModel>());
   });
 
   test('imports referenced response correctly', () {
@@ -135,9 +135,9 @@ void main() {
     final createdResponse =
         postOperation?.responses[const ExplicitResponseStatus(statusCode: 201)];
     expect(createdResponse, isNotNull);
-    expect(createdResponse?.model, isA<ClassModel>());
+    expect(createdResponse?.body?.model, isA<ClassModel>());
 
-    final model = createdResponse?.model as ClassModel?;
+    final model = createdResponse?.body?.model as ClassModel?;
     expect(model?.properties, hasLength(1));
 
     final idProperty = model?.properties.firstWhere((p) => p.name == 'id');

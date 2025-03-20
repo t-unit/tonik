@@ -6,7 +6,9 @@ environment:
   sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
-    tonic_core:
+  change_case: ^2.2.0
+  meta: ^1.16.0
+  tonic_core:
 
 dev_dependencies:
   test: ^1.24.0

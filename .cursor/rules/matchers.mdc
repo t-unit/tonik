@@ -25,3 +25,19 @@ expect(value, false);
 expect(value, isTrue);
 expect(value, isFalse);
 ```
+
+# Do not use equals
+
+For better readablity, do not use equals.
+
+## ❌ Don't
+
+```dart
+expect(value, equals('my value'));
+```
+
+## ✅ Do
+
+```dart
+expect(value, 'my value');
+```

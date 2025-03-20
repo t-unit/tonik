@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Test Driven Development
+
+- Create skeleton structure of production code first
+- Write tests before implmenting logic
+- Fill the skeleton with code last

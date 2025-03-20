@@ -31,7 +31,7 @@ class Operation {
   final Set<QueryParameter> queryParameters;
   final Set<PathParameter> pathParameters;
 
-  final Map<ResponseStatus, ResponseBody> responses;
+  final Map<ResponseStatus, Response> responses;
 }
 
 @immutable

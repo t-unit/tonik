@@ -57,11 +57,11 @@ class OperationImporter {
     }
   }
 
-  Map<core.ResponseStatus, core.ResponseBody> _importResponses(
+  Map<core.ResponseStatus, core.Response> _importResponses(
     Map<String, ReferenceWrapper<Response>> responses,
     core.Context context,
   ) {
-    final result = <core.ResponseStatus, core.ResponseBody>{};
+    final result = <core.ResponseStatus, core.Response>{};
 
     for (final entry in responses.entries) {
       final statusCode = entry.key;
@@ -76,7 +76,7 @@ class OperationImporter {
       if (importedResponse.body == null) continue;
 
       final status = _parseResponseStatus(statusCode);
-      result[status] = importedResponse.body!;
+      result[status] = importedResponse;
     }
 
     return result;
