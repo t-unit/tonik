@@ -1,511 +1,74 @@
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/name_generator.dart';
 import 'package:tonic_generate/src/name_manager.dart';
 
 void main() {
-  group('NameManager', () {
-    late NameManager nameManager;
+  group('NameManger', () {
+    late NameGenerator generator;
+    late NameManger manager;
 
     setUp(() {
-      nameManager = NameManager();
+      generator = NameGenerator();
+      manager = NameManger(generator: generator);
     });
 
-    group('generateClassName', () {
-      test('uses model name when available', () {
-        final model = ClassModel(
-          name: 'UserProfile',
-          properties: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateModelName(model), 'UserProfile');
-      });
+    test('caches generated names', () {
+      const tag = Tag(name: 'pets');
 
-      test('converts name to PascalCase', () {
-        final model = ClassModel(
-          name: 'user_profile',
-          properties: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateModelName(model), 'UserProfile');
-      });
+      final name1 = manager.tagName(tag);
+      final name2 = manager.tagName(tag);
 
-      test('makes duplicate names unique using Model suffix', () {
-        final model1 = ClassModel(
-          name: 'User',
-          properties: const {},
-          context: Context.initial(),
-        );
-        final model2 = ClassModel(
-          name: 'User',
-          properties: const {},
-          context: Context.initial(),
-        );
-        final model3 = ClassModel(
-          name: 'User',
-          properties: const {},
-          context: Context.initial(),
-        );
-
-        final name1 = nameManager.generateModelName(model1);
-        final name2 = nameManager.generateModelName(model2);
-        final name3 = nameManager.generateModelName(model3);
-
-        expect(name1, 'User');
-        expect(name2, 'UserModel');
-        expect(name3, 'UserModel2');
-      });
-
-      test('removes illegal characters', () {
-        final model = ClassModel(
-          name: 'User-Profile!123',
-          properties: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateModelName(model), 'UserProfile123');
-      });
-
-      test('combines context path components in PascalCase', () {
-        final model = ClassModel(
-          properties: const {},
-          context: Context.initial().pushAll(['api', 'models', 'user']),
-        );
-
-        expect(nameManager.generateModelName(model), 'ApiModelsUser');
-      });
-
-      test('converts each path component to PascalCase before joining', () {
-        final model = ListModel(
-          content: StringModel(context: Context.initial()),
-          context: Context.initial().pushAll([
-            'api',
-            'user_management',
-            'active_users',
-          ]),
-        );
-
-        expect(
-          nameManager.generateModelName(model),
-          'ApiUserManagementActiveUsers',
-        );
-      });
-
-      test('converts explicit names with underscores to PascalCase', () {
-        final model = ClassModel(
-          name: 'my_class_name',
-          properties: const {},
-          context: Context.initial(),
-        );
-
-        expect(nameManager.generateModelName(model), 'MyClassName');
-      });
-
-      test('converts names with leading underscores to PascalCase', () {
-        final model = ClassModel(
-          name: '_my_class_name',
-          properties: const {},
-          context: Context.initial(),
-        );
-
-        expect(nameManager.generateModelName(model), 'MyClassName');
-      });
-
-      test('uses Anonymous for model without name or context path', () {
-        final model = ClassModel(
-          properties: const {},
-          context: Context.initial(),
-        );
-
-        expect(nameManager.generateModelName(model), 'Anonymous');
-      });
-
-      test('makes anonymous names unique using Model suffix', () {
-        final model1 = ClassModel(
-          properties: const {},
-          context: Context.initial(),
-        );
-        final model2 = ClassModel(
-          properties: const {},
-          context: Context.initial(),
-        );
-        final model3 = ClassModel(
-          properties: const {},
-          context: Context.initial(),
-        );
-
-        final name1 = nameManager.generateModelName(model1);
-        final name2 = nameManager.generateModelName(model2);
-        final name3 = nameManager.generateModelName(model3);
-
-        expect(name1, 'Anonymous');
-        expect(name2, 'AnonymousModel');
-        expect(name3, 'AnonymousModel2');
-      });
-
-      group('number handling', () {
-        test('preserves numbers in class names', () {
-          final model = ClassModel(
-            name: 'Model23',
-            properties: const {},
-            context: Context.initial(),
-          );
-          expect(nameManager.generateModelName(model), 'Model23');
-        });
-
-        test('removes leading numbers', () {
-          final model = ClassModel(
-            name: '2Model',
-            properties: const {},
-            context: Context.initial(),
-          );
-          expect(nameManager.generateModelName(model), 'Model');
-        });
-
-        test('removes leading numbers but preserves internal ones', () {
-          final model = ClassModel(
-            name: '2_Model12String33',
-            properties: const {},
-            context: Context.initial(),
-          );
-          expect(nameManager.generateModelName(model), 'Model12String33');
-        });
-
-        test('handles multiple number segments', () {
-          final model = ClassModel(
-            name: 'user2_profile3_data4',
-            properties: const {},
-            context: Context.initial(),
-          );
-          expect(nameManager.generateModelName(model), 'User2Profile3Data4');
-        });
-
-        test('handles names with only numbers', () {
-          final model = ClassModel(
-            name: '123',
-            properties: const {},
-            context: Context.initial(),
-          );
-          expect(nameManager.generateModelName(model), 'Anonymous');
-        });
-      });
+      expect(name1, 'PetsApi');
+      expect(name2, 'PetsApi', reason: 'Should return cached name');
     });
 
-    group('_sanitizeName', () {
-      test('converts underscored name to PascalCase', () {
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: 'hello_world_test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorldTest',
-        );
-      });
+    test('primes names in correct order', () {
+      final context = Context.initial();
 
-      test('converts name with leading underscore to PascalCase', () {
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: '_hello_world',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorld',
-        );
-      });
-
-      test('removes illegal characters and converts to PascalCase', () {
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: 'Hello-World_Test!123',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorldTest123',
-        );
-      });
-
-      test('handles multiple leading underscores', () {
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: '___hello_world_test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorldTest',
-        );
-      });
-
-      test('handles mixed case with underscores', () {
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: 'My_Class_NAME',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'MyClassName',
-        );
-      });
-    });
-
-    group('unique name generation', () {
-      test('uses original name for first occurrence', () {
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'Test',
-        );
-      });
-
-      test('adds Model suffix for second occurrence', () {
-        nameManager.generateModelName(
-          ClassModel(
-            name: 'Test',
-            properties: const {},
-            context: Context.initial(),
-          ),
-        );
-
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'TestModel',
-        );
-      });
-
-      test('adds number to Model suffix for third occurrence', () {
-        nameManager
-          ..generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          )
-          ..generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          );
-
-        expect(
-          nameManager.generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'TestModel2',
-        );
-      });
-
-      test('handles names that already end with Model', () {
-        final model1 = ClassModel(
-          name: 'UserModel',
-          properties: const {},
-          context: Context.initial(),
-        );
-        final model2 = ClassModel(
-          name: 'UserModel',
-          properties: const {},
-          context: Context.initial(),
-        );
-
-        final name1 = nameManager.generateModelName(model1);
-        final name2 = nameManager.generateModelName(model2);
-
-        expect(name1, 'UserModel');
-        expect(name2, 'UserModel2');
-      });
-    });
-
-    group('generateResponseName', () {
-      test('uses name when available', () {
-        final response = Response(
-          name: 'User',
-          description: 'A user object',
+      final models = [
+        ListModel(content: StringModel(context: context), context: context),
+        ListModel(content: StringModel(context: context), context: context),
+      ];
+      final responses = [
+        Response(
+          name: 'user',
+          context: context,
+          description: 'A user response',
           headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateResponseName(response), 'User');
-      });
-
-      test('converts name to PascalCase', () {
-        final response = Response(
-          name: 'user_profile',
-          description: 'A user profile',
+        ),
+        Response(
+          name: 'user',
+          context: context,
+          description: 'Another user response',
           headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateResponseName(response), 'UserProfile');
-      });
+        ),
+      ];
+      const tags = [Tag(name: 'user')];
 
-      test('makes duplicate response names unique using Response suffix', () {
-        final response1 = Response(
-          name: 'User',
-          description: 'First user',
-          headers: const {},
-          context: Context.initial(),
-        );
-        final response2 = Response(
-          name: 'User',
-          description: 'Second user',
-          headers: const {},
-          context: Context.initial(),
-        );
-        final response3 = Response(
-          name: 'User',
-          description: 'Third user',
-          headers: const {},
-          context: Context.initial(),
-        );
+      manager.prime(
+        models: models,
+        responses: responses,
+        responseHeaders: const [],
+        operations: const [],
+        requestHeaders: const [],
+        queryParameters: const [],
+        pathParameters: const [],
+        tags: tags,
+      );
 
-        final name1 = nameManager.generateResponseName(response1);
-        final name2 = nameManager.generateResponseName(response2);
-        final name3 = nameManager.generateResponseName(response3);
+      // First model gets Anonymous
+      expect(manager.modelName(models[0]), 'Anonymous');
+      // Second model gets Model suffix
+      expect(manager.modelName(models[1]), 'AnonymousModel');
 
-        expect(name1, 'User');
-        expect(name2, 'UserResponse');
-        expect(name3, 'UserResponse2');
-      });
+      // First response gets base name
+      expect(manager.responseName(responses[0]), 'User');
+      // Second response gets Response suffix
+      expect(manager.responseName(responses[1]), 'UserResponse');
 
-      test('uses context path when name is not available', () {
-        final response = Response(
-          name: null,
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial().pushAll(['api', 'models', 'user']),
-        );
-        expect(nameManager.generateResponseName(response), 'ApiModelsUser');
-      });
-
-      test('uses Anonymous for response without name or context path', () {
-        final response = Response(
-          name: null,
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateResponseName(response), 'Anonymous');
-      });
-
-      test('preserves numbers in names', () {
-        final response = Response(
-          name: 'Model23',
-          description: 'A model',
-          headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameManager.generateResponseName(response), 'Model23');
-      });
-
-      test('handles names that already end with Response', () {
-        final response1 = Response(
-          name: 'UserResponse',
-          description: 'First user response',
-          headers: const {},
-          context: Context.initial(),
-        );
-        final response2 = Response(
-          name: 'UserResponse',
-          description: 'Second user response',
-          headers: const {},
-          context: Context.initial(),
-        );
-
-        final name1 = nameManager.generateResponseName(response1);
-        final name2 = nameManager.generateResponseName(response2);
-
-        expect(name1, 'UserResponse');
-        expect(name2, 'UserResponse2');
-      });
-
-      test('ensures global uniqueness with model names', () {
-        final model = ClassModel(
-          name: 'User',
-          properties: const {},
-          context: Context.initial(),
-        );
-        final response = Response(
-          name: 'User',
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial(),
-        );
-
-        final modelName = nameManager.generateModelName(model);
-        final responseName = nameManager.generateResponseName(response);
-        final responseName2 = nameManager.generateResponseName(response);
-
-        expect(modelName, 'User');
-        expect(responseName, 'UserResponse');
-        expect(responseName2, 'UserResponse2');
-
-        // Verify model names are also unique against response names
-        final modelName2 = nameManager.generateModelName(model);
-        expect(modelName2, 'UserModel');
-      });
-    });
-
-    group('generateTagName', () {
-      test('generates unique API class names for tags', () {
-        final manager = NameManager();
-        
-        expect(
-          manager.generateTagName(const Tag(name: 'pets')),
-          equals('PetsApi'),
-        );
-
-        expect(
-          manager.generateTagName(const Tag(name: 'pets')),
-          equals('PetsApi2'),
-        );
-
-        expect(
-          manager.generateTagName(const Tag(name: 'store_inventory')),
-          equals('StoreInventoryApi'),
-        );
-      });
-
-      test('handles special characters and numbers in tag names', () {
-        final manager = NameManager();
-        
-        expect(
-          manager.generateTagName(const Tag(name: '2pets')),
-          equals('PetsApi'),
-        );
-
-        expect(
-          manager.generateTagName(const Tag(name: 'pets-v2')),
-          equals('PetsV2Api'),
-        );
-
-        expect(
-          manager.generateTagName(const Tag(name: '_store_api')),
-          equals('StoreApiApi'),
-        );
-      });
+      // First tag gets Api suffix immediately
+      expect(manager.tagName(tags[0]), 'UserApi');
     });
   });
 }
