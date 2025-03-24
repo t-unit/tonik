@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/property_name_normalizer.dart';
+import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart class files from model definitions.
 @immutable
@@ -11,33 +12,38 @@ class ClassGenerator {
   const ClassGenerator({
     required this.nameManger,
     required this.propertyNameNormalizer,
+    required this.package,
   });
 
   final NameManger nameManger;
   final PropertyNameNormalizer propertyNameNormalizer;
+  final String package;
 
   static const deprecatedPropertyMessage = 'This property is deprecated.';
 
-  String generate(ClassModel model) {
+  ({String code, String filename}) generate(ClassModel model) {
     final emitter = DartEmitter.scoped(
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
 
-    final library = Library((b) => b..body.add(generateClass(model)));
-
     final snakeCaseName = nameManger.modelName(model).toSnakeCase();
+
+    final library = Library((b) {
+      b.directives.add(Directive.part('$snakeCaseName.freezed.dart'));
+      b.directives.add(Directive.part('$snakeCaseName.g.dart'));
+      b.body.add(generateClass(model));
+    });
 
     final buffer =
         StringBuffer()
           ..writeln('// Generated code - do not modify by hand\n')
-          ..writeln("part '$snakeCaseName.freezed.dart';")
-          ..writeln("part '$snakeCaseName.g.dart';\n")
           ..write(library.accept(emitter));
 
-    return buffer.toString();
+    return (code: buffer.toString(), filename: '$snakeCaseName.dart');
   }
 
+  @visibleForTesting
   Class generateClass(ClassModel model) {
     final className = nameManger.modelName(model);
     final normalizedProperties = propertyNameNormalizer.normalizeAll(
@@ -173,76 +179,7 @@ class ClassGenerator {
   }
 
   TypeReference _getTypeReference(Property property) {
-    final baseType = switch (property.model) {
-      final ListModel m => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(
-                _getTypeReference(
-                  Property(
-                    name: '',
-                    model: m.content,
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ),
-              ),
-      ),
-      final NamedModel m => TypeReference(
-        (b) => b..symbol = nameManger.modelName(m),
-      ),
-      StringModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'String'
-              ..url = 'dart:core',
-      ),
-      IntegerModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'int'
-              ..url = 'dart:core',
-      ),
-      DoubleModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'double'
-              ..url = 'dart:core',
-      ),
-      NumberModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'num'
-              ..url = 'dart:core',
-      ),
-      BooleanModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'bool'
-              ..url = 'dart:core',
-      ),
-      DateTimeModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'DateTime'
-              ..url = 'dart:core',
-      ),
-      DateModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'DateTime'
-              ..url = 'dart:core',
-      ),
-      DecimalModel _ => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'BigDecimal'
-              ..url = 'package:big_decimal/big_decimal.dart',
-      ),
-    };
+    final baseType = getTypeReference(property.model, nameManger, package);
 
     return property.isNullable || !property.isRequired
         ? TypeReference(

@@ -22,6 +22,7 @@ void main() {
       generator = ClassGenerator(
         nameManger: nameManger,
         propertyNameNormalizer: propertyNameNormalizer,
+        package: 'package:example',
       );
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
@@ -146,6 +147,17 @@ void main() {
         method.body?.accept(emitter).toString(),
         r'=> _$UserToJson(this)',
       );
+    });
+
+    test('generates filename in snake_case', () {
+      final model = ClassModel(
+        name: 'UserProfile',
+        properties: const {},
+        context: Context.initial(),
+      );
+
+      final result = generator.generate(model);
+      expect(result.filename, 'user_profile.dart');
     });
 
     group('property generation', () {
