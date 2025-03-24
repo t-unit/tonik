@@ -3,7 +3,6 @@ import 'package:tonic_generate/tonic_generate.dart';
 
 /// Manages name generation and caches results for consistent naming.
 class NameManger {
-  /// Creates a new name manager.
   NameManger({required this.generator});
 
   final NameGenerator generator;
@@ -29,7 +28,6 @@ class NameManger {
     required Iterable<PathParameter> pathParameters,
     required Iterable<Tag> tags,
   }) {
-    // Generate names in a consistent order
     for (final model in models) {
       modelName(model);
     }
