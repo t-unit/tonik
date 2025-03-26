@@ -6,11 +6,13 @@ environment:
   sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
-  change_case: ^2.2.0
-  code_builder: ^4.10.0
+  change_case: ^1.0.0+2
+  code_builder: ^4.9.0
+  collection: ^1.19.1
   meta: ^1.16.0
+  spell_out_numbers: ^1.0.0
   tonic_core:
 
 dev_dependencies:
   test: ^1.24.0
-  very_good_analysis: ^6.0.0
+  very_good_analysis: ^7.0.0

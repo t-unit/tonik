@@ -28,7 +28,10 @@ void main() {
 
       final models = [
         ListModel(content: StringModel(context: context), context: context),
-        ListModel(content: StringModel(context: context), context: context),
+        ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        ),
       ];
       final responses = [
         Response(
