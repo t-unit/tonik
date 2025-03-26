@@ -183,6 +183,26 @@ void main() {
     });
   });
 
+  test('handles special characters', () {
+      final result = normalizeEnumValues([
+        'class',
+        r'$class',
+        'class2',
+        'if',
+        r'$if',
+        'if2',
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        r'$class',
+        r'$class2',
+        'class2',
+        r'$if',
+        r'$if2',
+        'if2',
+      ]);
+  });
+
   test('preserves property metadata', () {
     final result = normalizeAll([
       createProperty('name', isDeprecated: true),
