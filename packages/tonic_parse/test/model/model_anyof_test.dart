@@ -53,6 +53,27 @@ void main() {
           ],
           'discriminator': {'propertyName': 'disc'},
         },
+        'DeepNestedAnyOf': {
+          'anyOf': [
+            {'type': 'string'},
+            {
+              'anyOf': [
+                {'type': 'integer'},
+                {
+                  'anyOf': [
+                    {'type': 'boolean'},
+                    {
+                      'type': 'object',
+                      'properties': {
+                        'foo': {'type': 'string'},
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       },
     },
   };
@@ -137,5 +158,40 @@ void main() {
     final inlineModel = simpleDiscriminator.models.last;
     expect(inlineModel.model, isA<AnyOfModel>());
     expect(inlineModel.discriminatorValue, 'InlineAnyOf');
+  });
+
+  test('Imports deeply nested anyOf', () {
+    final api = Importer().import(fileContent);
+
+    final deepNested = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'DeepNestedAnyOf',
+    );
+
+    expect(deepNested, isA<AnyOfModel>());
+    final level1 = deepNested as AnyOfModel;
+    expect(level1.models, hasLength(2));
+    expect(level1.models.first.model, isA<StringModel>());
+
+    final level2 = level1.models.last.model;
+    expect(level2, isA<AnyOfModel>());
+    expect((level2 as AnyOfModel).models, hasLength(2));
+    expect(api.models, contains(level2));
+    expect(level2.models.first.model, isA<IntegerModel>());
+
+    final level3 = level2.models.last.model;
+    expect(level3, isA<AnyOfModel>());
+    expect((level3 as AnyOfModel).models, hasLength(2));
+    expect(api.models, contains(level3));
+    expect(level3.models.first.model, isA<BooleanModel>());
+
+    final anonymousClass = level3.models.last.model;
+    expect(anonymousClass, isA<ClassModel>());
+    expect((anonymousClass as ClassModel).name, isNull);
+    expect(anonymousClass.properties.length, 1);
+    expect(anonymousClass.properties.first.name, 'foo');
+    expect(anonymousClass.properties.first.model, isA<StringModel>());
+
+    // Verify the anonymous class model is added to the models set
+    expect(api.models, contains(anonymousClass));
   });
 }

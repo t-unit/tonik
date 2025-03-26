@@ -202,7 +202,22 @@ class ModelImporter {
     final models = schema.allOf!.map(
       (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
     );
-    return AllOfModel(models: models.toSet(), context: context, name: name);
+    final allOfModel = AllOfModel(models: models.toSet(), context: context, name: name);
+
+    _addModelToSet(allOfModel);
+    return allOfModel;
+  }
+
+  void _addModelToSet(Model model) {
+    if (model is! PrimitiveModel) {
+      models.add(model);
+
+      if (model is OneOfModel) {
+        for (final nestedModel in model.models) {
+          _addModelToSet(nestedModel.model);
+        }
+      }
+    }
   }
 
   OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
@@ -217,12 +232,15 @@ class ModelImporter {
       ),
     );
 
-    return OneOfModel(
+    final oneOfModel = OneOfModel(
       models: models.toSet(),
       context: context,
       name: name,
       discriminator: schema.discriminator?.propertyName,
     );
+
+    _addModelToSet(oneOfModel);
+    return oneOfModel;
   }
 
   AnyOfModel _parseAnyOf(String? name, Schema schema, Context context) {
@@ -236,12 +254,15 @@ class ModelImporter {
         model: _parseSchemaWrapper(null, anyOfSchema, modelContext),
       ),
     );
-    return AnyOfModel(
+    final anyOfModel = AnyOfModel(
       models: models.toSet(),
       context: context,
       name: name,
       discriminator: schema.discriminator?.propertyName,
     );
+
+    _addModelToSet(anyOfModel);
+    return anyOfModel;
   }
 
   String? _getDiscriminatorValue({
