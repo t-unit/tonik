@@ -3,7 +3,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
-import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart typedef files from 
@@ -12,12 +11,10 @@ import 'package:tonic_generate/src/util/type_reference_generator.dart';
 class TypedefGenerator {
   const TypedefGenerator({
     required this.nameManger,
-    required this.propertyNameNormalizer,
     required this.package,
   });
 
   final NameManger nameManger;
-  final PropertyNameNormalizer propertyNameNormalizer;
   final String package;
 
   ({String code, String filename}) generateAlias(AliasModel model) =>

@@ -1,7 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
-import 'package:spell_out_numbers/spell_out_numbers.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/property_name_normalizer.dart';
@@ -11,12 +10,10 @@ import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 class EnumGenerator {
   const EnumGenerator({
     required this.nameManger,
-    required this.propertyNameNormalizer,
     required this.package,
   });
 
   final NameManger nameManger;
-  final PropertyNameNormalizer propertyNameNormalizer;
   final String package;
 
   ({String code, String filename}) generate<T extends Object>(
@@ -60,8 +57,10 @@ class EnumGenerator {
       );
     }
 
-    final values = _generateEnumValues(model);
-    final uniqueValues = _ensureUniqueNames(values);
+    final normalizedValues = normalizeEnumValues(
+      model.values.map((v) => v.toString()).toList(),
+    );
+    final enumValues = _generateEnumValues(model, normalizedValues);
 
     // Generate unique name for nullable enum with prefix to allow 
     // using a typedef to express the nullable type.
@@ -82,7 +81,7 @@ class EnumGenerator {
             ..annotations.add(
               refer('JsonEnum', 'package:json_annotation/json_annotation.dart'),
             )
-            ..values.addAll(uniqueValues),
+            ..values.addAll(enumValues),
     );
 
     final typedefValue = model.isNullable
@@ -94,9 +93,15 @@ class EnumGenerator {
     return (enumValue: enumValue, typedefValue: typedefValue);
   }
 
-  List<EnumValue> _generateEnumValues<T extends Object>(EnumModel<T> model) {
-    return model.values.map((value) {
-      // Add @JsonValue annotation with the original value
+  List<EnumValue> _generateEnumValues<T extends Object>(
+    EnumModel<T> model,
+    List<({String normalizedName, String originalValue})> normalizedValues,
+  ) {
+    final values = model.values.toList();
+    return values.asMap().entries.map((entry) {
+      final value = entry.value;
+      final normalizedName = normalizedValues[entry.key].normalizedName;
+
       final annotation = refer(
         '@JsonValue',
         'package:json_annotation/json_annotation.dart',
@@ -110,66 +115,9 @@ class EnumGenerator {
       return EnumValue(
         (b) =>
             b
-              ..name = _normalizeEnumValueName(value)
+              ..name = normalizedName
               ..annotations.add(annotation),
       );
     }).toList();
-  }
-
-  String _normalizeEnumValueName(Object value) {
-    // For integer values, spell out the number
-    if (value is int) {
-      final words = EnglishNumberScheme().toWord(value);
-      return words.toCamelCase();
-    }
-
-    final str = value.toString();
-
-    // Handle underscore-only values
-    if (RegExp(r'^_+$').hasMatch(str)) {
-      return 'value';
-    }
-
-    // For string values, just use camelCase
-    return str.toCamelCase();
-  }
-
-  List<EnumValue> _ensureUniqueNames(List<EnumValue> values) {
-    final usedNames = <String>{};
-    final result = <EnumValue>[];
-    final baseNames = <String, int>{};
-
-    for (final value in values) {
-      final baseName = value.name;
-      var name = baseName;
-
-      // If this base name has been seen before, increment its counter
-      baseNames.putIfAbsent(baseName, () => 1);
-      final counter = baseNames[baseName]!;
-
-      // If the name is already used, append the counter
-      if (usedNames.contains(name)) {
-        name = '$baseName${counter + 1}';
-        baseNames[baseName] = counter + 1;
-      }
-
-      usedNames.add(name);
-
-      // If the name was changed, create a new EnumValue
-      if (name != value.name) {
-        result.add(
-          EnumValue(
-            (b) =>
-                b
-                  ..name = name
-                  ..annotations.addAll(value.annotations),
-          ),
-        );
-      } else {
-        result.add(value);
-      }
-    }
-
-    return result;
   }
 }

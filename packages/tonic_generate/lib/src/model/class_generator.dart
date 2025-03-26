@@ -11,12 +11,10 @@ import 'package:tonic_generate/src/util/type_reference_generator.dart';
 class ClassGenerator {
   const ClassGenerator({
     required this.nameManger,
-    required this.propertyNameNormalizer,
     required this.package,
   });
 
   final NameManger nameManger;
-  final PropertyNameNormalizer propertyNameNormalizer;
   final String package;
 
   static const deprecatedPropertyMessage = 'This property is deprecated.';
@@ -46,7 +44,7 @@ class ClassGenerator {
   @visibleForTesting
   Class generateClass(ClassModel model) {
     final className = nameManger.modelName(model);
-    final normalizedProperties = propertyNameNormalizer.normalizeAll(
+    final normalizedProperties = normalizeAll(
       model.properties.toList(),
     );
 

@@ -4,13 +4,11 @@ import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/model/class_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
-import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 
 void main() {
   group('ClassGenerator', () {
     late ClassGenerator generator;
     late NameManger nameManger;
-    late PropertyNameNormalizer propertyNameNormalizer;
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
@@ -18,10 +16,8 @@ void main() {
     setUp(() {
       nameGenerator = NameGenerator();
       nameManger = NameManger(generator: nameGenerator);
-      propertyNameNormalizer = PropertyNameNormalizer();
       generator = ClassGenerator(
         nameManger: nameManger,
-        propertyNameNormalizer: propertyNameNormalizer,
         package: 'package:example',
       );
       context = Context.initial();

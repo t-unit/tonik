@@ -4,7 +4,6 @@ import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/model/enum_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
-import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 
 void main() {
   late EnumGenerator generator;
@@ -14,7 +13,6 @@ void main() {
     nameGenerator = NameGenerator();
     generator = EnumGenerator(
       nameManger: NameManger(generator: nameGenerator),
-      propertyNameNormalizer: PropertyNameNormalizer(),
       package: 'test_package',
     );
   });
