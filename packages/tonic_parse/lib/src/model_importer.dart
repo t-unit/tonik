@@ -202,7 +202,11 @@ class ModelImporter {
     final models = schema.allOf!.map(
       (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
     );
-    final allOfModel = AllOfModel(models: models.toSet(), context: context, name: name);
+    final allOfModel = AllOfModel(
+      models: models.toSet(),
+      context: context,
+      name: name,
+    );
 
     _addModelToSet(allOfModel);
     return allOfModel;

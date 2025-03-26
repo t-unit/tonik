@@ -19,9 +19,6 @@ class EnumGenerator {
   final PropertyNameNormalizer propertyNameNormalizer;
   final String package;
 
-  /// Generates a Dart enum file from an enum model.
-  ///
-  /// Supports both [String] and [int] values.
   ({String code, String filename}) generate<T extends Object>(
     EnumModel<T> model,
   ) {
@@ -30,11 +27,17 @@ class EnumGenerator {
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = nameManger.modelName(model).toSnakeCase();
+    final publicEnumName = nameManger.modelName(model);
+    final snakeCaseName = publicEnumName.toSnakeCase();
 
     final library = Library((b) {
       b.directives.add(Directive.part('$snakeCaseName.g.dart'));
-      b.body.add(generateEnum(model));
+      
+      final generated = generateEnum(model, publicEnumName);
+      b.body.addAll([
+        if (generated.typedefValue != null) generated.typedefValue!,
+        generated.enumValue,
+      ]);
     });
 
     final buffer =
@@ -46,7 +49,10 @@ class EnumGenerator {
   }
 
   @visibleForTesting
-  Enum generateEnum<T extends Object>(EnumModel<T> model) {
+  ({Enum enumValue, TypeDef? typedefValue}) generateEnum<T extends Object>(
+    EnumModel<T> model,
+    String enumName,
+  ) {
     if (T != String && T != int) {
       throw ArgumentError(
         'EnumGenerator only supports String and int values. '
@@ -54,19 +60,38 @@ class EnumGenerator {
       );
     }
 
-    final enumName = nameManger.modelName(model);
     final values = _generateEnumValues(model);
     final uniqueValues = _ensureUniqueNames(values);
 
-    return Enum(
+    // Generate unique name for nullable enum with prefix to allow 
+    // using a typedef to express the nullable type.
+    final actualEnumName = model.isNullable
+        ? nameManger.modelName(
+            AliasModel(
+              name: 'Raw$enumName',
+              model: model,
+              context: model.context,
+            ),
+          )
+        : enumName;
+
+    final enumValue = Enum(
       (b) =>
           b
-            ..name = enumName
+            ..name = actualEnumName
             ..annotations.add(
               refer('JsonEnum', 'package:json_annotation/json_annotation.dart'),
             )
             ..values.addAll(uniqueValues),
     );
+
+    final typedefValue = model.isNullable
+        ? TypeDef((b) => b
+          ..name = enumName
+          ..definition = refer('$actualEnumName?'),)
+        : null;
+
+    return (enumValue: enumValue, typedefValue: typedefValue);
   }
 
   List<EnumValue> _generateEnumValues<T extends Object>(EnumModel<T> model) {

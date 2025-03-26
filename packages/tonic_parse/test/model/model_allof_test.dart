@@ -35,13 +35,28 @@ void main() {
         },
         'DeepNestedAllOf': {
           'allOf': [
-            {'type': 'object', 'properties': {'type': {'type': 'string'}}},
+            {
+              'type': 'object',
+              'properties': {
+                'type': {'type': 'string'},
+              },
+            },
             {
               'allOf': [
-                {'type': 'object', 'properties': {'id': {'type': 'integer'}}},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'id': {'type': 'integer'},
+                  },
+                },
                 {
                   'allOf': [
-                    {'type': 'object', 'properties': {'active': {'type': 'boolean'}}},
+                    {
+                      'type': 'object',
+                      'properties': {
+                        'active': {'type': 'boolean'},
+                      },
+                    },
                     {
                       'type': 'object',
                       'properties': {
