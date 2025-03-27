@@ -67,7 +67,7 @@ class EnumGenerator {
     final actualEnumName = model.isNullable
         ? nameManger.modelName(
             AliasModel(
-              name: 'Raw$enumName',
+              name: enumName,
               model: model,
               context: model.context,
             ),
@@ -77,7 +77,7 @@ class EnumGenerator {
     final enumValue = Enum(
       (b) =>
           b
-            ..name = actualEnumName
+            ..name = model.isNullable ? 'Raw$enumName' : actualEnumName
             ..annotations.add(
               refer('JsonEnum', 'package:json_annotation/json_annotation.dart'),
             )
@@ -87,7 +87,7 @@ class EnumGenerator {
     final typedefValue = model.isNullable
         ? TypeDef((b) => b
           ..name = enumName
-          ..definition = refer('$actualEnumName?'),)
+          ..definition = refer('Raw$enumName?'),)
         : null;
 
     return (enumValue: enumValue, typedefValue: typedefValue);
