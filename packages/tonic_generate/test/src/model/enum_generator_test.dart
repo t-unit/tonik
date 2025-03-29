@@ -50,13 +50,17 @@ void main() {
       expect(generated.enumValue.values[1].name, 'green');
       expect(generated.enumValue.values[2].name, 'blue');
 
-      // Verify JSON value annotations
-      for (final value in generated.enumValue.values) {
-        final annotation = value.annotations.first;
-        final code = annotation.code.accept(DartEmitter()).toString();
-        expect(code, contains('@JsonValue'));
-        expect(code, contains("'${value.name}'"));
-      }
+      final code = generated.enumValue.accept(DartEmitter()).toString();
+      expect(code, contains("red('red')"));
+      expect(code, contains("green('green')"));
+      expect(code, contains("blue('blue')"));
+      expect(code, contains('const Color(this.rawValue);'));
+      expect(code, contains('final String rawValue;'));
+
+      final enumAnnotation = generated.enumValue.annotations.first;
+      final annotationCode =
+          enumAnnotation.code.accept(DartEmitter()).toString();
+      expect(annotationCode, contains("JsonEnum(valueField: 'rawValue')"));
     });
 
     test('generates nullable enum code', () {
@@ -174,14 +178,17 @@ void main() {
       expect(generated.enumValue.values[1].name, 'two');
       expect(generated.enumValue.values[2].name, 'three');
 
-      // Verify JSON value annotations
-      for (var i = 0; i < generated.enumValue.values.length; i++) {
-        final value = generated.enumValue.values[i];
-        final annotation = value.annotations.first;
-        final code = annotation.code.accept(DartEmitter()).toString();
-        expect(code, contains('@JsonValue'));
-        expect(code, contains('${i + 1}'));
-      }
+      final code = generated.enumValue.accept(DartEmitter()).toString();
+      expect(code, contains('one(1)'));
+      expect(code, contains('two(2)'));
+      expect(code, contains('three(3)'));
+      expect(code, contains('const Status(this.rawValue);'));
+      expect(code, contains('final int rawValue;'));
+
+      final enumAnnotation = generated.enumValue.annotations.first;
+      final annotationCode =
+          enumAnnotation.code.accept(DartEmitter()).toString();
+      expect(annotationCode, equals("JsonEnum(valueField: 'rawValue')"));
     });
 
     test('handles underscore-only values', () {
@@ -201,25 +208,12 @@ void main() {
       expect(generated.enumValue.values[1].name, 'value2');
       expect(generated.enumValue.values[2].name, 'value3');
 
-      // Verify JSON value annotations
-      expect(
-        generated.enumValue.values[0].annotations.first.code
-            .accept(DartEmitter())
-            .toString(),
-        contains("'_'"),
-      );
-      expect(
-        generated.enumValue.values[1].annotations.first.code
-            .accept(DartEmitter())
-            .toString(),
-        contains("'__'"),
-      );
-      expect(
-        generated.enumValue.values[2].annotations.first.code
-            .accept(DartEmitter())
-            .toString(),
-        contains("'___'"),
-      );
+      final code = generated.enumValue.accept(DartEmitter()).toString();
+      expect(code, contains("value('_')"));
+      expect(code, contains("value2('__')"));
+      expect(code, contains("value3('___')"));
+      expect(code, contains('const Placeholder(this.rawValue);'));
+      expect(code, contains('final String rawValue;'));
     });
 
     test('generates file with correct name and content', () {
@@ -233,13 +227,15 @@ void main() {
       final result = generator.generate(model);
 
       expect(result.filename, 'status.dart');
-      expect(result.code, contains('@_i1.JsonEnum'));
+      expect(result.code, contains("@_i1.JsonEnum(valueField: 'rawValue')"));
       expect(result.code, contains('enum Status'));
       expect(result.code, contains("part 'status.g.dart'"));
       expect(result.code, isNot(contains('typedef')));
-      expect(result.code, contains('@JsonValue(100)'));
-      expect(result.code, contains('@JsonValue(200)'));
-      expect(result.code, contains('@JsonValue(404)'));
+      expect(result.code, contains('oneHundred(100)'));
+      expect(result.code, contains('twoHundred(200)'));
+      expect(result.code, contains('fourHundredFour(404)'));
+      expect(result.code, contains('const Status(this.rawValue);'));
+      expect(result.code, contains('final int rawValue;'));
     });
 
     test('throws error for unsupported types', () {

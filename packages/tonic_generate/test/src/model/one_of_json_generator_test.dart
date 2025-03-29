@@ -41,18 +41,17 @@ void main() {
     });
 
     test('has private constructor for methods', () {
-      expect(
-        generatedClass.constructors.any((c) => c.name == '_'),
-        isTrue,
-      );
+      expect(generatedClass.constructors.any((c) => c.name == '_'), isTrue);
     });
 
     test('toJson method', () {
-      final toJson = generatedClass.methods.firstWhere((m) => m.name == 'toJson');
+      final toJson = generatedClass.methods.firstWhere(
+        (m) => m.name == 'toJson',
+      );
       expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
-      
+
       final body = toJson.body?.accept(emitter).toString() ?? '';
-      
+
       const expectedBody = '''
         final (dynamic json, String? discriminator) = switch (this) {
           ResultSuccess(:final value) => (value, 'success'),
@@ -60,12 +59,14 @@ void main() {
         };
 
         return json;''';
-      
+
       expect(body.normalizeCode(), expectedBody.normalizeCode());
     });
 
     test('fromJson method', () {
-      final fromJson = generatedClass.methods.firstWhere((m) => m.name == 'fromJson');
+      final fromJson = generatedClass.methods.firstWhere(
+        (m) => m.name == 'fromJson',
+      );
       expect(fromJson.static, isTrue);
       expect(fromJson.returns?.accept(emitter).toString(), 'Result');
       expect(
@@ -74,14 +75,14 @@ void main() {
       );
 
       final body = fromJson.body?.accept(emitter).toString() ?? '';
-      
+
       const expectedBody = r'''
         return switch (json) {
           String() => Result.success(json),
           int() => Result.error(json),
           _ => throw ArgumentError('Invalid JSON type for Result: \${json.runtimeType}')
         };''';
-      
+
       expect(body.normalizeCode(), expectedBody.normalizeCode());
     });
   });
@@ -134,11 +135,13 @@ void main() {
     });
 
     test('toJson method', () {
-      final toJson = generatedClass.methods.firstWhere((m) => m.name == 'toJson');
+      final toJson = generatedClass.methods.firstWhere(
+        (m) => m.name == 'toJson',
+      );
       expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
-      
+
       final body = toJson.body?.accept(emitter).toString() ?? '';
-      
+
       const expectedBody = '''
         final (dynamic json, String? discriminator) = switch (this) {
           ResultSuccess(:final value) => (value.toJson(), 'success'),
@@ -150,12 +153,14 @@ void main() {
         }
 
         return json;''';
-      
+
       expect(body.normalizeCode(), expectedBody.normalizeCode());
     });
 
     test('fromJson method', () {
-      final fromJson = generatedClass.methods.firstWhere((m) => m.name == 'fromJson');
+      final fromJson = generatedClass.methods.firstWhere(
+        (m) => m.name == 'fromJson',
+      );
       expect(fromJson.static, isTrue);
       expect(
         fromJson.requiredParameters.first.type?.accept(emitter).toString(),
@@ -163,14 +168,14 @@ void main() {
       );
 
       final body = fromJson.body?.accept(emitter).toString() ?? '';
-      
+
       const expectedBody = r'''
         return switch (json['type']) {
           'success' => Result.success(Success.fromJson(json)),
           'error' => Result.error(Error.fromJson(json)),
           _ => throw ArgumentError('Invalid discriminator value for Result: \${json['type']}')
         };''';
-      
+
       expect(body.normalizeCode(), expectedBody.normalizeCode());
     });
   });
@@ -224,11 +229,13 @@ void main() {
     });
 
     test('toJson method', () {
-      final toJson = generatedClass.methods.firstWhere((m) => m.name == 'toJson');
+      final toJson = generatedClass.methods.firstWhere(
+        (m) => m.name == 'toJson',
+      );
       expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
-      
+
       final body = toJson.body?.accept(emitter).toString() ?? '';
-      
+
       const expectedBody = '''
         final (dynamic json, String? discriminator) = switch (this) {
           ResultSuccess(:final value) => (value.toJson(), null),
@@ -241,12 +248,14 @@ void main() {
         }
 
         return json;''';
-      
+
       expect(body.normalizeCode(), expectedBody.normalizeCode());
     });
 
     test('fromJson method', () {
-      final fromJson = generatedClass.methods.firstWhere((m) => m.name == 'fromJson');
+      final fromJson = generatedClass.methods.firstWhere(
+        (m) => m.name == 'fromJson',
+      );
       expect(fromJson.static, isTrue);
       expect(
         fromJson.requiredParameters.first.type?.accept(emitter).toString(),
@@ -254,7 +263,7 @@ void main() {
       );
 
       final body = fromJson.body?.accept(emitter).toString() ?? '';
-      
+
       const expectedBody = '''
         final discriminator = json is Map<String, dynamic> ? json['discriminator'] : null;
 
@@ -276,7 +285,7 @@ void main() {
         } catch (_) {}
 
         throw ArgumentError('Invalid JSON for Result');''';
-      
+
       expect(body.normalizeCode(), expectedBody.normalizeCode());
     });
   });
@@ -284,4 +293,4 @@ void main() {
 
 extension on String {
   String normalizeCode() => replaceAll(RegExp(r'\s+'), ' ').trim();
-} 
+}

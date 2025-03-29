@@ -8,10 +8,7 @@ import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
 class EnumGenerator {
-  const EnumGenerator({
-    required this.nameManger,
-    required this.package,
-  });
+  const EnumGenerator({required this.nameManger, required this.package});
 
   final NameManger nameManger;
   final String package;
@@ -29,7 +26,7 @@ class EnumGenerator {
 
     final library = Library((b) {
       b.directives.add(Directive.part('$snakeCaseName.g.dart'));
-      
+
       final generated = generateEnum(model, publicEnumName);
       b.body.addAll([
         if (generated.typedefValue != null) generated.typedefValue!,
@@ -62,33 +59,61 @@ class EnumGenerator {
     );
     final enumValues = _generateEnumValues(model, normalizedValues);
 
-    // Generate unique name for nullable enum with prefix to allow 
+    // Generate unique name for nullable enum with prefix to allow
     // using a typedef to express the nullable type.
-    final actualEnumName = model.isNullable
-        ? nameManger.modelName(
-            AliasModel(
-              name: enumName,
-              model: model,
-              context: model.context,
-            ),
-          )
-        : enumName;
+    final actualEnumName =
+        model.isNullable
+            ? nameManger.modelName(
+              AliasModel(name: enumName, model: model, context: model.context),
+            )
+            : enumName;
 
     final enumValue = Enum(
       (b) =>
           b
             ..name = model.isNullable ? 'Raw$enumName' : actualEnumName
             ..annotations.add(
-              refer('JsonEnum', 'package:json_annotation/json_annotation.dart'),
+              refer(
+                'JsonEnum',
+                'package:json_annotation/json_annotation.dart',
+              ).call([], {'valueField': literalString('rawValue')}),
+            )
+            ..constructors.add(
+              Constructor(
+                (b) =>
+                    b
+                      ..constant = true
+                      ..requiredParameters.add(
+                        Parameter(
+                          (b) =>
+                              b
+                                ..name = 'rawValue'
+                                ..toThis = true,
+                        ),
+                      ),
+              ),
+            )
+            ..fields.add(
+              Field(
+                (b) =>
+                    b
+                      ..name = 'rawValue'
+                      ..modifier = FieldModifier.final$
+                      ..type = refer(T.toString()),
+              ),
             )
             ..values.addAll(enumValues),
     );
 
-    final typedefValue = model.isNullable
-        ? TypeDef((b) => b
-          ..name = enumName
-          ..definition = refer('Raw$enumName?'),)
-        : null;
+    final typedefValue =
+        model.isNullable
+            ? TypeDef(
+              (b) =>
+                  b
+                    ..name = enumName
+                    ..definition = refer('Raw$enumName?'),
+            )
+            : null;
 
     return (enumValue: enumValue, typedefValue: typedefValue);
   }
@@ -102,21 +127,15 @@ class EnumGenerator {
       final value = entry.value;
       final normalizedName = normalizedValues[entry.key].normalizedName;
 
-      final annotation = refer(
-        '@JsonValue',
-        'package:json_annotation/json_annotation.dart',
-      ).call([
-        if (value is int)
-          literalNum(value)
-        else
-          literalString(value.toString()),
-      ]);
-
       return EnumValue(
         (b) =>
             b
               ..name = normalizedName
-              ..annotations.add(annotation),
+              ..arguments.add(
+                value is int
+                    ? literalNum(value)
+                    : literalString(value.toString()),
+              ),
       );
     }).toList();
   }

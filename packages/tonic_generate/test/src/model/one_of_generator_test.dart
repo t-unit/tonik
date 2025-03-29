@@ -108,13 +108,17 @@ void main() {
             discriminatorValue: null,
             model: ClassModel(
               name: 'Success',
-              properties: {},
+              properties: const {},
               context: context,
             ),
           ),
           (
             discriminatorValue: null,
-            model: ClassModel(name: 'Error', properties: {}, context: context),
+            model: ClassModel(
+              name: 'Error',
+              properties: const {},
+              context: context,
+            ),
           ),
         },
         discriminator: null,
