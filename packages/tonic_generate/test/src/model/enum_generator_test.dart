@@ -301,5 +301,122 @@ void main() {
         expect(generated.enumValue.values[2].name, 'three');
       });
     });
+
+    group('json serialization', () {
+      test('generates toJson method', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final toJson = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toJson',
+        );
+        
+        final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
+        expect(body, 'rawValue');
+        expect(toJson.returns?.accept(DartEmitter()).toString(), 'String');
+      });
+
+      test('generates fromJson factory for string enums', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        expect(fromJson.factory, isTrue);
+        expect(
+          fromJson.requiredParameters.single.type?.accept(DartEmitter()).toString(),
+          'dynamic',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if (value is! String) {
+            throw FormatException('Expected String for Color, got ${value.runtimeType}');
+          }
+          return values.firstWhere(
+            (e) => e.rawValue == value,
+            orElse: () => throw FormatException('No matching Color for value: $value'));
+        ''';
+        expect(body.normalizeCode(), expectedBody.normalizeCode());
+      });
+
+      test('generates fromJson factory for integer enums', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {200, 404, 500},
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        expect(fromJson.factory, isTrue);
+        expect(
+          fromJson.requiredParameters.single.type?.accept(DartEmitter()).toString(),
+          'dynamic',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if (value is! int) {
+            throw FormatException('Expected int for Status, got ${value.runtimeType}');
+          }
+          return values.firstWhere(
+            (e) => e.rawValue == value,
+            orElse: () => throw FormatException('No matching Status for value: $value'));
+        ''';
+        expect(body.normalizeCode(), expectedBody.normalizeCode());
+      });
+
+      test('generates fromJson factory for nullable enums', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        expect(fromJson.factory, isTrue);
+        expect(
+          fromJson.requiredParameters.single.type?.accept(DartEmitter()).toString(),
+          'dynamic',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if (value is! String) {
+            throw FormatException('Expected String for Status, got ${value.runtimeType}');
+          }
+          return values.firstWhere(
+            (e) => e.rawValue == value,
+            orElse: () => throw FormatException('No matching Status for value: $value'));
+        ''';
+        expect(body.normalizeCode(), expectedBody.normalizeCode());
+      });
+    });
   });
+}
+
+extension on String {
+  String normalizeCode() => replaceAll(RegExp(r'\s+'), ' ').trim();
 }

@@ -93,6 +93,17 @@ class EnumGenerator {
                       ),
               ),
             )
+            ..constructors.add(_generateFromJsonConstructor<T>(actualEnumName))
+            ..methods.add(
+              Method(
+                (b) =>
+                    b
+                      ..name = 'toJson'
+                      ..returns = refer(T.toString())
+                      ..lambda = true
+                      ..body = const Code('rawValue'),
+              ),
+            )
             ..fields.add(
               Field(
                 (b) =>
@@ -116,6 +127,40 @@ class EnumGenerator {
             : null;
 
     return (enumValue: enumValue, typedefValue: typedefValue);
+  }
+
+  Constructor _generateFromJsonConstructor<T extends Object>(String enumName) {
+    const valueParam = 'value';
+    final typeCheck = 'value is! $T';
+    final typeError =
+        "throw FormatException('Expected $T for "
+        "$enumName, got \${$valueParam.runtimeType}');";
+    final valueError =
+        "throw FormatException('No matching $enumName "
+        "for value: \$$valueParam')";
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromJson'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = valueParam
+                      ..type = refer('dynamic'),
+              ),
+            )
+            ..body = Block.of([
+              Code('if ($typeCheck) {'),
+              Code(typeError),
+              const Code('}'),
+              const Code('return values.firstWhere('),
+              const Code('(e) => e.rawValue == $valueParam,'),
+              Code('orElse: () => $valueError);'),
+            ]),
+    );
   }
 
   List<EnumValue> _generateEnumValues<T extends Object>(
