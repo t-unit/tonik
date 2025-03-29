@@ -59,7 +59,17 @@ class OneOfGenerator {
                   model.discriminator,
                 ),
               ),
-            ),
+            )
+            ..methods.addAll([
+              Method(
+                (b) =>
+                    b
+                      ..name = 'toJson'
+                      ..returns = refer('dynamic')
+                      ..body = _generateToJsonBody(className, model)
+                      ..lambda = false,
+              ),
+            ]),
     );
   }
 
@@ -96,5 +106,48 @@ class OneOfGenerator {
               ),
             ),
     );
+  }
+
+  Code _generateToJsonBody(String className, OneOfModel model) {
+    final cases = model.models
+        .map((discriminatedModel) {
+          final factoryName =
+              discriminatedModel.discriminatorValue ??
+              nameManger.modelName(discriminatedModel.model);
+          final variantName = '$className${factoryName.toPascalCase()}';
+
+          final isPrimitive = discriminatedModel.model is PrimitiveModel;
+          final jsonValue = isPrimitive ? 'value' : 'value.toJson()';
+          final discriminatorValue =
+              discriminatedModel.discriminatorValue != null
+                  ? "'${discriminatedModel.discriminatorValue}'"
+                  : 'null';
+
+          return '$variantName(:final value) => '
+              '($jsonValue, $discriminatorValue)';
+        })
+        .join(',\n');
+
+    final blocks = [
+      Code(
+        'final (dynamic json, String? discriminator) = switch (this) {\n'
+        '$cases\n'
+        '};\n',
+      ),
+    ];
+
+    if (model.discriminator != null) {
+      blocks.add(
+        Code(
+          'if (discriminator != null && json is Map<String, dynamic>) {\n'
+          "  json.putIfAbsent('${model.discriminator}', () => discriminator);\n"
+          '}\n\n',
+        ),
+      );
+    }
+
+    blocks.add(const Code('return json;'));
+
+    return Block.of(blocks);
   }
 }
