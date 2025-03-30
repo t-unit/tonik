@@ -10,11 +10,11 @@ import 'package:tonic_generate/src/util/type_reference_generator.dart';
 @immutable
 class TypedefGenerator {
   const TypedefGenerator({
-    required this.nameManger,
+    required this.nameManager,
     required this.package,
   });
 
-  final NameManger nameManger;
+  final NameManager nameManager;
   final String package;
 
   ({String code, String filename}) generateAlias(AliasModel model) =>
@@ -32,12 +32,12 @@ class TypedefGenerator {
       _generateTypedefFromModel(model, model);
 
   TypeDef _generateTypedefFromModel(Model model, Model definition) {
-    final baseType = getTypeReference(definition, nameManger, package);
+    final baseType = getTypeReference(definition, nameManager, package);
 
     return TypeDef(
       (b) =>
           b
-            ..name = nameManger.modelName(model)
+            ..name = nameManager.modelName(model)
             ..definition = baseType,
     );
   }

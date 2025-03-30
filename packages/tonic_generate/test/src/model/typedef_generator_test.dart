@@ -8,7 +8,7 @@ import 'package:tonic_generate/src/util/name_manager.dart';
 void main() {
   group('TypedefGenerator', () {
     late TypedefGenerator generator;
-    late NameManger nameManager;
+    late NameManager nameManager;
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
@@ -16,9 +16,9 @@ void main() {
 
     setUp(() {
       nameGenerator = NameGenerator();
-      nameManager = NameManger(generator: nameGenerator);
+      nameManager = NameManager(generator: nameGenerator);
       generator = TypedefGenerator(
-        nameManger: nameManager,
+        nameManager: nameManager,
         package: package,
       );
       context = Context.initial();

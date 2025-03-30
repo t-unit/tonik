@@ -1,6 +1,5 @@
-/// A code generation package for Tonic.
+/// A Dart code gerenator for Open API models defined by tonic_core.
 library;
 
-export 'src/util/name_generator.dart';
-export 'src/util/name_manager.dart';
-export 'src/util/property_name_normalizer.dart';
+
+export 'src/generator.dart' show generate;

@@ -1,9 +1,9 @@
 import 'package:tonic_core/tonic_core.dart';
-import 'package:tonic_generate/tonic_generate.dart';
+import 'package:tonic_generate/src/util/name_generator.dart';
 
 /// Manages name generation and caches results for consistent naming.
-class NameManger {
-  NameManger({required this.generator});
+class NameManager {
+  NameManager({required this.generator});
 
   final NameGenerator generator;
 

@@ -4,13 +4,13 @@ import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 
 void main() {
-  group('NameManger', () {
+  group('NameManager', () {
     late NameGenerator generator;
-    late NameManger manager;
+    late NameManager manager;
 
     setUp(() {
       generator = NameGenerator();
-      manager = NameManger(generator: generator);
+      manager = NameManager(generator: generator);
     });
 
     test('caches generated names', () {

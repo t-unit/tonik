@@ -8,16 +8,16 @@ import 'package:tonic_generate/src/util/name_manager.dart';
 void main() {
   group('OneOfGenerator', () {
     late OneOfGenerator generator;
-    late NameManger nameManger;
+    late NameManager nameManager;
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
 
     setUp(() {
       nameGenerator = NameGenerator();
-      nameManger = NameManger(generator: nameGenerator);
+      nameManager = NameManager(generator: nameGenerator);
       generator = OneOfGenerator(
-        nameManger: nameManger,
+        nameManager: nameManager,
         package: 'package:example',
       );
       context = Context.initial();

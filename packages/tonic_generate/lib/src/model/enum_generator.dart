@@ -8,9 +8,9 @@ import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
 class EnumGenerator {
-  const EnumGenerator({required this.nameManger, required this.package});
+  const EnumGenerator({required this.nameManager, required this.package});
 
-  final NameManger nameManger;
+  final NameManager nameManager;
   final String package;
 
   ({String code, String filename}) generate<T extends Object>(
@@ -21,7 +21,7 @@ class EnumGenerator {
       useNullSafetySyntax: true,
     );
 
-    final publicEnumName = nameManger.modelName(model);
+    final publicEnumName = nameManager.modelName(model);
     final snakeCaseName = publicEnumName.toSnakeCase();
 
     final library = Library((b) {
@@ -63,7 +63,7 @@ class EnumGenerator {
     // using a typedef to express the nullable type.
     final actualEnumName =
         model.isNullable
-            ? nameManger.modelName(
+            ? nameManager.modelName(
               AliasModel(name: enumName, model: model, context: model.context),
             )
             : enumName;

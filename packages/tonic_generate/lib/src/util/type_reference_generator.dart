@@ -5,7 +5,7 @@ import 'package:tonic_generate/src/util/name_manager.dart';
 /// Generates a TypeReference from a model.
 TypeReference getTypeReference(
   Model model,
-  NameManger nameManger,
+  NameManager nameManager,
   String package,
 ) {
   return switch (model) {
@@ -14,12 +14,12 @@ TypeReference getTypeReference(
           b
             ..symbol = 'List'
             ..url = 'dart:core'
-            ..types.add(getTypeReference(m.content, nameManger, package)),
+            ..types.add(getTypeReference(m.content, nameManager, package)),
     ),
     final NamedModel m => TypeReference(
       (b) =>
           b
-            ..symbol = nameManger.modelName(m)
+            ..symbol = nameManager.modelName(m)
             ..url = package,
     ),
     StringModel _ => TypeReference(

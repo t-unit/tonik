@@ -9,9 +9,9 @@ import 'package:tonic_generate/src/util/type_reference_generator.dart';
 /// A generator for creating sealed Dart classes from OneOf model definitions.
 @immutable
 class OneOfGenerator {
-  const OneOfGenerator({required this.nameManger, required this.package});
+  const OneOfGenerator({required this.nameManager, required this.package});
 
-  final NameManger nameManger;
+  final NameManager nameManager;
   final String package;
 
   ({String code, String filename}) generate(OneOfModel model) {
@@ -20,7 +20,7 @@ class OneOfGenerator {
       useNullSafetySyntax: true,
     );
 
-    final className = nameManger.modelName(model);
+    final className = nameManager.modelName(model);
     final snakeCaseName = className.toSnakeCase();
 
     final library = Library((b) {
@@ -41,7 +41,7 @@ class OneOfGenerator {
 
   @visibleForTesting
   Class generateClass(OneOfModel model) {
-    final className = nameManger.modelName(model);
+    final className = nameManager.modelName(model);
 
     final stringRef = TypeReference(
       (b) =>
@@ -131,7 +131,7 @@ class OneOfGenerator {
   ) {
     final rawName =
         discriminatedModel.discriminatorValue ??
-        nameManger.modelName(discriminatedModel.model);
+        nameManager.modelName(discriminatedModel.model);
 
     final factoryName = rawName.toCamelCase();
 
@@ -151,7 +151,7 @@ class OneOfGenerator {
                       ..name = 'value'
                       ..type = getTypeReference(
                         discriminatedModel.model,
-                        nameManger,
+                        nameManager,
                         package,
                       ),
               ),
@@ -164,7 +164,7 @@ class OneOfGenerator {
         .map((discriminatedModel) {
           final factoryName =
               discriminatedModel.discriminatorValue ??
-              nameManger.modelName(discriminatedModel.model);
+              nameManager.modelName(discriminatedModel.model);
           final variantName = '$className${factoryName.toPascalCase()}';
 
           final isPrimitive = discriminatedModel.model is PrimitiveModel;
@@ -240,7 +240,7 @@ class OneOfGenerator {
           Code("'${m.discriminatorValue}' => "),
           refer(className).code,
           Code('.${m.discriminatorValue!.toCamelCase()}('),
-          refer(nameManger.modelName(m.model), package).code,
+          refer(nameManager.modelName(m.model), package).code,
           const Code('.fromJson(json)),\n'),
         ]);
       }
@@ -269,11 +269,11 @@ class OneOfGenerator {
 
       for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
         cases.addAll([
-          getTypeReference(m.model, nameManger, package).code,
+          getTypeReference(m.model, nameManager, package).code,
           const Code(' s => '),
           refer(className).code,
           Code(
-            '.${(m.discriminatorValue ?? nameManger.modelName(m.model)).toCamelCase()}(s),\n',
+            '.${(m.discriminatorValue ?? nameManager.modelName(m.model)).toCamelCase()}(s),\n',
           ),
         ]);
       }
@@ -301,9 +301,9 @@ class OneOfGenerator {
 
     // Handle primitive types.
     for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
-      final typeRef = getTypeReference(m.model, nameManger, package);
+      final typeRef = getTypeReference(m.model, nameManager, package);
       final factoryName =
-          (m.discriminatorValue ?? nameManger.modelName(m.model)).toCamelCase();
+          (m.discriminatorValue ?? nameManager.modelName(m.model)).toCamelCase();
 
       blocks.add(
         Block.of([
@@ -322,8 +322,8 @@ class OneOfGenerator {
     for (final m in model.models.where(
       (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
     )) {
-      final factoryName = nameManger.modelName(m.model).toCamelCase();
-      final modelName = nameManger.modelName(m.model);
+      final factoryName = nameManager.modelName(m.model).toCamelCase();
+      final modelName = nameManager.modelName(m.model);
       final mapType = TypeReference(
         (b) =>
             b

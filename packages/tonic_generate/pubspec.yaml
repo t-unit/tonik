@@ -11,6 +11,7 @@ dependencies:
   collection: ^1.19.1
   dart_style: ^3.0.1
   meta: ^1.16.0
+  path: ^1.9.1
   spell_out_numbers: ^1.0.0
   tonic_core:
 

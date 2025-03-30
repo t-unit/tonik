@@ -10,11 +10,11 @@ import 'package:tonic_generate/src/util/type_reference_generator.dart';
 @immutable
 class ClassGenerator {
   const ClassGenerator({
-    required this.nameManger,
+    required this.nameManager,
     required this.package,
   });
 
-  final NameManger nameManger;
+  final NameManager nameManager;
   final String package;
 
   static const deprecatedPropertyMessage = 'This property is deprecated.';
@@ -25,7 +25,7 @@ class ClassGenerator {
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = nameManger.modelName(model).toSnakeCase();
+    final snakeCaseName = nameManager.modelName(model).toSnakeCase();
 
     final library = Library((b) {
       b.directives.add(Directive.part('$snakeCaseName.freezed.dart'));
@@ -43,7 +43,7 @@ class ClassGenerator {
 
   @visibleForTesting
   Class generateClass(ClassModel model) {
-    final className = nameManger.modelName(model);
+    final className = nameManager.modelName(model);
     final normalizedProperties = normalizeAll(
       model.properties.toList(),
     );
@@ -177,7 +177,7 @@ class ClassGenerator {
   }
 
   TypeReference _getTypeReference(Property property) {
-    final baseType = getTypeReference(property.model, nameManger, package);
+    final baseType = getTypeReference(property.model, nameManager, package);
 
     return property.isNullable || !property.isRequired
         ? TypeReference(
