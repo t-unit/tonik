@@ -20,10 +20,10 @@ class ModelGenerator {
   final OneOfGenerator oneOfGenerator;
   final TypedefGenerator typedefGenerator;
 
-  Future<void> writeFiles({
+  void writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
-  }) async {
+  }) {
     for (final model in apiDocument.models) {
       ({String code, String filename})? result;
 
@@ -44,8 +44,8 @@ class ModelGenerator {
       }
 
       final file = File(path.join(outputDirectory, result.filename));
-      await file.parent.create(recursive: true);
-      await file.writeAsString(result.code);
+      file.parent.createSync(recursive: true);
+      file.writeAsStringSync(result.code);
     }
   }
 }

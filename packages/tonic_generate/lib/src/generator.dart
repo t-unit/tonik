@@ -7,51 +7,55 @@ import 'package:tonic_generate/src/model/typedef_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 
-Future<void> generate({
-  required ApiDocument apiDocument,
-  required String outputDirectory,
-  required String package,
-}) async {
-  final nameGenerator = NameGenerator();
-  final nameManager = NameManager(generator: nameGenerator);
+class Generator {
+  const Generator();
 
-  final classGenerator = ClassGenerator(
-    nameManager: nameManager,
-    package: package,
-  );
-  final enumGenerator = EnumGenerator(
-    nameManager: nameManager,
-    package: package,
-  );
-  final oneOfGenerator = OneOfGenerator(
-    nameManager: nameManager,
-    package: package,
-  );
-  final typedefGenerator = TypedefGenerator(
-    nameManager: nameManager,
-    package: package,
-  );
+  void generate({
+    required ApiDocument apiDocument,
+    required String outputDirectory,
+    required String package,
+  }) {
+    final nameGenerator = NameGenerator();
+    final nameManager = NameManager(generator: nameGenerator);
 
-  final modelGenerator = ModelGenerator(
-    classGenerator: classGenerator,
-    enumGenerator: enumGenerator,
-    oneOfGenerator: oneOfGenerator,
-    typedefGenerator: typedefGenerator,
-  );
+    final classGenerator = ClassGenerator(
+      nameManager: nameManager,
+      package: package,
+    );
+    final enumGenerator = EnumGenerator(
+      nameManager: nameManager,
+      package: package,
+    );
+    final oneOfGenerator = OneOfGenerator(
+      nameManager: nameManager,
+      package: package,
+    );
+    final typedefGenerator = TypedefGenerator(
+      nameManager: nameManager,
+      package: package,
+    );
 
-  nameManager.prime(
-    models: apiDocument.models,
-    responses: apiDocument.responses,
-    responseHeaders: apiDocument.responseHeaders,
-    operations: apiDocument.operations,
-    requestHeaders: apiDocument.requestHeaders,
-    queryParameters: apiDocument.queryParameters,
-    pathParameters: apiDocument.pathParameters,
-    tags: apiDocument.operationsByTag.keys,
-  );
+    final modelGenerator = ModelGenerator(
+      classGenerator: classGenerator,
+      enumGenerator: enumGenerator,
+      oneOfGenerator: oneOfGenerator,
+      typedefGenerator: typedefGenerator,
+    );
 
-  await modelGenerator.writeFiles(
-    apiDocument: apiDocument,
-    outputDirectory: outputDirectory,
-  );
+    nameManager.prime(
+      models: apiDocument.models,
+      responses: apiDocument.responses,
+      responseHeaders: apiDocument.responseHeaders,
+      operations: apiDocument.operations,
+      requestHeaders: apiDocument.requestHeaders,
+      queryParameters: apiDocument.queryParameters,
+      pathParameters: apiDocument.pathParameters,
+      tags: apiDocument.operationsByTag.keys,
+    );
+
+    modelGenerator.writeFiles(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+    );
+  }
 }

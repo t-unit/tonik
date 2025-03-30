@@ -2,4 +2,4 @@
 library;
 
 
-export 'src/generator.dart' show generate;
+export 'src/generator.dart';
