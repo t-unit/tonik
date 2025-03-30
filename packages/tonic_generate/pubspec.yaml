@@ -9,6 +9,7 @@ dependencies:
   change_case: ^1.0.0+2
   code_builder: ^4.9.0
   collection: ^1.19.1
+  dart_style: ^3.0.1
   meta: ^1.16.0
   spell_out_numbers: ^1.0.0
   tonic_core:

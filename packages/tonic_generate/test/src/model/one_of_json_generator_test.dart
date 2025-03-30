@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/model/one_of_generator.dart';
@@ -11,6 +12,10 @@ void main() {
   late NameGenerator nameGenerator;
   late Context context;
   late DartEmitter emitter;
+
+  final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -41,7 +46,12 @@ void main() {
     });
 
     test('has private constructor for methods', () {
-      expect(generatedClass.constructors.any((c) => c.name == '_'), isTrue);
+      final privateConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == '_',
+      );
+      expect(privateConstructor.name, '_');
+      expect(privateConstructor.factory, isFalse);
+      expect(privateConstructor.constant, isTrue);
     });
 
     test('toJson method', () {
@@ -50,17 +60,21 @@ void main() {
       );
       expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
 
-      final body = toJson.body?.accept(emitter).toString() ?? '';
+      final generatedCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
+        dynamic toJson() {
+          final (dynamic json, String? discriminator) = switch (this) {
+            ResultSuccess(:final value) => (value, 'success'),
+            ResultError(:final value) => (value, 'error'),
+          };
 
-      const expectedBody = '''
-        final (dynamic json, String? discriminator) = switch (this) {
-          ResultSuccess(:final value) => (value, 'success'),
-          ResultError(:final value) => (value, 'error')
-        };
+          return json;
+        }''';
 
-        return json;''';
-
-      expect(body.normalizeCode(), expectedBody.normalizeCode());
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
     });
 
     test('fromJson method', () {
@@ -74,16 +88,22 @@ void main() {
         'dynamic',
       );
 
-      final body = fromJson.body?.accept(emitter).toString() ?? '';
+      final generatedCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = r'''
+        static Result fromJson(dynamic json) {
+          return switch (json) {
+            String s => Result.success(s),
+            int s => Result.error(s),
+            _ => throw ArgumentError(
+              'Invalid JSON type for Result: ${json.runtimeType}',
+            ),
+          };
+        }''';
 
-      const expectedBody = r'''
-        return switch (json) {
-          String() => Result.success(json),
-          int() => Result.error(json),
-          _ => throw ArgumentError('Invalid JSON type for Result: \${json.runtimeType}')
-        };''';
-
-      expect(body.normalizeCode(), expectedBody.normalizeCode());
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
     });
   });
 
@@ -140,21 +160,25 @@ void main() {
       );
       expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
 
-      final body = toJson.body?.accept(emitter).toString() ?? '';
+      const expectedMethod = '''
+        dynamic toJson() {
+          final (dynamic json, String? discriminator) = switch (this) {
+            ResultSuccess(:final value) => (value.toJson(), 'success'),
+            ResultError(:final value) => (value.toJson(), 'error'),
+          };
 
-      const expectedBody = '''
-        final (dynamic json, String? discriminator) = switch (this) {
-          ResultSuccess(:final value) => (value.toJson(), 'success'),
-          ResultError(:final value) => (value.toJson(), 'error')
-        };
-        
-        if (discriminator != null && json is Map<String, dynamic>) {
-          json.putIfAbsent('type', () => discriminator);
-        }
+          if (discriminator != null && json is Map<String, dynamic>) {
+            json.putIfAbsent('type', () => discriminator);
+          }
 
-        return json;''';
+          return json;
+        }''';
 
-      expect(body.normalizeCode(), expectedBody.normalizeCode());
+      final generatedCode = format(generatedClass.accept(emitter).toString());
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
     });
 
     test('fromJson method', () {
@@ -164,19 +188,30 @@ void main() {
       expect(fromJson.static, isTrue);
       expect(
         fromJson.requiredParameters.first.type?.accept(emitter).toString(),
-        'Map<String, dynamic>',
+        'Map<String,dynamic>',
       );
 
-      final body = fromJson.body?.accept(emitter).toString() ?? '';
+      const expectedMethod = '''
+        static Result fromJson(Map<String, dynamic> json) {
+          final discriminator = json is Map<String, dynamic> ? json['type'] : null;
 
-      const expectedBody = r'''
-        return switch (json['type']) {
-          'success' => Result.success(Success.fromJson(json)),
-          'error' => Result.error(Error.fromJson(json)),
-          _ => throw ArgumentError('Invalid discriminator value for Result: \${json['type']}')
-        };''';
+          final result =  switch (discriminator) {
+            'success' => Result.success(Success.fromJson(json)),
+            'error' => Result.error(Error.fromJson(json)),
+            _ => null,
+          };
 
-      expect(body.normalizeCode(), expectedBody.normalizeCode());
+          if (result != null) {
+            return result;
+          }
+
+          throw ArgumentError('Invalid JSON for Result');
+        }''';
+
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
     });
   });
 
@@ -234,22 +269,26 @@ void main() {
       );
       expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
 
-      final body = toJson.body?.accept(emitter).toString() ?? '';
+      const expectedMethod = '''
+        dynamic toJson() {
+          final (dynamic json, String? discriminator) = switch (this) {
+            ResultSuccess(:final value) => (value.toJson(), null),
+            ResultAnonymous(:final value) => (value, null),
+            ResultError(:final value) => (value.toJson(), 'error'),
+          };
 
-      const expectedBody = '''
-        final (dynamic json, String? discriminator) = switch (this) {
-          ResultSuccess(:final value) => (value.toJson(), null),
-          ResultAnonymous(:final value) => (value, null),
-          ResultError(:final value) => (value.toJson(), 'error')
-        };
+          if (discriminator != null && json is Map<String, dynamic>) {
+            json.putIfAbsent('discriminator', () => discriminator);
+          }
 
-        if (discriminator != null && json is Map<String, dynamic>) {
-          json.putIfAbsent('discriminator', () => discriminator);
-        }
+          return json;
+        }''';
 
-        return json;''';
-
-      expect(body.normalizeCode(), expectedBody.normalizeCode());
+      final generatedCode = format(generatedClass.accept(emitter).toString());
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
     });
 
     test('fromJson method', () {
@@ -262,35 +301,34 @@ void main() {
         'dynamic',
       );
 
-      final body = fromJson.body?.accept(emitter).toString() ?? '';
+      const expectedMethod = '''
+        static Result fromJson(dynamic json) {
+          final discriminator = json is Map<String, dynamic> ? json['discriminator'] : null;
 
-      const expectedBody = '''
-        final discriminator = json is Map<String, dynamic> ? json['discriminator'] : null;
+          final result = switch (discriminator) {
+            'error' => Result.error(Error.fromJson(json)),
+            _ => null,
+          };
 
-        final result = switch (discriminator) {
-          'error' => Result.error(Error.fromJson(json)),
-          _ => null
-        };
+          if (result != null) {
+            return result;
+          }
 
-        if (result != null) {
-          return result;
-        }
+          if (json is String) {
+            return Result.anonymous(json);
+          }
 
-        if (json is String) {
-          return Result.primitive(json);
-        }
+          try {
+            return Result.success(Success.fromJson((json as Map<String, dynamic>)));
+          } catch (_) {}
 
-        try {
-          return Result.success(Success.fromJson(json as Map<String, dynamic>));
-        } catch (_) {}
+          throw ArgumentError('Invalid JSON for Result');
+        }''';
 
-        throw ArgumentError('Invalid JSON for Result');''';
-
-      expect(body.normalizeCode(), expectedBody.normalizeCode());
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
     });
   });
-}
-
-extension on String {
-  String normalizeCode() => replaceAll(RegExp(r'\s+'), ' ').trim();
 }

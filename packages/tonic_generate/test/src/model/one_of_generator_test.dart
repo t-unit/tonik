@@ -63,9 +63,16 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
 
-      expect(generatedClass.constructors, hasLength(2));
+      expect(generatedClass.constructors, hasLength(3));
+      expect(
+        generatedClass.constructors.any((c) => c.name == '_' && c.constant && !c.factory),
+        isTrue,
+        reason: 'Should have a private const constructor',
+      );
 
-      final successConstructor = generatedClass.constructors.first;
+      final successConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'success',
+      );
       expect(successConstructor.name, 'success');
       expect(successConstructor.factory, isTrue);
       expect(successConstructor.constant, isTrue);
@@ -82,7 +89,9 @@ void main() {
         reason: 'Should redirect to public class name',
       );
 
-      final errorConstructor = generatedClass.constructors.last;
+      final errorConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'error',
+      );
       expect(errorConstructor.name, 'error');
       expect(errorConstructor.factory, isTrue);
       expect(errorConstructor.constant, isTrue);
@@ -127,16 +136,30 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
 
-      expect(generatedClass.constructors, hasLength(2));
-      expect(generatedClass.constructors.first.name, 'success');
+      expect(generatedClass.constructors, hasLength(3));
+
+      final privateConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == '_',
+      );
+      expect(privateConstructor.constant, isTrue);
+      expect(privateConstructor.factory, isFalse);
+
+      final successConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'success',
+      );
+      expect(successConstructor.name, 'success');
       expect(
-        generatedClass.constructors.first.redirect?.symbol,
+        successConstructor.redirect?.symbol,
         'ResultSuccess',
         reason: 'Should redirect to public class name',
       );
-      expect(generatedClass.constructors.last.name, 'error');
+
+      final errorConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'error',
+      );
+      expect(errorConstructor.name, 'error');
       expect(
-        generatedClass.constructors.last.redirect?.symbol,
+        errorConstructor.redirect?.symbol,
         'ResultError',
         reason: 'Should redirect to public class name',
       );
@@ -160,9 +183,17 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
 
-      expect(generatedClass.constructors, hasLength(1));
+      expect(generatedClass.constructors, hasLength(2));
 
-      final dataConstructor = generatedClass.constructors.first;
+      final privateConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == '_',
+      );
+      expect(privateConstructor.constant, isTrue);
+      expect(privateConstructor.factory, isFalse);
+
+      final dataConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == 'data',
+      );
       expect(dataConstructor.name, 'data');
       expect(
         dataConstructor.requiredParameters.first.type

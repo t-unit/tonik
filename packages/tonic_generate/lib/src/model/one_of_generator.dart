@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
@@ -27,17 +28,42 @@ class OneOfGenerator {
       b.body.add(generateClass(model));
     });
 
-    final buffer =
-        StringBuffer()
-          ..writeln('// Generated code - do not modify by hand\n')
-          ..write(library.accept(emitter));
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
 
-    return (code: buffer.toString(), filename: '$snakeCaseName.dart');
+    final code = formatter.format(
+      '// Generated code - do not modify by hand\n\n${library.accept(emitter)}',
+    );
+
+    return (code: code, filename: '$snakeCaseName.dart');
   }
 
   @visibleForTesting
   Class generateClass(OneOfModel model) {
     final className = nameManger.modelName(model);
+
+    final stringRef = TypeReference(
+      (b) =>
+          b
+            ..symbol = 'String'
+            ..url = 'dart:core',
+    );
+
+    final dynamicRef = TypeReference(
+      (b) =>
+          b
+            ..symbol = 'dynamic'
+            ..url = 'dart:core',
+    );
+
+    final mapStringDynamic = TypeReference(
+      (b) =>
+          b
+            ..symbol = 'Map'
+            ..url = 'dart:core'
+            ..types.addAll([stringRef, dynamicRef]),
+    );
 
     return Class(
       (b) =>
@@ -51,15 +77,18 @@ class OneOfGenerator {
             )
             ..mixins.add(refer('_\$$className'))
             ..sealed = true
-            ..constructors.addAll(
-              model.models.map(
+            ..constructors.addAll([
+              Constructor((b) => b
+                ..name = '_'
+                ..constant = true),
+              ...model.models.map(
                 (discriminatedModel) => _generateConstructor(
                   className,
                   discriminatedModel,
                   model.discriminator,
                 ),
               ),
-            )
+            ])
             ..methods.addAll([
               Method(
                 (b) =>
@@ -67,6 +96,28 @@ class OneOfGenerator {
                       ..name = 'toJson'
                       ..returns = refer('dynamic')
                       ..body = _generateToJsonBody(className, model)
+                      ..lambda = false,
+              ),
+              Method(
+                (b) =>
+                    b
+                      ..name = 'fromJson'
+                      ..static = true
+                      ..returns = refer(className)
+                      ..requiredParameters.add(
+                        Parameter(
+                          (b) =>
+                              b
+                                ..name = 'json'
+                                ..type =
+                                    model.models.every(
+                                          (m) => m.model is! PrimitiveModel,
+                                        )
+                                        ? mapStringDynamic
+                                        : refer('dynamic'),
+                        ),
+                      )
+                      ..body = _generateFromJsonBody(className, model)
                       ..lambda = false,
               ),
             ]),
@@ -147,6 +198,165 @@ class OneOfGenerator {
     }
 
     blocks.add(const Code('return json;'));
+
+    return Block.of(blocks);
+  }
+
+  Code _generateFromJsonBody(String className, OneOfModel model) {
+    final blocks = <Code>[];
+
+    // Check for discriminator if present
+    if (model.discriminator != null) {
+      final discriminatorExpression = declareFinal('discriminator').assign(
+        refer('json')
+            .isA(
+              TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('dynamic', 'dart:core'),
+                      ]),
+              ),
+            )
+            .conditional(
+              refer('json').index(literalString(model.discriminator!)),
+              literalNull,
+            ),
+      );
+
+      final cases = <Code>[];
+
+      for (final m in model.models.where(
+        (m) =>
+            m.discriminatorValue != null &&
+            m.model is! PrimitiveModel &&
+            m.model is! ListModel &&
+            model is! EnumModel,
+      )) {
+        cases.addAll([
+          Code("'${m.discriminatorValue}' => "),
+          refer(className).code,
+          Code('.${m.discriminatorValue!.toCamelCase()}('),
+          refer(nameManger.modelName(m.model), package).code,
+          const Code('.fromJson(json)),\n'),
+        ]);
+      }
+
+      cases.add(const Code('_ => null'));
+
+      blocks.addAll([
+        discriminatorExpression.statement,
+        const Code('final result = '),
+        const Code('switch (discriminator) {'),
+        ...cases,
+        const Code('};\n\n'),
+        const Code('if (result != null) {\n'),
+        const Code('  return result;\n'),
+        const Code('}\n'),
+      ]);
+    }
+
+    // Check for primitive types
+    final hasPrimitives = model.models.any((m) => m.model is PrimitiveModel);
+    final hasOnlyPrimitives =
+        !model.models.any((m) => m.model is! PrimitiveModel);
+
+    if (hasPrimitives && hasOnlyPrimitives) {
+      final cases = <Code>[];
+
+      for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
+        cases.addAll([
+          getTypeReference(m.model, nameManger, package).code,
+          const Code(' s => '),
+          refer(className).code,
+          Code(
+            '.${(m.discriminatorValue ?? nameManger.modelName(m.model)).toCamelCase()}(s),\n',
+          ),
+        ]);
+      }
+
+      cases.addAll([
+        const Code('_ => '),
+        refer('ArgumentError', 'dart:core')
+            .call([
+              literalString(
+                'Invalid JSON type for $className: \${json.runtimeType}',
+              ),
+            ])
+            .thrown
+            .code,
+        const Code(','),
+      ]);
+
+      return Block.of([
+        refer('return switch').call([refer('json')]).code,
+        const Code(' {\n'),
+        ...cases,
+        const Code('\n};'),
+      ]);
+    }
+
+    // Handle primitive types.
+    for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
+      final typeRef = getTypeReference(m.model, nameManger, package);
+      final factoryName =
+          (m.discriminatorValue ?? nameManger.modelName(m.model)).toCamelCase();
+
+      blocks.add(
+        Block.of([
+          const Code('if ('),
+          refer('json').isA(typeRef).code,
+          const Code(') {\n'),
+          const Code('  return '),
+          refer(className).code,
+          Code('.$factoryName(json);\n'),
+          const Code('}\n'),
+        ]),
+      );
+    }
+
+    // Try complex types.
+    for (final m in model.models.where(
+      (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
+    )) {
+      final factoryName = nameManger.modelName(m.model).toCamelCase();
+      final modelName = nameManger.modelName(m.model);
+      final mapType = TypeReference(
+        (b) =>
+            b
+              ..symbol = 'Map'
+              ..url = 'dart:core'
+              ..types.addAll([
+                refer('String', 'dart:core'),
+                refer('dynamic', 'dart:core'),
+              ]),
+      );
+
+      blocks.add(
+        Block.of([
+          const Code('try {\n'),
+          const Code('  return '),
+          refer(className).property(factoryName).code,
+          const Code('('),
+          refer(modelName, package).property('fromJson').call([
+            refer('json').asA(mapType)
+          ]).code,
+          const Code(');\n'),
+          const Code('} catch (_) {}\n'),
+        ]),
+      );
+    }
+
+    // Throw if no match found.
+    blocks.add(
+      refer(
+        'ArgumentError',
+        'dart:core',
+      ).call([literalString('Invalid JSON for $className')]).thrown.statement,
+    );
 
     return Block.of(blocks);
   }
