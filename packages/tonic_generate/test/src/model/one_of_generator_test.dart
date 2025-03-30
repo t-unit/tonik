@@ -65,7 +65,9 @@ void main() {
 
       expect(generatedClass.constructors, hasLength(3));
       expect(
-        generatedClass.constructors.any((c) => c.name == '_' && c.constant && !c.factory),
+        generatedClass.constructors.any(
+          (c) => c.name == '_' && c.constant && !c.factory,
+        ),
         isTrue,
         reason: 'Should have a private const constructor',
       );

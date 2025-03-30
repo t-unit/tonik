@@ -78,9 +78,12 @@ class OneOfGenerator {
             ..mixins.add(refer('_\$$className'))
             ..sealed = true
             ..constructors.addAll([
-              Constructor((b) => b
-                ..name = '_'
-                ..constant = true),
+              Constructor(
+                (b) =>
+                    b
+                      ..name = '_'
+                      ..constant = true,
+              ),
               ...model.models.map(
                 (discriminatedModel) => _generateConstructor(
                   className,
@@ -268,13 +271,14 @@ class OneOfGenerator {
       final cases = <Code>[];
 
       for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
+        final factoryName =
+            (m.discriminatorValue ?? nameManager.modelName(m.model))
+                .toCamelCase();
         cases.addAll([
           getTypeReference(m.model, nameManager, package).code,
           const Code(' s => '),
           refer(className).code,
-          Code(
-            '.${(m.discriminatorValue ?? nameManager.modelName(m.model)).toCamelCase()}(s),\n',
-          ),
+          Code('.$factoryName(s),\n'),
         ]);
       }
 
@@ -303,7 +307,8 @@ class OneOfGenerator {
     for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
       final typeRef = getTypeReference(m.model, nameManager, package);
       final factoryName =
-          (m.discriminatorValue ?? nameManager.modelName(m.model)).toCamelCase();
+          (m.discriminatorValue ?? nameManager.modelName(m.model))
+              .toCamelCase();
 
       blocks.add(
         Block.of([
@@ -341,9 +346,10 @@ class OneOfGenerator {
           const Code('  return '),
           refer(className).property(factoryName).code,
           const Code('('),
-          refer(modelName, package).property('fromJson').call([
-            refer('json').asA(mapType)
-          ]).code,
+          refer(
+            modelName,
+            package,
+          ).property('fromJson').call([refer('json').asA(mapType)]).code,
           const Code(');\n'),
           const Code('} catch (_) {}\n'),
         ]),
