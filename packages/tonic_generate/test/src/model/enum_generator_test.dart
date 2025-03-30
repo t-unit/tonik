@@ -315,7 +315,7 @@ void main() {
         final toJson = generated.enumValue.methods.firstWhere(
           (m) => m.name == 'toJson',
         );
-        
+
         final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
         expect(body, 'rawValue');
         expect(toJson.returns?.accept(DartEmitter()).toString(), 'String');
@@ -336,7 +336,9 @@ void main() {
 
         expect(fromJson.factory, isTrue);
         expect(
-          fromJson.requiredParameters.single.type?.accept(DartEmitter()).toString(),
+          fromJson.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
           'dynamic',
         );
 
@@ -367,7 +369,9 @@ void main() {
 
         expect(fromJson.factory, isTrue);
         expect(
-          fromJson.requiredParameters.single.type?.accept(DartEmitter()).toString(),
+          fromJson.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
           'dynamic',
         );
 
@@ -398,7 +402,9 @@ void main() {
 
         expect(fromJson.factory, isTrue);
         expect(
-          fromJson.requiredParameters.single.type?.accept(DartEmitter()).toString(),
+          fromJson.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
           'dynamic',
         );
 
