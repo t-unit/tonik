@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
@@ -33,12 +34,15 @@ class ClassGenerator {
       b.body.add(generateClass(model));
     });
 
-    final buffer =
-        StringBuffer()
-          ..writeln('// Generated code - do not modify by hand\n')
-          ..write(library.accept(emitter));
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
 
-    return (code: buffer.toString(), filename: '$snakeCaseName.dart');
+    final code = formatter.format(
+      '// Generated code - do not modify by hand\n\n${library.accept(emitter)}',
+    );
+
+    return (code: code, filename: '$snakeCaseName.dart');
   }
 
   @visibleForTesting
@@ -109,7 +113,7 @@ class ClassGenerator {
             ),
           )
           ..lambda = true
-          ..body = Code('=> _\$${className}FromJson(json)'),
+          ..body = Code('_\$${className}FromJson(json)'),
   );
 
   TypeReference _buildMapStringDynamicType() => TypeReference(
@@ -139,7 +143,8 @@ class ClassGenerator {
           ..annotations.add(_buildJsonKeyIgnoreAnnotation())
           ..returns = _buildMapStringDynamicType()
           ..name = 'toJson'
-          ..body = Code('=> _\$${className}ToJson(this)'),
+          ..lambda = true
+          ..body = Code('_\$${className}ToJson(this)'),
   );
 
   Expression _buildJsonKeyIgnoreAnnotation() => refer(

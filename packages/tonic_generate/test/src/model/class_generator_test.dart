@@ -116,7 +116,7 @@ void main() {
       );
       expect(
         constructor.body?.accept(emitter).toString(),
-        r'=> _$UserFromJson(json)',
+        r'_$UserFromJson(json)',
       );
     });
 
@@ -141,7 +141,7 @@ void main() {
       );
       expect(
         method.body?.accept(emitter).toString(),
-        r'=> _$UserToJson(this)',
+        r'_$UserToJson(this)',
       );
     });
 
