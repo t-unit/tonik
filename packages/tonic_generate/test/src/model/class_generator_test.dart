@@ -120,31 +120,6 @@ void main() {
       );
     });
 
-    test('generates toJson method', () {
-      final model = ClassModel(
-        name: 'User',
-        properties: const {},
-        context: context,
-      );
-
-      final result = generator.generateClass(model);
-      final method = result.methods.first;
-
-      expect(method.name, 'toJson');
-      expect(
-        method.annotations.first.code.accept(emitter).toString(),
-        'JsonKey(ignore: true)',
-      );
-      expect(
-        method.returns?.accept(emitter).toString(),
-        'Map<String,dynamic>',
-      );
-      expect(
-        method.body?.accept(emitter).toString(),
-        r'_$UserToJson(this)',
-      );
-    });
-
     test('generates filename in snake_case', () {
       final model = ClassModel(
         name: 'UserProfile',

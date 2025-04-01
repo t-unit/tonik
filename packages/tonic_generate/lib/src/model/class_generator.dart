@@ -10,10 +10,7 @@ import 'package:tonic_generate/src/util/type_reference_generator.dart';
 /// A generator for creating Dart class files from model definitions.
 @immutable
 class ClassGenerator {
-  const ClassGenerator({
-    required this.nameManager,
-    required this.package,
-  });
+  const ClassGenerator({required this.nameManager, required this.package});
 
   final NameManager nameManager;
   final String package;
@@ -48,9 +45,7 @@ class ClassGenerator {
   @visibleForTesting
   Class generateClass(ClassModel model) {
     final className = nameManager.modelName(model);
-    final normalizedProperties = normalizeAll(
-      model.properties.toList(),
-    );
+    final normalizedProperties = normalizeAll(model.properties.toList());
 
     return Class(
       (b) =>
@@ -90,7 +85,7 @@ class ClassGenerator {
               ),
               _buildFromJsonConstructor(className),
             ])
-            ..methods.add(_buildToJsonMethod(className))
+            ..methods.add(_buildToJsonMethod(model))
             ..fields.addAll(
               normalizedProperties.map(
                 (prop) => generateField(prop.property, prop.normalizedName),
@@ -137,20 +132,32 @@ class ClassGenerator {
           ]),
   );
 
-  Method _buildToJsonMethod(String className) => Method(
-    (b) =>
-        b
-          ..annotations.add(_buildJsonKeyIgnoreAnnotation())
-          ..returns = _buildMapStringDynamicType()
-          ..name = 'toJson'
-          ..lambda = true
-          ..body = Code('_\$${className}ToJson(this)'),
-  );
+  Method _buildToJsonMethod(ClassModel model) {
+    final normalizedProperties = normalizeAll(model.properties.toList());
 
-  Expression _buildJsonKeyIgnoreAnnotation() => refer(
-    'JsonKey',
-    'package:json_annotation/json_annotation.dart',
-  ).call([], {'ignore': literalTrue});
+    final body = Block.of([
+      const Code('{'),
+      ...normalizedProperties.map((prop) {
+        if (prop.property.isRequired || prop.property.isNullable) {
+          return Code("r'${prop.property.name}': ${prop.normalizedName},");
+        }
+        return Code(
+          'if (${prop.normalizedName} != null) '
+          "r'${prop.property.name}': ${prop.normalizedName},",
+        );
+      }),
+      const Code('}'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..returns = _buildMapStringDynamicType()
+            ..name = 'toJson'
+            ..lambda = true
+            ..body = body,
+    );
+  }
 
   Field generateField(Property property, String normalizedName) {
     final annotations = <Expression>[];
