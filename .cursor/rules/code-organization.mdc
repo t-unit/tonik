@@ -1,0 +1,61 @@
+---
+description: Rules for code organization and commenting style
+globs: "**/*.dart"
+alwaysApply: true
+---
+
+# Comments should explain "why", not "what"
+
+Comments should never tell what is happening, but only be used to explain why something is done.
+
+## ❌ Don't
+
+```dart
+// This function validates the user email
+bool validateEmail(String email) {
+  // Check if email contains @ symbol
+  return email.contains('@');
+}
+```
+
+## ✅ Do
+
+```dart
+// Email validation is simplified since we only need basic format checking
+// for the prototype phase
+bool validateEmail(String email) {
+  return email.contains('@');
+}
+```
+
+# Private methods should be sorted below public methods
+
+All private methods (prefixed with `_` in Dart) should be sorted below any public methods in the class.
+
+## ❌ Don't
+
+```dart
+class UserService {
+  void _privateHelperMethod() {
+    // Implementation
+  }
+
+  void publicMethod() {
+    // Implementation
+  }
+}
+```
+
+## ✅ Do
+
+```dart
+class UserService {
+  void publicMethod() {
+    // Implementation
+  }
+
+  void _privateHelperMethod() {
+    // Implementation
+  }
+}
+``` 
