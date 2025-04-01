@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/property_name_normalizer.dart';
+import 'package:tonic_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart class files from model definitions.
@@ -83,33 +84,113 @@ class ClassGenerator {
                         ),
                       ),
               ),
-              _buildFromJsonConstructor(className),
+              _buildFromJsonConstructor(className, model),
             ])
             ..methods.add(_buildToJsonMethod(model))
             ..fields.addAll(
               normalizedProperties.map(
-                (prop) => generateField(prop.property, prop.normalizedName),
+                (prop) => _generateField(prop.property, prop.normalizedName),
               ),
             ),
     );
   }
 
-  Constructor _buildFromJsonConstructor(String className) => Constructor(
-    (b) =>
-        b
-          ..factory = true
-          ..name = 'fromJson'
-          ..requiredParameters.add(
-            Parameter(
-              (b) =>
-                  b
-                    ..name = 'json'
-                    ..type = _buildMapStringDynamicType(),
-            ),
-          )
-          ..lambda = true
-          ..body = Code('_\$${className}FromJson(json)'),
-  );
+  Constructor _buildFromJsonConstructor(String className, ClassModel model) =>
+      Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromJson'
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'json'
+                        ..type = refer('dynamic', 'dart:core'),
+                ),
+              )
+              ..body = _buildFromJsonBody(className, model),
+      );
+
+  Code _buildFromJsonBody(String className, ClassModel model) {
+    final normalizedProperties = normalizeAll(model.properties.toList());
+
+    final invalidJsonError = refer('ArgumentError', 'dart:core')
+        .call([literalString('Invalid JSON for $className: \$json')])
+        .thrown
+        .statement;
+
+    final codes = <Code>[
+      const Code('final map = json;'),
+      const Code(''),
+      const Code('if (map is! Map<String, dynamic>) {'),
+      invalidJsonError,
+      const Code('}'),
+      const Code(''),
+    ];
+
+    final propertyValidations = <Code>[];
+    final propertyAssignments = <String>[];
+
+    for (final prop in normalizedProperties) {
+      final property = prop.property;
+      final normalizedName = prop.normalizedName;
+      final jsonKey = property.name;
+      final typeCheckCode = _generateTypeCheck(
+        property,
+        normalizedName,
+        jsonKey,
+        className,
+      );
+
+      propertyValidations.add(typeCheckCode);
+      propertyAssignments.add('$normalizedName: $normalizedName');
+    }
+
+    codes
+      ..addAll(propertyValidations)
+      ..add(Code('return $className(${propertyAssignments.join(', ')});'));
+
+    return Block.of(codes);
+  }
+
+  Code _generateTypeCheck(
+    Property property,
+    String normalizedName,
+    String jsonKey,
+    String className,
+  ) {
+    final typeRef = getTypeReference(property.model, nameManager, package);
+    final symbolForMessage = typeRef.symbol;
+
+    final errorMessage =
+        'Expected $symbolForMessage${property.isNullable ? '?' : ''} '
+        'for $jsonKey of $className, got \${$normalizedName}';
+
+    final typeCheckError =
+        refer(
+          'ArgumentError',
+          'dart:core',
+        ).call([literalString(errorMessage)]).thrown.statement;
+
+    final conditionStart =
+        property.isNullable
+            ? Code('if ($normalizedName != null && $normalizedName is! ')
+            : Code('if ($normalizedName is! ');
+
+    const conditionEnd = Code(') {');
+
+    final checkCodes = <Code>[
+      Code("final $normalizedName = map[r'$jsonKey'];"),
+      conditionStart,
+      typeRef.code,
+      conditionEnd,
+      typeCheckError,
+      const Code('}'),
+    ];
+
+    return Block.of(checkCodes);
+  }
 
   TypeReference _buildMapStringDynamicType() => TypeReference(
     (b) =>
@@ -135,19 +216,21 @@ class ClassGenerator {
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeAll(model.properties.toList());
 
-    final body = Block.of([
-      const Code('{'),
-      ...normalizedProperties.map((prop) {
-        if (prop.property.isRequired || prop.property.isNullable) {
-          return Code("r'${prop.property.name}': ${prop.normalizedName},");
-        }
-        return Code(
-          'if (${prop.normalizedName} != null) '
-          "r'${prop.property.name}': ${prop.normalizedName},",
-        );
-      }),
-      const Code('}'),
-    ]);
+    final parts = <Code>[const Code('{')];
+    for (final prop in normalizedProperties) {
+      final property = prop.property;
+      final name = prop.normalizedName;
+      final jsonKeyString = literalString(property.name, raw: true).code;
+      final valueExprString = buildToJsonValueExpression(name, property);
+
+      if (property.isRequired || property.isNullable) {
+        parts.add(Code('$jsonKeyString: $valueExprString, '));
+      } else {
+        parts.add(Code('if ($name != null) $jsonKeyString: $valueExprString,'));
+      }
+    }
+
+    parts.add(const Code('}'));
 
     return Method(
       (b) =>
@@ -155,11 +238,11 @@ class ClassGenerator {
             ..returns = _buildMapStringDynamicType()
             ..name = 'toJson'
             ..lambda = true
-            ..body = body,
+            ..body = Block.of(parts),
     );
   }
 
-  Field generateField(Property property, String normalizedName) {
+  Field _generateField(Property property, String normalizedName) {
     final annotations = <Expression>[];
     if (property.isDeprecated) {
       annotations.add(

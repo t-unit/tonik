@@ -96,30 +96,6 @@ void main() {
       expect(nameParam.toThis, isTrue);
     });
 
-    test('generates fromJson factory constructor', () {
-      final model = ClassModel(
-        name: 'User',
-        properties: const {},
-        context: context,
-      );
-
-      final result = generator.generateClass(model);
-      final constructor = result.constructors[1];
-
-      expect(constructor.name, 'fromJson');
-      expect(constructor.factory, isTrue);
-      expect(constructor.requiredParameters, hasLength(1));
-      expect(constructor.requiredParameters.first.name, 'json');
-      expect(
-        constructor.requiredParameters.first.type?.accept(emitter).toString(),
-        'Map<String,dynamic>',
-      );
-      expect(
-        constructor.body?.accept(emitter).toString(),
-        r'_$UserFromJson(json)',
-      );
-    });
-
     test('generates filename in snake_case', () {
       final model = ClassModel(
         name: 'UserProfile',

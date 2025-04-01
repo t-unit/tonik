@@ -1,6 +1,6 @@
 ---
-description: Rules for code organization and commenting style
-globs: "**/*.dart"
+description: 
+globs: 
 alwaysApply: true
 ---
 
