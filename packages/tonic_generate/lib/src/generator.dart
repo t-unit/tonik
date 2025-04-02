@@ -15,24 +15,26 @@ class Generator {
     required String outputDirectory,
     required String package,
   }) {
+    final fullPackage = 'package:$package/$package.dart';
+
     final nameGenerator = NameGenerator();
     final nameManager = NameManager(generator: nameGenerator);
 
     final classGenerator = ClassGenerator(
       nameManager: nameManager,
-      package: package,
+      package: fullPackage,
     );
     final enumGenerator = EnumGenerator(
       nameManager: nameManager,
-      package: package,
+      package: fullPackage,
     );
     final oneOfGenerator = OneOfGenerator(
       nameManager: nameManager,
-      package: package,
+      package: fullPackage,
     );
     final typedefGenerator = TypedefGenerator(
       nameManager: nameManager,
-      package: package,
+      package: fullPackage,
     );
 
     final modelGenerator = ModelGenerator(

@@ -258,14 +258,9 @@ class OneOfGenerator {
 
       cases.addAll([
         const Code('_ => '),
-        refer('ArgumentError', 'dart:core')
-            .call([
-              literalString(
-                'Invalid JSON type for $className: \${json.runtimeType}',
-              ),
-            ])
-            .thrown
-            .code,
+        generateArgumentErrorExpression(
+          'Invalid JSON type for $className: \${json.runtimeType}',
+        ).code,
         const Code(','),
       ]);
 
