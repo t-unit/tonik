@@ -103,7 +103,7 @@ class EnumGenerator {
                 (b) =>
                     b
                       ..name = 'toJson'
-                      ..returns = refer(T.toString())
+                      ..returns = refer(T.toString(), 'dart:core')
                       ..lambda = true
                       ..body = const Code('rawValue'),
               ),
@@ -114,7 +114,7 @@ class EnumGenerator {
                     b
                       ..name = 'rawValue'
                       ..modifier = FieldModifier.final$
-                      ..type = refer(T.toString()),
+                      ..type = refer(T.toString(), 'dart:core'),
               ),
             )
             ..values.addAll(enumValues),
@@ -153,7 +153,7 @@ class EnumGenerator {
                 (b) =>
                     b
                       ..name = valueParam
-                      ..type = refer('dynamic'),
+                      ..type = refer('dynamic', 'dart:core'),
               ),
             )
             ..body = Block.of([

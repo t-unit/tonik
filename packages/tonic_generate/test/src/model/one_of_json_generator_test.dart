@@ -188,14 +188,14 @@ void main() {
       expect(fromJson.static, isTrue);
       expect(
         fromJson.requiredParameters.first.type?.accept(emitter).toString(),
-        'Map<String,dynamic>',
+        'dynamic',
       );
 
       const expectedMethod = '''
-        static Result fromJson(Map<String, dynamic> json) {
+        static Result fromJson(dynamic json) {
           final discriminator = json is Map<String, dynamic> ? json['type'] : null;
 
-          final result =  switch (discriminator) {
+          final result = switch (discriminator) {
             'success' => Result.success(Success.fromJson(json)),
             'error' => Result.error(Error.fromJson(json)),
             _ => null,
@@ -319,7 +319,7 @@ void main() {
           }
 
           try {
-            return Result.success(Success.fromJson((json as Map<String, dynamic>)));
+            return Result.success(Success.fromJson(json));
           } catch (_) {}
 
           throw ArgumentError('Invalid JSON for Result');

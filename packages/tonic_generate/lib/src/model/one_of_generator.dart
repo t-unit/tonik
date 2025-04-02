@@ -112,12 +112,7 @@ class OneOfGenerator {
                           (b) =>
                               b
                                 ..name = 'json'
-                                ..type =
-                                    model.models.every(
-                                          (m) => m.model is! PrimitiveModel,
-                                        )
-                                        ? mapStringDynamic
-                                        : refer('dynamic'),
+                                ..type = refer('dynamic'),
                         ),
                       )
                       ..body = _generateFromJsonBody(className, model)
@@ -349,7 +344,7 @@ class OneOfGenerator {
           refer(
             modelName,
             package,
-          ).property('fromJson').call([refer('json').asA(mapType)]).code,
+          ).property('fromJson').call([refer('json')]).code,
           const Code(');\n'),
           const Code('} catch (_) {}\n'),
         ]),
