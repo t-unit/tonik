@@ -449,12 +449,12 @@ void main() {
           
           final name = map[r'name'];
           if (name is! String) {
-            throw ArgumentError('Expected String for name of User, got $name');
+            throw ArgumentError('Expected String for name of User, got ${name}');
           }
           
           final age = map[r'age'];
           if (age is! int) {
-            throw ArgumentError('Expected int for age of User, got $age');
+            throw ArgumentError('Expected int for age of User, got ${age}');
           }
           
           return User(name: name, age: age);
@@ -501,12 +501,12 @@ void main() {
           
           final name = map[r'name'];
           if (name is! String) {
-            throw ArgumentError('Expected String for name of User, got $name');
+            throw ArgumentError('Expected String for name of User, got ${name}');
           }
           
           final bio = map[r'bio'];
           if (bio != null && bio is! String) {
-            throw ArgumentError('Expected String? for bio of User, got $bio');
+            throw ArgumentError('Expected String? for bio of User, got ${bio}');
           }
           
           return User(name: name, bio: bio);
@@ -545,7 +545,7 @@ void main() {
           
           final name = map[r'name'];
           if (name != null && name is! String) {
-            throw ArgumentError('Expected String? for name of User, got $name');
+            throw ArgumentError('Expected String? for name of User, got ${name}');
           }
           
           return User(name: name);
@@ -592,13 +592,13 @@ void main() {
           final firstName = map[r'first-name'];
           if (firstName is! String) {
             throw ArgumentError(
-              'Expected String for first-name of User, got $firstName',
+              'Expected String for first-name of User, got ${firstName}',
             );
           }
           
           final id = map[r'_id'];
           if (id is! String) {
-            throw ArgumentError('Expected String for _id of User, got $id');
+            throw ArgumentError('Expected String for _id of User, got ${id}');
           }
           
           return User(firstName: firstName, id: id);

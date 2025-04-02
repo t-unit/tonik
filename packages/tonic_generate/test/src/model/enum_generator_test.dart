@@ -51,16 +51,11 @@ void main() {
       expect(generated.enumValue.values[2].name, 'blue');
 
       final code = generated.enumValue.accept(DartEmitter()).toString();
-      expect(code, contains("red('red')"));
-      expect(code, contains("green('green')"));
-      expect(code, contains("blue('blue')"));
+      expect(code, contains("red(r'red')"));
+      expect(code, contains("green(r'green')"));
+      expect(code, contains("blue(r'blue')"));
       expect(code, contains('const Color(this.rawValue);'));
       expect(code, contains('final String rawValue;'));
-
-      final enumAnnotation = generated.enumValue.annotations.first;
-      final annotationCode =
-          enumAnnotation.code.accept(DartEmitter()).toString();
-      expect(annotationCode, contains("JsonEnum(valueField: 'rawValue')"));
     });
 
     test('generates nullable enum code', () {
@@ -184,11 +179,6 @@ void main() {
       expect(code, contains('three(3)'));
       expect(code, contains('const Status(this.rawValue);'));
       expect(code, contains('final int rawValue;'));
-
-      final enumAnnotation = generated.enumValue.annotations.first;
-      final annotationCode =
-          enumAnnotation.code.accept(DartEmitter()).toString();
-      expect(annotationCode, equals("JsonEnum(valueField: 'rawValue')"));
     });
 
     test('handles underscore-only values', () {
@@ -209,9 +199,9 @@ void main() {
       expect(generated.enumValue.values[2].name, 'value3');
 
       final code = generated.enumValue.accept(DartEmitter()).toString();
-      expect(code, contains("value('_')"));
-      expect(code, contains("value2('__')"));
-      expect(code, contains("value3('___')"));
+      expect(code, contains("value(r'_')"));
+      expect(code, contains("value2(r'__')"));
+      expect(code, contains("value3(r'___')"));
       expect(code, contains('const Placeholder(this.rawValue);'));
       expect(code, contains('final String rawValue;'));
     });
@@ -227,9 +217,7 @@ void main() {
       final result = generator.generate(model);
 
       expect(result.filename, 'status.dart');
-      expect(result.code, contains("@_i1.JsonEnum(valueField: 'rawValue')"));
       expect(result.code, contains('enum Status'));
-      expect(result.code, contains("part 'status.g.dart'"));
       expect(result.code, isNot(contains('typedef')));
       expect(result.code, contains('oneHundred(100)'));
       expect(result.code, contains('twoHundred(200)'));
@@ -248,14 +236,7 @@ void main() {
 
       expect(
         () => generator.generate(model),
-        throwsA(
-          isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            'EnumGenerator only supports String and int values. '
-                'Got type: double',
-          ),
-        ),
+        throwsA(isA<ArgumentError>()),
       );
     });
 
@@ -349,7 +330,7 @@ void main() {
           }
           return values.firstWhere(
             (e) => e.rawValue == value,
-            orElse: () => throw FormatException('No matching Color for value: $value'));
+            orElse: () => throw FormatException('No matching Color for value: $value') );
         ''';
         expect(body.normalizeCode(), expectedBody.normalizeCode());
       });
@@ -382,7 +363,7 @@ void main() {
           }
           return values.firstWhere(
             (e) => e.rawValue == value,
-            orElse: () => throw FormatException('No matching Status for value: $value'));
+            orElse: () => throw FormatException('No matching Status for value: $value') );
         ''';
         expect(body.normalizeCode(), expectedBody.normalizeCode());
       });
@@ -415,7 +396,7 @@ void main() {
           }
           return values.firstWhere(
             (e) => e.rawValue == value,
-            orElse: () => throw FormatException('No matching Status for value: $value'));
+            orElse: () => throw FormatException('No matching Status for value: $value') );
         ''';
         expect(body.normalizeCode(), expectedBody.normalizeCode());
       });

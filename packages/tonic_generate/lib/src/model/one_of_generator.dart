@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/exception_code_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
@@ -42,28 +43,6 @@ class OneOfGenerator {
   @visibleForTesting
   Class generateClass(OneOfModel model) {
     final className = nameManager.modelName(model);
-
-    final stringRef = TypeReference(
-      (b) =>
-          b
-            ..symbol = 'String'
-            ..url = 'dart:core',
-    );
-
-    final dynamicRef = TypeReference(
-      (b) =>
-          b
-            ..symbol = 'dynamic'
-            ..url = 'dart:core',
-    );
-
-    final mapStringDynamic = TypeReference(
-      (b) =>
-          b
-            ..symbol = 'Map'
-            ..url = 'dart:core'
-            ..types.addAll([stringRef, dynamicRef]),
-    );
 
     return Class(
       (b) =>
@@ -324,16 +303,6 @@ class OneOfGenerator {
     )) {
       final factoryName = nameManager.modelName(m.model).toCamelCase();
       final modelName = nameManager.modelName(m.model);
-      final mapType = TypeReference(
-        (b) =>
-            b
-              ..symbol = 'Map'
-              ..url = 'dart:core'
-              ..types.addAll([
-                refer('String', 'dart:core'),
-                refer('dynamic', 'dart:core'),
-              ]),
-      );
 
       blocks.add(
         Block.of([
@@ -353,10 +322,7 @@ class OneOfGenerator {
 
     // Throw if no match found.
     blocks.add(
-      refer(
-        'ArgumentError',
-        'dart:core',
-      ).call([literalString('Invalid JSON for $className')]).thrown.statement,
+      generateArgumentErrorExpression('Invalid JSON for $className').statement,
     );
 
     return Block.of(blocks);

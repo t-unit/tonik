@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/model/class_generator.dart';
@@ -8,7 +9,7 @@ import 'package:tonic_generate/src/model/one_of_generator.dart';
 import 'package:tonic_generate/src/model/typedef_generator.dart';
 
 class ModelGenerator {
-  const ModelGenerator({
+  ModelGenerator({
     required this.classGenerator,
     required this.enumGenerator,
     required this.oneOfGenerator,
@@ -20,18 +21,23 @@ class ModelGenerator {
   final OneOfGenerator oneOfGenerator;
   final TypedefGenerator typedefGenerator;
 
+  final log = Logger('ModelGenerator');
+
   void writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
   }) {
     for (final model in apiDocument.models) {
+      log.fine('Generating model $model');
       ({String code, String filename})? result;
 
       switch (model) {
         case ClassModel():
           result = classGenerator.generate(model);
-        case EnumModel<Object>():
-          result = enumGenerator.generate(model);
+        case EnumModel<int>():
+          result = enumGenerator.generate<int>(model);
+        case EnumModel<String>():
+          result = enumGenerator.generate<String>(model);
         case OneOfModel():
           result = oneOfGenerator.generate(model);
         case AliasModel():

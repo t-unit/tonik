@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/exception_code_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 import 'package:tonic_generate/src/util/to_json_value_expression_generator.dart';
@@ -115,10 +116,10 @@ class ClassGenerator {
   Code _buildFromJsonBody(String className, ClassModel model) {
     final normalizedProperties = normalizeAll(model.properties.toList());
 
-    final invalidJsonError = refer('ArgumentError', 'dart:core')
-        .call([literalString('Invalid JSON for $className: \$json')])
-        .thrown
-        .statement;
+    final invalidJsonError =
+        generateArgumentErrorExpression(
+          'Invalid JSON for $className: \$json',
+        ).statement;
 
     final codes = <Code>[
       const Code('final map = json;'),
@@ -168,10 +169,7 @@ class ClassGenerator {
         'for $jsonKey of $className, got \${$normalizedName}';
 
     final typeCheckError =
-        refer(
-          'ArgumentError',
-          'dart:core',
-        ).call([literalString(errorMessage)]).thrown.statement;
+        generateArgumentErrorExpression(errorMessage).statement;
 
     final conditionStart =
         property.isNullable

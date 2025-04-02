@@ -343,6 +343,8 @@ class ModelImporter {
     bool isNullable,
     Context context,
   ) {
+    log.fine('Parsing enum $name<$T> for $context with values $values');
+
     final typedValues = values.whereType<T>().toSet();
     final hasNull = values.any((value) => value == null);
 
@@ -356,7 +358,7 @@ class ModelImporter {
       );
     }
 
-    return EnumModel(
+    return EnumModel<T>(
       values: typedValues,
       isNullable: isNullable || hasNull,
       context: context,

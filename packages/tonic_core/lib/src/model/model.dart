@@ -69,7 +69,7 @@ class EnumModel<T> extends Model with NamedModel {
 
   @override
   String toString() =>
-      'EnumModel{name: $name, values: $values isNullable: $isNullable}';
+      'EnumModel<$T>{name: $name, values: $values isNullable: $isNullable}';
 }
 
 class AllOfModel extends Model with NamedModel {

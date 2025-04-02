@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/exception_code_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 
@@ -14,7 +15,7 @@ class EnumGenerator {
   final NameManager nameManager;
   final String package;
 
-  ({String code, String filename}) generate<T extends Object>(
+  ({String code, String filename}) generate<T>(
     EnumModel<T> model,
   ) {
     final emitter = DartEmitter.scoped(
@@ -26,8 +27,6 @@ class EnumGenerator {
     final snakeCaseName = publicEnumName.toSnakeCase();
 
     final library = Library((b) {
-      b.directives.add(Directive.part('$snakeCaseName.g.dart'));
-
       final generated = generateEnum(model, publicEnumName);
       b.body.addAll([
         if (generated.typedefValue != null) generated.typedefValue!,
@@ -47,14 +46,14 @@ class EnumGenerator {
   }
 
   @visibleForTesting
-  ({Enum enumValue, TypeDef? typedefValue}) generateEnum<T extends Object>(
+  ({Enum enumValue, TypeDef? typedefValue}) generateEnum<T>(
     EnumModel<T> model,
     String enumName,
   ) {
     if (T != String && T != int) {
       throw ArgumentError(
         'EnumGenerator only supports String and int values. '
-        'Got type: $T',
+        'Got type: $T for ${model.name ?? model.context.path.join('.')}',
       );
     }
 
@@ -76,12 +75,6 @@ class EnumGenerator {
       (b) =>
           b
             ..name = model.isNullable ? 'Raw$enumName' : actualEnumName
-            ..annotations.add(
-              refer(
-                'JsonEnum',
-                'package:json_annotation/json_annotation.dart',
-              ).call([], {'valueField': literalString('rawValue')}),
-            )
             ..constructors.add(
               Constructor(
                 (b) =>
@@ -133,15 +126,12 @@ class EnumGenerator {
     return (enumValue: enumValue, typedefValue: typedefValue);
   }
 
-  Constructor _generateFromJsonConstructor<T extends Object>(String enumName) {
+  Constructor _generateFromJsonConstructor<T>(String enumName) {
     const valueParam = 'value';
     final typeCheck = 'value is! $T';
-    final typeError =
-        "throw FormatException('Expected $T for "
-        "$enumName, got \${$valueParam.runtimeType}');";
-    final valueError =
-        "throw FormatException('No matching $enumName "
-        "for value: \$$valueParam')";
+    final typeErrorMessage =
+        'Expected $T for $enumName, got \${$valueParam.runtimeType}';
+    final valueErrorMessage = 'No matching $enumName for value: \$$valueParam';
 
     return Constructor(
       (b) =>
@@ -158,16 +148,18 @@ class EnumGenerator {
             )
             ..body = Block.of([
               Code('if ($typeCheck) {'),
-              Code(typeError),
+              generateFormatExceptionExpression(typeErrorMessage).statement,
               const Code('}'),
               const Code('return values.firstWhere('),
               const Code('(e) => e.rawValue == $valueParam,'),
-              Code('orElse: () => $valueError);'),
+              const Code('orElse: () => '),
+              generateFormatExceptionExpression(valueErrorMessage).code,
+              const Code(');'),
             ]),
     );
   }
 
-  List<EnumValue> _generateEnumValues<T extends Object>(
+  List<EnumValue> _generateEnumValues<T>(
     EnumModel<T> model,
     List<({String normalizedName, String originalValue})> normalizedValues,
   ) {
@@ -183,7 +175,7 @@ class EnumGenerator {
               ..arguments.add(
                 value is int
                     ? literalNum(value)
-                    : literalString(value.toString()),
+                    : literalString(value.toString(), raw: true),
               ),
       );
     }).toList();
