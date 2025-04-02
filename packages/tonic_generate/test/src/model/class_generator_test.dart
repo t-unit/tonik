@@ -44,14 +44,10 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      expect(result.annotations, hasLength(2));
+      expect(result.annotations, hasLength(1));
       expect(
         result.annotations[0].code.accept(emitter).toString(),
         'freezed',
-      );
-      expect(
-        result.annotations[1].code.accept(emitter).toString(),
-        'JsonSerializable(explicitToJson: true, includeIfNull: true, )',
       );
     });
 
@@ -128,11 +124,7 @@ void main() {
 
         expect(field.name, 'id');
         expect(field.type?.accept(emitter).toString(), 'int');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(includeIfNull: false, name: r'id', )",
-        );
+        expect(field.annotations, isEmpty);
       });
 
       test('generates optional nullable string property', () {
@@ -155,11 +147,7 @@ void main() {
 
         expect(field.name, 'name');
         expect(field.type?.accept(emitter).toString(), 'String?');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(name: r'name')",
-        );
+        expect(field.annotations, isEmpty);
       });
 
       test('generates decimal property', () {
@@ -182,11 +170,7 @@ void main() {
 
         expect(field.name, 'balance');
         expect(field.type?.accept(emitter).toString(), 'BigDecimal');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(includeIfNull: false, name: r'balance', )",
-        );
+        expect(field.annotations, isEmpty);
       });
 
       test('generates list of strings property', () {
@@ -212,11 +196,7 @@ void main() {
 
         expect(field.name, 'tags');
         expect(field.type?.accept(emitter).toString(), 'List<String>');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(includeIfNull: false, name: r'tags', )",
-        );
+        expect(field.annotations, isEmpty);
       });
 
       test('generates nested class property', () {
@@ -243,11 +223,7 @@ void main() {
 
         expect(field.name, 'address');
         expect(field.type?.accept(emitter).toString(), 'Address');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(includeIfNull: false, name: r'address', )",
-        );
+        expect(field.annotations, isEmpty);
       });
 
       test('generates deprecated property', () {
@@ -270,14 +246,10 @@ void main() {
 
         expect(field.name, 'username');
         expect(field.type?.accept(emitter).toString(), 'String');
-        expect(field.annotations, hasLength(2));
+        expect(field.annotations, hasLength(1));
         expect(
-          field.annotations[0].code.accept(emitter).toString(),
+          field.annotations.first.code.accept(emitter).toString(),
           "Deprecated('This property is deprecated.')",
-        );
-        expect(
-          field.annotations[1].code.accept(emitter).toString(),
-          "JsonKey(includeIfNull: false, name: r'username', )",
         );
       });
 
@@ -286,8 +258,8 @@ void main() {
           name: 'User',
           properties: {
             Property(
-              name: '_age',
-              model: IntegerModel(context: context),
+              name: 'photoUrl',
+              model: StringModel(context: context),
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
@@ -299,13 +271,9 @@ void main() {
         final result = generator.generateClass(model);
         final field = result.fields.first;
 
-        expect(field.name, 'age');
-        expect(field.type?.accept(emitter).toString(), 'int?');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(includeIfNull: false, name: r'_age', )",
-        );
+        expect(field.name, 'photoUrl');
+        expect(field.type?.accept(emitter).toString(), 'String?');
+        expect(field.annotations, isEmpty);
       });
 
       test('generates required nullable property', () {
@@ -313,7 +281,7 @@ void main() {
           name: 'User',
           properties: {
             Property(
-              name: 'bio',
+              name: 'photoUrl',
               model: StringModel(context: context),
               isRequired: true,
               isNullable: true,
@@ -326,13 +294,9 @@ void main() {
         final result = generator.generateClass(model);
         final field = result.fields.first;
 
-        expect(field.name, 'bio');
+        expect(field.name, 'photoUrl');
         expect(field.type?.accept(emitter).toString(), 'String?');
-        expect(field.annotations, hasLength(1));
-        expect(
-          field.annotations.first.code.accept(emitter).toString(),
-          "JsonKey(name: r'bio')",
-        );
+        expect(field.annotations, isEmpty);
       });
     });
   });

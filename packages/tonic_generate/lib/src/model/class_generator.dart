@@ -29,7 +29,6 @@ class ClassGenerator {
 
     final library = Library((b) {
       b.directives.add(Directive.part('$snakeCaseName.freezed.dart'));
-      b.directives.add(Directive.part('$snakeCaseName.g.dart'));
       b.body.add(generateClass(model));
     });
 
@@ -38,7 +37,9 @@ class ClassGenerator {
     );
 
     final code = formatter.format(
-      '// Generated code - do not modify by hand\n\n${library.accept(emitter)}',
+      '// Generated code - do not modify by hand\n'
+      '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n\n'
+      '${library.accept(emitter)}',
     );
 
     return (code: code, filename: '$snakeCaseName.dart');
@@ -53,19 +54,12 @@ class ClassGenerator {
       (b) =>
           b
             ..name = className
-            ..annotations.addAll([
+            ..annotations.add(
               refer(
                 'freezed',
                 'package:freezed_annotation/freezed_annotation.dart',
               ),
-              refer(
-                'JsonSerializable',
-                'package:json_annotation/json_annotation.dart',
-              ).call([], {
-                'explicitToJson': literalTrue,
-                'includeIfNull': literalTrue,
-              }),
-            ])
+            )
             ..mixins.add(refer('_\$$className'))
             ..constructors.addAll([
               Constructor(
@@ -241,32 +235,18 @@ class ClassGenerator {
   }
 
   Field _generateField(Property property, String normalizedName) {
-    final annotations = <Expression>[];
+    final fieldBuilder = FieldBuilder()
+      ..name = normalizedName
+      ..modifier = FieldModifier.final$
+      ..type = _getTypeReference(property);
+
     if (property.isDeprecated) {
-      annotations.add(
+      fieldBuilder.annotations.add(
         refer('Deprecated').call([literalString(deprecatedPropertyMessage)]),
       );
     }
 
-    final jsonKey = refer(
-      'JsonKey',
-      'package:json_annotation/json_annotation.dart',
-    );
-    annotations.add(
-      jsonKey.call(const [], {
-        if (!property.isNullable) 'includeIfNull': literalFalse,
-        'name': literalString(property.name, raw: true),
-      }),
-    );
-
-    return Field(
-      (b) =>
-          b
-            ..name = normalizedName
-            ..modifier = FieldModifier.final$
-            ..type = _getTypeReference(property)
-            ..annotations.addAll(annotations),
-    );
+    return fieldBuilder.build();
   }
 
   TypeReference _getTypeReference(Property property) {
