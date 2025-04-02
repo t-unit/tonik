@@ -34,7 +34,9 @@ class OneOfGenerator {
     );
 
     final code = formatter.format(
-      '// Generated code - do not modify by hand\n\n${library.accept(emitter)}',
+      '// Generated code - do not modify by hand\n'
+      '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n\n'
+      '${library.accept(emitter)}',
     );
 
     return (code: code, filename: '$snakeCaseName.dart');

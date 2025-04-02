@@ -1,9 +1,11 @@
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/library_generator.dart';
 import 'package:tonic_generate/src/model/class_generator.dart';
 import 'package:tonic_generate/src/model/enum_generator.dart';
 import 'package:tonic_generate/src/model/model_generator.dart';
 import 'package:tonic_generate/src/model/one_of_generator.dart';
 import 'package:tonic_generate/src/model/typedef_generator.dart';
+import 'package:tonic_generate/src/pubspec_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 
@@ -55,9 +57,22 @@ class Generator {
       tags: apiDocument.operationsByTag.keys,
     );
 
+    generatePubspec(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+    );
+
     modelGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
+      package: package,
+    );
+
+    generateLibraryFile(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
     );
   }
 }

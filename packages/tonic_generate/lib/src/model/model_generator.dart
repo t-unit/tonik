@@ -26,7 +26,16 @@ class ModelGenerator {
   void writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
+    required String package,
   }) {
+    final modelDirectory = path.joinAll([
+      outputDirectory,
+      package,
+      'lib',
+      'src',
+      'model',
+    ]);
+
     for (final model in apiDocument.models) {
       log.fine('Generating model $model');
       ({String code, String filename})? result;
@@ -49,7 +58,8 @@ class ModelGenerator {
           continue;
       }
 
-      final file = File(path.join(outputDirectory, result.filename));
+      log.fine('Writing file ${result.filename}');
+      final file = File(path.join(modelDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
     }
