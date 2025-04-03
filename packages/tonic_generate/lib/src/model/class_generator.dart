@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonic_generate/src/util/exception_code_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/property_name_normalizer.dart';
@@ -20,7 +21,8 @@ class ClassGenerator {
   static const deprecatedPropertyMessage = 'This property is deprecated.';
 
   ({String code, String filename}) generate(ClassModel model) {
-    final emitter = DartEmitter.scoped(
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
@@ -117,11 +119,11 @@ class ClassGenerator {
 
     final codes = <Code>[
       const Code('final map = json;'),
-      const Code(''),
-      const Code('if (map is! Map<String, dynamic>) {'),
+      const Code('if (map is! '),
+      _buildMapStringDynamicType().code,
+      const Code(') {'),
       invalidJsonError,
       const Code('}'),
-      const Code(''),
     ];
 
     final propertyValidations = <Code>[];

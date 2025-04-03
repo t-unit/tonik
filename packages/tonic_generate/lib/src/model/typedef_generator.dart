@@ -3,17 +3,15 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
-/// A generator for creating Dart typedef files from 
+/// A generator for creating Dart typedef files from
 /// alias and list model definitions.
 @immutable
 class TypedefGenerator {
-  const TypedefGenerator({
-    required this.nameManager,
-    required this.package,
-  });
+  const TypedefGenerator({required this.nameManager, required this.package});
 
   final NameManager nameManager;
   final String package;
@@ -44,7 +42,8 @@ class TypedefGenerator {
   }
 
   ({String code, String filename}) _generateFile(TypeDef typedef) {
-    final emitter = DartEmitter.scoped(
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );

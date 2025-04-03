@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonic_generate/src/util/exception_code_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
@@ -16,7 +17,8 @@ class OneOfGenerator {
   final String package;
 
   ({String code, String filename}) generate(OneOfModel model) {
-    final emitter = DartEmitter.scoped(
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );

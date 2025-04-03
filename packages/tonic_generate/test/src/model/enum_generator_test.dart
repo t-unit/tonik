@@ -223,7 +223,7 @@ void main() {
       expect(result.code, contains('twoHundred(200)'));
       expect(result.code, contains('fourHundredFour(404)'));
       expect(result.code, contains('const Status(this.rawValue);'));
-      expect(result.code, contains('final int rawValue;'));
+      expect(result.code, contains('final _i1.int rawValue;'));
     });
 
     test('throws error for unsupported types', () {
