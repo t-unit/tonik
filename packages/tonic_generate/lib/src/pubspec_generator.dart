@@ -22,6 +22,7 @@ environment:
   sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
+  big_decimal: ^0.5.0
   collection: ^1.17.0
 ''';
 
