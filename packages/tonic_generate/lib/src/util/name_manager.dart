@@ -65,11 +65,8 @@ class NameManager {
   );
 
   /// Gets a cached or generates a new unique response header name.
-  String responseHeaderName(ResponseHeader header) =>
-      _responseHeaderNames.putIfAbsent(
-        header,
-        () => generator.generateResponseHeaderName(header),
-      );
+  String responseHeaderName(ResponseHeader header) => _responseHeaderNames
+      .putIfAbsent(header, () => generator.generateResponseHeaderName(header));
 
   /// Gets a cached or generates a new unique request header name.
   String requestHeaderName(RequestHeader header) => _requestHeaderNames
@@ -90,8 +87,10 @@ class NameManager {
       );
 
   /// Gets a cached or generates a new unique operation name.
-  String operationName(Operation operation) => _operationNames
-      .putIfAbsent(operation, () => generator.generateOperationName(operation));
+  String operationName(Operation operation) => _operationNames.putIfAbsent(
+    operation,
+    () => generator.generateOperationName(operation),
+  );
 
   /// Gets a cached or generates a new unique API class name for a tag.
   String tagName(Tag tag) =>

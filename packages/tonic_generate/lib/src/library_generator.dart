@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:tonic_core/tonic_core.dart';
+
 void generateLibraryFile({
   required ApiDocument apiDocument,
   required String outputDirectory,

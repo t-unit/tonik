@@ -35,7 +35,7 @@ void main() {
       expect(result.name, 'User');
     });
 
-    test('generates class with correct annotations', () {
+    test('generates class with no annotations', () {
       final model = ClassModel(
         name: 'User',
         properties: const {},
@@ -43,12 +43,7 @@ void main() {
       );
 
       final result = generator.generateClass(model);
-
-      expect(result.annotations, hasLength(1));
-      expect(
-        result.annotations[0].code.accept(emitter).toString(),
-        'freezed',
-      );
+      expect(result.annotations, isEmpty);
     });
 
     test('generates constructor with required and optional parameters', () {
@@ -78,7 +73,7 @@ void main() {
 
       expect(constructor.constant, isTrue);
       expect(constructor.optionalParameters, hasLength(2));
-      
+
       final idParam = constructor.optionalParameters[0];
       expect(idParam.name, 'id');
       expect(idParam.named, isTrue);

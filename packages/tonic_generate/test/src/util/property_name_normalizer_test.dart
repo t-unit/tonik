@@ -115,13 +115,7 @@ void main() {
     });
 
     test('handles integer values', () {
-      final result = normalizeEnumValues([
-        '1',
-        '2',
-        '3',
-        '123',
-        '456',
-      ]);
+      final result = normalizeEnumValues(['1', '2', '3', '123', '456']);
 
       expect(result.map((r) => r.normalizedName).toList(), [
         'one',
@@ -151,12 +145,7 @@ void main() {
     });
 
     test('handles empty or underscore-only values', () {
-      final result = normalizeEnumValues([
-        '',
-        '_',
-        '__',
-        '___',
-      ]);
+      final result = normalizeEnumValues(['', '_', '__', '___']);
 
       expect(result.map((r) => r.normalizedName).toList(), [
         'value',
@@ -167,12 +156,7 @@ void main() {
     });
 
     test('makes duplicate names unique', () {
-      final result = normalizeEnumValues([
-        '1',
-        'one',
-        'ONE',
-        'One',
-      ]);
+      final result = normalizeEnumValues(['1', 'one', 'ONE', 'One']);
 
       expect(result.map((r) => r.normalizedName).toList(), [
         'one',
@@ -184,29 +168,27 @@ void main() {
   });
 
   test('handles special characters', () {
-      final result = normalizeEnumValues([
-        'class',
-        r'$class',
-        'class2',
-        'if',
-        r'$if',
-        'if2',
-      ]);
+    final result = normalizeEnumValues([
+      'class',
+      r'$class',
+      'class2',
+      'if',
+      r'$if',
+      'if2',
+    ]);
 
-      expect(result.map((r) => r.normalizedName).toList(), [
-        r'$class',
-        r'$class2',
-        'class2',
-        r'$if',
-        r'$if2',
-        'if2',
-      ]);
+    expect(result.map((r) => r.normalizedName).toList(), [
+      r'$class',
+      r'$class2',
+      'class2',
+      r'$if',
+      r'$if2',
+      'if2',
+    ]);
   });
 
   test('preserves property metadata', () {
-    final result = normalizeAll([
-      createProperty('name', isDeprecated: true),
-    ]);
+    final result = normalizeAll([createProperty('name', isDeprecated: true)]);
 
     expect(result.first.property.isDeprecated, isTrue);
   });
@@ -221,4 +203,4 @@ Property createProperty(String name, {bool isDeprecated = false}) {
     isNullable: true,
     isDeprecated: isDeprecated,
   );
-} 
+}

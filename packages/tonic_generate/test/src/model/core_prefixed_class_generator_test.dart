@@ -51,22 +51,14 @@ void main() {
       );
 
       final result = generator.generate(model);
-      
-      // Check that the generated code contains dart:core prefixes
+
+      // Check that the generated code contains dart:core prefixes:
       expect(result.code, contains("import 'dart:core' as _i"));
       expect(result.code, contains('_i'));
-      
-      // Verify that core types have prefixes
+
+      // Verify that core types have prefixes:
       final coreTypeRegex = RegExp(r'_i\d+\.(String|int|bool|Map|List)');
       expect(coreTypeRegex.hasMatch(result.code), isTrue);
-      
-      // Print the result for manual inspection
-      print('Generated code contains the following imports:');
-      RegExp(r'import.*').allMatches(result.code).forEach((match) {
-        print(match.group(0));
-      });
-      
-      print('\nGenerated file: ${result.filename}');
     });
   });
-} 
+}

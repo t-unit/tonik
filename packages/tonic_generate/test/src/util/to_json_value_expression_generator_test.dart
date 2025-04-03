@@ -136,21 +136,21 @@ void main() {
     test('for required property with nullable Enum type', () {
       final enumModel = EnumModel<String>(
         name: 'Priority',
-        values: const {'high', 'low'}, 
+        values: const {'high', 'low'},
         isNullable: true,
         context: context,
       );
       final property = Property(
         name: 'priority',
         model: enumModel,
-        isRequired: true, 
+        isRequired: true,
         isNullable: false,
         isDeprecated: false,
       );
 
       expect(
         buildToJsonValueExpression('priority', property),
-        'priority?.toJson()', 
+        'priority?.toJson()',
       );
     });
 

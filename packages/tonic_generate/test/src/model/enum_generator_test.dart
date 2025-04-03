@@ -234,10 +234,7 @@ void main() {
         context: Context.initial().push('test'),
       );
 
-      expect(
-        () => generator.generate(model),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => generator.generate(model), throwsA(isA<ArgumentError>()));
     });
 
     test('throws for unsupported enum value type', () {

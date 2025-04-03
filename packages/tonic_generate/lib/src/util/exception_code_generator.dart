@@ -17,7 +17,5 @@ Expression generateUnimplementedErrorExpression(String message) {
 
 /// Base function to generate a throw expression for any exception type.
 Expression _generateExceptionExpression(String type, String message) {
-  return refer(type, 'dart:core')
-      .call([literalString(message)])
-      .thrown;
+  return refer(type, 'dart:core').call([literalString(message)]).thrown;
 }
