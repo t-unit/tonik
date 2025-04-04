@@ -130,7 +130,7 @@ class EnumGenerator {
 
   Constructor _generateFromJsonConstructor<T>(String enumName) {
     const valueParam = 'value';
-    final typeCheck = 'value is! $T';
+    final typeReference = refer(T.toString(), 'dart:core');
     final typeErrorMessage =
         'Expected $T for $enumName, got \${$valueParam.runtimeType}';
     final valueErrorMessage = 'No matching $enumName for value: \$$valueParam';
@@ -149,7 +149,7 @@ class EnumGenerator {
               ),
             )
             ..body = Block.of([
-              Code('if ($typeCheck) {'),
+              Code.scope((a) => 'if (value is! ${a(typeReference)}) {'),
               generateFormatExceptionExpression(typeErrorMessage).statement,
               const Code('}'),
               const Code('return values.firstWhere('),

@@ -37,7 +37,10 @@ class ModelGenerator {
     ]);
 
     for (final model in apiDocument.models) {
-      log.fine('Generating model $model');
+      log.fine(
+        'Generating model '
+        '${model is NamedModel ? model.name : model}',
+      );
       ({String code, String filename})? result;
 
       switch (model) {
@@ -54,7 +57,7 @@ class ModelGenerator {
         case ListModel():
           result = typedefGenerator.generateList(model);
         default:
-          // Ignore unsupported models
+          log.fine('Ingnoring model: $model');
           continue;
       }
 
