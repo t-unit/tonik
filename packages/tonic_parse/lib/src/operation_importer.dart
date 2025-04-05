@@ -102,7 +102,7 @@ class OperationImporter {
       final importedResponse = responseImporter.importResponse(
         name: null,
         wrapper: response,
-        context: context.push('responses').push(statusCode),
+        context: context.push(statusCode),
       );
 
       if (importedResponse.body == null) continue;
@@ -139,6 +139,8 @@ class OperationImporter {
   ) {
     if (operation == null) return;
 
+    final methodContext = context.push(httpMethod.name);
+
     final tags =
         operation.tags
             ?.map(
@@ -152,18 +154,15 @@ class OperationImporter {
     final allParameters = [...pathParameters, ...operationParameters];
 
     final (headers, queryParams, pathParams) = parameterImporter
-        .importOperationParameters(allParameters);
+        .importOperationParameters(allParameters, context.push('parameters'));
 
-    final responses = _importResponses(
-      operation.responses,
-      context.push(httpMethod.name),
-    );
+    final responses = _importResponses(operation.responses, methodContext);
 
     operations.add(
       core.Operation(
         method: httpMethod,
         operationId: operation.operationId,
-        context: context.push(httpMethod.name),
+        context: methodContext,
         path: path,
         tags: tags ?? {},
         isDeprecated: operation.isDeprecated ?? false,

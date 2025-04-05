@@ -54,7 +54,10 @@ class RequestParameterImporter {
     Set<core.QueryParameter> queryParameters,
     Set<core.PathParameter> pathParameters,
   )
-  importOperationParameters(List<ReferenceWrapper<Parameter>> parameters) {
+  importOperationParameters(
+    List<ReferenceWrapper<Parameter>> parameters,
+    core.Context context,
+  ) {
     final localHeaders = <core.RequestHeader>{};
     final localQueryParameters = <core.QueryParameter>{};
     final localPathParameters = <core.PathParameter>{};
@@ -63,7 +66,7 @@ class RequestParameterImporter {
       final imported = _importParameter(
         name: null,
         wrapper: wrapper,
-        context: rootContext,
+        context: context,
       );
 
       if (imported case final core.RequestHeader header) {

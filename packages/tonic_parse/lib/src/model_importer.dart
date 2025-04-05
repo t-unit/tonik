@@ -38,7 +38,7 @@ class ModelImporter {
 
   Model importSchema(ReferenceWrapper<Schema> schema, Context context) {
     final model = _parseSchemaWrapper(null, schema, context);
-    log.fine('Importing schema $model');
+    log.fine('Importing schema $model@$context');
 
     if (model is! PrimitiveModel && model is! AliasModel) {
       _logModelAdded(model);
