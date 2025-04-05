@@ -24,6 +24,7 @@ void main() {
       final fooOperation = Operation(
         operationId: 'test',
         context: Context.initial().push('test'),
+        path: '/test',
         tags: {const Tag(name: 'foo')},
         summary: null,
         description: null,
@@ -38,6 +39,7 @@ void main() {
       final barOperation = Operation(
         operationId: 'test2',
         context: Context.initial().push('test'),
+        path: '/test2',
         tags: {const Tag(name: 'bar')},
         summary: null,
         description: null,
@@ -73,6 +75,7 @@ void main() {
       final twoTagOperation = Operation(
         operationId: 'test',
         context: Context.initial().push('test'),
+        path: '/test',
         tags: {const Tag(name: 'foo'), const Tag(name: 'bar')},
         summary: null,
         description: null,
@@ -95,6 +98,7 @@ void main() {
           Operation(
             operationId: 'test',
             context: Context.initial().push('test'),
+            path: '/test',
             tags: {const Tag(name: 'foo')},
             summary: null,
             description: null,

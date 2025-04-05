@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:collection/collection.dart';
 
 @immutable
 class Operation {
@@ -10,6 +11,7 @@ class Operation {
     required this.description,
     required this.tags,
     required this.isDeprecated,
+    required this.path,
     required this.method,
     required this.headers,
     required this.queryParameters,
@@ -25,6 +27,7 @@ class Operation {
   final String? summary;
   final String? description;
 
+  final String path;
   final HttpMethod method;
 
   final Set<RequestHeader> headers;
@@ -32,6 +35,47 @@ class Operation {
   final Set<PathParameter> pathParameters;
 
   final Map<ResponseStatus, Response> responses;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Operation) return false;
+    
+    final deepEquals = const DeepCollectionEquality().equals;
+    
+    return operationId == other.operationId &&
+        context == other.context &&
+        summary == other.summary &&
+        description == other.description &&
+        deepEquals(tags, other.tags) &&
+        isDeprecated == other.isDeprecated &&
+        path == other.path &&
+        method == other.method &&
+        deepEquals(headers, other.headers) &&
+        deepEquals(queryParameters, other.queryParameters) &&
+        deepEquals(pathParameters, other.pathParameters) &&
+        deepEquals(responses, other.responses);
+  }
+
+  @override
+  int get hashCode {
+    final deepHash = const DeepCollectionEquality().hash;
+    
+    return Object.hash(
+      operationId,
+      context,
+      summary,
+      description,
+      deepHash(tags),
+      isDeprecated,
+      path,
+      method,
+      deepHash(headers),
+      deepHash(queryParameters),
+      deepHash(pathParameters),
+      deepHash(responses),
+    );
+  }
 }
 
 @immutable

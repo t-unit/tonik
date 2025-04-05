@@ -38,22 +38,54 @@ class OperationImporter {
     operations = <core.Operation>{};
 
     for (final pathEntry in openApiObject.paths.entries) {
+      final path = pathEntry.key;
       final pathItem = pathEntry.value;
       final context = rootContext.push(pathEntry.key);
 
-      _addOperation(pathItem.get, context, core.HttpMethod.get, pathItem);
-      _addOperation(pathItem.put, context, core.HttpMethod.put, pathItem);
-      _addOperation(pathItem.post, context, core.HttpMethod.post, pathItem);
-      _addOperation(pathItem.delete, context, core.HttpMethod.delete, pathItem);
-      _addOperation(pathItem.patch, context, core.HttpMethod.patch, pathItem);
-      _addOperation(pathItem.head, context, core.HttpMethod.head, pathItem);
+      _addOperation(pathItem.get, context, core.HttpMethod.get, pathItem, path);
+      _addOperation(pathItem.put, context, core.HttpMethod.put, pathItem, path);
+      _addOperation(
+        pathItem.post,
+        context,
+        core.HttpMethod.post,
+        pathItem,
+        path,
+      );
+      _addOperation(
+        pathItem.delete,
+        context,
+        core.HttpMethod.delete,
+        pathItem,
+        path,
+      );
+      _addOperation(
+        pathItem.patch,
+        context,
+        core.HttpMethod.patch,
+        pathItem,
+        path,
+      );
+      _addOperation(
+        pathItem.head,
+        context,
+        core.HttpMethod.head,
+        pathItem,
+        path,
+      );
       _addOperation(
         pathItem.options,
         context,
         core.HttpMethod.options,
         pathItem,
+        path,
       );
-      _addOperation(pathItem.trace, context, core.HttpMethod.trace, pathItem);
+      _addOperation(
+        pathItem.trace,
+        context,
+        core.HttpMethod.trace,
+        pathItem,
+        path,
+      );
     }
   }
 
@@ -103,6 +135,7 @@ class OperationImporter {
     core.Context context,
     core.HttpMethod httpMethod,
     PathItem pathItem,
+    String path,
   ) {
     if (operation == null) return;
 
@@ -131,6 +164,7 @@ class OperationImporter {
         method: httpMethod,
         operationId: operation.operationId,
         context: context.push(httpMethod.name),
+        path: path,
         tags: tags ?? {},
         isDeprecated: operation.isDeprecated ?? false,
         summary: operation.summary,
