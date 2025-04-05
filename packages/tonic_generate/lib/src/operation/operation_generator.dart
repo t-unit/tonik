@@ -1,0 +1,198 @@
+import 'package:change_case/change_case.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
+import 'package:meta/meta.dart';
+import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonic_generate/src/util/name_manager.dart';
+
+/// Generator for creating callable operation classes
+/// from Operation definitions.
+class OperationGenerator {
+  const OperationGenerator({required this.nameManager});
+
+  final NameManager nameManager;
+
+  ({String code, String filename}) generateCallableOperation(
+    Operation operation,
+  ) {
+    final className = nameManager.operationName(operation);
+    final fileNameSnakeCase = className.toSnakeCase();
+    final fileName = '$fileNameSnakeCase.dart';
+
+    final library = Library(
+      (b) => b..body.add(generateClass(operation, className)),
+    );
+
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(),
+      orderDirectives: true,
+      useNullSafetySyntax: true,
+    );
+
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
+
+    final code = formatter.format(
+      '// Generated code - do not modify by hand\n'
+      '// ignore_for_file: unnecessary_brace_in_string_interps\n\n'
+      '${library.accept(emitter)}',
+    );
+
+    return (code: code, filename: fileName);
+  }
+
+  /// Generates the callable operation class
+  @visibleForTesting
+  Class generateClass(Operation operation, String className) {
+    return Class(
+      (b) =>
+          b
+            ..name = className
+            ..fields.add(
+              Field(
+                (b) =>
+                    b
+                      ..name = '_dio'
+                      ..modifier = FieldModifier.final$
+                      ..type = refer('Dio', 'package:dio/dio.dart'),
+              ),
+            )
+            ..constructors.add(
+              Constructor(
+                (b) =>
+                    b
+                      ..requiredParameters.add(
+                        Parameter(
+                          (b) =>
+                              b
+                                ..name = '_dio'
+                                ..toThis = true,
+                        ),
+                      ),
+              ),
+            )
+            ..methods.addAll([
+              generateCallMethod(operation),
+              generatePathMethod(operation),
+              generateDataMethod(operation),
+              generateQueryParametersMethod(operation),
+              generateOptionsMethod(operation),
+            ]),
+    );
+  }
+
+  /// Generates the call() method for the operation
+  @visibleForTesting
+  Method generateCallMethod(Operation operation) {
+    return Method(
+      (b) =>
+          b
+            ..name = 'call'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Future'
+                    ..url = 'dart:core'
+                    ..types.add(refer('void')),
+            )
+            ..modifier = MethodModifier.async
+            ..lambda = false
+            ..body = Block((b) => b
+              ..statements.add(
+                refer('_dio')
+                    .property('request')
+                    .call(
+                      [refer('_path()'),],
+                      {
+                        'data': refer('_data()'),
+                        'queryParameters': refer('_queryParameters()'),
+                        'options': refer('_options()'),
+                      },
+                      [refer('dynamic', 'dart:core')],
+                    )
+                    .awaited
+                    .statement,
+              ),
+            ),
+    );
+  }
+
+  /// Generates a path expression for the operation
+  @visibleForTesting
+  Method generatePathMethod(Operation operation) {
+    return Method(
+      (b) =>
+          b
+            ..name = '_path'
+            ..returns = refer('String', 'dart:core')
+            ..lambda = false
+            ..body = Code("return '${operation.path}';"),
+    );
+  }
+
+  /// Generates a data expression for the operation
+  @visibleForTesting
+  Method generateDataMethod(Operation operation) {
+    return Method(
+      (b) =>
+          b
+            ..name = '_data'
+            ..returns = refer('Object?', 'dart:core')
+            ..lambda = false
+            ..body = const Code('return null;'),
+    );
+  }
+
+  /// Generates a query parameters expression for the operation
+  @visibleForTesting
+  Method generateQueryParametersMethod(Operation operation) {
+    return Method(
+      (b) =>
+          b
+            ..name = '_queryParameters'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      refer('String', 'dart:core'),
+                      refer('dynamic', 'dart:core'),
+                    ]),
+            )
+            ..lambda = false
+            ..body = const Code('return {};'),
+    );
+  }
+
+  /// Generates an options expression for the operation
+  @visibleForTesting
+  Method generateOptionsMethod(Operation operation) {
+    // Convert HttpMethod enum to string using a switch statement
+    final methodString = switch (operation.method) {
+      HttpMethod.get => 'GET',
+      HttpMethod.post => 'POST',
+      HttpMethod.put => 'PUT',
+      HttpMethod.delete => 'DELETE',
+      HttpMethod.patch => 'PATCH',
+      HttpMethod.head => 'HEAD',
+      HttpMethod.options => 'OPTIONS',
+      HttpMethod.trace => 'TRACE',
+    };
+
+    return Method(
+      (b) =>
+          b
+            ..name = '_options'
+            ..returns = refer('Options', 'package:dio/dio.dart')
+            ..lambda = false
+            ..body = Code.scope(
+              (allocate) => "return ${allocate(
+                refer('Options', 'package:dio/dio.dart'),
+              )}(method: '$methodString');",
+            ),
+    );
+  }
+}

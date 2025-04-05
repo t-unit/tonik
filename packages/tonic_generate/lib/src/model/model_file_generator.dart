@@ -8,8 +8,8 @@ import 'package:tonic_generate/src/model/enum_generator.dart';
 import 'package:tonic_generate/src/model/one_of_generator.dart';
 import 'package:tonic_generate/src/model/typedef_generator.dart';
 
-class ModelGenerator {
-  ModelGenerator({
+class ModelFileGenerator {
+  ModelFileGenerator({
     required this.classGenerator,
     required this.enumGenerator,
     required this.oneOfGenerator,

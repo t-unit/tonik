@@ -38,8 +38,14 @@ void main() {
         final model = OneOfModel(
           name: 'Result',
           models: {
-            (discriminatorValue: 'success', model: StringModel(context: context)),
-            (discriminatorValue: 'error', model: IntegerModel(context: context)),
+            (
+              discriminatorValue: 'success',
+              model: StringModel(context: context),
+            ),
+            (
+              discriminatorValue: 'error',
+              model: IntegerModel(context: context),
+            ),
           },
           discriminator: null,
           context: context,
@@ -50,9 +56,7 @@ void main() {
       });
 
       test('toJson method handles primitive values', () {
-        final toJson = baseClass.methods.firstWhere(
-          (m) => m.name == 'toJson',
-        );
+        final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
         expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
 
         final generatedCode = format(baseClass.accept(emitter).toString());
@@ -152,9 +156,7 @@ void main() {
       });
 
       test('toJson method includes discriminator for complex types', () {
-        final toJson = baseClass.methods.firstWhere(
-          (m) => m.name == 'toJson',
-        );
+        final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
         expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
 
         const expectedMethod = '''
@@ -262,13 +264,15 @@ void main() {
         baseClass = generatedClasses.firstWhere((c) => c.name == 'Result');
       });
 
-      test('toJson method handles mixed types with and without discriminator', () {
-        final toJson = baseClass.methods.firstWhere(
-          (m) => m.name == 'toJson',
-        );
-        expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
+      test(
+        'toJson method handles mixed types with and without discriminator',
+        () {
+          final toJson = baseClass.methods.firstWhere(
+            (m) => m.name == 'toJson',
+          );
+          expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
 
-        const expectedMethod = '''
+          const expectedMethod = '''
           dynamic toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ResultSuccess(:final value) => (value.toJson(), null),
@@ -283,12 +287,13 @@ void main() {
             return json;
           }''';
 
-        final generatedCode = format(baseClass.accept(emitter).toString());
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      });
+          final generatedCode = format(baseClass.accept(emitter).toString());
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
 
       test('fromJson method with type detection fallbacks', () {
         final fromJson = baseClass.methods.firstWhere(

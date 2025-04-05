@@ -2,9 +2,11 @@ import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/library_generator.dart';
 import 'package:tonic_generate/src/model/class_generator.dart';
 import 'package:tonic_generate/src/model/enum_generator.dart';
-import 'package:tonic_generate/src/model/model_generator.dart';
+import 'package:tonic_generate/src/model/model_file_generator.dart';
 import 'package:tonic_generate/src/model/one_of_generator.dart';
 import 'package:tonic_generate/src/model/typedef_generator.dart';
+import 'package:tonic_generate/src/operation/operation_file_generator.dart';
+import 'package:tonic_generate/src/operation/operation_generator.dart';
 import 'package:tonic_generate/src/pubspec_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
@@ -39,11 +41,19 @@ class Generator {
       package: fullPackage,
     );
 
-    final modelGenerator = ModelGenerator(
+    final modelGenerator = ModelFileGenerator(
       classGenerator: classGenerator,
       enumGenerator: enumGenerator,
       oneOfGenerator: oneOfGenerator,
       typedefGenerator: typedefGenerator,
+    );
+    
+    final operationGenerator = OperationGenerator(
+      nameManager: nameManager,
+    );
+    
+    final operationFileGenerator = OperationFileGenerator(
+      operationGenerator: operationGenerator,
     );
 
     nameManager.prime(
@@ -64,6 +74,12 @@ class Generator {
     );
 
     modelGenerator.writeFiles(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+    );
+    
+    operationFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,

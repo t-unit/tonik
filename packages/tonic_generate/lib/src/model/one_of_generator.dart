@@ -198,7 +198,8 @@ class OneOfGenerator {
         final dynamicRef = refer('dynamic', 'dart:core');
         final stringNullableRef = refer('String?', 'dart:core');
 
-        return 'final (${allocate(dynamicRef)} json, ${allocate(stringNullableRef)} discriminator) = switch (this) {\n'
+        return 'final (${allocate(dynamicRef)} json, '
+            '${allocate(stringNullableRef)} discriminator) = switch (this) {\n'
             '$cases\n'
             '};\n';
       }),
