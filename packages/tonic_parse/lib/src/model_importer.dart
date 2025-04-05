@@ -22,6 +22,7 @@ class ModelImporter {
     final context = rootContext;
 
     for (final MapEntry(key: name, value: schema) in _schemas.entries) {
+      log.fine('Importing schema $name');
       var model = _parseSchemaWrapper(name, schema, context);
 
       if (model is PrimitiveModel) {
@@ -29,6 +30,7 @@ class ModelImporter {
       }
 
       if (models.none((m) => m is NamedModel && m.name == name)) {
+        log.fine('Adding model $name');
         models.add(model);
       }
     }
@@ -36,8 +38,10 @@ class ModelImporter {
 
   Model importSchema(ReferenceWrapper<Schema> schema, Context context) {
     final model = _parseSchemaWrapper(null, schema, context);
+    log.fine('Importing schema $model');
 
     if (model is! PrimitiveModel && model is! AliasModel) {
+      _logModelAdded(model);
       models.add(model);
     }
 
@@ -141,6 +145,7 @@ class ModelImporter {
 
     if (model is PrimitiveModel && name != null) {
       model = AliasModel(name: name, model: model, context: context);
+      _logModelAdded(model);
       models.add(model);
     }
 
@@ -198,7 +203,7 @@ class ModelImporter {
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
-    final modelContext = context.push('allOf');
+    final modelContext = context.push(name ?? 'allOf');
     final models = schema.allOf!.map(
       (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
     );
@@ -214,6 +219,7 @@ class ModelImporter {
 
   void _addModelToSet(Model model) {
     if (model is! PrimitiveModel) {
+      _logModelAdded(model);
       models.add(model);
 
       if (model is OneOfModel) {
@@ -225,7 +231,7 @@ class ModelImporter {
   }
 
   OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
-    final modelContext = context.push('oneOf');
+    final modelContext = context.push(name ?? 'oneOf');
     final models = schema.oneOf!.map(
       (oneOfSchema) => (
         discriminatorValue: _getDiscriminatorValue(
@@ -248,7 +254,7 @@ class ModelImporter {
   }
 
   AnyOfModel _parseAnyOf(String? name, Schema schema, Context context) {
-    final modelContext = context.push('anyOf');
+    final modelContext = context.push(name ?? 'anyOf');
     final models = schema.anyOf!.map(
       (anyOfSchema) => (
         discriminatorValue: _getDiscriminatorValue(
@@ -303,6 +309,7 @@ class ModelImporter {
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
       // Add model to the list of models before parsing properties,
       // only so we can support recursive models.
+      _logModelAdded(model);
       models.add(model);
     }
 
@@ -364,5 +371,13 @@ class ModelImporter {
       context: context,
       name: name,
     );
+  }
+
+  void _logModelAdded(Model model) {
+    final name =
+        model is NamedModel && model.name != null
+            ? model.name
+            : '${model.context}->${model.runtimeType}';
+    log.fine('Adding model $name');
   }
 }
