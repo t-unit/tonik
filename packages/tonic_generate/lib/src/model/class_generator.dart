@@ -340,7 +340,7 @@ class ClassGenerator {
     final codes = <Code>[
       const Code('final map = json;'),
       const Code('if (map is! '),
-      _buildMapStringDynamicType().code,
+      buildMapStringDynamicType().code,
       const Code(') {'),
       invalidJsonError,
       const Code('}'),
@@ -406,27 +406,6 @@ class ClassGenerator {
     return Block.of(checkCodes);
   }
 
-  TypeReference _buildMapStringDynamicType() => TypeReference(
-    (b) =>
-        b
-          ..symbol = 'Map'
-          ..url = 'dart:core'
-          ..types.addAll([
-            TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'String'
-                    ..url = 'dart:core',
-            ),
-            TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'dynamic'
-                    ..url = 'dart:core',
-            ),
-          ]),
-  );
-
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeAll(model.properties.toList());
 
@@ -449,7 +428,7 @@ class ClassGenerator {
     return Method(
       (b) =>
           b
-            ..returns = _buildMapStringDynamicType()
+            ..returns = buildMapStringDynamicType()
             ..name = 'toJson'
             ..lambda = true
             ..body = Block.of(parts),

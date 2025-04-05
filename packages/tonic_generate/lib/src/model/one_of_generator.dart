@@ -27,8 +27,7 @@ class OneOfGenerator {
     final snakeCaseName = className.toSnakeCase();
 
     final library = Library((b) {
-      b.directives.add(Directive.part('$snakeCaseName.freezed.dart'));
-      b.body.add(generateClass(model));
+      b.body.addAll(generateClasses(model));
     });
 
     final formatter = DartFormatter(
@@ -45,43 +44,65 @@ class OneOfGenerator {
   }
 
   @visibleForTesting
-  Class generateClass(OneOfModel model) {
+  List<Class> generateClasses(OneOfModel model) {
     final className = nameManager.modelName(model);
 
+    // Pre-generate variant names and store them for reuse
+    final variantNames = _generateVariantNames(model, className);
+
+    final baseClass = _generateBaseClass(model, className, variantNames);
+    final subClasses = _generateSubClasses(model, className, variantNames);
+
+    return [baseClass, ...subClasses];
+  }
+
+  /// Generate a map of discriminated model to variant class name
+  Map<DiscriminatedModel, String> _generateVariantNames(
+    OneOfModel model,
+    String parentClassName,
+  ) {
+    final variantNames = <DiscriminatedModel, String>{};
+
+    for (final discriminatedModel in model.models) {
+      final rawName =
+          discriminatedModel.discriminatorValue ??
+          nameManager.modelName(discriminatedModel.model);
+
+      final dummyClass = ClassModel(
+        name: '$parentClassName${rawName.toPascalCase()}',
+        properties: const {},
+        context: model.context,
+      );
+
+      final uniqueVariantName = nameManager.modelName(dummyClass);
+      variantNames[discriminatedModel] = uniqueVariantName;
+    }
+
+    return variantNames;
+  }
+
+  Class _generateBaseClass(
+    OneOfModel model,
+    String className,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
     return Class(
       (b) =>
           b
             ..name = className
-            ..annotations.add(
-              refer(
-                'freezed',
-                'package:freezed_annotation/freezed_annotation.dart',
-              ),
-            )
-            ..mixins.add(refer('_\$$className'))
             ..sealed = true
-            ..constructors.addAll([
-              Constructor(
-                (b) =>
-                    b
-                      ..name = '_'
-                      ..constant = true,
-              ),
-              ...model.models.map(
-                (discriminatedModel) => _generateConstructor(
-                  className,
-                  discriminatedModel,
-                  model.discriminator,
-                ),
-              ),
-            ])
+            ..constructors.add(Constructor((b) => b..constant = true))
             ..methods.addAll([
               Method(
                 (b) =>
                     b
                       ..name = 'toJson'
-                      ..returns = refer('dynamic')
-                      ..body = _generateToJsonBody(className, model)
+                      ..returns = refer('dynamic', 'dart:core')
+                      ..body = _generateToJsonBody(
+                        className,
+                        model,
+                        variantNames,
+                      )
                       ..lambda = false,
               ),
               Method(
@@ -95,58 +116,70 @@ class OneOfGenerator {
                           (b) =>
                               b
                                 ..name = 'json'
-                                ..type = refer('dynamic'),
+                                ..type = refer('dynamic', 'dart:core'),
                         ),
                       )
-                      ..body = _generateFromJsonBody(className, model)
+                      ..body = _generateFromJsonBody(
+                        className,
+                        model,
+                        variantNames,
+                      )
                       ..lambda = false,
               ),
             ]),
     );
   }
 
-  Constructor _generateConstructor(
+  List<Class> _generateSubClasses(
+    OneOfModel model,
     String parentClassName,
-    DiscriminatedModel discriminatedModel,
-    String? discriminator,
+    Map<DiscriminatedModel, String> variantNames,
   ) {
-    final rawName =
-        discriminatedModel.discriminatorValue ??
-        nameManager.modelName(discriminatedModel.model);
+    return model.models.map((discriminatedModel) {
+      final variantName = variantNames[discriminatedModel]!;
 
-    final factoryName = rawName.toCamelCase();
+      final typeRef = getTypeReference(
+        discriminatedModel.model,
+        nameManager,
+        package,
+      );
 
-    return Constructor(
-      (b) =>
-          b
-            ..constant = true
-            ..factory = true
-            ..name = factoryName
-            ..redirect = Reference(
-              '$parentClassName${factoryName.toPascalCase()}',
-            )
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'value'
-                      ..type = getTypeReference(
-                        discriminatedModel.model,
-                        nameManager,
-                        package,
-                      ),
+      return Class(
+        (b) =>
+            b
+              ..name = variantName
+              ..extend = refer(parentClassName)
+              ..fields.add(
+                Field(
+                  (b) =>
+                      b
+                        ..name = 'value'
+                        ..modifier = FieldModifier.final$
+                        ..type = typeRef,
+                ),
+              )
+              ..constructors.add(
+                Constructor(
+                  (b) =>
+                      b
+                        ..constant = true
+                        ..requiredParameters.add(
+                          Parameter((b) => b..name = 'this.value'),
+                        ),
+                ),
               ),
-            ),
-    );
+      );
+    }).toList();
   }
 
-  Code _generateToJsonBody(String className, OneOfModel model) {
+  Code _generateToJsonBody(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
     final cases = model.models
         .map((discriminatedModel) {
-          final factoryName =
-              discriminatedModel.discriminatorValue ??
-              nameManager.modelName(discriminatedModel.model);
-          final variantName = '$className${factoryName.toPascalCase()}';
+          final variantName = variantNames[discriminatedModel]!;
 
           final isPrimitive = discriminatedModel.model is PrimitiveModel;
           final jsonValue = isPrimitive ? 'value' : 'value.toJson()';
@@ -161,21 +194,26 @@ class OneOfGenerator {
         .join(',\n');
 
     final blocks = [
-      Code(
-        'final (dynamic json, String? discriminator) = switch (this) {\n'
-        '$cases\n'
-        '};\n',
-      ),
+      Code.scope((allocate) {
+        final dynamicRef = refer('dynamic', 'dart:core');
+        final stringNullableRef = refer('String?', 'dart:core');
+
+        return 'final (${allocate(dynamicRef)} json, ${allocate(stringNullableRef)} discriminator) = switch (this) {\n'
+            '$cases\n'
+            '};\n';
+      }),
     ];
 
     if (model.discriminator != null) {
-      blocks.add(
+      blocks.addAll([
+        const Code('if (discriminator != null && json is '),
+        buildMapStringDynamicType().code,
+        const Code(') {'),
         Code(
-          'if (discriminator != null && json is Map<String, dynamic>) {\n'
-          "  json.putIfAbsent('${model.discriminator}', () => discriminator);\n"
-          '}\n\n',
+          "json.putIfAbsent('${model.discriminator}', () => discriminator);",
         ),
-      );
+        const Code('}'),
+      ]);
     }
 
     blocks.add(const Code('return json;'));
@@ -183,32 +221,23 @@ class OneOfGenerator {
     return Block.of(blocks);
   }
 
-  Code _generateFromJsonBody(String className, OneOfModel model) {
+  Code _generateFromJsonBody(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
     final blocks = <Code>[];
 
-    // Check for discriminator if present
     if (model.discriminator != null) {
-      final discriminatorExpression = declareFinal('discriminator').assign(
-        refer('json')
-            .isA(
-              TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        refer('String', 'dart:core'),
-                        refer('dynamic', 'dart:core'),
-                      ]),
-              ),
-            )
-            .conditional(
-              refer('json').index(literalString(model.discriminator!)),
-              literalNull,
-            ),
-      );
+      final discriminatorCode = [
+        const Code('final discriminator = json is '),
+        buildMapStringDynamicType().code,
+        const Code(' ? '),
+        Code("json['${model.discriminator}']"),
+        const Code(' : null;'),
+      ];
 
-      final cases = <Code>[];
+      final resultCases = <Code>[];
 
       for (final m in model.models.where(
         (m) =>
@@ -217,23 +246,28 @@ class OneOfGenerator {
             m.model is! ListModel &&
             model is! EnumModel,
       )) {
-        cases.addAll([
+        final variantName = variantNames[m]!;
+
+        resultCases.addAll([
           Code("'${m.discriminatorValue}' => "),
-          refer(className).code,
-          Code('.${m.discriminatorValue!.toCamelCase()}('),
-          refer(nameManager.modelName(m.model), package).code,
-          const Code('.fromJson(json)),\n'),
+          refer(variantName).call([
+            refer(
+              nameManager.modelName(m.model),
+              package,
+            ).property('fromJson').call([refer('json')]),
+          ]).code,
+          const Code(',\n'),
         ]);
       }
 
-      cases.add(const Code('_ => null'));
+      resultCases.add(const Code('_ => null'));
 
       blocks.addAll([
-        discriminatorExpression.statement,
+        ...discriminatorCode,
         const Code('final result = '),
-        const Code('switch (discriminator) {'),
-        ...cases,
-        const Code('};\n\n'),
+        const Code('switch (discriminator) {\n'),
+        ...resultCases,
+        const Code('\n};\n'),
         const Code('if (result != null) {\n'),
         const Code('  return result;\n'),
         const Code('}\n'),
@@ -249,14 +283,11 @@ class OneOfGenerator {
       final cases = <Code>[];
 
       for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
-        final factoryName =
-            (m.discriminatorValue ?? nameManager.modelName(m.model))
-                .toCamelCase();
+        final variantName = variantNames[m]!;
+
         cases.addAll([
           getTypeReference(m.model, nameManager, package).code,
-          const Code(' s => '),
-          refer(className).code,
-          Code('.$factoryName(s),\n'),
+          Code(' s => $variantName(s), '),
         ]);
       }
 
@@ -269,8 +300,7 @@ class OneOfGenerator {
       ]);
 
       return Block.of([
-        refer('return switch').call([refer('json')]).code,
-        const Code(' {\n'),
+        const Code('return switch (json) {\n'),
         ...cases,
         const Code('\n};'),
       ]);
@@ -279,9 +309,7 @@ class OneOfGenerator {
     // Handle primitive types.
     for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
       final typeRef = getTypeReference(m.model, nameManager, package);
-      final factoryName =
-          (m.discriminatorValue ?? nameManager.modelName(m.model))
-              .toCamelCase();
+      final variantName = variantNames[m]!;
 
       blocks.add(
         Block.of([
@@ -289,8 +317,7 @@ class OneOfGenerator {
           refer('json').isA(typeRef).code,
           const Code(') {\n'),
           const Code('  return '),
-          refer(className).code,
-          Code('.$factoryName(json);\n'),
+          refer(variantName).call([refer('json')]).statement,
           const Code('}\n'),
         ]),
       );
@@ -300,20 +327,20 @@ class OneOfGenerator {
     for (final m in model.models.where(
       (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
     )) {
-      final factoryName = nameManager.modelName(m.model).toCamelCase();
       final modelName = nameManager.modelName(m.model);
+      final variantName = variantNames[m]!;
 
       blocks.add(
         Block.of([
           const Code('try {\n'),
           const Code('  return '),
-          refer(className).property(factoryName).code,
-          const Code('('),
-          refer(
-            modelName,
-            package,
-          ).property('fromJson').call([refer('json')]).code,
-          const Code(');\n'),
+          refer(variantName).call([
+            refer(
+              modelName,
+              package,
+            ).property('fromJson').call([refer('json')]),
+          ]).code,
+          const Code(';\n'),
           const Code('} catch (_) {}\n'),
         ]),
       );

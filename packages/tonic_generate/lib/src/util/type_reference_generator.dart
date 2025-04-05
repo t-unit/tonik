@@ -72,3 +72,28 @@ TypeReference getTypeReference(
     ),
   };
 }
+
+/// Returns a TypeReference for [Map<String, dynamic>].
+///
+/// This can be used with Code.scope to create properly 
+/// qualified type references in generated code.
+TypeReference buildMapStringDynamicType() => TypeReference(
+  (b) =>
+      b
+        ..symbol = 'Map'
+        ..url = 'dart:core'
+        ..types.addAll([
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core',
+          ),
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'dynamic'
+                  ..url = 'dart:core',
+          ),
+        ]),
+);

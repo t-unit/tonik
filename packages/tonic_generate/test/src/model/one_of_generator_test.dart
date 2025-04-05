@@ -24,7 +24,7 @@ void main() {
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
 
-    test('generates sealed class with correct name and annotations', () {
+    test('generated code does not include freezed part directive', () {
       final model = OneOfModel(
         name: 'Result',
         models: {
@@ -34,23 +34,83 @@ void main() {
         context: context,
       );
 
-      final generatedClass = generator.generateClass(model);
+      final result = generator.generate(model);
 
-      expect(generatedClass.name, 'Result');
-      expect(generatedClass.sealed, isTrue);
-      expect(generatedClass.annotations, hasLength(1));
+      expect(result.code, isNotEmpty);
       expect(
-        generatedClass.annotations.first.code.accept(emitter).toString(),
-        'freezed',
+        result.code.contains('.freezed.dart'),
+        isFalse,
+        reason:
+            'Generated code should not include a part directive for freezed',
       );
-      expect(generatedClass.mixins, hasLength(1));
       expect(
-        generatedClass.mixins.first.accept(emitter).toString(),
-        r'_$Result',
+        result.code.contains('part of'),
+        isFalse,
+        reason: 'Generated code should not include part directives',
       );
     });
 
-    test('generates factory constructors with correct names and types', () {
+    test('generates sealed class with standard constructor', () {
+      final model = OneOfModel(
+        name: 'Result',
+        models: {
+          (discriminatorValue: 'success', model: StringModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+
+      // Should have one sealed base class and one subclass
+      expect(classes, hasLength(2));
+
+      // Check base class
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      expect(baseClass.sealed, isTrue);
+
+      // No freezed annotations
+      expect(
+        baseClass.annotations.any(
+          (a) => a.code.accept(emitter).toString().contains('freezed'),
+        ),
+        isFalse,
+        reason: 'Should not have freezed annotations',
+      );
+
+      // No mixins
+      expect(
+        baseClass.mixins,
+        isEmpty,
+        reason: 'Should not have freezed mixins',
+      );
+
+      // Base class should have a single non-private constructor
+      expect(baseClass.constructors, hasLength(1));
+      final baseConstructor = baseClass.constructors.first;
+      expect(baseConstructor.name, isNull); // Default constructor, not private
+      expect(baseConstructor.constant, isTrue);
+      expect(baseConstructor.factory, isFalse);
+
+      // Check success subclass
+      final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+      expect(successClass.extend?.symbol, 'Result');
+
+      // Success subclass should have one constructor
+      expect(successClass.constructors, hasLength(1));
+      final successConstructor = successClass.constructors.first;
+      expect(successConstructor.name, isNull);
+      expect(successConstructor.constant, isTrue);
+
+      // Success subclass should have a value field
+      expect(successClass.fields, hasLength(1));
+      final successField = successClass.fields.first;
+      expect(successField.name, 'value');
+      expect(successField.type?.accept(emitter).toString(), 'String');
+      expect(successField.modifier, FieldModifier.final$);
+    });
+
+    test('generates subclasses for each model in oneOf', () {
       final model = OneOfModel(
         name: 'Result',
         models: {
@@ -61,54 +121,38 @@ void main() {
         context: context,
       );
 
-      final generatedClass = generator.generateClass(model);
+      final classes = generator.generateClasses(model);
 
-      expect(generatedClass.constructors, hasLength(3));
-      expect(
-        generatedClass.constructors.any(
-          (c) => c.name == '_' && c.constant && !c.factory,
-        ),
-        isTrue,
-        reason: 'Should have a private const constructor',
-      );
+      // Should have one sealed base class and two subclasses
+      expect(classes, hasLength(3));
 
-      final successConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == 'success',
-      );
-      expect(successConstructor.name, 'success');
-      expect(successConstructor.factory, isTrue);
-      expect(successConstructor.constant, isTrue);
-      expect(successConstructor.requiredParameters, hasLength(1));
+      // Check base class
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      expect(baseClass.sealed, isTrue);
+      expect(baseClass.constructors, hasLength(1));
+      expect(baseClass.constructors.first.name, isNull);
+      expect(baseClass.constructors.first.constant, isTrue);
+
+      // Check success subclass
+      final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+      expect(successClass.extend?.symbol, 'Result');
+      expect(successClass.constructors, hasLength(1));
+      expect(successClass.constructors.first.constant, isTrue);
+      expect(successClass.fields, hasLength(1));
+      expect(successClass.fields.first.name, 'value');
       expect(
-        successConstructor.requiredParameters.first.type
-            ?.accept(emitter)
-            .toString(),
+        successClass.fields.first.type?.accept(emitter).toString(),
         'String',
       );
-      expect(
-        successConstructor.redirect?.symbol,
-        'ResultSuccess',
-        reason: 'Should redirect to public class name',
-      );
 
-      final errorConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == 'error',
-      );
-      expect(errorConstructor.name, 'error');
-      expect(errorConstructor.factory, isTrue);
-      expect(errorConstructor.constant, isTrue);
-      expect(errorConstructor.requiredParameters, hasLength(1));
-      expect(
-        errorConstructor.requiredParameters.first.type
-            ?.accept(emitter)
-            .toString(),
-        'int',
-      );
-      expect(
-        errorConstructor.redirect?.symbol,
-        'ResultError',
-        reason: 'Should redirect to public class name',
-      );
+      // Check error subclass
+      final errorClass = classes.firstWhere((c) => c.name == 'ResultError');
+      expect(errorClass.extend?.symbol, 'Result');
+      expect(errorClass.constructors, hasLength(1));
+      expect(errorClass.constructors.first.constant, isTrue);
+      expect(errorClass.fields, hasLength(1));
+      expect(errorClass.fields.first.name, 'value');
+      expect(errorClass.fields.first.type?.accept(emitter).toString(), 'int');
     });
 
     test('uses model name when discriminator value is not available', () {
@@ -136,35 +180,27 @@ void main() {
         context: context,
       );
 
-      final generatedClass = generator.generateClass(model);
+      final classes = generator.generateClasses(model);
 
-      expect(generatedClass.constructors, hasLength(3));
+      // Should have one sealed base class and two subclasses
+      expect(classes, hasLength(3));
 
-      final privateConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == '_',
-      );
-      expect(privateConstructor.constant, isTrue);
-      expect(privateConstructor.factory, isFalse);
+      // Check base class
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      expect(baseClass.sealed, isTrue);
+      expect(baseClass.constructors, hasLength(1));
+      expect(baseClass.constructors.first.name, isNull);
+      expect(baseClass.constructors.first.constant, isTrue);
 
-      final successConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == 'success',
-      );
-      expect(successConstructor.name, 'success');
-      expect(
-        successConstructor.redirect?.symbol,
-        'ResultSuccess',
-        reason: 'Should redirect to public class name',
-      );
+      // Check success subclass (should be named after the model)
+      final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+      expect(successClass.extend?.symbol, 'Result');
+      expect(successClass.constructors, hasLength(1));
 
-      final errorConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == 'error',
-      );
-      expect(errorConstructor.name, 'error');
-      expect(
-        errorConstructor.redirect?.symbol,
-        'ResultError',
-        reason: 'Should redirect to public class name',
-      );
+      // Check error subclass (should be named after the model)
+      final errorClass = classes.firstWhere((c) => c.name == 'ResultError');
+      expect(errorClass.extend?.symbol, 'Result');
+      expect(errorClass.constructors, hasLength(1));
     });
 
     test('handles nested models correctly', () {
@@ -183,30 +219,28 @@ void main() {
         context: context,
       );
 
-      final generatedClass = generator.generateClass(model);
+      final classes = generator.generateClasses(model);
 
-      expect(generatedClass.constructors, hasLength(2));
+      // Should have one sealed base class and one subclass
+      expect(classes, hasLength(2));
 
-      final privateConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == '_',
-      );
-      expect(privateConstructor.constant, isTrue);
-      expect(privateConstructor.factory, isFalse);
+      // Check base class
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      expect(baseClass.sealed, isTrue);
+      expect(baseClass.constructors, hasLength(1));
+      expect(baseClass.constructors.first.name, isNull);
+      expect(baseClass.constructors.first.constant, isTrue);
 
-      final dataConstructor = generatedClass.constructors.firstWhere(
-        (c) => c.name == 'data',
-      );
-      expect(dataConstructor.name, 'data');
+      // Check data subclass with proper list type
+      final dataClass = classes.firstWhere((c) => c.name == 'ResultData');
+      expect(dataClass.extend?.symbol, 'Result');
+      expect(dataClass.constructors, hasLength(1));
+      expect(dataClass.constructors.first.constant, isTrue);
+      expect(dataClass.fields, hasLength(1));
+      expect(dataClass.fields.first.name, 'value');
       expect(
-        dataConstructor.requiredParameters.first.type
-            ?.accept(emitter)
-            .toString(),
+        dataClass.fields.first.type?.accept(emitter).toString(),
         'List<String>',
-      );
-      expect(
-        dataConstructor.redirect?.symbol,
-        'ResultData',
-        reason: 'Should redirect to public class name',
       );
     });
   });
