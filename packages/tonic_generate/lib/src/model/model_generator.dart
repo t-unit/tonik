@@ -37,10 +37,9 @@ class ModelGenerator {
     ]);
 
     for (final model in apiDocument.models) {
-      log.fine(
-        'Generating model '
-        '${model is NamedModel ? model.name : model}',
-      );
+      final name = classGenerator.nameManager.modelName(model);
+      log.fine('Generating model $name');
+
       ({String code, String filename})? result;
 
       switch (model) {
