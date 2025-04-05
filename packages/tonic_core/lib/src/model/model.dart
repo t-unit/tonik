@@ -131,34 +131,58 @@ sealed class PrimitiveModel extends Model {
 
 class IntegerModel extends PrimitiveModel {
   const IntegerModel({required super.context});
+
+  @override
+  String toString() => 'IntegerModel';
 }
 
 class DoubleModel extends PrimitiveModel {
   const DoubleModel({required super.context});
+
+  @override
+  String toString() => 'DoubleModel';
 }
 
 class NumberModel extends PrimitiveModel {
   const NumberModel({required super.context});
+
+  @override
+  String toString() => 'NumberModel';
 }
 
 class StringModel extends PrimitiveModel {
   const StringModel({required super.context});
+
+  @override
+  String toString() => 'StringModel';
 }
 
 class BooleanModel extends PrimitiveModel {
   const BooleanModel({required super.context});
+
+  @override
+  String toString() => 'BooleanModel';
 }
 
 class DateTimeModel extends PrimitiveModel {
   const DateTimeModel({required super.context});
+
+  @override
+  String toString() => 'DateTimeModel';
 }
 
 class DateModel extends PrimitiveModel {
   const DateModel({required super.context});
+
+  @override
+  String toString() => 'DateModel';
 }
 
 class DecimalModel extends PrimitiveModel {
   const DecimalModel({required super.context});
+
+  @override
+  String toString() => 'DecimalModel';
 }
 
 @immutable
