@@ -1,6 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
-import 'package:collection/collection.dart';
 
 @immutable
 class Operation {
@@ -40,9 +40,9 @@ class Operation {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Operation) return false;
-    
+
     final deepEquals = const DeepCollectionEquality().equals;
-    
+
     return operationId == other.operationId &&
         context == other.context &&
         summary == other.summary &&
@@ -60,7 +60,7 @@ class Operation {
   @override
   int get hashCode {
     final deepHash = const DeepCollectionEquality().hash;
-    
+
     return Object.hash(
       operationId,
       context,

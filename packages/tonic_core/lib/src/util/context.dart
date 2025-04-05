@@ -10,12 +10,20 @@ class Context {
   final List<String> path;
 
   Context push(String name) {
-    final newPath = List.of(path)..add(name);
+    if (name.isEmpty) {
+      throw ArgumentError('Name cannot be empty, got: $name');
+    }
+
+    final newPath = List.of(path)..add(name.normalize());
     return Context._(List.unmodifiable(newPath));
   }
 
   Context pushAll(Iterable<String> names) {
-    final newPath = List.of(path)..addAll(names);
+    if (names.isEmpty || names.any((n) => n.isEmpty)) {
+      throw ArgumentError('Names cannot be empty, got: $names');
+    }
+
+    final newPath = List.of(path)..addAll(names.map((n) => n.normalize()));
     return Context._(List.unmodifiable(newPath));
   }
 
@@ -31,4 +39,10 @@ class Context {
 
   @override
   String toString() => path.join('/');
+}
+
+extension on String {
+  String normalize() {
+    return replaceAll(RegExp('^/*'), '').replaceAll('/', '-');
+  }
 }

@@ -22,8 +22,8 @@ class NameGenerator {
   /// 3. 'Anonymous' as fallback
   String generateModelName(Model model) {
     String? name;
-    if (model case final NamedModel named) {
-      name = named.name;
+    if (model is NamedModel) {
+      name = model.name;
     }
 
     final baseName = _generateBaseName(name: name, context: model.context);
@@ -150,7 +150,9 @@ class NameGenerator {
 
     final path = context.path;
     if (path.isNotEmpty) {
-      return path.map(_sanitizeName).join();
+      return path
+          .map((part) => _sanitizeName(part, isPathComponent: true))
+          .join();
     }
 
     return 'Anonymous';
@@ -163,18 +165,27 @@ class NameGenerator {
   /// - '_my_class_name' → 'MyClassName'
   /// - 'hello_world_test' → 'HelloWorldTest'
   /// - 'Model23' → 'Model23'
-  /// - '2Model' → 'Model'
-  /// - '2_Model12String33' → 'Model12String33'
-  String _sanitizeName(String name) {
+  /// - '2Model' → 'Model' (for full names)
+  /// - '200' → '200' (for context path components)
+  /// - '2_Model12String33' → 'Model12String33' (for full names)
+  String _sanitizeName(String name, {bool isPathComponent = false}) {
     var cleaned = name.replaceAll('-', '_');
     cleaned = cleaned.replaceAll(RegExp(r'[^\w]'), '');
     cleaned = cleaned.replaceFirst(RegExp('^_+'), '');
+
+    // For path components like response codes, we want to preserve numbers
+    if (isPathComponent && RegExp(r'^\d+$').hasMatch(cleaned)) {
+      return cleaned;
+    }
 
     cleaned =
         cleaned
             .split(RegExp(r'[_\s]+'))
             .map((part) {
-              part = part.replaceFirst(RegExp(r'^\d+'), '');
+              // Only remove leading digits for full names, not path components
+              if (!isPathComponent) {
+                part = part.replaceFirst(RegExp(r'^\d+'), '');
+              }
               if (part.isEmpty) return '';
 
               return part.toPascalCase();
@@ -182,7 +193,8 @@ class NameGenerator {
             .where((part) => part.isNotEmpty)
             .join();
 
-    if (RegExp(r'^\d').hasMatch(cleaned)) {
+    // Only remove leading digits for full names, not path components
+    if (!isPathComponent && RegExp(r'^\d').hasMatch(cleaned)) {
       cleaned = cleaned.replaceFirst(RegExp(r'^\d+'), '');
     }
 
