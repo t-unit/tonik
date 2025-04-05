@@ -149,13 +149,46 @@ class NameGenerator {
     }
 
     final path = context.path;
-    if (path.isNotEmpty) {
-      return path
-          .map((part) => _sanitizeName(part, isPathComponent: true))
-          .join();
+    if (path.isEmpty) {
+      return 'Anonymous';
     }
 
-    return 'Anonymous';
+    // Filter path components.
+    final filteredPath = _removeOpenApiPrefixes(path);
+    if (filteredPath.isEmpty) {
+      return 'Anonymous';
+    }
+
+    return filteredPath
+        .map((part) => _sanitizeName(part, isPathComponent: true))
+        .join();
+  }
+
+  /// Removes OpenAPI-specific prefixes from a context path
+  List<String> _removeOpenApiPrefixes(List<String> path) {
+    if (path.isEmpty) {
+      return path;
+    }
+
+    if (path.first == 'paths') {
+      return path.skip(1).toList();
+    }
+
+    if (path.length >= 2 && path[0] == 'components') {
+      final secondComponent = path[1];
+      if ([
+        'schemas',
+        'requestBodies',
+        'responses',
+        'parameters',
+        'headers',
+        'pathItems',
+      ].contains(secondComponent)) {
+        return path.skip(2).toList();
+      }
+    }
+
+    return path;
   }
 
   /// Sanitizes a name for use as a Dart class name.
@@ -168,21 +201,30 @@ class NameGenerator {
   /// - '2Model' → 'Model' (for full names)
   /// - '200' → '200' (for context path components)
   /// - '2_Model12String33' → 'Model12String33' (for full names)
+  /// - 'X-Rate-Limit' → 'RateLimit' (for headers with X prefix)
   String _sanitizeName(String name, {bool isPathComponent = false}) {
-    var cleaned = name.replaceAll('-', '_');
+    // Handle common header prefix pattern (X-Something)
+    var inputName = name;
+    if (inputName.startsWith('X-') || inputName.startsWith('x-')) {
+      inputName = inputName.substring(2);
+    }
+
+    var cleaned = inputName.replaceAll('-', '_');
     cleaned = cleaned.replaceAll(RegExp(r'[^\w]'), '');
     cleaned = cleaned.replaceFirst(RegExp('^_+'), '');
 
-    // For path components like response codes, we want to preserve numbers
     if (isPathComponent && RegExp(r'^\d+$').hasMatch(cleaned)) {
       return cleaned;
+    }
+
+    if (isPathComponent && cleaned.startsWith('x_')) {
+      cleaned = cleaned.substring(2);
     }
 
     cleaned =
         cleaned
             .split(RegExp(r'[_\s]+'))
             .map((part) {
-              // Only remove leading digits for full names, not path components
               if (!isPathComponent) {
                 part = part.replaceFirst(RegExp(r'^\d+'), '');
               }
@@ -193,7 +235,6 @@ class NameGenerator {
             .where((part) => part.isNotEmpty)
             .join();
 
-    // Only remove leading digits for full names, not path components
     if (!isPathComponent && RegExp(r'^\d').hasMatch(cleaned)) {
       cleaned = cleaned.replaceFirst(RegExp(r'^\d+'), '');
     }

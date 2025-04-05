@@ -11,6 +11,109 @@ void main() {
     });
 
     group('generateClassName', () {
+      group('real world examples', () {
+        test('anonymous response', () {
+          final model = ClassModel(
+            properties: const {},
+            context: Context.initial().pushAll([
+              'paths',
+              'pet-findByStatus',
+              'get',
+              'responses',
+              '200',
+              'content',
+            ]),
+          );
+          expect(
+            nameGenerator.generateModelName(model),
+            'PetFindByStatusGetResponses200Content',
+          );
+        });
+
+        test('preserves numeric components in context paths', () {
+          final model = ClassModel(
+            properties: const {},
+            context: Context.initial().pushAll([
+              'paths',
+              'pet-store',
+              'get',
+              'responses',
+              '404',
+              'content',
+            ]),
+          );
+          expect(
+            nameGenerator.generateModelName(model),
+            'PetStoreGetResponses404Content',
+          );
+        });
+
+        test('oneOf model with inline model', () {
+          // Create a OneOfModel named Blub with an inline anonymous class model
+          final inlineClassModel = ClassModel(
+            properties: const {},
+            context: Context.initial().pushAll([
+              'components',
+              'schemas',
+              'Blub',
+            ]),
+          );
+
+          final oneOfModel = OneOfModel(
+            name: 'Blub',
+            models: {(discriminatorValue: null, model: inlineClassModel)},
+            discriminator: null,
+            context: Context.initial().pushAll(['components', 'schemas']),
+          );
+
+          // First name the oneOf model
+          final oneOfName = nameGenerator.generateModelName(oneOfModel);
+          // Then name the inline model
+          final inlineName = nameGenerator.generateModelName(inlineClassModel);
+
+          expect(oneOfName, 'Blub');
+          expect(inlineName, 'BlubModel');
+        });
+
+        test('header path with X prefix', () {
+          final header = ResponseHeaderObject(
+            name: 'X-Rate-Limit',
+            model: IntegerModel(context: Context.initial()),
+            explode: false,
+            isRequired: true,
+            isDeprecated: false,
+            description: 'Rate limit header',
+            context: Context.initial().pushAll([
+              'paths',
+              'user-login',
+              'get',
+              '200',
+              'headers',
+              'X-Rate-Limit',
+            ]),
+          );
+
+          expect(nameGenerator.generateResponseHeaderName(header), 'RateLimit');
+        });
+
+        test('enum parameter in path', () {
+          final enumModel = EnumModel<String>(
+            values: const {'available', 'pending', 'sold'},
+            isNullable: false,
+            context: Context.initial().pushAll([
+              'paths',
+              'pet-findByTags',
+              'parameter',
+            ]),
+          );
+
+          expect(
+            nameGenerator.generateModelName(enumModel),
+            'PetFindByTagsParameter',
+          );
+        });
+      });
+
       test('uses model name when available', () {
         final model = ClassModel(
           name: 'UserProfile',
@@ -187,120 +290,89 @@ void main() {
           expect(nameGenerator.generateModelName(model), 'Anonymous');
         });
       });
-    });
-
-    group('_sanitizeName', () {
-      test('converts underscored name to PascalCase', () {
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: 'hello_world_test',
-              properties: const {},
-              context: Context.initial(),
+      group('_sanitizeName', () {
+        test('converts underscored name to PascalCase', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: 'hello_world_test',
+                properties: const {},
+                context: Context.initial(),
+              ),
             ),
-          ),
-          'HelloWorldTest',
-        );
+            'HelloWorldTest',
+          );
+        });
+
+        test('converts name with leading underscore to PascalCase', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: '_hello_world',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            ),
+            'HelloWorld',
+          );
+        });
+
+        test('removes illegal characters and converts to PascalCase', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: 'Hello-World_Test!123',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            ),
+            'HelloWorldTest123',
+          );
+        });
+
+        test('handles multiple leading underscores', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: '___hello_world_test',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            ),
+            'HelloWorldTest',
+          );
+        });
+
+        test('handles mixed case with underscores', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: 'My_Class_NAME',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            ),
+            'MyClassName',
+          );
+        });
       });
 
-      test('converts name with leading underscore to PascalCase', () {
-        expect(
+      group('unique name generation', () {
+        test('uses original name for first occurrence', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: 'Test',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            ),
+            'Test',
+          );
+        });
+
+        test('adds Model suffix for second occurrence', () {
           nameGenerator.generateModelName(
-            ClassModel(
-              name: '_hello_world',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorld',
-        );
-      });
-
-      test('removes illegal characters and converts to PascalCase', () {
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: 'Hello-World_Test!123',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorldTest123',
-        );
-      });
-
-      test('handles multiple leading underscores', () {
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: '___hello_world_test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'HelloWorldTest',
-        );
-      });
-
-      test('handles mixed case with underscores', () {
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: 'My_Class_NAME',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'MyClassName',
-        );
-      });
-    });
-
-    group('unique name generation', () {
-      test('uses original name for first occurrence', () {
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'Test',
-        );
-      });
-
-      test('adds Model suffix for second occurrence', () {
-        nameGenerator.generateModelName(
-          ClassModel(
-            name: 'Test',
-            properties: const {},
-            context: Context.initial(),
-          ),
-        );
-
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          ),
-          'TestModel',
-        );
-      });
-
-      test('adds number to Model suffix for third occurrence', () {
-        nameGenerator
-          ..generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
-            ),
-          )
-          ..generateModelName(
             ClassModel(
               name: 'Test',
               properties: const {},
@@ -308,203 +380,233 @@ void main() {
             ),
           );
 
-        expect(
-          nameGenerator.generateModelName(
-            ClassModel(
-              name: 'Test',
-              properties: const {},
-              context: Context.initial(),
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: 'Test',
+                properties: const {},
+                context: Context.initial(),
+              ),
             ),
-          ),
-          'TestModel2',
-        );
+            'TestModel',
+          );
+        });
+
+        test('adds number to Model suffix for third occurrence', () {
+          nameGenerator
+            ..generateModelName(
+              ClassModel(
+                name: 'Test',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            )
+            ..generateModelName(
+              ClassModel(
+                name: 'Test',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            );
+
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                name: 'Test',
+                properties: const {},
+                context: Context.initial(),
+              ),
+            ),
+            'TestModel2',
+          );
+        });
+
+        test('handles names that already end with Model', () {
+          final model1 = ClassModel(
+            name: 'UserModel',
+            properties: const {},
+            context: Context.initial(),
+          );
+          final model2 = ClassModel(
+            name: 'UserModel',
+            properties: const {},
+            context: Context.initial(),
+          );
+
+          final name1 = nameGenerator.generateModelName(model1);
+          final name2 = nameGenerator.generateModelName(model2);
+
+          expect(name1, 'UserModel');
+          expect(name2, 'UserModel2');
+        });
       });
 
-      test('handles names that already end with Model', () {
-        final model1 = ClassModel(
-          name: 'UserModel',
-          properties: const {},
-          context: Context.initial(),
-        );
-        final model2 = ClassModel(
-          name: 'UserModel',
-          properties: const {},
-          context: Context.initial(),
-        );
+      group('generateResponseName', () {
+        test('uses name when available', () {
+          final response = Response(
+            name: 'User',
+            description: 'A user object',
+            headers: const {},
+            context: Context.initial(),
+          );
+          expect(nameGenerator.generateResponseName(response), 'User');
+        });
 
-        final name1 = nameGenerator.generateModelName(model1);
-        final name2 = nameGenerator.generateModelName(model2);
+        test('converts name to PascalCase', () {
+          final response = Response(
+            name: 'user_profile',
+            description: 'A user profile',
+            headers: const {},
+            context: Context.initial(),
+          );
+          expect(nameGenerator.generateResponseName(response), 'UserProfile');
+        });
 
-        expect(name1, 'UserModel');
-        expect(name2, 'UserModel2');
-      });
-    });
+        test('makes duplicate response names unique using Response suffix', () {
+          final response1 = Response(
+            name: 'User',
+            description: 'First user',
+            headers: const {},
+            context: Context.initial(),
+          );
+          final response2 = Response(
+            name: 'User',
+            description: 'Second user',
+            headers: const {},
+            context: Context.initial(),
+          );
+          final response3 = Response(
+            name: 'User',
+            description: 'Third user',
+            headers: const {},
+            context: Context.initial(),
+          );
 
-    group('generateResponseName', () {
-      test('uses name when available', () {
-        final response = Response(
-          name: 'User',
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameGenerator.generateResponseName(response), 'User');
-      });
+          final name1 = nameGenerator.generateResponseName(response1);
+          final name2 = nameGenerator.generateResponseName(response2);
+          final name3 = nameGenerator.generateResponseName(response3);
 
-      test('converts name to PascalCase', () {
-        final response = Response(
-          name: 'user_profile',
-          description: 'A user profile',
-          headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameGenerator.generateResponseName(response), 'UserProfile');
-      });
+          expect(name1, 'User');
+          expect(name2, 'UserResponse');
+          expect(name3, 'UserResponse2');
+        });
 
-      test('makes duplicate response names unique using Response suffix', () {
-        final response1 = Response(
-          name: 'User',
-          description: 'First user',
-          headers: const {},
-          context: Context.initial(),
-        );
-        final response2 = Response(
-          name: 'User',
-          description: 'Second user',
-          headers: const {},
-          context: Context.initial(),
-        );
-        final response3 = Response(
-          name: 'User',
-          description: 'Third user',
-          headers: const {},
-          context: Context.initial(),
-        );
+        test('uses context path when name is not available', () {
+          final response = Response(
+            name: null,
+            description: 'A user object',
+            headers: const {},
+            context: Context.initial().pushAll(['api', 'models', 'user']),
+          );
+          expect(nameGenerator.generateResponseName(response), 'ApiModelsUser');
+        });
 
-        final name1 = nameGenerator.generateResponseName(response1);
-        final name2 = nameGenerator.generateResponseName(response2);
-        final name3 = nameGenerator.generateResponseName(response3);
+        test('uses Anonymous for response without name or context path', () {
+          final response = Response(
+            name: null,
+            description: 'A user object',
+            headers: const {},
+            context: Context.initial(),
+          );
+          expect(nameGenerator.generateResponseName(response), 'Anonymous');
+        });
 
-        expect(name1, 'User');
-        expect(name2, 'UserResponse');
-        expect(name3, 'UserResponse2');
-      });
+        test('preserves numbers in names', () {
+          final response = Response(
+            name: 'Model23',
+            description: 'A model',
+            headers: const {},
+            context: Context.initial(),
+          );
+          expect(nameGenerator.generateResponseName(response), 'Model23');
+        });
 
-      test('uses context path when name is not available', () {
-        final response = Response(
-          name: null,
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial().pushAll(['api', 'models', 'user']),
-        );
-        expect(nameGenerator.generateResponseName(response), 'ApiModelsUser');
-      });
+        test('handles names that already end with Response', () {
+          final response1 = Response(
+            name: 'UserResponse',
+            description: 'First user response',
+            headers: const {},
+            context: Context.initial(),
+          );
+          final response2 = Response(
+            name: 'UserResponse',
+            description: 'Second user response',
+            headers: const {},
+            context: Context.initial(),
+          );
 
-      test('uses Anonymous for response without name or context path', () {
-        final response = Response(
-          name: null,
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameGenerator.generateResponseName(response), 'Anonymous');
-      });
+          final name1 = nameGenerator.generateResponseName(response1);
+          final name2 = nameGenerator.generateResponseName(response2);
 
-      test('preserves numbers in names', () {
-        final response = Response(
-          name: 'Model23',
-          description: 'A model',
-          headers: const {},
-          context: Context.initial(),
-        );
-        expect(nameGenerator.generateResponseName(response), 'Model23');
-      });
+          expect(name1, 'UserResponse');
+          expect(name2, 'UserResponse2');
+        });
 
-      test('handles names that already end with Response', () {
-        final response1 = Response(
-          name: 'UserResponse',
-          description: 'First user response',
-          headers: const {},
-          context: Context.initial(),
-        );
-        final response2 = Response(
-          name: 'UserResponse',
-          description: 'Second user response',
-          headers: const {},
-          context: Context.initial(),
-        );
+        test('ensures global uniqueness with model names', () {
+          final model = ClassModel(
+            name: 'User',
+            properties: const {},
+            context: Context.initial(),
+          );
+          final response = Response(
+            name: 'User',
+            description: 'A user object',
+            headers: const {},
+            context: Context.initial(),
+          );
 
-        final name1 = nameGenerator.generateResponseName(response1);
-        final name2 = nameGenerator.generateResponseName(response2);
+          final modelName = nameGenerator.generateModelName(model);
+          final responseName = nameGenerator.generateResponseName(response);
+          final responseName2 = nameGenerator.generateResponseName(response);
 
-        expect(name1, 'UserResponse');
-        expect(name2, 'UserResponse2');
-      });
+          expect(modelName, 'User');
+          expect(responseName, 'UserResponse');
+          expect(responseName2, 'UserResponse2');
 
-      test('ensures global uniqueness with model names', () {
-        final model = ClassModel(
-          name: 'User',
-          properties: const {},
-          context: Context.initial(),
-        );
-        final response = Response(
-          name: 'User',
-          description: 'A user object',
-          headers: const {},
-          context: Context.initial(),
-        );
-
-        final modelName = nameGenerator.generateModelName(model);
-        final responseName = nameGenerator.generateResponseName(response);
-        final responseName2 = nameGenerator.generateResponseName(response);
-
-        expect(modelName, 'User');
-        expect(responseName, 'UserResponse');
-        expect(responseName2, 'UserResponse2');
-
-        // Verify model names are also unique against response names
-        final modelName2 = nameGenerator.generateModelName(model);
-        expect(modelName2, 'UserModel');
-      });
-    });
-
-    group('generateTagName', () {
-      test('generates unique API class names for tags', () {
-        final manager = NameGenerator();
-
-        expect(
-          manager.generateTagName(const Tag(name: 'pets')),
-          equals('PetsApi'),
-        );
-
-        expect(
-          manager.generateTagName(const Tag(name: 'pets')),
-          equals('PetsApi2'),
-        );
-
-        expect(
-          manager.generateTagName(const Tag(name: 'store_inventory')),
-          equals('StoreInventoryApi'),
-        );
+          // Verify model names are also unique against response names
+          final modelName2 = nameGenerator.generateModelName(model);
+          expect(modelName2, 'UserModel');
+        });
       });
 
-      test('handles special characters and numbers in tag names', () {
-        final manager = NameGenerator();
+      group('generateTagName', () {
+        test('generates unique API class names for tags', () {
+          final manager = NameGenerator();
 
-        expect(
-          manager.generateTagName(const Tag(name: '2pets')),
-          equals('PetsApi'),
-        );
+          expect(
+            manager.generateTagName(const Tag(name: 'pets')),
+            equals('PetsApi'),
+          );
 
-        expect(
-          manager.generateTagName(const Tag(name: 'pets-v2')),
-          equals('PetsV2Api'),
-        );
+          expect(
+            manager.generateTagName(const Tag(name: 'pets')),
+            equals('PetsApi2'),
+          );
 
-        expect(
-          manager.generateTagName(const Tag(name: '_store_api')),
-          equals('StoreApiApi'),
-        );
+          expect(
+            manager.generateTagName(const Tag(name: 'store_inventory')),
+            equals('StoreInventoryApi'),
+          );
+        });
+
+        test('handles special characters and numbers in tag names', () {
+          final manager = NameGenerator();
+
+          expect(
+            manager.generateTagName(const Tag(name: '2pets')),
+            equals('PetsApi'),
+          );
+
+          expect(
+            manager.generateTagName(const Tag(name: 'pets-v2')),
+            equals('PetsV2Api'),
+          );
+
+          expect(
+            manager.generateTagName(const Tag(name: '_store_api')),
+            equals('StoreApiApi'),
+          );
+        });
       });
     });
   });

@@ -76,7 +76,7 @@ class ResponseImporter {
           for (final entry in response.headers!.entries) {
             headers[entry.key] = headerImporter.importInlineHeader(
               wrapper: entry.value,
-              context: context.push('headers').push(entry.key),
+              context: context.push('header').push(entry.key),
             );
           }
         }
