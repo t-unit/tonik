@@ -108,6 +108,25 @@ void main() {
     },
   };
 
+  const nestedInlineEnum = {
+    'openapi': '3.0.0',
+    'info': {'title': 'Test API', 'version': '1.0.0'},
+    'paths': <String, dynamic>{},
+    'components': {
+      'schemas': {
+        'SimpleModel': {
+          'type': 'object',
+          'properties': {
+            'nested': {
+              'type': 'string',
+              'enum': ['value1', 'value2'],
+            },
+          },
+        },
+      },
+    },
+  };
+
   test('import simple class model', () {
     final api = Importer().import(simple);
     expect(api.models, hasLength(1));
@@ -201,10 +220,12 @@ void main() {
     final nested = model?.properties.first.model;
     expect(nested, isA<ClassModel>());
     expect(classModels, contains(nested));
+    expect(api.models, contains(nested));
 
     final nestedNested = (nested! as ClassModel).properties.first.model;
     expect(nestedNested, isA<ClassModel>());
     expect(classModels, contains(nestedNested));
+    expect(api.models, contains(nestedNested));
 
     expect((nestedNested as ClassModel).name, isNull);
     expect(nestedNested.context.path, [
@@ -214,5 +235,18 @@ void main() {
       'nested',
       'name',
     ]);
+  });
+
+  test('import nested inline enum', () {
+    final api = Importer().import(nestedInlineEnum);
+    expect(api.models, hasLength(2));
+
+    final model = api.models.first as ClassModel;
+    expect(model.name, 'SimpleModel');
+
+    final nested = model.properties.first.model;
+    expect(nested, isA<EnumModel<String>>());
+    expect((nested as EnumModel<String>).values, {'value1', 'value2'});
+    expect(api.models, contains(nested));
   });
 }

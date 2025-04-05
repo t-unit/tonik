@@ -365,12 +365,19 @@ class ModelImporter {
       );
     }
 
-    return EnumModel<T>(
+    final model = EnumModel<T>(
       values: typedValues,
       isNullable: isNullable || hasNull,
       context: context,
       name: name,
     );
+
+    if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
+      _logModelAdded(model);
+      models.add(model);
+    }
+
+    return model;
   }
 
   void _logModelAdded(Model model) {
