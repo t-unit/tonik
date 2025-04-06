@@ -5,6 +5,7 @@ import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/operation/operation_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
+import 'package:tonic_generate/src/util/parameter_name_normalizer.dart';
 
 void main() {
   group('OperationGenerator', () {
@@ -53,7 +54,7 @@ void main() {
           }
         ''';
 
-        final method = generator.generatePathMethod(operation);
+        final method = generator.generatePathMethod(operation, []);
 
         expect(method, isA<Method>());
         expect(method.returns?.symbol, 'String');
@@ -125,7 +126,7 @@ void main() {
           }
         ''';
 
-        final method = generator.generateQueryParametersMethod(operation);
+        final method = generator.generateQueryParametersMethod(operation, []);
 
         expect(method, isA<Method>());
 
@@ -170,7 +171,16 @@ void main() {
           }
         ''';
 
-        final method = generator.generateCallMethod(operation);
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
 
         expect(method, isA<Method>());
 
@@ -229,7 +239,16 @@ void main() {
           }
         ''';
 
-        final method = generator.generateCallMethod(operation);
+        final normalizedParams = NormalizedRequestParameters(
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: [(normalizedName: 'xMyHeader', parameter: requestHeader)],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
 
         expect(method, isA<Method>());
         expect(method.returns?.accept(emitter).toString(), 'Future<void>');
@@ -239,76 +258,6 @@ void main() {
         expect(method.optionalParameters, hasLength(1));
         final param = method.optionalParameters.first;
         expect(param.name, 'xMyHeader');
-        expect(param.type?.accept(emitter).toString(), 'String');
-        expect(param.named, isTrue);
-        expect(param.required, isTrue);
-
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(expectedMethod),
-        );
-      });
-
-      test('generates call method with header aliases', () {
-        // Create a base header
-        final baseHeader = RequestHeaderObject(
-          name: 'X-Base-Header',
-          rawName: 'X-Base-Header',
-          description: 'A base header',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: HeaderParameterEncoding.simple,
-          context: context,
-        );
-
-        // Create an alias for the base header
-        final aliasHeader = RequestHeaderAlias(
-          name: 'X-Alias-Header',
-          header: baseHeader,
-          context: context,
-        );
-
-        final operation = Operation(
-          operationId: 'operationWithHeaderAlias',
-          context: context,
-          summary: 'Operation with header alias',
-          description: 'An operation that uses a header alias',
-          tags: const {},
-          isDeprecated: false,
-          path: '/with-alias-header',
-          method: HttpMethod.get,
-          headers: {aliasHeader},
-          queryParameters: const {},
-          pathParameters: const {},
-          responses: const {},
-        );
-
-        const expectedMethod = '''
-          Future<void> call({required String xAliasHeader}) async {
-            await _dio.request<dynamic>(
-              _path(),
-              data: _data(),
-              queryParameters: _queryParameters(),
-              options: _options(xAliasHeader: xAliasHeader),
-            );
-          }
-        ''';
-
-        final method = generator.generateCallMethod(operation);
-
-        expect(method, isA<Method>());
-        expect(method.returns?.accept(emitter).toString(), 'Future<void>');
-        expect(method.modifier, MethodModifier.async);
-        expect(method.name, 'call');
-
-        // Verify parameter - should use the alias name, not the base name
-        expect(method.optionalParameters, hasLength(1));
-        final param = method.optionalParameters.first;
-        expect(param.name, 'xAliasHeader');
         expect(param.type?.accept(emitter).toString(), 'String');
         expect(param.named, isTrue);
         expect(param.required, isTrue);

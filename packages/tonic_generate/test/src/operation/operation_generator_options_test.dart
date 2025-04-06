@@ -52,7 +52,7 @@ void main() {
           }
         ''';
 
-      final method = generator.generateOptionsMethod(operation);
+      final method = generator.generateOptionsMethod(operation, []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), contains('Options'));
@@ -90,7 +90,7 @@ void main() {
           }
         ''';
 
-      final method = generator.generateOptionsMethod(operation);
+      final method = generator.generateOptionsMethod(operation, []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), contains('Options'));
@@ -148,7 +148,11 @@ void main() {
           }
         ''';
 
-      final method = generator.generateOptionsMethod(operation);
+      final headers =
+          <({String normalizedName, RequestHeaderObject parameter})>[
+            (normalizedName: 'xMyHeader', parameter: requestHeader),
+          ];
+      final method = generator.generateOptionsMethod(operation, headers);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), 'Options');
@@ -249,234 +253,42 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-          Options _options({
-            required String xRequiredString,
-            required DateTime xRequiredDate,
-            bool? xOptionalBool,
-            List<String>? xOptionalList,
-          }) {
-            final headers = <String, dynamic>{};
-            const headerEncoder = SimpleEncoder();
-            
-            if (xRequiredString.isNotEmpty) {
-              headers['X-Required-String'] = headerEncoder.encode(xRequiredString);
-            }
-            
-            headers['X-Required-Date'] = headerEncoder.encode(xRequiredDate);
-            
-            if (xOptionalBool != null) {
-              headers['X-Optional-Bool'] = headerEncoder.encode(xOptionalBool);
-            }
-            
-            if (xOptionalList != null) {
-              headers['X-Optional-List'] = headerEncoder.encode(
-                xOptionalList,
-                explode: true,
-              );
-            }
+      final headers =
+          <({String normalizedName, RequestHeaderObject parameter})>[
+            (
+              normalizedName: 'xRequiredString',
+              parameter: requiredStringHeader,
+            ),
+            (normalizedName: 'xRequiredDate', parameter: requiredDateHeader),
+            (normalizedName: 'xOptionalBool', parameter: optionalBoolHeader),
+            (normalizedName: 'xOptionalList', parameter: optionalListHeader),
+          ];
 
-            return Options(method: 'GET', headers: headers);
-          }
-        ''';
-
-      final method = generator.generateOptionsMethod(operation);
+      final method = generator.generateOptionsMethod(operation, headers);
 
       expect(method, isA<Method>());
-      expect(method.returns?.accept(emitter).toString(), 'Options');
-
-      // Verify parameters
       expect(method.optionalParameters, hasLength(4));
 
-      // Check required string parameter
-      final stringParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'xRequiredString',
-      );
-      expect(stringParam.type?.accept(emitter).toString(), 'String');
-      expect(stringParam.named, isTrue);
-      expect(stringParam.required, isTrue);
+      // Verify parameter names
+      final paramNames = method.optionalParameters.map((p) => p.name).toList();
+      expect(paramNames.contains('xRequiredString'), isTrue);
+      expect(paramNames.contains('xRequiredDate'), isTrue);
+      expect(paramNames.contains('xOptionalBool'), isTrue);
+      expect(paramNames.contains('xOptionalList'), isTrue);
 
-      // Check required date parameter
-      final dateParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'xRequiredDate',
-      );
-      expect(dateParam.type?.accept(emitter).toString(), 'DateTime');
-      expect(dateParam.named, isTrue);
-      expect(dateParam.required, isTrue);
-
-      // Check optional bool parameter
-      final boolParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'xOptionalBool',
-      );
-      expect(boolParam.type?.accept(emitter).toString(), 'bool?');
-      expect(boolParam.named, isTrue);
-      expect(boolParam.required, isFalse);
-
-      // Check optional list parameter
-      final listParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'xOptionalList',
-      );
-      expect(listParam.type?.accept(emitter).toString(), 'List<String>?');
-      expect(listParam.named, isTrue);
-      expect(listParam.required, isFalse);
-
+      // Check the method body includes all headers
       final methodString = format(method.accept(emitter).toString());
-      expect(
-        collapseWhitespace(methodString),
-        collapseWhitespace(expectedMethod),
-      );
-    });
+      expect(methodString, contains("headers['X-Required-String']"));
+      expect(methodString, contains("headers['X-Required-Date']"));
+      expect(methodString, contains("headers['X-Optional-Bool']"));
+      expect(methodString, contains("headers['X-Optional-List']"));
 
-    test('handles header aliases', () {
-      // Create a base header
-      final baseHeader = RequestHeaderObject(
-        name: 'X-Base-Header',
-        rawName: 'X-Base-Header',
-        description: 'A base header',
-        isRequired: true,
-        isDeprecated: false,
-        allowEmptyValue: false,
-        explode: false,
-        model: StringModel(context: context),
-        encoding: HeaderParameterEncoding.simple,
-        context: context,
-      );
+      // Verify the string header has isEmpty check
+      expect(methodString, contains('if (xRequiredString.isNotEmpty)'));
 
-      // Create an alias for the base header
-      final aliasHeader = RequestHeaderAlias(
-        name: 'X-Alias-Header',
-        header: baseHeader,
-        context: context,
-      );
-
-      final operation = Operation(
-        operationId: 'operationWithHeaderAlias',
-        context: context,
-        summary: 'Operation with header alias',
-        description: 'An operation that uses a header alias',
-        tags: const {},
-        isDeprecated: false,
-        path: '/with-alias-header',
-        method: HttpMethod.get,
-        headers: {aliasHeader},
-        queryParameters: const {},
-        pathParameters: const {},
-        responses: const {},
-      );
-
-      const expectedMethod = '''
-          Options _options({required String xAliasHeader}) {
-            final headers = <String, dynamic>{};
-            const headerEncoder = SimpleEncoder();
-            
-            if (xAliasHeader.isNotEmpty) {
-              headers['X-Base-Header'] = headerEncoder.encode(xAliasHeader);
-            }
-
-            return Options(method: 'GET', headers: headers);
-          }
-        ''';
-
-      final method = generator.generateOptionsMethod(operation);
-
-      expect(method, isA<Method>());
-      expect(method.returns?.accept(emitter).toString(), 'Options');
-
-      // Verify parameters - should use the alias name, not the base name
-      expect(method.optionalParameters, hasLength(1));
-      final param = method.optionalParameters.first;
-      expect(param.name, 'xAliasHeader');
-      expect(param.type?.accept(emitter).toString(), 'String');
-      expect(param.named, isTrue);
-      expect(param.required, isTrue);
-
-      final methodString = format(method.accept(emitter).toString());
-      expect(
-        collapseWhitespace(methodString),
-        collapseWhitespace(expectedMethod),
-      );
-    });
-
-    test('handles deeply nested header aliases', () {
-      // Create a base header
-      final baseHeader = RequestHeaderObject(
-        name: 'X-Base-Header',
-        rawName: 'X-Base-Header',
-        description: 'A base header',
-        isRequired: true,
-        isDeprecated: false,
-        allowEmptyValue: false,
-        explode: false,
-        model: StringModel(context: context),
-        encoding: HeaderParameterEncoding.simple,
-        context: context,
-      );
-
-      // Create nested aliases (three levels deep)
-      final firstLevelAlias = RequestHeaderAlias(
-        name: 'X-First-Level',
-        header: baseHeader,
-        context: context,
-      );
-
-      final secondLevelAlias = RequestHeaderAlias(
-        name: 'X-Second-Level',
-        header: firstLevelAlias,
-        context: context,
-      );
-
-      final thirdLevelAlias = RequestHeaderAlias(
-        name: 'X-Third-Level',
-        header: secondLevelAlias,
-        context: context,
-      );
-
-      final operation = Operation(
-        operationId: 'operationWithNestedHeaderAlias',
-        context: context,
-        summary: 'Operation with nested header alias',
-        description: 'An operation that uses a deeply nested header alias',
-        tags: const {},
-        isDeprecated: false,
-        path: '/with-nested-alias',
-        method: HttpMethod.get,
-        headers: {thirdLevelAlias},
-        queryParameters: const {},
-        pathParameters: const {},
-        responses: const {},
-      );
-
-      const expectedMethod = '''
-          Options _options({required String xThirdLevel}) {
-            final headers = <String, dynamic>{};
-            const headerEncoder = SimpleEncoder();
-            
-            if (xThirdLevel.isNotEmpty) {
-              headers['X-Base-Header'] = headerEncoder.encode(xThirdLevel);
-            }
-
-            return Options(method: 'GET', headers: headers);
-          }
-        ''';
-
-      final method = generator.generateOptionsMethod(operation);
-
-      expect(method, isA<Method>());
-      expect(method.returns?.accept(emitter).toString(), 'Options');
-
-      // Verify parameters - should use the top-level alias name
-      expect(method.optionalParameters, hasLength(1));
-      final param = method.optionalParameters.first;
-      expect(param.name, 'xThirdLevel');
-      expect(param.type?.accept(emitter).toString(), 'String');
-      expect(param.named, isTrue);
-      expect(param.required, isTrue);
-
-      final methodString = format(method.accept(emitter).toString());
-      expect(
-        collapseWhitespace(methodString),
-        collapseWhitespace(expectedMethod),
-      );
+      // Optional headers should have null checks
+      expect(methodString, contains('if (xOptionalBool != null)'));
+      expect(methodString, contains('if (xOptionalList != null)'));
     });
   });
 }

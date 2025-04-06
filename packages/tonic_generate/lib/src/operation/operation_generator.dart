@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
+import 'package:tonic_generate/src/util/parameter_name_normalizer.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating callable operation classes
@@ -48,6 +49,17 @@ class OperationGenerator {
   /// Generates the callable operation class
   @visibleForTesting
   Class generateClass(Operation operation, String className) {
+    final pathParams = operation.pathParameters.map((p) => p.resolve()).toSet();
+    final queryParams =
+        operation.queryParameters.map((p) => p.resolve()).toSet();
+    final headerParams = operation.headers.map((p) => p.resolve()).toSet();
+
+    final normalizedParams = normalizeRequestParameters(
+      pathParameters: pathParams,
+      queryParameters: queryParams,
+      headers: headerParams,
+    );
+
     return Class(
       (b) =>
           b
@@ -76,30 +88,90 @@ class OperationGenerator {
               ),
             )
             ..methods.addAll([
-              generateCallMethod(operation),
-              generatePathMethod(operation),
+              generateCallMethod(operation, normalizedParams),
+              generatePathMethod(operation, normalizedParams.pathParameters),
               generateDataMethod(operation),
-              generateQueryParametersMethod(operation),
-              generateOptionsMethod(operation),
+              generateQueryParametersMethod(
+                operation,
+                normalizedParams.queryParameters,
+              ),
+              generateOptionsMethod(operation, normalizedParams.headers),
             ]),
     );
   }
 
   /// Generates the call() method for the operation
   @visibleForTesting
-  Method generateCallMethod(Operation operation) {
+  Method generateCallMethod(
+    Operation operation,
+    NormalizedRequestParameters normalizedParams,
+  ) {
     final headerParameters = <Parameter>[];
     final headerArgs = <String, Expression>{};
+    final pathParameters = <Parameter>[];
+    final pathArgs = <String, Expression>{};
+    final queryParameters = <Parameter>[];
+    final queryArgs = <String, Expression>{};
 
-    for (final header in operation.headers) {
-      final resolved = header.resolve();
-      final paramName = (resolved.name ?? resolved.rawName).toCamelCase();
+    for (final pathParam in normalizedParams.pathParameters) {
+      final paramName = pathParam.normalizedName.toCamelCase();
+      final resolvedParam = pathParam.parameter;
 
       final parameterType = typeReference(
-        resolved.model,
+        resolvedParam.model,
         nameManager,
         package,
-        isNullableOverride: !resolved.isRequired,
+        isNullableOverride: !resolvedParam.isRequired,
+      );
+
+      pathParameters.add(
+        Parameter(
+          (b) =>
+              b
+                ..name = paramName
+                ..type = parameterType
+                ..named = true
+                ..required = resolvedParam.isRequired,
+        ),
+      );
+
+      pathArgs[paramName] = refer(paramName);
+    }
+
+    for (final queryParam in normalizedParams.queryParameters) {
+      final paramName = queryParam.normalizedName.toCamelCase();
+      final resolvedParam = queryParam.parameter;
+
+      final parameterType = typeReference(
+        resolvedParam.model,
+        nameManager,
+        package,
+        isNullableOverride: !resolvedParam.isRequired,
+      );
+
+      queryParameters.add(
+        Parameter(
+          (b) =>
+              b
+                ..name = paramName
+                ..type = parameterType
+                ..named = true
+                ..required = resolvedParam.isRequired,
+        ),
+      );
+
+      queryArgs[paramName] = refer(paramName);
+    }
+
+    for (final headerParam in normalizedParams.headers) {
+      final paramName = headerParam.normalizedName.toCamelCase();
+      final resolvedParam = headerParam.parameter;
+
+      final parameterType = typeReference(
+        resolvedParam.model,
+        nameManager,
+        package,
+        isNullableOverride: !resolvedParam.isRequired,
       );
 
       headerParameters.add(
@@ -109,12 +181,20 @@ class OperationGenerator {
                 ..name = paramName
                 ..type = parameterType
                 ..named = true
-                ..required = resolved.isRequired,
+                ..required = resolvedParam.isRequired,
         ),
       );
 
       headerArgs[paramName] = refer(paramName);
     }
+
+    final pathExpr =
+        pathArgs.isEmpty ? refer('_path()') : refer('_path').call([], pathArgs);
+
+    final queryExpr =
+        queryArgs.isEmpty
+            ? refer('_queryParameters()')
+            : refer('_queryParameters').call([], queryArgs);
 
     final optionsExpr =
         headerArgs.isEmpty
@@ -132,7 +212,11 @@ class OperationGenerator {
                     ..url = 'dart:core'
                     ..types.add(refer('void')),
             )
-            ..optionalParameters.addAll(headerParameters)
+            ..optionalParameters.addAll([
+              ...pathParameters,
+              ...queryParameters,
+              ...headerParameters,
+            ])
             ..modifier = MethodModifier.async
             ..lambda = false
             ..body = Block(
@@ -142,10 +226,10 @@ class OperationGenerator {
                       refer('_dio')
                           .property('request')
                           .call(
-                            [refer('_path()')],
+                            [pathExpr],
                             {
                               'data': refer('_data()'),
-                              'queryParameters': refer('_queryParameters()'),
+                              'queryParameters': queryExpr,
                               'options': optionsExpr,
                             },
                             [refer('dynamic', 'dart:core')],
@@ -159,7 +243,11 @@ class OperationGenerator {
 
   /// Generates a path expression for the operation
   @visibleForTesting
-  Method generatePathMethod(Operation operation) {
+  Method generatePathMethod(
+    Operation operation,
+    List<({String normalizedName, PathParameterObject parameter})>
+    pathParameters,
+  ) {
     return Method(
       (b) =>
           b
@@ -185,7 +273,11 @@ class OperationGenerator {
 
   /// Generates a query parameters expression for the operation
   @visibleForTesting
-  Method generateQueryParametersMethod(Operation operation) {
+  Method generateQueryParametersMethod(
+    Operation operation,
+    List<({String normalizedName, QueryParameterObject parameter})>
+    queryParameters,
+  ) {
     return Method(
       (b) =>
           b
@@ -198,7 +290,10 @@ class OperationGenerator {
 
   /// Generates an options expression for the operation
   @visibleForTesting
-  Method generateOptionsMethod(Operation operation) {
+  Method generateOptionsMethod(
+    Operation operation,
+    List<({String normalizedName, RequestHeaderObject parameter})> headers,
+  ) {
     // Convert HttpMethod enum to string using a switch statement
     final methodString = switch (operation.method) {
       HttpMethod.get => 'GET',
@@ -211,7 +306,7 @@ class OperationGenerator {
       HttpMethod.trace => 'TRACE',
     };
 
-    final hasHeaders = operation.headers.isNotEmpty;
+    final hasHeaders = headers.isNotEmpty;
     final bodyStatements = <Code>[];
     final optionalParameters = <Parameter>[];
 
@@ -239,15 +334,16 @@ class OperationGenerator {
               .statement,
         );
 
-      for (final header in operation.headers) {
-        final resolved = header.resolve();
-        final paramName = (resolved.name ?? resolved.rawName).toCamelCase();
+      for (final headerParam in headers) {
+        final paramName = headerParam.normalizedName.toCamelCase();
+        final rawName = headerParam.parameter.rawName;
+        final resolvedParam = headerParam.parameter;
 
         final parameterType = typeReference(
-          resolved.model,
+          resolvedParam.model,
           nameManager,
           package,
-          isNullableOverride: !resolved.isRequired,
+          isNullableOverride: !resolvedParam.isRequired,
         );
 
         optionalParameters.add(
@@ -257,54 +353,52 @@ class OperationGenerator {
                   ..name = paramName
                   ..type = parameterType
                   ..named = true
-                  ..required = resolved.isRequired,
+                  ..required = resolvedParam.isRequired,
           ),
         );
 
         final needsToJson =
-            resolved.model is! PrimitiveModel && resolved.model is! ListModel;
+            resolvedParam.model is! PrimitiveModel &&
+            resolvedParam.model is! ListModel;
 
         Expression headerValue;
         if (needsToJson) {
           headerValue = refer('headerEncoder').property('encode').call([
             refer(paramName).property('toJson').call([]),
-          ], resolved.explode ? {'explode': literalBool(true)} : {},);
+          ], resolvedParam.explode ? {'explode': literalBool(true)} : {},);
         } else {
           headerValue = refer('headerEncoder').property('encode').call([
             refer(paramName),
-          ], resolved.explode ? {'explode': literalBool(true)} : {},);
+          ], resolvedParam.explode ? {'explode': literalBool(true)} : {},);
         }
 
-        if (resolved.isRequired && !resolved.allowEmptyValue) {
+        if (resolvedParam.isRequired && !resolvedParam.allowEmptyValue) {
           bodyStatements.add(
             Block.of([
               Code('if ($paramName.isNotEmpty) {'),
-              refer('headers')
-                  .index(literalString(resolved.rawName))
-                  .assign(headerValue)
-                  .statement,
+              refer(
+                'headers',
+              ).index(literalString(rawName)).assign(headerValue).statement,
               const Code('}'),
             ]),
           );
-        } else if (!resolved.isRequired) {
+        } else if (!resolvedParam.isRequired) {
           // Check for null for optional parameters
           bodyStatements.add(
             Block.of([
               Code('if ($paramName != null) {'),
-              refer('headers')
-                  .index(literalString(resolved.rawName))
-                  .assign(headerValue)
-                  .statement,
+              refer(
+                'headers',
+              ).index(literalString(rawName)).assign(headerValue).statement,
               const Code('}'),
             ]),
           );
         } else {
           // No condition needed
           bodyStatements.add(
-            refer('headers')
-                .index(literalString(resolved.rawName))
-                .assign(headerValue)
-                .statement,
+            refer(
+              'headers',
+            ).index(literalString(rawName)).assign(headerValue).statement,
           );
         }
       }
