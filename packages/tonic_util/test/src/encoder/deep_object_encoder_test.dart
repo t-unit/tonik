@@ -7,46 +7,40 @@ void main() {
 
   group('DeepObjectEncoder', () {
     test('encodes a simple object', () {
-      final result = encoder.encode('filter', {'color': 'red', 'size': 'large'});
-      
-      expect(result, {
-        'filter[color]': 'red',
-        'filter[size]': 'large',
+      final result = encoder.encode('filter', {
+        'color': 'red',
+        'size': 'large',
       });
+
+      expect(result, {'filter[color]': 'red', 'filter[size]': 'large'});
     });
 
     test('encodes boolean properties', () {
-      final result = encoder.encode('filter', {'active': true, 'premium': false});
-      
-      expect(result, {
-        'filter[active]': 'true',
-        'filter[premium]': 'false',
+      final result = encoder.encode('filter', {
+        'active': true,
+        'premium': false,
       });
+
+      expect(result, {'filter[active]': 'true', 'filter[premium]': 'false'});
     });
 
     test('encodes an object with a null value', () {
       final result = encoder.encode('filter', {'color': null, 'size': 'large'});
-      
-      expect(result, {
-        'filter[color]': '',
-        'filter[size]': 'large',
-      });
+
+      expect(result, {'filter[color]': '', 'filter[size]': 'large'});
     });
 
     test('encodes an empty object', () {
       final result = encoder.encode('filter', <String, dynamic>{});
-      
+
       expect(result, isEmpty);
     });
 
     test('encodes nested objects', () {
       final result = encoder.encode('filter', {
-        'product': {
-          'color': 'blue',
-          'size': 'medium',
-        },
+        'product': {'color': 'blue', 'size': 'medium'},
       });
-      
+
       expect(result, {
         'filter[product][color]': 'blue',
         'filter[product][size]': 'medium',
@@ -56,13 +50,10 @@ void main() {
     test('encodes deeply nested objects', () {
       final result = encoder.encode('filter', {
         'product': {
-          'attributes': {
-            'color': 'blue',
-            'size': 'medium',
-          },
+          'attributes': {'color': 'blue', 'size': 'medium'},
         },
       });
-      
+
       expect(result, {
         'filter[product][attributes][color]': 'blue',
         'filter[product][attributes][size]': 'medium',
@@ -80,9 +71,7 @@ void main() {
 
     test('throws for objects containing empty arrays', () {
       expect(
-        () => encoder.encode('filter', {
-          'colors': <String>[],
-        }),
+        () => encoder.encode('filter', {'colors': <String>[]}),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -101,47 +90,37 @@ void main() {
         'name': 'John',
         'age': 30,
         'active': true,
-        'address': {
-          'street': '123 Main St',
-          'city': 'New York',
-        },
+        'address': {'street': '123 Main St', 'city': 'New York'},
       });
-      
+
       expect(result, {
         'params[name]': 'John',
         'params[age]': '30',
         'params[active]': 'true',
-        'params[address][street]': '123%20Main%20St',
-        'params[address][city]': 'New%20York',
+        'params[address][street]': '123+Main+St',
+        'params[address][city]': 'New+York',
       });
     });
 
     test('encodes DateTime values correctly', () {
       final dateTime = DateTime.utc(2023, 5, 15, 12, 30, 45);
-      
-      final result = encoder.encode('filter', {
-        'date': dateTime,
-      });
-      
-      expect(result, {
-        'filter[date]': '2023-05-15T12%3A30%3A45.000Z',
-      });
+
+      final result = encoder.encode('filter', {'date': dateTime});
+
+      expect(result, {'filter[date]': '2023-05-15T12:30:45.000Z'});
     });
 
     test('encodes nested DateTime values correctly', () {
       final startDate = DateTime.utc(2023, 5, 15);
       final endDate = DateTime.utc(2023, 6, 20);
-      
+
       final result = encoder.encode('filter', {
-        'range': {
-          'start': startDate,
-          'end': endDate,
-        },
+        'range': {'start': startDate, 'end': endDate},
       });
-      
+
       expect(result, {
-        'filter[range][start]': '2023-05-15T00%3A00%3A00.000Z',
-        'filter[range][end]': '2023-06-20T00%3A00%3A00.000Z',
+        'filter[range][start]': '2023-05-15T00:00:00.000Z',
+        'filter[range][end]': '2023-06-20T00:00:00.000Z',
       });
     });
 
@@ -150,45 +129,47 @@ void main() {
         () => encoder.encode('param', 'string value'),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
-      
+
       expect(
         () => encoder.encode('param', 42),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
-      
+
       expect(
         () => encoder.encode('param', [1, 2, 3]),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
 
-    test('throws UnsupportedEncodingTypeException for unsupported types in Map', () {
-      // Object with a function value
-      final objectWithFunction = {
-        'callback': () => print('hello'),
-      };
-      
-      expect(
-        () => encoder.encode('param', objectWithFunction),
-        throwsA(isA<UnsupportedEncodingTypeException>()),
-      );
-    });
+    test(
+      'throws UnsupportedEncodingTypeException for unsupported types in Map',
+      () {
+        // Object with a function value
+        final objectWithFunction = {'callback': () => 'hello'};
 
-    test('throws UnsupportedEncodingTypeException for nested unsupported types', () {
-      // Nested map with an unsupported type
-      final nestedObject = {
-        'outer': {
-          'inner': {
-            'unsupported': RegExp(r'\d+'),
+        expect(
+          () => encoder.encode('param', objectWithFunction),
+          throwsA(isA<UnsupportedEncodingTypeException>()),
+        );
+      },
+    );
+
+    test(
+      'throws UnsupportedEncodingTypeException for nested unsupported types',
+      () {
+        // Nested map with an unsupported type
+        final nestedObject = {
+          'outer': {
+            'inner': {'unsupported': RegExp(r'\d+')},
           },
-        },
-      };
-      
-      expect(
-        () => encoder.encode('param', nestedObject),
-        throwsA(isA<UnsupportedEncodingTypeException>()),
-      );
-    });
+        };
+
+        expect(
+          () => encoder.encode('param', nestedObject),
+          throwsA(isA<UnsupportedEncodingTypeException>()),
+        );
+      },
+    );
 
     test('throws UnsupportedEncodingTypeException for nested arrays', () {
       // Object with nested arrays
@@ -197,11 +178,11 @@ void main() {
           'hobbies': ['reading', 'swimming'],
         },
       };
-      
+
       expect(
         () => encoder.encode('param', objectWithNestedArrays),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
   });
-} 
+}

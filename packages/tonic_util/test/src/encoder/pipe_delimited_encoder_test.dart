@@ -29,10 +29,9 @@ void main() {
 
     test('encodes BigDecimal value', () {
       final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
-      expect(
-        encoder.encodePiped(bigDecimal),
-        ['123456789012345678901234.56789'],
-      );
+      expect(encoder.encodePiped(bigDecimal), [
+        '123456789012345678901234.56789',
+      ]);
     });
 
     test('encodes boolean values', () {
@@ -42,18 +41,14 @@ void main() {
 
     test('encodes Uri value', () {
       final uri = Uri.parse('https://example.com/path?query=value');
-      expect(
-        encoder.encodePiped(uri),
-        ['https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue'],
-      );
+      expect(encoder.encodePiped(uri), [
+        'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+      ]);
     });
 
     test('encodes DateTime value', () {
       final dateTime = DateTime.utc(2023, 5, 15, 12, 30, 45);
-      expect(
-        encoder.encodePiped(dateTime),
-        ['2023-05-15T12%3A30%3A45.000Z'],
-      );
+      expect(encoder.encodePiped(dateTime), ['2023-05-15T12%3A30%3A45.000Z']);
     });
 
     test('encodes null value', () {
@@ -61,33 +56,23 @@ void main() {
     });
 
     test('encodes List of primitive values with explode=false', () {
-      expect(
-        encoder.encodePiped(['red', 'green', 'blue']),
-        ['red|green|blue'],
-      );
+      expect(encoder.encodePiped(['red', 'green', 'blue']), ['red|green|blue']);
     });
 
     test('encodes List of boolean values with explode=false', () {
-      expect(
-        encoder.encodePiped([true, false, true]),
-        ['true|false|true'],
-      );
+      expect(encoder.encodePiped([true, false, true]), ['true|false|true']);
     });
 
     test('encodes List with DateTime values with explode=false', () {
       final dateTime1 = DateTime.utc(2023, 5, 15);
       final dateTime2 = DateTime.utc(2023, 6, 20);
-      expect(
-        encoder.encodePiped([dateTime1, dateTime2]),
-        ['2023-05-15T00%3A00%3A00.000Z|2023-06-20T00%3A00%3A00.000Z'],
-      );
+      expect(encoder.encodePiped([dateTime1, dateTime2]), [
+        '2023-05-15T00%3A00%3A00.000Z|2023-06-20T00%3A00%3A00.000Z',
+      ]);
     });
 
     test('encodes List with special characters with explode=false', () {
-      expect(
-        encoder.encodePiped(['item 1', 'item 2']),
-        ['item+1|item+2'],
-      );
+      expect(encoder.encodePiped(['item 1', 'item 2']), ['item+1|item+2']);
     });
 
     test('encodes empty List with explode=false', () {
@@ -95,10 +80,7 @@ void main() {
     });
 
     test('encodes Set of primitive values with explode=false', () {
-      expect(
-        encoder.encodePiped({'red', 'green', 'blue'}),
-        ['red|green|blue'],
-      );
+      expect(encoder.encodePiped({'red', 'green', 'blue'}), ['red|green|blue']);
     });
 
     test('throws exception for Map values', () {
@@ -128,46 +110,49 @@ void main() {
     // Tests for explode functionality
     group('with explode=true', () {
       test('encodes List with explode=true as separate values', () {
-        expect(
-          encoder.encodePiped(['red', 'green', 'blue'], explode: true),
-          ['red', 'green', 'blue'],
-        );
+        expect(encoder.encodePiped(['red', 'green', 'blue'], explode: true), [
+          'red',
+          'green',
+          'blue',
+        ]);
       });
 
       test('encodes List of boolean values with explode=true', () {
-        expect(
-          encoder.encodePiped([true, false, true], explode: true),
-          ['true', 'false', 'true'],
-        );
+        expect(encoder.encodePiped([true, false, true], explode: true), [
+          'true',
+          'false',
+          'true',
+        ]);
       });
 
       test('encodes List with DateTime values with explode=true', () {
         final dateTime1 = DateTime.utc(2023, 5, 15);
         final dateTime2 = DateTime.utc(2023, 6, 20);
-        expect(
-          encoder.encodePiped([dateTime1, dateTime2], explode: true),
-          ['2023-05-15T00%3A00%3A00.000Z', '2023-06-20T00%3A00%3A00.000Z'],
-        );
+        expect(encoder.encodePiped([dateTime1, dateTime2], explode: true), [
+          '2023-05-15T00%3A00%3A00.000Z',
+          '2023-06-20T00%3A00%3A00.000Z',
+        ]);
       });
 
       test('encodes List with special characters and explode=true', () {
-        expect(
-          encoder.encodePiped(['item 1', 'item 2'], explode: true),
-          ['item+1', 'item+2'],
-        );
+        expect(encoder.encodePiped(['item 1', 'item 2'], explode: true), [
+          'item+1',
+          'item+2',
+        ]);
       });
 
       test('encodes empty List with explode=true', () {
-        expect(
-          encoder.encodePiped(<String>[], explode: true),
-          [''],
-        );
+        expect(encoder.encodePiped(<String>[], explode: true), ['']);
       });
 
       test('encodes Set with explode=true as separate values', () {
         // Since a Set's iteration order is not guaranteed, we need to check
         // that all expected values are in the result, not the exact order
-        final result = encoder.encodePiped({'red', 'green', 'blue'}, explode: true);
+        final result = encoder.encodePiped({
+          'red',
+          'green',
+          'blue',
+        }, explode: true,);
         expect(result.length, 3);
         expect(result, contains('red'));
         expect(result, contains('green'));
@@ -241,4 +226,4 @@ void main() {
       });
     });
   });
-} 
+}
