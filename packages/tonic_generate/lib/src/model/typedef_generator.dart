@@ -31,7 +31,7 @@ class TypedefGenerator {
       _generateTypedefFromModel(model, model);
 
   TypeDef _generateTypedefFromModel(Model model, Model definition) {
-    final baseType = getTypeReference(definition, nameManager, package);
+    final baseType = typeReference(definition, nameManager, package);
 
     return TypeDef(
       (b) =>

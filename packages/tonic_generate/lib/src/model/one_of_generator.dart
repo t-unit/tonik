@@ -138,7 +138,7 @@ class OneOfGenerator {
     return model.models.map((discriminatedModel) {
       final variantName = variantNames[discriminatedModel]!;
 
-      final typeRef = getTypeReference(
+      final typeRef = typeReference(
         discriminatedModel.model,
         nameManager,
         package,
@@ -287,7 +287,7 @@ class OneOfGenerator {
         final variantName = variantNames[m]!;
 
         cases.addAll([
-          getTypeReference(m.model, nameManager, package).code,
+          typeReference(m.model, nameManager, package).code,
           Code(' s => $variantName(s), '),
         ]);
       }
@@ -309,7 +309,7 @@ class OneOfGenerator {
 
     // Handle primitive types.
     for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
-      final typeRef = getTypeReference(m.model, nameManager, package);
+      final typeRef = typeReference(m.model, nameManager, package);
       final variantName = variantNames[m]!;
 
       blocks.add(

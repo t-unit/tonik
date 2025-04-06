@@ -95,23 +95,12 @@ class OperationGenerator {
       final resolved = header.resolve();
       final paramName = (resolved.name ?? resolved.rawName).toCamelCase();
 
-      final typeReference = getTypeReference(
+      final parameterType = typeReference(
         resolved.model,
         nameManager,
         package,
+        isNullableOverride: !resolved.isRequired,
       );
-
-      final parameterType =
-          resolved.isRequired
-              ? typeReference
-              : TypeReference(
-                (b) =>
-                    b
-                      ..symbol = typeReference.symbol
-                      ..url = typeReference.url
-                      ..types.addAll(typeReference.types)
-                      ..isNullable = true,
-              );
 
       headerParameters.add(
         Parameter(
@@ -254,23 +243,12 @@ class OperationGenerator {
         final resolved = header.resolve();
         final paramName = (resolved.name ?? resolved.rawName).toCamelCase();
 
-        final typeReference = getTypeReference(
+        final parameterType = typeReference(
           resolved.model,
           nameManager,
           package,
+          isNullableOverride: !resolved.isRequired,
         );
-
-        final parameterType =
-            resolved.isRequired
-                ? typeReference
-                : TypeReference(
-                  (b) =>
-                      b
-                        ..symbol = typeReference.symbol
-                        ..url = typeReference.url
-                        ..types.addAll(typeReference.types)
-                        ..isNullable = true,
-                );
 
         optionalParameters.add(
           Parameter(

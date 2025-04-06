@@ -377,7 +377,7 @@ class ClassGenerator {
     String jsonKey,
     String className,
   ) {
-    final typeRef = getTypeReference(property.model, nameManager, package);
+    final typeRef = typeReference(property.model, nameManager, package);
     final symbolForMessage = typeRef.symbol;
 
     final errorMessage =
@@ -455,17 +455,11 @@ class ClassGenerator {
   }
 
   TypeReference _getTypeReference(Property property) {
-    final baseType = getTypeReference(property.model, nameManager, package);
-
-    return property.isNullable || !property.isRequired
-        ? TypeReference(
-          (b) =>
-              b
-                ..symbol = baseType.symbol
-                ..url = baseType.url
-                ..types.addAll(baseType.types)
-                ..isNullable = true,
-        )
-        : baseType;
+    return typeReference(
+      property.model,
+      nameManager,
+      package,
+      isNullableOverride: property.isNullable || !property.isRequired,
+    );
   }
 }
