@@ -75,28 +75,6 @@ void main() {
           expect(inlineName, 'BlubModel');
         });
 
-        test('header path with X prefix', () {
-          final header = ResponseHeaderObject(
-            name: 'X-Rate-Limit',
-            model: IntegerModel(context: Context.initial()),
-            explode: false,
-            isRequired: true,
-            isDeprecated: false,
-            description: 'Rate limit header',
-            encoding: ResponseHeaderEncoding.simple,
-            context: Context.initial().pushAll([
-              'paths',
-              'user-login',
-              'get',
-              '200',
-              'headers',
-              'X-Rate-Limit',
-            ]),
-          );
-
-          expect(nameGenerator.generateResponseHeaderName(header), 'RateLimit');
-        });
-
         test('enum parameter in path', () {
           final enumModel = EnumModel<String>(
             values: const {'available', 'pending', 'sold'},

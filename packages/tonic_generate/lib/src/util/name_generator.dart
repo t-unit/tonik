@@ -7,8 +7,6 @@ class NameGenerator {
 
   static const _modelSuffix = 'Model';
   static const _responseSuffix = 'Response';
-  static const _headerSuffix = 'Header';
-  static const _parameterSuffix = 'Parameter';
   static const _operationSuffix = 'Operation';
   static const _apiSuffix = 'Api';
 
@@ -42,74 +40,6 @@ class NameGenerator {
       context: response.context,
     );
     return _makeUnique(baseName, _responseSuffix);
-  }
-
-  /// Generates a unique name for a response header.
-  ///
-  /// Names are generated with the following priority:
-  /// 1. Header's explicit name if available
-  /// 2. Combined context path components
-  /// 3. 'Anonymous' as fallback
-  String generateResponseHeaderName(ResponseHeader header) {
-    final baseName = _generateBaseName(
-      name: header.name,
-      context: header.context,
-    );
-    return _makeUnique(baseName, _headerSuffix);
-  }
-
-  /// Generates a unique name for a request header.
-  ///
-  /// Names are generated with the following priority:
-  /// 1. Header's explicit name if available
-  /// 2. Combined context path components
-  /// 3. 'Anonymous' as fallback
-  String generateRequestHeaderName(RequestHeader header) {
-    String? name;
-    if (header case final RequestHeaderObject obj) {
-      name = obj.name;
-    } else if (header case final RequestHeaderAlias alias) {
-      name = alias.name;
-    }
-
-    final baseName = _generateBaseName(name: name, context: header.context);
-    return _makeUnique(baseName, _headerSuffix);
-  }
-
-  /// Generates a unique name for a query parameter.
-  ///
-  /// Names are generated with the following priority:
-  /// 1. Parameter's explicit name if available
-  /// 2. Combined context path components
-  /// 3. 'Anonymous' as fallback
-  String generateQueryParameterName(QueryParameter parameter) {
-    String? name;
-    if (parameter case final QueryParameterObject obj) {
-      name = obj.name;
-    } else if (parameter case final QueryParameterAlias alias) {
-      name = alias.name;
-    }
-
-    final baseName = _generateBaseName(name: name, context: parameter.context);
-    return _makeUnique(baseName, _parameterSuffix);
-  }
-
-  /// Generates a unique name for a path parameter.
-  ///
-  /// Names are generated with the following priority:
-  /// 1. Parameter's explicit name if available
-  /// 2. Combined context path components
-  /// 3. 'Anonymous' as fallback
-  String generatePathParameterName(PathParameter parameter) {
-    String? name;
-    if (parameter case final PathParameterObject obj) {
-      name = obj.name;
-    } else if (parameter case final PathParameterAlias alias) {
-      name = alias.name;
-    }
-
-    final baseName = _generateBaseName(name: name, context: parameter.context);
-    return _makeUnique(baseName, _parameterSuffix);
   }
 
   /// Generates a unique name for an operation.

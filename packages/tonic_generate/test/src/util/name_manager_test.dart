@@ -49,11 +49,7 @@ void main() {
       manager.prime(
         models: models,
         responses: responses,
-        responseHeaders: const [],
         operations: const [],
-        requestHeaders: const [],
-        queryParameters: const [],
-        pathParameters: const [],
         tags: tags,
       );
 

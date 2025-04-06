@@ -50,6 +50,7 @@ class Generator {
     
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
+      package: fullPackage,
     );
     
     final operationFileGenerator = OperationFileGenerator(
@@ -59,11 +60,7 @@ class Generator {
     nameManager.prime(
       models: apiDocument.models,
       responses: apiDocument.responses,
-      responseHeaders: apiDocument.responseHeaders,
       operations: apiDocument.operations,
-      requestHeaders: apiDocument.requestHeaders,
-      queryParameters: apiDocument.queryParameters,
-      pathParameters: apiDocument.pathParameters,
       tags: apiDocument.operationsByTag.keys,
     );
 

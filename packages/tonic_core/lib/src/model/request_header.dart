@@ -12,6 +12,27 @@ sealed class RequestHeader {
   const RequestHeader({required this.context});
 
   final Context context;
+
+
+  RequestHeaderObject resolve({String? name}) {
+     switch (this) {
+    case final RequestHeaderObject header:
+        return RequestHeaderObject(
+          name: name ?? header.name,
+          rawName: header.rawName,
+          description: header.description,
+          isRequired: header.isRequired,
+          isDeprecated: header.isDeprecated,
+          allowEmptyValue: header.allowEmptyValue,
+          explode: header.explode,
+          model: header.model,
+          encoding: header.encoding,
+          context: context,
+        );
+      case final RequestHeaderAlias alias:
+        return alias.header.resolve(name: name ?? alias.name);
+    }
+  }
 }
 
 @immutable
