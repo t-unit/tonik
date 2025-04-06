@@ -25,6 +25,27 @@ sealed class QueryParameter {
   const QueryParameter({required this.context});
 
   final Context context;
+  
+  QueryParameterObject resolve({String? name}) {
+    switch (this) {
+      case final QueryParameterObject param:
+        return QueryParameterObject(
+          name: name ?? param.name,
+          rawName: param.rawName,
+          description: param.description,
+          isRequired: param.isRequired,
+          isDeprecated: param.isDeprecated,
+          allowEmptyValue: param.allowEmptyValue,
+          allowReserved: param.allowReserved,
+          explode: param.explode,
+          model: param.model,
+          encoding: param.encoding,
+          context: context,
+        );
+      case final QueryParameterAlias alias:
+        return alias.parameter.resolve(name: name ?? alias.name);
+    }
+  }
 }
 
 @immutable

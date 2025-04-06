@@ -13,6 +13,24 @@ sealed class ResponseHeader {
 
   final Context context;
   final String? name;
+  
+  ResponseHeaderObject resolve({String? name}) {
+    switch (this) {
+      case final ResponseHeaderObject header:
+        return ResponseHeaderObject(
+          name: name ?? header.name,
+          description: header.description,
+          explode: header.explode,
+          model: header.model,
+          isRequired: header.isRequired,
+          isDeprecated: header.isDeprecated,
+          encoding: header.encoding,
+          context: context,
+        );
+      case final ResponseHeaderAlias alias:
+        return alias.header.resolve(name: name ?? alias.name);
+    }
+  }
 }
 
 @immutable

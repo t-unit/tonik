@@ -20,6 +20,26 @@ sealed class PathParameter {
   const PathParameter({required this.context});
 
   final Context context;
+  
+  PathParameterObject resolve({String? name}) {
+    switch (this) {
+      case final PathParameterObject param:
+        return PathParameterObject(
+          name: name ?? param.name,
+          rawName: param.rawName,
+          description: param.description,
+          isRequired: param.isRequired,
+          isDeprecated: param.isDeprecated,
+          allowEmptyValue: param.allowEmptyValue,
+          explode: param.explode,
+          model: param.model,
+          encoding: param.encoding,
+          context: context,
+        );
+      case final PathParameterAlias alias:
+        return alias.parameter.resolve(name: name ?? alias.name);
+    }
+  }
 }
 
 @immutable
