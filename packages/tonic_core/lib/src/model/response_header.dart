@@ -1,6 +1,13 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 
+/// Encoding style supported for response headers .
+enum ResponseHeaderEncoding {
+  /// Comma-separated values. The only style for headers.
+  /// Example: `X-MyHeader: 3,4,5`
+  simple,
+}
+
 sealed class ResponseHeader {
   const ResponseHeader({required this.context, required this.name});
 
@@ -44,20 +51,21 @@ class ResponseHeaderObject extends ResponseHeader {
     required this.model,
     required this.isRequired,
     required this.isDeprecated,
+    required this.encoding,
   });
 
   final String? description;
   final bool explode;
   final Model model;
-
   final bool isRequired;
   final bool isDeprecated;
+  final ResponseHeaderEncoding encoding;
 
   @override
   String toString() =>
       'HeaderObject{name: $name, description: $description, '
       'explode: $explode, model: $model, isRequired: $isRequired, '
-      'isDeprecated: $isDeprecated, context: $context}';
+      'isDeprecated: $isDeprecated, encoding: $encoding, context: $context}';
 
   @override
   bool operator ==(Object other) =>
@@ -70,6 +78,7 @@ class ResponseHeaderObject extends ResponseHeader {
           model == other.model &&
           isRequired == other.isRequired &&
           isDeprecated == other.isDeprecated &&
+          encoding == other.encoding &&
           context == other.context;
 
   @override
@@ -80,6 +89,7 @@ class ResponseHeaderObject extends ResponseHeader {
     model,
     isRequired,
     isDeprecated,
+    encoding,
     context,
   );
 }

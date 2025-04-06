@@ -10,30 +10,6 @@ void main() {
     'paths': <String, dynamic>{},
     'components': {
       'parameters': {
-        'colorMatrix': {
-          'name': 'color',
-          'in': 'query',
-          'style': 'matrix',
-          'explode': false,
-          'schema': {'type': 'string'},
-        },
-        'colorLabel': {
-          'name': 'colorLabel',
-          'in': 'query',
-          'style': 'label',
-          'explode': false,
-          'schema': {'type': 'string'},
-          'allowReserved': true,
-        },
-        'colorSimple': {
-          'name': 'colorSimple',
-          'description': 'Simple style query parameter',
-          'in': 'query',
-          'style': 'simple',
-          'explode': false,
-          'schema': {'type': 'string'},
-          'allowReserved': false,
-        },
         'colorForm': {
           'name': 'colorForm',
           'in': 'query',
@@ -98,54 +74,6 @@ void main() {
   final api = Importer().import(fileContent);
   final queryParameters = api.queryParameters;
 
-  test('imports matrix style query parameter', () {
-    final parameter = queryParameters
-        .whereType<QueryParameterObject>()
-        .firstWhere((p) => p.name == 'colorMatrix');
-
-    expect(parameter.rawName, 'color');
-    expect(parameter.description, isNull);
-    expect(parameter.isRequired, isFalse);
-    expect(parameter.isDeprecated, isFalse);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.allowReserved, isFalse);
-    expect(parameter.explode, isFalse);
-    expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.matrix);
-  });
-
-  test('imports label style query parameter', () {
-    final parameter = queryParameters
-        .whereType<QueryParameterObject>()
-        .firstWhere((p) => p.name == 'colorLabel');
-
-    expect(parameter.rawName, 'colorLabel');
-    expect(parameter.description, isNull);
-    expect(parameter.isRequired, isFalse);
-    expect(parameter.isDeprecated, isFalse);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.allowReserved, isTrue);
-    expect(parameter.explode, isFalse);
-    expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.label);
-  });
-
-  test('imports simple style query parameter', () {
-    final parameter = queryParameters
-        .whereType<QueryParameterObject>()
-        .firstWhere((p) => p.name == 'colorSimple');
-
-    expect(parameter.rawName, 'colorSimple');
-    expect(parameter.description, 'Simple style query parameter');
-    expect(parameter.isRequired, isFalse);
-    expect(parameter.isDeprecated, isFalse);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.allowReserved, isFalse);
-    expect(parameter.explode, isFalse);
-    expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.simple);
-  });
-
   test('imports form style query parameter', () {
     final parameter = queryParameters
         .whereType<QueryParameterObject>()
@@ -159,7 +87,7 @@ void main() {
     expect(parameter.allowReserved, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.form);
+    expect(parameter.encoding, QueryParameterEncoding.form);
   });
 
   test('imports space delimited style query parameter', () {
@@ -175,7 +103,7 @@ void main() {
     expect(parameter.allowReserved, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<ListModel>());
-    expect(parameter.encoding, ParameterEncoding.spaceDelimited);
+    expect(parameter.encoding, QueryParameterEncoding.spaceDelimited);
   });
 
   test('imports pipe delimited style query parameter', () {
@@ -191,7 +119,7 @@ void main() {
     expect(parameter.allowReserved, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<ListModel>());
-    expect(parameter.encoding, ParameterEncoding.pipeDelimited);
+    expect(parameter.encoding, QueryParameterEncoding.pipeDelimited);
   });
 
   test('imports deep object style query parameter', () {
@@ -207,7 +135,7 @@ void main() {
     expect(parameter.allowReserved, isFalse);
     expect(parameter.explode, isTrue);
     expect(parameter.model, isA<ClassModel>());
-    expect(parameter.encoding, ParameterEncoding.deepObject);
+    expect(parameter.encoding, QueryParameterEncoding.deepObject);
 
     final classModel = parameter.model as ClassModel;
     expect(classModel.properties.length, 3);
@@ -238,7 +166,7 @@ void main() {
     expect(parameter.allowReserved, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<ClassModel>());
-    expect(parameter.encoding, ParameterEncoding.form);
+    expect(parameter.encoding, QueryParameterEncoding.form);
 
     final classModel = parameter.model as ClassModel;
     expect(classModel.properties.length, 2);

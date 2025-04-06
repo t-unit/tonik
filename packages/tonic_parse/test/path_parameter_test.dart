@@ -32,48 +32,6 @@ void main() {
           'explode': false,
           'schema': {'type': 'string'},
         },
-        'userIdForm': {
-          'name': 'userId4',
-          'in': 'path',
-          'style': 'form',
-          'explode': false,
-          'schema': {'type': 'string'},
-        },
-        'userIdSpaceDelimited': {
-          'name': 'userId5',
-          'in': 'path',
-          'style': 'spaceDelimited',
-          'explode': false,
-          'schema': {
-            'type': 'array',
-            'items': {'type': 'string'},
-          },
-        },
-        'userIdPipeDelimited': {
-          'name': 'userId6',
-          'in': 'path',
-          'deprecated': true,
-          'required': true,
-          'style': 'pipeDelimited',
-          'explode': false,
-          'schema': {
-            'type': 'array',
-            'items': {'type': 'string'},
-          },
-        },
-        'userIdDeepObject': {
-          'name': 'userId7',
-          'in': 'path',
-          'style': 'deepObject',
-          'explode': true,
-          'schema': {
-            'type': 'object',
-            'properties': {
-              'id': {'type': 'string'},
-              'type': {'type': 'string'},
-            },
-          },
-        },
         'userIdSchema': {
           'name': 'userId8',
           'in': 'path',
@@ -107,7 +65,7 @@ void main() {
     expect(parameter.allowEmptyValue, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.matrix);
+    expect(parameter.encoding, PathParameterEncoding.matrix);
   });
 
   test('imports label style path parameter', () {
@@ -122,7 +80,7 @@ void main() {
     expect(parameter.allowEmptyValue, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.label);
+    expect(parameter.encoding, PathParameterEncoding.label);
   });
 
   test('imports simple style path parameter', () {
@@ -137,78 +95,7 @@ void main() {
     expect(parameter.allowEmptyValue, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.simple);
-  });
-
-  test('imports form style path parameter', () {
-    final parameter = pathParameters
-        .whereType<PathParameterObject>()
-        .firstWhere((p) => p.name == 'userIdForm');
-
-    expect(parameter.rawName, 'userId4');
-    expect(parameter.description, isNull);
-    expect(parameter.isRequired, isFalse);
-    expect(parameter.isDeprecated, isFalse);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.explode, isFalse);
-    expect(parameter.model, isA<StringModel>());
-    expect(parameter.encoding, ParameterEncoding.form);
-  });
-
-  test('imports space delimited style path parameter', () {
-    final parameter = pathParameters
-        .whereType<PathParameterObject>()
-        .firstWhere((p) => p.name == 'userIdSpaceDelimited');
-
-    expect(parameter.rawName, 'userId5');
-    expect(parameter.description, isNull);
-    expect(parameter.isRequired, isFalse);
-    expect(parameter.isDeprecated, isFalse);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.explode, isFalse);
-    expect(parameter.model, isA<ListModel>());
-    expect(parameter.encoding, ParameterEncoding.spaceDelimited);
-  });
-
-  test('imports pipe delimited style path parameter', () {
-    final parameter = pathParameters
-        .whereType<PathParameterObject>()
-        .firstWhere((p) => p.name == 'userIdPipeDelimited');
-
-    expect(parameter.rawName, 'userId6');
-    expect(parameter.description, isNull);
-    expect(parameter.isRequired, isTrue);
-    expect(parameter.isDeprecated, isTrue);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.explode, isFalse);
-    expect(parameter.model, isA<ListModel>());
-    expect(parameter.encoding, ParameterEncoding.pipeDelimited);
-  });
-
-  test('imports deep object style path parameter', () {
-    final parameter = pathParameters
-        .whereType<PathParameterObject>()
-        .firstWhere((p) => p.name == 'userIdDeepObject');
-
-    expect(parameter.rawName, 'userId7');
-    expect(parameter.description, isNull);
-    expect(parameter.isRequired, isFalse);
-    expect(parameter.isDeprecated, isFalse);
-    expect(parameter.allowEmptyValue, isFalse);
-    expect(parameter.explode, isTrue);
-    expect(parameter.model, isA<ClassModel>());
-    expect(parameter.encoding, ParameterEncoding.deepObject);
-
-    final classModel = parameter.model as ClassModel;
-    expect(classModel.properties.length, 2);
-    expect(
-      classModel.properties.firstWhere((p) => p.name == 'id').model,
-      isA<StringModel>(),
-    );
-    expect(
-      classModel.properties.firstWhere((p) => p.name == 'type').model,
-      isA<StringModel>(),
-    );
+    expect(parameter.encoding, PathParameterEncoding.simple);
   });
 
   test('imports schema style path parameter', () {
@@ -223,7 +110,7 @@ void main() {
     expect(parameter.allowEmptyValue, isFalse);
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<ClassModel>());
-    expect(parameter.encoding, ParameterEncoding.simple);
+    expect(parameter.encoding, PathParameterEncoding.simple);
 
     final classModel = parameter.model as ClassModel;
     expect(classModel.properties.length, 2);

@@ -83,6 +83,7 @@ void main() {
             isRequired: true,
             isDeprecated: false,
             description: 'Rate limit header',
+            encoding: ResponseHeaderEncoding.simple,
             context: Context.initial().pushAll([
               'paths',
               'user-login',

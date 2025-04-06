@@ -212,9 +212,7 @@ class RequestParameterImporter {
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding: _getEncoding(
-                parameter.style ?? SerializationStyle.simple,
-              ),
+              encoding: _headerEncoding(parameter.style),
               explode: parameter.explode ?? false,
               model: model,
               isRequired: parameter.isRequired ?? false,
@@ -228,9 +226,7 @@ class RequestParameterImporter {
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding: _getEncoding(
-                parameter.style ?? SerializationStyle.form,
-              ),
+              encoding: _queryEncoding(parameter.style),
               explode: parameter.explode ?? false,
               model: model,
               isRequired: parameter.isRequired ?? false,
@@ -245,9 +241,7 @@ class RequestParameterImporter {
               name: name,
               rawName: parameter.name,
               description: parameter.description,
-              encoding: _getEncoding(
-                parameter.style ?? SerializationStyle.simple,
-              ),
+              encoding: _pathEncoding(parameter.style),
               explode: parameter.explode ?? false,
               model: model,
               isRequired: parameter.isRequired ?? false,
@@ -266,22 +260,53 @@ class RequestParameterImporter {
     }
   }
 
-  core.ParameterEncoding _getEncoding(SerializationStyle style) {
+  core.HeaderParameterEncoding _headerEncoding(SerializationStyle? style) {
+    if (style != null && style != SerializationStyle.simple) {
+      throw ArgumentError(
+        'Invalid encoding style for header parameter: $style. '
+        'Header parameters only support "simple" style.',
+      );
+    }
+    return core.HeaderParameterEncoding.simple;
+  }
+
+  core.QueryParameterEncoding _queryEncoding(SerializationStyle? style) {
     switch (style) {
-      case SerializationStyle.matrix:
-        return core.ParameterEncoding.matrix;
-      case SerializationStyle.label:
-        return core.ParameterEncoding.label;
-      case SerializationStyle.simple:
-        return core.ParameterEncoding.simple;
-      case SerializationStyle.form:
-        return core.ParameterEncoding.form;
+      case SerializationStyle.form || null:
+        return core.QueryParameterEncoding.form;
       case SerializationStyle.spaceDelimited:
-        return core.ParameterEncoding.spaceDelimited;
+        return core.QueryParameterEncoding.spaceDelimited;
       case SerializationStyle.pipeDelimited:
-        return core.ParameterEncoding.pipeDelimited;
+        return core.QueryParameterEncoding.pipeDelimited;
       case SerializationStyle.deepObject:
-        return core.ParameterEncoding.deepObject;
+        return core.QueryParameterEncoding.deepObject;
+      case SerializationStyle.simple:
+      case SerializationStyle.label:
+      case SerializationStyle.matrix:
+        throw ArgumentError(
+          'Invalid encoding style for query parameter: $style. '
+          'Supported styles are: form, spaceDelimited, '
+          'pipeDelimited, deepObject.',
+        );
+    }
+  }
+
+  core.PathParameterEncoding _pathEncoding(SerializationStyle? style) {
+    switch (style) {
+      case SerializationStyle.simple || null:
+        return core.PathParameterEncoding.simple;
+      case SerializationStyle.label:
+        return core.PathParameterEncoding.label;
+      case SerializationStyle.matrix:
+        return core.PathParameterEncoding.matrix;
+      case SerializationStyle.form:
+      case SerializationStyle.spaceDelimited:
+      case SerializationStyle.pipeDelimited:
+      case SerializationStyle.deepObject:
+        throw ArgumentError(
+          'Invalid encoding style for path parameter: $style. '
+          'Supported styles are: simple, label, matrix.',
+        );
     }
   }
 }

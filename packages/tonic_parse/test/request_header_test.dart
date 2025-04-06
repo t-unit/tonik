@@ -12,7 +12,7 @@ void main() {
       'parameters': {
         'colorMatrix': {
           'name': 'X-Color-Matrix',
-          'in': 'header',
+          'in': 'simple',
           'style': 'matrix',
           'explode': false,
           'schema': {'type': 'number'},
@@ -24,7 +24,7 @@ void main() {
         'colorLabel': {
           'name': 'X-Color-Label',
           'in': 'header',
-          'style': 'label',
+          'style': 'simple',
           'explode': false,
           'schema': {'type': 'string'},
           'description': 'Label style header',
@@ -39,14 +39,14 @@ void main() {
         'colorForm': {
           'name': 'X-Color-Form',
           'in': 'header',
-          'style': 'form',
+          'style': 'simple',
           'explode': false,
           'schema': {'type': 'string'},
         },
         'colorSpaceDelimited': {
           'name': 'X-Color-Space',
           'in': 'header',
-          'style': 'spaceDelimited',
+          'style': 'simple',
           'explode': false,
           'schema': {
             'type': 'array',
@@ -56,7 +56,7 @@ void main() {
         'colorPipeDelimited': {
           'name': 'X-Color-Pipe',
           'in': 'header',
-          'style': 'pipeDelimited',
+          'style': 'simple',
           'explode': false,
           'schema': {
             'type': 'array',
@@ -66,7 +66,7 @@ void main() {
         'colorDeepObject': {
           'name': 'X-Color-Deep',
           'in': 'header',
-          'style': 'deepObject',
+          'style': 'simple',
           'explode': true,
           'schema': {
             'type': 'object',
@@ -118,7 +118,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Matrix');
-    expect(header.encoding, ParameterEncoding.matrix);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<NumberModel>());
     expect(header.description, 'Matrix style header');
     expect(header.isRequired, isTrue);
@@ -133,7 +133,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Label');
-    expect(header.encoding, ParameterEncoding.label);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<StringModel>());
     expect(header.description, 'Label style header');
     expect(header.isRequired, isFalse); // default value
@@ -148,7 +148,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Simple');
-    expect(header.encoding, ParameterEncoding.simple);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<StringModel>());
     expect(header.explode, isFalse);
   });
@@ -159,7 +159,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Form');
-    expect(header.encoding, ParameterEncoding.form);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<StringModel>());
     expect(header.explode, isFalse);
   });
@@ -170,7 +170,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Space');
-    expect(header.encoding, ParameterEncoding.spaceDelimited);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<ListModel>());
     expect((header.model as ListModel).content, isA<StringModel>());
     expect(header.explode, isFalse);
@@ -182,7 +182,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Pipe');
-    expect(header.encoding, ParameterEncoding.pipeDelimited);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<ListModel>());
     expect((header.model as ListModel).content, isA<StringModel>());
     expect(header.explode, isFalse);
@@ -194,7 +194,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Deep');
-    expect(header.encoding, ParameterEncoding.deepObject);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<ClassModel>());
     expect(header.explode, isTrue);
 
@@ -209,7 +209,7 @@ void main() {
     );
 
     expect(header.rawName, 'X-Color-Schema');
-    expect(header.encoding, ParameterEncoding.simple);
+    expect(header.encoding, HeaderParameterEncoding.simple);
     expect(header.model, isA<ClassModel>());
 
     final model = header.model as ClassModel;
@@ -224,7 +224,7 @@ void main() {
 
     final target = header.header as RequestHeaderObject;
     expect(target.name, 'colorMatrix');
-    expect(target.encoding, ParameterEncoding.matrix);
+    expect(target.encoding, HeaderParameterEncoding.simple);
     expect(target.model, isA<NumberModel>());
   });
 

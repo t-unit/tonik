@@ -1,6 +1,26 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 
+/// Encoding styles supported for query parameters.
+enum QueryParameterEncoding {
+  /// Ampersand-separated values. Default style.
+  /// Example: ?id=3&id=4&id=5 (with explode: true)
+  /// Example: ?id=3,4,5 (with explode: false)
+  form,
+  
+  /// Space-separated array values (only for non-exploded arrays).
+  /// Example: ?id=3%204%205
+  spaceDelimited,
+  
+  /// Pipe-separated array values (only for non-exploded arrays).
+  /// Example: ?id=3|4|5
+  pipeDelimited,
+  
+  /// Objects are serialized as `paramName[property]=value`.
+  /// Example: `?id[role]=admin&id[firstName]=Alex`
+  deepObject,
+}
+
 sealed class QueryParameter {
   const QueryParameter({required this.context});
 
@@ -62,7 +82,7 @@ class QueryParameterObject extends QueryParameter {
   final bool allowReserved;
   final bool explode;
   final Model model;
-  final ParameterEncoding encoding;
+  final QueryParameterEncoding encoding;
 
   @override
   String toString() =>

@@ -127,6 +127,7 @@ class ResponseHeaderImporter {
           model: model,
           isRequired: header.isRequired ?? false,
           isDeprecated: header.isDeprecated ?? false,
+          encoding: core.ResponseHeaderEncoding.simple,
           context: context,
         );
     }

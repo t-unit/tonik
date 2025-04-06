@@ -1,6 +1,13 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 
+/// Encoding style supported for header parameters.
+enum HeaderParameterEncoding {
+  /// Comma-separated values. The only style for headers.
+  /// Example: X-MyHeader: 3,4,5
+  simple,
+}
+
 sealed class RequestHeader {
   const RequestHeader({required this.context});
 
@@ -59,7 +66,7 @@ class RequestHeaderObject extends RequestHeader {
   final bool allowEmptyValue;
   final bool explode;
   final Model model;
-  final ParameterEncoding encoding;
+  final HeaderParameterEncoding encoding;
 
   @override
   String toString() =>

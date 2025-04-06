@@ -1,6 +1,21 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
 
+/// Encoding styles supported for path parameters.
+enum PathParameterEncoding {
+  /// Comma-separated values. Default style.
+  /// Example: /users/3,4,5
+  simple,
+  
+  /// Dot-prefixed values (.param).
+  /// Example: /users/.3,4,5
+  label,
+  
+  /// Semicolon-prefixed values (;param).
+  /// Example: /users/;id=3,4,5
+  matrix,
+}
+
 sealed class PathParameter {
   const PathParameter({required this.context});
 
@@ -57,7 +72,7 @@ class PathParameterObject extends PathParameter {
   final bool allowEmptyValue;
   final bool explode;
   final Model model;
-  final ParameterEncoding encoding;
+  final PathParameterEncoding encoding;
 
   @override
   String toString() =>
