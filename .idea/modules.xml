@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/packages/tonic_core/melos_tonic_core.iml" filepath="$PROJECT_DIR$/packages/tonic_core/melos_tonic_core.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/tonic_generate/melos_tonic_generate.iml" filepath="$PROJECT_DIR$/packages/tonic_generate/melos_tonic_generate.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/tonic_parse/melos_tonic_parse.iml" filepath="$PROJECT_DIR$/packages/tonic_parse/melos_tonic_parse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tonic_util/melos_tonic_util.iml" filepath="$PROJECT_DIR$/packages/tonic_util/melos_tonic_util.iml" />
       <module fileurl="file://$PROJECT_DIR$/melos_tonic.iml" filepath="$PROJECT_DIR$/melos_tonic.iml" />
     </modules>
   </component>
