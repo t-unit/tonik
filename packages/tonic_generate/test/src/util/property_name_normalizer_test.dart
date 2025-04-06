@@ -188,7 +188,9 @@ void main() {
   });
 
   test('preserves property metadata', () {
-    final result = normalizeProperties([createProperty('name', isDeprecated: true)]);
+    final result = normalizeProperties([
+      createProperty('name', isDeprecated: true),
+    ]);
 
     expect(result.first.property.isDeprecated, isTrue);
   });
