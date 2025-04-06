@@ -4,7 +4,7 @@ import 'package:tonic_generate/src/util/property_name_normalizer.dart';
 
 void main() {
   test('normalizeAll removes leading underscores', () {
-    final result = normalizeAll([
+    final result = normalizeProperties([
       createProperty('_name'),
       createProperty('__name'),
       createProperty('___name'),
@@ -18,7 +18,7 @@ void main() {
   });
 
   test('normalizeAll handles empty or underscore-only strings', () {
-    final result = normalizeAll([
+    final result = normalizeProperties([
       createProperty(''),
       createProperty('_'),
       createProperty('__'),
@@ -32,7 +32,7 @@ void main() {
   });
 
   test('normalizeAll preserves numbers', () {
-    final result = normalizeAll([
+    final result = normalizeProperties([
       createProperty('user123'),
       createProperty('user_123'),
       createProperty('user_id_123'),
@@ -46,7 +46,7 @@ void main() {
   });
 
   test('normalizeAll makes duplicate names unique', () {
-    final result = normalizeAll([
+    final result = normalizeProperties([
       createProperty('user_name'),
       createProperty('userName'),
       createProperty('UserName'),
@@ -62,7 +62,7 @@ void main() {
   });
 
   test('normalizeAll handles Dart keywords', () {
-    final result = normalizeAll([
+    final result = normalizeProperties([
       createProperty('class'),
       createProperty('void'),
       createProperty('switch'),
@@ -188,7 +188,7 @@ void main() {
   });
 
   test('preserves property metadata', () {
-    final result = normalizeAll([createProperty('name', isDeprecated: true)]);
+    final result = normalizeProperties([createProperty('name', isDeprecated: true)]);
 
     expect(result.first.property.isDeprecated, isTrue);
   });

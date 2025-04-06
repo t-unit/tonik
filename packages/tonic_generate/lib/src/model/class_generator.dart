@@ -49,7 +49,7 @@ class ClassGenerator {
   @visibleForTesting
   Class generateClass(ClassModel model) {
     final className = nameManager.modelName(model);
-    final normalizedProperties = normalizeAll(model.properties.toList());
+    final normalizedProperties = normalizeProperties(model.properties.toList());
 
     return Class(
       (b) =>
@@ -330,7 +330,7 @@ class ClassGenerator {
       );
 
   Code _buildFromJsonBody(String className, ClassModel model) {
-    final normalizedProperties = normalizeAll(model.properties.toList());
+    final normalizedProperties = normalizeProperties(model.properties.toList());
 
     final invalidJsonError =
         generateArgumentErrorExpression(
@@ -407,7 +407,7 @@ class ClassGenerator {
   }
 
   Method _buildToJsonMethod(ClassModel model) {
-    final normalizedProperties = normalizeAll(model.properties.toList());
+    final normalizedProperties = normalizeProperties(model.properties.toList());
 
     final parts = <Code>[const Code('{')];
     for (final prop in normalizedProperties) {

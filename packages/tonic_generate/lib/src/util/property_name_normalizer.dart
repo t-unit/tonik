@@ -90,7 +90,7 @@ const _dartKeywords = {
 /// - user-name -> userName2 (if userName already exists)
 /// - user123 -> user123
 /// - empty string or _ -> field1, field2, etc.
-List<({String normalizedName, Property property})> normalizeAll(
+List<({String normalizedName, Property property})> normalizeProperties(
   List<Property> properties,
 ) {
   final normalized =
