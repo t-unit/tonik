@@ -65,6 +65,49 @@ void main() {
           collapseWhitespace(expectedMethod),
         );
       });
+
+      test('adds parameters when path parameters exist', () {
+        final pathParam = PathParameterObject(
+          name: 'id',
+          rawName: 'id',
+          description: 'User ID',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: PathParameterEncoding.simple,
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getUser',
+          context: context,
+          summary: 'Get user',
+          description: 'Gets a specific user',
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: {pathParam},
+          responses: const {},
+        );
+
+        final pathParameters = <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'id', parameter: pathParam),
+        ];
+
+        final method = generator.generatePathMethod(operation, pathParameters);
+
+        expect(method, isA<Method>());
+        expect(method.optionalParameters, hasLength(1));
+        expect(method.optionalParameters.first.name, 'id');
+        expect(method.optionalParameters.first.type?.symbol, 'String');
+        expect(method.optionalParameters.first.named, isTrue);
+        expect(method.optionalParameters.first.required, isTrue);
+      });
     });
 
     group('generateDataMethod', () {
@@ -140,6 +183,50 @@ void main() {
           collapseWhitespace(format(method.accept(emitter).toString())),
           collapseWhitespace(expectedMethod),
         );
+      });
+
+      test('adds parameters when query parameters exist', () {
+        final queryParam = QueryParameterObject(
+          name: 'filter',
+          rawName: 'filter',
+          description: 'Filter results',
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: true,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          allowReserved: false,
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'listUsers',
+          context: context,
+          summary: 'List users',
+          description: 'Lists all users with filters',
+          tags: const {},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          responses: const {},
+        );
+
+        final queryParameters = <({String normalizedName, QueryParameterObject parameter})>[
+          (normalizedName: 'filter', parameter: queryParam),
+        ];
+
+        final method = generator.generateQueryParametersMethod(operation, queryParameters);
+
+        expect(method, isA<Method>());
+        expect(method.optionalParameters, hasLength(1));
+        expect(method.optionalParameters.first.name, 'filter');
+        expect(method.optionalParameters.first.type?.symbol, 'String');
+        expect(method.optionalParameters.first.named, isTrue);
+        expect(method.optionalParameters.first.required, isFalse);
       });
     });
 

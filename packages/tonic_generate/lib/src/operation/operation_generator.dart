@@ -114,7 +114,7 @@ class OperationGenerator {
     final queryArgs = <String, Expression>{};
 
     for (final pathParam in normalizedParams.pathParameters) {
-      final paramName = pathParam.normalizedName.toCamelCase();
+      final paramName = pathParam.normalizedName;
       final resolvedParam = pathParam.parameter;
 
       final parameterType = typeReference(
@@ -139,7 +139,7 @@ class OperationGenerator {
     }
 
     for (final queryParam in normalizedParams.queryParameters) {
-      final paramName = queryParam.normalizedName.toCamelCase();
+      final paramName = queryParam.normalizedName;
       final resolvedParam = queryParam.parameter;
 
       final parameterType = typeReference(
@@ -164,7 +164,7 @@ class OperationGenerator {
     }
 
     for (final headerParam in normalizedParams.headers) {
-      final paramName = headerParam.normalizedName.toCamelCase();
+      final paramName = headerParam.normalizedName;
       final resolvedParam = headerParam.parameter;
 
       final parameterType = typeReference(
@@ -253,6 +253,22 @@ class OperationGenerator {
           b
             ..name = '_path'
             ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              for (final pathParam in pathParameters)
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = pathParam.normalizedName
+                        ..type = typeReference(
+                          pathParam.parameter.model,
+                          nameManager,
+                          package,
+                          isNullableOverride: !pathParam.parameter.isRequired,
+                        )
+                        ..named = true
+                        ..required = pathParam.parameter.isRequired,
+                ),
+            ])
             ..lambda = false
             ..body = Code("return '${operation.path}';"),
     );
@@ -283,6 +299,22 @@ class OperationGenerator {
           b
             ..name = '_queryParameters'
             ..returns = buildMapStringDynamicType()
+            ..optionalParameters.addAll([
+              for (final queryParam in queryParameters)
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = queryParam.normalizedName
+                        ..type = typeReference(
+                          queryParam.parameter.model,
+                          nameManager,
+                          package,
+                          isNullableOverride: !queryParam.parameter.isRequired,
+                        )
+                        ..named = true
+                        ..required = queryParam.parameter.isRequired,
+                ),
+            ])
             ..lambda = false
             ..body = const Code('return {};'),
     );
@@ -335,7 +367,7 @@ class OperationGenerator {
         );
 
       for (final headerParam in headers) {
-        final paramName = headerParam.normalizedName.toCamelCase();
+        final paramName = headerParam.normalizedName;
         final rawName = headerParam.parameter.rawName;
         final resolvedParam = headerParam.parameter;
 
