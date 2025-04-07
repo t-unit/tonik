@@ -191,15 +191,9 @@ class OperationGenerator {
     final pathExpr =
         pathArgs.isEmpty ? refer('_path()') : refer('_path').call([], pathArgs);
 
-    final queryExpr =
-        queryArgs.isEmpty
-            ? refer('_queryParameters()')
-            : refer('_queryParameters').call([], queryArgs);
+    final queryExpr = refer('_queryParameters').call([], queryArgs);
 
-    final optionsExpr =
-        headerArgs.isEmpty
-            ? refer('_options()')
-            : refer('_options').call([], headerArgs);
+    final optionsExpr = refer('_options').call([], headerArgs);
 
     return Method(
       (b) =>
