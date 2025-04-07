@@ -1,61 +1,32 @@
 ---
-description: 
-globs: 
+description: Keep specific order in files
+globs: *.dart
 alwaysApply: true
 ---
 
 # Comments should explain "why", not "what"
+- Never add comments explaining the next line or lines.
+- Use comment for bigger methods to separate section dealing with different things.
+- Keep comments short and precise.
+- End all comments with a dot or colon.
 
-Comments should never tell what is happening, but only be used to explain why something is done.
+# Documentation
+- Documents all public API.
+- Don't state the obvious.
+- Explain parameters and argument.
+- Keep documentation short
 
-## ❌ Don't
 
-```dart
-// This function validates the user email
-bool validateEmail(String email) {
-  // Check if email contains @ symbol
-  return email.contains('@');
-}
-```
+# Private and proceed methods
+- Use the [meta](mdc:https:/pub.dev/packages/meta) package to annotate private and protected methods.
+- Keep public interfaces as small as possible.
 
-## ✅ Do
-
-```dart
-// Email validation is simplified since we only need basic format checking
-// for the prototype phase
-bool validateEmail(String email) {
-  return email.contains('@');
-}
-```
-
-# Private methods should be sorted below public methods
-
-All private methods (prefixed with `_` in Dart) should be sorted below any public methods in the class.
-
-## ❌ Don't
-
-```dart
-class UserService {
-  void _privateHelperMethod() {
-    // Implementation
-  }
-
-  void publicMethod() {
-    // Implementation
-  }
-}
-```
-
-## ✅ Do
-
-```dart
-class UserService {
-  void publicMethod() {
-    // Implementation
-  }
-
-  void _privateHelperMethod() {
-    // Implementation
-  }
-}
-``` 
+# Class member ordering
+1. Put public constructors first
+2. Add non-public constructor
+3. Public static properties
+4. Followed by public regular properties
+5. Followed by private static
+6. Followed by private regular properties
+7. Put public methods next
+8. Followed by private and protected methods

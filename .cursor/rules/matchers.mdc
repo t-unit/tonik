@@ -1,43 +1,8 @@
 ---
-description: 
+description: Apply proper matchers in tests
 globs: *test.dart
 alwaysApply: false
 ---
  # Use isTrue and isFalse matchers
-
-When writing tests, prefer using `isTrue` and `isFalse` matchers instead of `equals(true)` or `equals(false)`.
-
-## ❌ Don't
-
-```dart
-expect(value, equals(true));
-expect(value, equals(false));
-```
-
-```dart
-expect(value, true);
-expect(value, false);
-```
-
-## ✅ Do
-
-```dart
-expect(value, isTrue);
-expect(value, isFalse);
-```
-
-# Do not use equals
-
-For better readablity, do not use equals.
-
-## ❌ Don't
-
-```dart
-expect(value, equals('my value'));
-```
-
-## ✅ Do
-
-```dart
-expect(value, 'my value');
-```
+- Always `isTrue` and `isFalse` instead of `false` and `true.
+- Never use `equals`, test against value directly.

@@ -1,0 +1,9 @@
+---
+description: Use specific rules for code generation
+globs: 
+alwaysApply: false
+---
+# When working with the [code_builder](mdc:https:/pub.dev/packages/code_builder) package
+- Do never not use `Code.scope`.
+- Always use `refer` with an URL provided if referring to types.
+- Never use `StringBuilder`, use `Code` with `Block.of`.
