@@ -95,9 +95,10 @@ void main() {
           responses: const {},
         );
 
-        final pathParameters = <({String normalizedName, PathParameterObject parameter})>[
-          (normalizedName: 'id', parameter: pathParam),
-        ];
+        final pathParameters =
+            <({String normalizedName, PathParameterObject parameter})>[
+              (normalizedName: 'id', parameter: pathParam),
+            ];
 
         final method = generator.generatePathMethod(operation, pathParameters);
 
@@ -215,11 +216,15 @@ void main() {
           responses: const {},
         );
 
-        final queryParameters = <({String normalizedName, QueryParameterObject parameter})>[
-          (normalizedName: 'filter', parameter: queryParam),
-        ];
+        final queryParameters =
+            <({String normalizedName, QueryParameterObject parameter})>[
+              (normalizedName: 'filter', parameter: queryParam),
+            ];
 
-        final method = generator.generateQueryParametersMethod(operation, queryParameters);
+        final method = generator.generateQueryParametersMethod(
+          operation,
+          queryParameters,
+        );
 
         expect(method, isA<Method>());
         expect(method.optionalParameters, hasLength(1));
