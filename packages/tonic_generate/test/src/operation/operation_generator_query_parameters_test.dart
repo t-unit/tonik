@@ -127,7 +127,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: {}),
+        model: ClassModel(context: context, properties: const {}),
         context: context,
       );
 
@@ -185,7 +185,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: {}),
+        model: ClassModel(context: context, properties: const {}),
         context: context,
       );
 
@@ -268,9 +268,9 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({List<String>? tags}) {
           final result = <String, dynamic>{};
-          final delimitedEncoder = DelimitedEncoder();
+          final spacedEncoder = DelimitedEncoder.spaced();
           if (tags != null) {
-            result['tags'] = delimitedEncoder.encodeSpaced(tags);
+            result['tags'] = spacedEncoder.encode(tags);
           }
           return result;
         }
@@ -365,7 +365,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: {}),
+        model: ClassModel(context: context, properties: const {}),
         context: context,
       );
 
@@ -423,13 +423,13 @@ void main() {
         }) {
           final result = <String, dynamic>{};
           final deepObjectEncoder = DeepObjectEncoder();
-          final delimitedEncoder = DelimitedEncoder();
+          final spacedEncoder = DelimitedEncoder.spaced();
           final formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(deepObjectEncoder.encode('filter', filter.toJson()));
           }
           if (tags != null) {
-            result['tags'] = delimitedEncoder.encodeSpaced(tags);
+            result['tags'] = spacedEncoder.encode(tags);
           }
           if (sort != null) {
             result['sort'] = formEncoder.encode(sort);
@@ -468,7 +468,7 @@ void main() {
         explode: true,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: {}),
+        model: ClassModel(context: context, properties: const {}),
         context: context,
       );
 
@@ -508,12 +508,12 @@ void main() {
         Map<String, dynamic> _queryParameters({Anonymous? filter, List<String>? tags}) {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
-          final delimitedEncoder = DelimitedEncoder();
+          final spacedEncoder = DelimitedEncoder.spaced();
           if (filter != null) {
             result['filter'] = formEncoder.encode(filter.toJson(), explode: true);
           }
           if (tags != null) {
-            result['tags'] = delimitedEncoder.encodeSpaced(tags, explode: true);
+            result['tags'] = spacedEncoder.encode(tags, explode: true);
           }
           return result;
         }
@@ -548,7 +548,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: {}),
+        model: ClassModel(context: context, properties: const {}),
         context: context,
       );
 
@@ -969,15 +969,16 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           final deepObjectEncoder = DeepObjectEncoder();
-          final delimitedEncoder = DelimitedEncoder();
+          final spacedEncoder = DelimitedEncoder.spaced();
+          final pipedEncoder = DelimitedEncoder.piped();
           if (color != null) {
             result['color'] = formEncoder.encode(color.toJson());
           }
           result.addAll(deepObjectEncoder.encode('value', value.toJson()));
           if (condition != null) {
-            result['condition'] = delimitedEncoder.encodeSpaced(condition.toJson());
+            result['condition'] = spacedEncoder.encode(condition.toJson());
           }
-          result['composite'] = delimitedEncoder.encodePiped(composite.toJson());
+          result['composite'] = pipedEncoder.encode(composite.toJson());
           return result;
         }
       ''';
@@ -1003,10 +1004,3 @@ void main() {
     });
   });
 }
-
-String collapseWhitespace(String input) {
-  return input
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .replaceAll(RegExp(r'{\s+}'), '{}')
-      .trim();
-} 

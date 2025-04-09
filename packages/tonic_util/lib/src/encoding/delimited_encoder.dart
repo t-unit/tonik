@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:tonic_util/src/encoding/base_encoder.dart';
 
 /// An encoder for OpenAPI's delimited style parameters.
@@ -22,30 +21,24 @@ import 'package:tonic_util/src/encoding/base_encoder.dart';
 /// Note: According to the OpenAPI specification, these delimited styles are
 /// only applicable to arrays, not objects.
 class DelimitedEncoder extends BaseEncoder {
-  /// Creates a new [DelimitedEncoder].
-  const DelimitedEncoder();
+  /// Creates a new [DelimitedEncoder] with the specified delimiter.
+  const DelimitedEncoder({required this.delimiter});
 
-  /// Encodes a value using pipe-delimited style.
+  /// Creates a new pipe-delimited encoder.
   ///
-  /// Shorthand for [encode] with `delimiter` set to `|`.
-  List<String> encodePiped(dynamic value, {bool explode = false}) {
-    return encode(value, delimiter: '|', explode: explode);
-  }
+  /// Shorthand for [DelimitedEncoder] with `delimiter` set to `|`.
+  const factory DelimitedEncoder.piped() = _PipedDelimitedEncoder;
 
-  /// Encodes a value using space-delimited style.
+  /// Creates a new space-delimited encoder.
   ///
-  /// Shorthand for [encode] with `delimiter` set to `%20`.
-  List<String> encodeSpaced(dynamic value, {bool explode = false}) {
-    return encode(value, delimiter: '%20', explode: explode);
-  }
+  /// Shorthand for [DelimitedEncoder] with `delimiter` set to `%20`.
+  const factory DelimitedEncoder.spaced() = _SpacedDelimitedEncoder;
 
-  /// Encodes a value according to the specified delimiter style.
-  @protected
-  List<String> encode(
-    dynamic value, {
-    required String delimiter,
-    bool explode = false,
-  }) {
+  /// The delimiter to use when encoding values.
+  final String delimiter;
+
+  /// Encodes a value according to the configured delimiter style.
+  List<String> encode(dynamic value, {bool explode = false}) {
     checkSupportedType(value, supportMaps: false);
 
     if (value == null) {
@@ -62,10 +55,7 @@ class DelimitedEncoder extends BaseEncoder {
         return value
             .map(
               (item) =>
-                  encodeValue(
-                    valueToString(item),
-                    useQueryEncoding: true,
-                  ),
+                  encodeValue(valueToString(item), useQueryEncoding: true),
             )
             .toList();
       } else {
@@ -74,21 +64,21 @@ class DelimitedEncoder extends BaseEncoder {
           value
               .map(
                 (item) =>
-                    encodeValue(
-                      valueToString(item),
-                      useQueryEncoding: true,
-                    ),
+                    encodeValue(valueToString(item), useQueryEncoding: true),
               )
               .join(delimiter),
         ];
       }
     }
 
-    return [
-      encodeValue(
-        valueToString(value),
-        useQueryEncoding: true,
-      ),
-    ];
+    return [encodeValue(valueToString(value), useQueryEncoding: true)];
   }
+}
+
+class _PipedDelimitedEncoder extends DelimitedEncoder {
+  const _PipedDelimitedEncoder() : super(delimiter: '|');
+}
+
+class _SpacedDelimitedEncoder extends DelimitedEncoder {
+  const _SpacedDelimitedEncoder() : super(delimiter: '%20');
 }
