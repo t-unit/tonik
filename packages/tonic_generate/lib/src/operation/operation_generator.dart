@@ -288,29 +288,181 @@ class OperationGenerator {
     List<({String normalizedName, QueryParameterObject parameter})>
     queryParameters,
   ) {
+    final body = <Code>[];
+    final parameters = <Parameter>[];
+
+    body.add(
+      declareFinal('result')
+          .assign(literalMap({}, refer('String', 'dart:core'), refer('dynamic', 'dart:core')))
+          .statement,
+    );
+
+      final encoders = <QueryParameterEncoding, String>{};
+
+      for (final encoding in queryParameters.map((q) => q.parameter.encoding).toSet()) {
+          final encoderName = switch (encoding) {
+            QueryParameterEncoding.form => 'formEncoder',
+            QueryParameterEncoding.spaceDelimited ||
+            QueryParameterEncoding.pipeDelimited => 'delimitedEncoder',
+            QueryParameterEncoding.deepObject => 'deepObjectEncoder',
+          };
+
+          final encoderClass = switch (encoding) {
+            QueryParameterEncoding.form => 'FormEncoder',
+            QueryParameterEncoding.spaceDelimited ||
+            QueryParameterEncoding.pipeDelimited => 'DelimitedEncoder',
+            QueryParameterEncoding.deepObject => 'DeepObjectEncoder',
+          };
+
+          encoders[encoding] = encoderName;
+
+
+          if (encoding == QueryParameterEncoding.spaceDelimited && encoders.containsKey(QueryParameterEncoding.pipeDelimited)) {
+            continue;
+          }
+
+          if (encoding == QueryParameterEncoding.pipeDelimited && encoders.containsKey(QueryParameterEncoding.spaceDelimited)) {
+            continue;
+          }
+
+            body.add(
+              declareFinal(encoderName)
+                  .assign(
+                    refer(encoderClass, 'package:tonic_util/tonic_util.dart')
+                        .newInstance([]),
+                  )
+                  .statement,
+            );
+          
+
+
+
+          
+      }
+
+      for (final queryParam in queryParameters) {
+        final paramName = queryParam.normalizedName;
+        final rawName = queryParam.parameter.rawName;
+        final resolvedParam = queryParam.parameter;
+
+        final parameterType = typeReference(
+          resolvedParam.model,
+          nameManager,
+          package,
+          isNullableOverride: !resolvedParam.isRequired,
+        );
+
+        parameters.add(
+          Parameter(
+            (b) =>
+                b
+                  ..name = paramName
+                  ..type = parameterType
+                  ..named = true
+                  ..required = resolvedParam.isRequired,
+          ),
+        );
+
+        final encoding = resolvedParam.encoding;
+        final encoderName = encoders[encoding]!;
+        final needsToJson = resolvedParam.model is! PrimitiveModel &&
+            resolvedParam.model is! ListModel;
+
+        final needsEmptyCheck = (resolvedParam.model is StringModel ||
+            resolvedParam.model is ListModel) && !resolvedParam.allowEmptyValue;
+
+        final encoderMethod = switch (encoding) {
+          QueryParameterEncoding.form => 'encode',
+          QueryParameterEncoding.spaceDelimited => 'encodeSpaced',
+          QueryParameterEncoding.pipeDelimited => 'encodePiped',
+          QueryParameterEncoding.deepObject => 'encode',
+        };
+
+        final value = needsToJson
+              ? refer(paramName).property('toJson').call([])
+              : refer(paramName);
+
+        Expression encodedValue;
+        if (encoding == QueryParameterEncoding.deepObject) {
+          encodedValue = refer(encoderName)
+              .property(encoderMethod)
+              .call(
+                [literalString(rawName), value],
+                resolvedParam.explode ? {'explode': literalBool(true)} : {},
+              );
+        } else {
+          encodedValue = refer(encoderName).property(encoderMethod).call(
+                [value],
+                resolvedParam.explode ? {'explode': literalBool(true)} : {},
+              );
+        }
+
+        if (!resolvedParam.isRequired) {
+          final condition = needsEmptyCheck
+              ? '$paramName != null && $paramName.isNotEmpty'
+              : '$paramName != null';
+
+          body.add(
+            Block.of([
+              Code('if ($condition) {'),
+              if (encoding == QueryParameterEncoding.deepObject)
+                refer('result')
+                    .property('addAll')
+                    .call([encodedValue]).statement
+              else
+                refer('result')
+                    .index(literalString(rawName))
+                    .assign(encodedValue)
+                    .statement,
+              const Code('}'),
+            ]),
+          );
+        } else {
+          if (needsEmptyCheck) {
+            body.add(
+              Block.of([
+                Code('if ($paramName.isNotEmpty) {'),
+                if (encoding == QueryParameterEncoding.deepObject)
+                  refer('result')
+                      .property('addAll')
+                      .call([encodedValue]).statement
+                else
+                  refer('result')
+                      .index(literalString(rawName))
+                      .assign(encodedValue)
+                      .statement,
+                const Code('}'),
+              ]),
+            );
+          } else {
+            if (encoding == QueryParameterEncoding.deepObject) {
+              body.add(
+                refer('result')
+                    .property('addAll')
+                    .call([encodedValue]).statement,
+              );
+            } else {
+              body.add(
+                refer('result')
+                    .index(literalString(rawName))
+                    .assign(encodedValue)
+                    .statement,
+              );
+            }
+          }
+        }
+      }
+
+    body.add(refer('result').returned.statement);
+
     return Method(
       (b) =>
           b
             ..name = '_queryParameters'
             ..returns = buildMapStringDynamicType()
-            ..optionalParameters.addAll([
-              for (final queryParam in queryParameters)
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = queryParam.normalizedName
-                        ..type = typeReference(
-                          queryParam.parameter.model,
-                          nameManager,
-                          package,
-                          isNullableOverride: !queryParam.parameter.isRequired,
-                        )
-                        ..named = true
-                        ..required = queryParam.parameter.isRequired,
-                ),
-            ])
+            ..optionalParameters.addAll(parameters)
             ..lambda = false
-            ..body = const Code('return {};'),
+            ..body = Block.of(body),
     );
   }
 

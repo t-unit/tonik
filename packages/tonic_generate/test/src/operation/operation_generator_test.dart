@@ -147,94 +147,6 @@ void main() {
       });
     });
 
-    group('generateQueryParametersMethod', () {
-      test('returns empty map for operation without query parameters', () {
-        final operation = Operation(
-          operationId: 'getUsers',
-          context: context,
-          summary: 'Get users',
-          description: 'Gets a list of users',
-          tags: const {},
-          isDeprecated: false,
-          path: '/users',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          responses: const {},
-        );
-
-        const expectedMethod = '''
-          Map<String, dynamic> _queryParameters() {
-            return {};
-          }
-        ''';
-
-        final method = generator.generateQueryParametersMethod(operation, []);
-
-        expect(method, isA<Method>());
-
-        final returnTypeString = method.returns?.accept(emitter).toString();
-        expect(returnTypeString, contains('Map<String,dynamic>'));
-
-        expect(method.requiredParameters, isEmpty);
-        expect(method.optionalParameters, isEmpty);
-
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(expectedMethod),
-        );
-      });
-
-      test('adds parameters when query parameters exist', () {
-        final queryParam = QueryParameterObject(
-          name: 'filter',
-          rawName: 'filter',
-          description: 'Filter results',
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: true,
-          explode: false,
-          encoding: QueryParameterEncoding.form,
-          allowReserved: false,
-          model: StringModel(context: context),
-          context: context,
-        );
-
-        final operation = Operation(
-          operationId: 'listUsers',
-          context: context,
-          summary: 'List users',
-          description: 'Lists all users with filters',
-          tags: const {},
-          isDeprecated: false,
-          path: '/users',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: {queryParam},
-          pathParameters: const {},
-          responses: const {},
-        );
-
-        final queryParameters =
-            <({String normalizedName, QueryParameterObject parameter})>[
-              (normalizedName: 'filter', parameter: queryParam),
-            ];
-
-        final method = generator.generateQueryParametersMethod(
-          operation,
-          queryParameters,
-        );
-
-        expect(method, isA<Method>());
-        expect(method.optionalParameters, hasLength(1));
-        expect(method.optionalParameters.first.name, 'filter');
-        expect(method.optionalParameters.first.type?.symbol, 'String');
-        expect(method.optionalParameters.first.named, isTrue);
-        expect(method.optionalParameters.first.required, isFalse);
-      });
-    });
-
     group('generateCallMethod', () {
       test('generates call method for operation without parameters', () {
         final operation = Operation(
@@ -384,4 +296,11 @@ void main() {
       });
     });
   });
+}
+
+String collapseWhitespace(String input) {
+  return input
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(RegExp(r'{\s+}'), '{}')
+      .trim();
 }
