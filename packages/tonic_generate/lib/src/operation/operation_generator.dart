@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
@@ -242,6 +243,88 @@ class OperationGenerator {
     List<({String normalizedName, PathParameterObject parameter})>
     pathParameters,
   ) {
+    if (pathParameters.isEmpty) {
+      return Method(
+        (b) =>
+            b
+              ..name = '_path'
+              ..returns = refer('String', 'dart:core')
+              ..lambda = false
+              ..body = Code("return r'${operation.path}';"),
+      );
+    }
+
+    final body = <Code>[];
+    final encoders = <PathParameterEncoding, String>{};
+
+    for (final encoding
+        in pathParameters.map((p) => p.parameter.encoding).toSet()) {
+      final encoderName = switch (encoding) {
+        PathParameterEncoding.simple => 'simpleEncoder',
+        PathParameterEncoding.label => 'labelEncoder',
+        PathParameterEncoding.matrix => 'matrixEncoder',
+      };
+
+      final encoderClass = switch (encoding) {
+        PathParameterEncoding.simple => 'SimpleEncoder',
+        PathParameterEncoding.label => 'LabelEncoder',
+        PathParameterEncoding.matrix => 'MatrixEncoder',
+      };
+
+      encoders[encoding] = encoderName;
+
+      body.add(
+        declareFinal(encoderName)
+            .assign(
+              refer(
+                encoderClass,
+                'package:tonic_util/tonic_util.dart',
+              ).newInstance([]),
+            )
+            .statement,
+      );
+    }
+
+    final pathParts = operation.path
+        .splitAndKeep(RegExp(r'\{[^}]+\}'))
+        .where((pathComponent) => pathComponent.isNotEmpty)
+        .map((pathComponent) {
+          if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
+            return Code("r'$pathComponent'");
+          }
+
+          final paramName = pathComponent.substring(
+            1,
+            pathComponent.length - 1,
+          );
+          final param = pathParameters.firstWhereOrNull(
+            (p) => p.parameter.rawName == paramName,
+          );
+
+          if (param == null) {
+            return Code("r'$pathComponent'");
+          }
+
+          final encoderName = encoders[param.parameter.encoding]!;
+          final needsToJson =
+              param.parameter.model is! PrimitiveModel &&
+              param.parameter.model is! ListModel;
+
+          final explode = param.parameter.explode ? ', explode: true' : '';
+          final valueExpression =
+              needsToJson
+                  ? '${param.normalizedName}.toJson()'
+                  : param.normalizedName;
+          final value = '$encoderName.encode($valueExpression$explode)';
+
+          return Code("'\${$value}'");
+        });
+
+    body
+      ..add(const Code('return '))
+      ..addAll(pathParts)
+      ..add(const Code(';'));
+
     return Method(
       (b) =>
           b
@@ -264,7 +347,7 @@ class OperationGenerator {
                 ),
             ])
             ..lambda = false
-            ..body = Code("return '${operation.path}';"),
+            ..body = Block.of(body),
     );
   }
 
@@ -601,5 +684,26 @@ class OperationGenerator {
             ..lambda = false
             ..body = Block((b) => b..statements.addAll(bodyStatements)),
     );
+  }
+}
+
+extension on String {
+  List<String> splitAndKeep(RegExp pattern) {
+    final result = <String>[];
+    var lastEnd = 0;
+
+    for (final match in pattern.allMatches(this)) {
+      if (match.start > lastEnd) {
+        result.add(substring(lastEnd, match.start));
+      }
+      result.add(match.group(0)!);
+      lastEnd = match.end;
+    }
+
+    if (lastEnd < length) {
+      result.add(substring(lastEnd));
+    }
+
+    return result;
   }
 }

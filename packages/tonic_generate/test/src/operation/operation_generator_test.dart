@@ -50,7 +50,7 @@ void main() {
 
         const expectedMethod = '''
           String _path() {
-            return '/users';
+            return r'/users';
           }
         ''';
 
