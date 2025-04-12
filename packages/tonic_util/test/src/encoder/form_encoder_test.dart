@@ -12,99 +12,131 @@ void main() {
 
   group('FormEncoder', () {
     test('encodes String value', () {
-      expect(encoder.encode('blue', explode: false, allowEmpty: true), 'blue');
+      expect(
+        encoder.encode('color', 'blue', explode: false, allowEmpty: true),
+        {'color': 'blue'},
+      );
     });
 
     test('encodes String value with special characters', () {
       expect(
-        encoder.encode('John Doe', explode: false, allowEmpty: true),
-        'John+Doe',
+        encoder.encode('name', 'John Doe', explode: false, allowEmpty: true),
+        {'name': 'John+Doe'},
       );
     });
 
     test('encodes int value', () {
-      expect(encoder.encode(25, explode: false, allowEmpty: true), '25');
+      expect(
+        encoder.encode('age', 25, explode: false, allowEmpty: true),
+        {'age': '25'},
+      );
     });
 
     test('encodes double value', () {
-      expect(encoder.encode(19.99, explode: false, allowEmpty: true), '19.99');
+      expect(
+        encoder.encode('price', 19.99, explode: false, allowEmpty: true),
+        {'price': '19.99'},
+      );
     });
 
     test('encodes boolean values', () {
-      expect(encoder.encode(true, explode: false, allowEmpty: true), 'true');
-      expect(encoder.encode(false, explode: false, allowEmpty: true), 'false');
+      expect(
+        encoder.encode('active', true, explode: false, allowEmpty: true),
+        {'active': 'true'},
+      );
+      expect(
+        encoder.encode('active', false, explode: false, allowEmpty: true),
+        {'active': 'false'},
+      );
     });
 
     test('encodes BigDecimal value', () {
       final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
       expect(
-        encoder.encode(bigDecimal, explode: false, allowEmpty: true),
-        '123456789012345678901234.56789',
+        encoder.encode('amount', bigDecimal, explode: false, allowEmpty: true),
+        {'amount': '123456789012345678901234.56789'},
       );
     });
 
     test('encodes Uri value', () {
       final uri = Uri.parse('https://example.com/path?query=value');
       expect(
-        encoder.encode(uri, explode: false, allowEmpty: true),
-        'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+        encoder.encode('url', uri, explode: false, allowEmpty: true),
+        {'url': 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue'},
       );
     });
 
     group('empty value handling', () {
       test('encodes null value when allowEmpty is true', () {
-        expect(encoder.encode(null, explode: false, allowEmpty: true), '');
+        expect(
+          encoder.encode('param', null, explode: false, allowEmpty: true),
+          {'param': ''},
+        );
       });
 
       test('throws when null value and allowEmpty is false', () {
         expect(
-          () => encoder.encode(null, explode: false, allowEmpty: false),
+          () => encoder.encode('param', null, explode: false, allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
 
       test('throws when empty string and allowEmpty is false', () {
         expect(
-          () => encoder.encode('', explode: false, allowEmpty: false),
+          () => encoder.encode('param', '', explode: false, allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
 
       test('encodes empty string when allowEmpty is true', () {
-        expect(encoder.encode('', explode: false, allowEmpty: true), '');
+        expect(
+          encoder.encode('param', '', explode: false, allowEmpty: true),
+          {'param': ''},
+        );
       });
 
       test('throws when empty List and allowEmpty is false', () {
         expect(
-          () => encoder.encode(<String>[], explode: false, allowEmpty: false),
+          () => encoder.encode(
+            'param',
+            <String>[],
+            explode: false,
+            allowEmpty: false,
+          ),
           throwsA(isA<EmptyValueException>()),
         );
       });
 
       test('encodes empty List when allowEmpty is true', () {
         expect(
-          encoder.encode(<String>[], explode: false, allowEmpty: true),
-          '',
+          encoder.encode('param', <String>[], explode: false, allowEmpty: true),
+          {'param': ''},
         );
       });
 
       test('throws when empty Set and allowEmpty is false', () {
         expect(
-          () => encoder.encode(<String>{}, explode: false, allowEmpty: false),
+          () => encoder.encode(
+            'param',
+            <String>{},
+            explode: false,
+            allowEmpty: false,
+          ),
           throwsA(isA<EmptyValueException>()),
         );
       });
 
       test('encodes empty Set when allowEmpty is true', () {
         expect(
-          encoder.encode(<String>{}, explode: false, allowEmpty: true),
-          '',
+          encoder.encode('param', <String>{}, explode: false, allowEmpty: true),
+          {'param': ''},
         );
       });
 
       test('throws when empty Map and allowEmpty is false', () {
         expect(
           () => encoder.encode(
+            'param',
             <String, dynamic>{},
             explode: false,
             allowEmpty: false,
@@ -115,8 +147,13 @@ void main() {
 
       test('encodes empty Map when allowEmpty is true', () {
         expect(
-          encoder.encode(<String, dynamic>{}, explode: false, allowEmpty: true),
-          '',
+          encoder.encode(
+            'param',
+            <String, dynamic>{},
+            explode: false,
+            allowEmpty: true,
+          ),
+          {'param': ''},
         );
       });
     });
@@ -124,43 +161,60 @@ void main() {
     test('encodes List of primitive values', () {
       expect(
         encoder.encode(
+          'colors',
           ['red', 'green', 'blue'],
           explode: false,
           allowEmpty: true,
         ),
-        'red,green,blue',
+        {'colors': 'red,green,blue'},
       );
     });
 
     test('encodes List with special characters', () {
       expect(
-        encoder.encode(['item 1', 'item 2'], explode: false, allowEmpty: true),
-        'item+1,item+2',
+        encoder.encode(
+          'items',
+          ['item 1', 'item 2'],
+          explode: false,
+          allowEmpty: true,
+        ),
+        {'items': 'item+1,item+2'},
       );
     });
 
     test('encodes Set of primitive values', () {
       expect(
         encoder.encode(
+          'colors',
           {'red', 'green', 'blue'},
           explode: false,
           allowEmpty: true,
         ),
-        'red,green,blue',
+        {'colors': 'red,green,blue'},
       );
     });
 
     test('supports Map<String, dynamic> values', () {
       expect(
-        encoder.encode({'key': 'value'}, explode: false, allowEmpty: true),
-        'key,value',
+        encoder.encode(
+          'param',
+          {'key': 'value'},
+          explode: false,
+          allowEmpty: true,
+        ),
+        {'param': 'key,value'},
       );
     });
 
     test('throws exception for complex object', () {
       final complexObject = Object();
       expect(
-        () => encoder.encode(complexObject, explode: false, allowEmpty: true),
+        () => encoder.encode(
+          'param',
+          complexObject,
+          explode: false,
+          allowEmpty: true,
+        ),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -168,6 +222,7 @@ void main() {
     test('throws exception for nested Lists', () {
       expect(
         () => encoder.encode(
+          'param',
           [
             ['nested'],
           ],
@@ -183,36 +238,54 @@ void main() {
       test('encodes List with explode=true', () {
         expect(
           encoder.encode(
+            'colors',
             ['red', 'green', 'blue'],
             explode: true,
             allowEmpty: true,
           ),
-          'red,green,blue',
+          {
+            'colors': ['red', 'green', 'blue'],
+          },
         );
       });
 
       test('encodes List with special characters and explode=true', () {
         expect(
-          encoder.encode(['item 1', 'item 2'], explode: true, allowEmpty: true),
-          'item+1,item+2',
+          encoder.encode(
+            'items',
+            ['item 1', 'item 2'],
+            explode: true,
+            allowEmpty: true,
+          ),
+          {
+            'items': ['item+1', 'item+2'],
+          },
         );
       });
 
       test('encodes Set with explode=true', () {
         expect(
           encoder.encode(
+            'colors',
             {'red', 'green', 'blue'},
             explode: true,
             allowEmpty: true,
           ),
-          'red,green,blue',
+          {
+            'colors': ['red', 'green', 'blue'],
+          },
         );
       });
 
       test('primitive values are encoded the same with explode=true', () {
-        // For non-collection types, explode parameter should have no effect
-        expect(encoder.encode('blue', explode: true, allowEmpty: true), 'blue');
-        expect(encoder.encode(25, explode: true, allowEmpty: true), '25');
+        expect(
+          encoder.encode('color', 'blue', explode: true, allowEmpty: true),
+          {'color': 'blue'},
+        );
+        expect(
+          encoder.encode('age', 25, explode: true, allowEmpty: true),
+          {'age': '25'},
+        );
       });
     });
 
@@ -220,43 +293,59 @@ void main() {
     group('with objects', () {
       test('encodes object', () {
         expect(
-          encoder.encode({'x': 1, 'y': 2}, explode: false, allowEmpty: true),
-          'x,1,y,2',
+          encoder.encode(
+            'point',
+            {'x': 1, 'y': 2},
+            explode: false,
+            allowEmpty: true,
+          ),
+          {'point': 'x,1,y,2'},
         );
       });
 
       test('encodes object with string values', () {
         expect(
           encoder.encode(
+            'user',
             {'name': 'John', 'role': 'admin'},
             explode: false,
             allowEmpty: true,
           ),
-          'name,John,role,admin',
+          {'user': 'name,John,role,admin'},
         );
       });
 
       test('encodes object with special characters', () {
         expect(
           encoder.encode(
+            'address',
             {'street': '123 Main St', 'city': 'New York'},
             explode: false,
             allowEmpty: true,
           ),
-          'street,123+Main+St,city,New+York',
+          {'address': 'street,123+Main+St,city,New+York'},
         );
       });
 
       test('encodes object with explode=true', () {
         expect(
-          encoder.encode({'x': 1, 'y': 2}, explode: true, allowEmpty: true),
-          'x=1,y=2',
+          encoder.encode(
+            'user',
+            {'role': 'admin', 'firstName': 'Alex'},
+            explode: true,
+            allowEmpty: true,
+          ),
+          {
+            'role': 'admin',
+            'firstName': 'Alex',
+          },
         );
       });
 
       test('throws exception for nested object', () {
         expect(
           () => encoder.encode(
+            'user',
             {
               'name': 'John',
               'address': {'city': 'NY'},

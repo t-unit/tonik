@@ -8,12 +8,10 @@ import 'package:tonic_util/src/encoding/encoding_exception.dart';
 /// - Primitives: name=value
 /// - Arrays (explode=false): name=value1,value2,value3
 /// - Arrays (explode=true): name=value1&name=value2&name=value3
-///   (not directly encoded)
 /// - Objects (explode=false): name=key1,value1,key2,value2
-/// - Objects (explode=true): key1=value1&key2=value2 (not directly encoded)
+/// - Objects (explode=true): key1=value1&key2=value2
 ///
-/// This encoder only encodes the value part, not the name=value combination,
-/// as that's typically handled at a higher level.
+/// This encoder handles both the name and value parts of parameters.
 class FormEncoder extends BaseEncoder {
   /// Creates a new [FormEncoder].
   const FormEncoder();
@@ -24,10 +22,6 @@ class FormEncoder extends BaseEncoder {
   /// separately encoded. When false, they are encoded as a single string with
   /// delimiters (typically comma).
   ///
-  /// Note: For arrays and objects with explode=true, this encoder only returns
-  /// the value part. The full name=value combination for each item should be
-  /// handled at a higher level.
-  ///
   /// The [allowEmpty] parameter controls whether empty values are allowed:
   /// - When `true`, empty values (null, empty strings, empty collections)
   ///   are encoded as empty strings
@@ -35,7 +29,8 @@ class FormEncoder extends BaseEncoder {
   ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder.
-  String encode(
+  Map<String, dynamic> encode(
+    String paramName,
     dynamic value, {
     required bool explode,
     required bool allowEmpty,
@@ -49,44 +44,50 @@ class FormEncoder extends BaseEncoder {
       if (!allowEmpty) {
         throw const EmptyValueException();
       }
-      return '';
+      return {paramName: ''};
     }
 
     if (value is Iterable) {
-      // For form style, explode=true normally means separate name=value pairs,
-      // but this encoder only handles the value part. For consistency, we
-      // return a comma-separated list just like with explode=false.
-      return value
-          .map(
-            (item) => encodeValue(valueToString(item), useQueryEncoding: true),
-          )
-          .join(',');
+      final values = value.map(
+        (item) => encodeValue(valueToString(item), useQueryEncoding: true),
+      );
+
+      if (explode) {
+        return {paramName: values.toList()};
+      } else {
+        return {paramName: values.join(',')};
+      }
     }
 
     if (value is Map<String, dynamic>) {
       if (explode) {
-        // With explode=true, the format would be key1=value1&key2=value2,
-        // but this encoder only handles a single value, so we'll use
-        // comma-separated key=value pairs as a fallback
-        return value.entries
-            .map(
-              (entry) =>
-                  '${entry.key}=${encodeValue(valueToString(entry.value), useQueryEncoding: true)}',
-            )
-            .join(',');
+        // With explode=true, each property becomes a separate name=value pair
+        return value.map(
+          (key, val) => MapEntry(
+            key,
+            encodeValue(valueToString(val), useQueryEncoding: true),
+          ),
+        );
       } else {
         // With explode=false, keys and values are comma-separated
-        return value.entries
-            .expand(
-              (entry) => [
-                entry.key,
-                encodeValue(valueToString(entry.value), useQueryEncoding: true),
-              ],
-            )
-            .join(',');
+        return {
+          paramName: value.entries
+              .expand(
+                (entry) => [
+                  entry.key,
+                  encodeValue(
+                    valueToString(entry.value),
+                    useQueryEncoding: true,
+                  ),
+                ],
+              )
+              .join(','),
+        };
       }
     }
 
-    return encodeValue(valueToString(value), useQueryEncoding: true);
+    return {
+      paramName: encodeValue(valueToString(value), useQueryEncoding: true),
+    };
   }
 }
