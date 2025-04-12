@@ -220,15 +220,31 @@ class OperationGenerator {
               (b) =>
                   b
                     ..statements.add(
+                      declareFinal('uri')
+                          .assign(
+                            refer('Uri', 'dart:core')
+                                .property('parse')
+                                .call([
+                                  refer(
+                                    '_dio',
+                                  ).property('options').property('baseUrl'),
+                                ])
+                                .property('resolveUri')
+                                .call([
+                                  refer('Uri', 'dart:core').call([], {
+                                    'path': pathExpr,
+                                    'query': queryExpr,
+                                  }),
+                                ]),
+                          )
+                          .statement,
+                    )
+                    ..statements.add(
                       refer('_dio')
-                          .property('request')
+                          .property('requestUri')
                           .call(
-                            [pathExpr],
-                            {
-                              'data': refer('_data()'),
-                              'queryParameters': queryExpr,
-                              'options': optionsExpr,
-                            },
+                            [refer('uri')],
+                            {'data': refer('_data()'), 'options': optionsExpr},
                             [refer('dynamic', 'dart:core')],
                           )
                           .awaited
@@ -377,10 +393,9 @@ class OperationGenerator {
     body.add(
       declareFinal('result')
           .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              refer('dynamic', 'dart:core'),
+            literalList(
+              [],
+              refer('ParameterEntry', 'package:tonic_util/tonic_util.dart'),
             ),
           )
           .statement,
@@ -469,77 +484,86 @@ class OperationGenerator {
       );
       final value = refer(valueExpression);
 
-      Expression encodedValue;
-      if (encoding == QueryParameterEncoding.deepObject) {
-        encodedValue = refer(encoderName)
-            .property('encode')
-            .call(
-              [literalString(rawName, raw: true), value],
-              {
-                'explode': literalBool(resolvedParam.explode),
-                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-              },
-            );
-      } else if (encoding == QueryParameterEncoding.form) {
-        encodedValue = refer(encoderName)
-            .property('encode')
-            .call(
-              [literalString(rawName, raw: true), value],
-              {
-                'explode': literalBool(resolvedParam.explode),
-                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-              },
-            );
-      } else {
-        encodedValue = refer(encoderName)
-            .property('encode')
-            .call(
-              [value],
-              {
-                'explode': literalBool(resolvedParam.explode),
-                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-              },
-            );
-      }
+      final encodeCall = refer(encoderName)
+          .property('encode')
+          .call(
+            [
+              if (encoding == QueryParameterEncoding.deepObject ||
+                  encoding == QueryParameterEncoding.form)
+                literalString(rawName, raw: true),
+              value,
+            ],
+            {
+              'explode': literalBool(resolvedParam.explode),
+              'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+            },
+          );
 
       if (!resolvedParam.isRequired) {
         body.add(
           Block.of([
             Code('if ($paramName != null) {'),
-            if (encoding == QueryParameterEncoding.deepObject ||
-                encoding == QueryParameterEncoding.form)
-              refer('result').property('addAll').call([encodedValue]).statement
+            if (encoding == QueryParameterEncoding.spaceDelimited ||
+                encoding == QueryParameterEncoding.pipeDelimited)
+              Block.of([
+                Code('for (final value in $encoderName.encode('),
+                value.code,
+                Code(', explode: ${resolvedParam.explode}, '),
+                Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
+                const Code(')) {'),
+                Code("result.add((name: '$rawName', value: value));"),
+                const Code('}'),
+              ])
             else
-              refer('result')
-                  .index(literalString(rawName, raw: true))
-                  .assign(encodedValue)
-                  .statement,
+              refer('result').property('addAll').call([encodeCall]).statement,
             const Code('}'),
           ]),
         );
       } else {
-        if (encoding == QueryParameterEncoding.deepObject) {
+        if (encoding == QueryParameterEncoding.spaceDelimited ||
+            encoding == QueryParameterEncoding.pipeDelimited) {
           body.add(
-            refer('result').property('addAll').call([encodedValue]).statement,
+            Block.of([
+              Code('for (final value in $encoderName.encode('),
+              value.code,
+              Code(', explode: ${resolvedParam.explode}, '),
+              Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
+              const Code(')) {'),
+              Code("result.add((name: '$rawName', value: value));"),
+              const Code('}'),
+            ]),
           );
         } else {
           body.add(
-            refer('result')
-                .index(literalString(rawName, raw: true))
-                .assign(encodedValue)
-                .statement,
+            refer('result').property('addAll').call([encodeCall]).statement,
           );
         }
       }
     }
 
-    body.add(refer('result').returned.statement);
+    body.add(
+      refer('result')
+          .property('map')
+          .call([
+            Method(
+              (b) =>
+                  b
+                    ..lambda = true
+                    ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                    ..body = const Code(r"'${e.name}=${e.value}'"),
+            ).closure,
+          ])
+          .property('join')
+          .call([literalString('&')])
+          .returned
+          .statement,
+    );
 
     return Method(
       (b) =>
           b
             ..name = '_queryParameters'
-            ..returns = buildMapStringDynamicType()
+            ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll(parameters)
             ..lambda = false
             ..body = Block.of(body),

@@ -166,12 +166,11 @@ void main() {
 
         const expectedMethod = '''
           Future<void> call() async {
-            await _dio.request<dynamic>(
-              _path(),
-              data: _data(),
-              queryParameters: _queryParameters(),
-              options: _options(),
-            );
+            final uri = Uri.parse(
+              _dio.options.baseUrl,
+            ).resolveUri(Uri(path: _path(), query: _queryParameters()));
+
+            await _dio.requestUri<dynamic>(uri, data: _data(), options: _options());
           }
         ''';
 
@@ -187,11 +186,8 @@ void main() {
         );
 
         expect(method, isA<Method>());
-
-        final returnTypeString = method.returns?.accept(emitter).toString();
-        expect(returnTypeString, 'Future<void>');
+        expect(method.returns?.accept(emitter).toString(), 'Future<void>');
         expect(method.modifier, MethodModifier.async);
-
         expect(method.name, 'call');
         expect(method.requiredParameters, isEmpty);
         expect(method.optionalParameters, isEmpty);
@@ -234,10 +230,13 @@ void main() {
 
         const expectedMethod = '''
           Future<void> call({required String xMyHeader}) async {
-            await _dio.request<dynamic>(
-              _path(),
+            final uri = Uri.parse(
+              _dio.options.baseUrl,
+            ).resolveUri(Uri(path: _path(), query: _queryParameters()));
+
+            await _dio.requestUri<dynamic>(
+              uri,
               data: _data(),
-              queryParameters: _queryParameters(),
               options: _options(xMyHeader: xMyHeader),
             );
           }
@@ -296,11 +295,4 @@ void main() {
       });
     });
   });
-}
-
-String collapseWhitespace(String input) {
-  return input
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .replaceAll(RegExp(r'{\s+}'), '{}')
-      .trim();
 }

@@ -30,7 +30,7 @@ void main() {
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
 
-    test('returns empty map for operation without query parameters', () {
+    test('returns empty string for operation without query parameters', () {
       final operation = Operation(
         operationId: 'getUsers',
         context: context,
@@ -46,20 +46,17 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters() {
-          final result = <String, dynamic>{};
-          return result;
+      const expectedMethod = r'''
+        String _queryParameters() {
+          final result = <ParameterEntry>[];
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
       final method = generator.generateQueryParametersMethod(operation, []);
 
       expect(method, isA<Method>());
-
-      final returnTypeString = method.returns?.accept(emitter).toString();
-      expect(returnTypeString, contains('Map<String,dynamic>'));
-
+      expect(method.returns?.accept(emitter).toString(), 'String');
       expect(method.requiredParameters, isEmpty);
       expect(method.optionalParameters, isEmpty);
 
@@ -147,9 +144,9 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({Anonymous? filter}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({Anonymous? filter}) {
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
@@ -161,7 +158,7 @@ void main() {
               ),
             );
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -212,9 +209,9 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({Anonymous? filter}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({Anonymous? filter}) {
+          final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
             result.addAll(
@@ -226,7 +223,7 @@ void main() {
               ),
             );
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -280,18 +277,20 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({List<String>? tags}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({List<String>? tags}) {
+          final result = <ParameterEntry>[];
           final spacedEncoder = DelimitedEncoder.spaced();
           if (tags != null) {
-            result[r'tags'] = spacedEncoder.encode(
+            for (final value in spacedEncoder.encode(
               tags,
               explode: false,
               allowEmpty: true,
-            );
+            )) {
+              result.add((name: 'tags', value: value));
+            }
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -342,9 +341,9 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({Anonymous? filter}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({Anonymous? filter}) {
+          final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
             result.addAll(
@@ -356,7 +355,7 @@ void main() {
               ),
             );
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -417,9 +416,12 @@ void main() {
         isDeprecated: false,
         allowEmptyValue: true,
         explode: false,
-        encoding: QueryParameterEncoding.form,
+        encoding: QueryParameterEncoding.pipeDelimited,
         allowReserved: false,
-        model: StringModel(context: context),
+        model: ListModel(
+          context: context,
+          content: StringModel(context: context),
+        ),
         context: context,
       );
 
@@ -438,16 +440,16 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({
+      const expectedMethod = r'''
+        String _queryParameters({
           Anonymous? filter,
           List<String>? tags,
-          String? sort,
+          List<String>? sort,
         }) {
-          final result = <String, dynamic>{};
+          final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
-          const formEncoder = FormEncoder();
+          final pipedEncoder = DelimitedEncoder.piped();
           if (filter != null) {
             result.addAll(
               deepObjectEncoder.encode(
@@ -459,18 +461,24 @@ void main() {
             );
           }
           if (tags != null) {
-            result[r'tags'] = spacedEncoder.encode(
+            for (final value in spacedEncoder.encode(
               tags,
               explode: false,
               allowEmpty: true,
-            );
+            )) {
+              result.add((name: 'tags', value: value));
+            }
           }
           if (sort != null) {
-            result.addAll(
-              formEncoder.encode(r'sort', sort, explode: false, allowEmpty: true),
-            );
+            for (final value in pipedEncoder.encode(
+              sort,
+              explode: false,
+              allowEmpty: true,
+            )) {
+              result.add((name: 'sort', value: value));
+            }
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -540,9 +548,9 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({Anonymous? filter, List<String>? tags}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({Anonymous? filter, List<String>? tags}) {
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           if (filter != null) {
@@ -556,13 +564,15 @@ void main() {
             );
           }
           if (tags != null) {
-            result[r'tags'] = spacedEncoder.encode(
+            for (final value in spacedEncoder.encode(
               tags,
               explode: true,
               allowEmpty: true,
-            );
+            )) {
+              result.add((name: 'tags', value: value));
+            }
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -614,17 +624,19 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({required Anonymous filter}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({required Anonymous filter}) {
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
-          result[r'filter'] = formEncoder.encode(
-            r'filter',
-            filter.toJson(),
-            explode: false,
-            allowEmpty: false,
+          result.addAll(
+            formEncoder.encode(
+              r'filter',
+              filter.toJson(),
+              explode: false,
+              allowEmpty: false,
+            ),
           );
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -675,9 +687,9 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({Anonymous? filter}) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({Anonymous? filter}) {
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
@@ -689,7 +701,7 @@ void main() {
               ),
             );
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -785,14 +797,14 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({
+      const expectedMethod = r'''
+        String _queryParameters({
           String? name,
           List<String>? tags,
           int? age,
           bool? active,
         }) {
-          final result = <String, dynamic>{};
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (name != null) {
             result.addAll(
@@ -814,7 +826,7 @@ void main() {
               formEncoder.encode(r'active', active, explode: false, allowEmpty: false),
             );
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -882,12 +894,9 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({
-          Anonymous? filter,
-          AnonymousModel? range,
-        }) {
-          final result = <String, dynamic>{};
+      const expectedMethod = r'''
+        String _queryParameters({Anonymous? filter, AnonymousModel? range}) {
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
@@ -909,7 +918,7 @@ void main() {
               ),
             );
           }
-          return result;
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1040,14 +1049,14 @@ void main() {
         responses: const {},
       );
 
-      const expectedMethod = '''
-        Map<String, dynamic> _queryParameters({
+      const expectedMethod = r'''
+        String _queryParameters({
           Anonymous? color,
           required OneOfValue value,
           AnyOfCondition? condition,
           required AllOfComposite composite,
         }) {
-          final result = <String, dynamic>{};
+          final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           const deepObjectEncoder = DeepObjectEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
@@ -1071,18 +1080,22 @@ void main() {
             ),
           );
           if (condition != null) {
-            result[r'condition'] = spacedEncoder.encode(
+            for (final value in spacedEncoder.encode(
               condition.toJson(),
               explode: false,
               allowEmpty: true,
-            );
+            )) {
+              result.add((name: 'condition', value: value));
+            }
           }
-          result[r'composite'] = pipedEncoder.encode(
+          for (final value in pipedEncoder.encode(
             composite.toJson(),
             explode: false,
             allowEmpty: true,
-          );
-          return result;
+          )) {
+            result.add((name: 'composite', value: value));
+          }
+          return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 

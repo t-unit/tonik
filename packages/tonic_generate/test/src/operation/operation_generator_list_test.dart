@@ -69,17 +69,19 @@ void main() {
           responses: const {},
         );
 
-        const expectedMethod = '''
-          Map<String, dynamic> _queryParameters({required List<Anonymous> colors}) {
-            final result = <String, dynamic>{};
+        const expectedMethod = r'''
+         String _queryParameters({required List<Anonymous> colors}) {
+            final result = <ParameterEntry>[];
             const formEncoder = FormEncoder();
-            result[r'colors'] = formEncoder.encode(
-              r'colors',
-              colors.map((e) => e.toJson()).toList(),
-              explode: true,
-              allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(
+                r'colors',
+                colors.map((e) => e.toJson()).toList(),
+                explode: true,
+                allowEmpty: false,
+              ),
             );
-            return result;
+            return result.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -139,17 +141,19 @@ void main() {
           responses: const {},
         );
 
-        const expectedMethod = '''
-          Map<String, dynamic> _queryParameters({required List<List<Anonymous>> matrix}) {
-            final result = <String, dynamic>{};
+        const expectedMethod = r'''
+          String _queryParameters({required List<List<Anonymous>> matrix}) {
+            final result = <ParameterEntry>[];
             const formEncoder = FormEncoder();
-            result[r'matrix'] = formEncoder.encode(
-              r'matrix',
-              matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
-              explode: true,
-              allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(
+                r'matrix',
+                matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
+                explode: true,
+                allowEmpty: false,
+              ),
             );
-            return result;
+            return result.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
