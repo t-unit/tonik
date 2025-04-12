@@ -6,9 +6,7 @@ import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/operation/operation_generator.dart';
 
 class OperationFileGenerator {
-  OperationFileGenerator({
-    required this.operationGenerator,
-  });
+  OperationFileGenerator({required this.operationGenerator});
 
   final OperationGenerator operationGenerator;
 
@@ -39,4 +37,4 @@ class OperationFileGenerator {
       file.writeAsStringSync(result.code);
     }
   }
-} 
+}

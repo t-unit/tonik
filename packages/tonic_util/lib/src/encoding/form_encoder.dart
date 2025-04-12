@@ -28,38 +28,42 @@ class FormEncoder extends BaseEncoder {
   /// the value part. The full name=value combination for each item should be
   /// handled at a higher level.
   ///
+  /// The [allowEmpty] parameter controls whether empty values are allowed:
+  /// - When `true`, empty values (null, empty strings, empty collections)
+  ///   are encoded as empty strings
+  /// - When `false`, empty values throw an [EmptyValueException]
+  ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder.
-  String encode(dynamic value, {bool explode = false}) {
+  String encode(
+    dynamic value, {
+    required bool explode,
+    required bool allowEmpty,
+  }) {
     checkSupportedType(value);
 
-    if (value == null) {
+    if (value == null ||
+        (value is String && value.isEmpty) ||
+        (value is Iterable && value.isEmpty) ||
+        (value is Map && value.isEmpty)) {
+      if (!allowEmpty) {
+        throw const EmptyValueException();
+      }
       return '';
     }
 
     if (value is Iterable) {
-      if (value.isEmpty) {
-        return '';
-      }
-
       // For form style, explode=true normally means separate name=value pairs,
       // but this encoder only handles the value part. For consistency, we
       // return a comma-separated list just like with explode=false.
       return value
           .map(
-            (item) => encodeValue(
-              valueToString(item),
-              useQueryEncoding: true,
-            ),
+            (item) => encodeValue(valueToString(item), useQueryEncoding: true),
           )
           .join(',');
     }
 
     if (value is Map<String, dynamic>) {
-      if (value.isEmpty) {
-        return '';
-      }
-
       if (explode) {
         // With explode=true, the format would be key1=value1&key2=value2,
         // but this encoder only handles a single value, so we'll use
@@ -67,10 +71,7 @@ class FormEncoder extends BaseEncoder {
         return value.entries
             .map(
               (entry) =>
-                  '${entry.key}=${encodeValue(
-                    valueToString(entry.value),
-                    useQueryEncoding: true,
-                  )}',
+                  '${entry.key}=${encodeValue(valueToString(entry.value), useQueryEncoding: true)}',
             )
             .join(',');
       } else {
@@ -79,19 +80,13 @@ class FormEncoder extends BaseEncoder {
             .expand(
               (entry) => [
                 entry.key,
-                encodeValue(
-                  valueToString(entry.value),
-                  useQueryEncoding: true,
-                ),
+                encodeValue(valueToString(entry.value), useQueryEncoding: true),
               ],
             )
             .join(',');
       }
     }
 
-    return encodeValue(
-      valueToString(value),
-      useQueryEncoding: true,
-    );
+    return encodeValue(valueToString(value), useQueryEncoding: true);
   }
 }

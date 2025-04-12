@@ -22,20 +22,31 @@ class SimpleEncoder extends BaseEncoder {
   /// separately encoded. When false, they are encoded as a single string with
   /// delimiters (typically comma).
   ///
+  /// The [allowEmpty] parameter controls whether empty values are allowed:
+  /// - When `true`, empty values (null, empty strings, empty collections)
+  ///   are encoded as empty strings
+  /// - When `false`, empty values throw an [EmptyValueException]
+  ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder.
-  String encode(dynamic value, {bool explode = false}) {
+  String encode(
+    dynamic value, {
+    required bool explode,
+    required bool allowEmpty,
+  }) {
     checkSupportedType(value);
 
-    if (value == null) {
+    if (value == null ||
+        (value is String && value.isEmpty) ||
+        (value is Iterable && value.isEmpty) ||
+        (value is Map && value.isEmpty)) {
+      if (!allowEmpty) {
+        throw const EmptyValueException();
+      }
       return '';
     }
 
     if (value is Iterable) {
-      if (value.isEmpty) {
-        return '';
-      }
-
       if (explode) {
         // With explode=true, we'd need multiple parameter instances,
         // but since SimpleEncoder only encodes the value part
@@ -49,10 +60,6 @@ class SimpleEncoder extends BaseEncoder {
     }
 
     if (value is Map<String, dynamic>) {
-      if (value.isEmpty) {
-        return '';
-      }
-
       if (explode) {
         // With explode=true, key=value pairs are comma-separated
         return value.entries

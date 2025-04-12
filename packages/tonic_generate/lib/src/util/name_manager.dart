@@ -73,8 +73,8 @@ class NameManager {
   }
 
   void _logOperationName(String name, Operation operation) {
-    final operationName = operation.operationId ??
-        '${operation.method}:${operation.path}';
+    final operationName =
+        operation.operationId ?? '${operation.method}:${operation.path}';
     log.fine('Name for operation $operationName: $name');
   }
 

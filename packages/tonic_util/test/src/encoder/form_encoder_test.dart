@@ -12,30 +12,33 @@ void main() {
 
   group('FormEncoder', () {
     test('encodes String value', () {
-      expect(encoder.encode('blue'), 'blue');
+      expect(encoder.encode('blue', explode: false, allowEmpty: true), 'blue');
     });
 
     test('encodes String value with special characters', () {
-      expect(encoder.encode('John Doe'), 'John+Doe');
+      expect(
+        encoder.encode('John Doe', explode: false, allowEmpty: true),
+        'John+Doe',
+      );
     });
 
     test('encodes int value', () {
-      expect(encoder.encode(25), '25');
+      expect(encoder.encode(25, explode: false, allowEmpty: true), '25');
     });
 
     test('encodes double value', () {
-      expect(encoder.encode(19.99), '19.99');
+      expect(encoder.encode(19.99, explode: false, allowEmpty: true), '19.99');
     });
 
     test('encodes boolean values', () {
-      expect(encoder.encode(true), 'true');
-      expect(encoder.encode(false), 'false');
+      expect(encoder.encode(true, explode: false, allowEmpty: true), 'true');
+      expect(encoder.encode(false, explode: false, allowEmpty: true), 'false');
     });
 
     test('encodes BigDecimal value', () {
       final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
       expect(
-        encoder.encode(bigDecimal),
+        encoder.encode(bigDecimal, explode: false, allowEmpty: true),
         '123456789012345678901234.56789',
       );
     });
@@ -43,57 +46,134 @@ void main() {
     test('encodes Uri value', () {
       final uri = Uri.parse('https://example.com/path?query=value');
       expect(
-        encoder.encode(uri),
+        encoder.encode(uri, explode: false, allowEmpty: true),
         'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
       );
     });
 
-    test('encodes null value', () {
-      expect(encoder.encode(null), '');
+    group('empty value handling', () {
+      test('encodes null value when allowEmpty is true', () {
+        expect(encoder.encode(null, explode: false, allowEmpty: true), '');
+      });
+
+      test('throws when null value and allowEmpty is false', () {
+        expect(
+          () => encoder.encode(null, explode: false, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws when empty string and allowEmpty is false', () {
+        expect(
+          () => encoder.encode('', explode: false, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes empty string when allowEmpty is true', () {
+        expect(encoder.encode('', explode: false, allowEmpty: true), '');
+      });
+
+      test('throws when empty List and allowEmpty is false', () {
+        expect(
+          () => encoder.encode(<String>[], explode: false, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes empty List when allowEmpty is true', () {
+        expect(
+          encoder.encode(<String>[], explode: false, allowEmpty: true),
+          '',
+        );
+      });
+
+      test('throws when empty Set and allowEmpty is false', () {
+        expect(
+          () => encoder.encode(<String>{}, explode: false, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes empty Set when allowEmpty is true', () {
+        expect(
+          encoder.encode(<String>{}, explode: false, allowEmpty: true),
+          '',
+        );
+      });
+
+      test('throws when empty Map and allowEmpty is false', () {
+        expect(
+          () => encoder.encode(
+            <String, dynamic>{},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes empty Map when allowEmpty is true', () {
+        expect(
+          encoder.encode(<String, dynamic>{}, explode: false, allowEmpty: true),
+          '',
+        );
+      });
     });
 
     test('encodes List of primitive values', () {
       expect(
-        encoder.encode(['red', 'green', 'blue']),
+        encoder.encode(
+          ['red', 'green', 'blue'],
+          explode: false,
+          allowEmpty: true,
+        ),
         'red,green,blue',
       );
     });
 
     test('encodes List with special characters', () {
       expect(
-        encoder.encode(['item 1', 'item 2']),
+        encoder.encode(['item 1', 'item 2'], explode: false, allowEmpty: true),
         'item+1,item+2',
       );
     });
 
-    test('encodes empty List', () {
-      expect(encoder.encode(<String>[]), '');
-    });
-
     test('encodes Set of primitive values', () {
       expect(
-        encoder.encode({'red', 'green', 'blue'}),
+        encoder.encode(
+          {'red', 'green', 'blue'},
+          explode: false,
+          allowEmpty: true,
+        ),
         'red,green,blue',
       );
     });
 
     test('supports Map<String, dynamic> values', () {
-      expect(encoder.encode({'key': 'value'}), 'key,value');
+      expect(
+        encoder.encode({'key': 'value'}, explode: false, allowEmpty: true),
+        'key,value',
+      );
     });
 
     test('throws exception for complex object', () {
       final complexObject = Object();
       expect(
-        () => encoder.encode(complexObject),
+        () => encoder.encode(complexObject, explode: false, allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
 
     test('throws exception for nested Lists', () {
       expect(
-        () => encoder.encode([
-          ['nested'],
-        ]),
+        () => encoder.encode(
+          [
+            ['nested'],
+          ],
+          explode: false,
+          allowEmpty: true,
+        ),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -102,83 +182,91 @@ void main() {
     group('with explode=true', () {
       test('encodes List with explode=true', () {
         expect(
-          encoder.encode(['red', 'green', 'blue'], explode: true),
+          encoder.encode(
+            ['red', 'green', 'blue'],
+            explode: true,
+            allowEmpty: true,
+          ),
           'red,green,blue',
         );
       });
 
       test('encodes List with special characters and explode=true', () {
         expect(
-          encoder.encode(['item 1', 'item 2'], explode: true),
+          encoder.encode(['item 1', 'item 2'], explode: true, allowEmpty: true),
           'item+1,item+2',
-        );
-      });
-
-      test('encodes empty List with explode=true', () {
-        expect(
-          encoder.encode(<String>[], explode: true),
-          '',
         );
       });
 
       test('encodes Set with explode=true', () {
         expect(
-          encoder.encode({'red', 'green', 'blue'}, explode: true),
+          encoder.encode(
+            {'red', 'green', 'blue'},
+            explode: true,
+            allowEmpty: true,
+          ),
           'red,green,blue',
         );
       });
 
       test('primitive values are encoded the same with explode=true', () {
         // For non-collection types, explode parameter should have no effect
-        expect(encoder.encode('blue', explode: true), 'blue');
-        expect(encoder.encode(25, explode: true), '25');
-        expect(encoder.encode(null, explode: true), '');
+        expect(encoder.encode('blue', explode: true, allowEmpty: true), 'blue');
+        expect(encoder.encode(25, explode: true, allowEmpty: true), '25');
       });
     });
 
     // Tests for object encoding (Maps)
     group('with objects', () {
       test('encodes object', () {
-        expect(encoder.encode({'x': 1, 'y': 2}), 'x,1,y,2');
-      });
-
-      test('encodes empty object', () {
-        expect(encoder.encode(<String, dynamic>{}), '');
+        expect(
+          encoder.encode({'x': 1, 'y': 2}, explode: false, allowEmpty: true),
+          'x,1,y,2',
+        );
       });
 
       test('encodes object with string values', () {
         expect(
-          encoder.encode({'name': 'John', 'role': 'admin'}),
+          encoder.encode(
+            {'name': 'John', 'role': 'admin'},
+            explode: false,
+            allowEmpty: true,
+          ),
           'name,John,role,admin',
         );
       });
 
       test('encodes object with special characters', () {
         expect(
-          encoder.encode({
-            'street': '123 Main St',
-            'city': 'New York',
-          }),
+          encoder.encode(
+            {'street': '123 Main St', 'city': 'New York'},
+            explode: false,
+            allowEmpty: true,
+          ),
           'street,123+Main+St,city,New+York',
         );
       });
 
       test('encodes object with explode=true', () {
         expect(
-          encoder.encode({'x': 1, 'y': 2}, explode: true),
+          encoder.encode({'x': 1, 'y': 2}, explode: true, allowEmpty: true),
           'x=1,y=2',
         );
       });
 
       test('throws exception for nested object', () {
         expect(
-          () => encoder.encode({
-            'name': 'John',
-            'address': {'city': 'NY'},
-          }),
+          () => encoder.encode(
+            {
+              'name': 'John',
+              'address': {'city': 'NY'},
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
           throwsA(isA<UnsupportedEncodingTypeException>()),
         );
       });
     });
   });
-} 
+}

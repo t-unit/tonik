@@ -25,21 +25,37 @@ class MatrixEncoder extends BaseEncoder {
   /// separately encoded. When false, they are encoded as a single string with
   /// delimiters (typically comma).
   ///
+  /// The [allowEmpty] parameter controls whether empty values are allowed:
+  /// - When `true`, empty values (null, empty strings, empty collections)
+  ///   are encoded as empty strings
+  /// - When `false`, empty values throw an [EmptyValueException]
+  ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder.
-  String encode(String paramName, dynamic value, {bool explode = false}) {
+  String encode(
+    String paramName,
+    dynamic value, {
+    required bool explode,
+    required bool allowEmpty,
+  }) {
     checkSupportedType(value);
 
-    if (value == null) {
+    if (value == null || (value is String && value.isEmpty)) {
+      if (!allowEmpty) {
+        throw const EmptyValueException();
+      }
       return ';$paramName';
     }
 
     if (value is Iterable) {
-      if (explode) {
-        if (value.isEmpty) {
-          return '';
+      if (value.isEmpty) {
+        if (!allowEmpty) {
+          throw const EmptyValueException();
         }
+        return ';$paramName';
+      }
 
+      if (explode) {
         return value
             .map((item) => ';$paramName=${encodeValue(valueToString(item))}')
             .join();
@@ -54,6 +70,9 @@ class MatrixEncoder extends BaseEncoder {
 
     if (value is Map<String, dynamic>) {
       if (value.isEmpty) {
+        if (!allowEmpty) {
+          throw const EmptyValueException();
+        }
         return ';$paramName=';
       }
 

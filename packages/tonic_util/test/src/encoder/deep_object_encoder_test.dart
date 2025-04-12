@@ -10,7 +10,7 @@ void main() {
       final result = encoder.encode('filter', {
         'color': 'red',
         'size': 'large',
-      });
+      }, allowEmpty: true);
 
       expect(result, {'filter[color]': 'red', 'filter[size]': 'large'});
     });
@@ -19,27 +19,34 @@ void main() {
       final result = encoder.encode('filter', {
         'active': true,
         'premium': false,
-      });
+      }, allowEmpty: true);
 
       expect(result, {'filter[active]': 'true', 'filter[premium]': 'false'});
     });
 
     test('encodes an object with a null value', () {
-      final result = encoder.encode('filter', {'color': null, 'size': 'large'});
+      final result = encoder.encode('filter', {
+        'color': null,
+        'size': 'large',
+      }, allowEmpty: true);
 
       expect(result, {'filter[color]': '', 'filter[size]': 'large'});
     });
 
     test('encodes an empty object', () {
-      final result = encoder.encode('filter', <String, dynamic>{});
+      final result = encoder.encode(
+        'filter',
+        <String, dynamic>{},
+        allowEmpty: true,
+      );
 
-      expect(result, isEmpty);
+      expect(result, {'filter': ''});
     });
 
     test('encodes nested objects', () {
       final result = encoder.encode('filter', {
         'product': {'color': 'blue', 'size': 'medium'},
-      });
+      }, allowEmpty: true);
 
       expect(result, {
         'filter[product][color]': 'blue',
@@ -52,7 +59,7 @@ void main() {
         'product': {
           'attributes': {'color': 'blue', 'size': 'medium'},
         },
-      });
+      }, allowEmpty: true);
 
       expect(result, {
         'filter[product][attributes][color]': 'blue',
@@ -64,14 +71,15 @@ void main() {
       expect(
         () => encoder.encode('filter', {
           'colors': ['red', 'blue', 'green'],
-        }),
+        }, allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
 
     test('throws for objects containing empty arrays', () {
       expect(
-        () => encoder.encode('filter', {'colors': <String>[]}),
+        () =>
+            encoder.encode('filter', {'colors': <String>[]}, allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -80,7 +88,7 @@ void main() {
       expect(
         () => encoder.encode('filter', {
           'sizes': {'small', 'medium', 'large'},
-        }),
+        }, allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -91,7 +99,7 @@ void main() {
         'age': 30,
         'active': true,
         'address': {'street': '123 Main St', 'city': 'New York'},
-      });
+      }, allowEmpty: true);
 
       expect(result, {
         'params[name]': 'John',
@@ -105,7 +113,9 @@ void main() {
     test('encodes DateTime values correctly', () {
       final dateTime = DateTime.utc(2023, 5, 15, 12, 30, 45);
 
-      final result = encoder.encode('filter', {'date': dateTime});
+      final result = encoder.encode('filter', {
+        'date': dateTime,
+      }, allowEmpty: true);
 
       expect(result, {'filter[date]': '2023-05-15T12:30:45.000Z'});
     });
@@ -116,7 +126,7 @@ void main() {
 
       final result = encoder.encode('filter', {
         'range': {'start': startDate, 'end': endDate},
-      });
+      }, allowEmpty: true);
 
       expect(result, {
         'filter[range][start]': '2023-05-15T00:00:00.000Z',
@@ -126,17 +136,17 @@ void main() {
 
     test('throws UnsupportedEncodingTypeException if value is not a Map', () {
       expect(
-        () => encoder.encode('param', 'string value'),
+        () => encoder.encode('param', 'string value', allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
 
       expect(
-        () => encoder.encode('param', 42),
+        () => encoder.encode('param', 42, allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
 
       expect(
-        () => encoder.encode('param', [1, 2, 3]),
+        () => encoder.encode('param', [1, 2, 3], allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -144,11 +154,10 @@ void main() {
     test(
       'throws UnsupportedEncodingTypeException for unsupported types in Map',
       () {
-        // Object with a function value
         final objectWithFunction = {'callback': () => 'hello'};
 
         expect(
-          () => encoder.encode('param', objectWithFunction),
+          () => encoder.encode('param', objectWithFunction, allowEmpty: true),
           throwsA(isA<UnsupportedEncodingTypeException>()),
         );
       },
@@ -157,7 +166,6 @@ void main() {
     test(
       'throws UnsupportedEncodingTypeException for nested unsupported types',
       () {
-        // Nested map with an unsupported type
         final nestedObject = {
           'outer': {
             'inner': {'unsupported': RegExp(r'\d+')},
@@ -165,7 +173,7 @@ void main() {
         };
 
         expect(
-          () => encoder.encode('param', nestedObject),
+          () => encoder.encode('param', nestedObject, allowEmpty: true),
           throwsA(isA<UnsupportedEncodingTypeException>()),
         );
       },
@@ -180,9 +188,81 @@ void main() {
       };
 
       expect(
-        () => encoder.encode('param', objectWithNestedArrays),
+        () => encoder.encode('param', objectWithNestedArrays, allowEmpty: true),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
+    });
+
+    group('allowEmpty parameter', () {
+      test('allows empty values when allowEmpty is true', () {
+        final result = encoder.encode('filter', {
+          'emptyString': '',
+          'emptyMap': <String, dynamic>{},
+          'normalValue': 'test',
+        }, allowEmpty: true);
+
+        expect(result, {
+          'filter[emptyString]': '',
+          'filter[emptyMap]': '',
+          'filter[normalValue]': 'test',
+        });
+      });
+
+      test('throws when allowEmpty is false and value is empty string', () {
+        expect(
+          () => encoder.encode('filter', {
+            'emptyString': '',
+            'normalValue': 'test',
+          }, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws when allowEmpty is false and map is empty', () {
+        expect(
+          () =>
+              encoder.encode('filter', <String, dynamic>{}, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws when allowEmpty is false and nested map is empty', () {
+        expect(
+          () => encoder.encode('filter', {
+            'nested': <String, dynamic>{},
+            'normalValue': 'test',
+          }, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws when allowEmpty is false and value is empty list', () {
+        expect(
+          () =>
+              encoder.encode('filter', {'list': <String>[]}, allowEmpty: false),
+          throwsA(isA<UnsupportedEncodingTypeException>()),
+        );
+      });
+
+      test('throws when allowEmpty is false and value is empty set', () {
+        expect(
+          () =>
+              encoder.encode('filter', {'set': <String>{}}, allowEmpty: false),
+          throwsA(isA<UnsupportedEncodingTypeException>()),
+        );
+      });
+
+      test('allows non-empty values when allowEmpty is false', () {
+        final result = encoder.encode('filter', {
+          'string': 'value',
+          'nested': {'inner': 'value'},
+        }, allowEmpty: false);
+
+        expect(result, {
+          'filter[string]': 'value',
+          'filter[nested][inner]': 'value',
+        });
+      });
     });
   });
 }

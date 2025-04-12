@@ -14,9 +14,10 @@ void main() {
     late NameManager nameManager;
     late NameGenerator nameGenerator;
 
-    final format = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    ).format;
+    final format =
+        DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
 
     setUp(() {
       nameGenerator = NameGenerator();
@@ -304,10 +305,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(
-          context: context,
-          properties: const {},
-        ),
+        model: ClassModel(context: context, properties: const {}),
         context: context,
       );
 

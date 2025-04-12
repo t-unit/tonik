@@ -33,34 +33,31 @@ class DeepObjectEncoder extends BaseEncoder {
   /// The [paramName] is required as deepObject encoding includes the parameter
   /// name in the encoded result.
   ///
-  /// Note: Unlike other encoders, the [explode] parameter is ignored as
-  /// deepObject style always uses the exploded form.
-  ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder or if the value is not a Map.
   Map<String, String> encode(
     String paramName,
     dynamic value, {
-    bool explode = true,
+    required bool allowEmpty,
   }) {
-    // DeepObject style only works with objects (Maps)
-    if (value is! Map<String, dynamic>) {
-      throw UnsupportedEncodingTypeException(
-        valueType: value?.runtimeType ?? Null,
-      );
-    }
-
     checkSupportedType(value);
 
-    if (value.isEmpty) {
-      return {};
+    if (value == null || (value as Map<String, dynamic>).isEmpty) {
+      if (!allowEmpty) {
+        throw const EmptyValueException();
+      }
+      return {paramName: ''};
     }
 
-    return _encodeMap(paramName, value);
+    return _encodeMap(paramName, value, allowEmpty: allowEmpty);
   }
 
   /// Internal method to encode a Map according to deepObject style.
-  Map<String, String> _encodeMap(String path, Map<String, dynamic> map) {
+  Map<String, String> _encodeMap(
+    String path,
+    Map<String, dynamic> map, {
+    required bool allowEmpty,
+  }) {
     final result = <String, String>{};
 
     for (final entry in map.entries) {
@@ -70,16 +67,24 @@ class DeepObjectEncoder extends BaseEncoder {
       if (value == null) {
         result['$path[$key]'] = '';
       } else if (value is Map<String, dynamic>) {
-        // Handle nested maps by recursively encoding them
-        result.addAll(_encodeMap('$path[$key]', value));
+        if (!allowEmpty && value.isEmpty) {
+          throw const EmptyValueException();
+        }
+        if (value.isEmpty) {
+          result['$path[$key]'] = '';
+        } else {
+          // Handle nested maps by recursively encoding them
+          result.addAll(
+            _encodeMap('$path[$key]', value, allowEmpty: allowEmpty),
+          );
+        }
       } else if (value is List || value is Set) {
-        // Arrays are not supported in deepObject style
         throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
       } else if (value is DateTime) {
-        // Handle DateTime values without URL encoding
         result['$path[$key]'] = valueToString(value);
+      } else if (value is String && !allowEmpty && value.isEmpty) {
+        throw const EmptyValueException();
       } else {
-        // Handle primitive values
         final encodedValue = encodeValue(
           valueToString(value),
           useQueryEncoding: true,

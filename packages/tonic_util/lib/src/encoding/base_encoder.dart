@@ -45,9 +45,7 @@ abstract class BaseEncoder {
       });
 
       if (hasUnsupportedElement) {
-        throw UnsupportedEncodingTypeException(
-          valueType: value.runtimeType,
-        );
+        throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
       }
 
       final hasNestedCollection = iterable.any((element) {
@@ -55,51 +53,43 @@ abstract class BaseEncoder {
       });
 
       if (hasNestedCollection) {
-        throw UnsupportedEncodingTypeException(
-          valueType: value.runtimeType,
-        );
+        throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
       }
 
       return;
     }
-    
+
     if (supportMaps && value is Map<String, dynamic>) {
       if (value.isEmpty) {
         return;
       }
-      
+
       final hasComplexValue = value.values.any((val) {
         return val is Iterable || val is Map;
       });
-      
+
       if (hasComplexValue) {
-        throw UnsupportedEncodingTypeException(
-          valueType: value.runtimeType,
-        );
+        throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
       }
-      
+
       final hasUnsupportedValue = value.values.any((val) {
         return val is! String &&
-               val is! num &&
-               val is! bool &&
-               val is! BigDecimal &&
-               val is! Uri &&
-               val is! DateTime &&
-               val != null;
+            val is! num &&
+            val is! bool &&
+            val is! BigDecimal &&
+            val is! Uri &&
+            val is! DateTime &&
+            val != null;
       });
-      
+
       if (hasUnsupportedValue) {
-        throw UnsupportedEncodingTypeException(
-          valueType: value.runtimeType,
-        );
+        throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
       }
-      
+
       return;
     }
 
-    throw UnsupportedEncodingTypeException(
-      valueType: value.runtimeType,
-    );
+    throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
   }
 
   /// Converts a value to its string representation.
@@ -119,21 +109,18 @@ abstract class BaseEncoder {
   /// Percent-encodes a string value according to RFC 3986.
   ///
   /// When [useQueryEncoding] is true, uses [Uri.encodeQueryComponent]
-  /// which is appropriate for query parameters. When false, uses 
+  /// which is appropriate for query parameters. When false, uses
   /// [Uri.encodeComponent] which is appropriate for path segments.
   @protected
-  String encodeValue(
-    String value, {
-    bool useQueryEncoding = false,
-  }) {
+  String encodeValue(String value, {bool useQueryEncoding = false}) {
     if (value.isEmpty) {
       return value;
     }
-    
+
     if (useQueryEncoding) {
       return Uri.encodeQueryComponent(value);
     } else {
       return Uri.encodeComponent(value);
     }
   }
-} 
+}

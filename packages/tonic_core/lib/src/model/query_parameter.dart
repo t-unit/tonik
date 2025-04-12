@@ -7,15 +7,15 @@ enum QueryParameterEncoding {
   /// Example: ?id=3&id=4&id=5 (with explode: true)
   /// Example: ?id=3,4,5 (with explode: false)
   form,
-  
+
   /// Space-separated array values (only for non-exploded arrays).
   /// Example: ?id=3%204%205
   spaceDelimited,
-  
+
   /// Pipe-separated array values (only for non-exploded arrays).
   /// Example: ?id=3|4|5
   pipeDelimited,
-  
+
   /// Objects are serialized as `paramName[property]=value`.
   /// Example: `?id[role]=admin&id[firstName]=Alex`
   deepObject,
@@ -25,7 +25,7 @@ sealed class QueryParameter {
   const QueryParameter({required this.context});
 
   final Context context;
-  
+
   QueryParameterObject resolve({String? name}) {
     switch (this) {
       case final QueryParameterObject param:

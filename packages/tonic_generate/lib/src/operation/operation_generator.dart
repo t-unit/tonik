@@ -482,11 +482,11 @@ class OperationGenerator {
         encodedValue = refer(encoderName).property('encode').call([
           literalString(rawName),
           value,
-        ], resolvedParam.explode ? {'explode': literalBool(true)} : {},);
+        ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
       } else {
         encodedValue = refer(encoderName).property('encode').call([
           value,
-        ], resolvedParam.explode ? {'explode': literalBool(true)} : {},);
+        ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
       }
 
       if (!resolvedParam.isRequired) {
@@ -629,11 +629,11 @@ class OperationGenerator {
         if (needsToJson) {
           headerValue = refer('headerEncoder').property('encode').call([
             refer(paramName).property('toJson').call([]),
-          ], resolvedParam.explode ? {'explode': literalBool(true)} : {},);
+          ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
         } else {
           headerValue = refer('headerEncoder').property('encode').call([
             refer(paramName),
-          ], resolvedParam.explode ? {'explode': literalBool(true)} : {},);
+          ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
         }
 
         if (resolvedParam.isRequired && !resolvedParam.allowEmptyValue) {

@@ -47,12 +47,12 @@ class Generator {
       oneOfGenerator: oneOfGenerator,
       typedefGenerator: typedefGenerator,
     );
-    
+
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
       package: fullPackage,
     );
-    
+
     final operationFileGenerator = OperationFileGenerator(
       operationGenerator: operationGenerator,
     );
@@ -75,7 +75,7 @@ class Generator {
       outputDirectory: outputDirectory,
       package: package,
     );
-    
+
     operationFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,

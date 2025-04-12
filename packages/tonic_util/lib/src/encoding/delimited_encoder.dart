@@ -1,4 +1,5 @@
 import 'package:tonic_util/src/encoding/base_encoder.dart';
+import 'package:tonic_util/src/encoding/encoding_exception.dart';
 
 /// An encoder for OpenAPI's delimited style parameters.
 ///
@@ -38,15 +39,34 @@ class DelimitedEncoder extends BaseEncoder {
   final String delimiter;
 
   /// Encodes a value according to the configured delimiter style.
-  List<String> encode(dynamic value, {bool explode = false}) {
+  ///
+  /// The [explode] parameter determines how array values are encoded:
+  /// - When `true`, each array item becomes a separate value
+  /// - When `false`, array items are joined with the specified delimiter
+  ///
+  /// The [allowEmpty] parameter controls whether empty values are allowed:
+  /// - When `true`, empty values (null, empty strings, empty collections)
+  ///   are encoded as empty strings
+  /// - When `false`, empty values throw an [EmptyValueException]
+  List<String> encode(
+    dynamic value, {
+    required bool explode,
+    required bool allowEmpty,
+  }) {
     checkSupportedType(value, supportMaps: false);
 
-    if (value == null) {
+    if (value == null || (value is String && value.isEmpty)) {
+      if (!allowEmpty) {
+        throw const EmptyValueException();
+      }
       return [''];
     }
 
     if (value is Iterable) {
       if (value.isEmpty) {
+        if (!allowEmpty) {
+          throw const EmptyValueException();
+        }
         return [''];
       }
 

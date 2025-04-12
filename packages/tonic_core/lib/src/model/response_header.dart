@@ -13,7 +13,7 @@ sealed class ResponseHeader {
 
   final Context context;
   final String? name;
-  
+
   ResponseHeaderObject resolve({String? name}) {
     switch (this) {
       case final ResponseHeaderObject header:

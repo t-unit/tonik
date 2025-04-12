@@ -13,10 +13,9 @@ sealed class RequestHeader {
 
   final Context context;
 
-
   RequestHeaderObject resolve({String? name}) {
-     switch (this) {
-    case final RequestHeaderObject header:
+    switch (this) {
+      case final RequestHeaderObject header:
         return RequestHeaderObject(
           name: name ?? header.name,
           rawName: header.rawName,

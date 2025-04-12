@@ -6,11 +6,11 @@ enum PathParameterEncoding {
   /// Comma-separated values. Default style.
   /// Example: /users/3,4,5
   simple,
-  
+
   /// Dot-prefixed values (.param).
   /// Example: /users/.3,4,5
   label,
-  
+
   /// Semicolon-prefixed values (;param).
   /// Example: /users/;id=3,4,5
   matrix,
@@ -20,7 +20,7 @@ sealed class PathParameter {
   const PathParameter({required this.context});
 
   final Context context;
-  
+
   PathParameterObject resolve({String? name}) {
     switch (this) {
       case final PathParameterObject param:

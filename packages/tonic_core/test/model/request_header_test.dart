@@ -3,64 +3,58 @@ import 'package:tonic_core/tonic_core.dart';
 
 void main() {
   group('RequestHeader', () {
-    test(
-      'resolve preserves original object with provided name',
-      () {
-        final context = Context.initial();
-        final model = StringModel(context: context);
+    test('resolve preserves original object with provided name', () {
+      final context = Context.initial();
+      final model = StringModel(context: context);
 
-        final header = RequestHeaderObject(
-          name: 'originalName',
-          rawName: 'originalRawName',
-          description: 'description',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: model,
-          encoding: HeaderParameterEncoding.simple,
-          context: context,
-        );
+      final header = RequestHeaderObject(
+        name: 'originalName',
+        rawName: 'originalRawName',
+        description: 'description',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: model,
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+      );
 
-        final resolved = header.resolve(name: 'newName');
+      final resolved = header.resolve(name: 'newName');
 
-        expect(resolved.name, equals('newName'));
-        expect(resolved.rawName, equals('originalRawName'));
-        expect(resolved.description, equals('description'));
-        expect(resolved.isRequired, isTrue);
-        expect(resolved.isDeprecated, isFalse);
-        expect(resolved.allowEmptyValue, isFalse);
-        expect(resolved.explode, isFalse);
-        expect(resolved.model, equals(model));
-        expect(resolved.encoding, equals(HeaderParameterEncoding.simple));
-        expect(resolved.context, equals(context));
-      },
-    );
+      expect(resolved.name, equals('newName'));
+      expect(resolved.rawName, equals('originalRawName'));
+      expect(resolved.description, equals('description'));
+      expect(resolved.isRequired, isTrue);
+      expect(resolved.isDeprecated, isFalse);
+      expect(resolved.allowEmptyValue, isFalse);
+      expect(resolved.explode, isFalse);
+      expect(resolved.model, equals(model));
+      expect(resolved.encoding, equals(HeaderParameterEncoding.simple));
+      expect(resolved.context, equals(context));
+    });
 
-    test(
-      'resolve preserves original name when no new name provided',
-      () {
-        final context = Context.initial();
-        final model = StringModel(context: context);
+    test('resolve preserves original name when no new name provided', () {
+      final context = Context.initial();
+      final model = StringModel(context: context);
 
-        final header = RequestHeaderObject(
-          name: 'originalName',
-          rawName: 'originalRawName',
-          description: 'description',
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          explode: false,
-          model: model,
-          encoding: HeaderParameterEncoding.simple,
-          context: context,
-        );
+      final header = RequestHeaderObject(
+        name: 'originalName',
+        rawName: 'originalRawName',
+        description: 'description',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: model,
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+      );
 
-        final resolved = header.resolve();
+      final resolved = header.resolve();
 
-        expect(resolved.name, equals('originalName'));
-      },
-    );
+      expect(resolved.name, equals('originalName'));
+    });
 
     test('RequestHeaderAlias.resolve resolves with alias name', () {
       final context = Context.initial();

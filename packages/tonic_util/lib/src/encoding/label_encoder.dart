@@ -24,23 +24,33 @@ class LabelEncoder extends BaseEncoder {
   /// separately encoded. When false, they are encoded as a single string with
   /// delimiters (typically comma).
   ///
+  /// The [allowEmpty] parameter controls whether empty values are allowed:
+  /// - When `true`, empty values (null, empty strings, empty collections)
+  ///   are encoded as empty strings
+  /// - When `false`, empty values throw an [EmptyValueException]
+  ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder.
-  String encode(dynamic value, {bool explode = false}) {
+  String encode(
+    dynamic value, {
+    required bool explode,
+    required bool allowEmpty,
+  }) {
     checkSupportedType(value);
 
-    if (value == null) {
+    if (value == null ||
+        (value is String && value.isEmpty) ||
+        (value is Iterable && value.isEmpty) ||
+        (value is Map && value.isEmpty)) {
+      if (!allowEmpty) {
+        throw const EmptyValueException();
+      }
       return '.';
     }
 
     if (value is Iterable) {
       if (explode) {
         // With explode=true, each value gets its own dot prefix
-        // Handle empty collections
-        if (value.isEmpty) {
-          return '';
-        }
-
         return value
             .map((item) => '.${encodeValue(valueToString(item))}')
             .join();
@@ -54,10 +64,6 @@ class LabelEncoder extends BaseEncoder {
     }
 
     if (value is Map<String, dynamic>) {
-      if (value.isEmpty) {
-        return '.';
-      }
-
       if (explode) {
         // With explode=true, each property gets encoded as .key=value
         return value.entries
