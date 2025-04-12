@@ -514,9 +514,10 @@ class OperationGenerator {
             if (encoding == QueryParameterEncoding.deepObject)
               refer('result').property('addAll').call([encodedValue]).statement
             else
-              refer(
-                'result',
-              ).index(literalString(rawName, raw: true)).assign(encodedValue).statement,
+              refer('result')
+                  .index(literalString(rawName, raw: true))
+                  .assign(encodedValue)
+                  .statement,
             const Code('}'),
           ]),
         );
@@ -527,9 +528,10 @@ class OperationGenerator {
           );
         } else {
           body.add(
-            refer(
-              'result',
-            ).index(literalString(rawName, raw: true)).assign(encodedValue).statement,
+            refer('result')
+                .index(literalString(rawName, raw: true))
+                .assign(encodedValue)
+                .statement,
           );
         }
       }
@@ -648,17 +650,19 @@ class OperationGenerator {
           bodyStatements.add(
             Block.of([
               Code('if ($paramName != null) {'),
-              refer(
-                'headers',
-              ).index(literalString(rawName, raw: true)).assign(headerValue).statement,
+              refer('headers')
+                  .index(literalString(rawName, raw: true))
+                  .assign(headerValue)
+                  .statement,
               const Code('}'),
             ]),
           );
         } else {
           bodyStatements.add(
-            refer(
-              'headers',
-            ).index(literalString(rawName, raw: true)).assign(headerValue).statement,
+            refer('headers')
+                .index(literalString(rawName, raw: true))
+                .assign(headerValue)
+                .statement,
           );
         }
       }

@@ -51,23 +51,20 @@ class ClassGenerator {
     final className = nameManager.modelName(model);
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final sortedProperties = [...normalizedProperties]
-      ..sort((a, b) {
-        // Required fields come before non-required fields
-        if (a.property.isRequired != b.property.isRequired) {
-          return a.property.isRequired ? -1 : 1;
-        }
-        // Keep original order for fields with same required status
-        return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
-      });
+    final sortedProperties = [...normalizedProperties]..sort((a, b) {
+      // Required fields come before non-required fields
+      if (a.property.isRequired != b.property.isRequired) {
+        return a.property.isRequired ? -1 : 1;
+      }
+      // Keep original order for fields with same required status
+      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
+    });
 
     return Class(
       (b) =>
           b
             ..name = className
-            ..annotations.add(
-              refer('immutable', 'package:meta/meta.dart'),
-            )
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.addAll([
               Constructor(
                 (b) =>
