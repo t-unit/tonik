@@ -35,7 +35,7 @@ void main() {
       expect(result.name, 'User');
     });
 
-    test('generates class with no annotations', () {
+    test('generates class with immutable annotation', () {
       final model = ClassModel(
         name: 'User',
         properties: const {},
@@ -43,7 +43,11 @@ void main() {
       );
 
       final result = generator.generateClass(model);
-      expect(result.annotations, isEmpty);
+      
+      expect(result.annotations.length, 1);
+      
+      final annotation = result.annotations.first;
+      expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
     test('generates constructor with required and optional parameters', () {
@@ -86,6 +90,80 @@ void main() {
       expect(nameParam.required, isFalse);
       expect(nameParam.toThis, isTrue);
     });
+
+    test(
+      'generates constructor with required fields before non-required fields',
+      () {
+        final model = ClassModel(
+          name: 'User',
+          properties: {
+            Property(
+              name: 'nickname',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'bio',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          },
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final constructor = result.constructors.first;
+
+        // Get the required and optional parameters
+        final requiredParams =
+            constructor.optionalParameters
+                .where((p) => p.required)
+                .map((p) => p.name)
+                .toList();
+        final optionalParams =
+            constructor.optionalParameters
+                .where((p) => !p.required)
+                .map((p) => p.name)
+                .toList();
+
+        // Verify all required parameters come before optional ones
+        final allParams =
+            constructor.optionalParameters.map((p) => p.name).toList();
+        final requiredIndices = requiredParams.map(allParams.indexOf);
+        final optionalIndices = optionalParams.map(allParams.indexOf);
+
+        // Check that every required parameter index is less
+        // than every optional parameter index
+        for (final reqIndex in requiredIndices) {
+          for (final optIndex in optionalIndices) {
+            expect(reqIndex < optIndex, isTrue);
+          }
+        }
+
+        // Verify the exact order: required params should be id and name, 
+        // optional params should be nickname and bio
+        expect(requiredParams, ['id', 'name']);
+        expect(optionalParams, ['nickname', 'bio']);
+      },
+    );
 
     test('generates filename in snake_case', () {
       final model = ClassModel(
