@@ -42,7 +42,9 @@ class OperationGenerator {
     final code = formatter.format(
       '// Generated code - do not modify by hand\n'
       '// ignore_for_file: lines_longer_than_80_chars\n '
-      '// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_raw_strings\n\n'
+      '// ignore_for_file: unnecessary_brace_in_string_interps\n '
+      '// ignore_for_file: cascade_invocations\n '
+      '// ignore_for_file: unnecessary_raw_strings\n\n'
       '${library.accept(emitter)}',
     );
 
