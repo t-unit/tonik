@@ -60,8 +60,6 @@ void main() {
       expect(method.optionalParameters, isEmpty);
 
       final methodString = format(method.accept(emitter).toString());
-      expect(methodString, contains("method: 'GET'"));
-
       expect(
         collapseWhitespace(methodString),
         collapseWhitespace(expectedMethod),
@@ -98,8 +96,78 @@ void main() {
       expect(method.optionalParameters, isEmpty);
 
       final methodString = format(method.accept(emitter).toString());
-      expect(methodString, contains("method: 'POST'"));
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(expectedMethod),
+      );
+    });
 
+    test('returns Options with PUT method for PUT operation', () {
+      final operation = Operation(
+        operationId: 'createUser',
+        context: context,
+        summary: 'Create user',
+        description: 'Creates a new user',
+        tags: const {},
+        isDeprecated: false,
+        path: '/users',
+        method: HttpMethod.put,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: const {},
+      );
+
+      const expectedMethod = '''
+          Options _options() {
+            return Options(method: 'PUT');
+          }
+        ''';
+
+      final method = generator.generateOptionsMethod(operation, []);
+
+      expect(method, isA<Method>());
+      expect(method.returns?.accept(emitter).toString(), contains('Options'));
+      expect(method.requiredParameters, isEmpty);
+      expect(method.optionalParameters, isEmpty);
+
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('returns Options with DELETE method for DELETE operation', () {
+      final operation = Operation(
+        operationId: 'createUser',
+        context: context,
+        summary: 'Create user',
+        description: 'Creates a new user',
+        tags: const {},
+        isDeprecated: false,
+        path: '/users',
+        method: HttpMethod.delete,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: const {},
+      );
+
+      const expectedMethod = '''
+          Options _options() {
+            return Options(method: 'DELETE');
+          }
+        ''';
+
+      final method = generator.generateOptionsMethod(operation, []);
+
+      expect(method, isA<Method>());
+      expect(method.returns?.accept(emitter).toString(), contains('Options'));
+      expect(method.requiredParameters, isEmpty);
+      expect(method.optionalParameters, isEmpty);
+
+      final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
         collapseWhitespace(expectedMethod),
@@ -139,11 +207,11 @@ void main() {
           Options _options({required String xMyHeader}) {
             final headers = <String, dynamic>{};
             const headerEncoder = SimpleEncoder();
-            
-            if (xMyHeader.isNotEmpty) {
-              headers['X-My-Header'] = headerEncoder.encode(xMyHeader);
-            }
-
+            headers[r'X-My-Header'] = headerEncoder.encode(
+              xMyHeader,
+              explode: false,
+              allowEmpty: false,
+            );
             return Options(method: 'GET', headers: headers);
           }
         ''';
@@ -264,31 +332,115 @@ void main() {
             (normalizedName: 'xOptionalList', parameter: optionalListHeader),
           ];
 
+      const expectedMethod = '''
+          Options _options({
+            required String xRequiredString,
+            required DateTime xRequiredDate,
+            bool? xOptionalBool,
+            List<String>? xOptionalList,
+          }) {
+            final headers = <String, dynamic>{};
+            const headerEncoder = SimpleEncoder();
+            headers[r'X-Required-String'] = headerEncoder.encode(
+              xRequiredString,
+              explode: false,
+              allowEmpty: false,
+            );
+            headers[r'X-Required-Date'] = headerEncoder.encode(
+              xRequiredDate,
+              explode: false,
+              allowEmpty: true,
+            );
+            if (xOptionalBool != null) {
+              headers[r'X-Optional-Bool'] = headerEncoder.encode(
+                xOptionalBool,
+                explode: false,
+                allowEmpty: false,
+              );
+            }
+            if (xOptionalList != null) {
+              headers[r'X-Optional-List'] = headerEncoder.encode(
+                xOptionalList,
+                explode: true,
+                allowEmpty: false,
+              );
+            }
+            return Options(method: 'GET', headers: headers);
+          }
+        ''';
+
       final method = generator.generateOptionsMethod(operation, headers);
 
       expect(method, isA<Method>());
       expect(method.optionalParameters, hasLength(4));
 
-      // Verify parameter names
       final paramNames = method.optionalParameters.map((p) => p.name).toList();
       expect(paramNames.contains('xRequiredString'), isTrue);
       expect(paramNames.contains('xRequiredDate'), isTrue);
       expect(paramNames.contains('xOptionalBool'), isTrue);
       expect(paramNames.contains('xOptionalList'), isTrue);
 
-      // Check the method body includes all headers
       final methodString = format(method.accept(emitter).toString());
-      expect(methodString, contains("headers['X-Required-String']"));
-      expect(methodString, contains("headers['X-Required-Date']"));
-      expect(methodString, contains("headers['X-Optional-Bool']"));
-      expect(methodString, contains("headers['X-Optional-List']"));
 
-      // Verify the string header has isEmpty check
-      expect(methodString, contains('if (xRequiredString.isNotEmpty)'));
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(expectedMethod),
+      );
+    });
 
-      // Optional headers should have null checks
-      expect(methodString, contains('if (xOptionalBool != null)'));
-      expect(methodString, contains('if (xOptionalList != null)'));
+    test('encodes headers with allowEmpty and explode flags', () {
+      final requestHeader = RequestHeaderObject(
+        name: 'X-My-Header',
+        rawName: 'X-My-Header',
+        description: 'A custom header',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: true,
+        explode: true,
+        model: StringModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'operationWithHeader',
+        context: context,
+        summary: 'Operation with header',
+        description: 'An operation that requires a header',
+        tags: const {},
+        isDeprecated: false,
+        path: '/with-header',
+        method: HttpMethod.get,
+        headers: {requestHeader},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: const {},
+      );
+
+      const expectedMethod = '''
+        Options _options({required String xMyHeader}) {
+          final headers = <String, dynamic>{};
+          const headerEncoder = SimpleEncoder();
+          headers[r'X-My-Header'] = headerEncoder.encode(
+            xMyHeader,
+            explode: true,
+            allowEmpty: true,
+          );
+          return Options(method: 'GET', headers: headers);
+        }
+      ''';
+
+      final headers =
+          <({String normalizedName, RequestHeaderObject parameter})>[
+            (normalizedName: 'xMyHeader', parameter: requestHeader),
+          ];
+      final method = generator.generateOptionsMethod(operation, headers);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
     });
   });
 }

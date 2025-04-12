@@ -26,24 +26,21 @@ void main() {
     });
 
     test('encodes int value', () {
-      expect(
-        encoder.encode('age', 25, explode: false, allowEmpty: true),
-        {'age': '25'},
-      );
+      expect(encoder.encode('age', 25, explode: false, allowEmpty: true), {
+        'age': '25',
+      });
     });
 
     test('encodes double value', () {
-      expect(
-        encoder.encode('price', 19.99, explode: false, allowEmpty: true),
-        {'price': '19.99'},
-      );
+      expect(encoder.encode('price', 19.99, explode: false, allowEmpty: true), {
+        'price': '19.99',
+      });
     });
 
     test('encodes boolean values', () {
-      expect(
-        encoder.encode('active', true, explode: false, allowEmpty: true),
-        {'active': 'true'},
-      );
+      expect(encoder.encode('active', true, explode: false, allowEmpty: true), {
+        'active': 'true',
+      });
       expect(
         encoder.encode('active', false, explode: false, allowEmpty: true),
         {'active': 'false'},
@@ -60,10 +57,9 @@ void main() {
 
     test('encodes Uri value', () {
       final uri = Uri.parse('https://example.com/path?query=value');
-      expect(
-        encoder.encode('url', uri, explode: false, allowEmpty: true),
-        {'url': 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue'},
-      );
+      expect(encoder.encode('url', uri, explode: false, allowEmpty: true), {
+        'url': 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+      });
     });
 
     group('empty value handling', () {
@@ -76,7 +72,8 @@ void main() {
 
       test('throws when null value and allowEmpty is false', () {
         expect(
-          () => encoder.encode('param', null, explode: false, allowEmpty: false),
+          () =>
+              encoder.encode('param', null, explode: false, allowEmpty: false),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -89,10 +86,9 @@ void main() {
       });
 
       test('encodes empty string when allowEmpty is true', () {
-        expect(
-          encoder.encode('param', '', explode: false, allowEmpty: true),
-          {'param': ''},
-        );
+        expect(encoder.encode('param', '', explode: false, allowEmpty: true), {
+          'param': '',
+        });
       });
 
       test('throws when empty List and allowEmpty is false', () {
@@ -282,10 +278,9 @@ void main() {
           encoder.encode('color', 'blue', explode: true, allowEmpty: true),
           {'color': 'blue'},
         );
-        expect(
-          encoder.encode('age', 25, explode: true, allowEmpty: true),
-          {'age': '25'},
-        );
+        expect(encoder.encode('age', 25, explode: true, allowEmpty: true), {
+          'age': '25',
+        });
       });
     });
 
@@ -335,10 +330,7 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          {
-            'role': 'admin',
-            'firstName': 'Alex',
-          },
+          {'role': 'admin', 'firstName': 'Alex'},
         );
       });
 

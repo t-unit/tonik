@@ -144,7 +144,7 @@ void main() {
         String _path({required List<String> ids}) {
           final simpleEncoder = SimpleEncoder();
           return r'/users/'
-            '${simpleEncoder.encode(ids)}';
+            '${simpleEncoder.encode(ids, explode: false, allowEmpty: false)}';
         }
       ''';
 
@@ -198,7 +198,7 @@ void main() {
         String _path({required List<String> ids}) {
           final labelEncoder = LabelEncoder();
           return r'/users'
-            '${labelEncoder.encode(ids)}';
+            '${labelEncoder.encode(ids, explode: false, allowEmpty: false)}';
         }
       ''';
 
@@ -252,7 +252,7 @@ void main() {
         String _path({required List<String> ids}) {
           final matrixEncoder = MatrixEncoder();
           return r'/users'
-          '${matrixEncoder.encode(ids)}';
+          '${matrixEncoder.encode(ids, explode: false, allowEmpty: false)}';
         }
       ''';
 
@@ -303,7 +303,58 @@ void main() {
         String _path({required Anonymous filter}) {
           final simpleEncoder = SimpleEncoder();
           return r'/users/'
-            '${simpleEncoder.encode(filter.toJson(), explode: true)}';
+            '${simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: false)}';
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'filter', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('encodes path parameters with allowEmpty and explode flags', () {
+      final pathParam = PathParameterObject(
+        name: 'filter',
+        rawName: 'filter',
+        description: 'Filter object',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: true,
+        explode: true,
+        model: ClassModel(context: context, properties: const {}),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getFilteredUsers',
+        context: context,
+        summary: 'Get filtered users',
+        description: 'Gets users with filter',
+        tags: const {},
+        isDeprecated: false,
+        path: '/users/{filter}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+      );
+
+      const expectedMethod = r'''
+        String _path({required Anonymous filter}) {
+          final simpleEncoder = SimpleEncoder();
+          return r'/users/'
+            '${simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: true)}';
         }
       ''';
 
@@ -389,9 +440,9 @@ void main() {
           final labelEncoder = LabelEncoder();
           final matrixEncoder = MatrixEncoder();
           return r'/users/'
-            '${simpleEncoder.encode(userId)}'
-            '${labelEncoder.encode(type)}'
-            '${matrixEncoder.encode(roles)}';
+            '${simpleEncoder.encode(userId, explode: false, allowEmpty: false)}'
+            '${labelEncoder.encode(type, explode: false, allowEmpty: false)}'
+            '${matrixEncoder.encode(roles, explode: false, allowEmpty: false)}';
         }
       ''';
 
@@ -497,11 +548,11 @@ void main() {
           final matrixEncoder = MatrixEncoder();
           final labelEncoder = LabelEncoder();
           return r'/users/'
-            '${simpleEncoder.encode(role.toJson())}'
+            '${simpleEncoder.encode(role.toJson(), explode: false, allowEmpty: false)}'
             r'/filter/'
-            '${matrixEncoder.encode(filter.toJson(), explode: true)}'
+            '${matrixEncoder.encode(filter.toJson(), explode: true, allowEmpty: false)}'
             r'/id/'
-            '${labelEncoder.encode(id.toJson())}';
+            '${labelEncoder.encode(id.toJson(), explode: false, allowEmpty: false)}';
         }
       ''';
 
@@ -567,9 +618,9 @@ void main() {
         String _path({required String animalId, required String id}) {
           final simpleEncoder = SimpleEncoder();
           return r'images/'
-            '${simpleEncoder.encode(id)}'
+            '${simpleEncoder.encode(id, explode: false, allowEmpty: false)}'
             r'/animals/'
-            '${simpleEncoder.encode(animalId)}'
+            '${simpleEncoder.encode(animalId, explode: false, allowEmpty: false)}'
             r'/thumbs';
         }
       ''';
@@ -622,9 +673,9 @@ void main() {
         String _path({required String user}) {
           final simpleEncoder = SimpleEncoder();
           return r'users/'
-            '${simpleEncoder.encode(user)}'
+            '${simpleEncoder.encode(user, explode: false, allowEmpty: false)}'
             r'/permissions/'
-            '${simpleEncoder.encode(user)}';
+            '${simpleEncoder.encode(user, explode: false, allowEmpty: false)}';
         }
       ''';
 

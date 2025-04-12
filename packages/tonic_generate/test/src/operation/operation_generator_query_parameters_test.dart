@@ -152,7 +152,12 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result['filter'] = formEncoder.encode(filter.toJson());
+            result[r'filter'] = formEncoder.encode(
+              r'filter',
+              filter.toJson(),
+              explode: false,
+              allowEmpty: true,
+            );
           }
           return result;
         }
@@ -210,7 +215,14 @@ void main() {
           final result = <String, dynamic>{};
           final deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
-            result.addAll(deepObjectEncoder.encode('filter', filter.toJson()));
+            result.addAll(
+              deepObjectEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: false,
+                allowEmpty: true,
+              ),
+            );
           }
           return result;
         }
@@ -271,7 +283,11 @@ void main() {
           final result = <String, dynamic>{};
           final spacedEncoder = DelimitedEncoder.spaced();
           if (tags != null) {
-            result['tags'] = spacedEncoder.encode(tags);
+            result[r'tags'] = spacedEncoder.encode(
+              tags,
+              explode: false,
+              allowEmpty: true,
+            );
           }
           return result;
         }
@@ -329,7 +345,14 @@ void main() {
           final result = <String, dynamic>{};
           final deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
-            result.addAll(deepObjectEncoder.encode('filter', filter.toJson()));
+            result.addAll(
+              deepObjectEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: false,
+                allowEmpty: true,
+              ),
+            );
           }
           return result;
         }
@@ -424,13 +447,29 @@ void main() {
           final spacedEncoder = DelimitedEncoder.spaced();
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result.addAll(deepObjectEncoder.encode('filter', filter.toJson()));
+            result.addAll(
+              deepObjectEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: false,
+                allowEmpty: true,
+              ),
+            );
           }
           if (tags != null) {
-            result['tags'] = spacedEncoder.encode(tags);
+            result[r'tags'] = spacedEncoder.encode(
+              tags,
+              explode: false,
+              allowEmpty: true,
+            );
           }
           if (sort != null) {
-            result['sort'] = formEncoder.encode(sort);
+            result[r'sort'] = formEncoder.encode(
+              r'sort',
+              sort,
+              explode: false,
+              allowEmpty: true,
+            );
           }
           return result;
         }
@@ -508,10 +547,19 @@ void main() {
           final formEncoder = FormEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           if (filter != null) {
-            result['filter'] = formEncoder.encode(filter.toJson(), explode: true);
+            result[r'filter'] = formEncoder.encode(
+              r'filter',
+              filter.toJson(),
+              explode: true,
+              allowEmpty: true,
+            );
           }
           if (tags != null) {
-            result['tags'] = spacedEncoder.encode(tags, explode: true);
+            result[r'tags'] = spacedEncoder.encode(
+              tags,
+              explode: true,
+              allowEmpty: true,
+            );
           }
           return result;
         }
@@ -569,7 +617,12 @@ void main() {
         Map<String, dynamic> _queryParameters({required Anonymous filter}) {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
-          result['filter'] = formEncoder.encode(filter.toJson());
+          result[r'filter'] = formEncoder.encode(
+            r'filter',
+            filter.toJson(),
+            explode: false,
+            allowEmpty: false,
+          );
           return result;
         }
       ''';
@@ -626,7 +679,12 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result['filter'] = formEncoder.encode(filter.toJson());
+            result[r'filter'] = formEncoder.encode(
+              r'filter',
+              filter.toJson(),
+              explode: false,
+              allowEmpty: false,
+            );
           }
           return result;
         }
@@ -733,17 +791,35 @@ void main() {
         }) {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
-          if (name != null && name.isNotEmpty) {
-            result['name'] = formEncoder.encode(name);
+          if (name != null) {
+            result[r'name'] = formEncoder.encode(
+              r'name',
+              name,
+              explode: false,
+              allowEmpty: false,
+            );
           }
-          if (tags != null && tags.isNotEmpty) {
-            result['tags'] = formEncoder.encode(tags);
+          if (tags != null) {
+            result[r'tags'] = formEncoder.encode(
+              r'tags',
+              tags,
+              explode: false, allowEmpty: false,
+            );
           }
           if (age != null) {
-            result['age'] = formEncoder.encode(age);
+            result[r'age'] = formEncoder.encode(
+              r'age',
+              age,
+              explode: false,
+              allowEmpty: false,
+            );
           }
           if (active != null) {
-            result['active'] = formEncoder.encode(active);
+            result[r'active'] = formEncoder.encode(
+              r'active',
+              active,
+              explode: false, allowEmpty: false,
+            );
           }
           return result;
         }
@@ -821,10 +897,19 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result['filter'] = formEncoder.encode(filter.toJson());
+            result[r'filter'] = formEncoder.encode(
+              r'filter',
+              filter.toJson(),
+              explode: false,
+              allowEmpty: false,
+            );
           }
           if (range != null) {
-            result['range'] = formEncoder.encode(range.toJson());
+            result[r'range'] = formEncoder.encode(
+              r'range',
+              range.toJson(),
+              explode: false, allowEmpty: false,
+            );
           }
           return result;
         }
@@ -970,13 +1055,33 @@ void main() {
           final spacedEncoder = DelimitedEncoder.spaced();
           final pipedEncoder = DelimitedEncoder.piped();
           if (color != null) {
-            result['color'] = formEncoder.encode(color.toJson());
+            result[r'color'] = formEncoder.encode(
+              r'color',
+              color.toJson(),
+              explode: false,
+              allowEmpty: true,
+            );
           }
-          result.addAll(deepObjectEncoder.encode('value', value.toJson()));
+          result.addAll(
+            deepObjectEncoder.encode(
+              r'value',
+              value.toJson(),
+              explode: false,
+              allowEmpty: true,
+            ),
+          );
           if (condition != null) {
-            result['condition'] = spacedEncoder.encode(condition.toJson());
+            result[r'condition'] = spacedEncoder.encode(
+              condition.toJson(),
+              explode: false,
+              allowEmpty: true,
+            );
           }
-          result['composite'] = pipedEncoder.encode(composite.toJson());
+          result[r'composite'] = pipedEncoder.encode(
+            composite.toJson(),
+            explode: false,
+            allowEmpty: true,
+          );
           return result;
         }
       ''';

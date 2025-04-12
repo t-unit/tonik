@@ -58,7 +58,7 @@ void main() {
           'in': 'query',
           'schema': {r'$ref': '#/components/schemas/Color'},
         },
-        'colorReference': {r'$ref': '#/components/parameters/colorMatrix'},
+        'colorReference': {r'$ref': '#/components/parameters/colorSchema'},
       },
       'schemas': {
         'Color': {
@@ -189,7 +189,7 @@ void main() {
 
     final reference = queryParameters
         .whereType<QueryParameterObject>()
-        .firstWhere((p) => p.name == 'colorMatrix');
+        .firstWhere((p) => p.name == 'colorSchema');
 
     expect(parameter.parameter, reference);
   });

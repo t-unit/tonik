@@ -310,14 +310,16 @@ class OperationGenerator {
               param.parameter.model is! PrimitiveModel &&
               param.parameter.model is! ListModel;
 
-          final explode = param.parameter.explode ? ', explode: true' : '';
           final valueExpression =
               needsToJson
                   ? '${param.normalizedName}.toJson()'
                   : param.normalizedName;
-          final value = '$encoderName.encode($valueExpression$explode)';
 
-          return Code("'\${$value}'");
+          return Code(
+            "'\${$encoderName.encode($valueExpression, "
+            'explode: ${param.parameter.explode}, '
+            "allowEmpty: ${param.parameter.allowEmptyValue})}'",
+          );
         });
 
     body
@@ -467,11 +469,6 @@ class OperationGenerator {
           resolvedParam.model is! PrimitiveModel &&
           resolvedParam.model is! ListModel;
 
-      final needsEmptyCheck =
-          (resolvedParam.model is StringModel ||
-              resolvedParam.model is ListModel) &&
-          !resolvedParam.allowEmptyValue;
-
       final value =
           needsToJson
               ? refer(paramName).property('toJson').call([])
@@ -479,62 +476,61 @@ class OperationGenerator {
 
       Expression encodedValue;
       if (encoding == QueryParameterEncoding.deepObject) {
-        encodedValue = refer(encoderName).property('encode').call([
-          literalString(rawName),
-          value,
-        ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
+        encodedValue = refer(encoderName)
+            .property('encode')
+            .call(
+              [literalString(rawName, raw: true), value],
+              {
+                'explode': literalBool(resolvedParam.explode),
+                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+              },
+            );
+      } else if (encoding == QueryParameterEncoding.form) {
+        encodedValue = refer(encoderName)
+            .property('encode')
+            .call(
+              [literalString(rawName, raw: true), value],
+              {
+                'explode': literalBool(resolvedParam.explode),
+                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+              },
+            );
       } else {
-        encodedValue = refer(encoderName).property('encode').call([
-          value,
-        ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
+        encodedValue = refer(encoderName)
+            .property('encode')
+            .call(
+              [value],
+              {
+                'explode': literalBool(resolvedParam.explode),
+                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+              },
+            );
       }
 
       if (!resolvedParam.isRequired) {
-        final condition =
-            needsEmptyCheck
-                ? '$paramName != null && $paramName.isNotEmpty'
-                : '$paramName != null';
-
         body.add(
           Block.of([
-            Code('if ($condition) {'),
+            Code('if ($paramName != null) {'),
             if (encoding == QueryParameterEncoding.deepObject)
               refer('result').property('addAll').call([encodedValue]).statement
             else
               refer(
                 'result',
-              ).index(literalString(rawName)).assign(encodedValue).statement,
+              ).index(literalString(rawName, raw: true)).assign(encodedValue).statement,
             const Code('}'),
           ]),
         );
       } else {
-        if (needsEmptyCheck) {
+        if (encoding == QueryParameterEncoding.deepObject) {
           body.add(
-            Block.of([
-              Code('if ($paramName.isNotEmpty) {'),
-              if (encoding == QueryParameterEncoding.deepObject)
-                refer(
-                  'result',
-                ).property('addAll').call([encodedValue]).statement
-              else
-                refer(
-                  'result',
-                ).index(literalString(rawName)).assign(encodedValue).statement,
-              const Code('}'),
-            ]),
+            refer('result').property('addAll').call([encodedValue]).statement,
           );
         } else {
-          if (encoding == QueryParameterEncoding.deepObject) {
-            body.add(
-              refer('result').property('addAll').call([encodedValue]).statement,
-            );
-          } else {
-            body.add(
-              refer(
-                'result',
-              ).index(literalString(rawName)).assign(encodedValue).statement,
-            );
-          }
+          body.add(
+            refer(
+              'result',
+            ).index(literalString(rawName, raw: true)).assign(encodedValue).statement,
+          );
         }
       }
     }
@@ -627,42 +623,42 @@ class OperationGenerator {
 
         Expression headerValue;
         if (needsToJson) {
-          headerValue = refer('headerEncoder').property('encode').call([
-            refer(paramName).property('toJson').call([]),
-          ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
+          headerValue = refer('headerEncoder')
+              .property('encode')
+              .call(
+                [refer(paramName).property('toJson').call([])],
+                {
+                  'explode': literalBool(resolvedParam.explode),
+                  'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+                },
+              );
         } else {
-          headerValue = refer('headerEncoder').property('encode').call([
-            refer(paramName),
-          ], resolvedParam.explode ? {'explode': literalBool(true)} : {});
+          headerValue = refer('headerEncoder')
+              .property('encode')
+              .call(
+                [refer(paramName)],
+                {
+                  'explode': literalBool(resolvedParam.explode),
+                  'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+                },
+              );
         }
 
-        if (resolvedParam.isRequired && !resolvedParam.allowEmptyValue) {
-          bodyStatements.add(
-            Block.of([
-              Code('if ($paramName.isNotEmpty) {'),
-              refer(
-                'headers',
-              ).index(literalString(rawName)).assign(headerValue).statement,
-              const Code('}'),
-            ]),
-          );
-        } else if (!resolvedParam.isRequired) {
-          // Check for null for optional parameters
+        if (!resolvedParam.isRequired) {
           bodyStatements.add(
             Block.of([
               Code('if ($paramName != null) {'),
               refer(
                 'headers',
-              ).index(literalString(rawName)).assign(headerValue).statement,
+              ).index(literalString(rawName, raw: true)).assign(headerValue).statement,
               const Code('}'),
             ]),
           );
         } else {
-          // No condition needed
           bodyStatements.add(
             refer(
               'headers',
-            ).index(literalString(rawName)).assign(headerValue).statement,
+            ).index(literalString(rawName, raw: true)).assign(headerValue).statement,
           );
         }
       }

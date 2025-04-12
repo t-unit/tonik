@@ -12,8 +12,8 @@ void main() {
       'parameters': {
         'colorMatrix': {
           'name': 'X-Color-Matrix',
-          'in': 'simple',
-          'style': 'matrix',
+          'in': 'header',
+          'style': 'simple',
           'explode': false,
           'schema': {'type': 'number'},
           'description': 'Matrix style header',
@@ -111,21 +111,6 @@ void main() {
 
   final api = Importer().import(fileContent);
   final headers = api.requestHeaders;
-
-  test('imports matrix style header', () {
-    final header = headers.whereType<RequestHeaderObject>().firstWhere(
-      (h) => h.name == 'colorMatrix',
-    );
-
-    expect(header.rawName, 'X-Color-Matrix');
-    expect(header.encoding, HeaderParameterEncoding.simple);
-    expect(header.model, isA<NumberModel>());
-    expect(header.description, 'Matrix style header');
-    expect(header.isRequired, isTrue);
-    expect(header.isDeprecated, isFalse);
-    expect(header.allowEmptyValue, isFalse);
-    expect(header.explode, isFalse);
-  });
 
   test('imports label style header', () {
     final header = headers.whereType<RequestHeaderObject>().firstWhere(
