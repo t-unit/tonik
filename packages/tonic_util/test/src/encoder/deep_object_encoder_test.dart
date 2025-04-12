@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 import 'package:tonic_util/src/encoding/deep_object_encoder.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
+import 'package:tonic_util/src/encoding/parameter_entry.dart';
 
 void main() {
   const encoder = DeepObjectEncoder();
@@ -12,7 +13,10 @@ void main() {
         'size': 'large',
       }, allowEmpty: true);
 
-      expect(result, {'filter[color]': 'red', 'filter[size]': 'large'});
+      expect(result, [
+        (name: 'filter[color]', value: 'red'),
+        (name: 'filter[size]', value: 'large'),
+      ]);
     });
 
     test('encodes boolean properties', () {
@@ -21,7 +25,10 @@ void main() {
         'premium': false,
       }, allowEmpty: true);
 
-      expect(result, {'filter[active]': 'true', 'filter[premium]': 'false'});
+      expect(result, [
+        (name: 'filter[active]', value: 'true'),
+        (name: 'filter[premium]', value: 'false'),
+      ]);
     });
 
     test('encodes an object with a null value', () {
@@ -30,7 +37,10 @@ void main() {
         'size': 'large',
       }, allowEmpty: true);
 
-      expect(result, {'filter[color]': '', 'filter[size]': 'large'});
+      expect(result, [
+        (name: 'filter[color]', value: ''),
+        (name: 'filter[size]', value: 'large'),
+      ]);
     });
 
     test('encodes an empty object', () {
@@ -40,7 +50,7 @@ void main() {
         allowEmpty: true,
       );
 
-      expect(result, {'filter': ''});
+      expect(result, [(name: 'filter', value: '')]);
     });
 
     test('encodes nested objects', () {
@@ -48,10 +58,10 @@ void main() {
         'product': {'color': 'blue', 'size': 'medium'},
       }, allowEmpty: true);
 
-      expect(result, {
-        'filter[product][color]': 'blue',
-        'filter[product][size]': 'medium',
-      });
+      expect(result, [
+        (name: 'filter[product][color]', value: 'blue'),
+        (name: 'filter[product][size]', value: 'medium'),
+      ]);
     });
 
     test('encodes deeply nested objects', () {
@@ -61,10 +71,10 @@ void main() {
         },
       }, allowEmpty: true);
 
-      expect(result, {
-        'filter[product][attributes][color]': 'blue',
-        'filter[product][attributes][size]': 'medium',
-      });
+      expect(result, [
+        (name: 'filter[product][attributes][color]', value: 'blue'),
+        (name: 'filter[product][attributes][size]', value: 'medium'),
+      ]);
     });
 
     test('throws for objects containing arrays', () {
@@ -101,13 +111,13 @@ void main() {
         'address': {'street': '123 Main St', 'city': 'New York'},
       }, allowEmpty: true);
 
-      expect(result, {
-        'params[name]': 'John',
-        'params[age]': '30',
-        'params[active]': 'true',
-        'params[address][street]': '123+Main+St',
-        'params[address][city]': 'New+York',
-      });
+      expect(result, [
+        (name: 'params[name]', value: 'John'),
+        (name: 'params[age]', value: '30'),
+        (name: 'params[active]', value: 'true'),
+        (name: 'params[address][street]', value: '123+Main+St'),
+        (name: 'params[address][city]', value: 'New+York'),
+      ]);
     });
 
     test('throws UnsupportedEncodingTypeException if value is not a Map', () {
@@ -177,11 +187,11 @@ void main() {
           'normalValue': 'test',
         }, allowEmpty: true);
 
-        expect(result, {
-          'filter[emptyString]': '',
-          'filter[emptyMap]': '',
-          'filter[normalValue]': 'test',
-        });
+        expect(result, [
+          (name: 'filter[emptyString]', value: ''),
+          (name: 'filter[emptyMap]', value: ''),
+          (name: 'filter[normalValue]', value: 'test'),
+        ]);
       });
 
       test('throws when allowEmpty is false and value is empty string', () {
@@ -234,10 +244,10 @@ void main() {
           'nested': {'inner': 'value'},
         }, allowEmpty: false);
 
-        expect(result, {
-          'filter[string]': 'value',
-          'filter[nested][inner]': 'value',
-        });
+        expect(result, [
+          (name: 'filter[string]', value: 'value'),
+          (name: 'filter[nested][inner]', value: 'value'),
+        ]);
       });
     });
   });

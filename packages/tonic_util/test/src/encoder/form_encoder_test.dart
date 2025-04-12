@@ -13,36 +13,39 @@ void main() {
     test('encodes String value', () {
       expect(
         encoder.encode('color', 'blue', explode: false, allowEmpty: true),
-        {'color': 'blue'},
+        [(name: 'color', value: 'blue')],
       );
     });
 
     test('encodes String value with special characters', () {
       expect(
         encoder.encode('name', 'John Doe', explode: false, allowEmpty: true),
-        {'name': 'John+Doe'},
+        [(name: 'name', value: 'John+Doe')],
       );
     });
 
     test('encodes int value', () {
-      expect(encoder.encode('age', 25, explode: false, allowEmpty: true), {
-        'age': '25',
-      });
+      expect(
+        encoder.encode('age', 25, explode: false, allowEmpty: true),
+        [(name: 'age', value: '25')],
+      );
     });
 
     test('encodes double value', () {
-      expect(encoder.encode('price', 19.99, explode: false, allowEmpty: true), {
-        'price': '19.99',
-      });
+      expect(
+        encoder.encode('price', 19.99, explode: false, allowEmpty: true),
+        [(name: 'price', value: '19.99')],
+      );
     });
 
     test('encodes boolean values', () {
-      expect(encoder.encode('active', true, explode: false, allowEmpty: true), {
-        'active': 'true',
-      });
+      expect(
+        encoder.encode('active', true, explode: false, allowEmpty: true),
+        [(name: 'active', value: 'true')],
+      );
       expect(
         encoder.encode('active', false, explode: false, allowEmpty: true),
-        {'active': 'false'},
+        [(name: 'active', value: 'false')],
       );
     });
 
@@ -50,7 +53,7 @@ void main() {
       test('encodes null value when allowEmpty is true', () {
         expect(
           encoder.encode('param', null, explode: false, allowEmpty: true),
-          {'param': ''},
+          [(name: 'param', value: '')],
         );
       });
 
@@ -70,9 +73,9 @@ void main() {
       });
 
       test('encodes empty string when allowEmpty is true', () {
-        expect(encoder.encode('param', '', explode: false, allowEmpty: true), {
-          'param': '',
-        });
+        expect(encoder.encode('param', '', explode: false, allowEmpty: true), [
+          (name: 'param', value: ''),
+        ]);
       });
 
       test('throws when empty List and allowEmpty is false', () {
@@ -90,7 +93,7 @@ void main() {
       test('encodes empty List when allowEmpty is true', () {
         expect(
           encoder.encode('param', <String>[], explode: false, allowEmpty: true),
-          {'param': ''},
+          [(name: 'param', value: '')],
         );
       });
 
@@ -109,7 +112,7 @@ void main() {
       test('encodes empty Set when allowEmpty is true', () {
         expect(
           encoder.encode('param', <String>{}, explode: false, allowEmpty: true),
-          {'param': ''},
+          [(name: 'param', value: '')],
         );
       });
 
@@ -133,7 +136,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ),
-          {'param': ''},
+          [(name: 'param', value: '')],
         );
       });
     });
@@ -146,7 +149,7 @@ void main() {
           explode: false,
           allowEmpty: true,
         ),
-        {'colors': 'red,green,blue'},
+        [(name: 'colors', value: 'red,green,blue')],
       );
     });
 
@@ -158,7 +161,7 @@ void main() {
           explode: false,
           allowEmpty: true,
         ),
-        {'items': 'item+1,item+2'},
+        [(name: 'items', value: 'item+1,item+2')],
       );
     });
 
@@ -170,7 +173,7 @@ void main() {
           explode: false,
           allowEmpty: true,
         ),
-        {'colors': 'red,green,blue'},
+        [(name: 'colors', value: 'red,green,blue')],
       );
     });
 
@@ -182,7 +185,7 @@ void main() {
           explode: false,
           allowEmpty: true,
         ),
-        {'param': 'key,value'},
+        [(name: 'param', value: 'key,value')],
       );
     });
 
@@ -223,9 +226,11 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          {
-            'colors': ['red', 'green', 'blue'],
-          },
+          [
+            (name: 'colors', value: 'red'),
+            (name: 'colors', value: 'green'),
+            (name: 'colors', value: 'blue'),
+          ],
         );
       });
 
@@ -237,9 +242,10 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          {
-            'items': ['item+1', 'item+2'],
-          },
+          [
+            (name: 'items', value: 'item+1'),
+            (name: 'items', value: 'item+2'),
+          ],
         );
       });
 
@@ -251,20 +257,37 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          {
-            'colors': ['red', 'green', 'blue'],
-          },
+          [
+            (name: 'colors', value: 'red'),
+            (name: 'colors', value: 'green'),
+            (name: 'colors', value: 'blue'),
+          ],
         );
       });
 
       test('primitive values are encoded the same with explode=true', () {
         expect(
           encoder.encode('color', 'blue', explode: true, allowEmpty: true),
-          {'color': 'blue'},
+          [(name: 'color', value: 'blue')],
         );
-        expect(encoder.encode('age', 25, explode: true, allowEmpty: true), {
-          'age': '25',
-        });
+        expect(encoder.encode('age', 25, explode: true, allowEmpty: true), [
+          (name: 'age', value: '25'),
+        ]);
+      });
+
+      test('encodes Map with explode=true', () {
+        expect(
+          encoder.encode(
+            'user',
+            {'role': 'admin', 'firstName': 'Alex'},
+            explode: true,
+            allowEmpty: true,
+          ),
+          [
+            (name: 'role', value: 'admin'),
+            (name: 'firstName', value: 'Alex'),
+          ],
+        );
       });
     });
 
@@ -278,7 +301,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ),
-          {'point': 'x,1,y,2'},
+          [(name: 'point', value: 'x,1,y,2')],
         );
       });
 
@@ -290,7 +313,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ),
-          {'user': 'name,John,role,admin'},
+          [(name: 'user', value: 'name,John,role,admin')],
         );
       });
 
@@ -302,7 +325,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ),
-          {'address': 'street,123+Main+St,city,New+York'},
+          [(name: 'address', value: 'street,123+Main+St,city,New+York')],
         );
       });
 
@@ -314,7 +337,10 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          {'role': 'admin', 'firstName': 'Alex'},
+          [
+            (name: 'role', value: 'admin'),
+            (name: 'firstName', value: 'Alex'),
+          ],
         );
       });
 

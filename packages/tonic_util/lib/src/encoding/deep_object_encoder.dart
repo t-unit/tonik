@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 import 'package:tonic_util/src/encoding/base_encoder.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
+import 'package:tonic_util/src/encoding/parameter_entry.dart';
 
 /// An encoder for OpenAPI's "deepObject" style parameters.
 ///
@@ -34,7 +35,7 @@ class DeepObjectEncoder extends BaseEncoder {
   ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder or if the value is not a Map.
-  Map<String, String> encode(
+  List<ParameterEntry> encode(
     String paramName,
     dynamic value, {
     required bool allowEmpty,
@@ -45,32 +46,32 @@ class DeepObjectEncoder extends BaseEncoder {
       if (!allowEmpty) {
         throw const EmptyValueException();
       }
-      return {paramName: ''};
+      return [(name: paramName, value: '')];
     }
 
     return _encodeMap(paramName, value, allowEmpty: allowEmpty);
   }
 
   /// Internal method to encode a Map according to deepObject style.
-  Map<String, String> _encodeMap(
+  List<ParameterEntry> _encodeMap(
     String path,
     Map<String, dynamic> map, {
     required bool allowEmpty,
   }) {
-    final result = <String, String>{};
+    final result = <ParameterEntry>[];
 
     for (final entry in map.entries) {
       final key = entry.key;
       final value = entry.value;
 
       if (value == null) {
-        result['$path[$key]'] = '';
+        result.add((name: '$path[$key]', value: ''));
       } else if (value is Map<String, dynamic>) {
         if (!allowEmpty && value.isEmpty) {
           throw const EmptyValueException();
         }
         if (value.isEmpty) {
-          result['$path[$key]'] = '';
+          result.add((name: '$path[$key]', value: ''));
         } else {
           // Handle nested maps by recursively encoding them
           result.addAll(
@@ -86,7 +87,7 @@ class DeepObjectEncoder extends BaseEncoder {
           valueToString(value),
           useQueryEncoding: true,
         );
-        result['$path[$key]'] = encodedValue;
+        result.add((name: '$path[$key]', value: encodedValue));
       }
     }
 

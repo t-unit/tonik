@@ -1,5 +1,6 @@
 import 'package:tonic_util/src/encoding/base_encoder.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
+import 'package:tonic_util/src/encoding/parameter_entry.dart';
 
 /// An encoder for OpenAPI's "form" style parameters.
 ///
@@ -29,7 +30,7 @@ class FormEncoder extends BaseEncoder {
   ///
   /// Throws an [UnsupportedEncodingTypeException] if the value type is not
   /// supported by this encoder.
-  Map<String, dynamic> encode(
+  List<ParameterEntry> encode(
     String paramName,
     dynamic value, {
     required bool explode,
@@ -44,7 +45,7 @@ class FormEncoder extends BaseEncoder {
       if (!allowEmpty) {
         throw const EmptyValueException();
       }
-      return {paramName: ''};
+      return [(name: paramName, value: '')];
     }
 
     if (value is Iterable) {
@@ -53,41 +54,52 @@ class FormEncoder extends BaseEncoder {
       );
 
       if (explode) {
-        return {paramName: values.toList()};
+        return values.map((v) => (name: paramName, value: v)).toList();
       } else {
-        return {paramName: values.join(',')};
+        return [(name: paramName, value: values.join(','))];
       }
     }
 
     if (value is Map<String, dynamic>) {
       if (explode) {
         // With explode=true, each property becomes a separate name=value pair
-        return value.map(
-          (key, val) => MapEntry(
-            key,
-            encodeValue(valueToString(val), useQueryEncoding: true),
-          ),
-        );
+        return value.entries
+            .map(
+              (entry) => (
+                name: entry.key,
+                value: encodeValue(
+                  valueToString(entry.value),
+                  useQueryEncoding: true,
+                ),
+              ),
+            )
+            .toList();
       } else {
         // With explode=false, keys and values are comma-separated
-        return {
-          paramName: value.entries
-              .expand(
-                (entry) => [
-                  entry.key,
-                  encodeValue(
-                    valueToString(entry.value),
-                    useQueryEncoding: true,
-                  ),
-                ],
-              )
-              .join(','),
-        };
+        return [
+          (
+            name: paramName,
+            value: value.entries
+                .expand(
+                  (entry) => [
+                    entry.key,
+                    encodeValue(
+                      valueToString(entry.value),
+                      useQueryEncoding: true,
+                    ),
+                  ],
+                )
+                .join(','),
+          ),
+        ];
       }
     }
 
-    return {
-      paramName: encodeValue(valueToString(value), useQueryEncoding: true),
-    };
+    return [
+      (
+        name: paramName,
+        value: encodeValue(valueToString(value), useQueryEncoding: true),
+      ),
+    ];
   }
 }
