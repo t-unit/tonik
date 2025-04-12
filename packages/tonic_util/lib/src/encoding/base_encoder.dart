@@ -1,4 +1,3 @@
-import 'package:big_decimal/big_decimal.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
 
@@ -21,10 +20,7 @@ abstract class BaseEncoder {
     if (value == null ||
         value is String ||
         value is num ||
-        value is bool ||
-        value is BigDecimal ||
-        value is Uri ||
-        value is DateTime) {
+        value is bool) {
       return;
     }
 
@@ -38,9 +34,6 @@ abstract class BaseEncoder {
         return element is! String &&
             element is! num &&
             element is! bool &&
-            element is! BigDecimal &&
-            element is! Uri &&
-            element is! DateTime &&
             element != null;
       });
 
@@ -76,9 +69,6 @@ abstract class BaseEncoder {
         return val is! String &&
             val is! num &&
             val is! bool &&
-            val is! BigDecimal &&
-            val is! Uri &&
-            val is! DateTime &&
             val != null;
       });
 

@@ -1,4 +1,3 @@
-import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
 import 'package:tonic_util/src/encoding/form_encoder.dart';
@@ -45,21 +44,6 @@ void main() {
         encoder.encode('active', false, explode: false, allowEmpty: true),
         {'active': 'false'},
       );
-    });
-
-    test('encodes BigDecimal value', () {
-      final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
-      expect(
-        encoder.encode('amount', bigDecimal, explode: false, allowEmpty: true),
-        {'amount': '123456789012345678901234.56789'},
-      );
-    });
-
-    test('encodes Uri value', () {
-      final uri = Uri.parse('https://example.com/path?query=value');
-      expect(encoder.encode('url', uri, explode: false, allowEmpty: true), {
-        'url': 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
-      });
     });
 
     group('empty value handling', () {

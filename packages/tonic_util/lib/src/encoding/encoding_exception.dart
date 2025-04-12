@@ -1,5 +1,5 @@
 /// Base class for all encoding related exceptions.
-abstract class EncodingException implements Exception {
+class EncodingException implements Exception {
   /// Creates a new [EncodingException] with the specified [message].
   const EncodingException(this.message);
 

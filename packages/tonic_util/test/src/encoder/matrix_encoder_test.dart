@@ -1,4 +1,3 @@
-import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonic_util/tonic_util.dart';
 
@@ -46,22 +45,6 @@ void main() {
       expect(
         encoder.encode('premium', false, explode: false, allowEmpty: true),
         ';premium=false',
-      );
-    });
-
-    test('encodes BigDecimal value', () {
-      final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
-      expect(
-        encoder.encode('amount', bigDecimal, explode: false, allowEmpty: true),
-        ';amount=123456789012345678901234.56789',
-      );
-    });
-
-    test('encodes Uri value', () {
-      final uri = Uri.parse('https://example.com/path?query=value');
-      expect(
-        encoder.encode('url', uri, explode: false, allowEmpty: true),
-        ';url=https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
       );
     });
 

@@ -1,4 +1,3 @@
-import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonic_util/src/encoding/delimited_encoder.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
@@ -34,26 +33,12 @@ void main() {
         ]);
       });
 
-      test('encodes BigDecimal value', () {
-        final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
-        expect(encoder.encode(bigDecimal, explode: false, allowEmpty: true), [
-          '123456789012345678901234.56789',
-        ]);
-      });
-
       test('encodes boolean values', () {
         expect(encoder.encode(true, explode: false, allowEmpty: true), [
           'true',
         ]);
         expect(encoder.encode(false, explode: false, allowEmpty: true), [
           'false',
-        ]);
-      });
-
-      test('encodes Uri value', () {
-        final uri = Uri.parse('https://example.com/path?query=value');
-        expect(encoder.encode(uri, explode: false, allowEmpty: true), [
-          'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
         ]);
       });
 
@@ -271,26 +256,12 @@ void main() {
         ]);
       });
 
-      test('encodes BigDecimal value', () {
-        final bigDecimal = BigDecimal.parse('123456789012345678901234.56789');
-        expect(encoder.encode(bigDecimal, explode: false, allowEmpty: true), [
-          '123456789012345678901234.56789',
-        ]);
-      });
-
       test('encodes boolean values', () {
         expect(encoder.encode(true, explode: false, allowEmpty: true), [
           'true',
         ]);
         expect(encoder.encode(false, explode: false, allowEmpty: true), [
           'false',
-        ]);
-      });
-
-      test('encodes Uri value', () {
-        final uri = Uri.parse('https://example.com/path?query=value');
-        expect(encoder.encode(uri, explode: false, allowEmpty: true), [
-          'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
         ]);
       });
 

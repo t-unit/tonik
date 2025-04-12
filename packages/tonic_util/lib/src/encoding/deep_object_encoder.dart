@@ -1,4 +1,3 @@
-import 'package:big_decimal/big_decimal.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_util/src/encoding/base_encoder.dart';
 import 'package:tonic_util/src/encoding/encoding_exception.dart';
@@ -80,8 +79,6 @@ class DeepObjectEncoder extends BaseEncoder {
         }
       } else if (value is List || value is Set) {
         throw UnsupportedEncodingTypeException(valueType: value.runtimeType);
-      } else if (value is DateTime) {
-        result['$path[$key]'] = valueToString(value);
       } else if (value is String && !allowEmpty && value.isEmpty) {
         throw const EmptyValueException();
       } else {
@@ -114,13 +111,7 @@ class DeepObjectEncoder extends BaseEncoder {
       for (final entry in value.entries) {
         final val = entry.value;
 
-        if (val == null ||
-            val is String ||
-            val is num ||
-            val is bool ||
-            val is BigDecimal ||
-            val is Uri ||
-            val is DateTime) {
+        if (val == null || val is String || val is num || val is bool) {
           continue;
         }
 
@@ -151,11 +142,6 @@ class DeepObjectEncoder extends BaseEncoder {
     if (value == null) {
       return '';
     }
-
-    if (value is DateTime) {
-      return value.toIso8601String();
-    }
-
     return value.toString();
   }
 }
