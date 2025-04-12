@@ -152,11 +152,13 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result[r'filter'] = formEncoder.encode(
-              r'filter',
-              filter.toJson(),
-              explode: false,
-              allowEmpty: true,
+            result.addAll(
+              formEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: false,
+                allowEmpty: true,
+              ),
             );
           }
           return result;
@@ -464,11 +466,8 @@ void main() {
             );
           }
           if (sort != null) {
-            result[r'sort'] = formEncoder.encode(
-              r'sort',
-              sort,
-              explode: false,
-              allowEmpty: true,
+            result.addAll(
+                formEncoder.encode(r'sort', sort, explode: false, allowEmpty: true),
             );
           }
           return result;
@@ -547,11 +546,13 @@ void main() {
           final formEncoder = FormEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           if (filter != null) {
-            result[r'filter'] = formEncoder.encode(
-              r'filter',
-              filter.toJson(),
-              explode: true,
-              allowEmpty: true,
+            result.addAll(
+              formEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: true,
+                allowEmpty: true,
+              ),
             );
           }
           if (tags != null) {
@@ -679,11 +680,13 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result[r'filter'] = formEncoder.encode(
-              r'filter',
-              filter.toJson(),
-              explode: false,
-              allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: false,
+                allowEmpty: false,
+              ),
             );
           }
           return result;
@@ -792,33 +795,23 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (name != null) {
-            result[r'name'] = formEncoder.encode(
-              r'name',
-              name,
-              explode: false,
-              allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(r'name', name, explode: false, allowEmpty: false),
             );
           }
           if (tags != null) {
-            result[r'tags'] = formEncoder.encode(
-              r'tags',
-              tags,
-              explode: false, allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(r'tags', tags, explode: false, allowEmpty: false),
             );
           }
           if (age != null) {
-            result[r'age'] = formEncoder.encode(
-              r'age',
-              age,
-              explode: false,
-              allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(r'age', age, explode: false, allowEmpty: false),
             );
           }
           if (active != null) {
-            result[r'active'] = formEncoder.encode(
-              r'active',
-              active,
-              explode: false, allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(r'active', active, explode: false, allowEmpty: false),
             );
           }
           return result;
@@ -897,18 +890,22 @@ void main() {
           final result = <String, dynamic>{};
           final formEncoder = FormEncoder();
           if (filter != null) {
-            result[r'filter'] = formEncoder.encode(
-              r'filter',
-              filter.toJson(),
-              explode: false,
-              allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(
+                r'filter',
+                filter.toJson(),
+                explode: false,
+                allowEmpty: false,
+                ),
             );
           }
           if (range != null) {
-            result[r'range'] = formEncoder.encode(
-              r'range',
-              range.toJson(),
-              explode: false, allowEmpty: false,
+            result.addAll(
+              formEncoder.encode(
+                r'range',
+                range.toJson(),
+                explode: false, allowEmpty: false,
+              ),
             );
           }
           return result;
@@ -1055,11 +1052,13 @@ void main() {
           final spacedEncoder = DelimitedEncoder.spaced();
           final pipedEncoder = DelimitedEncoder.piped();
           if (color != null) {
-            result[r'color'] = formEncoder.encode(
-              r'color',
-              color.toJson(),
-              explode: false,
-              allowEmpty: true,
+            result.addAll(
+              formEncoder.encode(
+                r'color',
+                color.toJson(),
+                explode: false,
+                allowEmpty: true,
+              ),
             );
           }
           result.addAll(

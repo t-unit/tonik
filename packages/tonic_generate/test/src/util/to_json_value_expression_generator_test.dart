@@ -18,7 +18,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('testName', property), 'testName');
+      expect(buildToJsonPropertyExpression('testName', property), 'testName');
     });
 
     test('for nullable String property', () {
@@ -29,7 +29,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('testName', property), 'testName');
+      expect(buildToJsonPropertyExpression('testName', property), 'testName');
     });
 
     test('for Integer property', () {
@@ -40,7 +40,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('testAge', property), 'testAge');
+      expect(buildToJsonPropertyExpression('testAge', property), 'testAge');
     });
 
     test('for DateTime property', () {
@@ -52,7 +52,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('startTime', property),
+        buildToJsonPropertyExpression('startTime', property),
         'startTime.toIso8601String()',
       );
     });
@@ -66,7 +66,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('dueDate', property),
+        buildToJsonPropertyExpression('dueDate', property),
         'dueDate?.toIso8601String()',
       );
     });
@@ -79,7 +79,10 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('price', property), 'price.toString()');
+      expect(
+        buildToJsonPropertyExpression('price', property),
+        'price.toString()',
+      );
     });
 
     test('for nullable Decimal property', () {
@@ -91,7 +94,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('discountPrice', property),
+        buildToJsonPropertyExpression('discountPrice', property),
         'discountPrice?.toString()',
       );
     });
@@ -110,7 +113,10 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('status', property), 'status.toJson()');
+      expect(
+        buildToJsonPropertyExpression('status', property),
+        'status.toJson()',
+      );
     });
 
     test('for nullable Enum property', () {
@@ -128,7 +134,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('priority', property),
+        buildToJsonPropertyExpression('priority', property),
         'priority?.toJson()',
       );
     });
@@ -149,7 +155,7 @@ void main() {
       );
 
       expect(
-        buildToJsonValueExpression('priority', property),
+        buildToJsonPropertyExpression('priority', property),
         'priority?.toJson()',
       );
     });
@@ -166,7 +172,7 @@ void main() {
         isDeprecated: false,
       );
       // List<primitive> is handled directly
-      expect(buildToJsonValueExpression('tags', property), 'tags');
+      expect(buildToJsonPropertyExpression('tags', property), 'tags');
     });
 
     test('for List<DateTime> property', () {
@@ -181,7 +187,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('meetingTimes', property),
+        buildToJsonPropertyExpression('meetingTimes', property),
         'meetingTimes.map((e) => e.toIso8601String()).toList()',
       );
     });
@@ -200,7 +206,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('addresses', property),
+        buildToJsonPropertyExpression('addresses', property),
         'addresses.map((e) => e.toJson()).toList()',
       );
     });
@@ -217,7 +223,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('lineItems', property),
+        buildToJsonPropertyExpression('lineItems', property),
         'lineItems?.map((e) => e.toString()).toList()',
       );
     });
@@ -235,7 +241,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('id', property), 'id');
+      expect(buildToJsonPropertyExpression('id', property), 'id');
     });
 
     test('for AliasModel property (DateTime)', () {
@@ -252,7 +258,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('createdAt', property),
+        buildToJsonPropertyExpression('createdAt', property),
         'createdAt.toIso8601String()',
       );
     });
@@ -271,7 +277,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('updatedAt', property),
+        buildToJsonPropertyExpression('updatedAt', property),
         'updatedAt?.toIso8601String()',
       );
     });
@@ -295,7 +301,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('address', property),
+        buildToJsonPropertyExpression('address', property),
         'address.toJson()',
       );
     });
@@ -319,7 +325,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('address', property),
+        buildToJsonPropertyExpression('address', property),
         'address?.toJson()',
       );
     });
@@ -338,7 +344,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('homeAddress', property),
+        buildToJsonPropertyExpression('homeAddress', property),
         'homeAddress.toJson()',
       );
     });
@@ -357,7 +363,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('workAddress', property),
+        buildToJsonPropertyExpression('workAddress', property),
         'workAddress?.toJson()',
       );
     });
@@ -376,7 +382,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('combinedData', property),
+        buildToJsonPropertyExpression('combinedData', property),
         'combinedData.toJson()',
       );
     });
@@ -395,7 +401,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('combinedData', property),
+        buildToJsonPropertyExpression('combinedData', property),
         'combinedData?.toJson()',
       );
     });
@@ -414,7 +420,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('pet', property), 'pet.toJson()');
+      expect(buildToJsonPropertyExpression('pet', property), 'pet.toJson()');
     });
 
     test('for nullable OneOfModel property', () {
@@ -431,7 +437,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
       );
-      expect(buildToJsonValueExpression('pet', property), 'pet?.toJson()');
+      expect(buildToJsonPropertyExpression('pet', property), 'pet?.toJson()');
     });
 
     test('for AnyOfModel property', () {
@@ -449,7 +455,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('content', property),
+        buildToJsonPropertyExpression('content', property),
         'content.toJson()',
       );
     });
@@ -468,7 +474,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('content', property),
+        buildToJsonPropertyExpression('content', property),
         'content?.toJson()',
       );
     });
@@ -490,7 +496,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('meetingTimes', property),
+        buildToJsonPropertyExpression('meetingTimes', property),
         'meetingTimes.map((e) => e.toIso8601String()).toList()',
       );
     });
@@ -512,7 +518,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('meetingTimes', property),
+        buildToJsonPropertyExpression('meetingTimes', property),
         'meetingTimes?.map((e) => e.toIso8601String()).toList()',
       );
     });
@@ -536,7 +542,7 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('addresses', property),
+        buildToJsonPropertyExpression('addresses', property),
         'addresses.map((e) => e.toJson()).toList()',
       );
     });
@@ -560,8 +566,245 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        buildToJsonValueExpression('addresses', property),
+        buildToJsonPropertyExpression('addresses', property),
         'addresses?.map((e) => e.toJson()).toList()',
+      );
+    });
+  });
+
+  group('buildToJsonPathParameterExpression', () {
+    test('for String parameter', () {
+      final parameter = PathParameterObject(
+        name: 'testName',
+        rawName: 'testName',
+        description: 'Test name parameter',
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonPathParameterExpression('testName', parameter),
+        'testName',
+      );
+    });
+
+    test('for Integer parameter', () {
+      final parameter = PathParameterObject(
+        name: 'testAge',
+        rawName: 'testAge',
+        description: 'Test age parameter',
+        model: IntegerModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonPathParameterExpression('testAge', parameter),
+        'testAge',
+      );
+    });
+
+    test('for DateTime parameter', () {
+      final parameter = PathParameterObject(
+        name: 'startTime',
+        rawName: 'startTime',
+        description: 'Test start time parameter',
+        model: DateTimeModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonPathParameterExpression('startTime', parameter),
+        'startTime.toIso8601String()',
+      );
+    });
+
+    test('for Enum parameter', () {
+      final enumModel = EnumModel<String>(
+        name: 'Status',
+        values: const {'active', 'inactive'},
+        isNullable: false,
+        context: context,
+      );
+      final parameter = PathParameterObject(
+        name: 'status',
+        rawName: 'status',
+        description: 'Test status parameter',
+        model: enumModel,
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonPathParameterExpression('status', parameter),
+        'status.toJson()',
+      );
+    });
+  });
+
+  group('buildToJsonQueryParameterExpression', () {
+    test('for String parameter', () {
+      final parameter = QueryParameterObject(
+        name: 'testName',
+        rawName: 'testName',
+        description: 'Test name parameter',
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        allowReserved: true,
+      );
+      expect(
+        buildToJsonQueryParameterExpression('testName', parameter),
+        'testName',
+      );
+    });
+
+    test('for Integer parameter', () {
+      final parameter = QueryParameterObject(
+        name: 'testAge',
+        rawName: 'testAge',
+        description: 'Test age parameter',
+        model: IntegerModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        allowReserved: true,
+      );
+      expect(
+        buildToJsonQueryParameterExpression('testAge', parameter),
+        'testAge',
+      );
+    });
+
+    test('for DateTime parameter', () {
+      final parameter = QueryParameterObject(
+        name: 'startTime',
+        rawName: 'startTime',
+        description: 'Test start time parameter',
+        model: DateTimeModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        allowReserved: true,
+      );
+      expect(
+        buildToJsonQueryParameterExpression('startTime', parameter),
+        'startTime.toIso8601String()',
+      );
+    });
+
+    test('for Enum parameter', () {
+      final enumModel = EnumModel<String>(
+        name: 'Status',
+        values: const {'active', 'inactive'},
+        isNullable: false,
+        context: context,
+      );
+      final parameter = QueryParameterObject(
+        name: 'status',
+        rawName: 'status',
+        description: 'Test status parameter',
+        model: enumModel,
+        encoding: QueryParameterEncoding.form,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        allowReserved: true,
+      );
+      expect(
+        buildToJsonQueryParameterExpression('status', parameter),
+        'status.toJson()',
+      );
+    });
+  });
+
+  group('buildToJsonHeaderParameterExpression', () {
+    test('for String parameter', () {
+      final parameter = RequestHeaderObject(
+        name: 'X-Test-Header',
+        rawName: 'X-Test-Header',
+        description: 'Test header parameter',
+        model: StringModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonHeaderParameterExpression('testHeader', parameter),
+        'testHeader',
+      );
+    });
+
+    test('for DateTime parameter', () {
+      final parameter = RequestHeaderObject(
+        name: 'X-Timestamp',
+        rawName: 'X-Timestamp',
+        description: 'Test timestamp parameter',
+        model: DateTimeModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonHeaderParameterExpression('timestamp', parameter),
+        'timestamp.toIso8601String()',
+      );
+    });
+
+    test('for Enum parameter', () {
+      final enumModel = EnumModel<String>(
+        name: 'ContentType',
+        values: const {'json', 'xml'},
+        isNullable: false,
+        context: context,
+      );
+      final parameter = RequestHeaderObject(
+        name: 'Content-Type',
+        rawName: 'Content-Type',
+        description: 'Test content type parameter',
+        model: enumModel,
+        encoding: HeaderParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        buildToJsonHeaderParameterExpression('contentType', parameter),
+        'contentType.toJson()',
       );
     });
   });

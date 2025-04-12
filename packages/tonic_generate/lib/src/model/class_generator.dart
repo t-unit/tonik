@@ -424,7 +424,7 @@ class ClassGenerator {
       final property = prop.property;
       final name = prop.normalizedName;
       final jsonKeyString = literalString(property.name, raw: true).code;
-      final valueExprString = buildToJsonValueExpression(name, property);
+      final valueExprString = buildToJsonPropertyExpression(name, property);
 
       if (property.isRequired || property.isNullable) {
         parts.add(Code('$jsonKeyString: $valueExprString, '));

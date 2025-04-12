@@ -7,6 +7,7 @@ import 'package:tonic_core/tonic_core.dart';
 import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/parameter_name_normalizer.dart';
+import 'package:tonic_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating callable operation classes
@@ -236,7 +237,7 @@ class OperationGenerator {
     );
   }
 
-  /// Generates a path expression for the operation
+  /// Generates the path method for the operation
   @visibleForTesting
   Method generatePathMethod(
     Operation operation,
@@ -306,14 +307,10 @@ class OperationGenerator {
           }
 
           final encoderName = encoders[param.parameter.encoding]!;
-          final needsToJson =
-              param.parameter.model is! PrimitiveModel &&
-              param.parameter.model is! ListModel;
-
-          final valueExpression =
-              needsToJson
-                  ? '${param.normalizedName}.toJson()'
-                  : param.normalizedName;
+          final valueExpression = buildToJsonPathParameterExpression(
+            param.normalizedName,
+            param.parameter,
+          );
 
           return Code(
             "'\${$encoderName.encode($valueExpression, "
@@ -366,7 +363,7 @@ class OperationGenerator {
     );
   }
 
-  /// Generates a query parameters expression for the operation
+  /// Generates the query parameters method for the operation
   @visibleForTesting
   Method generateQueryParametersMethod(
     Operation operation,
@@ -465,14 +462,11 @@ class OperationGenerator {
 
       final encoding = resolvedParam.encoding;
       final encoderName = encoders[encoding]!;
-      final needsToJson =
-          resolvedParam.model is! PrimitiveModel &&
-          resolvedParam.model is! ListModel;
-
-      final value =
-          needsToJson
-              ? refer(paramName).property('toJson').call([])
-              : refer(paramName);
+      final valueExpression = buildToJsonQueryParameterExpression(
+        paramName,
+        resolvedParam,
+      );
+      final value = refer(valueExpression);
 
       Expression encodedValue;
       if (encoding == QueryParameterEncoding.deepObject) {
@@ -511,7 +505,8 @@ class OperationGenerator {
         body.add(
           Block.of([
             Code('if ($paramName != null) {'),
-            if (encoding == QueryParameterEncoding.deepObject)
+            if (encoding == QueryParameterEncoding.deepObject ||
+                encoding == QueryParameterEncoding.form)
               refer('result').property('addAll').call([encodedValue]).statement
             else
               refer('result')
@@ -550,13 +545,12 @@ class OperationGenerator {
     );
   }
 
-  /// Generates an options expression for the operation
+  /// Generates the options method for the operation
   @visibleForTesting
   Method generateOptionsMethod(
     Operation operation,
     List<({String normalizedName, RequestHeaderObject parameter})> headers,
   ) {
-    // Convert HttpMethod enum to string using a switch statement
     final methodString = switch (operation.method) {
       HttpMethod.get => 'GET',
       HttpMethod.post => 'POST',
@@ -619,51 +613,38 @@ class OperationGenerator {
           ),
         );
 
-        final needsToJson =
-            resolvedParam.model is! PrimitiveModel &&
-            resolvedParam.model is! ListModel;
-
-        Expression headerValue;
-        if (needsToJson) {
-          headerValue = refer('headerEncoder')
-              .property('encode')
-              .call(
-                [refer(paramName).property('toJson').call([])],
-                {
-                  'explode': literalBool(resolvedParam.explode),
-                  'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-                },
-              );
-        } else {
-          headerValue = refer('headerEncoder')
-              .property('encode')
-              .call(
-                [refer(paramName)],
-                {
-                  'explode': literalBool(resolvedParam.explode),
-                  'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-                },
-              );
-        }
+        final valueExpression = buildToJsonHeaderParameterExpression(
+          paramName,
+          resolvedParam,
+        );
+        final headerAssignment =
+            refer('headers')
+                .index(literalString(rawName, raw: true))
+                .assign(
+                  refer('headerEncoder')
+                      .property('encode')
+                      .call(
+                        [refer(valueExpression)],
+                        {
+                          'explode': literalBool(resolvedParam.explode),
+                          'allowEmpty': literalBool(
+                            resolvedParam.allowEmptyValue,
+                          ),
+                        },
+                      ),
+                )
+                .statement;
 
         if (!resolvedParam.isRequired) {
           bodyStatements.add(
             Block.of([
               Code('if ($paramName != null) {'),
-              refer('headers')
-                  .index(literalString(rawName, raw: true))
-                  .assign(headerValue)
-                  .statement,
+              headerAssignment,
               const Code('}'),
             ]),
           );
         } else {
-          bodyStatements.add(
-            refer('headers')
-                .index(literalString(rawName, raw: true))
-                .assign(headerValue)
-                .statement,
-          );
+          bodyStatements.add(headerAssignment);
         }
       }
     }
