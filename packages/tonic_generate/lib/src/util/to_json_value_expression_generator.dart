@@ -31,7 +31,7 @@ String buildToJsonQueryParameterExpression(
   return suffix == null ? parameterName : '$parameterName$suffix';
 }
 
-/// Creates a Dart expression string that correctly serializes a 
+/// Creates a Dart expression string that correctly serializes a
 /// header parameter to its JSON representation.
 String buildToJsonHeaderParameterExpression(
   String parameterName,

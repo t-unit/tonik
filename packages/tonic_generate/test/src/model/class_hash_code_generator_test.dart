@@ -208,8 +208,8 @@ void main() {
       const expectedMethod = '''
         @override
         int get hashCode {
-          const _deepEquals = DeepCollectionEquality();
-          return Object.hash(name, _deepEquals.hash(tags));
+          const deepEquals = DeepCollectionEquality();
+          return Object.hash(name, deepEquals.hash(tags));
         }
         ''';
 
@@ -251,8 +251,8 @@ void main() {
       const expectedMethod = '''
         @override
         int get hashCode {
-          const _deepEquals = DeepCollectionEquality();
-          return Object.hash(name, _deepEquals.hash(nestedList));
+          const deepEquals = DeepCollectionEquality();
+          return Object.hash(name, deepEquals.hash(nestedList));
         }
         ''';
 

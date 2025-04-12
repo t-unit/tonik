@@ -142,7 +142,7 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required List<String> ids}) {
-          final simpleEncoder = SimpleEncoder();
+          const simpleEncoder = SimpleEncoder();
           return r'/users/'
             '${simpleEncoder.encode(ids, explode: false, allowEmpty: false)}';
         }
@@ -196,7 +196,7 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required List<String> ids}) {
-          final labelEncoder = LabelEncoder();
+          const labelEncoder = LabelEncoder();
           return r'/users'
             '${labelEncoder.encode(ids, explode: false, allowEmpty: false)}';
         }
@@ -250,9 +250,9 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required List<String> ids}) {
-          final matrixEncoder = MatrixEncoder();
+          const matrixEncoder = MatrixEncoder();
           return r'/users'
-          '${matrixEncoder.encode(ids, explode: false, allowEmpty: false)}';
+            '${matrixEncoder.encode(ids, explode: false, allowEmpty: false)}';
         }
       ''';
 
@@ -301,7 +301,7 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required Anonymous filter}) {
-          final simpleEncoder = SimpleEncoder();
+          const simpleEncoder = SimpleEncoder();
           return r'/users/'
             '${simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: false)}';
         }
@@ -352,7 +352,7 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required Anonymous filter}) {
-          final simpleEncoder = SimpleEncoder();
+          const simpleEncoder = SimpleEncoder();
           return r'/users/'
             '${simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: true)}';
         }
@@ -436,9 +436,9 @@ void main() {
           required String type,
           required List<String> roles,
         }) {
-          final simpleEncoder = SimpleEncoder();
-          final labelEncoder = LabelEncoder();
-          final matrixEncoder = MatrixEncoder();
+          const simpleEncoder = SimpleEncoder();
+          const labelEncoder = LabelEncoder();
+          const matrixEncoder = MatrixEncoder();
           return r'/users/'
             '${simpleEncoder.encode(userId, explode: false, allowEmpty: false)}'
             '${labelEncoder.encode(type, explode: false, allowEmpty: false)}'
@@ -544,9 +544,9 @@ void main() {
           required AnonymousModel filter,
           required OneOfValue id,
         }) {
-          final simpleEncoder = SimpleEncoder();
-          final matrixEncoder = MatrixEncoder();
-          final labelEncoder = LabelEncoder();
+          const simpleEncoder = SimpleEncoder();
+          const matrixEncoder = MatrixEncoder();
+          const labelEncoder = LabelEncoder();
           return r'/users/'
             '${simpleEncoder.encode(role.toJson(), explode: false, allowEmpty: false)}'
             r'/filter/'
@@ -616,7 +616,7 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required String animalId, required String id}) {
-          final simpleEncoder = SimpleEncoder();
+          const simpleEncoder = SimpleEncoder();
           return r'images/'
             '${simpleEncoder.encode(id, explode: false, allowEmpty: false)}'
             r'/animals/'
@@ -671,7 +671,7 @@ void main() {
 
       const expectedMethod = r'''
         String _path({required String user}) {
-          final simpleEncoder = SimpleEncoder();
+          const simpleEncoder = SimpleEncoder();
           return r'users/'
             '${simpleEncoder.encode(user, explode: false, allowEmpty: false)}'
             r'/permissions/'

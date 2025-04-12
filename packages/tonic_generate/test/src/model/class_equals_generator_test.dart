@@ -149,10 +149,10 @@ void main() {
       @override
       bool operator ==(Object other) {
         if (identical(this, other)) return true;
-        const _deepEquals = DeepCollectionEquality();
+        const deepEquals = DeepCollectionEquality();
         return other is User && 
           other.name == name && 
-          _deepEquals.equals(other.tags, tags);
+          deepEquals.equals(other.tags, tags);
       }
       ''';
 
@@ -233,10 +233,10 @@ void main() {
       @override
       bool operator ==(Object other) {
         if (identical(this, other)) return true;
-        const _deepEquals = DeepCollectionEquality();
+        const deepEquals = DeepCollectionEquality();
         return other is NestedData && 
           other.name == name && 
-          _deepEquals.equals(other.nestedList, nestedList);
+          deepEquals.equals(other.nestedList, nestedList);
       }
       ''';
 

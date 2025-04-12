@@ -25,24 +25,21 @@ void main() {
     });
 
     test('encodes int value', () {
-      expect(
-        encoder.encode('age', 25, explode: false, allowEmpty: true),
-        [(name: 'age', value: '25')],
-      );
+      expect(encoder.encode('age', 25, explode: false, allowEmpty: true), [
+        (name: 'age', value: '25'),
+      ]);
     });
 
     test('encodes double value', () {
-      expect(
-        encoder.encode('price', 19.99, explode: false, allowEmpty: true),
-        [(name: 'price', value: '19.99')],
-      );
+      expect(encoder.encode('price', 19.99, explode: false, allowEmpty: true), [
+        (name: 'price', value: '19.99'),
+      ]);
     });
 
     test('encodes boolean values', () {
-      expect(
-        encoder.encode('active', true, explode: false, allowEmpty: true),
-        [(name: 'active', value: 'true')],
-      );
+      expect(encoder.encode('active', true, explode: false, allowEmpty: true), [
+        (name: 'active', value: 'true'),
+      ]);
       expect(
         encoder.encode('active', false, explode: false, allowEmpty: true),
         [(name: 'active', value: 'false')],
@@ -242,10 +239,7 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          [
-            (name: 'items', value: 'item+1'),
-            (name: 'items', value: 'item+2'),
-          ],
+          [(name: 'items', value: 'item+1'), (name: 'items', value: 'item+2')],
         );
       });
 
@@ -283,10 +277,7 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          [
-            (name: 'role', value: 'admin'),
-            (name: 'firstName', value: 'Alex'),
-          ],
+          [(name: 'role', value: 'admin'), (name: 'firstName', value: 'Alex')],
         );
       });
     });
@@ -337,10 +328,7 @@ void main() {
             explode: true,
             allowEmpty: true,
           ),
-          [
-            (name: 'role', value: 'admin'),
-            (name: 'firstName', value: 'Alex'),
-          ],
+          [(name: 'role', value: 'admin'), (name: 'firstName', value: 'Alex')],
         );
       });
 

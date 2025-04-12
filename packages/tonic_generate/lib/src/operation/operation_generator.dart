@@ -41,6 +41,7 @@ class OperationGenerator {
 
     final code = formatter.format(
       '// Generated code - do not modify by hand\n'
+      '// ignore_for_file: lines_longer_than_80_chars\n '
       '// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_raw_strings\n\n'
       '${library.accept(emitter)}',
     );
@@ -275,7 +276,7 @@ class OperationGenerator {
       encoders[encoding] = encoderName;
 
       body.add(
-        declareFinal(encoderName)
+        declareConst(encoderName)
             .assign(
               refer(
                 encoderClass,
@@ -425,7 +426,7 @@ class OperationGenerator {
         );
       } else {
         body.add(
-          declareFinal(encoderName)
+          declareConst(encoderName)
               .assign(
                 refer(
                   encoderClass,

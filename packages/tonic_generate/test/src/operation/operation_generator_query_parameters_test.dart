@@ -150,7 +150,7 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({Anonymous? filter}) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
               formEncoder.encode(
@@ -215,7 +215,7 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({Anonymous? filter}) {
           final result = <String, dynamic>{};
-          final deepObjectEncoder = DeepObjectEncoder();
+          const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
             result.addAll(
               deepObjectEncoder.encode(
@@ -345,7 +345,7 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({Anonymous? filter}) {
           final result = <String, dynamic>{};
-          final deepObjectEncoder = DeepObjectEncoder();
+          const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
             result.addAll(
               deepObjectEncoder.encode(
@@ -445,9 +445,9 @@ void main() {
           String? sort,
         }) {
           final result = <String, dynamic>{};
-          final deepObjectEncoder = DeepObjectEncoder();
+          const deepObjectEncoder = DeepObjectEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
               deepObjectEncoder.encode(
@@ -467,7 +467,7 @@ void main() {
           }
           if (sort != null) {
             result.addAll(
-                formEncoder.encode(r'sort', sort, explode: false, allowEmpty: true),
+              formEncoder.encode(r'sort', sort, explode: false, allowEmpty: true),
             );
           }
           return result;
@@ -543,7 +543,7 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({Anonymous? filter, List<String>? tags}) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           if (filter != null) {
             result.addAll(
@@ -617,7 +617,7 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({required Anonymous filter}) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           result[r'filter'] = formEncoder.encode(
             r'filter',
             filter.toJson(),
@@ -678,7 +678,7 @@ void main() {
       const expectedMethod = '''
         Map<String, dynamic> _queryParameters({Anonymous? filter}) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
               formEncoder.encode(
@@ -793,7 +793,7 @@ void main() {
           bool? active,
         }) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           if (name != null) {
             result.addAll(
               formEncoder.encode(r'name', name, explode: false, allowEmpty: false),
@@ -888,7 +888,7 @@ void main() {
           AnonymousModel? range,
         }) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
+          const formEncoder = FormEncoder();
           if (filter != null) {
             result.addAll(
               formEncoder.encode(
@@ -896,7 +896,7 @@ void main() {
                 filter.toJson(),
                 explode: false,
                 allowEmpty: false,
-                ),
+              ),
             );
           }
           if (range != null) {
@@ -904,7 +904,8 @@ void main() {
               formEncoder.encode(
                 r'range',
                 range.toJson(),
-                explode: false, allowEmpty: false,
+                explode: false,
+                allowEmpty: false,
               ),
             );
           }
@@ -1047,8 +1048,8 @@ void main() {
           required AllOfComposite composite,
         }) {
           final result = <String, dynamic>{};
-          final formEncoder = FormEncoder();
-          final deepObjectEncoder = DeepObjectEncoder();
+          const formEncoder = FormEncoder();
+          const deepObjectEncoder = DeepObjectEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           final pipedEncoder = DelimitedEncoder.piped();
           if (color != null) {

@@ -17,10 +17,7 @@ abstract class BaseEncoder {
   /// that don't support object encoding).
   @protected
   void checkSupportedType(dynamic value, {bool supportMaps = true}) {
-    if (value == null ||
-        value is String ||
-        value is num ||
-        value is bool) {
+    if (value == null || value is String || value is num || value is bool) {
       return;
     }
 
@@ -66,10 +63,7 @@ abstract class BaseEncoder {
       }
 
       final hasUnsupportedValue = value.values.any((val) {
-        return val is! String &&
-            val is! num &&
-            val is! bool &&
-            val != null;
+        return val is! String && val is! num && val is! bool && val != null;
       });
 
       if (hasUnsupportedValue) {

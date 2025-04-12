@@ -43,9 +43,9 @@ void main() {
       );
 
       final result = generator.generateClass(model);
-      
+
       expect(result.annotations.length, 1);
-      
+
       final annotation = result.annotations.first;
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
@@ -158,7 +158,7 @@ void main() {
           }
         }
 
-        // Verify the exact order: required params should be id and name, 
+        // Verify the exact order: required params should be id and name,
         // optional params should be nickname and bio
         expect(requiredParams, ['id', 'name']);
         expect(optionalParams, ['nickname', 'bio']);

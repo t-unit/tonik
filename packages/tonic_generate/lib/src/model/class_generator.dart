@@ -39,6 +39,7 @@ class ClassGenerator {
 
     final code = formatter.format(
       '// Generated code - do not modify by hand\n'
+      '// ignore_for_file: lines_longer_than_80_chars\n '
       '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n\n'
       '${library.accept(emitter)}',
     );
@@ -156,7 +157,7 @@ class ClassGenerator {
 
       if (property.model is ListModel) {
         hasCollectionProperties = true;
-        comparisons.add('_deepEquals.equals(other.$name, $name)');
+        comparisons.add('deepEquals.equals(other.$name, $name)');
       } else {
         comparisons.add('other.$name == $name');
       }
@@ -185,7 +186,7 @@ class ClassGenerator {
 
     if (hasCollectionProperties) {
       codeLines.add(
-        declareConst('_deepEquals')
+        declareConst('deepEquals')
             .assign(
               refer(
                 'DeepCollectionEquality',
@@ -239,7 +240,7 @@ class ClassGenerator {
       if (properties.first.property.model is ListModel) {
         if (hasCollections) {
           codeLines.add(
-            declareConst('_deepEquals')
+            declareConst('deepEquals')
                 .assign(
                   refer(
                     'DeepCollectionEquality',
@@ -251,7 +252,7 @@ class ClassGenerator {
         }
         codeLines.add(
           refer(
-            '_deepEquals',
+            'deepEquals',
           ).property('hash').call([refer(propName)]).returned.statement,
         );
       } else {
@@ -270,7 +271,7 @@ class ClassGenerator {
 
     if (hasCollections) {
       codeLines.add(
-        declareConst('_deepEquals')
+        declareConst('deepEquals')
             .assign(
               refer(
                 'DeepCollectionEquality',
@@ -286,7 +287,7 @@ class ClassGenerator {
         final name = prop.normalizedName;
         if (prop.property.model is ListModel) {
           objectHashArgs.add(
-            refer('_deepEquals').property('hash').call([refer(name)]),
+            refer('deepEquals').property('hash').call([refer(name)]),
           );
         } else {
           objectHashArgs.add(refer(name));

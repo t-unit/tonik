@@ -72,7 +72,7 @@ void main() {
         const expectedMethod = '''
           Map<String, dynamic> _queryParameters({required List<Anonymous> colors}) {
             final result = <String, dynamic>{};
-            final formEncoder = FormEncoder();
+            const formEncoder = FormEncoder();
             result[r'colors'] = formEncoder.encode(
               r'colors',
               colors.map((e) => e.toJson()).toList(),
@@ -142,7 +142,7 @@ void main() {
         const expectedMethod = '''
           Map<String, dynamic> _queryParameters({required List<List<Anonymous>> matrix}) {
             final result = <String, dynamic>{};
-            final formEncoder = FormEncoder();
+            const formEncoder = FormEncoder();
             result[r'matrix'] = formEncoder.encode(
               r'matrix',
               matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
@@ -213,7 +213,7 @@ void main() {
 
         const expectedMethod = r'''
           String _path({required List<Anonymous> colors}) {
-            final simpleEncoder = SimpleEncoder();
+            const simpleEncoder = SimpleEncoder();
             return r'/data/'
               '${simpleEncoder.encode(colors.map((e) => e.toJson()).toList(), explode: true, allowEmpty: false)}';
           }
@@ -273,7 +273,7 @@ void main() {
 
         const expectedMethod = r'''
           String _path({required List<List<Anonymous>> matrix}) {
-            final simpleEncoder = SimpleEncoder();
+            const simpleEncoder = SimpleEncoder();
             return r'/data/'
               '${simpleEncoder.encode(matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(), explode: true, allowEmpty: false)}';
           }
