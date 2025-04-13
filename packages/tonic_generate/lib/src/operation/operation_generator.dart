@@ -307,7 +307,7 @@ class OperationGenerator {
                             )
                             .returned
                             .statement,
-                        const Code('}'),
+                        const Code('}\n'),
                       ]),
                       const Code('final '),
                       TypeReference(
@@ -352,7 +352,7 @@ class OperationGenerator {
                             )
                             .returned
                             .statement,
-                        const Code('}'),
+                        const Code('}\n'),
                       ]),
                       refer(
                             'TonicSuccess',
