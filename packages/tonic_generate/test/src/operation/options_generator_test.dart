@@ -48,7 +48,7 @@ void main() {
 
       const expectedMethod = '''
           Options _options() {
-            return Options(method: 'GET');
+            return Options(method: 'GET', validateStatus: (_) => true);
           }
         ''';
 
@@ -84,7 +84,7 @@ void main() {
 
       const expectedMethod = '''
           Options _options() {
-            return Options(method: 'POST');
+            return Options(method: 'POST', validateStatus: (_) => true);
           }
         ''';
 
@@ -120,7 +120,7 @@ void main() {
 
       const expectedMethod = '''
           Options _options() {
-            return Options(method: 'PUT');
+            return Options(method: 'PUT', validateStatus: (_) => true);
           }
         ''';
 
@@ -156,7 +156,7 @@ void main() {
 
       const expectedMethod = '''
           Options _options() {
-            return Options(method: 'DELETE');
+            return Options(method: 'DELETE', validateStatus: (_) => true);
           }
         ''';
 
@@ -212,7 +212,7 @@ void main() {
               explode: false,
               allowEmpty: false,
             );
-            return Options(method: 'GET', headers: headers);
+            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
           }
         ''';
 
@@ -365,7 +365,7 @@ void main() {
                 allowEmpty: false,
               );
             }
-            return Options(method: 'GET', headers: headers);
+            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
           }
         ''';
 
@@ -426,7 +426,7 @@ void main() {
             explode: true,
             allowEmpty: true,
           );
-          return Options(method: 'GET', headers: headers);
+          return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
         }
       ''';
 
@@ -489,7 +489,7 @@ void main() {
               explode: true,
               allowEmpty: false,
             );
-            return Options(method: 'GET', headers: headers);
+            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
           }
         ''';
 
@@ -554,7 +554,7 @@ void main() {
               explode: true,
               allowEmpty: false,
             );
-            return Options(method: 'GET', headers: headers);
+            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
           }
         ''';
 

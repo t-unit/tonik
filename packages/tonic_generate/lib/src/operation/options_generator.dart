@@ -116,6 +116,14 @@ class OptionsGenerator {
     final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
       'method': literalString(methodString),
       if (hasHeaders) 'headers': refer('headers'),
+      'validateStatus':
+          Method(
+            (b) =>
+                b
+                  ..lambda = true
+                  ..requiredParameters.add(Parameter((b) => b..name = '_'))
+                  ..body = literalBool(true).code,
+          ).closure,
     });
 
     bodyStatements.add(optionsExpr.returned.statement);
