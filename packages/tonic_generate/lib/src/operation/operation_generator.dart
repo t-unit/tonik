@@ -111,12 +111,10 @@ class OperationGenerator {
     Operation operation,
     NormalizedRequestParameters normalizedParams,
   ) {
-    final headerParameters = <Parameter>[];
-    final headerArgs = <String, Expression>{};
-    final pathParameters = <Parameter>[];
+    final parameters = <Parameter>[];
     final pathArgs = <String, Expression>{};
-    final queryParameters = <Parameter>[];
     final queryArgs = <String, Expression>{};
+    final headerArgs = <String, Expression>{};
 
     for (final pathParam in normalizedParams.pathParameters) {
       final paramName = pathParam.normalizedName;
@@ -129,7 +127,7 @@ class OperationGenerator {
         isNullableOverride: !resolvedParam.isRequired,
       );
 
-      pathParameters.add(
+      parameters.add(
         Parameter(
           (b) =>
               b
@@ -154,7 +152,7 @@ class OperationGenerator {
         isNullableOverride: !resolvedParam.isRequired,
       );
 
-      queryParameters.add(
+      parameters.add(
         Parameter(
           (b) =>
               b
@@ -179,7 +177,7 @@ class OperationGenerator {
         isNullableOverride: !resolvedParam.isRequired,
       );
 
-      headerParameters.add(
+      parameters.add(
         Parameter(
           (b) =>
               b
@@ -211,11 +209,7 @@ class OperationGenerator {
                     ..url = 'dart:core'
                     ..types.add(refer('void')),
             )
-            ..optionalParameters.addAll([
-              ...pathParameters,
-              ...queryParameters,
-              ...headerParameters,
-            ])
+            ..optionalParameters.addAll(parameters)
             ..modifier = MethodModifier.async
             ..lambda = false
             ..body = Block(
@@ -274,8 +268,32 @@ class OperationGenerator {
       );
     }
 
-    final body = <Code>[];
+    final parameters = <Parameter>[];
     final encoders = <PathParameterEncoding, String>{};
+    final body = <Code>[];
+
+    for (final pathParam in pathParameters) {
+      final paramName = pathParam.normalizedName;
+      final resolvedParam = pathParam.parameter;
+
+      final parameterType = typeReference(
+        resolvedParam.model,
+        nameManager,
+        package,
+        isNullableOverride: !resolvedParam.isRequired,
+      );
+
+      parameters.add(
+        Parameter(
+          (b) =>
+              b
+                ..name = paramName
+                ..type = parameterType
+                ..named = true
+                ..required = resolvedParam.isRequired,
+        ),
+      );
+    }
 
     for (final encoding
         in pathParameters.map((p) => p.parameter.encoding).toSet()) {
@@ -348,22 +366,7 @@ class OperationGenerator {
           b
             ..name = '_path'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              for (final pathParam in pathParameters)
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = pathParam.normalizedName
-                        ..type = typeReference(
-                          pathParam.parameter.model,
-                          nameManager,
-                          package,
-                          isNullableOverride: !pathParam.parameter.isRequired,
-                        )
-                        ..named = true
-                        ..required = pathParam.parameter.isRequired,
-                ),
-            ])
+            ..optionalParameters.addAll(parameters)
             ..lambda = false
             ..body = Block.of(body),
     );
@@ -389,10 +392,8 @@ class OperationGenerator {
     List<({String normalizedName, QueryParameterObject parameter})>
     queryParameters,
   ) {
-    final body = <Code>[];
     final parameters = <Parameter>[];
-
-    body.add(
+    final body = <Code>[
       declareFinal('result')
           .assign(
             literalList(
@@ -401,7 +402,7 @@ class OperationGenerator {
             ),
           )
           .statement,
-    );
+    ];
 
     final encoders = <QueryParameterEncoding, String>{};
 
@@ -457,7 +458,6 @@ class OperationGenerator {
 
     for (final queryParam in queryParameters) {
       final paramName = queryParam.normalizedName;
-      final rawName = queryParam.parameter.rawName;
       final resolvedParam = queryParam.parameter;
 
       final parameterType = typeReference(
@@ -492,7 +492,7 @@ class OperationGenerator {
             [
               if (encoding == QueryParameterEncoding.deepObject ||
                   encoding == QueryParameterEncoding.form)
-                literalString(rawName, raw: true),
+                literalString(resolvedParam.rawName, raw: true),
               value,
             ],
             {
@@ -513,7 +513,10 @@ class OperationGenerator {
                 Code(', explode: ${resolvedParam.explode}, '),
                 Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
                 const Code(')) {'),
-                Code("result.add((name: '$rawName', value: value));"),
+                Code(
+                  "result.add((name: '${resolvedParam.rawName}', "
+                  'value: value));',
+                ),
                 const Code('}'),
               ])
             else
@@ -531,7 +534,9 @@ class OperationGenerator {
               Code(', explode: ${resolvedParam.explode}, '),
               Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
               const Code(')) {'),
-              Code("result.add((name: '$rawName', value: value));"),
+              Code(
+                "result.add((name: '${resolvedParam.rawName}', value: value));",
+              ),
               const Code('}'),
             ]),
           );
@@ -591,7 +596,7 @@ class OperationGenerator {
 
     final hasHeaders = headers.isNotEmpty;
     final bodyStatements = <Code>[];
-    final optionalParameters = <Parameter>[];
+    final parameters = <Parameter>[];
 
     if (hasHeaders) {
       bodyStatements
@@ -619,7 +624,6 @@ class OperationGenerator {
 
       for (final headerParam in headers) {
         final paramName = headerParam.normalizedName;
-        final rawName = headerParam.parameter.rawName;
         final resolvedParam = headerParam.parameter;
 
         final parameterType = typeReference(
@@ -629,7 +633,7 @@ class OperationGenerator {
           isNullableOverride: !resolvedParam.isRequired,
         );
 
-        optionalParameters.add(
+        parameters.add(
           Parameter(
             (b) =>
                 b
@@ -646,7 +650,7 @@ class OperationGenerator {
         );
         final headerAssignment =
             refer('headers')
-                .index(literalString(rawName, raw: true))
+                .index(literalString(resolvedParam.rawName, raw: true))
                 .assign(
                   refer('headerEncoder')
                       .property('encode')
@@ -688,7 +692,7 @@ class OperationGenerator {
           b
             ..name = '_options'
             ..returns = refer('Options', 'package:dio/dio.dart')
-            ..optionalParameters.addAll(optionalParameters)
+            ..optionalParameters.addAll(parameters)
             ..lambda = false
             ..body = Block((b) => b..statements.addAll(bodyStatements)),
     );
