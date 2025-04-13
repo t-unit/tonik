@@ -236,7 +236,15 @@ class OperationGenerator {
                   b
                     ..symbol = 'Future'
                     ..url = 'dart:core'
-                    ..types.add(refer('void')),
+                    ..types.add(
+                      TypeReference(
+                        (b) =>
+                            b
+                              ..symbol = 'TonicResult'
+                              ..url = 'package:tonic_util/tonic_util.dart'
+                              ..types.add(refer('void')),
+                      ),
+                    ),
             )
             ..optionalParameters.addAll(parameters)
             ..modifier = MethodModifier.async
@@ -244,37 +252,116 @@ class OperationGenerator {
             ..body = Block(
               (b) =>
                   b
-                    ..statements.add(
-                      declareFinal('uri')
-                          .assign(
-                            refer('Uri', 'dart:core')
-                                .property('parse')
-                                .call([
-                                  refer(
-                                    '_dio',
-                                  ).property('options').property('baseUrl'),
-                                ])
-                                .property('resolveUri')
-                                .call([
-                                  refer('Uri', 'dart:core').call([], {
-                                    'path': pathExpr,
-                                    'query': queryExpr,
-                                  }),
-                                ]),
+                    ..statements.addAll([
+                      declareFinal(
+                        'uri',
+                        type: refer('Uri', 'dart:core'),
+                      ).statement,
+                      declareFinal(
+                        'data',
+                        type: refer('Object?', 'dart:core'),
+                      ).statement,
+                      declareFinal(
+                        'options',
+                        type: refer('Options', 'package:dio/dio.dart'),
+                      ).statement,
+                      Block.of([
+                        const Code('try {'),
+                        refer('uri')
+                            .assign(
+                              refer('Uri', 'dart:core')
+                                  .property('parse')
+                                  .call([
+                                    refer(
+                                      '_dio',
+                                    ).property('options').property('baseUrl'),
+                                  ])
+                                  .property('resolveUri')
+                                  .call([
+                                    refer('Uri', 'dart:core').call([], {
+                                      'path': pathExpr,
+                                      'query': queryExpr,
+                                    }),
+                                  ]),
+                            )
+                            .statement,
+                        refer('data').assign(refer('_data()')).statement,
+                        refer('options').assign(optionsExpr).statement,
+                        const Code('} on '),
+                        refer('Exception', 'dart:core').code,
+                        const Code(' catch (exception, stackTrace) {'),
+                        refer(
+                              'TonicError',
+                              'package:tonic_util/tonic_util.dart',
+                            )
+                            .call(
+                              [refer('exception')],
+                              {
+                                'stackTrace': refer('stackTrace'),
+                                'type': refer(
+                                  'TonicErrorType.encoding',
+                                  'package:tonic_util/tonic_util.dart',
+                                ),
+                                'response': literalNull,
+                              },
+                            )
+                            .returned
+                            .statement,
+                        const Code('}'),
+                      ]),
+                      const Code('final '),
+                      TypeReference(
+                        (b) =>
+                            b
+                              ..symbol = 'Response'
+                              ..url = 'package:dio/dio.dart'
+                              ..types.add(refer('dynamic', 'dart:core')),
+                      ).code,
+                      const Code(' response;'),
+                      Block.of([
+                        const Code('try {'),
+                        refer('response')
+                            .assign(
+                              refer('_dio').property('requestUri').call(
+                                [refer('uri')],
+                                {
+                                  'data': refer('data'),
+                                  'options': refer('options'),
+                                },
+                                [refer('dynamic', 'dart:core')],
+                              ).awaited,
+                            )
+                            .statement,
+                        const Code('} on '),
+                        refer('Exception', 'dart:core').code,
+                        const Code(' catch (exception, stackTrace) {'),
+                        refer(
+                              'TonicError',
+                              'package:tonic_util/tonic_util.dart',
+                            )
+                            .call(
+                              [refer('exception')],
+                              {
+                                'stackTrace': refer('stackTrace'),
+                                'type': refer(
+                                  'TonicErrorType.network',
+                                  'package:tonic_util/tonic_util.dart',
+                                ),
+                                'response': literalNull,
+                              },
+                            )
+                            .returned
+                            .statement,
+                        const Code('}'),
+                      ]),
+                      refer(
+                            'TonicSuccess',
+                            'package:tonic_util/tonic_util.dart',
                           )
+                          .call([literalNull, refer('response')])
+                          .returned
                           .statement,
-                    )
-                    ..statements.add(
-                      refer('_dio')
-                          .property('requestUri')
-                          .call(
-                            [refer('uri')],
-                            {'data': refer('_data()'), 'options': optionsExpr},
-                            [refer('dynamic', 'dart:core')],
-                          )
-                          .awaited
-                          .statement,
-                    ),
+                    ]),
             ),
     );
   }

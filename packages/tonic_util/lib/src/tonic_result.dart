@@ -23,7 +23,8 @@ class TonicSuccess<T> extends TonicResult<T> {
 /// A class representing an error that occurred during an API call.
 class TonicError<T> extends TonicResult<T> {
   /// Creates a new [TonicError] instance.
-  const TonicError(this.error, {
+  const TonicError(
+    this.error, {
     required this.stackTrace,
     required this.type,
     required this.response,
@@ -55,5 +56,5 @@ enum TonicErrorType {
   network,
 
   /// Any other error occurred.
-  other;
+  other,
 }
