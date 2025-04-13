@@ -1,22 +1,45 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonic_core/tonic_core.dart';
+import 'package:tonic_generate/src/operation/data_generator.dart';
+import 'package:tonic_generate/src/operation/options_generator.dart';
+import 'package:tonic_generate/src/operation/path_generator.dart';
+import 'package:tonic_generate/src/operation/query_generator.dart';
 import 'package:tonic_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 import 'package:tonic_generate/src/util/parameter_name_normalizer.dart';
-import 'package:tonic_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonic_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating callable operation classes
 /// from Operation definitions.
 class OperationGenerator {
-  const OperationGenerator({required this.nameManager, required this.package});
+  OperationGenerator({required this.nameManager, required this.package})
+    : _optionsGenerator = OptionsGenerator(
+        nameManager: nameManager,
+        package: package,
+      ),
+      _queryParametersGenerator = QueryGenerator(
+        nameManager: nameManager,
+        package: package,
+      ),
+      _pathGenerator = PathGenerator(
+        nameManager: nameManager,
+        package: package,
+      ),
+      _dataGenerator = DataGenerator(
+        nameManager: nameManager,
+        package: package,
+      );
 
   final NameManager nameManager;
   final String package;
+
+  final OptionsGenerator _optionsGenerator;
+  final QueryGenerator _queryParametersGenerator;
+  final PathGenerator _pathGenerator;
+  final DataGenerator _dataGenerator;
 
   ({String code, String filename}) generateCallableOperation(
     Operation operation,
@@ -94,13 +117,19 @@ class OperationGenerator {
             )
             ..methods.addAll([
               generateCallMethod(operation, normalizedParams),
-              generatePathMethod(operation, normalizedParams.pathParameters),
-              generateDataMethod(operation),
-              generateQueryParametersMethod(
+              _pathGenerator.generatePathMethod(
+                operation,
+                normalizedParams.pathParameters,
+              ),
+              _dataGenerator.generateDataMethod(operation),
+              _queryParametersGenerator.generateQueryParametersMethod(
                 operation,
                 normalizedParams.queryParameters,
               ),
-              generateOptionsMethod(operation, normalizedParams.headers),
+              _optionsGenerator.generateOptionsMethod(
+                operation,
+                normalizedParams.headers,
+              ),
             ]),
     );
   }
@@ -248,474 +277,5 @@ class OperationGenerator {
                     ),
             ),
     );
-  }
-
-  /// Generates the path method for the operation
-  @visibleForTesting
-  Method generatePathMethod(
-    Operation operation,
-    List<({String normalizedName, PathParameterObject parameter})>
-    pathParameters,
-  ) {
-    if (pathParameters.isEmpty) {
-      return Method(
-        (b) =>
-            b
-              ..name = '_path'
-              ..returns = refer('String', 'dart:core')
-              ..lambda = false
-              ..body = Code("return r'${operation.path}';"),
-      );
-    }
-
-    final parameters = <Parameter>[];
-    final encoders = <PathParameterEncoding, String>{};
-    final body = <Code>[];
-
-    for (final pathParam in pathParameters) {
-      final paramName = pathParam.normalizedName;
-      final resolvedParam = pathParam.parameter;
-
-      final parameterType = typeReference(
-        resolvedParam.model,
-        nameManager,
-        package,
-        isNullableOverride: !resolvedParam.isRequired,
-      );
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
-        ),
-      );
-    }
-
-    for (final encoding
-        in pathParameters.map((p) => p.parameter.encoding).toSet()) {
-      final encoderName = switch (encoding) {
-        PathParameterEncoding.simple => 'simpleEncoder',
-        PathParameterEncoding.label => 'labelEncoder',
-        PathParameterEncoding.matrix => 'matrixEncoder',
-      };
-
-      final encoderClass = switch (encoding) {
-        PathParameterEncoding.simple => 'SimpleEncoder',
-        PathParameterEncoding.label => 'LabelEncoder',
-        PathParameterEncoding.matrix => 'MatrixEncoder',
-      };
-
-      encoders[encoding] = encoderName;
-
-      body.add(
-        declareConst(encoderName)
-            .assign(
-              refer(
-                encoderClass,
-                'package:tonic_util/tonic_util.dart',
-              ).newInstance([]),
-            )
-            .statement,
-      );
-    }
-
-    final pathParts = operation.path
-        .splitAndKeep(RegExp(r'\{[^}]+\}'))
-        .where((pathComponent) => pathComponent.isNotEmpty)
-        .map((pathComponent) {
-          if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
-            return Code("r'$pathComponent'");
-          }
-
-          final paramName = pathComponent.substring(
-            1,
-            pathComponent.length - 1,
-          );
-          final param = pathParameters.firstWhereOrNull(
-            (p) => p.parameter.rawName == paramName,
-          );
-
-          if (param == null) {
-            return Code("r'$pathComponent'");
-          }
-
-          final encoderName = encoders[param.parameter.encoding]!;
-          final valueExpression = buildToJsonPathParameterExpression(
-            param.normalizedName,
-            param.parameter,
-          );
-
-          return Code(
-            "'\${$encoderName.encode($valueExpression, "
-            'explode: ${param.parameter.explode}, '
-            "allowEmpty: ${param.parameter.allowEmptyValue})}'",
-          );
-        });
-
-    body
-      ..add(const Code('return '))
-      ..addAll(pathParts)
-      ..add(const Code(';'));
-
-    return Method(
-      (b) =>
-          b
-            ..name = '_path'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(parameters)
-            ..lambda = false
-            ..body = Block.of(body),
-    );
-  }
-
-  /// Generates a data expression for the operation
-  @visibleForTesting
-  Method generateDataMethod(Operation operation) {
-    return Method(
-      (b) =>
-          b
-            ..name = '_data'
-            ..returns = refer('Object?', 'dart:core')
-            ..lambda = false
-            ..body = const Code('return null;'),
-    );
-  }
-
-  /// Generates the query parameters method for the operation
-  @visibleForTesting
-  Method generateQueryParametersMethod(
-    Operation operation,
-    List<({String normalizedName, QueryParameterObject parameter})>
-    queryParameters,
-  ) {
-    final parameters = <Parameter>[];
-    final body = <Code>[
-      declareFinal('result')
-          .assign(
-            literalList(
-              [],
-              refer('ParameterEntry', 'package:tonic_util/tonic_util.dart'),
-            ),
-          )
-          .statement,
-    ];
-
-    final encoders = <QueryParameterEncoding, String>{};
-
-    for (final encoding
-        in queryParameters.map((q) => q.parameter.encoding).toSet()) {
-      final encoderName = switch (encoding) {
-        QueryParameterEncoding.form => 'formEncoder',
-        QueryParameterEncoding.spaceDelimited => 'spacedEncoder',
-        QueryParameterEncoding.pipeDelimited => 'pipedEncoder',
-        QueryParameterEncoding.deepObject => 'deepObjectEncoder',
-      };
-
-      final encoderClass = switch (encoding) {
-        QueryParameterEncoding.form => 'FormEncoder',
-        QueryParameterEncoding.spaceDelimited => 'DelimitedEncoder',
-        QueryParameterEncoding.pipeDelimited => 'DelimitedEncoder',
-        QueryParameterEncoding.deepObject => 'DeepObjectEncoder',
-      };
-
-      encoders[encoding] = encoderName;
-
-      if (encoding == QueryParameterEncoding.spaceDelimited ||
-          encoding == QueryParameterEncoding.pipeDelimited) {
-        final factoryName = switch (encoding) {
-          QueryParameterEncoding.spaceDelimited => 'spaced',
-          QueryParameterEncoding.pipeDelimited => 'piped',
-          _ => throw StateError('Unexpected encoding type'),
-        };
-
-        body.add(
-          declareFinal(encoderName)
-              .assign(
-                refer(
-                  encoderClass,
-                  'package:tonic_util/tonic_util.dart',
-                ).property(factoryName).call([]),
-              )
-              .statement,
-        );
-      } else {
-        body.add(
-          declareConst(encoderName)
-              .assign(
-                refer(
-                  encoderClass,
-                  'package:tonic_util/tonic_util.dart',
-                ).newInstance([]),
-              )
-              .statement,
-        );
-      }
-    }
-
-    for (final queryParam in queryParameters) {
-      final paramName = queryParam.normalizedName;
-      final resolvedParam = queryParam.parameter;
-
-      final parameterType = typeReference(
-        resolvedParam.model,
-        nameManager,
-        package,
-        isNullableOverride: !resolvedParam.isRequired,
-      );
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
-        ),
-      );
-
-      final encoding = resolvedParam.encoding;
-      final encoderName = encoders[encoding]!;
-      final valueExpression = buildToJsonQueryParameterExpression(
-        paramName,
-        resolvedParam,
-      );
-      final value = refer(valueExpression);
-
-      final encodeCall = refer(encoderName)
-          .property('encode')
-          .call(
-            [
-              if (encoding == QueryParameterEncoding.deepObject ||
-                  encoding == QueryParameterEncoding.form)
-                literalString(resolvedParam.rawName, raw: true),
-              value,
-            ],
-            {
-              'explode': literalBool(resolvedParam.explode),
-              'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-            },
-          );
-
-      if (!resolvedParam.isRequired) {
-        body.add(
-          Block.of([
-            Code('if ($paramName != null) {'),
-            if (encoding == QueryParameterEncoding.spaceDelimited ||
-                encoding == QueryParameterEncoding.pipeDelimited)
-              Block.of([
-                Code('for (final value in $encoderName.encode('),
-                value.code,
-                Code(', explode: ${resolvedParam.explode}, '),
-                Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
-                const Code(')) {'),
-                Code(
-                  "result.add((name: '${resolvedParam.rawName}', "
-                  'value: value));',
-                ),
-                const Code('}'),
-              ])
-            else
-              refer('result').property('addAll').call([encodeCall]).statement,
-            const Code('}'),
-          ]),
-        );
-      } else {
-        if (encoding == QueryParameterEncoding.spaceDelimited ||
-            encoding == QueryParameterEncoding.pipeDelimited) {
-          body.add(
-            Block.of([
-              Code('for (final value in $encoderName.encode('),
-              value.code,
-              Code(', explode: ${resolvedParam.explode}, '),
-              Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
-              const Code(')) {'),
-              Code(
-                "result.add((name: '${resolvedParam.rawName}', value: value));",
-              ),
-              const Code('}'),
-            ]),
-          );
-        } else {
-          body.add(
-            refer('result').property('addAll').call([encodeCall]).statement,
-          );
-        }
-      }
-    }
-
-    body.add(
-      refer('result')
-          .property('map')
-          .call([
-            Method(
-              (b) =>
-                  b
-                    ..lambda = true
-                    ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                    ..body = const Code(r"'${e.name}=${e.value}'"),
-            ).closure,
-          ])
-          .property('join')
-          .call([literalString('&')])
-          .returned
-          .statement,
-    );
-
-    return Method(
-      (b) =>
-          b
-            ..name = '_queryParameters'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(parameters)
-            ..lambda = false
-            ..body = Block.of(body),
-    );
-  }
-
-  /// Generates the options method for the operation
-  @visibleForTesting
-  Method generateOptionsMethod(
-    Operation operation,
-    List<({String normalizedName, RequestHeaderObject parameter})> headers,
-  ) {
-    final methodString = switch (operation.method) {
-      HttpMethod.get => 'GET',
-      HttpMethod.post => 'POST',
-      HttpMethod.put => 'PUT',
-      HttpMethod.delete => 'DELETE',
-      HttpMethod.patch => 'PATCH',
-      HttpMethod.head => 'HEAD',
-      HttpMethod.options => 'OPTIONS',
-      HttpMethod.trace => 'TRACE',
-    };
-
-    final hasHeaders = headers.isNotEmpty;
-    final bodyStatements = <Code>[];
-    final parameters = <Parameter>[];
-
-    if (hasHeaders) {
-      bodyStatements
-        ..add(
-          declareFinal('headers')
-              .assign(
-                literalMap(
-                  {},
-                  refer('String', 'dart:core'),
-                  refer('dynamic', 'dart:core'),
-                ),
-              )
-              .statement,
-        )
-        ..add(
-          declareConst('headerEncoder')
-              .assign(
-                refer(
-                  'SimpleEncoder',
-                  'package:tonic_util/tonic_util.dart',
-                ).newInstance([]),
-              )
-              .statement,
-        );
-
-      for (final headerParam in headers) {
-        final paramName = headerParam.normalizedName;
-        final resolvedParam = headerParam.parameter;
-
-        final parameterType = typeReference(
-          resolvedParam.model,
-          nameManager,
-          package,
-          isNullableOverride: !resolvedParam.isRequired,
-        );
-
-        parameters.add(
-          Parameter(
-            (b) =>
-                b
-                  ..name = paramName
-                  ..type = parameterType
-                  ..named = true
-                  ..required = resolvedParam.isRequired,
-          ),
-        );
-
-        final valueExpression = buildToJsonHeaderParameterExpression(
-          paramName,
-          resolvedParam,
-        );
-        final headerAssignment =
-            refer('headers')
-                .index(literalString(resolvedParam.rawName, raw: true))
-                .assign(
-                  refer('headerEncoder')
-                      .property('encode')
-                      .call(
-                        [refer(valueExpression)],
-                        {
-                          'explode': literalBool(resolvedParam.explode),
-                          'allowEmpty': literalBool(
-                            resolvedParam.allowEmptyValue,
-                          ),
-                        },
-                      ),
-                )
-                .statement;
-
-        if (!resolvedParam.isRequired) {
-          bodyStatements.add(
-            Block.of([
-              Code('if ($paramName != null) {'),
-              headerAssignment,
-              const Code('}'),
-            ]),
-          );
-        } else {
-          bodyStatements.add(headerAssignment);
-        }
-      }
-    }
-
-    final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
-      'method': literalString(methodString),
-      if (hasHeaders) 'headers': refer('headers'),
-    });
-
-    bodyStatements.add(optionsExpr.returned.statement);
-
-    return Method(
-      (b) =>
-          b
-            ..name = '_options'
-            ..returns = refer('Options', 'package:dio/dio.dart')
-            ..optionalParameters.addAll(parameters)
-            ..lambda = false
-            ..body = Block((b) => b..statements.addAll(bodyStatements)),
-    );
-  }
-}
-
-extension on String {
-  List<String> splitAndKeep(RegExp pattern) {
-    final result = <String>[];
-    var lastEnd = 0;
-
-    for (final match in pattern.allMatches(this)) {
-      if (match.start > lastEnd) {
-        result.add(substring(lastEnd, match.start));
-      }
-      result.add(match.group(0)!);
-      lastEnd = match.end;
-    }
-
-    if (lastEnd < length) {
-      result.add(substring(lastEnd));
-    }
-
-    return result;
   }
 }

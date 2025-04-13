@@ -2,13 +2,13 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
-import 'package:tonic_generate/src/operation/operation_generator.dart';
+import 'package:tonic_generate/src/operation/query_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 
 void main() {
-  group('OperationGenerator.generateQueryParametersMethod', () {
-    late OperationGenerator generator;
+  group('QueryGenerator.generateQueryParametersMethod', () {
+    late QueryGenerator generator;
     late Context context;
     late DartEmitter emitter;
     late NameManager nameManager;
@@ -22,7 +22,7 @@ void main() {
     setUp(() {
       nameGenerator = NameGenerator();
       nameManager = NameManager(generator: nameGenerator);
-      generator = OperationGenerator(
+      generator = QueryGenerator(
         nameManager: nameManager,
         package: 'package:api/api.dart',
       );
@@ -1113,6 +1113,151 @@ void main() {
       );
 
       expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('handles simple list of enums', () {
+      final enumModel = EnumModel(
+        context: context,
+        values: const {'RED', 'GREEN', 'BLUE'},
+        isNullable: false,
+      );
+
+      final listModel = ListModel(context: context, content: enumModel);
+
+      final queryParam = QueryParameterObject(
+        name: 'colors',
+        rawName: 'colors',
+        description: 'List of colors',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: true,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: false,
+        model: listModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'listColors',
+        context: context,
+        summary: 'List colors',
+        description: 'Lists all colors',
+        tags: const {},
+        isDeprecated: false,
+        path: '/colors',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        responses: const {},
+      );
+
+      const expectedMethod = r'''
+         String _queryParameters({required List<Anonymous> colors}) {
+            final result = <ParameterEntry>[];
+            const formEncoder = FormEncoder();
+            result.addAll(
+              formEncoder.encode(
+                r'colors',
+                colors.map((e) => e.toJson()).toList(),
+                explode: true,
+                allowEmpty: false,
+              ),
+            );
+            return result.map((e) => '${e.name}=${e.value}').join('&');
+          }
+        ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'colors', parameter: queryParam),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('handles nested list of class models', () {
+      final innerModel = ClassModel(context: context, properties: const {});
+      final innerListModel = ListModel(context: context, content: innerModel);
+      final outerListModel = ListModel(
+        context: context,
+        content: innerListModel,
+      );
+
+      final queryParam = QueryParameterObject(
+        name: 'matrix',
+        rawName: 'matrix',
+        description: 'Matrix of items',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: true,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: false,
+        model: outerListModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getMatrix',
+        context: context,
+        summary: 'Get matrix',
+        description: 'Gets matrix data',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        responses: const {},
+      );
+
+      const expectedMethod = r'''
+          String _queryParameters({required List<List<Anonymous>> matrix}) {
+            final result = <ParameterEntry>[];
+            const formEncoder = FormEncoder();
+            result.addAll(
+              formEncoder.encode(
+                r'matrix',
+                matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
+                explode: true,
+                allowEmpty: false,
+              ),
+            );
+            return result.map((e) => '${e.name}=${e.value}').join('&');
+          }
+        ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'matrix', parameter: queryParam),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),

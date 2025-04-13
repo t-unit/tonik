@@ -2,13 +2,13 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonic_core/tonic_core.dart';
-import 'package:tonic_generate/src/operation/operation_generator.dart';
+import 'package:tonic_generate/src/operation/path_generator.dart';
 import 'package:tonic_generate/src/util/name_generator.dart';
 import 'package:tonic_generate/src/util/name_manager.dart';
 
 void main() {
-  group('OperationGenerator.generatePathMethod', () {
-    late OperationGenerator generator;
+  group('PathGenerator.generatePathMethod', () {
+    late PathGenerator generator;
     late Context context;
     late DartEmitter emitter;
     late NameManager nameManager;
@@ -22,7 +22,7 @@ void main() {
     setUp(() {
       nameGenerator = NameGenerator();
       nameManager = NameManager(generator: nameGenerator);
-      generator = OperationGenerator(
+      generator = PathGenerator(
         nameManager: nameManager,
         package: 'package:api/api.dart',
       );
@@ -687,6 +687,127 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('handles simple list of enums', () {
+      final enumModel = EnumModel(
+        context: context,
+        values: const {'RED', 'GREEN', 'BLUE'},
+        isNullable: false,
+      );
+
+      final listModel = ListModel(context: context, content: enumModel);
+
+      final pathParam = PathParameterObject(
+        name: 'colors',
+        rawName: 'colors',
+        description: 'List of colors',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: true,
+        encoding: PathParameterEncoding.simple,
+        model: listModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getByColors',
+        context: context,
+        summary: 'Get by colors',
+        description: 'Gets data by colors',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data/{colors}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+      );
+
+      const expectedMethod = r'''
+          String _path({required List<Anonymous> colors}) {
+            const simpleEncoder = SimpleEncoder();
+            return r'/data/'
+              '${simpleEncoder.encode(colors.map((e) => e.toJson()).toList(), explode: true, allowEmpty: false)}';
+          }
+        ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'colors', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('handles nested list of class models', () {
+      final innerModel = ClassModel(context: context, properties: const {});
+      final innerListModel = ListModel(context: context, content: innerModel);
+      final outerListModel = ListModel(
+        context: context,
+        content: innerListModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'matrix',
+        rawName: 'matrix',
+        description: 'Matrix of items',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: true,
+        encoding: PathParameterEncoding.simple,
+        model: outerListModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getMatrix',
+        context: context,
+        summary: 'Get matrix',
+        description: 'Gets matrix data',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data/{matrix}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+      );
+
+      const expectedMethod = r'''
+          String _path({required List<List<Anonymous>> matrix}) {
+            const simpleEncoder = SimpleEncoder();
+            return r'/data/'
+              '${simpleEncoder.encode(matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(), explode: true, allowEmpty: false)}';
+          }
+        ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'matrix', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
