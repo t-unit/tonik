@@ -1,1 +1,1 @@
-packages/tonic/README.md
+packages/tonik/README.md

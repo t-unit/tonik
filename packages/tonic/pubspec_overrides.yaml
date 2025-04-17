@@ -1,8 +1,0 @@
-# melos_managed_dependency_overrides: tonic_core,tonic_parse,tonic_generate
-dependency_overrides:
-  tonic_core:
-    path: ../tonic_core
-  tonic_generate:
-    path: ../tonic_generate
-  tonic_parse:
-    path: ../tonic_parse

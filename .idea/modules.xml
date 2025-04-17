@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/packages/tonic/melos_tonic.iml" filepath="$PROJECT_DIR$/packages/tonic/melos_tonic.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packages/tonic_core/melos_tonic_core.iml" filepath="$PROJECT_DIR$/packages/tonic_core/melos_tonic_core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packages/tonic_generate/melos_tonic_generate.iml" filepath="$PROJECT_DIR$/packages/tonic_generate/melos_tonic_generate.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packages/tonic_parse/melos_tonic_parse.iml" filepath="$PROJECT_DIR$/packages/tonic_parse/melos_tonic_parse.iml" />
-      <module fileurl="file://$PROJECT_DIR$/packages/tonic_util/melos_tonic_util.iml" filepath="$PROJECT_DIR$/packages/tonic_util/melos_tonic_util.iml" />
-      <module fileurl="file://$PROJECT_DIR$/melos_tonic.iml" filepath="$PROJECT_DIR$/melos_tonic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tonik/melos_tonik.iml" filepath="$PROJECT_DIR$/packages/tonik/melos_tonik.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tonik_core/melos_tonik_core.iml" filepath="$PROJECT_DIR$/packages/tonik_core/melos_tonik_core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tonik_generate/melos_tonik_generate.iml" filepath="$PROJECT_DIR$/packages/tonik_generate/melos_tonik_generate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tonik_parse/melos_tonik_parse.iml" filepath="$PROJECT_DIR$/packages/tonik_parse/melos_tonik_parse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tonik_util/melos_tonik_util.iml" filepath="$PROJECT_DIR$/packages/tonik_util/melos_tonik_util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/melos_tonik.iml" filepath="$PROJECT_DIR$/melos_tonik.iml" />
     </modules>
   </component>
 </project>
