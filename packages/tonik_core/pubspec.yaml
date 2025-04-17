@@ -1,5 +1,5 @@
 name: tonik_core
-description: A starting point for Dart libraries or applications.
+description: Core data structures and utilities for Tonik.
 version: 0.0.1
 repository: https://github.com/t-unit/tonik
 

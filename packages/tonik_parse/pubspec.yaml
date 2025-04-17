@@ -1,5 +1,5 @@
 name: tonik_parse
-description: A starting point for Dart libraries or applications.
+description: The parsing module for Tonik.
 version: 0.0.1
 repository: https://github.com/t-unit/tonik
 
