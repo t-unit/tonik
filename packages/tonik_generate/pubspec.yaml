@@ -15,7 +15,7 @@ dependencies:
   meta: ^1.16.0
   path: ^1.9.1
   spell_out_numbers: ^1.0.0
-  tonik_core:
+  tonik_core: ^0.0.1
 
 dev_dependencies:
   test: ^1.24.0

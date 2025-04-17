@@ -1,7 +1,7 @@
 name: tonik
 
 packages:
-  - packages/**
+  - packages/*
 
 scripts:
   generate:
@@ -22,6 +22,11 @@ command:
       meta: ^1.16.0
       path: ^1.9.1
       spell_out_numbers: ^1.0.0
+      tonik: ^0.0.1
+      tonik_core: ^0.0.1
+      tonik_parse: ^0.0.1
+      tonik_generate: ^0.0.1
+      tonik_util: ^0.0.1
     dev_dependencies:
       test: ^1.24.0
       very_good_analysis: ^7.0.0
