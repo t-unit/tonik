@@ -14,7 +14,8 @@ class ApiDocument {
     required this.responses,
     required this.queryParameters,
     required this.pathParameters,
-    this.description,
+    required this.requestBodies,
+    required this.description,
   });
 
   final String title;
@@ -31,6 +32,7 @@ class ApiDocument {
 
   final Set<Operation> operations;
   final Set<Response> responses;
+  final Set<RequestBody> requestBodies;
 
   Map<Tag, Set<Operation>> get operationsByTag {
     final taggedOperations = <Tag, Set<Operation>>{};
@@ -54,5 +56,6 @@ class ApiDocument {
       'version: $version, models: $models, responseHeaders: $responseHeaders, '
       'requestHeaders: $requestHeaders, servers: $servers, '
       'queryParameters: $queryParameters, pathParameters: $pathParameters, '
-      'operations: $operations, responses: $responses}';
+      'operations: $operations, responses: $responses, '
+      'requestBodies: $requestBodies}';
 }

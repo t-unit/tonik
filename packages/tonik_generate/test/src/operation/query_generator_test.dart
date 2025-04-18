@@ -44,6 +44,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -94,6 +95,7 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       final queryParameters =
@@ -142,7 +144,8 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
-      );
+        requestBody: null,
+        );
 
       const expectedMethod = r'''
         String _queryParameters({Anonymous? filter}) {
@@ -207,6 +210,7 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -275,6 +279,7 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -339,6 +344,7 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -438,6 +444,7 @@ void main() {
         queryParameters: {filterParam, tagsParam, sortParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -546,6 +553,7 @@ void main() {
         queryParameters: {filterParam, tagsParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -622,6 +630,7 @@ void main() {
         queryParameters: {filterParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -685,6 +694,7 @@ void main() {
         queryParameters: {filterParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -795,6 +805,7 @@ void main() {
         queryParameters: {stringParam, listParam, numberParam, boolParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -892,6 +903,7 @@ void main() {
         queryParameters: {classWithStringParam, classWithNumberParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1047,6 +1059,7 @@ void main() {
         queryParameters: {enumParam, oneOfParam, anyOfParam, allOfParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1155,6 +1168,7 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -1227,6 +1241,7 @@ void main() {
         queryParameters: {queryParam},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''

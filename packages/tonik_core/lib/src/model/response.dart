@@ -45,8 +45,6 @@ class Response {
       'description: $description, body: $body)';
 }
 
-enum ContentType { json }
-
 @immutable
 class ResponseBody {
   const ResponseBody({

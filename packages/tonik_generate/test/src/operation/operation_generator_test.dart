@@ -45,6 +45,7 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -144,6 +145,7 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -235,6 +237,7 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -343,6 +346,7 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
+          requestBody: null,
         );
 
         const expectedMethod = '''
@@ -431,6 +435,7 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
+          requestBody: null,
         );
 
         final result = generator.generateCallableOperation(operation);

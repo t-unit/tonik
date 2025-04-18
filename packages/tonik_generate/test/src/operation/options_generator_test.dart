@@ -44,6 +44,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -80,6 +81,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -116,6 +118,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -152,6 +155,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -201,6 +205,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -319,6 +324,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       final headers =
@@ -415,6 +421,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -478,6 +485,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -543,6 +551,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''

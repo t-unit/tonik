@@ -15,6 +15,8 @@ void main() {
         requestHeaders: {},
         queryParameters: {},
         pathParameters: {},
+        requestBodies: {},
+        description: null,
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -34,6 +36,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       final barOperation = Operation(
@@ -49,6 +52,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       final document = ApiDocument(
@@ -62,6 +66,8 @@ void main() {
         requestHeaders: const {},
         queryParameters: const {},
         pathParameters: const {},
+        requestBodies: const {},
+        description: null,
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -85,6 +91,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       final document = ApiDocument(
@@ -108,12 +115,15 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
+            requestBody: null,
           ),
         },
         responses: const {},
         requestHeaders: const {},
         queryParameters: const {},
         pathParameters: const {},
+        requestBodies: const {},
+        description: null,
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];

@@ -44,6 +44,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = '''
@@ -91,6 +92,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       final pathParameters =
@@ -138,6 +140,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -192,6 +195,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -246,6 +250,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -297,6 +302,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -348,6 +354,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -428,6 +435,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {simpleParam, labelParam, matrixParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -536,6 +544,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {enumParam, classParam, oneOfParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -612,6 +621,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {animalIdParam, idParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -667,6 +677,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {userParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -728,6 +739,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''
@@ -788,6 +800,7 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
+        requestBody: null,
       );
 
       const expectedMethod = r'''

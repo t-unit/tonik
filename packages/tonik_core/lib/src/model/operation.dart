@@ -17,6 +17,7 @@ class Operation {
     required this.queryParameters,
     required this.pathParameters,
     required this.responses,
+    required this.requestBody,
   });
 
   final Set<Tag> tags;
@@ -33,6 +34,7 @@ class Operation {
   final Set<RequestHeader> headers;
   final Set<QueryParameter> queryParameters;
   final Set<PathParameter> pathParameters;
+  final RequestBody? requestBody;
 
   final Map<ResponseStatus, Response> responses;
 
@@ -54,6 +56,7 @@ class Operation {
         deepEquals(headers, other.headers) &&
         deepEquals(queryParameters, other.queryParameters) &&
         deepEquals(pathParameters, other.pathParameters) &&
+        requestBody == other.requestBody &&
         deepEquals(responses, other.responses);
   }
 
@@ -73,6 +76,7 @@ class Operation {
       deepHash(headers),
       deepHash(queryParameters),
       deepHash(pathParameters),
+      requestBody,
       deepHash(responses),
     );
   }

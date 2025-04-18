@@ -16,6 +16,7 @@ class RequestBody {
 
   final String? description;
   final Map<String, MediaType> content;
+  @JsonKey(name: 'required')
   final bool? isRequired;
 
   @override

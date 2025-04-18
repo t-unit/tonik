@@ -50,6 +50,7 @@ class Importer {
       requestHeaders: parameterImporter.headers,
       queryParameters: parameterImporter.queryParameters,
       pathParameters: parameterImporter.pathParameters,
+      requestBodies: const {},
     );
   }
 }

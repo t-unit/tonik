@@ -172,6 +172,7 @@ class OperationImporter {
         queryParameters: queryParams,
         pathParameters: pathParams,
         responses: responses,
+        requestBody: null,
       ),
     );
   }
