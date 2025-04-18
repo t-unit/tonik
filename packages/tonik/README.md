@@ -1,8 +1,12 @@
 # Tonik
-
-A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
+[![pub version](https://img.shields.io/pub/v/tonik?logo=dart)](https://pub.dev/packages/tonik)
+[![pub likes](https://img.shields.io/pub/likes/tonik?logo=dart)](https://pub.dev/packages/tonik)
+[![Stars on Github](https://img.shields.io/github/stars/Carapacik/tonik?logo=github)](https://github.com/Carapacik/tonik)
+[![Tests](https://github.com/t-unit/tonik/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/t-unit/tonik/actions/workflows/test.yml)
 
 ![Logo](/resources/logo_no_bg_small.png)
+
+A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 
 ## Motivation
 There are already numerous projects available to generate Dart code from OpenAPI documents. But all lack certain, most often critical features. They might not support integer enums, composable data types (oneOf, anyOf, allOf), fail if you use existing class names in Dart or dependencies (e.g. `Response` of dio) or handle only success responses. 

@@ -4,6 +4,11 @@ packages:
   - packages/*
 
 scripts:
+  test:
+    run: dart test
+    exec:
+      concurrency: 1
+      
   generate:
     run: flutter pub run build_runner build --delete-conflicting-outputs
     exec:
