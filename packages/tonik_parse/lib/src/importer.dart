@@ -2,6 +2,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/operation_importer.dart';
+import 'package:tonik_parse/src/request_body_importer.dart';
 import 'package:tonik_parse/src/request_parameter_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
 import 'package:tonik_parse/src/response_importer.dart';
@@ -30,11 +31,16 @@ class Importer {
       parameterImporter: parameterImporter,
       responseImporter: responseImporter,
     );
+    final requestBodyImporter = RequestBodyImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+    );
 
     modelImporter.import();
     responseHeaderImporter.import();
     responseImporter.import();
     parameterImporter.import();
+    requestBodyImporter.import();
 
     operationImporter.import();
 
@@ -50,7 +56,7 @@ class Importer {
       requestHeaders: parameterImporter.headers,
       queryParameters: parameterImporter.queryParameters,
       pathParameters: parameterImporter.pathParameters,
-      requestBodies: const {},
+      requestBodies: requestBodyImporter.requestBodies,
     );
   }
 }

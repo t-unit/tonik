@@ -11,12 +11,12 @@ RequestBody _$RequestBodyFromJson(Map<String, dynamic> json) => RequestBody(
   content: (json['content'] as Map<String, dynamic>).map(
     (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
   ),
-  isRequired: json['isRequired'] as bool?,
+  isRequired: json['required'] as bool?,
 );
 
 Map<String, dynamic> _$RequestBodyToJson(RequestBody instance) =>
     <String, dynamic>{
       'description': instance.description,
       'content': instance.content,
-      'isRequired': instance.isRequired,
+      'required': instance.isRequired,
     };

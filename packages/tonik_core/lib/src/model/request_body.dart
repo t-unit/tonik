@@ -2,9 +2,46 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
+sealed class RequestBody {
+  const RequestBody({required this.name, required this.context});
+
+  final String? name;
+  final Context context;
+}
+
 @immutable
-class RequestBody {
-  const RequestBody({
+class RequestBodyAlias extends RequestBody {
+  const RequestBodyAlias({
+    required super.name,
+    required this.requestBody,
+    required super.context,
+  });
+
+  final RequestBody requestBody;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RequestBodyAlias &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          requestBody == other.requestBody &&
+          context == other.context;
+
+  @override
+  int get hashCode => Object.hash(name, requestBody, context);
+
+  @override
+  String toString() =>
+      'RequestBodyAlias(name: $name, '
+      'requestBody: $requestBody)';
+}
+
+@immutable
+class RequestBodyObject extends RequestBody {
+  const RequestBodyObject({
+    required super.name,
+    required super.context,
     required this.description,
     required this.isRequired,
     required this.content,
@@ -17,15 +54,19 @@ class RequestBody {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    if (other is! RequestBody) return false;
+    if (other is! RequestBodyObject) return false;
 
-    return description == other.description &&
+    return name == other.name &&
+        context == other.context &&
+        description == other.description &&
         isRequired == other.isRequired &&
         const DeepCollectionEquality().equals(content, other.content);
   }
 
   @override
   int get hashCode => Object.hash(
+    name,
+    context,
     description,
     isRequired,
     const DeepCollectionEquality().hash(content),
@@ -33,8 +74,8 @@ class RequestBody {
 
   @override
   String toString() =>
-      'RequestBody(description: $description, isRequired: $isRequired, '
-      'content: $content)';
+      'RequestBodyObject(name: $name, description: $description, '
+      'isRequired: $isRequired, content: $content)';
 }
 
 @immutable

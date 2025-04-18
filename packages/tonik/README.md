@@ -26,7 +26,7 @@ This package aims to overcome these shortcomings.
 
 ### Long term goals
 - Supporting the `not` keyword
-- Encoding and decoding of `application/x-www-form-urlencoded`
+- Encoding and decoding of `application/x-www-form-urlencoded` and `text/plain`
 - Optionally generating `unknown` enum case
 - Support for `additionalProperties`
 - Server Templating support 
