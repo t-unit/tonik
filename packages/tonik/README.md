@@ -2,7 +2,7 @@
 
 A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 
-![Logo](/resources/logo_small.png)
+![Logo](/resources/logo_no_bg_small.png)
 
 ## Motivation
 There are already numerous projects available to generate Dart code from OpenAPI documents. But all lack certain, most often critical features. They might not support integer enums, composable data types (oneOf, anyOf, allOf), fail if you use existing class names in Dart or dependencies (e.g. `Response` of dio) or handle only success responses. 
