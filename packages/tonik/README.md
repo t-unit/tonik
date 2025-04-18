@@ -34,8 +34,9 @@ This package aims to overcome these shortcomings.
 - Default values
 - Supporting `byte` and `binary` formatted strings
 
-### Non goals
+### Non-goals
 - Parameter encoding via content, see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content)
 - XML de- and encoding
 - Min, Max and multiple validation
 - Pattern validation 
+- Remote and URL references
