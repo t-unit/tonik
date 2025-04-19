@@ -119,9 +119,58 @@ void main() {
         },
       );
 
-      expect(manager.requestBodyName(requestBody), 'TestRequestBody');
-      expect(manager.requestBodyNames.length, 1);
+      // First request body gets base name
+      final name1 = manager.requestBodyName(requestBody);
+      expect(name1, 'Test');
+
+      // Second request body with same name gets RequestBody suffix
+      final requestBody2 = RequestBodyObject(
+        name: 'test',
+        context: context,
+        description: '',
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/vnd.api+json',
+          ),
+        },
+      );
+      final name2 = manager.requestBodyName(requestBody2);
+      expect(name2, 'TestRequestBody');
+
+      // Third request body with same name gets numbered suffix
+      final requestBody3 = RequestBodyObject(
+        name: 'test',
+        context: context,
+        description: '',
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/vnd.api+json',
+          ),
+        },
+      );
+      final name3 = manager.requestBodyName(requestBody3);
+      expect(name3, 'TestRequestBody2');
+
+      expect(manager.requestBodyNames.length, 3);
       expect(manager.requestBodyNames.containsKey(requestBody), isTrue);
+      expect(manager.requestBodyNames.containsKey(requestBody2), isTrue);
+      expect(manager.requestBodyNames.containsKey(requestBody3), isTrue);
     });
 
     test('skips empty responses when priming', () {
