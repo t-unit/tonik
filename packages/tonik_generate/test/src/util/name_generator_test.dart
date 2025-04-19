@@ -422,42 +422,47 @@ void main() {
 
       group('generateResponseName', () {
         test('uses name when available', () {
-          final response = Response(
+          final response = ResponseObject(
             name: 'User',
             description: 'A user object',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'User');
         });
 
         test('converts name to PascalCase', () {
-          final response = Response(
+          final response = ResponseObject(
             name: 'user_profile',
             description: 'A user profile',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'UserProfile');
         });
 
         test('makes duplicate response names unique using Response suffix', () {
-          final response1 = Response(
+          final response1 = ResponseObject(
             name: 'User',
             description: 'First user',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
-          final response2 = Response(
+          final response2 = ResponseObject(
             name: 'User',
             description: 'Second user',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
-          final response3 = Response(
+          final response3 = ResponseObject(
             name: 'User',
             description: 'Third user',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
 
@@ -471,46 +476,51 @@ void main() {
         });
 
         test('uses context path when name is not available', () {
-          final response = Response(
+          final response = ResponseObject(
             name: null,
             description: 'A user object',
             headers: const {},
+            body: null,
             context: Context.initial().pushAll(['api', 'models', 'user']),
           );
           expect(nameGenerator.generateResponseName(response), 'ApiModelsUser');
         });
 
         test('uses Anonymous for response without name or context path', () {
-          final response = Response(
+          final response = ResponseObject(
             name: null,
             description: 'A user object',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'Anonymous');
         });
 
         test('preserves numbers in names', () {
-          final response = Response(
+          final response = ResponseObject(
             name: 'Model23',
             description: 'A model',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'Model23');
         });
 
         test('handles names that already end with Response', () {
-          final response1 = Response(
+          final response1 = ResponseObject(
             name: 'UserResponse',
             description: 'First user response',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
-          final response2 = Response(
+          final response2 = ResponseObject(
             name: 'UserResponse',
             description: 'Second user response',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
 
@@ -527,10 +537,11 @@ void main() {
             properties: const {},
             context: Context.initial(),
           );
-          final response = Response(
+          final response = ResponseObject(
             name: 'User',
             description: 'A user object',
             headers: const {},
+            body: null,
             context: Context.initial(),
           );
 

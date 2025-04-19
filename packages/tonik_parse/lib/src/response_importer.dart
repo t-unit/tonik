@@ -62,9 +62,15 @@ class ResponseImporter {
           throw ArgumentError('Response $refName not found');
         }
 
-        return importResponse(
+        final referencedResponse = importResponse(
           name: refName,
           wrapper: refResponse,
+          context: context,
+        );
+
+        return core.ResponseAlias(
+          name: name,
+          response: referencedResponse,
           context: context,
         );
 
@@ -119,7 +125,7 @@ class ResponseImporter {
           }
         }
 
-        return core.Response(
+        return core.ResponseObject(
           name: name,
           description: response.description,
           headers: headers,

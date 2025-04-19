@@ -190,21 +190,24 @@ void main() {
 
     final content = inlineClassBody?.content.first;
     expect(content?.model, isA<ClassModel>());
-    
+
     final model = content?.model as ClassModel?;
     expect(model?.properties, hasLength(3));
-    
-    final nameProperty = model?.properties
-        .firstWhereOrNull((p) => p.name == 'name');
-    final ageProperty = model?.properties
-        .firstWhereOrNull((p) => p.name == 'age');
-    final emailProperty = model?.properties
-        .firstWhereOrNull((p) => p.name == 'email');
-        
+
+    final nameProperty = model?.properties.firstWhereOrNull(
+      (p) => p.name == 'name',
+    );
+    final ageProperty = model?.properties.firstWhereOrNull(
+      (p) => p.name == 'age',
+    );
+    final emailProperty = model?.properties.firstWhereOrNull(
+      (p) => p.name == 'email',
+    );
+
     expect(nameProperty?.model, isA<StringModel>());
     expect(ageProperty?.model, isA<IntegerModel>());
     expect(emailProperty?.model, isA<StringModel>());
-    
+
     expect(api.models, contains(model));
   });
 
@@ -241,7 +244,10 @@ void main() {
     final aliasRequestBody = alias?.requestBody as RequestBodyAlias?;
     expect(aliasRequestBody?.requestBody, isA<RequestBodyObject>());
     expect(
-      (aliasRequestBody?.requestBody as RequestBodyObject?)?.content.first.model,
+      (aliasRequestBody?.requestBody as RequestBodyObject?)
+          ?.content
+          .first
+          .model,
       isA<StringModel>(),
     );
   });

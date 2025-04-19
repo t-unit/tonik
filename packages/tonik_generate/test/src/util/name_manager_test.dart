@@ -31,17 +31,23 @@ void main() {
         ListModel(content: IntegerModel(context: context), context: context),
       ];
       final responses = [
-        Response(
+        ResponseAlias(
           name: 'user',
           context: context,
-          description: 'A user response',
-          headers: const {},
+          response: ResponseObject(
+            name: 'users',
+            context: context,
+            description: 'A user response',
+            headers: const {},
+            body: null,
+          ),
         ),
-        Response(
+        ResponseObject(
           name: 'user',
           context: context,
           description: 'Another user response',
           headers: const {},
+          body: null,
         ),
       ];
       const tags = [Tag(name: 'user')];

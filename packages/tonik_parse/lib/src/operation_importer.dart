@@ -105,8 +105,6 @@ class OperationImporter {
         context: context.push(statusCode),
       );
 
-      if (importedResponse.body == null) continue;
-
       final status = _parseResponseStatus(statusCode);
       result[status] = importedResponse;
     }

@@ -57,8 +57,25 @@ void main() {
         },
         'delete': {
           'operationId': 'deleteTest',
-          // Empty responses map instead of no responses.
           'responses': <String, dynamic>{},
+        },
+        'head': {
+          'operationId': 'headTest',
+          'responses': {
+            '200': {
+              'description': 'Headers only response',
+              'headers': {
+                'X-Rate-Limit': {
+                  'description': 'Rate limit per hour',
+                  'schema': {'type': 'integer'},
+                },
+                'X-Rate-Limit-Reset': {
+                  'description': 'Time until rate limit resets',
+                  'schema': {'type': 'string', 'format': 'date-time'},
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -77,9 +94,11 @@ void main() {
             },
           },
         },
+        'AnotherCreatedResponse': {
+          r'$ref': '#/components/responses/CreatedResponse',
+        },
       },
     },
-    'servers': <dynamic>[],
   };
 
   test('imports inline response correctly', () {
@@ -93,7 +112,11 @@ void main() {
     final successResponse =
         getOperation?.responses[const ExplicitResponseStatus(statusCode: 200)];
     expect(successResponse, isNotNull);
-    expect(successResponse?.body?.model, isA<StringModel>());
+    expect(successResponse, isA<ResponseObject>());
+    expect(
+      (successResponse as ResponseObject?)?.body?.model,
+      isA<StringModel>(),
+    );
   });
 
   test('imports default response correctly', () {
@@ -107,7 +130,11 @@ void main() {
     final defaultResponse =
         getOperation?.responses[const DefaultResponseStatus()];
     expect(defaultResponse, isNotNull);
-    expect(defaultResponse?.body?.model, isA<ClassModel>());
+    expect(defaultResponse, isA<ResponseObject>());
+    expect(
+      (defaultResponse as ResponseObject?)?.body?.model,
+      isA<ClassModel>(),
+    );
   });
 
   test('imports response range correctly', () {
@@ -121,7 +148,8 @@ void main() {
     final rangeResponse =
         postOperation?.responses[const RangeResponseStatus(min: 400, max: 499)];
     expect(rangeResponse, isNotNull);
-    expect(rangeResponse?.body?.model, isA<ClassModel>());
+    expect(rangeResponse, isA<ResponseObject>());
+    expect((rangeResponse as ResponseObject?)?.body?.model, isA<ClassModel>());
   });
 
   test('imports referenced response correctly', () {
@@ -135,9 +163,16 @@ void main() {
     final createdResponse =
         postOperation?.responses[const ExplicitResponseStatus(statusCode: 201)];
     expect(createdResponse, isNotNull);
-    expect(createdResponse?.body?.model, isA<ClassModel>());
+    expect(createdResponse, isA<ResponseAlias>());
 
-    final model = createdResponse?.body?.model as ClassModel?;
+    final resolvedResponse = (createdResponse as ResponseAlias?)?.response;
+    expect(resolvedResponse, isA<ResponseObject>());
+    expect(
+      (resolvedResponse as ResponseObject?)?.body?.model,
+      isA<ClassModel>(),
+    );
+
+    final model = resolvedResponse?.body?.model as ClassModel?;
     expect(model?.properties, hasLength(1));
 
     final idProperty = model?.properties.firstWhere((p) => p.name == 'id');
@@ -152,5 +187,59 @@ void main() {
     );
     expect(deleteOperation, isNotNull);
     expect(deleteOperation?.responses, isEmpty);
+  });
+
+  test('imports component response referencing another response', () {
+    final api = Importer().import(fileContent);
+
+    final anotherCreatedResponse = api.responses.firstWhereOrNull(
+      (r) => r.name == 'AnotherCreatedResponse',
+    );
+    expect(anotherCreatedResponse, isNotNull);
+    expect(anotherCreatedResponse, isA<ResponseAlias>());
+
+    final firstAlias = anotherCreatedResponse as ResponseAlias?;
+    expect(firstAlias?.response, isA<ResponseObject>());
+
+    final resolvedResponse = firstAlias?.response as ResponseObject?;
+    expect(resolvedResponse?.name, 'CreatedResponse');
+    expect(resolvedResponse?.body?.model, isA<ClassModel>());
+
+    final model = resolvedResponse?.body?.model as ClassModel?;
+    expect(model?.properties, hasLength(1));
+
+    final idProperty = model?.properties.firstWhere((p) => p.name == 'id');
+    expect(idProperty?.model, isA<StringModel>());
+  });
+
+  test('imports response with only headers correctly', () {
+    final api = Importer().import(fileContent);
+
+    final headOperation = api.operations.firstWhereOrNull(
+      (o) => o.operationId == 'headTest',
+    );
+    expect(headOperation, isNotNull);
+
+    final headResponse =
+        headOperation?.responses[const ExplicitResponseStatus(statusCode: 200)];
+    expect(headResponse, isNotNull);
+    expect(headResponse, isA<ResponseObject>());
+
+    final responseObject = headResponse as ResponseObject?;
+    expect(responseObject?.body, isNull);
+    expect(responseObject?.headers, hasLength(2));
+
+    final rateLimit = responseObject?.headers['X-Rate-Limit'];
+    expect(rateLimit, isA<ResponseHeaderObject>());
+    expect((rateLimit as ResponseHeaderObject?)?.model, isA<IntegerModel>());
+    expect(rateLimit?.description, 'Rate limit per hour');
+
+    final rateLimitReset = responseObject?.headers['X-Rate-Limit-Reset'];
+    expect(rateLimitReset, isA<ResponseHeaderObject>());
+    expect(
+      (rateLimitReset as ResponseHeaderObject?)?.model,
+      isA<DateTimeModel>(),
+    );
+    expect(rateLimitReset?.description, 'Time until rate limit resets');
   });
 }

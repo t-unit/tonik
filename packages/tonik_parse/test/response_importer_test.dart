@@ -74,10 +74,10 @@ void main() {
             },
           },
         },
-        'ReferenceResponse': {r'$ref': '#/components/responses/SimpleResponse'},
         'DoubleReferenceResponse': {
           r'$ref': '#/components/responses/ReferenceResponse',
         },
+        'ReferenceResponse': {r'$ref': '#/components/responses/SimpleResponse'},
       },
     },
   };
@@ -89,7 +89,11 @@ void main() {
     );
 
     expect(simpleResponse, isNotNull);
-    expect(simpleResponse?.description, 'A simple response');
+    expect(simpleResponse, isA<ResponseObject>());
+    expect(
+      (simpleResponse as ResponseObject?)?.description,
+      'A simple response',
+    );
     expect(simpleResponse?.headers, isEmpty);
     expect(simpleResponse?.body, isNull);
   });
@@ -101,7 +105,11 @@ void main() {
     );
 
     expect(inlineBodyResponse, isNotNull);
-    expect(inlineBodyResponse?.body?.model, isA<StringModel>());
+    expect(inlineBodyResponse, isA<ResponseObject>());
+    expect(
+      (inlineBodyResponse as ResponseObject?)?.body?.model,
+      isA<StringModel>(),
+    );
     expect(inlineBodyResponse?.body?.rawContentType, 'application/json');
   });
 
@@ -112,7 +120,11 @@ void main() {
     );
 
     expect(referenceBodyResponse, isNotNull);
-    expect(referenceBodyResponse?.body?.model, isA<AliasModel>());
+    expect(referenceBodyResponse, isA<ResponseObject>());
+    expect(
+      (referenceBodyResponse as ResponseObject?)?.body?.model,
+      isA<AliasModel>(),
+    );
     expect(
       (referenceBodyResponse?.body?.model as AliasModel?)?.name,
       'MySchema',
@@ -126,7 +138,8 @@ void main() {
     );
 
     expect(inlineHeaderResponse, isNotNull);
-    expect(inlineHeaderResponse?.headers, hasLength(1));
+    expect(inlineHeaderResponse, isA<ResponseObject>());
+    expect((inlineHeaderResponse as ResponseObject?)?.headers, hasLength(1));
 
     final yourHeader = inlineHeaderResponse?.headers['X-YourHeader'];
     expect(yourHeader, isA<ResponseHeaderObject>());
@@ -140,7 +153,8 @@ void main() {
     );
 
     expect(referenceHeaderResponse, isNotNull);
-    expect(referenceHeaderResponse?.headers, hasLength(1));
+    expect(referenceHeaderResponse, isA<ResponseObject>());
+    expect((referenceHeaderResponse as ResponseObject?)?.headers, hasLength(1));
 
     final myHeader = referenceHeaderResponse?.headers['X-MyHeader'];
     expect(myHeader, isA<ResponseHeaderObject>());
@@ -154,7 +168,11 @@ void main() {
     );
 
     expect(jsonLikeResponse, isNotNull);
-    expect(jsonLikeResponse?.body?.model, isA<StringModel>());
+    expect(jsonLikeResponse, isA<ResponseObject>());
+    expect(
+      (jsonLikeResponse as ResponseObject?)?.body?.model,
+      isA<StringModel>(),
+    );
     expect(jsonLikeResponse?.body?.rawContentType, 'alto-endpointcost+json');
   });
 
@@ -165,10 +183,53 @@ void main() {
     );
 
     expect(invalidResponse, isNotNull);
-    expect(invalidResponse?.body?.model, isA<NumberModel>());
+    expect(invalidResponse, isA<ResponseObject>());
+    expect(
+      (invalidResponse as ResponseObject?)?.body?.model,
+      isA<NumberModel>(),
+    );
     expect(
       invalidResponse?.body?.rawContentType,
       'concise-problem-details+cbor',
+    );
+  });
+
+  test('imports direct reference response', () {
+    final api = Importer().import(fileContent);
+    final referenceResponse = api.responses.firstWhereOrNull(
+      (r) => r.name == 'ReferenceResponse',
+    );
+
+    expect(referenceResponse, isNotNull);
+    expect(referenceResponse, isA<ResponseAlias>());
+
+    final alias = referenceResponse as ResponseAlias?;
+    expect(alias?.response, isA<ResponseObject>());
+    expect((alias?.response as ResponseObject?)?.name, 'SimpleResponse');
+    expect(
+      (alias?.response as ResponseObject?)?.description,
+      'A simple response',
+    );
+  });
+
+  test('imports double reference response', () {
+    final api = Importer().import(fileContent);
+    final doubleReferenceResponse = api.responses.firstWhereOrNull(
+      (r) => r.name == 'DoubleReferenceResponse',
+    );
+
+    expect(doubleReferenceResponse, isNotNull);
+    expect(doubleReferenceResponse, isA<ResponseAlias>());
+
+    final firstAlias = doubleReferenceResponse as ResponseAlias?;
+    expect(firstAlias?.response, isA<ResponseAlias>());
+
+    final secondAlias = firstAlias?.response as ResponseAlias?;
+    expect(secondAlias?.response, isA<ResponseObject>());
+    expect((secondAlias?.response as ResponseObject?)?.name, 'SimpleResponse');
+    expect(
+      (secondAlias?.response as ResponseObject?)?.description,
+      'A simple response',
     );
   });
 }
