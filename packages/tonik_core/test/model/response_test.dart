@@ -209,5 +209,66 @@ void main() {
         },
       );
     });
+
+    group('bodyCount', () {
+      test('ResponseObject - returns number of bodies', () {
+        final response = ResponseObject(
+          name: 'test',
+          context: context,
+          headers: const {},
+          description: '',
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+            ResponseBody(
+              model: StringModel(context: context),
+              rawContentType: 'application/xml',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        expect(response.bodyCount, 2);
+      });
+
+      test('ResponseObject - returns 0 for empty bodies', () {
+        final response = ResponseObject(
+          name: 'test',
+          context: context,
+          headers: const {},
+          description: '',
+          bodies: const {},
+        );
+
+        expect(response.bodyCount, 0);
+      });
+
+      test('ResponseAlias - returns body count of referenced response', () {
+        final referencedResponse = ResponseObject(
+          name: 'test',
+          context: context,
+          headers: const {},
+          description: '',
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final alias = ResponseAlias(
+          name: 'test',
+          context: context,
+          response: referencedResponse,
+        );
+
+        expect(alias.bodyCount, 1);
+      });
+    });
   });
 }

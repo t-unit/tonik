@@ -38,8 +38,8 @@ class NameManager {
       _logModelName(name, model);
     }
     for (final response in responses) {
-      // Skip responses without headers as body is used directly.
-      if (response.hasHeaders) {
+      // Generate names for responses with headers or multiple bodies
+      if (response.hasHeaders || response.bodyCount > 1) {
         final name = responseName(response);
         _logResponseName(name, response);
       }

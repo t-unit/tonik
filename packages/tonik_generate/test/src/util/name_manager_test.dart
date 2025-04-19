@@ -382,5 +382,37 @@ void main() {
       final aliasName2 = manager.requestBodyName(bodyAlias);
       expect(aliasName1, aliasName2);
     });
+
+    test('caches and names responses with multiple bodies', () {
+      final multiBodyResponse = ResponseObject(
+        name: 'multiBody',
+        context: context,
+        description: '',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/xml',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      manager.prime(
+        models: const [],
+        responses: [multiBodyResponse],
+        operations: const [],
+        tags: const [],
+        requestBodies: const [],
+      );
+
+      expect(manager.responseNames.length, 1);
+      expect(manager.responseName(multiBodyResponse), 'MultiBody');
+    });
   });
 }

@@ -14,6 +14,9 @@ sealed class Response {
 
   /// Returns true if the response has any headers.
   bool get hasHeaders;
+
+  /// Returns the number of bodies in the response.
+  int get bodyCount;
 }
 
 @immutable
@@ -31,6 +34,9 @@ class ResponseAlias extends Response {
 
   @override
   bool get hasHeaders => response.hasHeaders;
+
+  @override
+  int get bodyCount => response.bodyCount;
 
   @override
   bool operator ==(Object other) =>
@@ -67,6 +73,9 @@ class ResponseObject extends Response {
 
   @override
   bool get hasHeaders => headers.isNotEmpty;
+
+  @override
+  int get bodyCount => bodies.length;
 
   @override
   bool operator ==(Object other) {
