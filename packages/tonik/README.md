@@ -36,6 +36,7 @@ This package aims to overcome these shortcomings.
 - E2E tests (using imposter?)
 - Full decoding and encoding support for all of, any of and one of
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
+- Annotate deprecated fields methods and classes.
 
 ### Long term goals
 - Supporting the `not` keyword

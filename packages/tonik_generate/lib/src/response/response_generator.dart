@@ -1,0 +1,383 @@
+import 'package:change_case/change_case.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:meta/meta.dart';
+import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/name_manager.dart';
+import 'package:tonik_generate/src/util/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
+
+/// A generator for creating Dart sealed classes and typedefs
+/// from Response definitions.
+@immutable
+class ResponseGenerator {
+  const ResponseGenerator({required this.nameManager, required this.package});
+
+  final NameManager nameManager;
+  final String package;
+
+  ({String code, String filename}) generate(Response response) {
+    if (!response.hasHeaders && response.bodyCount <= 1) {
+      throw ArgumentError(
+        'Response must have headers or multiple bodies, '
+        'got ${response.bodyCount} bodies and no headers',
+      );
+    }
+
+    final name = nameManager.responseName(response);
+
+    switch (response) {
+      case ResponseAlias():
+        final typedef = generateTypedef(response, name);
+        final library = Library((b) => b.body.add(typedef));
+        final code = _formatLibrary(library);
+        return (code: code, filename: '${name.toSnakeCase()}.dart');
+      case ResponseObject():
+        throw UnimplementedError(
+          'Complex response objects not yet implemented',
+        );
+    }
+  }
+
+  @visibleForTesting
+  TypeDef generateTypedef(ResponseAlias response, String name) {
+    final targetName = nameManager.responseName(response.response);
+
+    return TypeDef(
+      (b) =>
+          b
+            ..name = name
+            ..definition = refer(targetName),
+    );
+  }
+
+  @visibleForTesting
+  Class generateResponseClass(ResponseObject response) {
+    final className = nameManager.responseName(response);
+    final properties = <Property>[];
+
+    // Add header properties
+    for (final header in response.headers.entries) {
+      final headerObject = header.value.resolve(name: header.key);
+      final name = header.key;
+      
+      properties.add(
+        Property(
+          name: name.toLowerCase() == 'body' ? '${name}Header' : name,
+          model: headerObject.model,
+          isRequired: headerObject.isRequired,
+          isNullable: false,
+          isDeprecated: headerObject.isDeprecated,
+        ),
+      );
+    }
+
+      final body = response.bodies.first;
+      properties.add(
+        Property(
+          name: 'body',
+          model: body.model,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      );
+
+    final normalizedProperties = normalizeProperties(properties);
+
+    final sortedProperties = [...normalizedProperties]..sort((a, b) {
+      // Required fields come before non-required fields
+      if (a.property.isRequired != b.property.isRequired) {
+        return a.property.isRequired ? -1 : 1;
+      }
+      // Keep original order for fields with same required status
+      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
+    });
+
+    return Class(
+      (b) =>
+          b
+            ..name = className
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+            ..constructors.add(
+              Constructor(
+                (b) =>
+                    b
+                      ..constant = true
+                      ..optionalParameters.addAll(
+                        sortedProperties.map(
+                          (prop) => Parameter(
+                            (b) =>
+                                b
+                                  ..name = prop.normalizedName
+                                  ..named = true
+                                  ..required = prop.property.isRequired
+                                  ..toThis = true,
+                          ),
+                        ),
+                      ),
+              ),
+            )
+            ..methods.addAll([
+              _buildEqualsMethod(className, sortedProperties),
+              _buildHashCodeMethod(sortedProperties),
+              _buildCopyWithMethod(className, sortedProperties),
+            ])
+            ..fields.addAll(
+              sortedProperties.map(
+                (prop) => Field(
+                  (b) =>
+                      b
+                        ..name = prop.normalizedName
+                        ..modifier = FieldModifier.final$
+                        ..type = typeReference(
+                          prop.property.model,
+                          nameManager,
+                          package,
+                          isNullableOverride: !prop.property.isRequired,
+                        ),
+                ),
+              ),
+            ),
+    );
+  }
+
+  Method _buildEqualsMethod(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    var hasCollectionProperties = false;
+    final comparisons = <String>[];
+
+    for (final prop in properties) {
+      final name = prop.normalizedName;
+      final property = prop.property;
+
+      if (property.model is ListModel) {
+        hasCollectionProperties = true;
+        comparisons.add('deepEquals.equals(other.$name, $name)');
+      } else {
+        comparisons.add('other.$name == $name');
+      }
+    }
+
+    final methodBuilder =
+        MethodBuilder()
+          ..name = 'operator =='
+          ..returns = refer('bool', 'dart:core')
+          ..annotations.add(refer('override', 'dart:core'))
+          ..requiredParameters.add(
+            Parameter(
+              (b) =>
+                  b
+                    ..name = 'other'
+                    ..type = refer('Object', 'dart:core'),
+            ),
+          );
+
+    final codeLines = <Code>[
+      Code.scope((allocate) {
+        final identical = allocate(refer('identical', 'dart:core'));
+        return 'if ($identical(this, other)) return true;';
+      }),
+    ];
+
+    if (hasCollectionProperties) {
+      codeLines.add(
+        declareConst('deepEquals')
+            .assign(
+              refer(
+                'DeepCollectionEquality',
+                'package:collection/collection.dart',
+              ).call([]),
+            )
+            .statement,
+      );
+    }
+
+    if (properties.isEmpty) {
+      codeLines.add(Code('return other is $className;'));
+    } else {
+      codeLines
+        ..add(Code('return other is $className && '))
+        ..add(Code('  ${comparisons.join(' && ')};'));
+    }
+
+    methodBuilder.body = Block.of(codeLines);
+
+    return methodBuilder.build();
+  }
+
+  Method _buildHashCodeMethod(
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasCollections = properties.any(
+      (prop) => prop.property.model is ListModel,
+    );
+
+    final codeLines = <Code>[];
+
+    if (properties.isEmpty) {
+      codeLines.add(
+        refer('runtimeType').property('hashCode').returned.statement,
+      );
+      return Method(
+        (b) =>
+            b
+              ..name = 'hashCode'
+              ..type = MethodType.getter
+              ..returns = refer('int', 'dart:core')
+              ..annotations.add(refer('override', 'dart:core'))
+              ..body = Block.of(codeLines),
+      );
+    }
+
+    if (properties.length == 1) {
+      // If there's only one property, just return its hashCode
+      final propName = properties.first.normalizedName;
+      if (properties.first.property.model is ListModel) {
+        if (hasCollections) {
+          codeLines.add(
+            declareConst('deepEquals')
+                .assign(
+                  refer(
+                    'DeepCollectionEquality',
+                    'package:collection/collection.dart',
+                  ).call([]),
+                )
+                .statement,
+          );
+        }
+        codeLines.add(
+          refer(
+            'deepEquals',
+          ).property('hash').call([refer(propName)]).returned.statement,
+        );
+      } else {
+        codeLines.add(refer(propName).property('hashCode').returned.statement);
+      }
+      return Method(
+        (b) =>
+            b
+              ..name = 'hashCode'
+              ..type = MethodType.getter
+              ..returns = refer('int', 'dart:core')
+              ..annotations.add(refer('override', 'dart:core'))
+              ..body = Block.of(codeLines),
+      );
+    }
+
+    if (hasCollections) {
+      codeLines.add(
+        declareConst('deepEquals')
+            .assign(
+              refer(
+                'DeepCollectionEquality',
+                'package:collection/collection.dart',
+              ).call([]),
+            )
+            .statement,
+      );
+
+      final objectHashArgs = <Expression>[];
+
+      for (final prop in properties) {
+        final name = prop.normalizedName;
+        if (prop.property.model is ListModel) {
+          objectHashArgs.add(
+            refer('deepEquals').property('hash').call([refer(name)]),
+          );
+        } else {
+          objectHashArgs.add(refer(name));
+        }
+      }
+
+      codeLines.add(
+        refer(
+          'Object',
+          'dart:core',
+        ).property('hash').call(objectHashArgs).returned.statement,
+      );
+    } else {
+      final hashArgs =
+          properties.map((prop) => refer(prop.normalizedName)).toList();
+
+      codeLines.add(
+        refer(
+          'Object',
+          'dart:core',
+        ).property('hash').call(hashArgs).returned.statement,
+      );
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'hashCode'
+            ..type = MethodType.getter
+            ..returns = refer('int', 'dart:core')
+            ..annotations.add(refer('override', 'dart:core'))
+            ..body = Block.of(codeLines),
+    );
+  }
+
+  Method _buildCopyWithMethod(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final parameters = <Parameter>[];
+    final assignments = <Code>[];
+
+    for (final prop in properties) {
+      final name = prop.normalizedName;
+      final property = prop.property;
+      final typeRef = typeReference(
+        property.model,
+        nameManager,
+        package,
+      );
+
+      parameters.add(
+        Parameter(
+          (b) =>
+              b
+                ..name = name
+                ..named = true
+                ..type = TypeReference(
+                  (b) =>
+                      b
+                        ..symbol = typeRef.symbol
+                        ..url = typeRef.url
+                        ..types.addAll(typeRef.types)
+                        ..isNullable = true,
+                ),
+        ),
+      );
+
+      assignments.add(Code('$name: $name ?? this.$name,'));
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'copyWith'
+            ..returns = refer(className)
+            ..optionalParameters.addAll(parameters)
+            ..body = Code(
+              'return $className(\n  ${assignments.join('\n  ')}\n);',
+            ),
+    );
+  }
+
+  String _formatLibrary(Library library) {
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(),
+      orderDirectives: true,
+      useNullSafetySyntax: true,
+    );
+
+    return '// Generated code - do not modify by hand\n'
+        '// ignore_for_file: lines_longer_than_80_chars\n\n'
+        '${library.accept(emitter)}';
+  }
+}
