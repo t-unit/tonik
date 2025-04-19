@@ -55,15 +55,15 @@ class ResponseObject extends Response {
     required super.context,
     required this.headers,
     required this.description,
-    required this.body,
+    required this.bodies,
   });
 
   final Map<String, ResponseHeader> headers;
-  final ResponseBody? body;
+  final Set<ResponseBody> bodies;
   final String description;
 
   @override
-  bool get isEmpty => body == null && headers.isEmpty;
+  bool get isEmpty => bodies.isEmpty && headers.isEmpty;
 
   @override
   bool get hasHeaders => headers.isNotEmpty;
@@ -78,7 +78,7 @@ class ResponseObject extends Response {
           headers,
           other.headers,
         ) &&
-        body == other.body &&
+        bodies == other.bodies &&
         description == other.description;
   }
 
@@ -87,14 +87,14 @@ class ResponseObject extends Response {
     name,
     context,
     const MapEquality<String, ResponseHeader>().hash(headers),
-    body,
+    bodies,
     description,
   );
 
   @override
   String toString() =>
       'ResponseObject(name: $name, context: $context, headers: $headers, '
-      'description: $description, body: $body)';
+      'description: $description, bodies: $bodies)';
 }
 
 @immutable

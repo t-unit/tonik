@@ -87,49 +87,46 @@ class ResponseImporter {
           }
         }
 
-        core.ResponseBody? body;
         if (response.content != null) {
           final mediaTypes = response.content!;
+          final bodies = <core.ResponseBody>[];
 
-          // Try to find application/json first
-          var mediaType = mediaTypes.entries.firstWhereOrNull(
-            (entry) => entry.key == 'application/json',
-          );
-
-          // If not found, look for any JSON-like content type
-          mediaType ??= mediaTypes.entries.firstWhereOrNull(
-            (entry) => entry.key.toLowerCase().contains('json'),
-          );
-
-          // If no json media type is found, use the first one
-          if (mediaType == null) {
-            log.warning('No JSON media type found for response $name');
-            mediaType = mediaTypes.entries.firstOrNull;
+          // Process all JSON and JSON-like content types
+          for (final entry in mediaTypes.entries) {
+            final contentType = entry.key.toLowerCase();
+            if (contentType.contains('json') && entry.value.schema != null) {
+              final model = modelImporter.importSchema(
+                entry.value.schema!,
+                context.push('content'),
+              );
+              bodies.add(
+                core.ResponseBody(
+                  model: model,
+                  rawContentType: entry.key,
+                  contentType: core.ContentType.json,
+                ),
+              );
+            }
           }
 
-          if (mediaType?.value.schema != null) {
-            final model = modelImporter.importSchema(
-              mediaType!.value.schema!,
-              context.push('content'),
-            );
-            body = core.ResponseBody(
-              model: model,
-              rawContentType: mediaType.key,
-              contentType: core.ContentType.json,
-            );
-          } else if (mediaType != null) {
-            log.warning(
-              'No schema found for response $name. '
-              'Ignoring response body for ${mediaType.key}',
-            );
+          if (bodies.isEmpty && mediaTypes.isNotEmpty) {
+            log.warning('No schema found for response $name.');
           }
+
+          return core.ResponseObject(
+            name: name,
+            description: response.description,
+            headers: headers,
+            bodies: bodies.toSet(),
+            context: context,
+          );
         }
 
         return core.ResponseObject(
           name: name,
           description: response.description,
           headers: headers,
-          body: body,
+          bodies: const {},
           context: context,
         );
     }

@@ -114,7 +114,7 @@ void main() {
     expect(successResponse, isNotNull);
     expect(successResponse, isA<ResponseObject>());
     expect(
-      (successResponse as ResponseObject?)?.body?.model,
+      (successResponse as ResponseObject?)?.bodies.first.model,
       isA<StringModel>(),
     );
   });
@@ -132,7 +132,7 @@ void main() {
     expect(defaultResponse, isNotNull);
     expect(defaultResponse, isA<ResponseObject>());
     expect(
-      (defaultResponse as ResponseObject?)?.body?.model,
+      (defaultResponse as ResponseObject?)?.bodies.first.model,
       isA<ClassModel>(),
     );
   });
@@ -149,7 +149,10 @@ void main() {
         postOperation?.responses[const RangeResponseStatus(min: 400, max: 499)];
     expect(rangeResponse, isNotNull);
     expect(rangeResponse, isA<ResponseObject>());
-    expect((rangeResponse as ResponseObject?)?.body?.model, isA<ClassModel>());
+    expect(
+      (rangeResponse as ResponseObject?)?.bodies.first.model,
+      isA<ClassModel>(),
+    );
   });
 
   test('imports referenced response correctly', () {
@@ -168,11 +171,11 @@ void main() {
     final resolvedResponse = (createdResponse as ResponseAlias?)?.response;
     expect(resolvedResponse, isA<ResponseObject>());
     expect(
-      (resolvedResponse as ResponseObject?)?.body?.model,
+      (resolvedResponse as ResponseObject?)?.bodies.first.model,
       isA<ClassModel>(),
     );
 
-    final model = resolvedResponse?.body?.model as ClassModel?;
+    final model = resolvedResponse?.bodies.first.model as ClassModel?;
     expect(model?.properties, hasLength(1));
 
     final idProperty = model?.properties.firstWhere((p) => p.name == 'id');
@@ -203,9 +206,9 @@ void main() {
 
     final resolvedResponse = firstAlias?.response as ResponseObject?;
     expect(resolvedResponse?.name, 'CreatedResponse');
-    expect(resolvedResponse?.body?.model, isA<ClassModel>());
+    expect(resolvedResponse?.bodies.first.model, isA<ClassModel>());
 
-    final model = resolvedResponse?.body?.model as ClassModel?;
+    final model = resolvedResponse?.bodies.first.model as ClassModel?;
     expect(model?.properties, hasLength(1));
 
     final idProperty = model?.properties.firstWhere((p) => p.name == 'id');
@@ -226,7 +229,7 @@ void main() {
     expect(headResponse, isA<ResponseObject>());
 
     final responseObject = headResponse as ResponseObject?;
-    expect(responseObject?.body, isNull);
+    expect(responseObject?.bodies, isEmpty);
     expect(responseObject?.headers, hasLength(2));
 
     final rateLimit = responseObject?.headers['X-Rate-Limit'];

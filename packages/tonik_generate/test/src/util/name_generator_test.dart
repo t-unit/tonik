@@ -426,7 +426,7 @@ void main() {
             name: 'User',
             description: 'A user object',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'User');
@@ -437,7 +437,7 @@ void main() {
             name: 'user_profile',
             description: 'A user profile',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'UserProfile');
@@ -448,21 +448,21 @@ void main() {
             name: 'User',
             description: 'First user',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           final response2 = ResponseObject(
             name: 'User',
             description: 'Second user',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           final response3 = ResponseObject(
             name: 'User',
             description: 'Third user',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
 
@@ -480,7 +480,7 @@ void main() {
             name: null,
             description: 'A user object',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial().pushAll(['api', 'models', 'user']),
           );
           expect(nameGenerator.generateResponseName(response), 'ApiModelsUser');
@@ -491,7 +491,7 @@ void main() {
             name: null,
             description: 'A user object',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'Anonymous');
@@ -502,7 +502,7 @@ void main() {
             name: 'Model23',
             description: 'A model',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           expect(nameGenerator.generateResponseName(response), 'Model23');
@@ -513,14 +513,14 @@ void main() {
             name: 'UserResponse',
             description: 'First user response',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
           final response2 = ResponseObject(
             name: 'UserResponse',
             description: 'Second user response',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
 
@@ -541,7 +541,7 @@ void main() {
             name: 'User',
             description: 'A user object',
             headers: const {},
-            body: null,
+            bodies: const {},
             context: Context.initial(),
           );
 

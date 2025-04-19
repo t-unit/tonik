@@ -50,11 +50,13 @@ void main() {
                 context: context,
               ),
             },
-            body: ResponseBody(
-              model: StringModel(context: context),
-              rawContentType: 'application/json',
-              contentType: ContentType.json,
-            ),
+            bodies: {
+               ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+            },
           ),
         ),
         ResponseObject(
@@ -73,7 +75,7 @@ void main() {
               context: context,
             ),
           },
-          body: null,
+          bodies: const {},
         ),
       ];
       const tags = [Tag(name: 'user')];
@@ -180,7 +182,7 @@ void main() {
         context: context,
         headers: const {},
         description: '',
-        body: null,
+        bodies: const {},
       );
 
       final bodyOnlyResponse = ResponseObject(
@@ -188,11 +190,13 @@ void main() {
         context: context,
         headers: const {},
         description: '',
-        body: ResponseBody(
-          model: StringModel(context: context),
-          rawContentType: 'application/json',
-          contentType: ContentType.json,
-        ),
+        bodies: {
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
       );
 
       final headersOnlyResponse = ResponseObject(
@@ -211,7 +215,7 @@ void main() {
           ),
         },
         description: '',
-        body: null,
+        bodies: const {},
       );
 
       final completeResponse = ResponseObject(
@@ -230,11 +234,13 @@ void main() {
           ),
         },
         description: '',
-        body: ResponseBody(
-          model: StringModel(context: context),
-          rawContentType: 'application/json',
-          contentType: ContentType.json,
-        ),
+        bodies: {
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
       );
 
       final emptyAlias = ResponseAlias(

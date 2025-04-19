@@ -78,6 +78,46 @@ void main() {
           r'$ref': '#/components/responses/ReferenceResponse',
         },
         'ReferenceResponse': {r'$ref': '#/components/responses/SimpleResponse'},
+        'MultiJsonResponse': {
+          'description': 'A response with multiple JSON content types',
+          'content': {
+            'application/json': {
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'id': {'type': 'string'},
+                },
+              },
+            },
+            'application/problem+json': {
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'error': {'type': 'string'},
+                },
+              },
+            },
+            'application/ld+json': {
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'context': {'type': 'string'},
+                },
+              },
+            },
+            'application/geo+json': {
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'coordinates': {
+                    'type': 'array',
+                    'items': {'type': 'number'},
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
   };
@@ -95,7 +135,7 @@ void main() {
       'A simple response',
     );
     expect(simpleResponse?.headers, isEmpty);
-    expect(simpleResponse?.body, isNull);
+    expect(simpleResponse?.bodies, isEmpty);
   });
 
   test('imports response with inline body', () {
@@ -107,10 +147,10 @@ void main() {
     expect(inlineBodyResponse, isNotNull);
     expect(inlineBodyResponse, isA<ResponseObject>());
     expect(
-      (inlineBodyResponse as ResponseObject?)?.body?.model,
+      (inlineBodyResponse as ResponseObject?)?.bodies.first.model,
       isA<StringModel>(),
     );
-    expect(inlineBodyResponse?.body?.rawContentType, 'application/json');
+    expect(inlineBodyResponse?.bodies.first.rawContentType, 'application/json');
   });
 
   test('imports response with reference body', () {
@@ -122,11 +162,11 @@ void main() {
     expect(referenceBodyResponse, isNotNull);
     expect(referenceBodyResponse, isA<ResponseObject>());
     expect(
-      (referenceBodyResponse as ResponseObject?)?.body?.model,
+      (referenceBodyResponse as ResponseObject?)?.bodies.first.model,
       isA<AliasModel>(),
     );
     expect(
-      (referenceBodyResponse?.body?.model as AliasModel?)?.name,
+      (referenceBodyResponse?.bodies.first.model as AliasModel?)?.name,
       'MySchema',
     );
   });
@@ -170,13 +210,16 @@ void main() {
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse, isA<ResponseObject>());
     expect(
-      (jsonLikeResponse as ResponseObject?)?.body?.model,
+      (jsonLikeResponse as ResponseObject?)?.bodies.first.model,
       isA<StringModel>(),
     );
-    expect(jsonLikeResponse?.body?.rawContentType, 'alto-endpointcost+json');
+    expect(
+      jsonLikeResponse?.bodies.first.rawContentType,
+      'alto-endpointcost+json',
+    );
   });
 
-  test('imports response with invalid body content type as json', () {
+  test('ingores body of response with invalid body content type', () {
     final api = Importer().import(fileContent);
     final invalidResponse = api.responses.firstWhereOrNull(
       (r) => r.name == 'InvalidResponse',
@@ -184,14 +227,7 @@ void main() {
 
     expect(invalidResponse, isNotNull);
     expect(invalidResponse, isA<ResponseObject>());
-    expect(
-      (invalidResponse as ResponseObject?)?.body?.model,
-      isA<NumberModel>(),
-    );
-    expect(
-      invalidResponse?.body?.rawContentType,
-      'concise-problem-details+cbor',
-    );
+    expect((invalidResponse as ResponseObject?)?.bodies, isEmpty);
   });
 
   test('imports direct reference response', () {
@@ -231,5 +267,35 @@ void main() {
       (secondAlias?.response as ResponseObject?)?.description,
       'A simple response',
     );
+  });
+
+  test('imports multiple json content types as response objects', () {
+    final api = Importer().import(fileContent);
+    final multiJsonResponse = api.responses.firstWhereOrNull(
+      (r) => r.name == 'MultiJsonResponse',
+    );
+
+    expect(multiJsonResponse, isNotNull);
+    expect(multiJsonResponse, isA<ResponseObject>());
+
+    final response = multiJsonResponse as ResponseObject?;
+    expect(response?.bodies, hasLength(4));
+
+    // Verify all content types are preserved
+    final contentTypes = response?.bodies.map((b) => b.rawContentType).toList();
+    expect(
+      contentTypes,
+      containsAll([
+        'application/json',
+        'application/problem+json',
+        'application/ld+json',
+        'application/geo+json',
+      ]),
+    );
+
+    // Verify all bodies are parsed as ClassModel
+    for (final body in response?.bodies ?? <ResponseBody>[]) {
+      expect(body.model, isA<ClassModel>());
+    }
   });
 }
