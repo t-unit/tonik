@@ -6,10 +6,7 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating query parameters method for operations.
 class QueryGenerator {
-  const QueryGenerator({
-    required this.nameManager,
-    required this.package,
-  });
+  const QueryGenerator({required this.nameManager, required this.package});
 
   final NameManager nameManager;
   final String package;

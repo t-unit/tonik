@@ -59,9 +59,10 @@ class Generator {
 
     nameManager.prime(
       models: apiDocument.models,
-      responses: apiDocument.responses,
-      operations: apiDocument.operations,
-      tags: apiDocument.operationsByTag.keys,
+      responses: apiDocument.responses.toList(),
+      requestBodies: apiDocument.requestBodies.toList(),
+      operations: apiDocument.operations.toList(),
+      tags: apiDocument.operationsByTag.keys.toList(),
     );
 
     generatePubspec(

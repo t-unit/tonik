@@ -9,6 +9,7 @@ class NameGenerator {
   static const _responseSuffix = 'Response';
   static const _operationSuffix = 'Operation';
   static const _apiSuffix = 'Api';
+  static const _requestBodySuffix = 'RequestBody';
 
   final _usedNames = <String>{};
 
@@ -67,6 +68,20 @@ class NameGenerator {
     }
 
     return _addNumberSuffix(nameWithSuffix);
+  }
+
+  /// Generates a unique request body class name.
+  ///
+  /// Names are generated with the following priority:
+  /// 1. Request body's explicit name if available
+  /// 2. Combined context path components
+  /// 3. 'Anonymous' as fallback
+  String generateRequestBodyName(RequestBody requestBody) {
+    final baseName = _generateBaseName(
+      name: requestBody.name,
+      context: requestBody.context,
+    );
+    return _makeUnique(baseName, _requestBodySuffix);
   }
 
   /// Generates a base name using the following priority:

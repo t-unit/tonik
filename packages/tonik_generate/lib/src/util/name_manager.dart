@@ -1,4 +1,5 @@
 import 'package:logging/logging.dart';
+import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/name_generator.dart';
 
@@ -8,10 +9,18 @@ class NameManager {
 
   final NameGenerator generator;
 
-  final _modelNames = <Model, String>{};
-  final _responseNames = <Response, String>{};
-  final _operationNames = <Operation, String>{};
-  final _tagNames = <Tag, String>{};
+  @protected
+  final modelNames = <Model, String>{};
+  @protected
+  @visibleForTesting
+  final responseNames = <Response, String>{};
+  @protected
+  final operationNames = <Operation, String>{};
+  @protected
+  final tagNames = <Tag, String>{};
+  @protected
+  @visibleForTesting
+  final requestBodyNames = <RequestBody, String>{};
 
   final log = Logger('NameManager');
 
@@ -19,6 +28,7 @@ class NameManager {
   /// This ensures consistent naming across multiple calls.
   void prime({
     required Iterable<Model> models,
+    required Iterable<RequestBody> requestBodies,
     required Iterable<Response> responses,
     required Iterable<Operation> operations,
     required Iterable<Tag> tags,
@@ -28,8 +38,11 @@ class NameManager {
       _logModelName(name, model);
     }
     for (final response in responses) {
-      final name = responseName(response);
-      _logResponseName(name, response);
+      // Skip responses without headers as body is used directly.
+      if (response.hasHeaders) {
+        final name = responseName(response);
+        _logResponseName(name, response);
+      }
     }
     for (final operation in operations) {
       final name = operationName(operation);
@@ -39,27 +52,41 @@ class NameManager {
       final name = tagName(tag);
       _logTagName(name, tag);
     }
+    for (final requestBody in requestBodies) {
+      // Skip request bodies with only one content type as content
+      // is used directly.
+      if (requestBody.contentCount > 1) {
+        requestBodyName(requestBody);
+      }
+    }
   }
 
   /// Gets a cached or generates a new unique class name for a model.
   String modelName(Model model) =>
-      _modelNames.putIfAbsent(model, () => generator.generateModelName(model));
+      modelNames.putIfAbsent(model, () => generator.generateModelName(model));
 
   /// Gets a cached or generates a new unique response class name.
-  String responseName(Response response) => _responseNames.putIfAbsent(
+  String responseName(Response response) => responseNames.putIfAbsent(
     response,
     () => generator.generateResponseName(response),
   );
 
   /// Gets a cached or generates a new unique operation name.
-  String operationName(Operation operation) => _operationNames.putIfAbsent(
+  String operationName(Operation operation) => operationNames.putIfAbsent(
     operation,
     () => generator.generateOperationName(operation),
   );
 
   /// Gets a cached or generates a new unique API class name for a tag.
   String tagName(Tag tag) =>
-      _tagNames.putIfAbsent(tag, () => generator.generateTagName(tag));
+      tagNames.putIfAbsent(tag, () => generator.generateTagName(tag));
+
+  /// Gets a cached or generates a new unique request body class name.
+  String requestBodyName(RequestBody requestBody) =>
+      requestBodyNames.putIfAbsent(
+        requestBody,
+        () => generator.generateRequestBodyName(requestBody),
+      );
 
   void _logModelName(String name, Model model) {
     final modelName =

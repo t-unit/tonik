@@ -7,6 +7,9 @@ sealed class RequestBody {
 
   final String? name;
   final Context context;
+
+  /// Returns the number of content objects in this request body.
+  int get contentCount;
 }
 
 @immutable
@@ -18,6 +21,9 @@ class RequestBodyAlias extends RequestBody {
   });
 
   final RequestBody requestBody;
+
+  @override
+  int get contentCount => requestBody.contentCount;
 
   @override
   bool operator ==(Object other) =>
@@ -50,6 +56,9 @@ class RequestBodyObject extends RequestBody {
   final String? description;
   final bool isRequired;
   final Set<RequestContent> content;
+
+  @override
+  int get contentCount => content.length;
 
   @override
   bool operator ==(Object other) {

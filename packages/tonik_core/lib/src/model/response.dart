@@ -4,13 +4,16 @@ import 'package:tonik_core/tonik_core.dart';
 
 @immutable
 sealed class Response {
-  const Response({
-    required this.name,
-    required this.context,
-  });
+  const Response({required this.name, required this.context});
 
   final String? name;
   final Context context;
+
+  /// Returns true if the response has no body and no headers.
+  bool get isEmpty;
+
+  /// Returns true if the response has any headers.
+  bool get hasHeaders;
 }
 
 @immutable
@@ -22,6 +25,12 @@ class ResponseAlias extends Response {
   });
 
   final Response response;
+
+  @override
+  bool get isEmpty => response.isEmpty;
+
+  @override
+  bool get hasHeaders => response.hasHeaders;
 
   @override
   bool operator ==(Object other) =>
@@ -54,6 +63,12 @@ class ResponseObject extends Response {
   final String description;
 
   @override
+  bool get isEmpty => body == null && headers.isEmpty;
+
+  @override
+  bool get hasHeaders => headers.isNotEmpty;
+
+  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! ResponseObject) return false;
@@ -69,12 +84,12 @@ class ResponseObject extends Response {
 
   @override
   int get hashCode => Object.hash(
-        name,
-        context,
-        const MapEquality<String, ResponseHeader>().hash(headers),
-        body,
-        description,
-      );
+    name,
+    context,
+    const MapEquality<String, ResponseHeader>().hash(headers),
+    body,
+    description,
+  );
 
   @override
   String toString() =>

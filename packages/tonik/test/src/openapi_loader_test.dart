@@ -33,10 +33,7 @@ void main() {
 
       expect(result, {
         'openapi': '3.0.0',
-        'info': {
-          'title': 'Test API',
-          'version': '1.0.0'
-        }
+        'info': {'title': 'Test API', 'version': '1.0.0'},
       });
     });
 
@@ -53,21 +50,20 @@ info:
 
       expect(result, {
         'openapi': '3.0.0',
-        'info': {
-          'title': 'Test API',
-          'version': '1.0.0'
-        }
+        'info': {'title': 'Test API', 'version': '1.0.0'},
       });
     });
 
     test('throws when file does not exist', () {
       expect(
         () => loadOpenApiDocument('nonexistent.json'),
-        throwsA(isA<OpenApiLoaderException>().having(
-          (e) => e.toString(),
-          'message',
-          'OpenAPI document not found',
-        )),
+        throwsA(
+          isA<OpenApiLoaderException>().having(
+            (e) => e.toString(),
+            'message',
+            'OpenAPI document not found',
+          ),
+        ),
       );
     });
 
@@ -87,11 +83,13 @@ info:
 
       expect(
         () => loadOpenApiDocument(jsonFile.path),
-        throwsA(isA<OpenApiLoaderException>().having(
-          (e) => e.toString(),
-          'message',
-          'Failed to parse OpenAPI document.',
-        )),
+        throwsA(
+          isA<OpenApiLoaderException>().having(
+            (e) => e.toString(),
+            'message',
+            'Failed to parse OpenAPI document.',
+          ),
+        ),
       );
     });
 
@@ -135,10 +133,7 @@ paths:
 
       expect(result, {
         'openapi': '3.0.0',
-        'info': {
-          'title': 'Complex API',
-          'version': '1.0.0'
-        },
+        'info': {'title': 'Complex API', 'version': '1.0.0'},
         'paths': {
           '/test': {
             'get': {
@@ -149,18 +144,16 @@ paths:
                     'application/json': {
                       'schema': {
                         'type': 'array',
-                        'items': {
-                          'type': 'string'
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                        'items': {'type': 'string'},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
     });
   });
-} 
+}

@@ -145,7 +145,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
-        );
+      );
 
       const expectedMethod = r'''
         String _queryParameters({Anonymous? filter}) {
