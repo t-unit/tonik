@@ -92,6 +92,7 @@ class OneOfGenerator {
           b
             ..name = className
             ..sealed = true
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.add(Constructor((b) => b..constant = true))
             ..methods.addAll([
               Method(
@@ -145,11 +146,85 @@ class OneOfGenerator {
         package,
       );
 
+      final hasCollectionValue = discriminatedModel.model is ListModel;
+      final equalsMethod = Method((b) {
+        b
+          ..name = 'operator =='
+          ..returns = refer('bool', 'dart:core')
+          ..annotations.add(refer('override', 'dart:core'))
+          ..requiredParameters.add(
+            Parameter(
+              (b) =>
+                  b
+                    ..name = 'other'
+                    ..type = refer('Object', 'dart:core'),
+            ),
+          );
+
+        final codeLines = <Code>[
+          Code.scope((allocate) {
+            final identical = allocate(refer('identical', 'dart:core'));
+            return 'if ($identical(this, other)) return true;';
+          }),
+        ];
+
+        if (hasCollectionValue) {
+          codeLines.add(
+            declareConst('deepEquals')
+                .assign(
+                  refer(
+                    'DeepCollectionEquality',
+                    'package:collection/collection.dart',
+                  ).call([]),
+                )
+                .statement,
+          );
+        }
+
+        codeLines.addAll([
+          Code('return other is $variantName && '),
+          Code(
+            hasCollectionValue
+                ? 'deepEquals.equals(other.value, value);'
+                : 'other.value == value;',
+          ),
+        ]);
+
+        b.body = Block.of(codeLines);
+      });
+
+      final hashCodeMethod = Method((b) {
+        b
+          ..name = 'hashCode'
+          ..type = MethodType.getter
+          ..returns = refer('int', 'dart:core')
+          ..annotations.add(refer('override', 'dart:core'));
+
+        if (hasCollectionValue) {
+          b.body = Block.of([
+            declareConst('deepEquals')
+                .assign(
+                  refer(
+                    'DeepCollectionEquality',
+                    'package:collection/collection.dart',
+                  ).call([]),
+                )
+                .statement,
+            const Code('return deepEquals.hash(value);'),
+          ]);
+        } else {
+          b
+            ..lambda = true
+            ..body = refer('value').property('hashCode').code;
+        }
+      });
+
       return Class(
         (b) =>
             b
               ..name = variantName
               ..extend = refer(parentClassName)
+              ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
               ..fields.add(
                 Field(
                   (b) =>
@@ -168,7 +243,8 @@ class OneOfGenerator {
                           Parameter((b) => b..name = 'this.value'),
                         ),
                 ),
-              ),
+              )
+              ..methods.addAll([equalsMethod, hashCodeMethod]),
       );
     }).toList();
   }

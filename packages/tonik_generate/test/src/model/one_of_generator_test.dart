@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/one_of_generator.dart';
@@ -6,12 +7,15 @@ import 'package:tonik_generate/src/util/name_generator.dart';
 import 'package:tonik_generate/src/util/name_manager.dart';
 
 void main() {
-  group('OneOfGenerator', () {
     late OneOfGenerator generator;
     late NameManager nameManager;
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
+
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
 
     setUp(() {
       nameGenerator = NameGenerator();
@@ -241,6 +245,94 @@ void main() {
       expect(
         dataClass.fields.first.type?.accept(emitter).toString(),
         'List<String>',
+      );
+    });
+
+  group('subclass equals', () {
+    test('generates equals method for primitive type', () {
+      final model = OneOfModel(
+        name: 'Result',
+        models: {
+          (
+            discriminatorValue: 'success',
+            model: StringModel(context: context),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+
+      const expectedClass = '''
+        @immutable
+        class ResultSuccess extends Result {
+          const ResultSuccess(this.value);
+
+          final String value;
+
+          @override
+          bool operator ==(Object other) {
+            if (identical(this, other)) return true;
+            return other is ResultSuccess && other.value == value;
+          }
+
+          @override
+          int get hashCode => value.hashCode;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(successClass.accept(emitter).toString())),
+        collapseWhitespace(format(expectedClass)),
+      );
+    });
+
+    test('generates equals method for collection type', () {
+      final model = OneOfModel(
+        name: 'Result',
+        models: {
+          (
+            discriminatorValue: 'strings',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final listClass = classes.firstWhere((c) => c.name == 'ResultStrings');
+
+      const expectedClass = '''
+        @immutable
+        class ResultStrings extends Result {
+          const ResultStrings(this.value);
+
+          final List<String> value;
+
+          @override
+          bool operator ==(Object other) {
+            if (identical(this, other)) return true;
+            const deepEquals = DeepCollectionEquality();
+            return other is ResultStrings && deepEquals.equals(other.value, value);
+          }
+
+          @override
+          int get hashCode {
+            const deepEquals = DeepCollectionEquality();
+            return deepEquals.hash(value);
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(listClass.accept(emitter).toString())),
+        collapseWhitespace(format(expectedClass)),
       );
     });
   });
