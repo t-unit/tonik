@@ -1,11 +1,20 @@
+<br/>
+<p align="center">                    
+<img  src="https://raw.githubusercontent.com/t-unit/tonik/main/resources/logo_no_bg_small.png" height="120" alt="tonik logo">                    
+</p>                    
+
+<p align="center">                    
+<a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>                    
+<a href="https://pub.dev/packages/tonik"><img src="https://img.shields.io/pub/v/tonik?logo=dart" alt="pub verion"></a>                    
+<a href="https://pub.dev/packages/tonik"><img src="https://img.shields.io/pub/likes/tonik?logo=dart" alt="pub likes"></a>
+<a href="https://github.com/t-unit/tonik"><img src="https://img.shields.io/github/stars/t-unit/tonik?logo=github" alt="stars on github"></a> 
+<a href="https://github.com/t-unit/tonik"><img src="https://github.com/t-unit/tonik/actions/workflows/test.yml/badge.svg?branch=main" alt="tests"></a>                  
+</p>                    
+
+
+
+
 # Tonik
-[![pub version](https://img.shields.io/pub/v/tonik?logo=dart)](https://pub.dev/packages/tonik)
-[![pub likes](https://img.shields.io/pub/likes/tonik?logo=dart)](https://pub.dev/packages/tonik)
-[![Stars on Github](https://img.shields.io/github/stars/Carapacik/tonik?logo=github)](https://github.com/Carapacik/tonik)
-[![Tests](https://github.com/t-unit/tonik/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/t-unit/tonik/actions/workflows/test.yml)
-
-![Logo](/resources/logo_no_bg_small.png)
-
 A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 
 ## Motivation
