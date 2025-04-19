@@ -1,0 +1,58 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+  - package-ecosystem: pub
+    directory: /packages/tonik
+    schedule:
+      interval: weekly
+    groups:
+      packages-tonik-pub:
+        patterns:
+          - "*"
+  - package-ecosystem: pub
+    directory: /packages/tonik_core
+    schedule:
+      interval: weekly
+    groups:
+      packages-tonik-core-pub:
+        patterns:
+          - "*"
+  - package-ecosystem: pub
+    directory: /packages/tonik_generate
+    schedule:
+      interval: weekly
+    groups:
+      packages-tonik-generate-pub:
+        patterns:
+          - "*"
+  - package-ecosystem: pub
+    directory: /packages/tonik_parse
+    schedule:
+      interval: weekly
+    groups:
+      packages-tonik-parse-pub:
+        patterns:
+          - "*"
+  - package-ecosystem: pub
+    directory: /packages/tonik_util
+    schedule:
+      interval: weekly
+    groups:
+      packages-tonik-util-pub:
+        patterns:
+          - "*"
+  - package-ecosystem: pub
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      root-pub:
+        patterns:
+          - "*"
