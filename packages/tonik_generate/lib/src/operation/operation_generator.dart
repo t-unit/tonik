@@ -122,10 +122,11 @@ class OperationGenerator {
                 normalizedParams.pathParameters,
               ),
               _dataGenerator.generateDataMethod(operation),
-              _queryParametersGenerator.generateQueryParametersMethod(
-                operation,
-                normalizedParams.queryParameters,
-              ),
+              if (operation.queryParameters.isNotEmpty)
+                _queryParametersGenerator.generateQueryParametersMethod(
+                  operation,
+                  normalizedParams.queryParameters,
+                ),
               _optionsGenerator.generateOptionsMethod(
                 operation,
                 normalizedParams.headers,
@@ -278,10 +279,15 @@ class OperationGenerator {
                                   ])
                                   .property('resolveUri')
                                   .call([
-                                    refer('Uri', 'dart:core').call([], {
-                                      'path': pathExpr,
-                                      'query': queryExpr,
-                                    }),
+                                    refer('Uri', 'dart:core').call(
+                                      [],
+                                      operation.queryParameters.isEmpty
+                                          ? {'path': pathExpr}
+                                          : {
+                                            'path': pathExpr,
+                                            'query': queryExpr,
+                                          },
+                                    ),
                                   ]),
                             )
                             .statement,

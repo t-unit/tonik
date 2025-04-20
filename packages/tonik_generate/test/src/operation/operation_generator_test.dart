@@ -30,6 +30,7 @@ void main() {
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
+
     group('generateCallMethod', () {
       test('generates call method for operation without parameters', () {
         final operation = Operation(
@@ -55,9 +56,7 @@ void main() {
             final Options options;
 
             try {
-              uri = Uri.parse(
-                _dio.options.baseUrl,
-              ).resolveUri(Uri(path: _path(), query: _queryParameters()));
+              uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               data = _data();
               options = _options();
             } on Exception catch (exception, stackTrace) {
@@ -155,9 +154,7 @@ void main() {
             final Options options;
 
             try {
-              uri = Uri.parse(
-                _dio.options.baseUrl,
-              ).resolveUri(Uri(path: _path(), query: _queryParameters()));
+              uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               data = _data();
               options = _options(xMyHeader: xMyHeader);
             } on Exception catch (exception, stackTrace) {
@@ -249,7 +246,7 @@ void main() {
             try {
               uri = Uri.parse(
                 _dio.options.baseUrl,
-              ).resolveUri(Uri(path: _path(petId: petId), query: _queryParameters()));
+              ).resolveUri(Uri(path: _path(petId: petId)));
               data = _data();
               options = _options();
             } on Exception catch (exception, stackTrace) {
@@ -356,9 +353,7 @@ void main() {
             final Options options;
 
             try {
-              uri = Uri.parse(
-                _dio.options.baseUrl,
-              ).resolveUri(Uri(path: _path(), query: _queryParameters()));
+              uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               data = _data();
               options = _options();
             } on Exception catch (exception, stackTrace) {
@@ -418,6 +413,135 @@ void main() {
           collapseWhitespace(expectedMethod),
         );
       });
+
+      test('generates call method with query parameters', () {
+        final queryParam1 = QueryParameterObject(
+          name: 'filter',
+          rawName: 'filter',
+          description: 'Filter results',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          model: StringModel(context: context),
+          context: context,
+          allowReserved: false,
+        );
+
+        final queryParam2 = QueryParameterObject(
+          name: 'sort',
+          rawName: 'sort',
+          description: 'Sort direction',
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          model: StringModel(context: context),
+          context: context,
+          allowReserved: false,
+        );
+
+        final operation = Operation(
+          operationId: 'searchUsers',
+          context: context,
+          summary: 'Search users',
+          description: 'Search users with filters',
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/search',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam1, queryParam2},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+        );
+
+        const expectedMethod = '''
+          Future<TonikResult<void>> call({required String filter, String? sort}) async {
+            final Uri uri;
+            final Object? data;
+            final Options options;
+
+            try {
+              uri = Uri.parse(_dio.options.baseUrl).resolveUri(
+                Uri(path: _path(), query: _queryParameters(filter: filter, sort: sort)),
+              );
+              data = _data();
+              options = _options();
+            } on Exception catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.encoding,
+                response: null,
+              );
+            }
+
+            final Response<dynamic> response;
+
+            try {
+              response = await _dio.requestUri<dynamic>(
+                uri,
+                data: data,
+                options: options,
+              );
+            } on Exception catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.network,
+                response: null,
+              );
+            }
+
+            return TonikSuccess(null, response);
+          }
+        ''';
+
+        final normalizedParams = NormalizedRequestParameters(
+          pathParameters: const [],
+          queryParameters: [
+            (normalizedName: 'filter', parameter: queryParam1),
+            (normalizedName: 'sort', parameter: queryParam2),
+          ],
+          headers: const [],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+
+        expect(method, isA<Method>());
+        expect(
+          method.returns?.accept(emitter).toString(),
+          'Future<TonikResult<void>>',
+        );
+        expect(method.name, 'call');
+        expect(method.modifier, MethodModifier.async);
+
+        // Check parameters
+        expect(method.optionalParameters, hasLength(2));
+        final param1 = method.optionalParameters.first;
+        final param2 = method.optionalParameters.last;
+        expect(param1.name, 'filter');
+        expect(param1.type?.accept(emitter).toString(), 'String');
+        expect(param1.named, isTrue);
+        expect(param1.required, isTrue);
+        expect(param2.name, 'sort');
+        expect(param2.type?.accept(emitter).toString(), 'String?');
+        expect(param2.named, isTrue);
+        expect(param2.required, isFalse);
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      });
     });
 
     group('generateCallableOperation', () {
@@ -441,6 +565,96 @@ void main() {
         final result = generator.generateCallableOperation(operation);
         expect(result.filename, 'get_users.dart');
       });
+    });
+
+    group('generateClass', () {
+      test(
+        'does not generate query parameters method without query parameters',
+        () {
+          final operation = Operation(
+            operationId: 'getUsers',
+            context: context,
+            summary: 'Get users',
+            description: 'Gets a list of users',
+            tags: const {},
+            isDeprecated: false,
+            path: '/users',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass(operation, 'GetUsers');
+
+          // Verify that _queryParameters method is not generated
+          expect(
+            generatedClass.methods.where((m) => m.name == '_queryParameters'),
+            isEmpty,
+          );
+
+          // Verify that call method doesn't include query parameter
+          final callMethod = generatedClass.methods.firstWhere(
+            (m) => m.name == 'call',
+          );
+          final methodString = callMethod.accept(emitter).toString();
+          expect(methodString.contains('query:'), isFalse);
+          expect(methodString.contains('Uri(path: _path())'), isTrue);
+        },
+      );
+
+      test(
+        'generates query parameters method when query parameters exist',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'filter',
+            rawName: 'filter',
+            description: 'Filter results',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: QueryParameterEncoding.form,
+            model: StringModel(context: context),
+            context: context,
+            allowReserved: false,
+          );
+
+          final operation = Operation(
+            operationId: 'getUsers',
+            context: context,
+            summary: 'Get users',
+            description: 'Gets a list of users',
+            tags: const {},
+            isDeprecated: false,
+            path: '/users',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass(operation, 'GetUsers');
+
+          // Verify that _queryParameters method is generated
+          expect(
+            generatedClass.methods.where((m) => m.name == '_queryParameters'),
+            isNotEmpty,
+          );
+
+          // Verify that call method includes query parameter
+          final callMethod = generatedClass.methods.firstWhere(
+            (m) => m.name == 'call',
+          );
+          final methodString = callMethod.accept(emitter).toString();
+          expect(methodString.contains('query: _queryParameters('), isTrue);
+          expect(methodString.contains('filter: filter'), isTrue);
+        },
+      );
     });
   });
 }
