@@ -67,7 +67,7 @@ class RequestBodyGenerator {
       (b) =>
           b
             ..name = name
-            ..definition = refer(targetName),
+            ..definition = refer(targetName, package),
     );
   }
 
