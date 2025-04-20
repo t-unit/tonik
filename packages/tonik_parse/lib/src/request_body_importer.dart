@@ -63,14 +63,17 @@ class RequestBodyImporter {
           wrapper: refRequestBody,
           context: context,
         );
-
-        final alias = core.RequestBodyAlias(
-          name: name,
-          requestBody: importedBody,
-          context: context,
-        );
-        requestBodies.add(alias);
-        return alias;
+        if (name != null) {
+          final alias = core.RequestBodyAlias(
+            name: name,
+            requestBody: importedBody,
+            context: context,
+          );
+          requestBodies.add(alias);
+          return alias;
+        } else {
+          return importedBody;
+        }
 
       case InlinedObject<RequestBody>():
         final requestBody = wrapper.object;

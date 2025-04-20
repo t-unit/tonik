@@ -31,11 +31,11 @@ void main() {
                   'type': 'object',
                   'properties': {
                     'name': {'type': 'string'},
-                    'age': {'type': 'integer'}
-                  }
-                }
-              }
-            }
+                    'age': {'type': 'integer'},
+                  },
+                },
+              },
+            },
           },
           'responses': {
             '201': {'description': 'Created response'},
@@ -50,8 +50,33 @@ void main() {
           },
         },
       },
+      '/test-ref': {
+        'post': {
+          'operationId': 'postTestRef',
+          'requestBody': {r'$ref': '#/components/requestBodies/TestBody'},
+          'responses': {
+            '200': {'description': 'Successful response'},
+          },
+        },
+      },
     },
-    'servers': <dynamic>[],
+    'components': {
+      'requestBodies': {
+        'TestBody': {
+          'required': true,
+          'content': {
+            'application/json': {
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'test': {'type': 'string'},
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
   test('imports operation method correctly', () {
@@ -163,5 +188,32 @@ void main() {
     );
     expect(getOperation, isNotNull);
     expect(getOperation?.requestBody, isNull);
+  });
+
+  test('imports referenced request body correctly', () {
+    final api = Importer().import(fileContent);
+
+    final postOperation = api.operations.firstWhereOrNull(
+      (o) => o.operationId == 'postTestRef',
+    );
+    expect(postOperation, isNotNull);
+    expect(postOperation?.requestBody, isNotNull);
+    expect(postOperation?.requestBody?.isRequired, isTrue);
+    expect(
+      postOperation?.requestBody?.resolvedContent.any(
+        (content) => content.rawContentType == 'application/json',
+      ),
+      isTrue,
+    );
+
+    final content = postOperation?.requestBody?.resolvedContent.firstWhere(
+      (content) => content.rawContentType == 'application/json',
+    );
+    expect(content, isNotNull);
+    expect(content?.model, isA<ClassModel>());
+    expect(
+      (content?.model as ClassModel?)?.properties.any((p) => p.name == 'test'),
+      isTrue,
+    );
   });
 }
