@@ -69,5 +69,53 @@ void main() {
         expect(alias.contentCount, 1);
       });
     });
+
+    group('resolvedContent', () {
+      test('RequestBodyObject - returns its own content', () {
+        final content = {
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+        };
+        
+        final body = RequestBodyObject(
+          name: 'test',
+          context: context,
+          description: '',
+          isRequired: true,
+          content: content,
+        );
+
+        expect(body.resolvedContent, content);
+      });
+
+      test('RequestBodyAlias - returns content of referenced body', () {
+        final content = {
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+          ),
+        };
+        
+        final referencedBody = RequestBodyObject(
+          name: 'referenced',
+          context: context,
+          description: '',
+          isRequired: true,
+          content: content,
+        );
+
+        final alias = RequestBodyAlias(
+          name: 'test',
+          context: context,
+          requestBody: referencedBody,
+        );
+
+        expect(alias.resolvedContent, content);
+      });
+    });
   });
 }

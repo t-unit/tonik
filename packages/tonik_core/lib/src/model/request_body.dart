@@ -10,6 +10,12 @@ sealed class RequestBody {
 
   /// Returns the number of content objects in this request body.
   int get contentCount;
+
+  /// Returns the resolved content of this request body.
+  Set<RequestContent> get resolvedContent;
+
+  /// Returns whether this request body is required.
+  bool get isRequired;
 }
 
 @immutable
@@ -24,6 +30,12 @@ class RequestBodyAlias extends RequestBody {
 
   @override
   int get contentCount => requestBody.contentCount;
+
+  @override
+  Set<RequestContent> get resolvedContent => requestBody.resolvedContent;
+
+  @override
+  bool get isRequired => requestBody.isRequired;
 
   @override
   bool operator ==(Object other) =>
@@ -54,11 +66,17 @@ class RequestBodyObject extends RequestBody {
   });
 
   final String? description;
+
+  @override
   final bool isRequired;
+
   final Set<RequestContent> content;
 
   @override
   int get contentCount => content.length;
+
+  @override
+  Set<RequestContent> get resolvedContent => content;
 
   @override
   bool operator ==(Object other) {
