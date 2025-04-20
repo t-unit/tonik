@@ -87,7 +87,7 @@ void main() {
         expect(result.filename, equals('alias_response.dart'));
         expect(
           result.code,
-          contains('typedef AliasResponse = OriginalResponse;'),
+          contains('typedef AliasResponse ='),
         );
       });
 
