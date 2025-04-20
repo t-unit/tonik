@@ -28,23 +28,29 @@ class ResponseGenerator {
     }
 
     final name = nameManager.responseName(response);
+    final library = Library((b) {
+      switch (response) {
+        case ResponseAlias():
+          b.body.add(generateTypedef(response, name));
+        case ResponseObject() when response.bodies.length == 1:
+          b.body.add(generateResponseClass(response));
+        case ResponseObject():
+          b.body.addAll(generateMultiBodyResponseClasses(response));
+      }
+    });
 
-    switch (response) {
-      case ResponseAlias():
-        final typedef = generateTypedef(response, name);
-        final library = Library((b) => b.body.add(typedef));
-        final code = _formatLibrary(library);
-        return (code: code, filename: '${name.toSnakeCase()}.dart');
-      case ResponseObject() when response.bodies.length == 1:
-        final clazz = generateResponseClass(response);
-        final library = Library((b) => b.body.add(clazz));
-        final code = _formatLibrary(library);
-        return (code: code, filename: '${name.toSnakeCase()}.dart');
-      case ResponseObject():
-        throw UnimplementedError(
-          'Complex response objects not yet implemented',
-        );
-    }
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(),
+      orderDirectives: true,
+      useNullSafetySyntax: true,
+    );
+
+    final code =
+        '// Generated code - do not modify by hand\n'
+        '// ignore_for_file: lines_longer_than_80_chars\n'
+        '${library.accept(emitter)}';
+
+    return (code: code, filename: '${name.toSnakeCase()}.dart');
   }
 
   @visibleForTesting
@@ -62,50 +68,21 @@ class ResponseGenerator {
   @visibleForTesting
   Class generateResponseClass(ResponseObject response) {
     final className = nameManager.responseName(response);
-    final properties = <Property>[];
-
-    // Add header properties
-    for (final header in response.headers.entries) {
-      final headerObject = header.value.resolve(name: header.key);
-      final name = header.key;
-
-      properties.add(
-        Property(
-          name: name.toLowerCase() == 'body' ? '${name}Header' : name,
-          model: headerObject.model,
-          isRequired: headerObject.isRequired,
-          isNullable: false,
-          isDeprecated: headerObject.isDeprecated,
-        ),
-      );
-    }
-
-    final body = response.bodies.first;
-    properties.add(
-      Property(
+    final properties = _buildNormalizedAndSortedProperties(
+      headers: response.headers,
+      bodyProperty: Property(
         name: 'body',
-        model: body.model,
+        model: response.bodies.first.model,
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
       ),
     );
 
-    final normalizedProperties = normalizeProperties(properties);
-
-    final sortedProperties = [...normalizedProperties]..sort((a, b) {
-      // Required fields come before non-required fields
-      if (a.property.isRequired != b.property.isRequired) {
-        return a.property.isRequired ? -1 : 1;
-      }
-      // Keep original order for fields with same required status
-      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
-    });
-
     final equalsMethod = generateEqualsMethod(
       className: className,
       properties:
-          sortedProperties
+          properties
               .map(
                 (prop) => (
                   normalizedName: prop.normalizedName,
@@ -117,7 +94,7 @@ class ResponseGenerator {
 
     final hashCodeMethod = generateHashCodeMethod(
       properties:
-          sortedProperties
+          properties
               .map(
                 (p) => (
                   normalizedName: p.normalizedName,
@@ -126,10 +103,11 @@ class ResponseGenerator {
               )
               .toList(),
     );
+
     final copyWithMethod = generateCopyWithMethod(
       className: className,
       properties:
-          normalizedProperties
+          properties
               .map(
                 (prop) => (
                   normalizedName: prop.normalizedName,
@@ -137,7 +115,6 @@ class ResponseGenerator {
                     prop.property.model,
                     nameManager,
                     package,
-                    isNullableOverride: !prop.property.isRequired,
                   ),
                 ),
               )
@@ -155,7 +132,7 @@ class ResponseGenerator {
                     b
                       ..constant = true
                       ..optionalParameters.addAll(
-                        sortedProperties.map(
+                        properties.map(
                           (prop) => Parameter(
                             (b) =>
                                 b
@@ -170,33 +147,233 @@ class ResponseGenerator {
             )
             ..methods.addAll([equalsMethod, hashCodeMethod, copyWithMethod])
             ..fields.addAll(
-              sortedProperties.map(
+              properties.map(
                 (prop) => Field(
-                  (b) =>
-                      b
-                        ..name = prop.normalizedName
-                        ..modifier = FieldModifier.final$
-                        ..type = typeReference(
-                          prop.property.model,
-                          nameManager,
-                          package,
-                          isNullableOverride: !prop.property.isRequired,
-                        ),
+                  (b) => b
+                    ..name = prop.normalizedName
+                    ..modifier = FieldModifier.final$
+                    ..type = typeReference(
+                      prop.property.model,
+                      nameManager,
+                      package,
+                      isNullableOverride: !prop.property.isRequired,
+                    ),
                 ),
               ),
             ),
     );
   }
 
-  String _formatLibrary(Library library) {
-    final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(),
-      orderDirectives: true,
-      useNullSafetySyntax: true,
+  List<({String normalizedName, Property property})>
+  _buildNormalizedAndSortedProperties({
+    required Map<String, ResponseHeader> headers,
+    Property? bodyProperty,
+  }) {
+    final headerProperties = headers.entries.map(
+      (header) => Property(
+        name:
+            header.key.toLowerCase() == 'body'
+                ? '${header.key}Header'
+                : header.key,
+        model: header.value.resolve(name: header.key).model,
+        isRequired: header.value.resolve(name: header.key).isRequired,
+        isNullable: false,
+        isDeprecated: header.value.resolve(name: header.key).isDeprecated,
+      ),
     );
 
-    return '// Generated code - do not modify by hand\n'
-        '// ignore_for_file: lines_longer_than_80_chars\n'
-        '${library.accept(emitter)}';
+    final properties = <Property>[
+      ...headerProperties,
+      if (bodyProperty != null) bodyProperty,
+    ];
+
+    final normalizedProperties = normalizeProperties(properties);
+
+    return [...normalizedProperties]..sort((a, b) {
+      // Required fields come before non-required fields
+      if (a.property.isRequired != b.property.isRequired) {
+        return a.property.isRequired ? -1 : 1;
+      }
+      // Keep original order for fields with same required status
+      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
+    });
+  }
+
+  @visibleForTesting
+  List<Class> generateMultiBodyResponseClasses(ResponseObject response) {
+    final className = nameManager.responseName(response);
+    final normalizedBaseProperties = _buildNormalizedAndSortedProperties(
+      headers: response.headers,
+    );
+
+    // Create base sealed class
+    final baseClass = Class(
+      (b) =>
+          b
+            ..name = className
+            ..sealed = true
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+            ..constructors.add(
+              Constructor(
+                (b) =>
+                    b
+                      ..constant = true
+                      ..optionalParameters.addAll(
+                        normalizedBaseProperties.map(
+                          (prop) => Parameter(
+                            (b) =>
+                                b
+                                  ..name = prop.normalizedName
+                                  ..named = true
+                                  ..required = prop.property.isRequired
+                                  ..toThis = true,
+                          ),
+                        ),
+                      ),
+              ),
+            )
+            ..fields.addAll(
+              normalizedBaseProperties.map(
+                (prop) => Field(
+                  (b) => b
+                    ..name = prop.normalizedName
+                    ..modifier = FieldModifier.final$
+                    ..type = typeReference(
+                      prop.property.model,
+                      nameManager,
+                      package,
+                      isNullableOverride: !prop.property.isRequired,
+                    ),
+                ),
+              ),
+            ),
+    );
+
+    // Create implementation classes for each body type
+    final implementationClasses =
+        response.bodies.map((body) {
+          final implementationName = _generateImplementationName(
+            className,
+            body,
+          );
+
+          // Create properties for equals and hashCode methods
+          final allProperties = _buildNormalizedAndSortedProperties(
+            headers: response.headers,
+            bodyProperty: Property(
+              name: 'body',
+              model: body.model,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          );
+
+          final equalsMethod = generateEqualsMethod(
+            className: implementationName,
+            properties:
+                allProperties
+                    .map(
+                      (prop) => (
+                        normalizedName: prop.normalizedName,
+                        hasCollectionValue: prop.property.model is ListModel,
+                      ),
+                    )
+                    .toList(),
+          );
+
+          final hashCodeMethod = generateHashCodeMethod(
+            properties:
+                allProperties
+                    .map(
+                      (p) => (
+                        normalizedName: p.normalizedName,
+                        hasCollectionValue: p.property.model is ListModel,
+                      ),
+                    )
+                    .toList(),
+          );
+
+          final methods = [equalsMethod, hashCodeMethod];
+
+          // Add copyWith method if we have headers
+          if (response.headers.isNotEmpty) {
+            final copyWithMethod = generateCopyWithMethod(
+              className: implementationName,
+              properties:
+                  allProperties
+                      .map(
+                        (prop) => (
+                          normalizedName: prop.normalizedName,
+                          typeRef: typeReference(
+                            prop.property.model,
+                            nameManager,
+                            package,
+                          ),
+                        ),
+                      )
+                      .toList(),
+            );
+            methods.add(copyWithMethod);
+          }
+
+          return Class(
+            (b) =>
+                b
+                  ..name = implementationName
+                  ..extend = refer(className)
+                  ..annotations.add(
+                    refer('immutable', 'package:meta/meta.dart'),
+                  )
+                  ..constructors.add(
+                    Constructor(
+                      (b) =>
+                          b
+                            ..constant = true
+                            ..optionalParameters.addAll([
+                              ...normalizedBaseProperties.map(
+                                (prop) => Parameter(
+                                  (b) =>
+                                      b
+                                        ..name = prop.normalizedName
+                                        ..named = true
+                                        ..required = prop.property.isRequired
+                                        ..toSuper = true,
+                                ),
+                              ),
+                              Parameter(
+                                (b) =>
+                                    b
+                                      ..name = 'body'
+                                      ..named = true
+                                      ..required = true
+                                      ..toThis = true,
+                              ),
+                            ]),
+                    ),
+                  )
+                  ..methods.addAll(methods)
+                  ..fields.add(
+                    Field(
+                      (b) => b
+                        ..name = 'body'
+                        ..modifier = FieldModifier.final$
+                        ..type = typeReference(
+                          body.model,
+                          nameManager,
+                          package,
+                        ),
+                    ),
+                  ),
+          );
+        }).toList();
+
+    return [baseClass, ...implementationClasses];
+  }
+
+  String _generateImplementationName(String baseName, ResponseBody body) {
+    final contentType =
+        body.rawContentType.split('/').lastOrNull?.toPascalCase();
+    return '$baseName${contentType ?? ''}';
   }
 }

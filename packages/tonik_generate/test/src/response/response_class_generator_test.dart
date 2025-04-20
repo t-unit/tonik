@@ -458,11 +458,11 @@ void main() {
         );
 
         const expectedMethod = '''
-          CopyWithResponse copyWith({String? xRequired, int? xOptional, String? body}) {
+          CopyWithResponse copyWith({String? xRequired, String? body, int? xOptional}) {
             return CopyWithResponse(
               xRequired: xRequired ?? this.xRequired,
-              xOptional: xOptional ?? this.xOptional,
               body: body ?? this.body,
+              xOptional: xOptional ?? this.xOptional,
             );
           }
         ''';

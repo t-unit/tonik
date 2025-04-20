@@ -123,7 +123,7 @@ void main() {
       });
 
       test(
-        'throws UnimplementedError for ResponseObject with multiple bodies',
+        'generates multiple classes for ResponseObject with multiple bodies',
         () {
           final response = ResponseObject(
             name: 'MultiBodyResponse',
@@ -155,9 +155,17 @@ void main() {
             },
           );
 
+          final result = generator.generate(response);
+          expect(result.filename, 'multi_body_response.dart');
+
+          expect(result.code, contains('sealed class MultiBodyResponse'));
           expect(
-            () => generator.generate(response),
-            throwsA(isA<UnimplementedError>()),
+            result.code,
+            contains('class MultiBodyResponseJson extends MultiBodyResponse'),
+          );
+          expect(
+            result.code,
+            contains('class MultiBodyResponseXml extends MultiBodyResponse'),
           );
         },
       );
