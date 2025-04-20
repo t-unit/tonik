@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/util/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
 
 void main() {
   group('NameGenerator', () {

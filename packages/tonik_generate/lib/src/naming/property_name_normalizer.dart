@@ -1,5 +1,5 @@
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/util/name_utils.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 
 /// Normalizes a list of properties to follow Dart guidelines.
 /// Ensures all normalized names are unique by appending numbers if needed.

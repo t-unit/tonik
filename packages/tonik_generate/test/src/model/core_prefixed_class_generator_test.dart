@@ -1,8 +1,8 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
-import 'package:tonik_generate/src/util/name_generator.dart';
-import 'package:tonik_generate/src/util/name_manager.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 
 void main() {
   group('ClassGenerator with CorePrefixedAllocator', () {

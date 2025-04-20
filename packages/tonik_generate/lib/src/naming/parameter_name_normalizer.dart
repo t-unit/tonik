@@ -1,5 +1,5 @@
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/util/name_utils.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 
 const _pathSuffix = 'Path';
 const _querySuffix = 'Query';

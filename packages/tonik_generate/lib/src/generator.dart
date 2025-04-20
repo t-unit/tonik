@@ -5,13 +5,13 @@ import 'package:tonik_generate/src/model/enum_generator.dart';
 import 'package:tonik_generate/src/model/model_file_generator.dart';
 import 'package:tonik_generate/src/model/one_of_generator.dart';
 import 'package:tonik_generate/src/model/typedef_generator.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_file_generator.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
 import 'package:tonik_generate/src/request/request_body_file_generator.dart';
 import 'package:tonik_generate/src/request/request_body_generator.dart';
-import 'package:tonik_generate/src/util/name_generator.dart';
-import 'package:tonik_generate/src/util/name_manager.dart';
 
 class Generator {
   const Generator();

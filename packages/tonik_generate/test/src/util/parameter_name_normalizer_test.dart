@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/util/parameter_name_normalizer.dart';
+import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 
 void main() {
   group('normalizeRequestParameters', () {

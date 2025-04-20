@@ -3,9 +3,9 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
-import 'package:tonik_generate/src/util/name_manager.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart sealed classes and typedefs
@@ -138,10 +138,12 @@ class RequestBodyGenerator {
               ..methods.addAll([
                 generateEqualsMethod(
                   className: className,
-                  properties: [(
-                    normalizedName: 'value',
-                    hasCollectionValue: hasCollectionValue,
-                  )],
+                  properties: [
+                    (
+                      normalizedName: 'value',
+                      hasCollectionValue: hasCollectionValue,
+                    ),
+                  ],
                 ),
                 _buildHashCodeMethod(hasCollectionValue),
               ]),

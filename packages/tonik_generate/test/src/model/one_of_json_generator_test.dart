@@ -3,8 +3,8 @@ import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/one_of_generator.dart';
-import 'package:tonik_generate/src/util/name_generator.dart';
-import 'package:tonik_generate/src/util/name_manager.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 
 void main() {
   late OneOfGenerator generator;

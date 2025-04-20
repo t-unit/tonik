@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/util/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
 
 /// Manages name generation and caches results for consistent naming.
 class NameManager {

@@ -2,10 +2,10 @@ import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
-import 'package:tonik_generate/src/util/name_manager.dart';
-import 'package:tonik_generate/src/util/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart sealed classes and typedefs
@@ -61,7 +61,7 @@ class ResponseGenerator {
     for (final header in response.headers.entries) {
       final headerObject = header.value.resolve(name: header.key);
       final name = header.key;
-      
+
       properties.add(
         Property(
           name: name.toLowerCase() == 'body' ? '${name}Header' : name,
@@ -73,16 +73,16 @@ class ResponseGenerator {
       );
     }
 
-      final body = response.bodies.first;
-      properties.add(
-        Property(
-          name: 'body',
-          model: body.model,
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-        ),
-      );
+    final body = response.bodies.first;
+    properties.add(
+      Property(
+        name: 'body',
+        model: body.model,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      ),
+    );
 
     final normalizedProperties = normalizeProperties(properties);
 
@@ -149,10 +149,15 @@ class ResponseGenerator {
   ) {
     return generateEqualsMethod(
       className: className,
-      properties: properties.map((prop) => (
-        normalizedName: prop.normalizedName,
-        hasCollectionValue: prop.property.model is ListModel,
-      )).toList(),
+      properties:
+          properties
+              .map(
+                (prop) => (
+                  normalizedName: prop.normalizedName,
+                  hasCollectionValue: prop.property.model is ListModel,
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -279,11 +284,7 @@ class ResponseGenerator {
     for (final prop in properties) {
       final name = prop.normalizedName;
       final property = prop.property;
-      final typeRef = typeReference(
-        property.model,
-        nameManager,
-        package,
-      );
+      final typeRef = typeReference(property.model, nameManager, package);
 
       parameters.add(
         Parameter(
