@@ -23,6 +23,20 @@ void main() {
           'summary': 'Post test operation',
           'description': 'This is a test POST operation',
           'deprecated': true,
+          'requestBody': {
+            'required': true,
+            'content': {
+              'application/json': {
+                'schema': {
+                  'type': 'object',
+                  'properties': {
+                    'name': {'type': 'string'},
+                    'age': {'type': 'integer'}
+                  }
+                }
+              }
+            }
+          },
           'responses': {
             '201': {'description': 'Created response'},
           },
@@ -126,5 +140,28 @@ void main() {
     );
     expect(putOperation, isNotNull);
     expect(putOperation?.description, 'This is a test PUT operation');
+  });
+
+  test('imports operation request body correctly', () {
+    final api = Importer().import(fileContent);
+
+    final postOperation = api.operations.firstWhereOrNull(
+      (o) => o.operationId == 'postTest',
+    );
+    expect(postOperation, isNotNull);
+    expect(postOperation?.requestBody, isNotNull);
+    expect(postOperation?.requestBody?.isRequired, isTrue);
+    expect(
+      postOperation?.requestBody?.resolvedContent.any(
+        (content) => content.rawContentType == 'application/json',
+      ),
+      isTrue,
+    );
+
+    final getOperation = api.operations.firstWhereOrNull(
+      (o) => o.operationId == 'getTest',
+    );
+    expect(getOperation, isNotNull);
+    expect(getOperation?.requestBody, isNull);
   });
 }

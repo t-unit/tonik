@@ -26,14 +26,15 @@ class Importer {
       openApiObject: openApiObject,
       modelImporter: modelImporter,
     );
+    final requestBodyImporter = RequestBodyImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+    );
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,
       parameterImporter: parameterImporter,
       responseImporter: responseImporter,
-    );
-    final requestBodyImporter = RequestBodyImporter(
-      openApiObject: openApiObject,
-      modelImporter: modelImporter,
+      requestBodyImporter: requestBodyImporter,
     );
 
     modelImporter.import();

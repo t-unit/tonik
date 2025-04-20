@@ -7,6 +7,7 @@ import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/tag.dart';
+import 'package:tonik_parse/src/request_body_importer.dart';
 import 'package:tonik_parse/src/request_parameter_importer.dart';
 import 'package:tonik_parse/src/response_importer.dart';
 
@@ -15,10 +16,12 @@ class OperationImporter {
     required this.openApiObject,
     required this.parameterImporter,
     required this.responseImporter,
+    required this.requestBodyImporter,
   });
 
   final RequestParameterImporter parameterImporter;
   final ResponseImporter responseImporter;
+  final RequestBodyImporter requestBodyImporter;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['paths']);
@@ -158,6 +161,15 @@ class OperationImporter {
 
     final responses = _importResponses(operation.responses, methodContext);
 
+    core.RequestBody? requestBody;
+    if (operation.requestBody != null) {
+      requestBody = requestBodyImporter.importRequestBody(
+        name: null,
+        wrapper: operation.requestBody!,
+        context: methodContext.push('body'),
+      );
+    }
+
     operations.add(
       core.Operation(
         method: httpMethod,
@@ -172,7 +184,7 @@ class OperationImporter {
         queryParameters: queryParams,
         pathParameters: pathParams,
         responses: responses,
-        requestBody: null,
+        requestBody: requestBody,
       ),
     );
   }
