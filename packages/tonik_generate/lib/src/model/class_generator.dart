@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
@@ -106,43 +107,16 @@ class ClassGenerator {
     String className,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final parameters = <Parameter>[];
-    final assignments = <Code>[];
-
-    for (final prop in properties) {
-      final name = prop.normalizedName;
-      final property = prop.property;
-      final typeRef = _getTypeReference(property);
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = name
-                ..named = true
-                ..type = TypeReference(
-                  (b) =>
-                      b
-                        ..symbol = typeRef.symbol
-                        ..url = typeRef.url
-                        ..types.addAll(typeRef.types)
-                        ..isNullable = true,
-                ),
-        ),
-      );
-
-      assignments.add(Code('$name: $name ?? this.$name,'));
-    }
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'copyWith'
-            ..returns = refer(className)
-            ..optionalParameters.addAll(parameters)
-            ..body = Code(
-              'return $className(\n  ${assignments.join('\n  ')}\n);',
+    return generateCopyWithMethod(
+      className: className,
+      properties: properties
+          .map(
+            (prop) => (
+              normalizedName: prop.normalizedName,
+              typeRef: _getTypeReference(prop.property),
             ),
+          )
+          .toList(),
     );
   }
 

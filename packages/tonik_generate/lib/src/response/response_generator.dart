@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
@@ -101,6 +102,48 @@ class ResponseGenerator {
       return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
     });
 
+    final equalsMethod = generateEqualsMethod(
+      className: className,
+      properties:
+          sortedProperties
+              .map(
+                (prop) => (
+                  normalizedName: prop.normalizedName,
+                  hasCollectionValue: prop.property.model is ListModel,
+                ),
+              )
+              .toList(),
+    );
+
+    final hashCodeMethod = generateHashCodeMethod(
+      properties:
+          sortedProperties
+              .map(
+                (p) => (
+                  normalizedName: p.normalizedName,
+                  hasCollectionValue: p.property.model is ListModel,
+                ),
+              )
+              .toList(),
+    );
+    final copyWithMethod = generateCopyWithMethod(
+      className: className,
+      properties:
+          normalizedProperties
+              .map(
+                (prop) => (
+                  normalizedName: prop.normalizedName,
+                  typeRef: typeReference(
+                    prop.property.model,
+                    nameManager,
+                    package,
+                    isNullableOverride: !prop.property.isRequired,
+                  ),
+                ),
+              )
+              .toList(),
+    );
+
     return Class(
       (b) =>
           b
@@ -125,11 +168,7 @@ class ResponseGenerator {
                       ),
               ),
             )
-            ..methods.addAll([
-              _buildEqualsMethod(className, sortedProperties),
-              _buildHashCodeMethod(sortedProperties),
-              _buildCopyWithMethod(className, sortedProperties),
-            ])
+            ..methods.addAll([equalsMethod, hashCodeMethod, copyWithMethod])
             ..fields.addAll(
               sortedProperties.map(
                 (prop) => Field(
@@ -145,84 +184,6 @@ class ResponseGenerator {
                         ),
                 ),
               ),
-            ),
-    );
-  }
-
-  Method _buildEqualsMethod(
-    String className,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return generateEqualsMethod(
-      className: className,
-      properties:
-          properties
-              .map(
-                (prop) => (
-                  normalizedName: prop.normalizedName,
-                  hasCollectionValue: prop.property.model is ListModel,
-                ),
-              )
-              .toList(),
-    );
-  }
-
-  Method _buildHashCodeMethod(
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return generateHashCodeMethod(
-      properties:
-          properties
-              .map(
-                (p) => (
-                  normalizedName: p.normalizedName,
-                  hasCollectionValue: p.property.model is ListModel,
-                ),
-              )
-              .toList(),
-    );
-  }
-
-  Method _buildCopyWithMethod(
-    String className,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    final parameters = <Parameter>[];
-    final assignments = <Code>[];
-
-    for (final prop in properties) {
-      final name = prop.normalizedName;
-      final property = prop.property;
-      final typeRef = typeReference(property.model, nameManager, package);
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = name
-                ..named = true
-                ..type = TypeReference(
-                  (b) =>
-                      b
-                        ..symbol = typeRef.symbol
-                        ..url = typeRef.url
-                        ..types.addAll(typeRef.types)
-                        ..isNullable = true,
-                ),
-        ),
-      );
-
-      assignments.add(Code('$name: $name ?? this.$name,'));
-    }
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'copyWith'
-            ..returns = refer(className)
-            ..optionalParameters.addAll(parameters)
-            ..body = Code(
-              'return $className(\n  ${assignments.join('\n  ')}\n);',
             ),
     );
   }
