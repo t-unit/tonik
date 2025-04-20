@@ -34,6 +34,11 @@ class ResponseGenerator {
         final library = Library((b) => b.body.add(typedef));
         final code = _formatLibrary(library);
         return (code: code, filename: '${name.toSnakeCase()}.dart');
+      case ResponseObject() when response.bodies.length == 1:
+        final clazz = generateResponseClass(response);
+        final library = Library((b) => b.body.add(clazz));
+        final code = _formatLibrary(library);
+        return (code: code, filename: '${name.toSnakeCase()}.dart');
       case ResponseObject():
         throw UnimplementedError(
           'Complex response objects not yet implemented',

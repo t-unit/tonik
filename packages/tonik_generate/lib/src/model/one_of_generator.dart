@@ -39,7 +39,8 @@ class OneOfGenerator {
     final code = formatter.format(
       '// Generated code - do not modify by hand\n'
       '// ignore_for_file: lines_longer_than_80_chars\n '
-      '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n'
+      '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n '
+      '// ignore_for_file: avoid_catches_without_on_clauses\n '
       '${library.accept(emitter)}',
     );
 
