@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
@@ -45,10 +46,15 @@ class ResponseGenerator {
       useNullSafetySyntax: true,
     );
 
-    final code =
-        '// Generated code - do not modify by hand\n'
-        '// ignore_for_file: lines_longer_than_80_chars\n'
-        '${library.accept(emitter)}';
+      final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
+
+    final code = formatter.format(
+      '// Generated code - do not modify by hand\n'
+      '// ignore_for_file: lines_longer_than_80_chars\n'
+      '${library.accept(emitter)}',
+    );
 
     return (code: code, filename: '${name.toSnakeCase()}.dart');
   }
@@ -61,7 +67,7 @@ class ResponseGenerator {
       (b) =>
           b
             ..name = name
-            ..definition = refer(targetName),
+            ..definition = refer(targetName, package),
     );
   }
 

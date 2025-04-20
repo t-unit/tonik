@@ -31,12 +31,12 @@ class ResponseImporter {
       final name = entry.key;
       final response = entry.value;
 
-      final imported = importResponse(
+      importResponse(
         name: name,
         wrapper: response,
         context: rootContext.push(name),
       );
-      responses.add(imported);
+
     }
   }
 
@@ -45,6 +45,7 @@ class ResponseImporter {
     required ReferenceWrapper<Response> wrapper,
     required core.Context context,
   }) {
+    core.Response response;
     switch (wrapper) {
       case Reference<Response>():
         if (!wrapper.ref.startsWith('#/components/responses/')) {
@@ -67,18 +68,18 @@ class ResponseImporter {
           context: context,
         );
 
-        return core.ResponseAlias(
+        response = core.ResponseAlias(
           name: name,
           response: referencedResponse,
           context: context,
         );
 
       case InlinedObject<Response>():
-        final response = wrapper.object;
+        final responseObj = wrapper.object;
         final headers = <String, core.ResponseHeader>{};
 
-        if (response.headers != null) {
-          for (final entry in response.headers!.entries) {
+        if (responseObj.headers != null) {
+          for (final entry in responseObj.headers!.entries) {
             headers[entry.key] = headerImporter.importInlineHeader(
               wrapper: entry.value,
               context: context.push('header').push(entry.key),
@@ -86,8 +87,8 @@ class ResponseImporter {
           }
         }
 
-        if (response.content != null) {
-          final mediaTypes = response.content!;
+        if (responseObj.content != null) {
+          final mediaTypes = responseObj.content!;
           final bodies = <core.ResponseBody>[];
 
           // Process all JSON and JSON-like content types
@@ -112,22 +113,25 @@ class ResponseImporter {
             log.warning('No schema found for response $name.');
           }
 
-          return core.ResponseObject(
+          response = core.ResponseObject(
             name: name,
-            description: response.description,
+            description: responseObj.description,
             headers: headers,
             bodies: bodies.toSet(),
             context: context,
           );
+        } else {
+          response = core.ResponseObject(
+            name: name,
+            description: responseObj.description,
+            headers: headers,
+            bodies: const {},
+            context: context,
+          );
         }
-
-        return core.ResponseObject(
-          name: name,
-          description: response.description,
-          headers: headers,
-          bodies: const {},
-          context: context,
-        );
     }
+
+    responses.add(response);
+    return response;
   }
 }

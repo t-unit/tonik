@@ -17,6 +17,8 @@ class OperationFileGenerator {
     required String outputDirectory,
     required String package,
   }) {
+    log.fine('Writing ${apiDocument.operations.length} operation files');
+
     final operationDirectory = path.joinAll([
       outputDirectory,
       package,

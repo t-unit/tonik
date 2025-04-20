@@ -1,6 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/model/open_api_object.dart';
+import 'package:tonik_parse/src/model_importer.dart';
+import 'package:tonik_parse/src/response_header_importer.dart';
+import 'package:tonik_parse/src/response_importer.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
@@ -297,5 +301,35 @@ void main() {
     for (final body in response?.bodies ?? <ResponseBody>[]) {
       expect(body.model, isA<ClassModel>());
     }
+  });
+
+  test('adds single imported response to responses set', () {
+    final openApiObject = OpenApiObject.fromJson(fileContent);
+    final modelImporter = ModelImporter(openApiObject);
+    final headerImporter = ResponseHeaderImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+    );
+    final responseImporter = ResponseImporter(
+        openApiObject: openApiObject,
+        modelImporter: modelImporter,
+        headerImporter: headerImporter,
+      )
+      // Initialize the responses set
+      ..responses = {};
+
+    // Import a single response
+    final simpleResponse =
+        openApiObject.components?.responses?['SimpleResponse'];
+    expect(simpleResponse, isNotNull);
+
+    final importedResponse = responseImporter.importResponse(
+      name: 'SimpleResponse',
+      wrapper: simpleResponse!,
+      context: ResponseImporter.rootContext.push('SimpleResponse'),
+    );
+
+    // Verify the response was added to the responses set
+    expect(responseImporter.responses, contains(importedResponse));
   });
 }

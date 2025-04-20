@@ -17,6 +17,8 @@ class RequestBodyFileGenerator {
     required String outputDirectory,
     required String package,
   }) {
+    log.fine('Writing ${apiDocument.requestBodies.length} request body files');
+
     final requestBodyDirectory = path.joinAll([
       outputDirectory,
       package,

@@ -99,6 +99,8 @@ class OperationImporter {
       final statusCode = entry.key;
       final response = entry.value;
 
+      log.finer('Importing response $statusCode at ${context.path.join('.')}');
+
       final importedResponse = responseImporter.importResponse(
         name: null,
         wrapper: response,

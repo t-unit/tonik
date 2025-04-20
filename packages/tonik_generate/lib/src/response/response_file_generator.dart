@@ -17,6 +17,8 @@ class ResponseFileGenerator {
     required String outputDirectory,
     required String package,
   }) {
+    log.fine('Writing ${apiDocument.responses.length} response files');
+
     final responseDirectory = path.joinAll([
       outputDirectory,
       package,

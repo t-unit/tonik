@@ -28,6 +28,8 @@ class ModelFileGenerator {
     required String outputDirectory,
     required String package,
   }) {
+    log.fine('Writing ${apiDocument.models.length} model files');
+
     final modelDirectory = path.joinAll([
       outputDirectory,
       package,
