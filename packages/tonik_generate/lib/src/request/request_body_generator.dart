@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
+import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart sealed classes and typedefs
@@ -152,34 +153,10 @@ class RequestBodyGenerator {
   }
 
   Method _buildHashCodeMethod(bool hasCollectionValue) {
-    final hashCodeMethod = Method((b) {
-      b
-        ..name = 'hashCode'
-        ..type = MethodType.getter
-        ..returns = refer('int', 'dart:core')
-        ..annotations.add(refer('override', 'dart:core'));
-
-      if (hasCollectionValue) {
-        b.body = Block.of([
-          declareConst('deepEquals')
-              .assign(
-                refer(
-                  'DeepCollectionEquality',
-                  'package:collection/collection.dart',
-                ).call([]),
-              )
-              .statement,
-          refer(
-            'deepEquals',
-          ).property('hash').call([refer('value')]).returned.statement,
-        ]);
-      } else {
-        b
-          ..lambda = true
-          ..body = refer('value').property('hashCode').code;
-      }
-    });
-
-    return hashCodeMethod;
+    return generateHashCodeMethod(
+      properties: [
+        (normalizedName: 'value', hasCollectionValue: hasCollectionValue),
+      ],
+    );
   }
 }

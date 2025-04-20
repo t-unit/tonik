@@ -6,6 +6,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
+import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart sealed classes and typedefs
@@ -164,113 +165,16 @@ class ResponseGenerator {
   Method _buildHashCodeMethod(
     List<({String normalizedName, Property property})> properties,
   ) {
-    final hasCollections = properties.any(
-      (prop) => prop.property.model is ListModel,
-    );
-
-    final codeLines = <Code>[];
-
-    if (properties.isEmpty) {
-      codeLines.add(
-        refer('runtimeType').property('hashCode').returned.statement,
-      );
-      return Method(
-        (b) =>
-            b
-              ..name = 'hashCode'
-              ..type = MethodType.getter
-              ..returns = refer('int', 'dart:core')
-              ..annotations.add(refer('override', 'dart:core'))
-              ..body = Block.of(codeLines),
-      );
-    }
-
-    if (properties.length == 1) {
-      // If there's only one property, just return its hashCode
-      final propName = properties.first.normalizedName;
-      if (properties.first.property.model is ListModel) {
-        if (hasCollections) {
-          codeLines.add(
-            declareConst('deepEquals')
-                .assign(
-                  refer(
-                    'DeepCollectionEquality',
-                    'package:collection/collection.dart',
-                  ).call([]),
-                )
-                .statement,
-          );
-        }
-        codeLines.add(
-          refer(
-            'deepEquals',
-          ).property('hash').call([refer(propName)]).returned.statement,
-        );
-      } else {
-        codeLines.add(refer(propName).property('hashCode').returned.statement);
-      }
-      return Method(
-        (b) =>
-            b
-              ..name = 'hashCode'
-              ..type = MethodType.getter
-              ..returns = refer('int', 'dart:core')
-              ..annotations.add(refer('override', 'dart:core'))
-              ..body = Block.of(codeLines),
-      );
-    }
-
-    if (hasCollections) {
-      codeLines.add(
-        declareConst('deepEquals')
-            .assign(
-              refer(
-                'DeepCollectionEquality',
-                'package:collection/collection.dart',
-              ).call([]),
-            )
-            .statement,
-      );
-
-      final objectHashArgs = <Expression>[];
-
-      for (final prop in properties) {
-        final name = prop.normalizedName;
-        if (prop.property.model is ListModel) {
-          objectHashArgs.add(
-            refer('deepEquals').property('hash').call([refer(name)]),
-          );
-        } else {
-          objectHashArgs.add(refer(name));
-        }
-      }
-
-      codeLines.add(
-        refer(
-          'Object',
-          'dart:core',
-        ).property('hash').call(objectHashArgs).returned.statement,
-      );
-    } else {
-      final hashArgs =
-          properties.map((prop) => refer(prop.normalizedName)).toList();
-
-      codeLines.add(
-        refer(
-          'Object',
-          'dart:core',
-        ).property('hash').call(hashArgs).returned.statement,
-      );
-    }
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'hashCode'
-            ..type = MethodType.getter
-            ..returns = refer('int', 'dart:core')
-            ..annotations.add(refer('override', 'dart:core'))
-            ..body = Block.of(codeLines),
+    return generateHashCodeMethod(
+      properties:
+          properties
+              .map(
+                (p) => (
+                  normalizedName: p.normalizedName,
+                  hasCollectionValue: p.property.model is ListModel,
+                ),
+              )
+              .toList(),
     );
   }
 

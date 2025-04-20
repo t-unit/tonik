@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating sealed Dart classes from OneOf model definitions.
@@ -373,31 +374,12 @@ class OneOfGenerator {
     return Block.of(blocks);
   }
 
+  
   Method _buildHashCodeMethod(bool hasCollectionValue) {
-    return Method((b) {
-      b
-        ..name = 'hashCode'
-        ..type = MethodType.getter
-        ..returns = refer('int', 'dart:core')
-        ..annotations.add(refer('override', 'dart:core'));
-
-      if (hasCollectionValue) {
-        b.body = Block.of([
-          declareConst('deepEquals')
-              .assign(
-                refer(
-                  'DeepCollectionEquality',
-                  'package:collection/collection.dart',
-                ).call([]),
-              )
-              .statement,
-          const Code('return deepEquals.hash(value);'),
-        ]);
-      } else {
-        b
-          ..lambda = true
-          ..body = refer('value').property('hashCode').code;
-      }
-    });
+    return generateHashCodeMethod(
+      properties: [
+        (normalizedName: 'value', hasCollectionValue: hasCollectionValue),
+      ],
+    );
   }
 }
