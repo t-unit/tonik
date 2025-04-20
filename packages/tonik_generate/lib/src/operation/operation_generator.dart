@@ -67,7 +67,7 @@ class OperationGenerator {
       '// ignore_for_file: lines_longer_than_80_chars\n '
       '// ignore_for_file: unnecessary_brace_in_string_interps\n '
       '// ignore_for_file: cascade_invocations\n '
-      '// ignore_for_file: unnecessary_raw_strings\n\n'
+      '// ignore_for_file: unnecessary_raw_strings\n'
       '${library.accept(emitter)}',
     );
 
