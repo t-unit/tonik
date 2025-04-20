@@ -4,6 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/name_manager.dart';
 import 'package:tonik_generate/src/util/property_name_normalizer.dart';
@@ -148,66 +149,18 @@ class ClassGenerator {
     String className,
     List<({String normalizedName, Property property})> properties,
   ) {
-    var hasCollectionProperties = false;
-    final comparisons = <String>[];
-
-    for (final prop in properties) {
-      final name = prop.normalizedName;
-      final property = prop.property;
-
-      if (property.model is ListModel) {
-        hasCollectionProperties = true;
-        comparisons.add('deepEquals.equals(other.$name, $name)');
-      } else {
-        comparisons.add('other.$name == $name');
-      }
-    }
-
-    final methodBuilder =
-        MethodBuilder()
-          ..name = 'operator =='
-          ..returns = refer('bool', 'dart:core')
-          ..annotations.add(refer('override', 'dart:core'))
-          ..requiredParameters.add(
-            Parameter(
-              (b) =>
-                  b
-                    ..name = 'other'
-                    ..type = refer('Object', 'dart:core'),
-            ),
-          );
-
-    final codeLines = <Code>[
-      Code.scope((allocate) {
-        final identical = allocate(refer('identical', 'dart:core'));
-        return 'if ($identical(this, other)) return true;';
-      }),
-    ];
-
-    if (hasCollectionProperties) {
-      codeLines.add(
-        declareConst('deepEquals')
-            .assign(
-              refer(
-                'DeepCollectionEquality',
-                'package:collection/collection.dart',
-              ).call([]),
-            )
-            .statement,
-      );
-    }
-
-    if (properties.isEmpty) {
-      codeLines.add(Code('return other is $className;'));
-    } else {
-      codeLines
-        ..add(Code('return other is $className && '))
-        ..add(Code('  ${comparisons.join(' && ')};'));
-    }
-
-    methodBuilder.body = Block.of(codeLines);
-
-    return methodBuilder.build();
+    return generateEqualsMethod(
+      className: className,
+      properties:
+          properties
+              .map(
+                (prop) => (
+                  normalizedName: prop.normalizedName,
+                  hasCollectionValue: prop.property.model is ListModel,
+                ),
+              )
+              .toList(),
+    );
   }
 
   Method _buildHashCodeMethod(

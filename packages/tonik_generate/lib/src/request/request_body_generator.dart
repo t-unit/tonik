@@ -4,6 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/name_manager.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -109,79 +110,6 @@ class RequestBodyGenerator {
       final typeRef = typeReference(content.model, nameManager, package);
       final hasCollectionValue = content.model is ListModel;
 
-      final equalsMethod = Method((b) {
-        b
-          ..name = 'operator =='
-          ..returns = refer('bool', 'dart:core')
-          ..annotations.add(refer('override', 'dart:core'))
-          ..requiredParameters.add(
-            Parameter(
-              (b) =>
-                  b
-                    ..name = 'other'
-                    ..type = refer('Object', 'dart:core'),
-            ),
-          );
-
-        final codeBlocks = <Code>[
-          Code.scope((allocate) {
-            final identical = allocate(refer('identical', 'dart:core'));
-            return 'if ($identical(this, other)) return true;';
-          }),
-        ];
-
-        if (hasCollectionValue) {
-          codeBlocks.add(
-            declareConst('deepEquals')
-                .assign(
-                  refer(
-                    'DeepCollectionEquality',
-                    'package:collection/collection.dart',
-                  ).call([]),
-                )
-                .statement,
-          );
-        }
-
-        codeBlocks.addAll([
-          Code('return other is $className && '),
-          if (hasCollectionValue)
-            const Code('deepEquals.equals(other.value, value);')
-          else
-            const Code('other.value == value;'),
-        ]);
-
-        b.body = Block.of(codeBlocks);
-      });
-
-      final hashCodeMethod = Method((b) {
-        b
-          ..name = 'hashCode'
-          ..type = MethodType.getter
-          ..returns = refer('int', 'dart:core')
-          ..annotations.add(refer('override', 'dart:core'));
-
-        if (hasCollectionValue) {
-          b.body = Block.of([
-            declareConst('deepEquals')
-                .assign(
-                  refer(
-                    'DeepCollectionEquality',
-                    'package:collection/collection.dart',
-                  ).call([]),
-                )
-                .statement,
-            refer(
-              'deepEquals',
-            ).property('hash').call([refer('value')]).returned.statement,
-          ]);
-        } else {
-          b
-            ..lambda = true
-            ..body = refer('value').property('hashCode').code;
-        }
-      });
-
       return Class(
         (b) =>
             b
@@ -207,8 +135,49 @@ class RequestBodyGenerator {
                         ),
                 ),
               )
-              ..methods.addAll([equalsMethod, hashCodeMethod]),
+              ..methods.addAll([
+                generateEqualsMethod(
+                  className: className,
+                  properties: [(
+                    normalizedName: 'value',
+                    hasCollectionValue: hasCollectionValue,
+                  )],
+                ),
+                _buildHashCodeMethod(hasCollectionValue),
+              ]),
       );
     }).toList();
+  }
+
+  Method _buildHashCodeMethod(bool hasCollectionValue) {
+    final hashCodeMethod = Method((b) {
+      b
+        ..name = 'hashCode'
+        ..type = MethodType.getter
+        ..returns = refer('int', 'dart:core')
+        ..annotations.add(refer('override', 'dart:core'));
+
+      if (hasCollectionValue) {
+        b.body = Block.of([
+          declareConst('deepEquals')
+              .assign(
+                refer(
+                  'DeepCollectionEquality',
+                  'package:collection/collection.dart',
+                ).call([]),
+              )
+              .statement,
+          refer(
+            'deepEquals',
+          ).property('hash').call([refer('value')]).returned.statement,
+        ]);
+      } else {
+        b
+          ..lambda = true
+          ..body = refer('value').property('hashCode').code;
+      }
+    });
+
+    return hashCodeMethod;
   }
 }
