@@ -1,6 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/model/open_api_object.dart' as parse;
+import 'package:tonik_parse/src/model/reference.dart';
+import 'package:tonik_parse/src/model/request_body.dart' as parse;
+import 'package:tonik_parse/src/model_importer.dart';
+import 'package:tonik_parse/src/request_body_importer.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
@@ -250,5 +255,33 @@ void main() {
           .model,
       isA<StringModel>(),
     );
+  });
+
+  test('adds request body when importing a single one', () {
+    final openApiObject = parse.OpenApiObject.fromJson(fileContent);
+    final modelImporter = ModelImporter(openApiObject)..import();
+
+    final importer = RequestBodyImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+    )..import();
+
+    final imported = importer.importRequestBody(
+      name: 'SimpleBody',
+      wrapper: InlinedObject(
+        parse.RequestBody.fromJson({
+          'description': 'A simple request body',
+          'required': true,
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string'},
+            },
+          },
+        }),
+      ),
+      context: RequestBodyImporter.rootContext.push('SimpleBody'),
+    );
+
+    expect(importer.requestBodies, contains(imported));
   });
 }

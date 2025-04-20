@@ -28,12 +28,11 @@ class RequestBodyImporter {
       final name = entry.key;
       final requestBody = entry.value;
 
-      final imported = importRequestBody(
+      importRequestBody(
         name: name,
         wrapper: requestBody,
         context: rootContext.push(name),
       );
-      requestBodies.add(imported);
     }
   }
 
@@ -65,11 +64,13 @@ class RequestBodyImporter {
           context: context,
         );
 
-        return core.RequestBodyAlias(
+        final alias = core.RequestBodyAlias(
           name: name,
           requestBody: importedBody,
           context: context,
         );
+        requestBodies.add(alias);
+        return alias;
 
       case InlinedObject<RequestBody>():
         final requestBody = wrapper.object;
@@ -106,13 +107,15 @@ class RequestBodyImporter {
           }
         }
 
-        return core.RequestBodyObject(
+        final bodyObject = core.RequestBodyObject(
           name: name,
           context: context,
           description: requestBody.description,
           isRequired: requestBody.isRequired ?? false,
           content: content,
         );
+        requestBodies.add(bodyObject);
+        return bodyObject;
     }
   }
 }
