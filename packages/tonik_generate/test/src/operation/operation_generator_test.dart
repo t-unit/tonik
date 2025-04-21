@@ -542,6 +542,262 @@ void main() {
           collapseWhitespace(expectedMethod),
         );
       });
+
+      test(
+        'generates call method w/o request body parameter when body is null',
+        () {
+          final operation = Operation(
+            operationId: 'operationWithoutBody',
+            context: context,
+            summary: 'Operation without body',
+            description: 'An operation that has no request body',
+            tags: const {},
+            isDeprecated: false,
+            path: '/no-body',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          expect(method.optionalParameters, isEmpty);
+          expect(method.requiredParameters, isEmpty);
+        },
+      );
+
+      test(
+        'generates call method with single content type request body parameter',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'singleBody',
+            context: context,
+            description: 'A single content type body',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'operationWithSingleBody',
+            context: context,
+            summary: 'Operation with single body',
+            description: 'An operation that has a single content type body',
+            tags: const {},
+            isDeprecated: false,
+            path: '/single-body',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          expect(method.optionalParameters, hasLength(1));
+          final param = method.optionalParameters.first;
+          expect(param.type?.accept(emitter).toString(), 'String');
+          expect(param.required, isTrue);
+          expect(param.name, 'body');
+        },
+      );
+
+      test(
+        'generates call method w/ multiple content type request body parameter',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'multiBody',
+            context: context,
+            description: 'A multiple content type body',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+              RequestContent(
+                model: IntegerModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/xml',
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'operationWithMultiBody',
+            context: context,
+            summary: 'Operation with multiple body',
+            description: 'An operation that has multiple content type bodies',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multi-body',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          expect(method.optionalParameters, hasLength(1));
+          final param = method.optionalParameters.first;
+          expect(param.type?.accept(emitter).toString(), 'MultiBody');
+          expect(param.required, isTrue);
+          expect(param.name, 'body');
+        },
+      );
+
+      test(
+        'prioritizes body parameter for request body with conflicting names',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'singleBody',
+            context: context,
+            description: 'A single content type body',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+            },
+          );
+
+          final headerParam = RequestHeaderObject(
+            name: 'body',
+            rawName: 'body',
+            description: 'A header named body',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: HeaderParameterEncoding.simple,
+            context: context,
+          );
+
+          final queryParam = QueryParameterObject(
+            name: 'body',
+            rawName: 'body',
+            description: 'A query param named body',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: QueryParameterEncoding.form,
+            model: StringModel(context: context),
+            context: context,
+            allowReserved: false,
+          );
+
+          final pathParam = PathParameterObject(
+            name: 'body',
+            rawName: 'body',
+            description: 'A path param named body',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: PathParameterEncoding.simple,
+            model: StringModel(context: context),
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'operationWithNameConflicts',
+            context: context,
+            summary: 'Operation with conflicting parameter names',
+            description: 'An operation that has parameters named body',
+            tags: const {},
+            isDeprecated: false,
+            path: '/conflict/{body}',
+            method: HttpMethod.post,
+            headers: {headerParam},
+            queryParameters: {queryParam},
+            pathParameters: {pathParam},
+            responses: const {},
+            requestBody: requestBody,
+          );
+
+          final normalizedParams = NormalizedRequestParameters(
+            pathParameters: [(normalizedName: 'body', parameter: pathParam)],
+            queryParameters: [(normalizedName: 'body', parameter: queryParam)],
+            headers: [(normalizedName: 'body', parameter: headerParam)],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          // Verify request body parameter is named 'body'
+          final bodyParam = method.optionalParameters.firstWhere(
+            (p) => p.type?.accept(emitter).toString() == 'String',
+          );
+          expect(bodyParam.name, 'body');
+          expect(bodyParam.required, isTrue);
+
+          // Verify other parameters have appropriate suffixes
+          final headerBodyParam = method.optionalParameters.firstWhere(
+            (p) => p.name == 'bodyHeader',
+          );
+          expect(headerBodyParam.type?.accept(emitter).toString(), 'String');
+          expect(headerBodyParam.required, isTrue);
+
+          final queryBodyParam = method.optionalParameters.firstWhere(
+            (p) => p.name == 'bodyQuery',
+          );
+          expect(queryBodyParam.type?.accept(emitter).toString(), 'String');
+          expect(queryBodyParam.required, isTrue);
+
+          final pathBodyParam = method.optionalParameters.firstWhere(
+            (p) => p.name == 'bodyPath',
+          );
+          expect(pathBodyParam.type?.accept(emitter).toString(), 'String');
+          expect(pathBodyParam.required, isTrue);
+        },
+      );
     });
 
     group('generateCallableOperation', () {
@@ -605,56 +861,53 @@ void main() {
         },
       );
 
-      test(
-        'generates query parameters method when query parameters exist',
-        () {
-          final queryParam = QueryParameterObject(
-            name: 'filter',
-            rawName: 'filter',
-            description: 'Filter results',
-            isRequired: true,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            explode: false,
-            encoding: QueryParameterEncoding.form,
-            model: StringModel(context: context),
-            context: context,
-            allowReserved: false,
-          );
+      test('generates query parameters method when query parameters exist', () {
+        final queryParam = QueryParameterObject(
+          name: 'filter',
+          rawName: 'filter',
+          description: 'Filter results',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          model: StringModel(context: context),
+          context: context,
+          allowReserved: false,
+        );
 
-          final operation = Operation(
-            operationId: 'getUsers',
-            context: context,
-            summary: 'Get users',
-            description: 'Gets a list of users',
-            tags: const {},
-            isDeprecated: false,
-            path: '/users',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            responses: const {},
-            requestBody: null,
-          );
+        final operation = Operation(
+          operationId: 'getUsers',
+          context: context,
+          summary: 'Get users',
+          description: 'Gets a list of users',
+          tags: const {},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+        );
 
-          final generatedClass = generator.generateClass(operation, 'GetUsers');
+        final generatedClass = generator.generateClass(operation, 'GetUsers');
 
-          // Verify that _queryParameters method is generated
-          expect(
-            generatedClass.methods.where((m) => m.name == '_queryParameters'),
-            isNotEmpty,
-          );
+        // Verify that _queryParameters method is generated
+        expect(
+          generatedClass.methods.where((m) => m.name == '_queryParameters'),
+          isNotEmpty,
+        );
 
-          // Verify that call method includes query parameter
-          final callMethod = generatedClass.methods.firstWhere(
-            (m) => m.name == 'call',
-          );
-          final methodString = callMethod.accept(emitter).toString();
-          expect(methodString.contains('query: _queryParameters('), isTrue);
-          expect(methodString.contains('filter: filter'), isTrue);
-        },
-      );
+        // Verify that call method includes query parameter
+        final callMethod = generatedClass.methods.firstWhere(
+          (m) => m.name == 'call',
+        );
+        final methodString = callMethod.accept(emitter).toString();
+        expect(methodString.contains('query: _queryParameters('), isTrue);
+        expect(methodString.contains('filter: filter'), isTrue);
+      });
     });
   });
 }

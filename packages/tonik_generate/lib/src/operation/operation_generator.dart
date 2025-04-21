@@ -145,9 +145,52 @@ class OperationGenerator {
     final pathArgs = <String, Expression>{};
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
+    final dataArgs = <String, Expression>{};
+
+    // Handle request body first to reserve the 'body' name if needed
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+
+    if (hasRequestBody) {
+      final requestBody = operation.requestBody!;
+
+      final parameterType =
+          requestBody.contentCount == 1
+              ? typeReference(
+                requestBody.resolvedContent.first.model,
+                nameManager,
+                package,
+                isNullableOverride: !requestBody.isRequired,
+              )
+              : TypeReference(
+                (b) =>
+                    b
+                      ..symbol = nameManager.requestBodyName(requestBody)
+                      ..url = package
+                      ..isNullable = !requestBody.isRequired,
+              );
+
+      parameters.add(
+        Parameter(
+          (b) =>
+              b
+                ..name = 'body'
+                ..type = parameterType
+                ..named = true
+                ..required = requestBody.isRequired,
+        ),
+      );
+
+      dataArgs['body'] = refer('body');
+    }
+
+    // Add suffix to any parameter named 'body' if request body exists
+    String normalizeParamName(String name, String suffix) {
+      return name == 'body' && hasRequestBody ? '$name$suffix' : name;
+    }
 
     for (final pathParam in normalizedParams.pathParameters) {
-      final paramName = pathParam.normalizedName;
+      final paramName = normalizeParamName(pathParam.normalizedName, 'Path');
       final resolvedParam = pathParam.parameter;
 
       final parameterType = typeReference(
@@ -168,11 +211,11 @@ class OperationGenerator {
         ),
       );
 
-      pathArgs[paramName] = refer(paramName);
+      pathArgs[pathParam.normalizedName] = refer(paramName);
     }
 
     for (final queryParam in normalizedParams.queryParameters) {
-      final paramName = queryParam.normalizedName;
+      final paramName = normalizeParamName(queryParam.normalizedName, 'Query');
       final resolvedParam = queryParam.parameter;
 
       final parameterType = typeReference(
@@ -193,11 +236,14 @@ class OperationGenerator {
         ),
       );
 
-      queryArgs[paramName] = refer(paramName);
+      queryArgs[queryParam.normalizedName] = refer(paramName);
     }
 
     for (final headerParam in normalizedParams.headers) {
-      final paramName = headerParam.normalizedName;
+      final paramName = normalizeParamName(
+        headerParam.normalizedName,
+        'Header',
+      );
       final resolvedParam = headerParam.parameter;
 
       final parameterType = typeReference(
@@ -218,7 +264,7 @@ class OperationGenerator {
         ),
       );
 
-      headerArgs[paramName] = refer(paramName);
+      headerArgs[headerParam.normalizedName] = refer(paramName);
     }
 
     final pathExpr =
