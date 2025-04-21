@@ -638,7 +638,7 @@ void main() {
     });
 
     test(
-      'sets contentType from single content type when requestBody has one content',
+      'sets contentType from content type when requestBody has one content',
       () {
         final requestBody = RequestBodyObject(
           name: 'singleContent',

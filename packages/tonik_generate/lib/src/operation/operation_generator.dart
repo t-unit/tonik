@@ -159,7 +159,7 @@ class OperationGenerator {
               : TypeReference(
                 (b) =>
                     b
-                      ..symbol = nameManager.requestBodyName(requestBody)
+                      ..symbol = nameManager.getRequestBodyNames(requestBody).$1
                       ..url = package
                       ..isNullable = !requestBody.isRequired,
               );

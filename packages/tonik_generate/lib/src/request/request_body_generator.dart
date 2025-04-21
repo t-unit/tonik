@@ -36,7 +36,7 @@ class RequestBodyGenerator {
       useNullSafetySyntax: true,
     );
 
-    final name = nameManager.requestBodyName(requestBody);
+    final (name, _) = nameManager.getRequestBodyNames(requestBody);
 
     final library = Library((b) {
       switch (requestBody) {
@@ -58,7 +58,9 @@ class RequestBodyGenerator {
 
   @visibleForTesting
   TypeDef generateTypedef(RequestBodyAlias requestBody, String name) {
-    final targetName = nameManager.requestBodyName(requestBody.requestBody);
+    final (targetName, _) = nameManager.getRequestBodyNames(
+      requestBody.requestBody,
+    );
 
     return TypeDef(
       (b) =>
@@ -91,20 +93,9 @@ class RequestBodyGenerator {
     RequestBodyObject requestBody,
     String parentClassName,
   ) {
-    return requestBody.content.map((content) {
-      final suffix =
-          content.rawContentType.split('/').lastOrNull?.toPascalCase();
-
-      final className = nameManager.requestBodyName(
-        RequestBodyObject(
-          name: '$parentClassName$suffix',
-          context: requestBody.context,
-          description: null,
-          isRequired: true,
-          content: const {},
-        ),
-      );
-
+    final (_, subclassNames) = nameManager.getRequestBodyNames(requestBody);
+    return requestBody.resolvedContent.map((content) {
+      final className = subclassNames[content.rawContentType]!;
       final typeRef = typeReference(content.model, nameManager, package);
       final hasCollectionValue = content.model is ListModel;
 

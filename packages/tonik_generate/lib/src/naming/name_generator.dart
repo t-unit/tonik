@@ -76,12 +76,35 @@ class NameGenerator {
   /// 1. Request body's explicit name if available
   /// 2. Combined context path components
   /// 3. 'Anonymous' as fallback
-  String generateRequestBodyName(RequestBody requestBody) {
+  ///
+  /// For request bodies with multiple content types, this will generate
+  /// a base class name and subclass names for each content type.
+  /// Returns a record with the base name and a map of content types 
+  /// to subclass names.
+  (String baseName, Map<String, String> subclassNames) generateRequestBodyNames(
+    RequestBody requestBody,
+  ) {
     final baseName = _generateBaseName(
       name: requestBody.name,
       context: requestBody.context,
     );
-    return _makeUnique(baseName, _requestBodySuffix);
+    final uniqueBaseName = _makeUnique(baseName, _requestBodySuffix);
+
+    final subclassNames = <String, String>{};
+    if (requestBody is RequestBodyObject && requestBody.contentCount > 1) {
+      for (final content in requestBody.resolvedContent) {
+        final suffix =
+            content.rawContentType.split('/').lastOrNull?.toPascalCase() ??
+            'Default';
+        final subclassBaseName = '$uniqueBaseName$suffix';
+        subclassNames[content.rawContentType] = _makeUnique(
+          subclassBaseName,
+          '',
+        );
+      }
+    }
+
+    return (uniqueBaseName, subclassNames);
   }
 
   /// Generates a base name using the following priority:

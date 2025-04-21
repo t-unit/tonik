@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
@@ -72,13 +71,15 @@ class OptionsGenerator {
       return literalString(requestBody.resolvedContent.first.rawContentType);
     }
 
-    final bodyName = nameManager.requestBodyName(requestBody);
+    final (baseName, subclassNames) = nameManager.getRequestBodyNames(
+      requestBody,
+    );
     parameters.add(
       Parameter(
         (b) =>
             b
               ..name = 'body'
-              ..type = refer(bodyName, package)
+              ..type = refer(baseName, package)
               ..named = true
               ..required = requestBody.isRequired,
       ),
@@ -86,17 +87,7 @@ class OptionsGenerator {
 
     final cases = <Code>[];
     for (final content in requestBody.resolvedContent) {
-      final className = nameManager.requestBodyName(
-        RequestBodyObject(
-          name:
-              '$bodyName${content.rawContentType.split('/').lastOrNull?.toPascalCase()}',
-          context: requestBody.context,
-          description: null,
-          isRequired: true,
-          content: const {},
-        ),
-      );
-
+      final className = subclassNames[content.rawContentType]!;
       final caseCode = [
         refer(className, package).code,
         const Code(' _ => '),

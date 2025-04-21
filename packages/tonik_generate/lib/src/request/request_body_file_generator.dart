@@ -37,7 +37,7 @@ class RequestBodyFileGenerator {
         continue;
       }
 
-      final name = requestBodyGenerator.nameManager.requestBodyName(
+      final (name, _) = requestBodyGenerator.nameManager.getRequestBodyNames(
         requestBody,
       );
       log.fine('Generating request body $name');

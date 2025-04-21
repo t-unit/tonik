@@ -20,7 +20,8 @@ class NameManager {
   final tagNames = <Tag, String>{};
   @protected
   @visibleForTesting
-  final requestBodyNames = <RequestBody, String>{};
+  final Map<RequestBody, (String baseName, Map<String, String> subclassNames)>
+  requestBodyNameCache = {};
 
   final log = Logger('NameManager');
 
@@ -56,7 +57,7 @@ class NameManager {
       // Skip request bodies with only one content type as content
       // is used directly.
       if (requestBody.contentCount > 1) {
-        requestBodyName(requestBody);
+        getRequestBodyNames(requestBody);
       }
     }
   }
@@ -81,12 +82,18 @@ class NameManager {
   String tagName(Tag tag) =>
       tagNames.putIfAbsent(tag, () => generator.generateTagName(tag));
 
-  /// Gets a cached or generates a new unique request body class name.
-  String requestBodyName(RequestBody requestBody) =>
-      requestBodyNames.putIfAbsent(
-        requestBody,
-        () => generator.generateRequestBodyName(requestBody),
-      );
+  /// Returns the base name and subclass names for a request body.
+  ///
+  /// The base name is used for the sealed class, while the subclass
+  /// names are used for the concrete implementations for each content type.
+  (String baseName, Map<String, String> subclassNames) getRequestBodyNames(
+    RequestBody requestBody,
+  ) {
+    return requestBodyNameCache.putIfAbsent(
+      requestBody,
+      () => generator.generateRequestBodyNames(requestBody),
+    );
+  }
 
   void _logModelName(String name, Model model) {
     final modelName =

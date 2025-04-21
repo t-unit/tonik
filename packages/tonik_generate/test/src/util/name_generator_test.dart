@@ -599,5 +599,131 @@ void main() {
         });
       });
     });
+
+    group('generateRequestBodyNames', () {
+      test('generates base name and no subclass names for single content', () {
+        final requestBody = RequestBodyObject(
+          name: 'user',
+          context: Context.initial(),
+          description: '',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final (baseName, subclassNames) = nameGenerator
+            .generateRequestBodyNames(requestBody);
+        expect(baseName, 'User');
+        expect(subclassNames, isEmpty);
+      });
+
+      test(
+        'generates base name and subclass names for multiple content types',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'user',
+            context: Context.initial(),
+            description: '',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: Context.initial()),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+              RequestContent(
+                model: StringModel(context: Context.initial()),
+                contentType: ContentType.json,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+          );
+
+          final (baseName, subclassNames) = nameGenerator
+              .generateRequestBodyNames(requestBody);
+          expect(baseName, 'User');
+          expect(subclassNames, {
+            'application/json': 'UserJson',
+            'application/x-www-form-urlencoded': 'UserXWwwFormUrlencoded',
+          });
+        },
+      );
+
+      test('makes duplicate subclass names unique', () {
+        final requestBody = RequestBodyObject(
+          name: 'user',
+          context: Context.initial(),
+          description: '',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+            RequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/json+v2',
+            ),
+          },
+        );
+
+        // First call to generate names
+        final (baseName1, subclassNames1) = nameGenerator
+            .generateRequestBodyNames(requestBody);
+        expect(baseName1, 'User');
+        expect(subclassNames1, {
+          'application/json': 'UserJson',
+          'application/json+v2': 'UserJsonV2',
+        });
+
+        // Second call with same content types should get different names
+        final (baseName2, subclassNames2) = nameGenerator
+            .generateRequestBodyNames(requestBody);
+        expect(baseName2, 'UserRequestBody');
+        expect(subclassNames2, {
+          'application/json': 'UserRequestBodyJson',
+          'application/json+v2': 'UserRequestBodyJsonV2',
+        });
+      });
+
+      test('handles request body aliases', () {
+        final originalBody = RequestBodyObject(
+          name: 'user',
+          context: Context.initial(),
+          description: '',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+            RequestContent(
+              model: StringModel(context: Context.initial()),
+              contentType: ContentType.json,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+        );
+
+        final aliasBody = RequestBodyAlias(
+          name: 'userAlias',
+          context: Context.initial(),
+          requestBody: originalBody,
+        );
+
+        final (baseName, subclassNames) = nameGenerator
+            .generateRequestBodyNames(aliasBody);
+        expect(baseName, 'UserAlias');
+        expect(subclassNames, isEmpty);
+      });
+    });
   });
 }

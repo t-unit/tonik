@@ -88,7 +88,7 @@ void main() {
           ),
         );
 
-        final name = nameManager.requestBodyName(aliasBody);
+        final (name, _) = nameManager.getRequestBodyNames(aliasBody);
         final typedef = generator.generateTypedef(aliasBody, name);
         expect(typedef.name, name);
         expect(
@@ -119,7 +119,7 @@ void main() {
           },
         );
 
-        final name = nameManager.requestBodyName(requestBody);
+        final (name, _) = nameManager.getRequestBodyNames(requestBody);
         final classes = generator.generateClasses(requestBody, name);
         final baseClass = classes.first;
 
@@ -152,7 +152,7 @@ void main() {
           },
         );
 
-        final name = nameManager.requestBodyName(requestBody);
+        final (name, _) = nameManager.getRequestBodyNames(requestBody);
         final classes = generator.generateClasses(requestBody, name);
         final subClass = classes[1];
 
@@ -204,7 +204,7 @@ void main() {
             }
           ''';
 
-          final name = nameManager.requestBodyName(requestBody);
+          final (name, _) = nameManager.getRequestBodyNames(requestBody);
           final classes = generator.generateClasses(requestBody, name);
           final subClass = classes[1];
           expect(
@@ -245,7 +245,7 @@ void main() {
             }
           ''';
 
-          final name = nameManager.requestBodyName(requestBody);
+          final (name, _) = nameManager.getRequestBodyNames(requestBody);
           final classes = generator.generateClasses(requestBody, name);
           final subClass = classes[1];
           expect(
@@ -281,7 +281,7 @@ void main() {
             int get hashCode => value.hashCode;
           ''';
 
-          final name = nameManager.requestBodyName(requestBody);
+          final (name, _) = nameManager.getRequestBodyNames(requestBody);
           final classes = generator.generateClasses(requestBody, name);
           final subClass = classes[1];
           expect(
@@ -321,7 +321,7 @@ void main() {
             }
           ''';
 
-          final name = nameManager.requestBodyName(requestBody);
+          final (name, _) = nameManager.getRequestBodyNames(requestBody);
           final classes = generator.generateClasses(requestBody, name);
           final subClass = classes[1];
           expect(
