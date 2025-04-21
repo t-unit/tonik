@@ -86,7 +86,10 @@ void main() {
 
       const expectedMethod = '''
           Options _options() {
-            return Options(method: 'POST', validateStatus: (_) => true);
+            return Options(
+              method: 'POST',
+              validateStatus: (_) => true,
+            );
           }
         ''';
 
@@ -100,7 +103,7 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -217,7 +220,11 @@ void main() {
               explode: false,
               allowEmpty: false,
             );
-            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+            return Options(
+              method: 'GET',
+              headers: headers,
+              validateStatus: (_) => true,
+            );
           }
         ''';
 
@@ -240,7 +247,7 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -371,7 +378,11 @@ void main() {
                 allowEmpty: false,
               );
             }
-            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+            return Options(
+              method: 'GET',
+              headers: headers,
+              validateStatus: (_) => true,
+            );
           }
         ''';
 
@@ -390,7 +401,7 @@ void main() {
 
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -433,7 +444,11 @@ void main() {
             explode: true,
             allowEmpty: true,
           );
-          return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+          return Options(
+            method: 'GET',
+            headers: headers,
+            validateStatus: (_) => true,
+          );
         }
       ''';
 
@@ -446,7 +461,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -497,7 +512,11 @@ void main() {
               explode: true,
               allowEmpty: false,
             );
-            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+            return Options(
+              method: 'GET',
+              headers: headers,
+              validateStatus: (_) => true,
+            );
           }
         ''';
 
@@ -513,7 +532,7 @@ void main() {
       expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -563,7 +582,11 @@ void main() {
               explode: true,
               allowEmpty: false,
             );
-            return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+            return Options(
+              method: 'GET',
+              headers: headers,
+              validateStatus: (_) => true,
+            );
           }
         ''';
 
@@ -579,8 +602,152 @@ void main() {
       expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('sets contentType to null when requestBody is null', () {
+      final operation = Operation(
+        operationId: 'operationWithoutBody',
+        context: context,
+        summary: 'Operation without body',
+        description: 'An operation without request body',
+        tags: const {},
+        isDeprecated: false,
+        path: '/no-body',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: const {},
+        requestBody: null,
+      );
+
+      const expectedMethod = '''
+          Options _options() {
+            return Options(method: 'POST', validateStatus: (_) => true);
+          }
+        ''';
+
+      final method = generator.generateOptionsMethod(operation, []);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
         collapseWhitespace(expectedMethod),
       );
     });
+
+    test(
+      'sets contentType from single content type when requestBody has one content',
+      () {
+        final requestBody = RequestBodyObject(
+          name: 'singleContent',
+          context: context,
+          description: 'Request body with single content type',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'operationWithSingleContent',
+          context: context,
+          summary: 'Operation with single content',
+          description: 'An operation with single content type body',
+          tags: const {},
+          isDeprecated: false,
+          path: '/single-content',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+        );
+
+        const expectedMethod = '''
+          Options _options() {
+            return Options(
+              method: 'POST',
+              contentType: 'application/json',
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final method = generator.generateOptionsMethod(operation, []);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test(
+      'sets contentType based on body type when body has multiple contents',
+      () {
+        final requestBody = RequestBodyObject(
+          name: 'multiContent',
+          context: context,
+          description: 'Request body with multiple content types',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'multipart/form-data',
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'operationWithMultiContent',
+          context: context,
+          summary: 'Operation with multi content',
+          description: 'An operation with multiple content type body',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multi-content',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+        );
+
+        const expectedMethod = '''
+          Options _options({required MultiContent body}) {
+            final contentType = switch (body) {
+              MultiContentJson _ => 'application/json',
+              MultiContentFormData _ => 'multipart/form-data',
+            };
+            return Options(
+              method: 'POST',
+              contentType: contentType,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final method = generator.generateOptionsMethod(operation, []);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
   });
 }
