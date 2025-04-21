@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/format_with_header.dart';
 
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
@@ -38,12 +39,7 @@ class EnumGenerator {
       languageVersion: DartFormatter.latestLanguageVersion,
     );
 
-    final code = formatter.format(
-      '// Generated code - do not modify by hand\n'
-      '// ignore_for_file: lines_longer_than_80_chars\n '
-      '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n'
-      '${library.accept(emitter)}',
-    );
+    final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
     return (code: code, filename: '$snakeCaseName.dart');
   }

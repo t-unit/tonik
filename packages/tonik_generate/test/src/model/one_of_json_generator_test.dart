@@ -324,7 +324,7 @@ void main() {
 
             try {
               return ResultSuccess(Success.fromJson(json));
-            } catch (_) {}
+            } on Object catch (_) {}
 
             throw ArgumentError('Invalid JSON for Result');
           }''';

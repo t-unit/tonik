@@ -248,6 +248,41 @@ void main() {
       );
     });
 
+    test('fromJson method includes proper catch clause with on Object', () {
+      final model = OneOfModel(
+        name: 'TestOneOf',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'TestClass',
+              properties: const {},
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'TestOneOf');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+      const expectedMethod = '''
+        TestOneOf fromJson(dynamic json) {
+          try {
+            return TestOneOfTestClass(TestClass.fromJson(json));
+          } on Object catch(_) {}
+          throw ArgumentError('Invalid JSON for TestOneOf');
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(format(expectedMethod))),
+      );
+    });
+
   group('subclass equals', () {
     test('generates equals method for primitive type', () {
       final model = OneOfModel(

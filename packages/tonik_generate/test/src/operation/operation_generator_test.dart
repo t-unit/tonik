@@ -59,7 +59,7 @@ void main() {
               _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               _$data = _data();
               _$options = _options();
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -76,7 +76,7 @@ void main() {
                 data: _$data,
                 options: _$options,
               );
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -157,7 +157,7 @@ void main() {
               _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               _$data = _data();
               _$options = _options(xMyHeader: xMyHeader);
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -174,7 +174,7 @@ void main() {
                 data: _$data,
                 options: _$options,
               );
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -249,7 +249,7 @@ void main() {
               ).resolveUri(Uri(path: _path(petId: petId)));
               _$data = _data();
               _$options = _options();
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -266,7 +266,7 @@ void main() {
                 data: _$data,
                 options: _$options,
               );
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -356,7 +356,7 @@ void main() {
               _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               _$data = _data();
               _$options = _options();
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -373,7 +373,7 @@ void main() {
                 data: _$data,
                 options: _$options,
               );
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -471,7 +471,7 @@ void main() {
               );
               _$data = _data();
               _$options = _options();
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,
@@ -488,7 +488,7 @@ void main() {
                 data: _$data,
                 options: _$options,
               );
-            } on Exception catch (exception, stackTrace) {
+            } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
                 stackTrace: stackTrace,

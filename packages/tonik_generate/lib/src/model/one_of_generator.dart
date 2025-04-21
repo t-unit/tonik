@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -36,13 +37,7 @@ class OneOfGenerator {
       languageVersion: DartFormatter.latestLanguageVersion,
     );
 
-    final code = formatter.format(
-      '// Generated code - do not modify by hand\n'
-      '// ignore_for_file: lines_longer_than_80_chars\n '
-      '// ignore_for_file: unnecessary_raw_strings, unnecessary_brace_in_string_interps\n '
-      '// ignore_for_file: avoid_catches_without_on_clauses\n '
-      '${library.accept(emitter)}',
-    );
+    final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
     return (code: code, filename: '$snakeCaseName.dart');
   }
@@ -362,7 +357,9 @@ class OneOfGenerator {
             ).property('fromJson').call([refer('json')]),
           ]).code,
           const Code(';\n'),
-          const Code('} catch (_) {}\n'),
+          const Code('} on '),
+          refer('Object', 'dart:core').code,
+          const Code(' catch(_) {}\n'),
         ]),
       );
     }
@@ -375,7 +372,6 @@ class OneOfGenerator {
     return Block.of(blocks);
   }
 
-  
   Method _buildHashCodeMethod(bool hasCollectionValue) {
     return generateHashCodeMethod(
       properties: [

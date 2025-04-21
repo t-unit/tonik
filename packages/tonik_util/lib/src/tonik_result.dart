@@ -31,7 +31,7 @@ class TonikError<T> extends TonikResult<T> {
   });
 
   /// The error that occurred during the API call.
-  final Exception error;
+  final Object error;
 
   /// The stack trace of the error.
   final StackTrace stackTrace;
