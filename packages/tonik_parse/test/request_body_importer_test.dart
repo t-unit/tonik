@@ -92,6 +92,27 @@ void main() {
         },
         'AliasBody': {r'$ref': '#/components/requestBodies/SimpleBody'},
         'DoubleAliasBody': {r'$ref': '#/components/requestBodies/AliasBody'},
+        'DuplicateBody': {
+          'description': 'First definition',
+          'required': true,
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+        'AnotherBody': {
+          'description': 'Second definition with same content',
+          'required': true,
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+        'DuplicateBodyRef': {
+          r'$ref': '#/components/requestBodies/DuplicateBody',
+        },
       },
     },
   };
@@ -255,6 +276,24 @@ void main() {
           .model,
       isA<StringModel>(),
     );
+  });
+
+  test('handles duplicate request bodies correctly', () {
+    final api = Importer().import(fileContent);
+
+    final duplicateBodies =
+        api.requestBodies.where((r) => r.name == 'DuplicateBody').toList();
+
+    expect(duplicateBodies, hasLength(1));
+
+    final duplicateBody = duplicateBodies.first;
+    expect(duplicateBody, isA<RequestBodyObject>());
+    expect(
+      (duplicateBody as RequestBodyObject).description,
+      'First definition',
+    );
+    expect(duplicateBody.isRequired, isTrue);
+    expect(duplicateBody.content.first.model, isA<StringModel>());
   });
 
   test('adds request body when importing a single one', () {

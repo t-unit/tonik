@@ -41,6 +41,15 @@ class RequestBodyImporter {
     required ReferenceWrapper<RequestBody> wrapper,
     required core.Context context,
   }) {
+    // Check if we already have a request body with this name
+    if (name != null) {
+      final existing =
+          requestBodies.where((body) => body.name == name).firstOrNull;
+      if (existing != null) {
+        return existing;
+      }
+    }
+
     switch (wrapper) {
       case Reference<RequestBody>():
         if (!wrapper.ref.startsWith('#/components/requestBodies/')) {

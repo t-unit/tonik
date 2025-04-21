@@ -36,7 +36,6 @@ class ResponseImporter {
         wrapper: response,
         context: rootContext.push(name),
       );
-
     }
   }
 
@@ -45,6 +44,15 @@ class ResponseImporter {
     required ReferenceWrapper<Response> wrapper,
     required core.Context context,
   }) {
+    // Check if we already have a response with this name
+    if (name != null) {
+      final existing =
+          responses.where((response) => response.name == name).firstOrNull;
+      if (existing != null) {
+        return existing;
+      }
+    }
+
     core.Response response;
     switch (wrapper) {
       case Reference<Response>():

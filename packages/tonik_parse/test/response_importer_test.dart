@@ -122,6 +122,25 @@ void main() {
             },
           },
         },
+        'DuplicateResponse': {
+          'description': 'First definition',
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+        'AnotherResponse': {
+          'description': 'Second definition with same content',
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+        'DuplicateResponseRef': {
+          r'$ref': '#/components/responses/DuplicateResponse',
+        },
       },
     },
   };
@@ -331,5 +350,22 @@ void main() {
 
     // Verify the response was added to the responses set
     expect(responseImporter.responses, contains(importedResponse));
+  });
+
+  test('handles duplicate responses correctly', () {
+    final api = Importer().import(fileContent);
+
+    final duplicateResponses =
+        api.responses.where((r) => r.name == 'DuplicateResponse').toList();
+
+    expect(duplicateResponses, hasLength(1));
+
+    final duplicateResponse = duplicateResponses.first;
+    expect(duplicateResponse, isA<ResponseObject>());
+    expect(
+      (duplicateResponse as ResponseObject).description,
+      'First definition',
+    );
+    expect(duplicateResponse.bodies.first.model, isA<StringModel>());
   });
 }
