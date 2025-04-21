@@ -141,9 +141,9 @@ class OperationGenerator {
     final headerArgs = <String, Expression>{};
     final dataArgs = <String, Expression>{};
 
-    // Handle request body first to reserve the 'body' name if needed
     final hasRequestBody =
         operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+    final hasVariableContent = (operation.requestBody?.contentCount ?? 0) > 1;
 
     if (hasRequestBody) {
       final requestBody = operation.requestBody!;
@@ -266,8 +266,6 @@ class OperationGenerator {
 
     final queryExpr = refer('_queryParameters').call([], queryArgs);
 
-    final optionsExpr = refer('_options').call([], headerArgs);
-
     return Method(
       (b) =>
           b
@@ -336,7 +334,7 @@ class OperationGenerator {
                             .assign(
                               refer('_options').call([], {
                                 ...headerArgs,
-                                if (hasRequestBody) 'body': refer('body'),
+                                if (hasVariableContent) 'body': refer('body'),
                               }),
                             )
                             .statement,

@@ -63,11 +63,11 @@ class OptionsGenerator {
     List<Code> bodyStatements,
     List<Parameter> parameters,
   ) {
-    if (requestBody == null || requestBody.contentCount == 0) {
+    if (requestBody?.resolvedContent.isEmpty ?? true) {
       return null;
     }
 
-    if (requestBody.contentCount == 1) {
+    if (requestBody!.contentCount == 1) {
       return literalString(requestBody.resolvedContent.first.rawContentType);
     }
 
