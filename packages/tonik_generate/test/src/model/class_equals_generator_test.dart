@@ -145,14 +145,14 @@ void main() {
         context: context,
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
       @override
       bool operator ==(Object other) {
         if (identical(this, other)) return true;
-        const deepEquals = DeepCollectionEquality();
+        const _$deepEquals = DeepCollectionEquality();
         return other is User && 
           other.name == name && 
-          deepEquals.equals(other.tags, tags);
+          _$deepEquals.equals(other.tags, tags);
       }
       ''';
 
@@ -229,14 +229,14 @@ void main() {
         context: context,
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
       @override
       bool operator ==(Object other) {
         if (identical(this, other)) return true;
-        const deepEquals = DeepCollectionEquality();
+        const _$deepEquals = DeepCollectionEquality();
         return other is NestedData && 
           other.name == name && 
-          deepEquals.equals(other.nestedList, nestedList);
+          _$deepEquals.equals(other.nestedList, nestedList);
       }
       ''';
 

@@ -76,12 +76,12 @@ void main() {
         properties: [(normalizedName: 'values', hasCollectionValue: true)],
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         @override
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
-          const deepEquals = DeepCollectionEquality();
-          return other is TestClass && deepEquals.equals(other.values, values);
+          const _$deepEquals = DeepCollectionEquality();
+          return other is TestClass && _$deepEquals.equals(other.values, values);
         }
       ''';
 
@@ -101,14 +101,14 @@ void main() {
         ],
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         @override
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
-          const deepEquals = DeepCollectionEquality();
+          const _$deepEquals = DeepCollectionEquality();
           return other is TestClass && 
             other.id == id && 
-            deepEquals.equals(other.items, items) && 
+            _$deepEquals.equals(other.items, items) && 
             other.name == name;
         }
       ''';

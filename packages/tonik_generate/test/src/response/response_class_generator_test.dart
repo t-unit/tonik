@@ -261,14 +261,12 @@ void main() {
             },
           );
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
-            const deepEquals = DeepCollectionEquality(); 
-            return other is ListHeaderResponse &&
-              deepEquals.equals(other.xList, xList) &&
-              other.body == body;
+            const _$deepEquals = DeepCollectionEquality();
+            return other is ListHeaderResponse && _$deepEquals.equals(other.xList, xList) && other.body == body;
           }
         ''';
 

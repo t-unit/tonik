@@ -308,20 +308,19 @@ void main() {
       final classes = generator.generateClasses(model);
       final listClass = classes.firstWhere((c) => c.name == 'ResultStrings');
 
-      const expectedClass = '''
+      const expectedMethod = r'''
         @immutable
         class ResultStrings extends Result {
           const ResultStrings(this.value);
-
           final List<String> value;
-
+          
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
-            const deepEquals = DeepCollectionEquality();
-            return other is ResultStrings && deepEquals.equals(other.value, value);
+            const _$deepEquals = DeepCollectionEquality();
+            return other is ResultStrings && _$deepEquals.equals(other.value, value);
           }
-
+          
           @override
           int get hashCode {
             const deepEquals = DeepCollectionEquality();
@@ -332,7 +331,7 @@ void main() {
 
       expect(
         collapseWhitespace(format(listClass.accept(emitter).toString())),
-        collapseWhitespace(format(expectedClass)),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
   });

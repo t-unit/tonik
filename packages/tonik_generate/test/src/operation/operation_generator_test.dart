@@ -49,16 +49,16 @@ void main() {
           requestBody: null,
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<TonikResult<void>> call() async {
-            final Uri uri;
-            final Object? data;
-            final Options options;
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
 
             try {
-              uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              data = _data();
-              options = _options();
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
+              _$data = _data();
+              _$options = _options();
             } on Exception catch (exception, stackTrace) {
               return TonikError(
                 exception,
@@ -72,9 +72,9 @@ void main() {
 
             try {
               response = await _dio.requestUri<dynamic>(
-                uri,
-                data: data,
-                options: options,
+                _$uri,
+                data: _$data,
+                options: _$options,
               );
             } on Exception catch (exception, stackTrace) {
               return TonikError(
@@ -147,16 +147,16 @@ void main() {
           requestBody: null,
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<TonikResult<void>> call({required String xMyHeader}) async {
-            final Uri uri;
-            final Object? data;
-            final Options options;
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
 
             try {
-              uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              data = _data();
-              options = _options(xMyHeader: xMyHeader);
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
+              _$data = _data();
+              _$options = _options(xMyHeader: xMyHeader);
             } on Exception catch (exception, stackTrace) {
               return TonikError(
                 exception,
@@ -170,9 +170,9 @@ void main() {
 
             try {
               response = await _dio.requestUri<dynamic>(
-                uri,
-                data: data,
-                options: options,
+                _$uri,
+                data: _$data,
+                options: _$options,
               );
             } on Exception catch (exception, stackTrace) {
               return TonikError(
@@ -237,18 +237,18 @@ void main() {
           requestBody: null,
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<TonikResult<void>> call({required int petId}) async {
-            final Uri uri;
-            final Object? data;
-            final Options options;
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
 
             try {
-              uri = Uri.parse(
+              _$uri = Uri.parse(
                 _dio.options.baseUrl,
               ).resolveUri(Uri(path: _path(petId: petId)));
-              data = _data();
-              options = _options();
+              _$data = _data();
+              _$options = _options();
             } on Exception catch (exception, stackTrace) {
               return TonikError(
                 exception,
@@ -262,9 +262,9 @@ void main() {
 
             try {
               response = await _dio.requestUri<dynamic>(
-                uri,
-                data: data,
-                options: options,
+                _$uri,
+                data: _$data,
+                options: _$options,
               );
             } on Exception catch (exception, stackTrace) {
               return TonikError(
@@ -346,16 +346,16 @@ void main() {
           requestBody: null,
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<TonikResult<void>> call() async {
-            final Uri uri;
-            final Object? data;
-            final Options options;
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
 
             try {
-              uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              data = _data();
-              options = _options();
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
+              _$data = _data();
+              _$options = _options();
             } on Exception catch (exception, stackTrace) {
               return TonikError(
                 exception,
@@ -369,9 +369,9 @@ void main() {
 
             try {
               response = await _dio.requestUri<dynamic>(
-                uri,
-                data: data,
-                options: options,
+                _$uri,
+                data: _$data,
+                options: _$options,
               );
             } on Exception catch (exception, stackTrace) {
               return TonikError(
@@ -459,18 +459,18 @@ void main() {
           requestBody: null,
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<TonikResult<void>> call({required String filter, String? sort}) async {
-            final Uri uri;
-            final Object? data;
-            final Options options;
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
 
             try {
-              uri = Uri.parse(_dio.options.baseUrl).resolveUri(
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(
                 Uri(path: _path(), query: _queryParameters(filter: filter, sort: sort)),
               );
-              data = _data();
-              options = _options();
+              _$data = _data();
+              _$options = _options();
             } on Exception catch (exception, stackTrace) {
               return TonikError(
                 exception,
@@ -484,9 +484,9 @@ void main() {
 
             try {
               response = await _dio.requestUri<dynamic>(
-                uri,
-                data: data,
-                options: options,
+                _$uri,
+                data: _$data,
+                options: _$options,
               );
             } on Exception catch (exception, stackTrace) {
               return TonikError(

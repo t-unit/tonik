@@ -236,12 +236,12 @@ void main() {
             },
           );
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
             @override
             bool operator ==(Object other) {
               if (identical(this, other)) return true;
-              const deepEquals = DeepCollectionEquality();
-              return other is MultiBodyJson && deepEquals.equals(other.value, value);
+              const _$deepEquals = DeepCollectionEquality();
+              return other is MultiBodyJson && _$deepEquals.equals(other.value, value);
             }
           ''';
 

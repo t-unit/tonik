@@ -301,20 +301,20 @@ class OperationGenerator {
                   b
                     ..statements.addAll([
                       declareFinal(
-                        'uri',
+                        r'_$uri',
                         type: refer('Uri', 'dart:core'),
                       ).statement,
                       declareFinal(
-                        'data',
+                        r'_$data',
                         type: refer('Object?', 'dart:core'),
                       ).statement,
                       declareFinal(
-                        'options',
+                        r'_$options',
                         type: refer('Options', 'package:dio/dio.dart'),
                       ).statement,
                       Block.of([
                         const Code('try {'),
-                        refer('uri')
+                        refer(r'_$uri')
                             .assign(
                               refer('Uri', 'dart:core')
                                   .property('parse')
@@ -337,8 +337,8 @@ class OperationGenerator {
                                   ]),
                             )
                             .statement,
-                        refer('data').assign(refer('_data()')).statement,
-                        refer('options').assign(optionsExpr).statement,
+                        refer(r'_$data').assign(refer('_data()')).statement,
+                        refer(r'_$options').assign(optionsExpr).statement,
                         const Code('} on '),
                         refer('Exception', 'dart:core').code,
                         const Code(' catch (exception, stackTrace) {'),
@@ -375,10 +375,10 @@ class OperationGenerator {
                         refer('response')
                             .assign(
                               refer('_dio').property('requestUri').call(
-                                [refer('uri')],
+                                [refer(r'_$uri')],
                                 {
-                                  'data': refer('data'),
-                                  'options': refer('options'),
+                                  'data': refer(r'_$data'),
+                                  'options': refer(r'_$options'),
                                 },
                                 [refer('dynamic', 'dart:core')],
                               ).awaited,
