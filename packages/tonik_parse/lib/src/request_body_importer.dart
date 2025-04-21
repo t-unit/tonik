@@ -96,7 +96,7 @@ class RequestBodyImporter {
             if (mediaType.schema != null) {
               final model = modelImporter.importSchema(
                 mediaType.schema!,
-                context.push('content'),
+                context.push('body'),
               );
 
               content.add(

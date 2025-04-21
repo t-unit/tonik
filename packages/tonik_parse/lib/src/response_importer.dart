@@ -105,7 +105,7 @@ class ResponseImporter {
             if (contentType.contains('json') && entry.value.schema != null) {
               final model = modelImporter.importSchema(
                 entry.value.schema!,
-                context.push('content'),
+                context.push('body'),
               );
               bodies.add(
                 core.ResponseBody(
