@@ -332,7 +332,14 @@ class OperationGenerator {
                             )
                             .statement,
                         refer(r'_$data').assign(refer('_data()')).statement,
-                        refer(r'_$options').assign(optionsExpr).statement,
+                        refer(r'_$options')
+                            .assign(
+                              refer('_options').call([], {
+                                ...headerArgs,
+                                if (hasRequestBody) 'body': refer('body'),
+                              }),
+                            )
+                            .statement,
                         const Code('} on '),
                         refer('Object', 'dart:core').code,
                         const Code(' catch (exception, stackTrace) {'),

@@ -630,6 +630,55 @@ void main() {
         },
       );
 
+      test('forwards body parameter to _options method when request body exists', () {
+        final requestBody = RequestBodyObject(
+          name: 'singleBody',
+          context: context,
+          description: 'A single content type body',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'operationWithBody',
+          context: context,
+          summary: 'Operation with body',
+          description: 'An operation with request body',
+          tags: const {},
+          isDeprecated: false,
+          path: '/with-body',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+        );
+
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          methodString,
+          contains(r'_$options = _options(body: body);'),
+        );
+      });
+
       test(
         'generates call method w/ multiple content type request body parameter',
         () {
