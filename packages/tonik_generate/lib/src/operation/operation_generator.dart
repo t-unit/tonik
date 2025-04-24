@@ -329,7 +329,13 @@ class OperationGenerator {
                                   ]),
                             )
                             .statement,
-                        refer(r'_$data').assign(refer('_data()')).statement,
+                        refer(r'_$data')
+                            .assign(
+                              refer('_data').call([], {
+                                if (hasRequestBody) 'body': refer('body'),
+                              }),
+                            )
+                            .statement,
                         refer(r'_$options')
                             .assign(
                               refer('_options').call([], {
