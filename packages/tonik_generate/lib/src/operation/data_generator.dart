@@ -33,7 +33,7 @@ class DataGenerator {
       final parameterType = TypeReference(
         (b) =>
             b
-              ..symbol = nameManager.getRequestBodyNames(requestBody).$1
+              ..symbol = nameManager.requestBodyNames(requestBody).$1
               ..url = package
               ..isNullable = !isRequired,
       );
@@ -59,7 +59,7 @@ class DataGenerator {
                 const Code('return switch (body) {'),
                 ...content.map((c) {
                   final variantName =
-                      nameManager.getRequestBodyNames(requestBody).$2[c
+                      nameManager.requestBodyNames(requestBody).$2[c
                           .rawContentType]!;
                   final valueExpr = buildToJsonPropertyExpression(
                     'value',

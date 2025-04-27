@@ -11,17 +11,29 @@ class NameManager {
 
   @protected
   final modelNames = <Model, String>{};
+
   @protected
   @visibleForTesting
   final responseNames = <Response, String>{};
+
   @protected
   final operationNames = <Operation, String>{};
+
   @protected
   final tagNames = <Tag, String>{};
+
   @protected
   @visibleForTesting
   final Map<RequestBody, (String baseName, Map<String, String> subclassNames)>
   requestBodyNameCache = {};
+
+  @protected
+  @visibleForTesting
+  final Map<
+    Operation,
+    (String baseName, Map<ResponseStatus, String> subclassNames)
+  >
+  responseWrapperNameCache = {};
 
   final log = Logger('NameManager');
 
@@ -57,7 +69,7 @@ class NameManager {
       // Skip request bodies with only one content type as content
       // is used directly.
       if (requestBody.contentCount > 1) {
-        getRequestBodyNames(requestBody);
+        requestBodyNames(requestBody);
       }
     }
   }
@@ -86,12 +98,27 @@ class NameManager {
   ///
   /// The base name is used for the sealed class, while the subclass
   /// names are used for the concrete implementations for each content type.
-  (String baseName, Map<String, String> subclassNames) getRequestBodyNames(
+  (String baseName, Map<String, String> subclassNames) requestBodyNames(
     RequestBody requestBody,
   ) {
     return requestBodyNameCache.putIfAbsent(
       requestBody,
       () => generator.generateRequestBodyNames(requestBody),
+    );
+  }
+
+  /// Returns the base name and subclass names for a response wrapper.
+  ///
+  /// The base name is used for the sealed class, while the subclass
+  /// names are used for the concrete implementations for each status.
+  (String baseName, Map<ResponseStatus, String> subclassNames)
+  responseWrapperNames(Operation operation) {
+    return responseWrapperNameCache.putIfAbsent(
+      operation,
+      () => generator.generateResponseWrapperNames(
+        operationName(operation),
+        operation.responses,
+      ),
     );
   }
 

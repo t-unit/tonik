@@ -25,6 +25,72 @@ void main() {
       expect(name2, 'PetsApi', reason: 'Should return cached name');
     });
 
+    group('responseWrapperNames', () {
+      test('returns correct base and subclass names and caches result', () {
+        final operation = Operation(
+          operationId: '_testOperation',
+          context: context,
+          summary: null,
+          description: null,
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: 'SuccessResponse',
+              context: context,
+              description: 'Success',
+              headers: const {},
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+            const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+              name: 'NotFoundResponse',
+              context: context,
+              description: 'Not found',
+              headers: const {},
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'text/plain',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          requestBody: null,
+        );
+        final (baseName, subclassNames) = manager.responseWrapperNames(
+          operation,
+        );
+        expect(baseName, 'TestOperationResponseWrapper');
+        expect(subclassNames.keys, containsAll(operation.responses.keys));
+        expect(
+          subclassNames[const ExplicitResponseStatus(statusCode: 200)],
+          'TestOperationResponseWrapper200',
+        );
+        expect(
+          subclassNames[const ExplicitResponseStatus(statusCode: 404)],
+          'TestOperationResponseWrapper404',
+        );
+        // Should be cached
+        final (baseName2, subclassNames2) = manager.responseWrapperNames(
+          operation,
+        );
+        expect(identical(subclassNames, subclassNames2), isTrue);
+        expect(baseName2, baseName);
+      });
+    });
+
     test('primes names in correct order', () {
       final models = [
         ListModel(content: StringModel(context: context), context: context),
@@ -122,7 +188,7 @@ void main() {
       );
 
       // First request body gets base name
-      final (name1, _) = manager.getRequestBodyNames(requestBody);
+      final (name1, _) = manager.requestBodyNames(requestBody);
       expect(name1, 'Test');
 
       // Second request body with same name gets RequestBody suffix
@@ -144,7 +210,7 @@ void main() {
           ),
         },
       );
-      final (name2, _) = manager.getRequestBodyNames(requestBody2);
+      final (name2, _) = manager.requestBodyNames(requestBody2);
       expect(name2, 'TestRequestBody');
 
       // Third request body with same name gets numbered suffix
@@ -166,7 +232,7 @@ void main() {
           ),
         },
       );
-      final (name3, _) = manager.getRequestBodyNames(requestBody3);
+      final (name3, _) = manager.requestBodyNames(requestBody3);
       expect(name3, 'TestRequestBody2');
 
       expect(manager.requestBodyNameCache.length, 3);
@@ -175,19 +241,19 @@ void main() {
       expect(manager.requestBodyNameCache.containsKey(requestBody3), isTrue);
 
       // Verify subclass names are consistent
-      final (_, subclassNames1) = manager.getRequestBodyNames(requestBody);
+      final (_, subclassNames1) = manager.requestBodyNames(requestBody);
       expect(subclassNames1, {
         'application/json': 'TestJson',
         'application/vnd.api+json': 'TestVndApiJson',
       });
 
-      final (_, subclassNames2) = manager.getRequestBodyNames(requestBody2);
+      final (_, subclassNames2) = manager.requestBodyNames(requestBody2);
       expect(subclassNames2, {
         'application/json': 'TestRequestBodyJson',
         'application/vnd.api+json': 'TestRequestBodyVndApiJson',
       });
 
-      final (_, subclassNames3) = manager.getRequestBodyNames(requestBody3);
+      final (_, subclassNames3) = manager.requestBodyNames(requestBody3);
       expect(subclassNames3, {
         'application/json': 'TestRequestBody2Json',
         'application/vnd.api+json': 'TestRequestBody2VndApiJson',
@@ -390,31 +456,31 @@ void main() {
       expect(manager.requestBodyNameCache.containsKey(bodyAlias), isFalse);
 
       // And: Verify name generation still works consistently
-      final (emptyName1, _) = manager.getRequestBodyNames(emptyBody);
-      final (emptyName2, _) = manager.getRequestBodyNames(emptyBody);
+      final (emptyName1, _) = manager.requestBodyNames(emptyBody);
+      final (emptyName2, _) = manager.requestBodyNames(emptyBody);
       expect(emptyName1, emptyName2);
 
-      final (singleName1, _) = manager.getRequestBodyNames(singleContentBody);
-      final (singleName2, _) = manager.getRequestBodyNames(singleContentBody);
+      final (singleName1, _) = manager.requestBodyNames(singleContentBody);
+      final (singleName2, _) = manager.requestBodyNames(singleContentBody);
       expect(singleName1, singleName2);
 
-      final (multiName1, _) = manager.getRequestBodyNames(multiContentBody);
-      final (multiName2, _) = manager.getRequestBodyNames(multiContentBody);
+      final (multiName1, _) = manager.requestBodyNames(multiContentBody);
+      final (multiName2, _) = manager.requestBodyNames(multiContentBody);
       expect(multiName1, multiName2);
       expect(multiName1, 'Multi');
 
-      final (aliasName1, _) = manager.getRequestBodyNames(bodyAlias);
-      final (aliasName2, _) = manager.getRequestBodyNames(bodyAlias);
+      final (aliasName1, _) = manager.requestBodyNames(bodyAlias);
+      final (aliasName2, _) = manager.requestBodyNames(bodyAlias);
       expect(aliasName1, aliasName2);
 
       // Verify subclass names for multi content body
-      final (_, subclassNames) = manager.getRequestBodyNames(multiContentBody);
+      final (_, subclassNames) = manager.requestBodyNames(multiContentBody);
       expect(subclassNames, {
         'application/json': 'MultiJson',
         'application/vnd.api+json': 'MultiVndApiJson',
       });
 
-      final (_, subclassNames2) = manager.getRequestBodyNames(multiContentBody);
+      final (_, subclassNames2) = manager.requestBodyNames(multiContentBody);
       expect(subclassNames2, subclassNames);
     });
 

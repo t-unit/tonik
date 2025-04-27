@@ -71,7 +71,7 @@ class OptionsGenerator {
       return literalString(requestBody.resolvedContent.first.rawContentType);
     }
 
-    final (baseName, subclassNames) = nameManager.getRequestBodyNames(
+    final (baseName, subclassNames) = nameManager.requestBodyNames(
       requestBody,
     );
     parameters.add(

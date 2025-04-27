@@ -79,7 +79,7 @@ class NameGenerator {
   ///
   /// For request bodies with multiple content types, this will generate
   /// a base class name and subclass names for each content type.
-  /// Returns a record with the base name and a map of content types 
+  /// Returns a record with the base name and a map of content types
   /// to subclass names.
   (String baseName, Map<String, String> subclassNames) generateRequestBodyNames(
     RequestBody requestBody,
@@ -105,6 +105,43 @@ class NameGenerator {
     }
 
     return (uniqueBaseName, subclassNames);
+  }
+
+  /// Generates a unique response wrapper base class name and subclass names
+  /// for each response status.
+  ///
+  /// Returns a record with the base name and a map of ResponseStatus keys
+  /// to subclass names.
+  (String baseName, Map<ResponseStatus, String> subclassNames)
+  generateResponseWrapperNames(
+    String operationName,
+    Map<ResponseStatus, Response> responses,
+  ) {
+    String statusSuffix(ResponseStatus status) {
+      if (status is ExplicitResponseStatus) {
+        return status.statusCode.toString();
+      } else if (status is DefaultResponseStatus) {
+        return 'Default';
+      } else if (status is RangeResponseStatus) {
+        final min = status.min;
+        final max = status.max;
+        if (min % 100 == 0 && max == min + 99) {
+          return '${min ~/ 100}XX';
+        }
+        return '${min}To$max';
+      }
+      return 'Unknown';
+    }
+
+    final baseName = '${operationName}ResponseWrapper';
+    final subclassNames = <ResponseStatus, String>{};
+    for (final entry in responses.entries) {
+      final status = entry.key;
+      final statusSuffixStr = statusSuffix(status);
+      final subclassName = '$baseName$statusSuffixStr';
+      subclassNames[status] = _makeUnique(subclassName, '');
+    }
+    return (baseName, subclassNames);
   }
 
   /// Generates a base name using the following priority:

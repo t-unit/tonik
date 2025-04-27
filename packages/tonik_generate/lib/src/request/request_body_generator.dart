@@ -36,7 +36,7 @@ class RequestBodyGenerator {
       useNullSafetySyntax: true,
     );
 
-    final (name, _) = nameManager.getRequestBodyNames(requestBody);
+    final (name, _) = nameManager.requestBodyNames(requestBody);
 
     final library = Library((b) {
       switch (requestBody) {
@@ -58,7 +58,7 @@ class RequestBodyGenerator {
 
   @visibleForTesting
   TypeDef generateTypedef(RequestBodyAlias requestBody, String name) {
-    final (targetName, _) = nameManager.getRequestBodyNames(
+    final (targetName, _) = nameManager.requestBodyNames(
       requestBody.requestBody,
     );
 
@@ -93,7 +93,7 @@ class RequestBodyGenerator {
     RequestBodyObject requestBody,
     String parentClassName,
   ) {
-    final (_, subclassNames) = nameManager.getRequestBodyNames(requestBody);
+    final (_, subclassNames) = nameManager.requestBodyNames(requestBody);
     return requestBody.resolvedContent.map((content) {
       final className = subclassNames[content.rawContentType]!;
       final typeRef = typeReference(content.model, nameManager, package);
