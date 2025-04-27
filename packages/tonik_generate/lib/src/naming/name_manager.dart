@@ -70,6 +70,7 @@ class NameManager {
       // is used directly.
       if (requestBody.contentCount > 1) {
         requestBodyNames(requestBody);
+        _logRequestBodyNames(requestBody);
       }
     }
   }
@@ -142,5 +143,10 @@ class NameManager {
   void _logTagName(String name, Tag tag) {
     final tagName = tag.name;
     log.fine('Name for tag $tagName: $name');
+  }
+
+  void _logRequestBodyNames(RequestBody requestBody) {
+    final requestBodyName = requestBody.name ?? requestBody.context;
+    log.fine('Name for request body $requestBodyName: $requestBodyName');
   }
 }
