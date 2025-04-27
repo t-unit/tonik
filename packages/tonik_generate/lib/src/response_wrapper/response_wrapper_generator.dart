@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 @immutable
 class ResponseWrapperGenerator {
@@ -60,14 +61,62 @@ class ResponseWrapperGenerator {
 
     final classes = <Class>[baseClass];
 
-    for (final subclassName in subclassNames.values) {
+    for (final entry in subclassNames.entries) {
+      final status = entry.key;
+      final subclassName = entry.value;
+      final response = operation.responses[status];
+      final fields = <Field>[];
+
+      if (response != null &&
+          response.bodyCount == 1 &&
+          response.hasHeaders == false) {
+        final body = response.resolved.bodies.first;
+        fields.add(
+          Field(
+            (b) =>
+                b
+                  ..name = 'body'
+                  ..modifier = FieldModifier.final$
+                  ..type = typeReference(body.model, nameManager, package),
+          ),
+        );
+      } else if (response != null &&
+          (response.bodyCount > 1 || response.hasHeaders)) {
+        final responseClassName = nameManager.responseName(response.resolved);
+        fields.add(
+          Field(
+            (b) =>
+                b
+                  ..name = 'body'
+                  ..modifier = FieldModifier.final$
+                  ..type = refer(responseClassName, package),
+          ),
+        );
+      }
       classes.add(
         Class(
           (b) =>
               b
                 ..name = subclassName
                 ..extend = refer(baseName)
-                ..constructors.add(Constructor((b) => b..constant = true)),
+                ..fields.addAll(fields)
+                ..constructors.add(
+                  Constructor((cb) {
+                    cb.constant = true;
+                    cb.optionalParameters.addAll(
+                      fields.map(
+                        (f) => Parameter(
+                          (pb) =>
+                              pb
+                                ..name = f.name
+                                ..named = true
+                                ..required = true
+                                ..toThis = true,
+                        ),
+                      ),
+                    );
+                  }),
+                ),
         ),
       );
     }

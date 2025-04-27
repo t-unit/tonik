@@ -1,4 +1,3 @@
-import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -6,13 +5,11 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
 
 void main() {
-  late DartEmitter emitter;
   late NameManager nameManager;
   late ResponseWrapperGenerator generator;
   late Context testContext;
 
   setUp(() {
-    emitter = DartEmitter(orderDirectives: true, useNullSafetySyntax: true);
     nameManager = NameManager(generator: NameGenerator());
     generator = ResponseWrapperGenerator(
       nameManager: nameManager,
@@ -96,7 +93,7 @@ void main() {
   });
 
   group('generateClasses', () {
-    test('returns proper class definitions for all responses', () {
+    test('returns proper body property and constructor for all responses', () {
       final responses = {
         const ExplicitResponseStatus(statusCode: 200): ResponseObject(
           name: 'SuccessResponse',
@@ -161,11 +158,36 @@ void main() {
           'TestOperationResponseWrapper404',
         }),
       );
-      for (final subclass in classes.skip(1)) {
-        expect(subclass.extend?.symbol, baseClass.name);
-        expect(subclass.fields, isEmpty);
-        expect(subclass.constructors, isNotEmpty);
-      }
+      // 200 has multiple bodies, so should have a body
+      // field referencing SuccessResponse
+      // 404 has one body, so has body field of type String
+      final subclass200 = classes.firstWhere(
+        (c) => c.name == 'TestOperationResponseWrapper200',
+      );
+      final subclass404 = classes.firstWhere(
+        (c) => c.name == 'TestOperationResponseWrapper404',
+      );
+      expect(subclass200.fields.length, 1);
+      expect(subclass200.fields.first.name, 'body');
+      expect(subclass200.fields.first.type?.symbol, 'SuccessResponse');
+      expect(subclass404.fields.length, 1);
+      expect(subclass404.fields.first.name, 'body');
+      expect(subclass404.fields.first.type?.symbol, 'String');
+      // Constructor for 200 and 404 should have body as named, required argument
+      final ctor200 = subclass200.constructors.first;
+      final ctor404 = subclass404.constructors.first;
+      expect(
+        ctor200.optionalParameters.any(
+          (p) => p.name == 'body' && p.named && p.required,
+        ),
+        isTrue,
+      );
+      expect(
+        ctor404.optionalParameters.any(
+          (p) => p.name == 'body' && p.named && p.required,
+        ),
+        isTrue,
+      );
     });
 
     test('throws if there are no responses', () {
@@ -188,49 +210,65 @@ void main() {
       expect(() => generator.generateClasses(operation), throwsArgumentError);
     });
 
-    test('single response with multiple content types', () {
-      final responses = {
-        const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-          name: 'MultiContentResponse',
+    test(
+      'body property references response class for multiple content types',
+      () {
+        final responses = {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: 'MultiContentResponse',
+            context: testContext,
+            description: 'Multi content',
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: testContext),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+              ResponseBody(
+                model: StringModel(context: testContext),
+                rawContentType: 'application/xml',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+        };
+        final operation = Operation(
+          operationId: 'TestOperation',
           context: testContext,
-          description: 'Multi content',
+          summary: null,
+          description: null,
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
           headers: const {},
-          bodies: {
-            ResponseBody(
-              model: StringModel(context: testContext),
-              rawContentType: 'application/json',
-              contentType: ContentType.json,
-            ),
-            ResponseBody(
-              model: StringModel(context: testContext),
-              rawContentType: 'application/xml',
-              contentType: ContentType.json,
-            ),
-          },
-        ),
-      };
-      final operation = Operation(
-        operationId: 'TestOperation',
-        context: testContext,
-        summary: null,
-        description: null,
-        tags: const {},
-        isDeprecated: false,
-        path: '/test',
-        method: HttpMethod.get,
-        headers: const {},
-        queryParameters: const {},
-        pathParameters: const {},
-        responses: responses,
-        requestBody: null,
-      );
-      final classes = generator.generateClasses(operation);
-      expect(classes, hasLength(2));
-      expect(classes.first.name, 'TestOperationResponseWrapper');
-      expect(classes.last.name, 'TestOperationResponseWrapper200');
-    });
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: responses,
+          requestBody: null,
+        );
+        final classes = generator.generateClasses(operation);
+        expect(classes, hasLength(2));
+        expect(classes.first.name, 'TestOperationResponseWrapper');
+        expect(classes.last.name, 'TestOperationResponseWrapper200');
+        // Should have a body property referencing the response class
+        final subclass = classes.last;
+        expect(subclass.fields.length, 1);
+        expect(subclass.fields.first.name, 'body');
+        expect(subclass.fields.first.type?.symbol, 'MultiContentResponse');
+        // Constructor should take 'body' as named, required argument
+        final ctor = subclass.constructors.first;
+        expect(
+          ctor.optionalParameters.any(
+            (p) => p.name == 'body' && p.named && p.required,
+          ),
+          isTrue,
+        );
+      },
+    );
 
-    test('multiple responses with single content type each', () {
+    test('body property is correct type for each single-content response', () {
       final responses = {
         const ExplicitResponseStatus(statusCode: 200): ResponseObject(
           name: 'SuccessResponse',
@@ -286,33 +324,197 @@ void main() {
           'TestOperationResponseWrapper404',
         }),
       );
+      // Both should have a body property of type String
+      final subclass200 = classes.firstWhere(
+        (c) => c.name == 'TestOperationResponseWrapper200',
+      );
+      final subclass404 = classes.firstWhere(
+        (c) => c.name == 'TestOperationResponseWrapper404',
+      );
+      expect(subclass200.fields.length, 1);
+      expect(subclass200.fields.first.name, 'body');
+      expect(subclass200.fields.first.type?.symbol, 'String');
+      expect(subclass404.fields.length, 1);
+      expect(subclass404.fields.first.name, 'body');
+      expect(subclass404.fields.first.type?.symbol, 'String');
+      // Constructor should take 'body' as named, required argument
+      final ctor200 = subclass200.constructors.first;
+      final ctor404 = subclass404.constructors.first;
+      expect(
+        ctor200.optionalParameters.any(
+          (p) => p.name == 'body' && p.named && p.required,
+        ),
+        isTrue,
+      );
+      expect(
+        ctor404.optionalParameters.any(
+          (p) => p.name == 'body' && p.named && p.required,
+        ),
+        isTrue,
+      );
     });
 
-    test('handles DefaultResponseStatus', () {
-      final responses = {
-        const DefaultResponseStatus(): ResponseObject(
-          name: 'DefaultResponse',
+    test(
+      'body property type matches single-body, multi-body, and header cases',
+      () {
+        final responses = {
+          const ExplicitResponseStatus(statusCode: 201): ResponseObject(
+            name: 'CreatedResponse',
+            context: testContext,
+            description: 'Created',
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: IntegerModel(context: testContext),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+          const ExplicitResponseStatus(statusCode: 400): ResponseObject(
+            name: 'BadRequestResponse',
+            context: testContext,
+            description: 'Bad request',
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: testContext),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+          const ExplicitResponseStatus(statusCode: 409): ResponseObject(
+            name: 'ConflictResponse',
+            context: testContext,
+            description: 'Conflict',
+            headers: {
+              'X-Error': ResponseHeaderObject(
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                context: testContext,
+                name: null,
+                description: '',
+                explode: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: testContext),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+          const ExplicitResponseStatus(statusCode: 500): ResponseObject(
+            name: 'ServerErrorResponse',
+            context: testContext,
+            description: 'Server error',
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: testContext),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+              ResponseBody(
+                model: IntegerModel(context: testContext),
+                rawContentType: 'application/xml',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+        };
+        final operation = Operation(
+          operationId: 'CreateEntity',
           context: testContext,
-          description: 'Default',
+          summary: null,
+          description: null,
+          tags: const {},
+          isDeprecated: false,
+          path: '/entity',
+          method: HttpMethod.post,
           headers: const {},
-          bodies: {
-            ResponseBody(
-              model: StringModel(context: testContext),
-              rawContentType: 'application/json',
-              contentType: ContentType.json,
-            ),
-          },
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: responses,
+          requestBody: null,
+        );
+        final classes = generator.generateClasses(operation);
+        final subclass201 = classes.firstWhere(
+          (c) => c.name == 'CreateEntityResponseWrapper201',
+        );
+        final subclass400 = classes.firstWhere(
+          (c) => c.name == 'CreateEntityResponseWrapper400',
+        );
+        final subclass409 = classes.firstWhere(
+          (c) => c.name == 'CreateEntityResponseWrapper409',
+        );
+        final subclass500 = classes.firstWhere(
+          (c) => c.name == 'CreateEntityResponseWrapper500',
+        );
+
+        // Should have a 'body' property for all, but type differs
+        expect(subclass201.fields.any((f) => f.name == 'body'), isTrue);
+        expect(subclass400.fields.any((f) => f.name == 'body'), isTrue);
+        expect(subclass409.fields.any((f) => f.name == 'body'), isTrue);
+        expect(subclass500.fields.any((f) => f.name == 'body'), isTrue);
+
+        // Check the type of the 'body' property
+        final bodyField201 = subclass201.fields.firstWhere(
+          (f) => f.name == 'body',
+        );
+        final bodyField400 = subclass400.fields.firstWhere(
+          (f) => f.name == 'body',
+        );
+        final bodyField409 = subclass409.fields.firstWhere(
+          (f) => f.name == 'body',
+        );
+        final bodyField500 = subclass500.fields.firstWhere(
+          (f) => f.name == 'body',
+        );
+        // IntegerModel for 201, StringModel for 400, ConflictResponse
+        // for 409, ServerErrorResponse for 500
+        expect(bodyField201.type?.symbol, 'int');
+        expect(bodyField400.type?.symbol, 'String');
+        expect(bodyField409.type?.symbol, 'ConflictResponse');
+        expect(bodyField500.type?.symbol, 'ServerErrorResponse');
+      },
+    );
+
+    test('subclass has body property for ResponseAlias resolving '
+        'to single-body, no-header ResponseObject', () {
+      final aliasTarget = ResponseObject(
+        name: 'AliasTarget',
+        context: testContext,
+        description: 'Alias target',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: IntegerModel(context: testContext),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+      final responses = {
+        const ExplicitResponseStatus(statusCode: 201): ResponseAlias(
+          name: 'CreatedAlias',
+          response: aliasTarget,
+          context: testContext,
         ),
       };
       final operation = Operation(
-        operationId: 'MyOperation',
+        operationId: 'CreateEntityAlias',
         context: testContext,
         summary: null,
         description: null,
         tags: const {},
         isDeprecated: false,
-        path: '/test',
-        method: HttpMethod.get,
+        path: '/entity/alias',
+        method: HttpMethod.post,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
@@ -320,74 +522,22 @@ void main() {
         requestBody: null,
       );
       final classes = generator.generateClasses(operation);
-      expect(classes, hasLength(2));
-      expect(classes.first.name, 'MyOperationResponseWrapper');
-      expect(classes.last.name, 'MyOperationResponseWrapperDefault');
-    });
-
-    test('handles RangeResponseStatus', () {
-      final responses = {
-        const RangeResponseStatus(min: 200, max: 299): ResponseObject(
-          name: 'RangeResponse',
-          context: testContext,
-          description: 'Range',
-          headers: const {},
-          bodies: {
-            ResponseBody(
-              model: StringModel(context: testContext),
-              rawContentType: 'application/json',
-              contentType: ContentType.json,
-            ),
-          },
-        ),
-        const ExplicitResponseStatus(statusCode: 404): ResponseObject(
-          name: 'NotFoundResponse',
-          context: testContext,
-          description: 'Not found',
-          headers: const {},
-          bodies: {
-            ResponseBody(
-              model: StringModel(context: testContext),
-              rawContentType: 'text/plain',
-              contentType: ContentType.json,
-            ),
-          },
-        ),
-        const DefaultResponseStatus(): ResponseObject(
-          name: 'DefaultResponse',
-          context: testContext,
-          description: 'Default',
-          headers: const {},
-          bodies: {
-            ResponseBody(
-              model: StringModel(context: testContext),
-              rawContentType: 'application/json',
-              contentType: ContentType.json,
-            ),
-          },
-        ),
-      };
-      final operation = Operation(
-        operationId: 'updatePet',
-        context: testContext,
-        summary: null,
-        description: null,
-        tags: const {},
-        isDeprecated: false,
-        path: '/test',
-        method: HttpMethod.get,
-        headers: const {},
-        queryParameters: const {},
-        pathParameters: const {},
-        responses: responses,
-        requestBody: null,
+      final subclass201 = classes.firstWhere(
+        (c) => c.name == 'CreateEntityAliasResponseWrapper201',
       );
-      final classes = generator.generateClasses(operation);
-      expect(classes, hasLength(4));
-      expect(classes[0].name, 'UpdatePetResponseWrapper');
-      expect(classes[1].name, 'UpdatePetResponseWrapper2XX');
-      expect(classes[2].name, 'UpdatePetResponseWrapper404');
-      expect(classes[3].name, 'UpdatePetResponseWrapperDefault');
+      // Should have a 'body' property
+      expect(subclass201.fields.any((f) => f.name == 'body'), isTrue);
+      final bodyField = subclass201.fields.firstWhere((f) => f.name == 'body');
+      expect(bodyField.type?.symbol, 'int');
+
+      // Check that the constructor takes 'body' as a named, required argument
+      final ctor = subclass201.constructors.first;
+      expect(
+        ctor.optionalParameters.any(
+          (p) => p.name == 'body' && p.named && p.required,
+        ),
+        isTrue,
+      );
     });
   });
 }

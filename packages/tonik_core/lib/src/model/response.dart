@@ -17,6 +17,9 @@ sealed class Response {
 
   /// Returns the number of bodies in the response.
   int get bodyCount;
+
+  /// Returns the resolved response object.
+  ResponseObject get resolved;
 }
 
 @immutable
@@ -38,6 +41,9 @@ class ResponseAlias extends Response {
   @override
   int get bodyCount => response.bodyCount;
 
+  @override
+  ResponseObject get resolved => response.resolved;
+  
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -76,6 +82,9 @@ class ResponseObject extends Response {
 
   @override
   int get bodyCount => bodies.length;
+
+  @override
+  ResponseObject get resolved => this;
 
   @override
   bool operator ==(Object other) {
