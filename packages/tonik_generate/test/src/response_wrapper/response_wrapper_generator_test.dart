@@ -173,7 +173,9 @@ void main() {
       expect(subclass404.fields.length, 1);
       expect(subclass404.fields.first.name, 'body');
       expect(subclass404.fields.first.type?.symbol, 'String');
-      // Constructor for 200 and 404 should have body as named, required argument
+
+      // Constructor for 200 and 404 should have body as named,
+      // required argument
       final ctor200 = subclass200.constructors.first;
       final ctor404 = subclass404.constructors.first;
       expect(

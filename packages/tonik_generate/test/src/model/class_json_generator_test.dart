@@ -498,7 +498,7 @@ void main() {
             throw ArgumentError('Expected String for name of User, got ${$name}');
           }
           final $bio = map[r'bio'];
-          if ($bio != null && $bio is! String) {
+          if ($bio is! String?) {
             throw ArgumentError('Expected String? for bio of User, got ${$bio}');
           }
           return User(name: $name, bio: $bio);
@@ -534,7 +534,7 @@ void main() {
             throw ArgumentError('Invalid JSON for User: $json');
           }
           final $name = map[r'name'];
-          if ($name != null && $name is! String) {
+          if ($name is! String?) {
             throw ArgumentError('Expected String? for name of User, got ${$name}');
           }
           return User(name: $name);

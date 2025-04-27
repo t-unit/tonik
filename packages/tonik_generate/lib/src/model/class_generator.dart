@@ -217,7 +217,12 @@ class ClassGenerator {
     String jsonKey,
     String className,
   ) {
-    final typeRef = typeReference(property.model, nameManager, package);
+    final typeRef = typeReference(
+      property.model,
+      nameManager,
+      package,
+      isNullableOverride: property.isNullable || !property.isRequired,
+    );
     final symbolForMessage = typeRef.symbol;
 
     final errorMessage =
@@ -228,16 +233,11 @@ class ClassGenerator {
     final typeCheckError =
         generateArgumentErrorExpression(errorMessage).statement;
 
-    final conditionStart =
-        property.isNullable
-            ? Code('if ($localName != null && $localName is! ')
-            : Code('if ($localName is! ');
-
     const conditionEnd = Code(') {');
 
     final checkCodes = <Code>[
       Code("final $localName = map[r'$jsonKey'];"),
-      conditionStart,
+      Code('if ($localName is! '),
       typeRef.code,
       conditionEnd,
       typeCheckError,
