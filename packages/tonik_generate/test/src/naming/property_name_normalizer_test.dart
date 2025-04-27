@@ -72,6 +72,11 @@ void main() {
       createProperty('Class'),
       createProperty('VOID'),
       createProperty('Switch123'),
+      createProperty('fromJson'),
+      createProperty('toJson'),
+      createProperty('copyWith'),
+      createProperty('toString'),
+      createProperty('hashCode'),
     ]);
 
     expect(result.map((r) => r.normalizedName).toList(), [
@@ -84,6 +89,11 @@ void main() {
       r'$class2',
       r'$void2',
       'switch123',
+      r'$fromJson',
+      r'$toJson',
+      r'$copyWith',
+      r'$toString',
+      r'$hashCode',
     ]);
   });
 

@@ -79,11 +79,21 @@ const dartKeywords = {
   'yield',
 };
 
+const generatedClassTokens = {
+  'fromjson',
+  'toJson',
+  'copyWith',
+  'toString',
+  'hashCode',
+};
+
+const allKeywords = {...dartKeywords, ...generatedClassTokens};
+
 /// Ensures a name is not a Dart keyword by adding a $ prefix if necessary.
 String ensureNotKeyword(String name) {
-  final lower = name.toLowerCase();
-  if (dartKeywords.contains(lower)) {
-    return '\$$lower';
+  if (allKeywords.contains(name.toCamelCase()) ||
+      allKeywords.contains(name.toLowerCase())) {
+    return '\$$name';
   }
   return name;
 }
