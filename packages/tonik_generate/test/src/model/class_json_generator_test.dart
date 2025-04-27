@@ -157,8 +157,8 @@ void main() {
 
       const expectedMethod = '''
         Map<String, dynamic> toJson() => {
-          r'name': name, 
-          if (nickname != null) r'nickname': nickname, 
+          r'name': name,
+          if (nickname != null) r'nickname': nickname,
         };
         ''';
 
@@ -442,22 +442,18 @@ void main() {
         const expectedMethod = r'''
         factory User.fromJson(dynamic json) {
           final map = json;
-          
           if (map is! Map<String, dynamic>) {
             throw ArgumentError('Invalid JSON for User: $json');
           }
-          
-          final name = map[r'name'];
-          if (name is! String) {
-            throw ArgumentError('Expected String for name of User, got ${name}');
+          final $name = map[r'name'];
+          if ($name is! String) {
+            throw ArgumentError('Expected String for name of User, got ${$name}');
           }
-          
-          final age = map[r'age'];
-          if (age is! int) {
-            throw ArgumentError('Expected int for age of User, got ${age}');
+          final $age = map[r'age'];
+          if ($age is! int) {
+            throw ArgumentError('Expected int for age of User, got ${$age}');
           }
-          
-          return User(name: name, age: age);
+          return User(name: $name, age: $age);
         }
         ''';
 
@@ -494,22 +490,18 @@ void main() {
       const expectedMethod = r'''
         factory User.fromJson(dynamic json) {
           final map = json;
-          
           if (map is! Map<String, dynamic>) {
             throw ArgumentError('Invalid JSON for User: $json');
           }
-          
-          final name = map[r'name'];
-          if (name is! String) {
-            throw ArgumentError('Expected String for name of User, got ${name}');
+          final $name = map[r'name'];
+          if ($name is! String) {
+            throw ArgumentError('Expected String for name of User, got ${$name}');
           }
-          
-          final bio = map[r'bio'];
-          if (bio != null && bio is! String) {
-            throw ArgumentError('Expected String? for bio of User, got ${bio}');
+          final $bio = map[r'bio'];
+          if ($bio != null && $bio is! String) {
+            throw ArgumentError('Expected String? for bio of User, got ${$bio}');
           }
-          
-          return User(name: name, bio: bio);
+          return User(name: $name, bio: $bio);
         }
         ''';
 
@@ -538,17 +530,14 @@ void main() {
       const expectedMethod = r'''
         factory User.fromJson(dynamic json) {
           final map = json;
-          
           if (map is! Map<String, dynamic>) {
             throw ArgumentError('Invalid JSON for User: $json');
           }
-          
-          final name = map[r'name'];
-          if (name != null && name is! String) {
-            throw ArgumentError('Expected String? for name of User, got ${name}');
+          final $name = map[r'name'];
+          if ($name != null && $name is! String) {
+            throw ArgumentError('Expected String? for name of User, got ${$name}');
           }
-          
-          return User(name: name);
+          return User(name: $name);
         }
         ''';
 
@@ -584,24 +573,67 @@ void main() {
       const expectedMethod = r'''
         factory User.fromJson(dynamic json) {
           final map = json;
-          
           if (map is! Map<String, dynamic>) {
             throw ArgumentError('Invalid JSON for User: $json');
           }
-          
-          final firstName = map[r'first-name'];
-          if (firstName is! String) {
+          final $firstName = map[r'first-name'];
+          if ($firstName is! String) {
             throw ArgumentError(
-              'Expected String for first-name of User, got ${firstName}',
+              'Expected String for first-name of User, got ${$firstName}',
             );
           }
-          
-          final id = map[r'_id'];
-          if (id is! String) {
-            throw ArgumentError('Expected String for _id of User, got ${id}');
+          final $id = map[r'_id'];
+          if ($id is! String) {
+            throw ArgumentError('Expected String for _id of User, got ${$id}');
           }
-          
-          return User(firstName: firstName, id: id);
+          return User(firstName: $firstName, id: $id);
+        }
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates fromJson method with properties named json and map', () {
+      final model = ClassModel(
+        name: 'Test',
+        properties: {
+          Property(
+            name: 'json',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'map',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        },
+        context: context,
+      );
+
+      const expectedMethod = r'''
+        factory Test.fromJson(dynamic json) {
+          final map = json;
+          if (map is! Map<String, dynamic>) {
+            throw ArgumentError('Invalid JSON for Test: $json');
+          }
+          final $json = map[r'json'];
+          if ($json is! String) {
+            throw ArgumentError('Expected String for json of Test, got ${$json}');
+          }
+          final $map = map[r'map'];
+          if ($map is! String) {
+            throw ArgumentError('Expected String for map of Test, got ${$map}');
+          }
+          return Test(json: $json, map: $map);
         }
         ''';
 

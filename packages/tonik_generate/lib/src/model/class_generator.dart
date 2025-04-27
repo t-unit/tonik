@@ -191,16 +191,17 @@ class ClassGenerator {
     for (final prop in normalizedProperties) {
       final property = prop.property;
       final normalizedName = prop.normalizedName;
+      final localName = '\$${prop.normalizedName}';
       final jsonKey = property.name;
       final typeCheckCode = _generateTypeCheck(
         property,
-        normalizedName,
+        localName,
         jsonKey,
         className,
       );
 
       propertyValidations.add(typeCheckCode);
-      propertyAssignments.add('$normalizedName: $normalizedName');
+      propertyAssignments.add('$normalizedName: $localName');
     }
 
     codes
@@ -212,7 +213,7 @@ class ClassGenerator {
 
   Code _generateTypeCheck(
     Property property,
-    String normalizedName,
+    String localName,
     String jsonKey,
     String className,
   ) {
@@ -221,20 +222,21 @@ class ClassGenerator {
 
     final errorMessage =
         'Expected $symbolForMessage${property.isNullable ? '?' : ''} '
-        'for $jsonKey of $className, got \${$normalizedName}';
+        'for ${jsonKey.replaceAll(r'$', r'\$')} of $className, '
+        'got \${$localName}';
 
     final typeCheckError =
         generateArgumentErrorExpression(errorMessage).statement;
 
     final conditionStart =
         property.isNullable
-            ? Code('if ($normalizedName != null && $normalizedName is! ')
-            : Code('if ($normalizedName is! ');
+            ? Code('if ($localName != null && $localName is! ')
+            : Code('if ($localName is! ');
 
     const conditionEnd = Code(') {');
 
     final checkCodes = <Code>[
-      Code("final $normalizedName = map[r'$jsonKey'];"),
+      Code("final $localName = map[r'$jsonKey'];"),
       conditionStart,
       typeRef.code,
       conditionEnd,
