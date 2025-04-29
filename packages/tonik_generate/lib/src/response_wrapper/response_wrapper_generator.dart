@@ -5,7 +5,9 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 @immutable
@@ -65,56 +67,67 @@ class ResponseWrapperGenerator {
       final status = entry.key;
       final subclassName = entry.value;
       final response = operation.responses[status];
-      final fields = <Field>[];
+      Field? bodyField;
 
       if (response != null &&
           response.bodyCount == 1 &&
           response.hasHeaders == false) {
         final body = response.resolved.bodies.first;
-        fields.add(
-          Field(
-            (b) =>
-                b
-                  ..name = 'body'
-                  ..modifier = FieldModifier.final$
-                  ..type = typeReference(body.model, nameManager, package),
-          ),
+        bodyField = Field(
+          (b) =>
+              b
+                ..name = 'body'
+                ..modifier = FieldModifier.final$
+                ..type = typeReference(body.model, nameManager, package),
         );
       } else if (response != null &&
           (response.bodyCount > 1 || response.hasHeaders)) {
         final responseClassName = nameManager.responseName(response.resolved);
-        fields.add(
-          Field(
-            (b) =>
-                b
-                  ..name = 'body'
-                  ..modifier = FieldModifier.final$
-                  ..type = refer(responseClassName, package),
-          ),
+        bodyField = Field(
+          (b) =>
+              b
+                ..name = 'body'
+                ..modifier = FieldModifier.final$
+                ..type = refer(responseClassName, package),
         );
       }
+
+      final properties =
+          bodyField == null
+              ? <({String normalizedName, bool hasCollectionValue})>[]
+              : [(normalizedName: bodyField.name, hasCollectionValue: false)];
+
+      final equalsMethod = generateEqualsMethod(
+        className: subclassName,
+        properties: properties,
+      );
+
+      final hashCodeMethod = generateHashCodeMethod(properties: properties);
+
       classes.add(
         Class(
           (b) =>
               b
                 ..name = subclassName
                 ..extend = refer(baseName)
-                ..fields.addAll(fields)
+                ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+                ..fields.addAll(bodyField == null ? [] : [bodyField])
+                ..methods.addAll([equalsMethod, hashCodeMethod])
                 ..constructors.add(
                   Constructor((cb) {
                     cb.constant = true;
-                    cb.optionalParameters.addAll(
-                      fields.map(
-                        (f) => Parameter(
+                    if (bodyField != null) {
+                      cb.optionalParameters.add(
+                        Parameter(
                           (pb) =>
                               pb
-                                ..name = f.name
+                                ..name = bodyField!.name
                                 ..named = true
                                 ..required = true
                                 ..toThis = true,
                         ),
-                      ),
-                    );
+                      );
+                    }
                   }),
                 ),
         ),

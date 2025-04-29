@@ -1,3 +1,4 @@
+import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -8,6 +9,7 @@ void main() {
   late NameManager nameManager;
   late ResponseWrapperGenerator generator;
   late Context testContext;
+  late DartEmitter emitter;
 
   setUp(() {
     nameManager = NameManager(generator: NameGenerator());
@@ -16,6 +18,7 @@ void main() {
       package: 'test_package',
     );
     testContext = Context.initial();
+    emitter = DartEmitter();
   });
 
   group('generate', () {
@@ -210,6 +213,98 @@ void main() {
         requestBody: null,
       );
       expect(() => generator.generateClasses(operation), throwsArgumentError);
+    });
+
+    test('generated subclasses have equals and hashCode methods', () {
+      final responses = {
+        const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+          name: 'SuccessResponse',
+          context: testContext,
+          description: 'Success',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: testContext),
+              rawContentType: 'text/plain',
+              contentType: ContentType.json,
+            ),
+          },
+        ),
+      };
+      final operation = Operation(
+        operationId: 'TestOperation',
+        context: testContext,
+        summary: null,
+        description: null,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: responses,
+        requestBody: null,
+      );
+
+      final classes = generator.generateClasses(operation);
+      final subclass = classes.firstWhere(
+        (c) => c.name == 'TestOperationResponseWrapper200',
+      );
+
+      // Verify equals method exists
+      expect(subclass.methods.any((m) => m.name == 'operator =='), isTrue);
+
+      // Verify hashCode getter exists
+      expect(
+        subclass.methods.any(
+          (m) => m.name == 'hashCode' && m.type == MethodType.getter,
+        ),
+        isTrue,
+      );
+    });
+
+    test('generated subclasses have @immutable annotation', () {
+      final responses = {
+        const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+          name: 'SuccessResponse',
+          context: testContext,
+          description: 'Success',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: testContext),
+              rawContentType: 'text/plain',
+              contentType: ContentType.json,
+            ),
+          },
+        ),
+      };
+      final operation = Operation(
+        operationId: 'TestOperation',
+        context: testContext,
+        summary: null,
+        description: null,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: responses,
+        requestBody: null,
+      );
+
+      final classes = generator.generateClasses(operation);
+      final subclass = classes.firstWhere(
+        (c) => c.name == 'TestOperationResponseWrapper200',
+      );
+
+      // Verify @immutable annotation exists
+      expect(subclass.annotations.length, 1);
+      final annotation = subclass.annotations.first;
+      expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
     test(

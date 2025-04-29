@@ -250,7 +250,7 @@ class ClassGenerator {
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final parts = <Code>[const Code('{')];
+    final parts = [const Code('{')];
     for (final prop in normalizedProperties) {
       final property = prop.property;
       final name = prop.normalizedName;
