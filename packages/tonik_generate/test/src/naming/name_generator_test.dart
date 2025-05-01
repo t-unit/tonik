@@ -764,18 +764,79 @@ void main() {
         final (baseName, subclassNames) = nameGenerator
             .generateResponseWrapperNames('TestOperation', responses);
 
-        expect(baseName, 'TestOperationResponseWrapper');
+        expect(baseName, 'TestOperationResponse');
         expect(subclassNames.keys, containsAll(responses.keys));
         expect(
           subclassNames[const ExplicitResponseStatus(statusCode: 200)],
-          'TestOperationResponseWrapper200',
+          'TestOperationResponse200',
         );
         expect(
           subclassNames[const ExplicitResponseStatus(statusCode: 404)],
-          'TestOperationResponseWrapper404',
+          'TestOperationResponse404',
         );
         expect(subclassNames.length, 2);
       });
+
+      test(
+        'only adds ResponseWrapper suffix when Response is already taken',
+        () {
+          final response = ResponseObject(
+            name: 'GetPetResponse',
+            context: Context.initial(),
+            description: 'Response',
+            headers: const {},
+            bodies: const {},
+          );
+
+          expect(
+            nameGenerator.generateResponseName(response),
+            'GetPetResponse',
+          );
+
+          final responses = {
+            const DefaultResponseStatus(): ResponseObject(
+              name: null,
+              context: Context.initial(),
+              description: 'Default',
+              headers: const {},
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: Context.initial()),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+            const RangeResponseStatus(min: 200, max: 299): ResponseObject(
+              name: null,
+              context: Context.initial(),
+              description: 'Range',
+              headers: const {},
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: Context.initial()),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          };
+          final (baseName, subclassNames) = nameGenerator
+              .generateResponseWrapperNames('GetPet', responses);
+
+          expect(baseName, 'GetPetResponseWrapper');
+          expect(subclassNames.keys, containsAll(responses.keys));
+          expect(
+            subclassNames[const DefaultResponseStatus()],
+            'GetPetResponseWrapperDefault',
+          );
+
+          expect(
+            subclassNames[const RangeResponseStatus(min: 200, max: 299)],
+            'GetPetResponseWrapper2XX',
+          );
+        },
+      );
 
       test('generates correct names for Default and Range statuses', () {
         final responses = {
@@ -809,15 +870,15 @@ void main() {
         final (baseName, subclassNames) = nameGenerator
             .generateResponseWrapperNames('TestOperation', responses);
 
-        expect(baseName, 'TestOperationResponseWrapper');
+        expect(baseName, 'TestOperationResponse');
         expect(subclassNames.keys, containsAll(responses.keys));
         expect(
           subclassNames[const DefaultResponseStatus()],
-          'TestOperationResponseWrapperDefault',
+          'TestOperationResponseDefault',
         );
         expect(
           subclassNames[const RangeResponseStatus(min: 200, max: 299)],
-          'TestOperationResponseWrapper2XX',
+          'TestOperationResponse2XX',
         );
         expect(subclassNames.length, 2);
       });
@@ -847,14 +908,14 @@ void main() {
         final (baseName, subclassNames) = nameGenerator
             .generateResponseWrapperNames('TestOperation', responses);
 
-        expect(baseName, 'TestOperationResponseWrapper');
+        expect(baseName, 'TestOperationResponse');
         expect(
           subclassNames.keys,
           contains(const ExplicitResponseStatus(statusCode: 200)),
         );
         expect(
           subclassNames[const ExplicitResponseStatus(statusCode: 200)],
-          'TestOperationResponseWrapper200',
+          'TestOperationResponse200',
         );
         expect(subclassNames.length, 1);
       });

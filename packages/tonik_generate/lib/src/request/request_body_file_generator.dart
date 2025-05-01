@@ -31,8 +31,8 @@ class RequestBodyFileGenerator {
       // Skip request bodies with no content or just one content type
       if (requestBody.contentCount <= 1) {
         log.fine(
-          'Skipping request body ${requestBody.name} with '
-          '${requestBody.contentCount} content types',
+          'Skipping request body ${requestBody.name ?? requestBody.context} '
+          'with ${requestBody.contentCount} content types',
         );
         continue;
       }

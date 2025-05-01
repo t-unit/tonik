@@ -33,7 +33,7 @@ class ResponseFileGenerator {
       // Skip responses with no headers and just one body
       if (!response.hasHeaders && response.bodyCount <= 1) {
         log.fine(
-          'Skipping response ${response.name} with '
+          'Skipping response ${response.name ?? response.context} with '
           '${response.bodyCount} bodies and no headers',
         );
         continue;

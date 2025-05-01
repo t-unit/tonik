@@ -133,7 +133,8 @@ class NameGenerator {
       return 'Unknown';
     }
 
-    final baseName = '${operationName}ResponseWrapper';
+    final baseName = _makeUnique('${operationName}Response', 'Wrapper');
+
     final subclassNames = <ResponseStatus, String>{};
     for (final entry in responses.entries) {
       final status = entry.key;
