@@ -72,15 +72,15 @@ void main() {
         final (baseName, subclassNames) = manager.responseWrapperNames(
           operation,
         );
-        expect(baseName, 'TestOperationResponseWrapper');
+        expect(baseName, 'TestOperationResponse');
         expect(subclassNames.keys, containsAll(operation.responses.keys));
         expect(
           subclassNames[const ExplicitResponseStatus(statusCode: 200)],
-          'TestOperationResponseWrapper200',
+          'TestOperationResponse200',
         );
         expect(
           subclassNames[const ExplicitResponseStatus(statusCode: 404)],
-          'TestOperationResponseWrapper404',
+          'TestOperationResponse404',
         );
         // Should be cached
         final (baseName2, subclassNames2) = manager.responseWrapperNames(

@@ -204,5 +204,45 @@ void main() {
         expect(null.decodeSimpleNullableStringNullableSet(), null);
       });
     });
+
+    group('String', () {
+      test('decodes string values', () {
+        expect('test'.decodeSimpleString(), 'test');
+        expect(
+          () => null.decodeSimpleString(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable string values', () {
+        expect('test'.decodeSimpleNullableString(), 'test');
+        expect(null.decodeSimpleNullableString(), isNull);
+        expect(''.decodeSimpleNullableString(), isNull);
+      });
+    });
+
+    group('Int', () {
+      test('decodes integer values', () {
+        expect('42'.decodeSimpleInt(), 42);
+        expect(
+          () => 'not a number'.decodeSimpleInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeSimpleInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable integer values', () {
+        expect('42'.decodeSimpleNullableInt(), 42);
+        expect(null.decodeSimpleNullableInt(), isNull);
+        expect(''.decodeSimpleNullableInt(), isNull);
+        expect(
+          () => 'not a number'.decodeSimpleNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
   });
 }

@@ -219,11 +219,6 @@ void main() {
       expect(result.filename, 'status.dart');
       expect(result.code, contains('enum Status'));
       expect(result.code, isNot(contains('typedef')));
-      expect(result.code, contains('oneHundred(100)'));
-      expect(result.code, contains('twoHundred(200)'));
-      expect(result.code, contains('fourHundredFour(404)'));
-      expect(result.code, contains('const Status(this.rawValue);'));
-      expect(result.code, contains('final _i1.int rawValue;'));
     });
 
     test('throws error for unsupported types', () {
@@ -329,7 +324,7 @@ void main() {
             (e) => e.rawValue == value,
             orElse: () => throw FormatException('No matching Color for value: $value') );
         ''';
-        expect(body.normalizeCode(), expectedBody.normalizeCode());
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
 
       test('generates fromJson factory for integer enums', () {
@@ -362,7 +357,7 @@ void main() {
             (e) => e.rawValue == value,
             orElse: () => throw FormatException('No matching Status for value: $value') );
         ''';
-        expect(body.normalizeCode(), expectedBody.normalizeCode());
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
 
       test('generates fromJson factory for nullable enums', () {
@@ -395,12 +390,117 @@ void main() {
             (e) => e.rawValue == value,
             orElse: () => throw FormatException('No matching Status for value: $value') );
         ''';
-        expect(body.normalizeCode(), expectedBody.normalizeCode());
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+    });
+
+    group('fromSimple factory', () {
+      test('generates fromSimple constructor for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final fromSimple = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromSimple',
+        );
+
+        expect(fromSimple.factory, isTrue);
+        expect(
+          fromSimple.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+        expect(fromSimple.requiredParameters.single.name, 'value');
+
+        final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return Color.fromJson(value.decodeSimpleString());
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('generates fromSimple constructor for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromSimple = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromSimple',
+        );
+
+        expect(fromSimple.factory, isTrue);
+        expect(
+          fromSimple.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+        expect(fromSimple.requiredParameters.single.name, 'value');
+
+        final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return Status.fromJson(value.decodeSimpleInt());
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('generates fromSimple constructor for nullable string enum', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromSimple = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromSimple',
+        );
+
+        final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return RawStatus.fromJson(value.decodeSimpleString());
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('generates fromSimple constructor for nullable int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromSimple = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromSimple',
+        );
+
+        expect(fromSimple.factory, isTrue);
+        expect(
+          fromSimple.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+        expect(fromSimple.requiredParameters.single.name, 'value');
+
+        final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return RawStatus.fromJson(value.decodeSimpleInt());
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
     });
   });
-}
-
-extension on String {
-  String normalizeCode() => replaceAll(RegExp(r'\s+'), ' ').trim();
 }

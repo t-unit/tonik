@@ -19,7 +19,9 @@ class EnumGenerator {
 
   ({String code, String filename}) generate<T>(EnumModel<T> model) {
     final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(),
+      allocator: CorePrefixedAllocator(
+        additionalImports: ['package:tonik_util/tonik_util.dart'],
+      ),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
@@ -66,14 +68,18 @@ class EnumGenerator {
     final actualEnumName =
         model.isNullable
             ? nameManager.modelName(
-              AliasModel(name: enumName, model: model, context: model.context),
+              AliasModel(
+                name: 'Raw$enumName',
+                model: model,
+                context: model.context,
+              ),
             )
             : enumName;
 
     final enumValue = Enum(
       (b) =>
           b
-            ..name = model.isNullable ? 'Raw$enumName' : actualEnumName
+            ..name = actualEnumName
             ..constructors.add(
               Constructor(
                 (b) =>
@@ -89,7 +95,12 @@ class EnumGenerator {
                       ),
               ),
             )
-            ..constructors.add(_generateFromJsonConstructor<T>(actualEnumName))
+            ..constructors.add(
+              _generateFromJsonConstructor<T>(enumName, actualEnumName),
+            )
+            ..constructors.add(
+              _generateFromSimpleConstructor<T>(enumName, actualEnumName),
+            )
             ..methods.add(
               Method(
                 (b) =>
@@ -118,19 +129,55 @@ class EnumGenerator {
               (b) =>
                   b
                     ..name = enumName
-                    ..definition = refer('Raw$enumName?'),
+                    ..definition = refer('$actualEnumName?'),
             )
             : null;
 
     return (enumValue: enumValue, typedefValue: typedefValue);
   }
 
-  Constructor _generateFromJsonConstructor<T>(String enumName) {
+  Constructor _generateFromSimpleConstructor<T>(
+    String publicEnumName,
+    String actualEnumName,
+  ) {
+    const valueParam = 'value';
+    final decodeMethod = T == String ? 'decodeSimpleString' : 'decodeSimpleInt';
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromSimple'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = valueParam
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..body = Block.of([
+              refer(actualEnumName)
+                  .property('fromJson')
+                  .call([
+                    refer(valueParam).property(decodeMethod).call([], {}, []),
+                  ])
+                  .returned
+                  .statement,
+            ]),
+    );
+  }
+
+  Constructor _generateFromJsonConstructor<T>(
+    String publicEnumName,
+    String actualEnumName,
+  ) {
     const valueParam = 'value';
     final typeReference = refer(T.toString(), 'dart:core');
     final typeErrorMessage =
-        'Expected $T for $enumName, got \${$valueParam.runtimeType}';
-    final valueErrorMessage = 'No matching $enumName for value: \$$valueParam';
+        'Expected $T for $publicEnumName, got \${$valueParam.runtimeType}';
+    final valueErrorMessage =
+        'No matching $publicEnumName for value: \$$valueParam';
 
     return Constructor(
       (b) =>

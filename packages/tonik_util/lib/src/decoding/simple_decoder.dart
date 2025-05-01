@@ -4,6 +4,29 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
 /// Extensions for decoding simple form values from strings.
 extension SimpleDecoder on String? {
+  /// Decodes a string to a string.
+  ///
+  /// Returns the string value as is.
+  /// Throws [InvalidTypeException] if the value is null.
+  String decodeSimpleString() {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: String,
+        cause: 'Value is null',
+      );
+    }
+    return this!;
+  }
+
+  /// Decodes a string to a nullable string.
+  ///
+  /// Returns null if the string is empty or null.
+  String? decodeSimpleNullableString() {
+    if (this?.isEmpty ?? true) return null;
+    return this;
+  }
+
   /// Decodes a string to an integer.
   ///
   /// Throws [InvalidTypeException] if the string is not a valid integer

@@ -77,21 +77,21 @@ void main() {
 
     test('returns the expected Dart filename', () {
       final result = generator.generate(operation);
-      expect(result.filename, 'test_operation_response_wrapper.dart');
+      expect(result.filename, 'test_operation_response.dart');
     });
 
     test('contains the base class', () {
       final result = generator.generate(operation);
       expect(
         result.code,
-        contains('sealed class TestOperationResponseWrapper'),
+        contains('sealed class TestOperationResponse'),
       );
     });
 
     test('contains all expected subclasses', () {
       final result = generator.generate(operation);
-      expect(result.code, contains('class TestOperationResponseWrapper404'));
-      expect(result.code, contains('class TestOperationResponseWrapper200'));
+      expect(result.code, contains('class TestOperationResponse404'));
+      expect(result.code, contains('class TestOperationResponse200'));
     });
   });
 
@@ -148,7 +148,7 @@ void main() {
       final classes = generator.generateClasses(operation);
       expect(classes, isNotEmpty);
       final baseClass = classes.first;
-      expect(baseClass.name, 'TestOperationResponseWrapper');
+      expect(baseClass.name, 'TestOperationResponse');
       expect(baseClass.sealed, isTrue);
       expect(baseClass.extend, isNull);
       expect(baseClass.fields, isEmpty);
@@ -157,18 +157,18 @@ void main() {
       expect(
         subclassNames,
         containsAll({
-          'TestOperationResponseWrapper200',
-          'TestOperationResponseWrapper404',
+          'TestOperationResponse200',
+          'TestOperationResponse404',
         }),
       );
       // 200 has multiple bodies, so should have a body
       // field referencing SuccessResponse
       // 404 has one body, so has body field of type String
       final subclass200 = classes.firstWhere(
-        (c) => c.name == 'TestOperationResponseWrapper200',
+        (c) => c.name == 'TestOperationResponse200',
       );
       final subclass404 = classes.firstWhere(
-        (c) => c.name == 'TestOperationResponseWrapper404',
+        (c) => c.name == 'TestOperationResponse404',
       );
       expect(subclass200.fields.length, 1);
       expect(subclass200.fields.first.name, 'body');
@@ -249,7 +249,7 @@ void main() {
 
       final classes = generator.generateClasses(operation);
       final subclass = classes.firstWhere(
-        (c) => c.name == 'TestOperationResponseWrapper200',
+        (c) => c.name == 'TestOperationResponse200',
       );
 
       // Verify equals method exists
@@ -298,7 +298,7 @@ void main() {
 
       final classes = generator.generateClasses(operation);
       final subclass = classes.firstWhere(
-        (c) => c.name == 'TestOperationResponseWrapper200',
+        (c) => c.name == 'TestOperationResponse200',
       );
 
       // Verify @immutable annotation exists
@@ -347,8 +347,8 @@ void main() {
         );
         final classes = generator.generateClasses(operation);
         expect(classes, hasLength(2));
-        expect(classes.first.name, 'TestOperationResponseWrapper');
-        expect(classes.last.name, 'TestOperationResponseWrapper200');
+        expect(classes.first.name, 'TestOperationResponse');
+        expect(classes.last.name, 'TestOperationResponse200');
         // Should have a body property referencing the response class
         final subclass = classes.last;
         expect(subclass.fields.length, 1);
@@ -412,21 +412,21 @@ void main() {
       final classes = generator.generateClasses(operation);
       expect(classes, isNotEmpty);
       final baseClass = classes.first;
-      expect(baseClass.name, 'TestOperationResponseWrapper');
+      expect(baseClass.name, 'TestOperationResponse');
       final subclassNames = classes.skip(1).map((c) => c.name).toSet();
       expect(
         subclassNames,
         containsAll({
-          'TestOperationResponseWrapper200',
-          'TestOperationResponseWrapper404',
+          'TestOperationResponse200',
+          'TestOperationResponse404',
         }),
       );
       // Both should have a body property of type String
       final subclass200 = classes.firstWhere(
-        (c) => c.name == 'TestOperationResponseWrapper200',
+        (c) => c.name == 'TestOperationResponse200',
       );
       final subclass404 = classes.firstWhere(
-        (c) => c.name == 'TestOperationResponseWrapper404',
+        (c) => c.name == 'TestOperationResponse404',
       );
       expect(subclass200.fields.length, 1);
       expect(subclass200.fields.first.name, 'body');
@@ -541,16 +541,16 @@ void main() {
         );
         final classes = generator.generateClasses(operation);
         final subclass201 = classes.firstWhere(
-          (c) => c.name == 'CreateEntityResponseWrapper201',
+          (c) => c.name == 'CreateEntityResponse201',
         );
         final subclass400 = classes.firstWhere(
-          (c) => c.name == 'CreateEntityResponseWrapper400',
+          (c) => c.name == 'CreateEntityResponse400',
         );
         final subclass409 = classes.firstWhere(
-          (c) => c.name == 'CreateEntityResponseWrapper409',
+          (c) => c.name == 'CreateEntityResponse409',
         );
         final subclass500 = classes.firstWhere(
-          (c) => c.name == 'CreateEntityResponseWrapper500',
+          (c) => c.name == 'CreateEntityResponse500',
         );
 
         // Should have a 'body' property for all, but type differs
@@ -620,7 +620,7 @@ void main() {
       );
       final classes = generator.generateClasses(operation);
       final subclass201 = classes.firstWhere(
-        (c) => c.name == 'CreateEntityAliasResponseWrapper201',
+        (c) => c.name == 'CreateEntityAliasResponse201',
       );
       // Should have a 'body' property
       expect(subclass201.fields.any((f) => f.name == 'body'), isTrue);

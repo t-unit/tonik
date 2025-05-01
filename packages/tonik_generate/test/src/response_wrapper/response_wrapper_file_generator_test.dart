@@ -141,7 +141,7 @@ void main() {
         .whereType<File>()
         .toList();
     expect(
-      files.any((f) => f.path.endsWith('two_statuses_response_wrapper.dart')),
+      files.any((f) => f.path.endsWith('two_statuses_response.dart')),
       isTrue,
     );
   });
