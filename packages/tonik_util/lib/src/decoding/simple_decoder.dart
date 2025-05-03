@@ -16,7 +16,7 @@ extension SimpleDecoder on String? {
         cause: 'Value is null',
       );
     }
-    return this!;
+    return Uri.decodeComponent(this!);
   }
 
   /// Decodes a string to a nullable string.
@@ -24,7 +24,7 @@ extension SimpleDecoder on String? {
   /// Returns null if the string is empty or null.
   String? decodeSimpleNullableString() {
     if (this?.isEmpty ?? true) return null;
-    return this;
+    return Uri.decodeComponent(this!);
   }
 
   /// Decodes a string to an integer.
@@ -201,7 +201,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!.split(',');
+    return this!.split(',').map((s) => s.decodeSimpleString()).toList();
   }
 
   /// Decodes a string to a nullable list of strings.
@@ -228,7 +228,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return [];
-    return this!.split(',').map((s) => s.isEmpty ? null : s).toList();
+    return this!.split(',').map((s) => s.decodeSimpleNullableString()).toList();
   }
 
   /// Decodes a string to a nullable list of nullable strings.
@@ -254,7 +254,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return {};
-    return this!.split(',').toSet();
+    return this!.split(',').map((s) => s.decodeSimpleString()).toSet();
   }
 
   /// Decodes a string to a nullable set of strings.
@@ -281,7 +281,7 @@ extension SimpleDecoder on String? {
       );
     }
     if (this!.isEmpty) return {};
-    return this!.split(',').map((s) => s.isEmpty ? null : s).toSet();
+    return this!.split(',').map((s) => s.decodeSimpleNullableString()).toSet();
   }
 
   /// Decodes a string to a nullable set of nullable strings.

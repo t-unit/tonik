@@ -203,9 +203,7 @@ void main() {
         expect(''.decodeSimpleNullableStringNullableSet(), null);
         expect(null.decodeSimpleNullableStringNullableSet(), null);
       });
-    });
 
-    group('String', () {
       test('decodes string values', () {
         expect('test'.decodeSimpleString(), 'test');
         expect(
@@ -219,9 +217,7 @@ void main() {
         expect(null.decodeSimpleNullableString(), isNull);
         expect(''.decodeSimpleNullableString(), isNull);
       });
-    });
 
-    group('Int', () {
       test('decodes integer values', () {
         expect('42'.decodeSimpleInt(), 42);
         expect(
@@ -243,6 +239,130 @@ void main() {
           throwsA(isA<InvalidTypeException>()),
         );
       });
+    });
+
+    group('Escaping and percent-encoding', () {
+      test('decodeSimpleString decodes percent-encoded comma', () {
+        expect('foo%2Cbar'.decodeSimpleString(), 'foo,bar');
+      });
+
+      test('decodeSimpleNullableString decodes percent-encoded comma', () {
+        expect('foo%2Cbar'.decodeSimpleNullableString(), 'foo,bar');
+        expect(''.decodeSimpleNullableString(), isNull);
+        expect((null as String?).decodeSimpleNullableString(), isNull);
+      });
+
+      test(
+        'decodeSimpleStringList splits only on unescaped commas and decodes',
+        () {
+          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringList(), [
+            'foo',
+            'bar,baz',
+            '',
+            'qux',
+          ]);
+          expect('foo%2Cbar'.decodeSimpleStringList(), ['foo,bar']);
+          expect(''.decodeSimpleStringList(), isEmpty);
+        },
+      );
+
+      test('decodeSimpleNullableStringList splits and decodes', () {
+        expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringList(), [
+          'foo',
+          'bar,baz',
+          '',
+          'qux',
+        ]);
+        expect(''.decodeSimpleNullableStringList(), isNull);
+        expect((null as String?).decodeSimpleNullableStringList(), isNull);
+      });
+
+      test(
+        'decodeSimpleStringNullableList splits, decodes, and converts empty to null',
+        () {
+          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableList(), [
+            'foo',
+            'bar,baz',
+            null,
+            'qux',
+          ]);
+          expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo,bar']);
+          expect(''.decodeSimpleStringNullableList(), isEmpty);
+        },
+      );
+
+      test(
+        'decodeSimpleNullableStringNullableList splits, decodes, and converts empty to null',
+        () {
+          expect(
+            'foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableList(),
+            ['foo', 'bar,baz', null, 'qux'],
+          );
+          expect(''.decodeSimpleNullableStringNullableList(), isNull);
+          expect(
+            (null as String?).decodeSimpleNullableStringNullableList(),
+            isNull,
+          );
+        },
+      );
+
+      test('decodeSimpleStringSet splits, decodes, and returns set', () {
+        expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringSet(), {
+          'foo',
+          'bar,baz',
+          '',
+          'qux',
+        });
+        expect('foo%2Cbar'.decodeSimpleStringSet(), {'foo,bar'});
+        expect(''.decodeSimpleStringSet(), isEmpty);
+      });
+
+      test(
+        'decodeSimpleNullableStringSet splits, decodes, and returns set',
+        () {
+          expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringSet(), {
+            'foo',
+            'bar,baz',
+            '',
+            'qux',
+          });
+          expect(''.decodeSimpleNullableStringSet(), isNull);
+          expect((null as String?).decodeSimpleNullableStringSet(), isNull);
+        },
+      );
+
+      test(
+        'decodeSimpleStringNullableSet splits, decodes, and converts empty to '
+        'null in set',
+        () {
+          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableSet(), {
+            'foo',
+            'bar,baz',
+            null,
+            'qux',
+          });
+          expect('foo%2Cbar'.decodeSimpleStringNullableSet(), {'foo,bar'});
+          expect(''.decodeSimpleStringNullableSet(), isEmpty);
+        },
+      );
+
+      test(
+        'decodeSimpleNullableStringNullableSet splits, decodes, and converts '
+        'empty to null in set',
+        () {
+          expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableSet(), {
+            'foo',
+            'bar,baz',
+            null,
+            'qux',
+          });
+          expect(''.decodeSimpleNullableStringNullableSet(), isNull);
+          expect(
+            (null as String?).decodeSimpleNullableStringNullableSet(),
+            isNull,
+          );
+        },
+      );
     });
   });
 }
