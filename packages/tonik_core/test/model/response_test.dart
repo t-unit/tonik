@@ -31,7 +31,7 @@ void main() {
           context: context,
           headers: const {},
           description: '',
-          bodies:  {
+          bodies: {
             ResponseBody(
               model: StringModel(context: context),
               rawContentType: 'application/json',

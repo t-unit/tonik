@@ -69,7 +69,7 @@ class OneOfGenerator {
 
       final dummyClass = ClassModel(
         name: '$parentClassName${rawName.toPascalCase()}',
-        properties: const {},
+        properties: const [],
         context: model.context,
       );
 

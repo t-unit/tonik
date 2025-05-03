@@ -1,7 +1,6 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
-
 /// Extensions for decoding simple form values from strings.
 extension SimpleDecoder on String? {
   /// Decodes a string to a string.

@@ -195,7 +195,7 @@ void main() {
     test('for List<ClassModel> property', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final property = Property(
@@ -285,7 +285,7 @@ void main() {
     test('for AliasModel property (Class)', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final aliasModel = AliasModel(
@@ -309,7 +309,7 @@ void main() {
     test('for nullable AliasModel property (Class)', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final aliasModel = AliasModel(
@@ -333,7 +333,7 @@ void main() {
     test('for ClassModel property', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final property = Property(
@@ -352,7 +352,7 @@ void main() {
     test('for nullable ClassModel property', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final property = Property(
@@ -526,7 +526,7 @@ void main() {
     test('for Alias to List<ClassModel>', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final aliasModel = AliasModel(
@@ -550,7 +550,7 @@ void main() {
     test('for nullable Alias to List<ClassModel>', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: const {},
+        properties: const [],
         context: context,
       );
       final aliasModel = AliasModel(

@@ -43,7 +43,7 @@ class ResponseAlias extends Response {
 
   @override
   ResponseObject get resolved => response.resolved;
-  
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

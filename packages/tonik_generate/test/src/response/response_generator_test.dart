@@ -85,10 +85,7 @@ void main() {
 
         final result = generator.generate(aliasResponse);
         expect(result.filename, equals('alias_response.dart'));
-        expect(
-          result.code,
-          contains('typedef AliasResponse ='),
-        );
+        expect(result.code, contains('typedef AliasResponse ='));
       });
 
       test('generates class for ResponseObject with single body', () {

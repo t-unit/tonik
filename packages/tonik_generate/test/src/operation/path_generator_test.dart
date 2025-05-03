@@ -284,7 +284,7 @@ void main() {
         isDeprecated: false,
         allowEmptyValue: false,
         explode: true,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         encoding: PathParameterEncoding.simple,
         context: context,
       );
@@ -336,7 +336,7 @@ void main() {
         isDeprecated: false,
         allowEmptyValue: true,
         explode: true,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         encoding: PathParameterEncoding.simple,
         context: context,
       );
@@ -477,7 +477,7 @@ void main() {
         isNullable: false,
       );
 
-      final classModel = ClassModel(context: context, properties: const {});
+      final classModel = ClassModel(context: context, properties: const []);
 
       final oneOfModel = OneOfModel(
         context: context,
@@ -767,7 +767,7 @@ void main() {
     });
 
     test('handles nested list of class models', () {
-      final innerModel = ClassModel(context: context, properties: const {});
+      final innerModel = ClassModel(context: context, properties: const []);
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
         context: context,

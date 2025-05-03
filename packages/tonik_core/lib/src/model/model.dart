@@ -48,7 +48,7 @@ class ClassModel extends Model with NamedModel {
 
   @override
   final String? name;
-  final Set<Property> properties;
+  final List<Property> properties;
 
   @override
   String toString() => 'ClassModel{name: $name, properties: $properties}';

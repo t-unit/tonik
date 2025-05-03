@@ -33,7 +33,7 @@ void main() {
     test('generates hashCode method', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -48,7 +48,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -67,7 +67,7 @@ void main() {
     test('generates hashCode method with multiple properties', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'id',
             model: StringModel(context: context),
@@ -96,7 +96,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -115,7 +115,7 @@ void main() {
     test('generates hashCode method with nullable properties', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -130,7 +130,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -149,7 +149,7 @@ void main() {
     test('generates hashCode method with normalized property names', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'first-name',
             model: StringModel(context: context),
@@ -164,7 +164,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -183,7 +183,7 @@ void main() {
     test('generates hashCode method with list types', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -201,7 +201,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -223,7 +223,7 @@ void main() {
     test('generates hashCode method with deeply nested list types', () {
       final nestedListModel = ClassModel(
         name: 'NestedData',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -244,7 +244,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 

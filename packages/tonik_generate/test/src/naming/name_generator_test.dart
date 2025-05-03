@@ -14,7 +14,7 @@ void main() {
       group('real world examples', () {
         test('anonymous response', () {
           final model = ClassModel(
-            properties: const {},
+            properties: const [],
             context: Context.initial().pushAll([
               'paths',
               'pet-findByStatus',
@@ -32,7 +32,7 @@ void main() {
 
         test('preserves numeric components in context paths', () {
           final model = ClassModel(
-            properties: const {},
+            properties: const [],
             context: Context.initial().pushAll([
               'paths',
               'pet-store',
@@ -51,7 +51,7 @@ void main() {
         test('oneOf model with inline model', () {
           // Create a OneOfModel named Blub with an inline anonymous class model
           final inlineClassModel = ClassModel(
-            properties: const {},
+            properties: const [],
             context: Context.initial().pushAll([
               'components',
               'schemas',
@@ -96,7 +96,7 @@ void main() {
       test('uses model name when available', () {
         final model = ClassModel(
           name: 'UserProfile',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
@@ -105,7 +105,7 @@ void main() {
       test('converts name to PascalCase', () {
         final model = ClassModel(
           name: 'user_profile',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
@@ -114,17 +114,17 @@ void main() {
       test('makes duplicate names unique using Model suffix', () {
         final model1 = ClassModel(
           name: 'User',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         final model2 = ClassModel(
           name: 'User',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         final model3 = ClassModel(
           name: 'User',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
 
@@ -140,7 +140,7 @@ void main() {
       test('removes illegal characters', () {
         final model = ClassModel(
           name: 'User-Profile!123',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile123');
@@ -148,7 +148,7 @@ void main() {
 
       test('combines context path components in PascalCase', () {
         final model = ClassModel(
-          properties: const {},
+          properties: const [],
           context: Context.initial().pushAll(['api', 'models', 'user']),
         );
 
@@ -174,7 +174,7 @@ void main() {
       test('converts explicit names with underscores to PascalCase', () {
         final model = ClassModel(
           name: 'my_class_name',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
 
@@ -184,7 +184,7 @@ void main() {
       test('converts names with leading underscores to PascalCase', () {
         final model = ClassModel(
           name: '_my_class_name',
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
 
@@ -193,7 +193,7 @@ void main() {
 
       test('uses Anonymous for model without name or context path', () {
         final model = ClassModel(
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
 
@@ -202,15 +202,15 @@ void main() {
 
       test('makes anonymous names unique using Model suffix', () {
         final model1 = ClassModel(
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         final model2 = ClassModel(
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
         final model3 = ClassModel(
-          properties: const {},
+          properties: const [],
           context: Context.initial(),
         );
 
@@ -227,7 +227,7 @@ void main() {
         test('preserves numbers in class names', () {
           final model = ClassModel(
             name: 'Model23',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           expect(nameGenerator.generateModelName(model), 'Model23');
@@ -236,7 +236,7 @@ void main() {
         test('removes leading numbers', () {
           final model = ClassModel(
             name: '2Model',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           expect(nameGenerator.generateModelName(model), 'Model');
@@ -245,7 +245,7 @@ void main() {
         test('removes leading numbers but preserves internal ones', () {
           final model = ClassModel(
             name: '2_Model12String33',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           expect(nameGenerator.generateModelName(model), 'Model12String33');
@@ -254,7 +254,7 @@ void main() {
         test('handles multiple number segments', () {
           final model = ClassModel(
             name: 'user2_profile3_data4',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           expect(nameGenerator.generateModelName(model), 'User2Profile3Data4');
@@ -263,7 +263,7 @@ void main() {
         test('handles names with only numbers', () {
           final model = ClassModel(
             name: '123',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           expect(nameGenerator.generateModelName(model), 'Anonymous');
@@ -275,7 +275,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: 'hello_world_test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -288,7 +288,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: '_hello_world',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -301,7 +301,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: 'Hello-World_Test!123',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -314,7 +314,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: '___hello_world_test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -327,7 +327,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: 'My_Class_NAME',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -342,7 +342,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: 'Test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -354,7 +354,7 @@ void main() {
           nameGenerator.generateModelName(
             ClassModel(
               name: 'Test',
-              properties: const {},
+              properties: const [],
               context: Context.initial(),
             ),
           );
@@ -363,7 +363,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: 'Test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -376,14 +376,14 @@ void main() {
             ..generateModelName(
               ClassModel(
                 name: 'Test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             )
             ..generateModelName(
               ClassModel(
                 name: 'Test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             );
@@ -392,7 +392,7 @@ void main() {
             nameGenerator.generateModelName(
               ClassModel(
                 name: 'Test',
-                properties: const {},
+                properties: const [],
                 context: Context.initial(),
               ),
             ),
@@ -403,12 +403,12 @@ void main() {
         test('handles names that already end with Model', () {
           final model1 = ClassModel(
             name: 'UserModel',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           final model2 = ClassModel(
             name: 'UserModel',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
 
@@ -534,7 +534,7 @@ void main() {
         test('ensures global uniqueness with model names', () {
           final model = ClassModel(
             name: 'User',
-            properties: const {},
+            properties: const [],
             context: Context.initial(),
           );
           final response = ResponseObject(

@@ -24,7 +24,7 @@ void main() {
     test('generates code with prefixed dart:core types', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'id',
             model: IntegerModel(context: context),
@@ -46,7 +46,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 

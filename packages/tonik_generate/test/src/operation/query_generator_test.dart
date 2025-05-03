@@ -127,7 +127,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -193,7 +193,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -327,7 +327,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -393,7 +393,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -519,7 +519,7 @@ void main() {
         explode: true,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -613,7 +613,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -677,7 +677,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -872,7 +872,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -886,7 +886,7 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const {}),
+        model: ClassModel(context: context, properties: const []),
         context: context,
       );
 
@@ -962,7 +962,7 @@ void main() {
       final stringModel = StringModel(context: context);
       final integerModel = IntegerModel(context: context);
       final booleanModel = BooleanModel(context: context);
-      final classModel = ClassModel(context: context, properties: const {});
+      final classModel = ClassModel(context: context, properties: const []);
 
       final oneOfModel = OneOfModel(
         context: context,
@@ -1207,7 +1207,7 @@ void main() {
     });
 
     test('handles nested list of class models', () {
-      final innerModel = ClassModel(context: context, properties: const {});
+      final innerModel = ClassModel(context: context, properties: const []);
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
         context: context,

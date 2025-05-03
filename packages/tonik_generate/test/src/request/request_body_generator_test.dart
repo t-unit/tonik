@@ -12,9 +12,10 @@ void main() {
   late Context testContext;
   late DartEmitter emitter;
 
-  final format = DartFormatter(
-    languageVersion: DartFormatter.latestLanguageVersion,
-  ).format;
+  final format =
+      DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
 
   setUp(() {
     nameManager = NameManager(generator: NameGenerator());
@@ -36,10 +37,7 @@ void main() {
         content: const {},
       );
 
-      expect(
-        () => generator.generate(requestBody),
-        throwsArgumentError,
-      );
+      expect(() => generator.generate(requestBody), throwsArgumentError);
     });
 
     test('throws when request body has only one content', () {
@@ -57,10 +55,7 @@ void main() {
         },
       );
 
-      expect(
-        () => generator.generate(requestBody),
-        throwsArgumentError,
-      );
+      expect(() => generator.generate(requestBody), throwsArgumentError);
     });
 
     group('typedef generation', () {
@@ -91,10 +86,7 @@ void main() {
         final (name, _) = nameManager.requestBodyNames(aliasBody);
         final typedef = generator.generateTypedef(aliasBody, name);
         expect(typedef.name, name);
-        expect(
-          typedef.definition.accept(emitter).toString(),
-          'OriginalBody',
-        );
+        expect(typedef.definition.accept(emitter).toString(), 'OriginalBody');
       });
     });
 
@@ -157,10 +149,7 @@ void main() {
         final subClass = classes[1];
 
         expect(subClass.name, 'MultiBodyJson');
-        expect(
-          subClass.extend?.accept(emitter).toString(),
-          'MultiBody',
-        );
+        expect(subClass.extend?.accept(emitter).toString(), 'MultiBody');
 
         // Test field
         final field = subClass.fields.first;
@@ -332,4 +321,4 @@ void main() {
       });
     });
   });
-} 
+}

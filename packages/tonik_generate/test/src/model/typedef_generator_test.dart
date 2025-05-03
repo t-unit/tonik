@@ -62,7 +62,7 @@ void main() {
     test('generates typedef for named models', () {
       final userModel = ClassModel(
         name: 'User',
-        properties: const {},
+        properties: const [],
         context: context,
       );
 
@@ -173,7 +173,7 @@ void main() {
       test('generates typedef for list of named models', () {
         final userModel = ClassModel(
           name: 'User',
-          properties: const {},
+          properties: const [],
           context: context,
         );
 

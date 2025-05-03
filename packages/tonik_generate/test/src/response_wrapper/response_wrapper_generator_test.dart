@@ -82,10 +82,7 @@ void main() {
 
     test('contains the base class', () {
       final result = generator.generate(operation);
-      expect(
-        result.code,
-        contains('sealed class TestOperationResponse'),
-      );
+      expect(result.code, contains('sealed class TestOperationResponse'));
     });
 
     test('contains all expected subclasses', () {
@@ -156,10 +153,7 @@ void main() {
       final subclassNames = classes.skip(1).map((c) => c.name).toSet();
       expect(
         subclassNames,
-        containsAll({
-          'TestOperationResponse200',
-          'TestOperationResponse404',
-        }),
+        containsAll({'TestOperationResponse200', 'TestOperationResponse404'}),
       );
       // 200 has multiple bodies, so should have a body
       // field referencing SuccessResponse
@@ -416,10 +410,7 @@ void main() {
       final subclassNames = classes.skip(1).map((c) => c.name).toSet();
       expect(
         subclassNames,
-        containsAll({
-          'TestOperationResponse200',
-          'TestOperationResponse404',
-        }),
+        containsAll({'TestOperationResponse200', 'TestOperationResponse404'}),
       );
       // Both should have a body property of type String
       final subclass200 = classes.firstWhere(

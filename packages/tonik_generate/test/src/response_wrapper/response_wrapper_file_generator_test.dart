@@ -136,10 +136,10 @@ void main() {
       'src',
       'response_wrapper',
     );
-    final files = Directory(wrapperDir)
-        .listSync(recursive: true)
-        .whereType<File>()
-        .toList();
+    final files =
+        Directory(
+          wrapperDir,
+        ).listSync(recursive: true).whereType<File>().toList();
     expect(
       files.any((f) => f.path.endsWith('two_statuses_response.dart')),
       isTrue,
@@ -159,13 +159,13 @@ void main() {
       'src',
       'response_wrapper',
     );
-    final files = Directory(wrapperDir)
-        .listSync(recursive: true)
-        .whereType<File>()
-        .toList();
+    final files =
+        Directory(
+          wrapperDir,
+        ).listSync(recursive: true).whereType<File>().toList();
     expect(
       files.any((f) => f.path.endsWith('one_status_response_wrapper.dart')),
       isFalse,
     );
   });
-} 
+}

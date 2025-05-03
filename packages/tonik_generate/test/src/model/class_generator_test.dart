@@ -27,7 +27,7 @@ void main() {
     test('generates class with correct name', () {
       final model = ClassModel(
         name: 'User',
-        properties: const {},
+        properties: const [],
         context: context,
       );
 
@@ -38,7 +38,7 @@ void main() {
     test('generates class with immutable annotation', () {
       final model = ClassModel(
         name: 'User',
-        properties: const {},
+        properties: const [],
         context: context,
       );
 
@@ -53,7 +53,7 @@ void main() {
     test('generates constructor with required and optional parameters', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'id',
             model: IntegerModel(context: context),
@@ -68,7 +68,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -96,7 +96,7 @@ void main() {
       () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'nickname',
               model: StringModel(context: context),
@@ -125,7 +125,7 @@ void main() {
               isNullable: true,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -168,7 +168,7 @@ void main() {
     test('generates filename in snake_case', () {
       final model = ClassModel(
         name: 'UserProfile',
-        properties: const {},
+        properties: const [],
         context: Context.initial(),
       );
 
@@ -180,7 +180,7 @@ void main() {
       test('generates required non-nullable int property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'id',
               model: IntegerModel(context: context),
@@ -188,7 +188,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -203,7 +203,7 @@ void main() {
       test('generates optional nullable string property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'name',
               model: StringModel(context: context),
@@ -211,7 +211,7 @@ void main() {
               isNullable: true,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -226,7 +226,7 @@ void main() {
       test('generates decimal property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'balance',
               model: DecimalModel(context: context),
@@ -234,7 +234,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -249,7 +249,7 @@ void main() {
       test('generates list of strings property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'tags',
               model: ListModel(
@@ -260,7 +260,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -275,19 +275,19 @@ void main() {
       test('generates nested class property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'address',
               model: ClassModel(
                 name: 'Address',
-                properties: const {},
+                properties: const [],
                 context: context,
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -302,7 +302,7 @@ void main() {
       test('generates deprecated property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'username',
               model: StringModel(context: context),
@@ -310,7 +310,7 @@ void main() {
               isNullable: false,
               isDeprecated: true,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -329,7 +329,7 @@ void main() {
       test('generates optional non-nullable property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'photoUrl',
               model: StringModel(context: context),
@@ -337,7 +337,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 
@@ -352,7 +352,7 @@ void main() {
       test('generates required nullable property', () {
         final model = ClassModel(
           name: 'User',
-          properties: {
+          properties: [
             Property(
               name: 'photoUrl',
               model: StringModel(context: context),
@@ -360,7 +360,7 @@ void main() {
               isNullable: true,
               isDeprecated: false,
             ),
-          },
+          ],
           context: context,
         );
 

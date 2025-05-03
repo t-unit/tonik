@@ -27,23 +27,24 @@ Method generateHashCodeMethod({
   if (properties.length == 1) {
     final prop = properties.first;
     if (prop.hasCollectionValue) {
-      codeLines..add(
-        declareConst('deepEquals')
-            .assign(
-              refer(
-                'DeepCollectionEquality',
-                'package:collection/collection.dart',
-              ).call([]),
-            )
-            .statement,
-      )
-      ..add(
-        refer('deepEquals')
-            .property('hash')
-            .call([refer(prop.normalizedName)])
-            .returned
-            .statement,
-      );
+      codeLines
+        ..add(
+          declareConst('deepEquals')
+              .assign(
+                refer(
+                  'DeepCollectionEquality',
+                  'package:collection/collection.dart',
+                ).call([]),
+              )
+              .statement,
+        )
+        ..add(
+          refer('deepEquals')
+              .property('hash')
+              .call([refer(prop.normalizedName)])
+              .returned
+              .statement,
+        );
     } else {
       methodBuilder
         ..lambda = true

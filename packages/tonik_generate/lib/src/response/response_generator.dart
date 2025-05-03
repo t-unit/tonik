@@ -47,7 +47,7 @@ class ResponseGenerator {
       useNullSafetySyntax: true,
     );
 
-      final formatter = DartFormatter(
+    final formatter = DartFormatter(
       languageVersion: DartFormatter.latestLanguageVersion,
     );
 
@@ -152,15 +152,16 @@ class ResponseGenerator {
             ..fields.addAll(
               properties.map(
                 (prop) => Field(
-                  (b) => b
-                    ..name = prop.normalizedName
-                    ..modifier = FieldModifier.final$
-                    ..type = typeReference(
-                      prop.property.model,
-                      nameManager,
-                      package,
-                      isNullableOverride: !prop.property.isRequired,
-                    ),
+                  (b) =>
+                      b
+                        ..name = prop.normalizedName
+                        ..modifier = FieldModifier.final$
+                        ..type = typeReference(
+                          prop.property.model,
+                          nameManager,
+                          package,
+                          isNullableOverride: !prop.property.isRequired,
+                        ),
                 ),
               ),
             ),
@@ -238,15 +239,16 @@ class ResponseGenerator {
             ..fields.addAll(
               normalizedBaseProperties.map(
                 (prop) => Field(
-                  (b) => b
-                    ..name = prop.normalizedName
-                    ..modifier = FieldModifier.final$
-                    ..type = typeReference(
-                      prop.property.model,
-                      nameManager,
-                      package,
-                      isNullableOverride: !prop.property.isRequired,
-                    ),
+                  (b) =>
+                      b
+                        ..name = prop.normalizedName
+                        ..modifier = FieldModifier.final$
+                        ..type = typeReference(
+                          prop.property.model,
+                          nameManager,
+                          package,
+                          isNullableOverride: !prop.property.isRequired,
+                        ),
                 ),
               ),
             ),
@@ -358,14 +360,15 @@ class ResponseGenerator {
                   ..methods.addAll(methods)
                   ..fields.add(
                     Field(
-                      (b) => b
-                        ..name = 'body'
-                        ..modifier = FieldModifier.final$
-                        ..type = typeReference(
-                          body.model,
-                          nameManager,
-                          package,
-                        ),
+                      (b) =>
+                          b
+                            ..name = 'body'
+                            ..modifier = FieldModifier.final$
+                            ..type = typeReference(
+                              body.model,
+                              nameManager,
+                              package,
+                            ),
                     ),
                   ),
           );

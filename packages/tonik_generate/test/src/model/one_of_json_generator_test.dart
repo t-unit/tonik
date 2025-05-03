@@ -118,7 +118,7 @@ void main() {
               discriminatorValue: 'success',
               model: ClassModel(
                 name: 'Success',
-                properties: {
+                properties: [
                   Property(
                     name: 'value',
                     model: StringModel(context: context),
@@ -126,7 +126,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                   ),
-                },
+                ],
                 context: context,
               ),
             ),
@@ -134,7 +134,7 @@ void main() {
               discriminatorValue: 'error',
               model: ClassModel(
                 name: 'Error',
-                properties: {
+                properties: [
                   Property(
                     name: 'value',
                     model: IntegerModel(context: context),
@@ -142,7 +142,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                   ),
-                },
+                ],
                 context: context,
               ),
             ),
@@ -226,7 +226,7 @@ void main() {
               discriminatorValue: null,
               model: ClassModel(
                 name: 'Success',
-                properties: {
+                properties: [
                   Property(
                     name: 'value',
                     model: StringModel(context: context),
@@ -234,7 +234,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                   ),
-                },
+                ],
                 context: context,
               ),
             ),
@@ -243,7 +243,7 @@ void main() {
               discriminatorValue: 'error',
               model: ClassModel(
                 name: 'Error',
-                properties: {
+                properties: [
                   Property(
                     name: 'value',
                     model: IntegerModel(context: context),
@@ -251,7 +251,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                   ),
-                },
+                ],
                 context: context,
               ),
             ),

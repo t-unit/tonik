@@ -291,7 +291,7 @@ class ModelImporter {
 
   ClassModel _parseClassModel(String? name, Schema schema, Context context) {
     final schemaProperties = schema.properties ?? {};
-    final properties = <Property>{};
+    final properties = <Property>[];
 
     final model = ClassModel(
       name: name,

@@ -79,7 +79,7 @@ void main() {
             rawContentType: 'application/json',
           ),
         };
-        
+
         final body = RequestBodyObject(
           name: 'test',
           context: context,
@@ -99,7 +99,7 @@ void main() {
             rawContentType: 'application/json',
           ),
         };
-        
+
         final referencedBody = RequestBodyObject(
           name: 'referenced',
           context: context,

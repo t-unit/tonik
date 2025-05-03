@@ -21,11 +21,11 @@ void main() {
     );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
-    format = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    ).format;
+    format =
+        DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
   });
-
 
   group('generateDataMethod', () {
     test('returns null when no request body', () {
@@ -73,7 +73,7 @@ void main() {
             RequestContent(
               model: ClassModel(
                 name: 'TestModel',
-                properties: const <Property>{},
+                properties: const [],
                 context: testContext,
               ),
               contentType: ContentType.json,
@@ -120,7 +120,7 @@ void main() {
             RequestContent(
               model: ClassModel(
                 name: 'JsonModel',
-                properties: const <Property>{},
+                properties: const [],
                 context: testContext,
               ),
               contentType: ContentType.json,
@@ -129,7 +129,7 @@ void main() {
             RequestContent(
               model: ClassModel(
                 name: 'FormModel',
-                properties: const <Property>{},
+                properties: const [],
                 context: testContext,
               ),
               contentType: ContentType.json,
@@ -365,7 +365,7 @@ void main() {
             RequestContent(
               model: ClassModel(
                 name: 'TestModel',
-                properties: const <Property>{},
+                properties: const [],
                 context: testContext,
               ),
               contentType: ContentType.json,

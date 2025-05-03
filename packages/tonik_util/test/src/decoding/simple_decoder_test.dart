@@ -277,22 +277,21 @@ void main() {
         expect((null as String?).decodeSimpleNullableStringList(), isNull);
       });
 
-      test(
-        'decodeSimpleStringNullableList splits, decodes, and converts empty to null',
-        () {
-          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableList(), [
-            'foo',
-            'bar,baz',
-            null,
-            'qux',
-          ]);
-          expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo,bar']);
-          expect(''.decodeSimpleStringNullableList(), isEmpty);
-        },
-      );
+      test('decodeSimpleStringNullableList splits, decodes, and converts empty '
+          'to null', () {
+        expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableList(), [
+          'foo',
+          'bar,baz',
+          null,
+          'qux',
+        ]);
+        expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo,bar']);
+        expect(''.decodeSimpleStringNullableList(), isEmpty);
+      });
 
       test(
-        'decodeSimpleNullableStringNullableList splits, decodes, and converts empty to null',
+        'decodeSimpleNullableStringNullableList splits, decodes, and converts '
+        'empty to null',
         () {
           expect(
             'foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableList(),

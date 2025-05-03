@@ -33,7 +33,7 @@ void main() {
     test('generates copyWith method for simple properties', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -48,7 +48,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -68,7 +68,7 @@ void main() {
     test('generates copyWith method with nullable properties', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -83,7 +83,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -103,7 +103,7 @@ void main() {
     test('generates copyWith method with optional non-nullable properties', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -118,7 +118,7 @@ void main() {
             isNullable: false, // But not nullable
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -138,7 +138,7 @@ void main() {
     test('generates copyWith method with complex types', () {
       final addressModel = ClassModel(
         name: 'Address',
-        properties: {
+        properties: [
           Property(
             name: 'street',
             model: StringModel(context: context),
@@ -146,13 +146,13 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -174,7 +174,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -198,7 +198,7 @@ void main() {
     test('generates copyWith method with list types', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'name',
             model: StringModel(context: context),
@@ -226,7 +226,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 
@@ -254,7 +254,7 @@ void main() {
     test('generates copyWith method with normalized property names', () {
       final model = ClassModel(
         name: 'User',
-        properties: {
+        properties: [
           Property(
             name: 'first-name',
             model: StringModel(context: context),
@@ -276,7 +276,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
-        },
+        ],
         context: context,
       );
 

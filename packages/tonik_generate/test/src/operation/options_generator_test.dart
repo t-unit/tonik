@@ -537,7 +537,7 @@ void main() {
     });
 
     test('handles nested list of class models', () {
-      final innerModel = ClassModel(context: context, properties: const {});
+      final innerModel = ClassModel(context: context, properties: const []);
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
         context: context,
