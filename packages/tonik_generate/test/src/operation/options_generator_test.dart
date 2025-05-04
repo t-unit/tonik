@@ -48,11 +48,12 @@ void main() {
       );
 
       const expectedMethod = '''
-          Options _options() {
-            return Options(method: 'GET', validateStatus: (_) => true);
-          }
-        ''';
-
+        Options _options() {
+          final headers = <String, dynamic>{};
+          headers['Accept'] = '*/*';
+          return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+        }
+      ''';
       final method = generator.generateOptionsMethod(operation, []);
 
       expect(method, isA<Method>());
@@ -85,14 +86,12 @@ void main() {
       );
 
       const expectedMethod = '''
-          Options _options() {
-            return Options(
-              method: 'POST',
-              validateStatus: (_) => true,
-            );
-          }
-        ''';
-
+        Options _options() {
+          final headers = <String, dynamic>{};
+          headers['Accept'] = '*/*';
+          return Options(method: 'POST', headers: headers, validateStatus: (_) => true);
+        }
+      ''';
       final method = generator.generateOptionsMethod(operation, []);
 
       expect(method, isA<Method>());
@@ -103,7 +102,7 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(format(expectedMethod)),
+        collapseWhitespace(expectedMethod),
       );
     });
 
@@ -125,11 +124,12 @@ void main() {
       );
 
       const expectedMethod = '''
-          Options _options() {
-            return Options(method: 'PUT', validateStatus: (_) => true);
-          }
-        ''';
-
+        Options _options() {
+          final headers = <String, dynamic>{};
+          headers['Accept'] = '*/*';
+          return Options(method: 'PUT', headers: headers, validateStatus: (_) => true);
+        }
+      ''';
       final method = generator.generateOptionsMethod(operation, []);
 
       expect(method, isA<Method>());
@@ -162,11 +162,16 @@ void main() {
       );
 
       const expectedMethod = '''
-          Options _options() {
-            return Options(method: 'DELETE', validateStatus: (_) => true);
-          }
-        ''';
-
+        Options _options() {
+          final headers = <String, dynamic>{};
+          headers['Accept'] = '*/*';
+          return Options(
+            method: 'DELETE',
+            headers: headers,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
       final method = generator.generateOptionsMethod(operation, []);
 
       expect(method, isA<Method>());
@@ -214,6 +219,7 @@ void main() {
       const expectedMethod = '''
           Options _options({required String xMyHeader}) {
             final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
             const headerEncoder = SimpleEncoder();
             headers[r'X-My-Header'] = headerEncoder.encode(
               xMyHeader,
@@ -353,6 +359,7 @@ void main() {
             List<String>? xOptionalList,
           }) {
             final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
             const headerEncoder = SimpleEncoder();
             headers[r'X-Required-String'] = headerEncoder.encode(
               xRequiredString,
@@ -438,6 +445,7 @@ void main() {
       const expectedMethod = '''
         Options _options({required String xMyHeader}) {
           final headers = <String, dynamic>{};
+          headers['Accept'] = '*/*';
           const headerEncoder = SimpleEncoder();
           headers[r'X-My-Header'] = headerEncoder.encode(
             xMyHeader,
@@ -506,6 +514,7 @@ void main() {
       const expectedMethod = '''
           Options _options({required List<Anonymous> xColors}) {
             final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
             const headerEncoder = SimpleEncoder();
             headers[r'X-Colors'] = headerEncoder.encode(
               xColors.map((e) => e.toJson()).toList(),
@@ -576,6 +585,7 @@ void main() {
       const expectedMethod = '''
           Options _options({required List<List<Anonymous>> xMatrix}) {
             final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
             const headerEncoder = SimpleEncoder();
             headers[r'X-Matrix'] = headerEncoder.encode(
               xMatrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
@@ -625,7 +635,9 @@ void main() {
 
       const expectedMethod = '''
           Options _options() {
-            return Options(method: 'POST', validateStatus: (_) => true);
+            final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
+            return Options(method: 'POST', headers: headers, validateStatus: (_) => true);
           }
         ''';
 
@@ -672,8 +684,11 @@ void main() {
 
         const expectedMethod = '''
           Options _options() {
+            final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
+              headers: headers,
               contentType: 'application/json',
               validateStatus: (_) => true,
             );
@@ -733,8 +748,11 @@ void main() {
               MultiContentJson _ => 'application/json',
               MultiContentFormData _ => 'multipart/form-data',
             };
+            final headers = <String, dynamic>{};
+            headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
+              headers: headers,
               contentType: contentType,
               validateStatus: (_) => true,
             );
@@ -746,6 +764,259 @@ void main() {
         expect(
           collapseWhitespace(methodString),
           collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test('adds Accept header with all response content types', () {
+      final operation = Operation(
+        operationId: 'getWithAccept',
+        context: context,
+        summary: 'Get with Accept',
+        description: 'Test Accept header',
+        tags: const {},
+        isDeprecated: false,
+        path: '/accept',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: 'OK',
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+              ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/xml',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+        },
+        requestBody: null,
+      );
+
+      const expectedMethod = '''
+        Options _options() {
+          final headers = <String, dynamic>{};
+          headers['Accept'] = 'application/json,application/xml';
+          return Options(
+            method: 'GET',
+            headers: headers,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+
+      final method = generator.generateOptionsMethod(operation, []);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('adds Accept header as */* if no response content types', () {
+      final operation = Operation(
+        operationId: 'getWithWildcardAccept',
+        context: context,
+        summary: 'Get with Accept',
+        description: 'Test Accept header',
+        tags: const {},
+        isDeprecated: false,
+        path: '/accept',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: 'OK',
+            bodies: const {},
+          ),
+        },
+        requestBody: null,
+      );
+
+      const expectedMethod = '''
+        Options _options() {
+          final headers = <String, dynamic>{};
+          headers['Accept'] = '*/*';
+          return Options(
+            method: 'GET',
+            headers: headers,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+
+      final method = generator.generateOptionsMethod(operation, []);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('does not override explicit Accept header', () {
+      final requestHeader = RequestHeaderObject(
+        name: 'Accept',
+        rawName: 'Accept',
+        description: 'Explicit Accept',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+      );
+      final operation = Operation(
+        operationId: 'explicitAccept',
+        context: context,
+        summary: 'Explicit Accept',
+        description: 'Test explicit Accept header',
+        tags: const {},
+        isDeprecated: false,
+        path: '/accept',
+        method: HttpMethod.get,
+        headers: {requestHeader},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: 'OK',
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+        },
+        requestBody: null,
+      );
+
+      const expectedMethod = '''
+        Options _options({required String accept}) {
+          final headers = <String, dynamic>{};
+          const headerEncoder = SimpleEncoder();
+          headers[r'Accept'] = headerEncoder.encode(
+            accept,
+            explode: false,
+            allowEmpty: false,
+          );
+          return Options(
+            method: 'GET',
+            headers: headers,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+
+      final method = generator.generateOptionsMethod(operation, [
+        (normalizedName: 'accept', parameter: requestHeader),
+      ]);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test(
+      'sets default Accept if explicit Accept header is optional and not set',
+      () {
+        final requestHeader = RequestHeaderObject(
+          name: 'Accept',
+          rawName: 'Accept',
+          description: 'Optional Accept',
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+        );
+        final operation = Operation(
+          operationId: 'optionalAccept',
+          context: context,
+          summary: 'Optional Accept',
+          description: 'Test optional Accept header',
+          tags: const {},
+          isDeprecated: false,
+          path: '/accept',
+          method: HttpMethod.get,
+          headers: {requestHeader},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: 'OK',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/xml',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          requestBody: null,
+        );
+
+        const expectedMethod = '''
+        Options _options({String? accept}) {
+          final headers = <String, dynamic>{};
+          const headerEncoder = SimpleEncoder();
+          if (accept != null) {
+            headers[r'Accept'] = headerEncoder.encode(
+              accept,
+              explode: false,
+              allowEmpty: false,
+            );
+          } else {
+            headers['Accept'] = 'application/json,application/xml';
+          }
+          return Options(
+            method: 'GET',
+            headers: headers,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+
+        final method = generator.generateOptionsMethod(operation, [
+          (normalizedName: 'accept', parameter: requestHeader),
+        ]);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
         );
       },
     );

@@ -25,7 +25,12 @@ class OptionsGenerator {
       bodyStatements,
       parameters,
     );
-    final headersData = _generateHeaders(headers, bodyStatements, parameters);
+    final headersData = _generateHeaders(
+      headers,
+      bodyStatements,
+      parameters,
+      operation,
+    );
 
     final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
       'method': literalString(methodString),
@@ -115,22 +120,144 @@ class OptionsGenerator {
     List<({String normalizedName, RequestHeaderObject parameter})> headers,
     List<Code> bodyStatements,
     List<Parameter> parameters,
+    Operation operation,
   ) {
-    if (headers.isEmpty) return null;
+    // Accept header logic
+    final hasAcceptHeader = headers.any(
+      (h) => h.parameter.rawName.toLowerCase() == 'accept',
+    );
+    final acceptHeader = headers
+        .cast<({String normalizedName, RequestHeaderObject parameter})?>()
+        .firstWhere(
+          (h) => h?.parameter.rawName.toLowerCase() == 'accept',
+          orElse: () => null,
+        );
+    String? acceptParamName;
+    var acceptIsRequired = false;
+    if (acceptHeader != null) {
+      acceptParamName = acceptHeader.normalizedName;
+      acceptIsRequired = acceptHeader.parameter.isRequired;
+    }
 
-    bodyStatements
-      ..add(
-        declareFinal('headers')
+    // Collect all unique response content types
+    final contentTypes = <String>{};
+
+    for (final response in operation.responses.values) {
+      if (response is ResponseObject) {
+        for (final body in response.bodies) {
+          contentTypes.add(body.rawContentType);
+        }
+      }
+    }
+
+    final acceptValue =
+        contentTypes.isNotEmpty ? contentTypes.join(',') : '*/*';
+
+    bodyStatements.add(
+      declareFinal('headers')
+          .assign(
+            literalMap(
+              {},
+              refer('String', 'dart:core'),
+              refer('dynamic', 'dart:core'),
+            ),
+          )
+          .statement,
+    );
+
+    // Accept header assignment
+    final hasUserHeaders = headers.any(
+      (h) => h.parameter.rawName.toLowerCase() != 'accept',
+    );
+    final needsHeaderEncoderForAccept = hasAcceptHeader;
+    final needsHeaderEncoder = hasUserHeaders || needsHeaderEncoderForAccept;
+
+    // For required Accept header, always assign using encoder
+    if (hasAcceptHeader && acceptIsRequired) {
+      if (needsHeaderEncoder) {
+        bodyStatements.add(
+          declareConst('headerEncoder')
+              .assign(
+                refer(
+                  'SimpleEncoder',
+                  'package:tonik_util/tonik_util.dart',
+                ).newInstance([]),
+              )
+              .statement,
+        );
+      }
+      bodyStatements.add(
+        refer('headers')
+            .index(literalString('Accept', raw: true))
             .assign(
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                refer('dynamic', 'dart:core'),
-              ),
+              refer('headerEncoder')
+                  .property('encode')
+                  .call(
+                    [refer(acceptParamName!)],
+                    {
+                      'explode': literalBool(acceptHeader!.parameter.explode),
+                      'allowEmpty': literalBool(
+                        acceptHeader.parameter.allowEmptyValue,
+                      ),
+                    },
+                  ),
             )
             .statement,
-      )
-      ..add(
+      );
+    } else if (hasAcceptHeader && !acceptIsRequired) {
+      if (needsHeaderEncoder) {
+        bodyStatements.add(
+          declareConst('headerEncoder')
+              .assign(
+                refer(
+                  'SimpleEncoder',
+                  'package:tonik_util/tonik_util.dart',
+                ).newInstance([]),
+              )
+              .statement,
+        );
+      }
+      bodyStatements
+        ..add(Code('if ($acceptParamName != null) {'))
+        ..add(
+          refer('headers')
+              .index(literalString('Accept', raw: true))
+              .assign(
+                refer('headerEncoder')
+                    .property('encode')
+                    .call(
+                      [refer(acceptParamName!)],
+                      {
+                        'explode': literalBool(acceptHeader!.parameter.explode),
+                        'allowEmpty': literalBool(
+                          acceptHeader.parameter.allowEmptyValue,
+                        ),
+                      },
+                    ),
+              )
+              .statement,
+        )
+        ..add(const Code('} else {'))
+        ..add(
+          refer('headers')
+              .index(literalString('Accept'))
+              .assign(literalString(acceptValue))
+              .statement,
+        )
+        ..add(const Code('}'));
+    } else {
+      // No Accept header param, just assign default
+      bodyStatements.add(
+        refer('headers')
+            .index(literalString('Accept'))
+            .assign(literalString(acceptValue))
+            .statement,
+      );
+    }
+
+    // Only add headerEncoder if there are user-defined headers (excluding Accept) or Accept needs encoding
+    if (hasUserHeaders && !(hasAcceptHeader && needsHeaderEncoderForAccept)) {
+      bodyStatements.add(
         declareConst('headerEncoder')
             .assign(
               refer(
@@ -140,8 +267,19 @@ class OptionsGenerator {
             )
             .statement,
       );
+    }
 
     for (final headerParam in headers) {
+      // Skip Accept header, already handled
+      if (headerParam.parameter.rawName.toLowerCase() == 'accept') {
+        parameters.add(
+          _generateHeaderParameter(
+            headerParam.normalizedName,
+            headerParam.parameter,
+          ),
+        );
+        continue;
+      }
       final paramName = headerParam.normalizedName;
       final resolvedParam = headerParam.parameter;
 
