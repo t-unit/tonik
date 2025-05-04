@@ -93,7 +93,7 @@ void main() {
             return switch (json) {
               String s => ResultSuccess(s),
               int s => ResultError(s),
-              _ => throw ArgumentError(
+              _ => throw JsonDecodingException(
                 'Invalid JSON type for Result: ${json.runtimeType}',
               ),
             };
@@ -204,7 +204,7 @@ void main() {
               return result;
             }
 
-            throw ArgumentError('Invalid JSON for Result');
+            throw JsonDecodingException('Invalid JSON for Result');
           }''';
 
         expect(
@@ -326,7 +326,7 @@ void main() {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
 
-            throw ArgumentError('Invalid JSON for Result');
+            throw JsonDecodingException('Invalid JSON for Result');
           }''';
 
         expect(

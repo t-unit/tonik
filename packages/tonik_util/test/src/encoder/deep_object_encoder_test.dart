@@ -10,7 +10,7 @@ void main() {
       final result = encoder.encode('filter', {
         'color': 'red',
         'size': 'large',
-      }, allowEmpty: true);
+      }, allowEmpty: true,);
 
       expect(result, [
         (name: 'filter[color]', value: 'red'),
@@ -22,7 +22,7 @@ void main() {
       final result = encoder.encode('filter', {
         'active': true,
         'premium': false,
-      }, allowEmpty: true);
+      }, allowEmpty: true,);
 
       expect(result, [
         (name: 'filter[active]', value: 'true'),
@@ -34,7 +34,7 @@ void main() {
       final result = encoder.encode('filter', {
         'color': null,
         'size': 'large',
-      }, allowEmpty: true);
+      }, allowEmpty: true,);
 
       expect(result, [
         (name: 'filter[color]', value: ''),
@@ -55,7 +55,7 @@ void main() {
     test('encodes nested objects', () {
       final result = encoder.encode('filter', {
         'product': {'color': 'blue', 'size': 'medium'},
-      }, allowEmpty: true);
+      }, allowEmpty: true,);
 
       expect(result, [
         (name: 'filter[product][color]', value: 'blue'),
@@ -68,7 +68,7 @@ void main() {
         'product': {
           'attributes': {'color': 'blue', 'size': 'medium'},
         },
-      }, allowEmpty: true);
+      }, allowEmpty: true,);
 
       expect(result, [
         (name: 'filter[product][attributes][color]', value: 'blue'),
@@ -80,7 +80,7 @@ void main() {
       expect(
         () => encoder.encode('filter', {
           'colors': ['red', 'blue', 'green'],
-        }, allowEmpty: true),
+        }, allowEmpty: true,),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -97,7 +97,7 @@ void main() {
       expect(
         () => encoder.encode('filter', {
           'sizes': {'small', 'medium', 'large'},
-        }, allowEmpty: true),
+        }, allowEmpty: true,),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -108,7 +108,7 @@ void main() {
         'age': 30,
         'active': true,
         'address': {'street': '123 Main St', 'city': 'New York'},
-      }, allowEmpty: true);
+      }, allowEmpty: true,);
 
       expect(result, [
         (name: 'params[name]', value: 'John'),
@@ -184,7 +184,7 @@ void main() {
           'emptyString': '',
           'emptyMap': <String, dynamic>{},
           'normalValue': 'test',
-        }, allowEmpty: true);
+        }, allowEmpty: true,);
 
         expect(result, [
           (name: 'filter[emptyString]', value: ''),
@@ -198,7 +198,7 @@ void main() {
           () => encoder.encode('filter', {
             'emptyString': '',
             'normalValue': 'test',
-          }, allowEmpty: false),
+          }, allowEmpty: false,),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -216,7 +216,7 @@ void main() {
           () => encoder.encode('filter', {
             'nested': <String, dynamic>{},
             'normalValue': 'test',
-          }, allowEmpty: false),
+          }, allowEmpty: false,),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -241,7 +241,7 @@ void main() {
         final result = encoder.encode('filter', {
           'string': 'value',
           'nested': {'inner': 'value'},
-        }, allowEmpty: false);
+        }, allowEmpty: false,);
 
         expect(result, [
           (name: 'filter[string]', value: 'value'),

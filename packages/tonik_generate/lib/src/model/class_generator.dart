@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -13,7 +14,6 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
-import 'package:collection/collection.dart';
 
 /// A generator for creating Dart class files from model definitions.
 @immutable
@@ -315,7 +315,7 @@ class ClassGenerator {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
     final invalidJsonError =
-        generateArgumentErrorExpression(
+        generateJsonDecodingExceptionExpression(
           'Invalid JSON for $className: \$json',
         ).statement;
 
@@ -374,7 +374,7 @@ class ClassGenerator {
         'got \${$localName}';
 
     final typeCheckError =
-        generateArgumentErrorExpression(errorMessage).statement;
+        generateJsonDecodingExceptionExpression(errorMessage).statement;
 
     const conditionEnd = Code(') {');
 

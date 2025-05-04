@@ -269,7 +269,7 @@ void main() {
           try {
             return TestOneOfTestClass(TestClass.fromJson(json));
           } on Object catch(_) {}
-          throw ArgumentError('Invalid JSON for TestOneOf');
+          throw JsonDecodingException('Invalid JSON for TestOneOf');
         }
       ''';
 

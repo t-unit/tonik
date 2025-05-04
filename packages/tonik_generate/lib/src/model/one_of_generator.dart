@@ -309,7 +309,7 @@ class OneOfGenerator {
 
       cases.addAll([
         const Code('_ => '),
-        generateArgumentErrorExpression(
+        generateJsonDecodingExceptionExpression(
           'Invalid JSON type for $className: \${json.runtimeType}',
         ).code,
         const Code(','),
@@ -366,7 +366,8 @@ class OneOfGenerator {
 
     // Throw if no match found.
     blocks.add(
-      generateArgumentErrorExpression('Invalid JSON for $className').statement,
+      generateJsonDecodingExceptionExpression('Invalid JSON for $className')
+          .statement,
     );
 
     return Block.of(blocks);

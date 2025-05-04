@@ -443,15 +443,17 @@ void main() {
         factory User.fromJson(dynamic json) {
           final map = json;
           if (map is! Map<String, dynamic>) {
-            throw ArgumentError('Invalid JSON for User: $json');
+            throw JsonDecodingException('Invalid JSON for User: $json');
           }
           final $name = map[r'name'];
           if ($name is! String) {
-            throw ArgumentError('Expected String for name of User, got ${$name}');
+            throw JsonDecodingException(
+              'Expected String for name of User, got ${$name}',
+            );
           }
           final $age = map[r'age'];
           if ($age is! int) {
-            throw ArgumentError('Expected int for age of User, got ${$age}');
+            throw JsonDecodingException('Expected int for age of User, got ${$age}');
           }
           return User(name: $name, age: $age);
         }
@@ -491,15 +493,19 @@ void main() {
         factory User.fromJson(dynamic json) {
           final map = json;
           if (map is! Map<String, dynamic>) {
-            throw ArgumentError('Invalid JSON for User: $json');
+            throw JsonDecodingException('Invalid JSON for User: $json');
           }
           final $name = map[r'name'];
           if ($name is! String) {
-            throw ArgumentError('Expected String for name of User, got ${$name}');
+            throw JsonDecodingException(
+              'Expected String for name of User, got ${$name}',
+            );
           }
           final $bio = map[r'bio'];
           if ($bio is! String?) {
-            throw ArgumentError('Expected String? for bio of User, got ${$bio}');
+            throw JsonDecodingException(
+              'Expected String? for bio of User, got ${$bio}',
+            );
           }
           return User(name: $name, bio: $bio);
         }
@@ -531,11 +537,13 @@ void main() {
         factory User.fromJson(dynamic json) {
           final map = json;
           if (map is! Map<String, dynamic>) {
-            throw ArgumentError('Invalid JSON for User: $json');
+            throw JsonDecodingException('Invalid JSON for User: $json');
           }
           final $name = map[r'name'];
           if ($name is! String?) {
-            throw ArgumentError('Expected String? for name of User, got ${$name}');
+            throw JsonDecodingException(
+              'Expected String? for name of User, got ${$name}',
+            );
           }
           return User(name: $name);
         }
@@ -574,17 +582,19 @@ void main() {
         factory User.fromJson(dynamic json) {
           final map = json;
           if (map is! Map<String, dynamic>) {
-            throw ArgumentError('Invalid JSON for User: $json');
+            throw JsonDecodingException('Invalid JSON for User: $json');
           }
           final $firstName = map[r'first-name'];
           if ($firstName is! String) {
-            throw ArgumentError(
+            throw JsonDecodingException(
               'Expected String for first-name of User, got ${$firstName}',
             );
           }
           final $id = map[r'_id'];
           if ($id is! String) {
-            throw ArgumentError('Expected String for _id of User, got ${$id}');
+            throw JsonDecodingException(
+              'Expected String for _id of User, got ${$id}',
+            );
           }
           return User(firstName: $firstName, id: $id);
         }
@@ -623,15 +633,19 @@ void main() {
         factory Test.fromJson(dynamic json) {
           final map = json;
           if (map is! Map<String, dynamic>) {
-            throw ArgumentError('Invalid JSON for Test: $json');
+            throw JsonDecodingException('Invalid JSON for Test: $json');
           }
           final $json = map[r'json'];
           if ($json is! String) {
-            throw ArgumentError('Expected String for json of Test, got ${$json}');
+            throw JsonDecodingException(
+              'Expected String for json of Test, got ${$json}',
+            );
           }
           final $map = map[r'map'];
           if ($map is! String) {
-            throw ArgumentError('Expected String for map of Test, got ${$map}');
+            throw JsonDecodingException(
+              'Expected String for map of Test, got ${$map}',
+            );
           }
           return Test(json: $json, map: $map);
         }
