@@ -255,7 +255,8 @@ class OptionsGenerator {
       );
     }
 
-    // Only add headerEncoder if there are user-defined headers (excluding Accept) or Accept needs encoding
+    // Only add headerEncoder if there are user-defined headers
+    // (excluding Accept) or Accept needs encoding
     if (hasUserHeaders && !(hasAcceptHeader && needsHeaderEncoderForAccept)) {
       bodyStatements.add(
         declareConst('headerEncoder')

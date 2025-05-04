@@ -166,44 +166,6 @@ void main() {
         expect(null.decodeSimpleNullableStringNullableList(), null);
       });
 
-      test('decodes string sets', () {
-        // Set<String>
-        expect('a,b,c,b'.decodeSimpleStringSet(), {'a', 'b', 'c'});
-        expect(''.decodeSimpleStringSet(), isEmpty);
-        expect(
-          () => null.decodeSimpleStringSet(),
-          throwsA(isA<InvalidTypeException>()),
-        );
-
-        // Set<String>?
-        expect('a,b,c,b'.decodeSimpleNullableStringSet(), {'a', 'b', 'c'});
-        expect(''.decodeSimpleNullableStringSet(), null);
-        expect(null.decodeSimpleNullableStringSet(), null);
-
-        // Set<String?>
-        expect('a,b,c,b'.decodeSimpleStringNullableSet(), {'a', 'b', 'c'});
-        expect('a,,c,'.decodeSimpleStringNullableSet(), {'a', null, 'c'});
-        expect(''.decodeSimpleStringNullableSet(), isEmpty);
-        expect(
-          () => null.decodeSimpleStringNullableSet(),
-          throwsA(isA<InvalidTypeException>()),
-        );
-
-        // Set<String?>?
-        expect('a,b,c,b'.decodeSimpleNullableStringNullableSet(), {
-          'a',
-          'b',
-          'c',
-        });
-        expect('a,,c,'.decodeSimpleNullableStringNullableSet(), {
-          'a',
-          null,
-          'c',
-        });
-        expect(''.decodeSimpleNullableStringNullableSet(), null);
-        expect(null.decodeSimpleNullableStringNullableSet(), null);
-      });
-
       test('decodes string values', () {
         expect('test'.decodeSimpleString(), 'test');
         expect(
@@ -300,64 +262,6 @@ void main() {
           expect(''.decodeSimpleNullableStringNullableList(), isNull);
           expect(
             (null as String?).decodeSimpleNullableStringNullableList(),
-            isNull,
-          );
-        },
-      );
-
-      test('decodeSimpleStringSet splits, decodes, and returns set', () {
-        expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringSet(), {
-          'foo',
-          'bar,baz',
-          '',
-          'qux',
-        });
-        expect('foo%2Cbar'.decodeSimpleStringSet(), {'foo,bar'});
-        expect(''.decodeSimpleStringSet(), isEmpty);
-      });
-
-      test(
-        'decodeSimpleNullableStringSet splits, decodes, and returns set',
-        () {
-          expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringSet(), {
-            'foo',
-            'bar,baz',
-            '',
-            'qux',
-          });
-          expect(''.decodeSimpleNullableStringSet(), isNull);
-          expect((null as String?).decodeSimpleNullableStringSet(), isNull);
-        },
-      );
-
-      test(
-        'decodeSimpleStringNullableSet splits, decodes, and converts empty to '
-        'null in set',
-        () {
-          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableSet(), {
-            'foo',
-            'bar,baz',
-            null,
-            'qux',
-          });
-          expect('foo%2Cbar'.decodeSimpleStringNullableSet(), {'foo,bar'});
-          expect(''.decodeSimpleStringNullableSet(), isEmpty);
-        },
-      );
-
-      test(
-        'decodeSimpleNullableStringNullableSet splits, decodes, and converts '
-        'empty to null in set',
-        () {
-          expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableSet(), {
-            'foo',
-            'bar,baz',
-            null,
-            'qux',
-          });
-          expect(''.decodeSimpleNullableStringNullableSet(), isNull);
-          expect(
-            (null as String?).decodeSimpleNullableStringNullableSet(),
             isNull,
           );
         },

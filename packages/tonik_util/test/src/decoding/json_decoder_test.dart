@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
@@ -55,6 +57,159 @@ void main() {
           throwsA(isA<InvalidTypeException>()),
         );
       });
+    });
+
+    group('String', () {
+      test('decodes String values', () {
+        expect('hello'.decodeJsonString(), 'hello');
+        expect(
+          () => 123.decodeJsonString(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeJsonString(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable String values', () {
+        expect('hello'.decodeJsonNullableString(), 'hello');
+        expect(null.decodeJsonNullableString(), isNull);
+        expect(''.decodeJsonNullableString(), '');
+        expect(
+          () => 123.decodeJsonNullableString(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
+
+    group('int', () {
+      test('decodes int values', () {
+        expect(42.decodeJsonInt(), 42);
+        expect((-7).decodeJsonInt(), -7);
+        expect(
+          () => 'foo'.decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable int values', () {
+        expect(42.decodeJsonNullableInt(), 42);
+        expect((-7).decodeJsonNullableInt(), -7);
+        expect(null.decodeJsonNullableInt(), isNull);
+        expect(
+          () => 'foo'.decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
+
+    group('num', () {
+      test('decodes num values', () {
+        expect(42.decodeJsonNum(), 42);
+        expect((-7.5).decodeJsonNum(), -7.5);
+        expect(3.14.decodeJsonNum(), 3.14);
+        expect(
+          () => 'foo'.decodeJsonNum(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeJsonNum(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable num values', () {
+        expect(42.decodeJsonNullableNum(), 42);
+        expect((-7.5).decodeJsonNullableNum(), -7.5);
+        expect(3.14.decodeJsonNullableNum(), 3.14);
+        expect(null.decodeJsonNullableNum(), isNull);
+        expect(
+          () => 'foo'.decodeJsonNullableNum(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
+
+    group('double', () {
+      test('decodes double values', () {
+        expect(3.14.decodeJsonDouble(), 3.14);
+        expect((-0.5).decodeJsonDouble(), -0.5);
+        expect(
+          () => 'foo'.decodeJsonDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeJsonDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable double values', () {
+        expect(3.14.decodeJsonNullableDouble(), 3.14);
+        expect((-0.5).decodeJsonNullableDouble(), -0.5);
+        expect(null.decodeJsonNullableDouble(), isNull);
+        expect(
+          () => 'foo'.decodeJsonNullableDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
+  });
+
+  group('List', () {
+    test('decodes int lists', () {
+      final json = jsonDecode('[1,2,3]') as Object?;
+      expect(json.decodeJsonList<int>(), [1, 2, 3]);
+    });
+
+    test('decodes string lists', () {
+      final json = jsonDecode('["foo","bar"]') as Object?;
+      expect(json.decodeJsonList<String>(), ['foo', 'bar']);
+    });
+
+    test('throws if the list is not a list', () {
+      final json = jsonDecode('{"foo":"bar"}') as Object?;
+      expect(
+        () => json.decodeJsonList<int>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws if the list is not a list of the expected type', () {
+      final json = jsonDecode('[1,2,3]') as Object?;
+      expect(
+        () => json.decodeJsonList<String>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws if the list is null', () {
+      final json = jsonDecode('null') as Object?;
+      expect(
+        () => json.decodeJsonList<int>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('decodes nested lists', () {
+      final json = jsonDecode('[[1,2],[3,4]]') as Object?;
+      expect(
+        json?.decodeJsonList<List<Object?>>(),
+        [
+          [1, 2],
+          [3, 4],
+        ],
+      );
+    });
+
+    test('decodes nullable lists', () {
+      final json = jsonDecode('null') as Object?;
+      expect(json.decodeJsonNullableList<int>(), isNull);
     });
   });
 }
