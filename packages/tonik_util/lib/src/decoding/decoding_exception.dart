@@ -49,3 +49,15 @@ class InvalidTypeException extends DecodingException {
   @override
   String toString() => 'InvalidTypeException: $message';
 }
+
+/// Exception thrown when a value cannot be decoded using fromSimple.
+class SimpleDecodingException extends DecodingException {
+  /// Creates a new [SimpleDecodingException] with the specified [message].
+  const SimpleDecodingException(super.message);
+}
+
+/// Exception thrown when a value cannot be decoded using fromJson.
+class JsonDecodingException extends DecodingException {
+  /// Creates a new [JsonDecodingException] with the specified [message].
+  const JsonDecodingException(super.message);
+}

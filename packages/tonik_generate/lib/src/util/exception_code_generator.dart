@@ -1,5 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 
+
+
 /// Generates a throw expression for ArgumentError.
 Expression generateArgumentErrorExpression(String message) {
   return _generateExceptionExpression('ArgumentError', message);
@@ -15,7 +17,20 @@ Expression generateUnimplementedErrorExpression(String message) {
   return _generateExceptionExpression('UnimplementedError', message);
 }
 
-/// Base function to generate a throw expression for any exception type.
-Expression _generateExceptionExpression(String type, String message) {
-  return refer(type, 'dart:core').call([literalString(message)]).thrown;
+/// Generates a throw expression for SimpleDecodingException.
+Expression generateSimpleDecodingExceptionExpression(String message) {
+  return _generateExceptionExpression(
+    'SimpleDecodingException',
+    message,
+    importUrl: 'package:tonik_util/tonik_util.dart',
+  );
+}
+
+Expression _generateExceptionExpression(
+  String type,
+  String message, {
+  String importUrl = 'dart:core',
+}) {
+  final ref = refer(type, importUrl);
+  return ref.call([literalString(message)]).thrown;
 }

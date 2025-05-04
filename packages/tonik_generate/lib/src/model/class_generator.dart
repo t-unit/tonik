@@ -13,6 +13,7 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:collection/collection.dart';
 
 /// A generator for creating Dart class files from model definitions.
 @immutable
@@ -60,6 +61,30 @@ class ClassGenerator {
       return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
     });
 
+    // Only add fromSimple if all properties are supported
+    bool isPrimitiveOrSupportedEnumOrOneOf(Model m) {
+      var target = m;
+      while (target is AliasModel) {
+        target = target.model;
+      }
+      if (target is PrimitiveModel) return true;
+      if (target is EnumModel) return true;
+      if (target is OneOfModel) {
+        return target.models.every(
+          (dm) => isPrimitiveOrSupportedEnumOrOneOf(dm.model),
+        );
+      }
+      return false;
+    }
+
+    final unsupported = normalizedProperties.firstWhereOrNull(
+      (prop) => !isPrimitiveOrSupportedEnumOrOneOf(prop.property.model),
+    );
+    final fromSimpleCtor =
+        unsupported == null
+            ? _buildFromSimpleConstructor(className, model)
+            : null;
+
     return Class(
       (b) =>
           b
@@ -83,6 +108,7 @@ class ClassGenerator {
                         ),
                       ),
               ),
+              if (fromSimpleCtor != null) fromSimpleCtor,
               _buildFromJsonConstructor(className, model),
             ])
             ..methods.addAll([
@@ -148,6 +174,123 @@ class ClassGenerator {
                 ),
               )
               .toList(),
+    );
+  }
+
+  Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
+    final normalizedProperties = normalizeProperties(model.properties.toList());
+    final propertyAssignments = <MapEntry<String, Expression>>[];
+    for (var i = 0; i < normalizedProperties.length; i++) {
+      final prop = normalizedProperties[i];
+      final name = prop.normalizedName;
+      var modelType = prop.property.model;
+
+      // Track the outermost alias (if any)
+      String? aliasName;
+      var aliasType = prop.property.model;
+      while (aliasType is AliasModel) {
+        aliasName = nameManager.modelName(aliasType);
+        aliasType = aliasType.model;
+      }
+
+      // Unwrap aliases recursively for code generation
+      while (modelType is AliasModel) {
+        modelType = modelType.model;
+      }
+      final isNullable = prop.property.isNullable;
+      Expression decodeExpr;
+      if (modelType is IntegerModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable ? 'decodeSimpleNullableInt' : 'decodeSimpleInt',
+            )
+            .call([]);
+      } else if (modelType is DoubleModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable ? 'decodeSimpleNullableDouble' : 'decodeSimpleDouble',
+            )
+            .call([]);
+      } else if (modelType is BooleanModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable ? 'decodeSimpleNullableBool' : 'decodeSimpleBool',
+            )
+            .call([]);
+      } else if (modelType is DateTimeModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable
+                  ? 'decodeSimpleNullableDateTime'
+                  : 'decodeSimpleDateTime',
+            )
+            .call([]);
+      } else if (modelType is DateModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable ? 'decodeSimpleNullableString' : 'decodeSimpleString',
+            )
+            .call([]);
+      } else if (modelType is DecimalModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable
+                  ? 'decodeSimpleNullableBigDecimal'
+                  : 'decodeSimpleBigDecimal',
+            )
+            .call([]);
+      } else if (modelType is StringModel) {
+        decodeExpr = refer('properties[$i]')
+            .property(
+              isNullable ? 'decodeSimpleNullableString' : 'decodeSimpleString',
+            )
+            .call([]);
+      } else if (modelType is EnumModel) {
+        final typeName = aliasName ?? nameManager.modelName(modelType);
+        decodeExpr = refer(
+          typeName,
+          package,
+        ).property('fromSimple').call([refer('properties[$i]')]);
+      } else if (modelType is OneOfModel) {
+        final typeName = aliasName ?? nameManager.modelName(modelType);
+        decodeExpr = refer(
+          typeName,
+          package,
+        ).property('fromJson').call([refer('properties[$i]')]);
+      } else {
+        decodeExpr = refer('properties[$i]');
+      }
+      propertyAssignments.add(MapEntry(name, decodeExpr));
+    }
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromSimple'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..body = Block.of([
+              const Code('final properties = value.decodeSimpleStringList();'),
+              Code('if (properties.length < ${normalizedProperties.length}) {'),
+              generateSimpleDecodingExceptionExpression(
+                'Invalid value for $className: \$value',
+              ).statement,
+              const Code('}'),
+              refer(className, package)
+                  .call([], {
+                    for (final entry in propertyAssignments)
+                      entry.key: entry.value,
+                  })
+                  .returned
+                  .statement,
+            ]),
     );
   }
 
