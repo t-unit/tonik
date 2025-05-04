@@ -68,10 +68,9 @@ void main() {
               );
             }
 
-            final Response<dynamic> response;
-
+            final Response<dynamic> _$response;
             try {
-              response = await _dio.requestUri<dynamic>(
+              _$response = await _dio.requestUri<dynamic>(
                 _$uri,
                 data: _$data,
                 options: _$options,
@@ -85,7 +84,7 @@ void main() {
               );
             }
 
-            return TonikSuccess(null, response);
+            return TonikSuccess(null, _$response);
           }
         ''';
 
@@ -166,10 +165,9 @@ void main() {
               );
             }
 
-            final Response<dynamic> response;
-
+            final Response<dynamic> _$response;
             try {
-              response = await _dio.requestUri<dynamic>(
+              _$response = await _dio.requestUri<dynamic>(
                 _$uri,
                 data: _$data,
                 options: _$options,
@@ -183,7 +181,7 @@ void main() {
               );
             }
 
-            return TonikSuccess(null, response);
+            return TonikSuccess(null, _$response);
           }
         ''';
 
@@ -258,10 +256,9 @@ void main() {
               );
             }
 
-            final Response<dynamic> response;
-
+            final Response<dynamic> _$response;
             try {
-              response = await _dio.requestUri<dynamic>(
+              _$response = await _dio.requestUri<dynamic>(
                 _$uri,
                 data: _$data,
                 options: _$options,
@@ -275,7 +272,7 @@ void main() {
               );
             }
 
-            return TonikSuccess(null, response);
+            return TonikSuccess(null, _$response);
           }
         ''';
 
@@ -365,10 +362,9 @@ void main() {
               );
             }
 
-            final Response<dynamic> response;
-
+            final Response<dynamic> _$response;
             try {
-              response = await _dio.requestUri<dynamic>(
+              _$response = await _dio.requestUri<dynamic>(
                 _$uri,
                 data: _$data,
                 options: _$options,
@@ -382,7 +378,7 @@ void main() {
               );
             }
 
-            return TonikSuccess(null, response);
+            return TonikSuccess(null, _$response);
           }
         ''';
 
@@ -480,10 +476,9 @@ void main() {
               );
             }
 
-            final Response<dynamic> response;
-
+            final Response<dynamic> _$response;
             try {
-              response = await _dio.requestUri<dynamic>(
+              _$response = await _dio.requestUri<dynamic>(
                 _$uri,
                 data: _$data,
                 options: _$options,
@@ -497,7 +492,7 @@ void main() {
               );
             }
 
-            return TonikSuccess(null, response);
+            return TonikSuccess(null, _$response);
           }
         ''';
 
@@ -798,6 +793,181 @@ void main() {
           expect(pathBodyParam.required, isTrue);
         },
       );
+
+      test('generates call method with parsing and error handling for '
+          'non-void return', () {
+        final operation = Operation(
+          operationId: 'parseTest',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/parse',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          requestBody: null,
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: 'ParseResponse',
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+        );
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+        const expectedMethod = r'''
+          Future<TonikResult<String>> call() async {
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
+
+            try {
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
+              _$data = _data();
+              _$options = _options();
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.encoding,
+                response: null,
+              );
+            }
+
+            final Response<dynamic> _$response;
+            try {
+              _$response = await _dio.requestUri<dynamic>(
+                _$uri,
+                data: _$data,
+                options: _$options,
+              );
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.network,
+                response: null,
+              );
+            }
+
+            final String _$parsedResponse;
+            try {
+              _$parsedResponse = _parseResponse(_$response);
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.decoding,
+                response: _$response,
+              );
+            }
+
+            return TonikSuccess(_$parsedResponse, _$response);
+          }
+        ''';
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      });
+
+      test('generates call method without parsing for void return', () {
+        final operation = Operation(
+          operationId: 'voidParseTest',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/void-parse',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          requestBody: null,
+          responses: {
+            const ExplicitResponseStatus(statusCode: 204): ResponseObject(
+              name: 'NoContent',
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: const {},
+            ),
+          },
+        );
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+        const expectedMethod = r'''
+          Future<TonikResult<void>> call() async {
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
+
+            try {
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
+              _$data = _data();
+              _$options = _options();
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.encoding,
+                response: null,
+              );
+            }
+
+            final Response<dynamic> _$response;
+            try {
+              _$response = await _dio.requestUri<dynamic>(
+                _$uri,
+                data: _$data,
+                options: _$options,
+              );
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.network,
+                response: null,
+              );
+            }
+
+            return TonikSuccess(null, _$response);
+          }
+        ''';
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      });
     });
 
     group('generateCallableOperation', () {
