@@ -37,6 +37,7 @@ This package aims to overcome these shortcomings.
 - Full decoding and encoding support for all of, any of and one of
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
 - Annotate deprecated fields methods and classes.
+- Respect `nullable` property on schema objects
 
 ### Long term goals
 - Supporting the `not` keyword

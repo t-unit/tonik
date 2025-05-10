@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/operation/data_generator.dart';
 import 'package:tonik_generate/src/operation/options_generator.dart';
+import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
@@ -32,6 +33,10 @@ class OperationGenerator {
       _dataGenerator = DataGenerator(
         nameManager: nameManager,
         package: package,
+      ),
+      _parseGenerator = ParseGenerator(
+        nameManager: nameManager,
+        package: package,
       );
 
   final NameManager nameManager;
@@ -41,6 +46,7 @@ class OperationGenerator {
   final QueryGenerator _queryParametersGenerator;
   final PathGenerator _pathGenerator;
   final DataGenerator _dataGenerator;
+  final ParseGenerator _parseGenerator;
 
   ({String code, String filename}) generateCallableOperation(
     Operation operation,
@@ -124,6 +130,10 @@ class OperationGenerator {
               _optionsGenerator.generateOptionsMethod(
                 operation,
                 normalizedParams.headers,
+              ),
+              _parseGenerator.generateParseResponseMethod(
+                operation,
+                _resultTypeForOperation(operation).types.first,
               ),
             ]),
     );

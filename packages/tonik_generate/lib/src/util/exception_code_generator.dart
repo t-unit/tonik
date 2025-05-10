@@ -35,6 +35,15 @@ Expression generateJsonDecodingExceptionExpression(String message) {
   );
 }
 
+/// Generates a throw expression for DecodingException.
+Expression generateDecodingExceptionExpression(String message) {
+  return _generateExceptionExpression(
+    'DecodingException',
+    message,
+    importUrl: 'package:tonik_util/tonik_util.dart',
+  );
+}
+
 Expression _generateExceptionExpression(
   String type,
   String message, {
