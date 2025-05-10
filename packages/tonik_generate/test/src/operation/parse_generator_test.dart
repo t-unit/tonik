@@ -69,7 +69,7 @@ void main() {
         responseType,
       );
       const expectedMethod = r'''
-String _parseResponse(Response response) {
+String _parseResponse(Response<Object?> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, 'application/json'):
       return response.data.decodeJsonString();
@@ -127,7 +127,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        Anonymous _parseResponse(Response response) {
+        Anonymous _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return Anonymous.fromJson(response.data);
@@ -193,7 +193,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        User _parseResponse(Response response) {
+        User _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return User.fromJson(response.data);
@@ -254,7 +254,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        List<int> _parseResponse(Response response) {
+        List<int> _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return response.data.decodeJsonList<int>();
@@ -325,7 +325,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        List<User> _parseResponse(Response response) {
+        List<User> _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return response.data.decodeJsonList<Object?>()
@@ -403,7 +403,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        Pet _parseResponse(Response response) {
+        Pet _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return Pet.fromJson(response.data);
@@ -456,7 +456,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        String _parseResponse(Response response) {
+        String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (var status, 'application/json') when status >= 200 && status <= 299:
               return response.data.decodeJsonString();
@@ -509,7 +509,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        String _parseResponse(Response response) {
+        String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (_, 'application/json'):
               return response.data.decodeJsonString();
@@ -583,7 +583,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        MyResponseWrapper _parseResponse(Response response) {
+        MyResponseWrapper _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return MultiStatusOpResponse200(body: User.fromJson(response.data));
@@ -674,7 +674,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        MyResponseWrapper _parseResponse(Response response) {
+        MyResponseWrapper _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return Anonymous(
@@ -781,7 +781,7 @@ String _parseResponse(Response response) {
         responseType,
       );
       const expectedMethod = r'''
-        CombinedOpResponseWrapper _parseResponse(Response response) {
+        CombinedOpResponseWrapper _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return CombinedOpResponse200(

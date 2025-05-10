@@ -75,7 +75,12 @@ class ParseGenerator {
                 (b) =>
                     b
                       ..name = 'response'
-                      ..type = refer('Response', 'package:dio/dio.dart'),
+                      ..type = TypeReference(
+                        (b) => b
+                          ..symbol = 'Response'
+                          ..url = 'package:dio/dio.dart'
+                         ..types.add(refer('Object?', 'dart:core')),
+                      ),
               ),
             )
             ..lambda = false
