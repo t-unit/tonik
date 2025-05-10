@@ -262,7 +262,7 @@ void main() {
             if (properties.length < 1) {
               throw SimpleDecodingException('Invalid value for Container: $value');
             }
-            return Container(value: PrimitiveOneOf.fromJson(properties[0]));
+            return Container(value: PrimitiveOneOf.fromSimple(properties[0]));
           }
         ''';
         expect(
@@ -384,7 +384,7 @@ void main() {
           if (properties.length < 1) {
             throw SimpleDecodingException('Invalid value for AliasHolder: $value');
           }
-          return AliasHolder(value: MyAlias.fromJson(properties[0]));
+          return AliasHolder(value: PrimitiveOneOf.fromSimple(properties[0]));
         }
       ''';
       expect(

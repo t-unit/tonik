@@ -183,7 +183,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<Object?>().map((e) => User.fromJson(e)).toList()',
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => User.fromJson(e)).toList()',
         ),
       );
 
@@ -200,7 +201,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<Object?>().map((e) => User.fromJson(e)).toList()',
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => User.fromJson(e)).toList()',
         ),
       );
     });
@@ -283,7 +285,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<String>().map((e) => e.decodeJsonDate()).toList()',
+          'value.decodeJsonList<String>()'
+          '.map((e) => e.decodeJsonDate()).toList()',
         ),
       );
 
@@ -300,7 +303,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<String>().map((e) => e.decodeJsonDateTime()).toList()',
+          'value.decodeJsonList<String>()'
+          '.map((e) => e.decodeJsonDateTime()).toList()',
         ),
       );
 
@@ -317,7 +321,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<String>().map((e) => e.decodeJsonBigDecimal()).toList()',
+          'value.decodeJsonList<String>()'
+          '.map((e) => e.decodeJsonBigDecimal()).toList()',
         ),
       );
     });
@@ -337,7 +342,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<Object?>().map((e) => User.fromJson(e)).toList()',
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => User.fromJson(e)).toList()',
         ),
       );
     });
@@ -416,7 +422,8 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<Object?>().map((e) => UserRole.fromJson(e)).toList()',
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => UserRole.fromJson(e)).toList()',
         ),
       );
     });

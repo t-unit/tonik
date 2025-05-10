@@ -4,7 +4,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
-import 'package:tonik_generate/src/util/form_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 
 class ParseGenerator {
   const ParseGenerator({required this.nameManager, required this.package});
@@ -57,7 +57,8 @@ class ParseGenerator {
 
     final switchBody = Block.of([
       const Code(
-        "switch ((response.statusCode, response.headers.value('content-type'))) {",
+        'switch ((response.statusCode, '
+        "response.headers.value('content-type'))) {",
       ),
       ...cases,
       defaultCase,
@@ -123,7 +124,7 @@ class ParseGenerator {
     final headerAssignments =
         hasHeaders && response is ResponseObject
             ? _decodeHeaders(response.headers)
-            : Code('');
+            : const Code('');
 
     if (isMulti) {
       if (hasHeaders || response.bodyCount > 1) {
@@ -208,11 +209,16 @@ class ParseGenerator {
       final name = norm.property.name;
       final normalizedName = norm.normalizedName;
       final header = headers[name] as ResponseHeaderObject;
-      final decode = buildFormSimpleValueExpression(
-        header,
+      final headerValue = refer('response')
+          .property('headers')
+          .property('value')
+          .call([literalString(name, raw: true)]);
+      final decode = buildSimpleValueExpression(
+        headerValue,
+        model: header.model,
+        isRequired: header.isRequired,
         nameManager: nameManager,
         package: package,
-        headerName: name,
       );
       assignments.add(
         Block.of([Code('$normalizedName: '), decode.code, const Code(',')]),
