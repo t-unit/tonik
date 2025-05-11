@@ -4,12 +4,12 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart sealed classes and typedefs
@@ -71,16 +71,7 @@ class ResponseGenerator {
   @visibleForTesting
   Class generateResponseClass(ResponseObject response) {
     final className = nameManager.responseName(response);
-    final properties = _buildNormalizedAndSortedProperties(
-      headers: response.headers,
-      bodyProperty: Property(
-        name: 'body',
-        model: response.bodies.first.model,
-        isRequired: true,
-        isNullable: false,
-        isDeprecated: false,
-      ),
-    );
+    final properties = normalizeResponseProperties(response);
 
     final equalsMethod = generateEqualsMethod(
       className: className,
@@ -168,47 +159,10 @@ class ResponseGenerator {
     );
   }
 
-  List<({String normalizedName, Property property})>
-  _buildNormalizedAndSortedProperties({
-    required Map<String, ResponseHeader> headers,
-    Property? bodyProperty,
-  }) {
-    final headerProperties = headers.entries.map(
-      (header) => Property(
-        name:
-            header.key.toLowerCase() == 'body'
-                ? '${header.key}Header'
-                : header.key,
-        model: header.value.resolve(name: header.key).model,
-        isRequired: header.value.resolve(name: header.key).isRequired,
-        isNullable: false,
-        isDeprecated: header.value.resolve(name: header.key).isDeprecated,
-      ),
-    );
-
-    final properties = <Property>[
-      ...headerProperties,
-      if (bodyProperty != null) bodyProperty,
-    ];
-
-    final normalizedProperties = normalizeProperties(properties);
-
-    return [...normalizedProperties]..sort((a, b) {
-      // Required fields come before non-required fields
-      if (a.property.isRequired != b.property.isRequired) {
-        return a.property.isRequired ? -1 : 1;
-      }
-      // Keep original order for fields with same required status
-      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
-    });
-  }
-
   @visibleForTesting
   List<Class> generateMultiBodyResponseClasses(ResponseObject response) {
     final className = nameManager.responseName(response);
-    final normalizedBaseProperties = _buildNormalizedAndSortedProperties(
-      headers: response.headers,
-    );
+    final normalizedBaseProperties = normalizeResponseProperties(response);
 
     // Create base sealed class
     final baseClass = Class(
@@ -257,20 +211,25 @@ class ResponseGenerator {
     // Create implementation classes for each body type
     final implementationClasses =
         response.bodies.map((body) {
-          final implementationName = _generateImplementationName(
-            className,
+          final implementationName = nameManager.responseImplementationName(
+            response,
             body,
           );
 
           // Create properties for equals and hashCode methods
-          final allProperties = _buildNormalizedAndSortedProperties(
-            headers: response.headers,
-            bodyProperty: Property(
-              name: 'body',
-              model: body.model,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+          final allProperties = normalizeResponseProperties(
+            ResponseObject(
+              name: null,
+              context: response.context,
+              headers: response.headers,
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: body.model,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
             ),
           );
 
@@ -375,11 +334,5 @@ class ResponseGenerator {
         }).toList();
 
     return [baseClass, ...implementationClasses];
-  }
-
-  String _generateImplementationName(String baseName, ResponseBody body) {
-    final contentType =
-        body.rawContentType.split('/').lastOrNull?.toPascalCase();
-    return '$baseName${contentType ?? ''}';
   }
 }

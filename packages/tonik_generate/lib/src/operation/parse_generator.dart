@@ -1,10 +1,10 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 
 class ParseGenerator {
   const ParseGenerator({required this.nameManager, required this.package});
@@ -23,19 +23,16 @@ class ParseGenerator {
     for (final entry in responses.entries) {
       final status = entry.key;
       final response = entry.value;
-      final contentTypes = <String?>{};
+      final contentTypes = _getContentTypes(response);
 
-      if (response is ResponseObject) {
-        for (final body in response.bodies) {
-          contentTypes.add(body.rawContentType);
-        }
-      }
-      if (contentTypes.isEmpty) {
-        contentTypes.add(null);
-      }
       for (final contentType in contentTypes) {
         final casePattern = _casePattern(status, contentType);
-        final caseBody = _caseBody(operation, status, response, contentType);
+        final caseBody = _caseBody(
+          operation,
+          status,
+          response.resolved,
+          contentType,
+        );
         cases
           ..add(casePattern)
           ..add(caseBody);
@@ -76,10 +73,11 @@ class ParseGenerator {
                     b
                       ..name = 'response'
                       ..type = TypeReference(
-                        (b) => b
-                          ..symbol = 'Response'
-                          ..url = 'package:dio/dio.dart'
-                         ..types.add(refer('Object?', 'dart:core')),
+                        (b) =>
+                            b
+                              ..symbol = 'Response'
+                              ..url = 'package:dio/dio.dart'
+                              ..types.add(refer('Object?', 'dart:core')),
                       ),
               ),
             )
@@ -106,70 +104,73 @@ class ParseGenerator {
   Code _caseBody(
     Operation operation,
     ResponseStatus status,
-    Response response,
+    ResponseObject response,
     String? contentType,
   ) {
     final isMulti = operation.responses.length > 1;
-    final wrapperName =
-        isMulti ? nameManager.responseWrapperNames(operation).$2[status] : null;
-    final hasHeaders = response.hasHeaders;
     final hasBody = response.bodyCount > 0;
-    final responseClassName =
-        hasHeaders || response.bodyCount > 1
-            ? nameManager.responseName(response.resolved)
-            : null;
-    final bodyModel =
-        hasBody && response is ResponseObject
-            ? response.bodies.first.model
-            : null;
+    final bodyModel = response.bodies.firstOrNull?.model;
+
     final bodyDecode =
         hasBody && bodyModel != null
             ? _decodeBody('response.data', bodyModel, nameManager)
             : null;
-    final headerAssignments =
-        hasHeaders && response is ResponseObject
-            ? _decodeHeaders(response.headers)
-            : const Code('');
 
     if (isMulti) {
-      if (hasHeaders || response.bodyCount > 1) {
+      final wrapperName =
+          nameManager.responseWrapperNames(operation).$2[status]!;
+
+      if (response.hasHeaders || response.bodyCount > 1) {
         // Wrapper subclass with response class
+        final responseArgs = <String, Expression>{};
+        if (bodyDecode != null) {
+          responseArgs['body'] = bodyDecode;
+        }
+        responseArgs.addAll(_decodeHeaders(response));
+
+        final wrapperArgs = <String, Expression>{
+          'body': refer(
+            nameManager.responseName(response.resolved),
+            package,
+          ).call([], responseArgs),
+        };
+
         return Block.of([
-          Code('return $wrapperName('),
-          Code('body: $responseClassName('),
-          if (bodyDecode != null) ...[
-            const Code('body: '),
-            bodyDecode.code,
-            const Code(','),
-          ],
-          headerAssignments,
-          const Code('),'),
-          const Code(');'),
+          const Code('return '),
+          refer(wrapperName, package).call([], wrapperArgs).code,
+          const Code(';'),
         ]);
       } else if (hasBody && bodyDecode != null) {
         // Wrapper subclass with direct body
         return Block.of([
-          Code('return $wrapperName('),
-          const Code('body: '),
-          bodyDecode.code,
-          const Code(');'),
+          const Code('return '),
+          refer(wrapperName, package).call([], {'body': bodyDecode}).code,
+          const Code(';'),
         ]);
       } else {
         // Wrapper subclass with no body
-        return Code('return const $wrapperName();');
+        return Block.of([
+          const Code('return const '),
+          refer(wrapperName, package).call([]).code,
+          const Code(';'),
+        ]);
       }
     } else {
-      if (hasHeaders || response.bodyCount > 1) {
+      if (response.hasHeaders || response.bodyCount > 1) {
         // Just response class
+        final args = <String, Expression>{};
+        if (bodyDecode != null) {
+          args['body'] = bodyDecode;
+        }
+        args.addAll(_decodeHeaders(response));
+
         return Block.of([
-          Code('return $responseClassName('),
-          if (bodyDecode != null) ...[
-            const Code('body: '),
-            bodyDecode.code,
-            const Code(','),
-          ],
-          headerAssignments,
-          const Code(');'),
+          const Code('return '),
+          refer(
+            nameManager.responseName(response.resolved),
+            package,
+          ).call([], args).code,
+          const Code(';'),
         ]);
       } else if (hasBody && bodyDecode != null) {
         // Just body
@@ -180,7 +181,7 @@ class ParseGenerator {
         ]);
       } else {
         // No body
-        return const Code('return null;');
+        return const Code('return;');
       }
     }
   }
@@ -194,41 +195,48 @@ class ParseGenerator {
     );
   }
 
-  Code _decodeHeaders(Map<String, ResponseHeader> headers) {
-    final assignments = <Code>[];
-    final properties =
-        headers.entries
-            .map(
-              (entry) => Property(
-                name: entry.key,
-                model: (entry.value as ResponseHeaderObject).model,
-                isRequired: (entry.value as ResponseHeaderObject).isRequired,
-                isNullable: false,
-                isDeprecated:
-                    (entry.value as ResponseHeaderObject).isDeprecated,
-              ),
-            )
-            .toList();
-    final normalized = normalizeProperties(properties);
-    for (final norm in normalized) {
-      final name = norm.property.name;
+  Map<String, Expression> _decodeHeaders(ResponseObject response) {
+    final assignments = <String, Expression>{};
+    final normalizedProperties = normalizeResponseProperties(response);
+    final normalizedHeaders = normalizedProperties.where(
+      (norm) => norm.property.name != 'body',
+    );
+
+    for (final norm in normalizedHeaders) {
+      final rawHeaderName =
+          response.headers.entries
+              .firstWhere((entry) => entry.value == norm.header)
+              .key;
+
       final normalizedName = norm.normalizedName;
-      final header = headers[name] as ResponseHeaderObject;
       final headerValue = refer('response')
           .property('headers')
           .property('value')
-          .call([literalString(name, raw: true)]);
+          .call([literalString(rawHeaderName, raw: true)]);
       final decode = buildSimpleValueExpression(
         headerValue,
-        model: header.model,
-        isRequired: header.isRequired,
+        model: norm.property.model,
+        isRequired: norm.property.isRequired,
         nameManager: nameManager,
         package: package,
       );
-      assignments.add(
-        Block.of([Code('$normalizedName: '), decode.code, const Code(',')]),
-      );
+      assignments[normalizedName] = decode;
     }
-    return Block.of(assignments);
+    return assignments;
+  }
+
+  Set<String?> _getContentTypes(Response response) {
+    final contentTypes = <String?>{};
+    final resolvedResponse = response.resolved;
+
+    for (final body in resolvedResponse.bodies) {
+      contentTypes.add(body.rawContentType);
+    }
+
+    if (contentTypes.isEmpty) {
+      contentTypes.add(null);
+    }
+
+    return contentTypes;
   }
 }

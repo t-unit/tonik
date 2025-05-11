@@ -5,6 +5,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 
 void main() {
   group('ParseGenerator', () {
@@ -15,6 +16,8 @@ void main() {
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
+    late CorePrefixedAllocator scopedAllocator;
+    late DartEmitter scopedEmitter;
 
     final format =
         DartFormatter(
@@ -24,13 +27,15 @@ void main() {
     setUp(() {
       nameGenerator = NameGenerator();
       nameManager = NameManager(generator: nameGenerator);
-      generator = ParseGenerator(
-        nameManager: nameManager,
-        package: package,
-      );
+      generator = ParseGenerator(nameManager: nameManager, package: package);
 
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
+      scopedAllocator = CorePrefixedAllocator();
+      scopedEmitter = DartEmitter(
+        useNullSafetySyntax: true,
+        allocator: scopedAllocator,
+      );
     });
 
     test('generates for primitive response', () {
@@ -809,6 +814,321 @@ String _parseResponse(Response<Object?> response) {
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
       );
+    });
+
+    test('generates for response with alias', () {
+      const wrapperClass = 'AliasResponseWrapper';
+      final classModel = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      // Create the base response object
+      final baseResponse = ResponseObject(
+        name: 'BaseResponse',
+        context: context,
+        description: 'Base response with headers',
+        headers: {
+          'x-user-id': ResponseHeaderObject(
+            name: 'x-user-id',
+            context: context,
+            description: 'User ID header',
+            model: StringModel(context: context),
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            encoding: ResponseHeaderEncoding.simple,
+          ),
+        },
+        bodies: {
+          ResponseBody(
+            model: classModel,
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      // Create an alias for the base response
+      final aliasedResponse = ResponseAlias(
+        name: 'AliasedResponse',
+        context: context,
+        response: baseResponse,
+      );
+
+      final operation = Operation(
+        operationId: 'aliasOp',
+        context: context,
+        summary: 'Get user with alias',
+        description: 'Get user by ID using aliased response',
+        tags: {const Tag(name: 'users')},
+        isDeprecated: false,
+        path: '/users/{id}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBody: null,
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): aliasedResponse,
+        },
+      );
+
+      final responseType = refer(wrapperClass);
+      final method = generator.generateParseResponseMethod(
+        operation,
+        responseType,
+      );
+
+      const expectedMethod = r'''
+        AliasResponseWrapper _parseResponse(Response<Object?> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              return BaseResponse(
+                body: User.fromJson(response.data),
+                xUserId: response.headers.value(r'x-user-id').decodeSimpleString(),
+              );
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw DecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('generates for response with header alias', () {
+      final classModel = ClassModel(
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+
+      // The actual header object
+      final headerObject = ResponseHeaderObject(
+        name: 'x-user-id',
+        context: context,
+        description: 'User ID header',
+        model: StringModel(context: context),
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        encoding: ResponseHeaderEncoding.simple,
+      );
+
+      // The alias header
+      final headerAlias = ResponseHeaderAlias(
+        name: 'x-user-id-alias',
+        context: context,
+        header: headerObject,
+      );
+
+      final response = ResponseObject(
+        name: 'HeaderAliasResponse',
+        context: context,
+        description: 'Response with header alias',
+        headers: {
+          'x-user-id': headerAlias,
+        },
+        bodies: {
+          ResponseBody(
+            model: classModel,
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'headerAliasOp',
+        context: context,
+        summary: 'Get user with header alias',
+        description: 'Get user by ID using header alias',
+        tags: {const Tag(name: 'users')},
+        isDeprecated: false,
+        path: '/users/{id}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBody: null,
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): response,
+        },
+      );
+
+      final responseType = refer('HeaderAliasResponseWrapper');
+      final method = generator.generateParseResponseMethod(
+        operation,
+        responseType,
+      );
+
+      const expectedMethod = r'''
+        HeaderAliasResponseWrapper _parseResponse(Response<Object?> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              return HeaderAliasResponse(
+                body: User.fromJson(response.data),
+                xUserId: response.headers.value(r'x-user-id').decodeSimpleString(),
+              );
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw DecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('generates for response with header named body', () {
+      final classModel = ClassModel(
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+
+      final response = ResponseObject(
+        name: 'BodyHeaderResponse',
+        context: context,
+        description: 'Response with header named body',
+        headers: {
+          'body': ResponseHeaderObject(
+            name: 'body',
+            context: context,
+            description: 'Body header',
+            model: StringModel(context: context),
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            encoding: ResponseHeaderEncoding.simple,
+          ),
+        },
+        bodies: {
+          ResponseBody(
+            model: classModel,
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'bodyHeaderOp',
+        context: context,
+        summary: 'Get user with body header',
+        description: 'Get user by ID with body header',
+        tags: {const Tag(name: 'users')},
+        isDeprecated: false,
+        path: '/users/{id}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBody: null,
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): response,
+        },
+      );
+
+      final responseType = refer('BodyHeaderResponseWrapper');
+      final method = generator.generateParseResponseMethod(
+        operation,
+        responseType,
+      );
+
+      const expectedMethod = r'''
+        BodyHeaderResponseWrapper _parseResponse(Response<Object?> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              return BodyHeaderResponse(
+                body: User.fromJson(response.data),
+                bodyHeader: response.headers.value(r'body').decodeSimpleString(),
+              );
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw DecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    group('Scoped Emitters', () {
+      test('generates scoped response with headers', () {
+        final operation = Operation(
+          context: context,
+          operationId: 'getUser',
+          summary: 'Get user',
+          description: 'Get user by ID',
+          tags: {const Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          requestBody: null,
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              context: context,
+              name: 'GetUserResponse',
+              description: 'Response for GetUser',
+              bodies: const <ResponseBody>{},
+              headers: {
+                'x-user-id': ResponseHeaderObject(
+                  context: context,
+                  name: 'x-user-id',
+                  description: 'User ID header',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isDeprecated: false,
+                  explode: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
+
+        final method = generator.generateParseResponseMethod(
+          operation,
+          refer('Response', 'package:my_package/models.dart'),
+        );
+
+        final generated = method.accept(scopedEmitter).toString();
+        expect(generated, contains('_i1.Response'));
+        expect(generated, contains('_i4.GetUserResponse('));
+      });
     });
   });
 }
