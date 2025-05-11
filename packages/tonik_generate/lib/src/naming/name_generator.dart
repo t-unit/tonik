@@ -145,6 +145,35 @@ class NameGenerator {
     return (baseName, subclassNames);
   }
 
+  /// Generates a unique implementation name for a response body.
+  ///
+  /// The name is based on the base response name and the content type.
+  /// For example, a response named "UserResponse" with content type
+  /// "application/json" would generate "UserResponseJson".
+  ///
+  /// If multiple responses have the same content type, numbers are appended
+  /// to make the names unique.
+  String generateResponseImplementationName(
+    String baseName,
+    ResponseBody body,
+  ) {
+    final contentType = body.rawContentType.split('/').lastOrNull;
+    if (contentType == null) {
+      return _makeUnique(baseName, '');
+    }
+
+    // Handle version numbers in content type (e.g. application/json+v2)
+    final parts = contentType.split('+');
+    final baseContentType = parts.first;
+    final version = parts.length > 1 ? parts.last : null;
+
+    final suffix = baseContentType.toPascalCase();
+    final versionSuffix = version != null ? version.toPascalCase() : '';
+    final fullSuffix = '$suffix$versionSuffix';
+
+    return _makeUnique(baseName, fullSuffix);
+  }
+
   /// Generates a base name using the following priority:
   /// 1. Explicit name if available
   /// 2. Combined context path components

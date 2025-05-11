@@ -532,7 +532,10 @@ class OperationGenerator {
               ..symbol = 'TonikResult'
               ..url = 'package:tonik_util/tonik_util.dart'
               ..types.add(
-                refer(nameManager.responseName(response!.resolved), package),
+                refer(
+                  nameManager.responseNames(response!.resolved).baseName,
+                  package,
+                ),
               ),
       ),
     };

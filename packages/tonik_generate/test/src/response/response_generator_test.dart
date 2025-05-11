@@ -193,7 +193,7 @@ void main() {
           ),
         );
 
-        final name = nameManager.responseName(aliasResponse);
+        final name = nameManager.responseNames(aliasResponse).baseName;
         final typedef = generator.generateTypedef(aliasResponse, name);
         expect(typedef.name, name);
         expect(

@@ -109,7 +109,15 @@ class ParseGenerator {
   ) {
     final isMulti = operation.responses.length > 1;
     final hasBody = response.bodyCount > 0;
-    final bodyModel = response.bodies.firstOrNull?.model;
+    final bodyModel =
+        contentType != null && hasBody
+            ? response.bodies
+                .firstWhere(
+                  (body) => body.rawContentType == contentType,
+                  orElse: () => response.bodies.first,
+                )
+                .model
+            : response.bodies.firstOrNull?.model;
 
     final bodyDecode =
         hasBody && bodyModel != null
@@ -130,7 +138,11 @@ class ParseGenerator {
 
         final wrapperArgs = <String, Expression>{
           'body': refer(
-            nameManager.responseName(response.resolved),
+            contentType != null && response.bodyCount > 1
+                ? nameManager
+                    .responseNames(response)
+                    .implementationNames[contentType]!
+                : nameManager.responseNames(response).baseName,
             package,
           ).call([], responseArgs),
         };
@@ -167,7 +179,11 @@ class ParseGenerator {
         return Block.of([
           const Code('return '),
           refer(
-            nameManager.responseName(response.resolved),
+            contentType != null && response.bodyCount > 1
+                ? nameManager
+                    .responseNames(response)
+                    .implementationNames[contentType]!
+                : nameManager.responseNames(response).baseName,
             package,
           ).call([], args).code,
           const Code(';'),

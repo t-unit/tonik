@@ -943,9 +943,7 @@ String _parseResponse(Response<Object?> response) {
         name: 'HeaderAliasResponse',
         context: context,
         description: 'Response with header alias',
-        headers: {
-          'x-user-id': headerAlias,
-        },
+        headers: {'x-user-id': headerAlias},
         bodies: {
           ResponseBody(
             model: classModel,
@@ -968,9 +966,7 @@ String _parseResponse(Response<Object?> response) {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
-        responses: {
-          const ExplicitResponseStatus(statusCode: 200): response,
-        },
+        responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
       final responseType = refer('HeaderAliasResponseWrapper');
@@ -1048,9 +1044,7 @@ String _parseResponse(Response<Object?> response) {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
-        responses: {
-          const ExplicitResponseStatus(statusCode: 200): response,
-        },
+        responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
       final responseType = refer('BodyHeaderResponseWrapper');
@@ -1067,6 +1061,149 @@ String _parseResponse(Response<Object?> response) {
                 body: User.fromJson(response.data),
                 bodyHeader: response.headers.value(r'body').decodeSimpleString(),
               );
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw DecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test(
+      'selects correct body model based on status code and content type',
+      () {
+        final response = ResponseObject(
+          name: 'UserResponse',
+          context: context,
+          description: 'A user response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'application/xml',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'getUser',
+          context: context,
+          summary: null,
+          description: null,
+          tags: const {},
+          isDeprecated: false,
+          path: '/user',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {const ExplicitResponseStatus(statusCode: 200): response},
+          requestBody: null,
+        );
+
+        final method = generator.generateParseResponseMethod(
+          operation,
+          refer('UserResponse'),
+        );
+
+        const expectedMethod = r'''
+        UserResponse _parseResponse(Response<Object?> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              return UserResponseJson(body: response.data.decodeJsonString());
+            case (200, 'application/xml'):
+              return UserResponseXml(body: response.data.decodeJsonInt());
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw DecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test('handles multiple status codes with different content types', () {
+      final successResponse = ResponseObject(
+        name: 'SuccessResponse',
+        context: context,
+        description: 'Success response',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      final errorResponse = ResponseObject(
+        name: 'ErrorResponse',
+        context: context,
+        description: 'Error response',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: IntegerModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'getUser',
+        context: context,
+        summary: null,
+        description: null,
+        tags: const {},
+        isDeprecated: false,
+        path: '/user',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): successResponse,
+          const ExplicitResponseStatus(statusCode: 400): errorResponse,
+        },
+        requestBody: null,
+      );
+
+      final method = generator.generateParseResponseMethod(
+        operation,
+        refer('UserResponse'),
+      );
+
+      const expectedMethod = r'''
+        UserResponse _parseResponse(Response<Object?> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              return GetUserResponse200(body: response.data.decodeJsonString());
+            case (400, 'application/json'):
+              return GetUserResponse400(body: response.data.decodeJsonInt());
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;

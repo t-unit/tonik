@@ -29,7 +29,7 @@ class ResponseGenerator {
       );
     }
 
-    final name = nameManager.responseName(response);
+    final name = nameManager.responseNames(response).baseName;
     final library = Library((b) {
       switch (response) {
         case ResponseAlias():
@@ -58,7 +58,7 @@ class ResponseGenerator {
 
   @visibleForTesting
   TypeDef generateTypedef(ResponseAlias response, String name) {
-    final targetName = nameManager.responseName(response.response);
+    final targetName = nameManager.responseNames(response.response).baseName;
 
     return TypeDef(
       (b) =>
@@ -70,7 +70,7 @@ class ResponseGenerator {
 
   @visibleForTesting
   Class generateResponseClass(ResponseObject response) {
-    final className = nameManager.responseName(response);
+    final className = nameManager.responseNames(response).baseName;
     final properties = normalizeResponseProperties(response);
 
     final equalsMethod = generateEqualsMethod(
@@ -161,7 +161,7 @@ class ResponseGenerator {
 
   @visibleForTesting
   List<Class> generateMultiBodyResponseClasses(ResponseObject response) {
-    final className = nameManager.responseName(response);
+    final className = nameManager.responseNames(response).baseName;
     final normalizedBaseProperties = normalizeResponseProperties(response);
 
     // Create base sealed class
@@ -211,10 +211,9 @@ class ResponseGenerator {
     // Create implementation classes for each body type
     final implementationClasses =
         response.bodies.map((body) {
-          final implementationName = nameManager.responseImplementationName(
-            response,
-            body,
-          );
+          final implementationName =
+              nameManager.responseNames(response).implementationNames[body
+                  .rawContentType]!;
 
           // Create properties for equals and hashCode methods
           final allProperties = normalizeResponseProperties(

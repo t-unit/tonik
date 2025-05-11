@@ -160,9 +160,8 @@ void main() {
       expect(manager.modelName(models[1]), 'AnonymousModel');
 
       // Both responses have headers, so both should be cached
-      expect(manager.responseNames.length, 2);
-      expect(manager.responseName(responses[0]), 'User');
-      expect(manager.responseName(responses[1]), 'UserResponse');
+      expect(manager.responseNames(responses[0]).baseName, 'User');
+      expect(manager.responseNames(responses[1]).baseName, 'UserResponse');
 
       // First tag gets Api suffix immediately
       expect(manager.tagName(tags[0]), 'UserApi');
@@ -350,34 +349,49 @@ void main() {
       );
 
       // Then: Verify cache contents
-      expect(manager.responseNames.length, 2);
-      expect(manager.responseNames.containsKey(headersOnlyResponse), isTrue);
-      expect(manager.responseNames.containsKey(completeResponse), isTrue);
-      expect(manager.responseNames.containsKey(emptyResponse), isFalse);
-      expect(manager.responseNames.containsKey(bodyOnlyResponse), isFalse);
-      expect(manager.responseNames.containsKey(emptyAlias), isFalse);
+      expect(manager.responsAndImplementationNames.length, 2);
+      expect(
+        manager.responsAndImplementationNames.containsKey(headersOnlyResponse),
+        isTrue,
+      );
+      expect(
+        manager.responsAndImplementationNames.containsKey(completeResponse),
+        isTrue,
+      );
+      expect(
+        manager.responsAndImplementationNames.containsKey(emptyResponse),
+        isFalse,
+      );
+      expect(
+        manager.responsAndImplementationNames.containsKey(bodyOnlyResponse),
+        isFalse,
+      );
+      expect(
+        manager.responsAndImplementationNames.containsKey(emptyAlias),
+        isFalse,
+      );
 
       // And: Verify name generation still works consistently
-      final emptyName1 = manager.responseName(emptyResponse);
-      final emptyName2 = manager.responseName(emptyResponse);
+      final emptyName1 = manager.responseNames(emptyResponse).baseName;
+      final emptyName2 = manager.responseNames(emptyResponse).baseName;
       expect(emptyName1, emptyName2);
 
-      final bodyOnlyName1 = manager.responseName(bodyOnlyResponse);
-      final bodyOnlyName2 = manager.responseName(bodyOnlyResponse);
+      final bodyOnlyName1 = manager.responseNames(bodyOnlyResponse);
+      final bodyOnlyName2 = manager.responseNames(bodyOnlyResponse);
       expect(bodyOnlyName1, bodyOnlyName2);
 
-      final headersOnlyName1 = manager.responseName(headersOnlyResponse);
-      final headersOnlyName2 = manager.responseName(headersOnlyResponse);
+      final headersOnlyName1 = manager.responseNames(headersOnlyResponse);
+      final headersOnlyName2 = manager.responseNames(headersOnlyResponse);
       expect(headersOnlyName1, headersOnlyName2);
-      expect(headersOnlyName1, 'HeadersOnly');
+      expect(headersOnlyName1.baseName, 'HeadersOnly');
 
-      final completeName1 = manager.responseName(completeResponse);
-      final completeName2 = manager.responseName(completeResponse);
+      final completeName1 = manager.responseNames(completeResponse);
+      final completeName2 = manager.responseNames(completeResponse);
       expect(completeName1, completeName2);
-      expect(completeName1, 'Complete');
+      expect(completeName1.baseName, 'Complete');
 
-      final emptyAliasName1 = manager.responseName(emptyAlias);
-      final emptyAliasName2 = manager.responseName(emptyAlias);
+      final emptyAliasName1 = manager.responseNames(emptyAlias);
+      final emptyAliasName2 = manager.responseNames(emptyAlias);
       expect(emptyAliasName1, emptyAliasName2);
     });
 
@@ -512,8 +526,74 @@ void main() {
         requestBodies: const [],
       );
 
-      expect(manager.responseNames.length, 1);
-      expect(manager.responseName(multiBodyResponse), 'MultiBody');
+      expect(manager.responsAndImplementationNames.length, 1);
+      expect(manager.responseNames(multiBodyResponse).baseName, 'MultiBody');
+    });
+
+    test('responseNames returns base name and implementation names', () {
+      final response = ResponseObject(
+        name: 'UserResponse',
+        context: context,
+        description: 'A user response',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/xml',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      final (:baseName, :implementationNames) = manager.responseNames(response);
+
+      expect(baseName, 'UserResponse');
+      expect(implementationNames, {
+        'application/json': 'UserResponseJson',
+        'application/xml': 'UserResponseXml',
+      });
+
+      // Verify caching
+      final (
+        baseName: baseName2,
+        implementationNames: implementationNames2,
+      ) = manager.responseNames(response);
+      expect(baseName2, baseName);
+      expect(identical(implementationNames, implementationNames2), isTrue);
+    });
+
+    test('responseNames handles content types with version numbers', () {
+      final response = ResponseObject(
+        name: 'UserResponse',
+        context: context,
+        description: 'A user response',
+        headers: const {},
+        bodies: {
+          ResponseBody(
+            model: StringModel(context: context),
+            rawContentType: 'application/json+v2',
+            contentType: ContentType.json,
+          ),
+        },
+      );
+
+      final (:baseName, :implementationNames) = manager.responseNames(response);
+
+      expect(baseName, 'UserResponse');
+      expect(implementationNames, isEmpty);
+
+      // Verify caching
+      final (
+        baseName: baseName2,
+        implementationNames: implementationNames2,
+      ) = manager.responseNames(response);
+      expect(baseName2, baseName);
+      expect(identical(implementationNames, implementationNames2), isTrue);
     });
   });
 }

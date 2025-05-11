@@ -13,10 +13,6 @@ class NameManager {
   final modelNames = <Model, String>{};
 
   @protected
-  @visibleForTesting
-  final responseNames = <Response, String>{};
-
-  @protected
   final operationNames = <Operation, String>{};
 
   @protected
@@ -34,6 +30,14 @@ class NameManager {
     (String baseName, Map<ResponseStatus, String> subclassNames)
   >
   responseWrapperNameCache = {};
+
+  @protected
+  @visibleForTesting
+  final Map<
+    Response,
+    ({String baseName, Map<String, String> implementationNames})
+  >
+  responsAndImplementationNames = {};
 
   final log = Logger('NameManager');
 
@@ -53,8 +57,8 @@ class NameManager {
     for (final response in responses) {
       // Generate names for responses with headers or multiple bodies
       if (response.hasHeaders || response.bodyCount > 1) {
-        final name = responseName(response);
-        _logResponseName(name, response);
+        final (:baseName, :implementationNames) = responseNames(response);
+        _logResponseName(baseName, response);
       }
     }
     for (final operation in operations) {
@@ -79,11 +83,28 @@ class NameManager {
   String modelName(Model model) =>
       modelNames.putIfAbsent(model, () => generator.generateModelName(model));
 
-  /// Gets a cached or generates a new unique response class name.
-  String responseName(Response response) => responseNames.putIfAbsent(
-    response,
-    () => generator.generateResponseName(response),
-  );
+  /// Gets a cached or generates a new unique response class 
+  /// name and implementation names.
+  ///
+  /// Returns a record with the base name and a map of content 
+  /// types to implementation names.
+  ({String baseName, Map<String, String> implementationNames}) responseNames(
+    Response response,
+  ) {
+    return responsAndImplementationNames.putIfAbsent(response, () {
+      final baseName = generator.generateResponseName(response);
+      final implementationNames = <String, String>{};
+
+      if (response is ResponseObject && response.bodies.length > 1) {
+        for (final body in response.bodies) {
+          implementationNames[body.rawContentType] = generator
+              .generateResponseImplementationName(baseName, body);
+        }
+      }
+
+      return (baseName: baseName, implementationNames: implementationNames);
+    });
+  }
 
   /// Gets a cached or generates a new unique operation name.
   String operationName(Operation operation) => operationNames.putIfAbsent(

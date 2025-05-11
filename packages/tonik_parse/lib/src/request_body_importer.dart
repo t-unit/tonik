@@ -114,7 +114,8 @@ class RequestBodyImporter {
             }
           } else {
             log.warning(
-              'Unsupported content type $contentType for request body $name',
+              'Unsupported content type $contentType for request body '
+              '${name ?? context}',
             );
           }
         }

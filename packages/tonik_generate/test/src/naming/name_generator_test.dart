@@ -920,5 +920,147 @@ void main() {
         expect(subclassNames.length, 1);
       });
     });
+
+    group('generateResponseImplementationName', () {
+      test('generates unique names for different content types', () {
+        final response = ResponseObject(
+          name: 'UserResponse',
+          context: Context.initial(),
+          description: 'A user response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: Context.initial()),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+            ResponseBody(
+              model: StringModel(context: Context.initial()),
+              rawContentType: 'application/xml',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final baseName = nameGenerator.generateResponseName(response);
+        final jsonName = nameGenerator.generateResponseImplementationName(
+          baseName,
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        );
+        final xmlName = nameGenerator.generateResponseImplementationName(
+          baseName,
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/xml',
+            contentType: ContentType.json,
+          ),
+        );
+
+        expect(jsonName, 'UserResponseJson');
+        expect(xmlName, 'UserResponseXml');
+      });
+
+      test('handles duplicate content types', () {
+        final response = ResponseObject(
+          name: 'UserResponse',
+          context: Context.initial(),
+          description: 'A user response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: Context.initial()),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+            ResponseBody(
+              model: StringModel(context: Context.initial()),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final baseName = nameGenerator.generateResponseName(response);
+        final name1 = nameGenerator.generateResponseImplementationName(
+          baseName,
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        );
+        final name2 = nameGenerator.generateResponseImplementationName(
+          baseName,
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/json',
+            contentType: ContentType.json,
+          ),
+        );
+
+        expect(name1, 'UserResponseJson');
+        expect(name2, 'UserResponseJson2');
+      });
+
+      test('handles content types with version numbers', () {
+        final response = ResponseObject(
+          name: 'UserResponse',
+          context: Context.initial(),
+          description: 'A user response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: Context.initial()),
+              rawContentType: 'application/json+v2',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final baseName = nameGenerator.generateResponseName(response);
+        final name = nameGenerator.generateResponseImplementationName(
+          baseName,
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application/json+v2',
+            contentType: ContentType.json,
+          ),
+        );
+
+        expect(name, 'UserResponseJsonV2');
+      });
+
+      test('handles content types with no subtype', () {
+        final response = ResponseObject(
+          name: 'UserResponse',
+          context: Context.initial(),
+          description: 'A user response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: Context.initial()),
+              rawContentType: 'application',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final baseName = nameGenerator.generateResponseName(response);
+        final name = nameGenerator.generateResponseImplementationName(
+          baseName,
+          ResponseBody(
+            model: StringModel(context: Context.initial()),
+            rawContentType: 'application',
+            contentType: ContentType.json,
+          ),
+        );
+
+        expect(name, 'UserResponseApplication');
+      });
+    });
   });
 }
