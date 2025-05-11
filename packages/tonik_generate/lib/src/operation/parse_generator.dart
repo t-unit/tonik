@@ -107,99 +107,161 @@ class ParseGenerator {
     ResponseObject response,
     String? contentType,
   ) {
-    final isMulti = operation.responses.length > 1;
-    final hasBody = response.bodyCount > 0;
-    final bodyModel =
-        contentType != null && hasBody
-            ? response.bodies
-                .firstWhere(
-                  (body) => body.rawContentType == contentType,
-                  orElse: () => response.bodies.first,
-                )
-                .model
-            : response.bodies.firstOrNull?.model;
-
-    final bodyDecode =
-        hasBody && bodyModel != null
-            ? _decodeBody('response.data', bodyModel, nameManager)
-            : null;
-
-    if (isMulti) {
-      final wrapperName =
-          nameManager.responseWrapperNames(operation).$2[status]!;
-
-      if (response.hasHeaders || response.bodyCount > 1) {
-        // Wrapper subclass with response class
-        final responseArgs = <String, Expression>{};
-        if (bodyDecode != null) {
-          responseArgs['body'] = bodyDecode;
-        }
-        responseArgs.addAll(_decodeHeaders(response));
-
-        final wrapperArgs = <String, Expression>{
-          'body': refer(
-            contentType != null && response.bodyCount > 1
-                ? nameManager
-                    .responseNames(response)
-                    .implementationNames[contentType]!
-                : nameManager.responseNames(response).baseName,
-            package,
-          ).call([], responseArgs),
-        };
-
-        return Block.of([
-          const Code('return '),
-          refer(wrapperName, package).call([], wrapperArgs).code,
-          const Code(';'),
-        ]);
-      } else if (hasBody && bodyDecode != null) {
-        // Wrapper subclass with direct body
-        return Block.of([
-          const Code('return '),
-          refer(wrapperName, package).call([], {'body': bodyDecode}).code,
-          const Code(';'),
-        ]);
-      } else {
-        // Wrapper subclass with no body
-        return Block.of([
-          const Code('return const '),
-          refer(wrapperName, package).call([]).code,
-          const Code(';'),
-        ]);
-      }
+    if (operation.responses.length > 1) {
+      return _generateMultiResponseCase(
+        operation,
+        status,
+        response,
+        contentType,
+      );
     } else {
-      if (response.hasHeaders || response.bodyCount > 1) {
-        // Just response class
-        final args = <String, Expression>{};
-        if (bodyDecode != null) {
-          args['body'] = bodyDecode;
-        }
-        args.addAll(_decodeHeaders(response));
-
-        return Block.of([
-          const Code('return '),
-          refer(
-            contentType != null && response.bodyCount > 1
-                ? nameManager
-                    .responseNames(response)
-                    .implementationNames[contentType]!
-                : nameManager.responseNames(response).baseName,
-            package,
-          ).call([], args).code,
-          const Code(';'),
-        ]);
-      } else if (hasBody && bodyDecode != null) {
-        // Just body
-        return Block.of([
-          const Code('return '),
-          bodyDecode.code,
-          const Code(';'),
-        ]);
-      } else {
-        // No body
-        return const Code('return;');
-      }
+      return _generateSingleResponseCase(response, contentType);
     }
+  }
+
+  Expression? _createBodyDecode(
+    ResponseObject response,
+    String? contentType,
+  ) {
+    final hasBody = response.bodyCount > 0;
+    if (!hasBody) return null;
+
+    final bodyModel = contentType != null
+        ? response.bodies
+            .firstWhere(
+              (body) => body.rawContentType == contentType,
+              orElse: () => response.bodies.first,
+            )
+            .model
+        : response.bodies.firstOrNull?.model;
+
+    if (bodyModel == null) return null;
+
+    return _decodeBody('response.data', bodyModel, nameManager);
+  }
+
+  Code _generateMultiResponseCase(
+    Operation operation,
+    ResponseStatus status,
+    ResponseObject response,
+    String? contentType,
+  ) {
+    final wrapperName = nameManager.responseWrapperNames(operation).$2[status]!;
+    final bodyDecode = _createBodyDecode(response, contentType);
+
+    if (response.hasHeaders || response.bodyCount > 1) {
+      return _generateMultiResponseWithHeaders(
+        wrapperName,
+        response,
+        contentType,
+        bodyDecode,
+      );
+    } else if (bodyDecode != null) {
+      return _generateMultiResponseWithBody(wrapperName, bodyDecode);
+    } else {
+      return _generateMultiResponseNoBody(wrapperName);
+    }
+  }
+
+  Code _generateSingleResponseCase(
+    ResponseObject response,
+    String? contentType,
+  ) {
+    final bodyDecode = _createBodyDecode(response, contentType);
+
+    if (response.hasHeaders || response.bodyCount > 1) {
+      return _generateSingleResponseWithHeaders(
+        response,
+        contentType,
+        bodyDecode,
+      );
+    } else if (bodyDecode != null) {
+      return _generateSingleResponseWithBody(bodyDecode);
+    } else {
+      return _generateSingleResponseNoBody();
+    }
+  }
+
+  Code _generateMultiResponseWithHeaders(
+    String wrapperName,
+    ResponseObject response,
+    String? contentType,
+    Expression? bodyDecode,
+  ) {
+    final responseArgs = <String, Expression>{};
+    if (bodyDecode != null) {
+      responseArgs['body'] = bodyDecode;
+    }
+    responseArgs.addAll(_decodeHeaders(response));
+
+    final wrapperArgs = <String, Expression>{
+      'body': refer(
+        contentType != null && response.bodyCount > 1
+            ? nameManager
+                .responseNames(response)
+                .implementationNames[contentType]!
+            : nameManager.responseNames(response).baseName,
+        package,
+      ).call([], responseArgs),
+    };
+
+    return Block.of([
+      const Code('return '),
+      refer(wrapperName, package).call([], wrapperArgs).code,
+      const Code(';'),
+    ]);
+  }
+
+  Code _generateMultiResponseWithBody(
+    String wrapperName,
+    Expression bodyDecode,
+  ) {
+    return Block.of([
+      const Code('return '),
+      refer(wrapperName, package).call([], {'body': bodyDecode}).code,
+      const Code(';'),
+    ]);
+  }
+
+  Code _generateMultiResponseNoBody(String wrapperName) {
+    return Block.of([
+      const Code('return const '),
+      refer(wrapperName, package).call([]).code,
+      const Code(';'),
+    ]);
+  }
+
+  Code _generateSingleResponseWithHeaders(
+    ResponseObject response,
+    String? contentType,
+    Expression? bodyDecode,
+  ) {
+    final args = <String, Expression>{};
+    if (bodyDecode != null) {
+      args['body'] = bodyDecode;
+    }
+    args.addAll(_decodeHeaders(response));
+
+    return Block.of([
+      const Code('return '),
+      refer(
+        contentType != null && response.bodyCount > 1
+            ? nameManager
+                .responseNames(response)
+                .implementationNames[contentType]!
+            : nameManager.responseNames(response).baseName,
+        package,
+      ).call([], args).code,
+      const Code(';'),
+    ]);
+  }
+
+  Code _generateSingleResponseWithBody(Expression bodyDecode) {
+    return Block.of([const Code('return '), bodyDecode.code, const Code(';')]);
+  }
+
+  Code _generateSingleResponseNoBody() {
+    return const Code('return;');
   }
 
   Expression _decodeBody(String expr, Model model, NameManager nameManager) {
