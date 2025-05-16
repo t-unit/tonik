@@ -1,4 +1,6 @@
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
+import 'package:tonik_generate/src/api_client/api_client_generator.dart';
 import 'package:tonik_generate/src/library_generator.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
 import 'package:tonik_generate/src/model/enum_generator.dart';
@@ -89,6 +91,16 @@ class Generator {
     final responseWrapperFileGenerator = ResponseWrapperFileGenerator(
       responseWrapperGenerator: responseWrapperGenerator,
     );
+
+    final apiClientGenerator = ApiClientGenerator(
+      nameManager: nameManager,
+      package: fullPackage,
+    );
+
+    final apiClientFileGenerator = ApiClientFileGenerator(
+      apiClientGenerator: apiClientGenerator,
+    );
+
     nameManager.prime(
       models: apiDocument.models,
       responses: apiDocument.responses.toList(),
@@ -128,6 +140,12 @@ class Generator {
     );
 
     operationFileGenerator.writeFiles(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+    );
+
+    apiClientFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,

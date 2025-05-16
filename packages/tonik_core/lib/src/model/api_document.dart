@@ -46,7 +46,6 @@ class ApiDocument {
         );
       }
     }
-
     return taggedOperations;
   }
 

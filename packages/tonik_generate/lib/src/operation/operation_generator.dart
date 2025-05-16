@@ -12,6 +12,7 @@ import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating callable operation classes
@@ -131,10 +132,7 @@ class OperationGenerator {
                 operation,
                 normalizedParams.headers,
               ),
-              _parseGenerator.generateParseResponseMethod(
-                operation,
-                _resultTypeForOperation(operation).types.first,
-              ),
+              _parseGenerator.generateParseResponseMethod(operation),
             ]),
     );
   }
@@ -276,7 +274,7 @@ class OperationGenerator {
 
     final queryExpr = refer('_queryParameters').call([], queryArgs);
 
-    final resultType = _resultTypeForOperation(operation);
+    final resultType = resultTypeForOperation(operation, nameManager, package);
     final isVoidReturn =
         resultType.types.isNotEmpty && resultType.types.first.symbol == 'void';
     const responseVar = r'_$response';
@@ -484,60 +482,5 @@ class OperationGenerator {
         const Code('}\n'),
       ]),
     ];
-  }
-
-  TypeReference _resultTypeForOperation(Operation operation) {
-    final responses = operation.responses;
-    final response = responses.values.firstOrNull;
-    final hasHeaders = response?.hasHeaders ?? false;
-    final bodyCount = response?.bodyCount ?? 0;
-    final hasMultipleResponses = responses.length > 1;
-
-    return switch ((hasHeaders, bodyCount, hasMultipleResponses)) {
-      (_, _, true) => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'TonikResult'
-              ..url = 'package:tonik_util/tonik_util.dart'
-              ..types.add(
-                refer(nameManager.responseWrapperNames(operation).$1, package),
-              ),
-      ),
-
-      (false, 0, false) => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'TonikResult'
-              ..url = 'package:tonik_util/tonik_util.dart'
-              ..types.add(refer('void')),
-      ),
-
-      (false, 1, false) => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'TonikResult'
-              ..url = 'package:tonik_util/tonik_util.dart'
-              ..types.add(
-                typeReference(
-                  response!.resolved.bodies.first.model,
-                  nameManager,
-                  package,
-                ),
-              ),
-      ),
-
-      (true, _, false) || (false, _, false) => TypeReference(
-        (b) =>
-            b
-              ..symbol = 'TonikResult'
-              ..url = 'package:tonik_util/tonik_util.dart'
-              ..types.add(
-                refer(
-                  nameManager.responseNames(response!.resolved).baseName,
-                  package,
-                ),
-              ),
-      ),
-    };
   }
 }

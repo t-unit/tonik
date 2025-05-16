@@ -5,6 +5,7 @@ import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
+import 'package:tonik_generate/src/util/response_type_generator.dart';
 
 class ParseGenerator {
   const ParseGenerator({required this.nameManager, required this.package});
@@ -13,11 +14,13 @@ class ParseGenerator {
   final String package;
 
   /// Generates the _parseResponse method for the operation.
-  Method generateParseResponseMethod(
-    Operation operation,
-    Reference responseType,
-  ) {
+  Method generateParseResponseMethod(Operation operation) {
     final responses = operation.responses;
+    final responseType = resultTypeForOperation(
+      operation,
+      nameManager,
+      package,
+    ).types.first;
     final cases = <Code>[];
 
     for (final entry in responses.entries) {
@@ -119,21 +122,19 @@ class ParseGenerator {
     }
   }
 
-  Expression? _createBodyDecode(
-    ResponseObject response,
-    String? contentType,
-  ) {
+  Expression? _createBodyDecode(ResponseObject response, String? contentType) {
     final hasBody = response.bodyCount > 0;
     if (!hasBody) return null;
 
-    final bodyModel = contentType != null
-        ? response.bodies
-            .firstWhere(
-              (body) => body.rawContentType == contentType,
-              orElse: () => response.bodies.first,
-            )
-            .model
-        : response.bodies.firstOrNull?.model;
+    final bodyModel =
+        contentType != null
+            ? response.bodies
+                .firstWhere(
+                  (body) => body.rawContentType == contentType,
+                  orElse: () => response.bodies.first,
+                )
+                .model
+            : response.bodies.firstOrNull?.model;
 
     if (bodyModel == null) return null;
 

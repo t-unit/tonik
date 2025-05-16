@@ -68,10 +68,8 @@ void main() {
         },
         requestBody: null,
       );
-      final responseType = refer('String');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
 String _parseResponse(Response<Object?> response) {
@@ -126,10 +124,8 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer('Anonymous');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         Anonymous _parseResponse(Response<Object?> response) {
@@ -192,10 +188,8 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer('User');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         User _parseResponse(Response<Object?> response) {
@@ -248,15 +242,8 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..types.add(refer('int')),
-      );
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         List<int> _parseResponse(Response<Object?> response) {
@@ -319,15 +306,9 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..types.add(refer('User')),
-      );
+
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         List<User> _parseResponse(Response<Object?> response) {
@@ -402,10 +383,8 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer('Pet');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         Pet _parseResponse(Response<Object?> response) {
@@ -455,10 +434,8 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer('String');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         String _parseResponse(Response<Object?> response) {
@@ -508,10 +485,8 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer('String');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
         String _parseResponse(Response<Object?> response) {
@@ -532,7 +507,6 @@ String _parseResponse(Response<Object?> response) {
     });
 
     test('generates for multiple response status codes', () {
-      const wrapperClass = 'MyResponseWrapper';
       final classModel = ClassModel(
         name: 'User',
         properties: [
@@ -582,13 +556,11 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer(wrapperClass);
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
-        MyResponseWrapper _parseResponse(Response<Object?> response) {
+        MultiStatusOpResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return MultiStatusOpResponse200(body: User.fromJson(response.data));
@@ -608,7 +580,6 @@ String _parseResponse(Response<Object?> response) {
     });
 
     test('generates for response with headers', () {
-      const wrapperClass = 'MyResponseWrapper';
       final classModel = ClassModel(
         name: 'User',
         properties: [
@@ -673,13 +644,11 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer(wrapperClass);
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
-        MyResponseWrapper _parseResponse(Response<Object?> response) {
+        Anonymous _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return Anonymous(
@@ -701,7 +670,6 @@ String _parseResponse(Response<Object?> response) {
     });
 
     test('combines headers, default, range, and explicit cases', () {
-      const wrapperClass = 'CombinedOpResponseWrapper';
       final classModel = ClassModel(
         name: 'User',
         properties: [
@@ -780,13 +748,11 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final responseType = refer(wrapperClass);
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
       const expectedMethod = r'''
-        CombinedOpResponseWrapper _parseResponse(Response<Object?> response) {
+        CombinedOpResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return CombinedOpResponse200(
@@ -817,7 +783,6 @@ String _parseResponse(Response<Object?> response) {
     });
 
     test('generates for response with alias', () {
-      const wrapperClass = 'AliasResponseWrapper';
       final classModel = ClassModel(
         name: 'User',
         properties: [
@@ -883,14 +848,12 @@ String _parseResponse(Response<Object?> response) {
         },
       );
 
-      final responseType = refer(wrapperClass);
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
 
       const expectedMethod = r'''
-        AliasResponseWrapper _parseResponse(Response<Object?> response) {
+        BaseResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return BaseResponse(
@@ -969,14 +932,12 @@ String _parseResponse(Response<Object?> response) {
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
-      final responseType = refer('HeaderAliasResponseWrapper');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
 
       const expectedMethod = r'''
-        HeaderAliasResponseWrapper _parseResponse(Response<Object?> response) {
+        HeaderAliasResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return HeaderAliasResponse(
@@ -1047,14 +1008,12 @@ String _parseResponse(Response<Object?> response) {
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
-      final responseType = refer('BodyHeaderResponseWrapper');
       final method = generator.generateParseResponseMethod(
         operation,
-        responseType,
       );
 
       const expectedMethod = r'''
-        BodyHeaderResponseWrapper _parseResponse(Response<Object?> response) {
+        BodyHeaderResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return BodyHeaderResponse(
@@ -1117,7 +1076,6 @@ String _parseResponse(Response<Object?> response) {
 
         final method = generator.generateParseResponseMethod(
           operation,
-          refer('UserResponse'),
         );
 
         const expectedMethod = r'''
@@ -1194,11 +1152,10 @@ String _parseResponse(Response<Object?> response) {
 
       final method = generator.generateParseResponseMethod(
         operation,
-        refer('UserResponse'),
       );
 
       const expectedMethod = r'''
-        UserResponse _parseResponse(Response<Object?> response) {
+        GetUserResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return GetUserResponse200(body: response.data.decodeJsonString());
@@ -1259,12 +1216,11 @@ String _parseResponse(Response<Object?> response) {
 
         final method = generator.generateParseResponseMethod(
           operation,
-          refer('Response', 'package:my_package/models.dart'),
         );
 
         final generated = method.accept(scopedEmitter).toString();
-        expect(generated, contains('_i1.Response'));
-        expect(generated, contains('_i4.GetUserResponse('));
+        expect(generated, contains('_i2.Response'));
+        expect(generated, contains('_i1.GetUserResponse('));
       });
     });
   });
