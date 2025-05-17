@@ -38,6 +38,7 @@ This package aims to overcome these shortcomings.
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
 - Annotate deprecated fields methods and classes.
 - Respect `nullable` property on schema objects
+- Add doc strings based on fields in the spec to fields, classes and methods
 
 ### Long term goals
 - Supporting the `not` keyword

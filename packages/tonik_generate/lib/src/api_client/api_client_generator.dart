@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
@@ -45,46 +46,53 @@ class ApiClientGenerator {
   @visibleForTesting
   Class generateClass(Set<Operation> operations, Tag tag) {
     // Create private fields for each operation
-    final operationFields = operations.map((operation) {
-      final operationName = nameManager.operationName(operation);
-      final fieldName = '_${operationName.toCamelCase()}';
-      
-      return Field(
-        (b) => b
-          ..name = fieldName
-          ..modifier = FieldModifier.final$
-          ..type = refer(operationName, package),
-      );
-    }).toList();
+    final operationFields =
+        operations.map((operation) {
+          final operationName = nameManager.operationName(operation);
+          final fieldName = '_${operationName.toCamelCase()}';
+
+          return Field(
+            (b) =>
+                b
+                  ..name = fieldName
+                  ..modifier = FieldModifier.final$
+                  ..type = refer(operationName, package),
+          );
+        }).toList();
 
     // Create constructor initializers for each operation
-    final constructorInitializers = operations.map((operation) {
-      final operationName = nameManager.operationName(operation);
-      final fieldName = '_${operationName.toCamelCase()}';
-      
-      return refer(fieldName).assign(
-        refer(operationName, package).call([refer('dio')]),
-      ).code;
-    }).toList();
+    final constructorInitializers =
+        operations.map((operation) {
+          final operationName = nameManager.operationName(operation);
+          final fieldName = '_${operationName.toCamelCase()}';
+
+          return refer(
+            fieldName,
+          ).assign(refer(operationName, package).call([refer('dio')])).code;
+        }).toList();
 
     return Class(
-      (b) => b
-        ..name = nameManager.tagName(tag)
-        ..fields.addAll(operationFields)
-        ..constructors.add(
-          Constructor(
-            (b) => b
-              ..requiredParameters.add(
-                Parameter(
-                  (b) => b
-                    ..name = 'dio'
-                    ..type = refer('Dio', 'package:dio/dio.dart'),
-                ),
-              )
-              ..initializers.addAll(constructorInitializers),
-          ),
-        )
-        ..methods.addAll(operations.map(_generateMethod)),
+      (b) =>
+          b
+            ..name = nameManager.tagName(tag)
+            ..fields.addAll(operationFields)
+            ..docs.addAll(formatDocComment(tag.description))
+            ..constructors.add(
+              Constructor(
+                (b) =>
+                    b
+                      ..requiredParameters.add(
+                        Parameter(
+                          (b) =>
+                              b
+                                ..name = 'dio'
+                                ..type = refer('Dio', 'package:dio/dio.dart'),
+                        ),
+                      )
+                      ..initializers.addAll(constructorInitializers),
+              ),
+            )
+            ..methods.addAll(operations.map(_generateMethod)),
     );
   }
 
@@ -97,31 +105,37 @@ class ApiClientGenerator {
     );
 
     final resultType = resultTypeForOperation(operation, nameManager, package);
-    final operationFieldName = '_${nameManager.operationName(operation).toCamelCase()}';
+    final operationFieldName =
+        '_${nameManager.operationName(operation).toCamelCase()}';
 
     final requiredParams = parameters.where((p) => p.required).toList();
     final optionalParams = parameters.where((p) => !p.required).toList();
-    
+
     final paramMap = {
       for (final param in parameters) param.name: refer(param.name),
     };
 
+    final docs = formatDocComments([operation.summary, operation.description]);
+
     return Method(
-      (b) => b
-        ..name = nameManager.operationName(operation).toCamelCase()
-        ..returns = TypeReference(
-          (b) => b
-            ..symbol = 'Future'
-            ..url = 'dart:core'
-            ..types.add(resultType),
-        )
-        ..optionalParameters.addAll([
-          ...requiredParams.map((p) => p.rebuild((b) => b..named = true)),
-          ...optionalParams.map((p) => p.rebuild((b) => b..named = true)),
-        ])
-        ..modifier = MethodModifier.async
-        ..lambda = true
-        ..body = refer(operationFieldName).call([], paramMap).code,
+      (b) =>
+          b
+            ..name = nameManager.operationName(operation).toCamelCase()
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Future'
+                    ..url = 'dart:core'
+                    ..types.add(resultType),
+            )
+            ..docs.addAll(docs)
+            ..optionalParameters.addAll([
+              ...requiredParams.map((p) => p.rebuild((b) => b..named = true)),
+              ...optionalParams.map((p) => p.rebuild((b) => b..named = true)),
+            ])
+            ..modifier = MethodModifier.async
+            ..lambda = true
+            ..body = refer(operationFieldName).call([], paramMap).code,
     );
   }
 }

@@ -48,7 +48,7 @@ void main() {
 
         final generatedClass = generator.generateClass({
           operation,
-        }, const Tag(name: 'users'),);
+        }, const Tag(name: 'users'));
 
         // Test class definition
         expect(generatedClass.name, 'UsersApi');
@@ -70,6 +70,74 @@ void main() {
         final initializerCode =
             constructor.initializers.first.accept(emitter).toString();
         expect(initializerCode, '_getUser = GetUser(dio)');
+      });
+
+      test(
+        'generates API client class with doc string for a tag with description',
+        () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            description: 'Get user by ID',
+            tags: {
+              const Tag(name: 'users', description: 'User management API'),
+            },
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users', description: 'User management API'));
+
+          // Test class has documentation
+          expect(generatedClass.docs, isNotEmpty);
+          expect(generatedClass.docs.first, '/// User management API');
+        },
+      );
+
+      test('generates API client class with multiline doc string', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          description: 'Get user by ID',
+          tags: {
+            const Tag(
+              name: 'users',
+              description: 'User management API\nWith multiple lines',
+            ),
+          },
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          const Tag(
+            name: 'users',
+            description: 'User management API\nWith multiple lines',
+          ),
+        );
+
+        // Test class has multiline documentation
+        expect(generatedClass.docs, isNotEmpty);
+        expect(generatedClass.docs.length, 2);
+        expect(generatedClass.docs[0], '/// User management API');
+        expect(generatedClass.docs[1], '/// With multiple lines');
       });
     });
 
@@ -97,7 +165,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'),);
+          }, const Tag(name: 'users'));
         });
 
         test('generates method with correct signature', () {
@@ -124,6 +192,18 @@ void main() {
             contains(collapseWhitespace(expectedMethod)),
           );
         });
+
+        test(
+          'generates method with doc string from operation summary and description',
+          () {
+            final method = generatedClass.methods.first;
+
+            // Check that method has documentation
+            expect(method.docs, isNotEmpty);
+            expect(method.docs, contains('/// Get user'));
+            expect(method.docs, contains('/// Get user by ID'));
+          },
+        );
       });
 
       group('method with path parameters', () {
@@ -162,7 +242,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'),);
+          }, const Tag(name: 'users'));
         });
 
         test('generates method with path parameter', () {
@@ -242,7 +322,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'),);
+          }, const Tag(name: 'users'));
         });
 
         test('generates method with query parameters', () {
@@ -324,7 +404,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'),);
+          }, const Tag(name: 'users'));
         });
 
         test('generates method with request body', () {
@@ -396,7 +476,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'),);
+          }, const Tag(name: 'users'));
         });
 
         test('generates method with aliased parameter', () {
@@ -423,6 +503,165 @@ void main() {
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(expectedMethod)),
           );
+        });
+      });
+
+      group('method with only summary or description', () {
+        test('generates method with doc string from only summary', () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            description: null,
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'));
+
+          final method = generatedClass.methods.first;
+
+          // Check that method has documentation with only summary
+          expect(method.docs, isNotEmpty);
+          expect(method.docs, contains('/// Get user'));
+          expect(method.docs.length, 1);
+        });
+
+        test('generates method with doc string from only description', () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: null,
+            description: 'Get user by ID',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'));
+
+          final method = generatedClass.methods.first;
+
+          // Check that method has documentation with only description
+          expect(method.docs, isNotEmpty);
+          expect(method.docs, contains('/// Get user by ID'));
+          expect(method.docs.length, 1);
+        });
+
+        test('generates method with multiline doc strings', () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user\ndetails',
+            description: 'Get user by ID\nand return profile data',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'));
+
+          final method = generatedClass.methods.first;
+
+          // Check that method has multiline documentation
+          expect(method.docs, isNotEmpty);
+          expect(method.docs.length, 4);
+
+          expect(method.docs[0], '/// Get user');
+          expect(method.docs[1], '/// details');
+          expect(method.docs[2], '/// Get user by ID');
+          expect(method.docs[3], '/// and return profile data');
+        });
+      });
+
+      group('method with real operation docs ordering', () {
+        test('places description before summary', () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            description: 'Get user by ID',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'));
+
+          final method = generatedClass.methods.first;
+
+          // Check documentation order
+          expect(method.docs, isNotEmpty);
+          expect(method.docs.length, 2);
+
+          expect(method.docs[0], '/// Get user');
+          expect(method.docs[1], '/// Get user by ID');
+        });
+
+        test('works with multiline doc comments', () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user\nwith details',
+            description: 'Get user by ID\nand return profile data',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
+
+          final generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'));
+
+          final method = generatedClass.methods.first;
+
+          // Check documentation order with multiline comments
+          expect(method.docs, isNotEmpty);
+          expect(method.docs.length, 4);
+
+          expect(method.docs[0], '/// Get user');
+          expect(method.docs[1], '/// with details');
+          expect(method.docs[2], '/// Get user by ID');
+          expect(method.docs[3], '/// and return profile data');
         });
       });
     });
