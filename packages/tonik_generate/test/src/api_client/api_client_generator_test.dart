@@ -53,17 +53,23 @@ void main() {
         // Test class definition
         expect(generatedClass.name, 'UsersApi');
         expect(generatedClass.fields.length, 1);
-        expect(generatedClass.fields.first.name, '_dio');
+        expect(generatedClass.fields.first.name, '_getUser');
         expect(
           generatedClass.fields.first.type?.accept(emitter).toString(),
-          'Dio',
+          'GetUser',
         );
 
         // Test constructor
         final constructor = generatedClass.constructors.first;
         expect(constructor.requiredParameters.length, 1);
-        expect(constructor.requiredParameters.first.name, '_dio');
-        expect(constructor.requiredParameters.first.toThis, isTrue);
+        expect(constructor.requiredParameters.first.name, 'dio');
+        expect(constructor.requiredParameters.first.toThis, isFalse);
+
+        // Test constructor initializers
+        expect(constructor.initializers.length, 1);
+        final initializerCode =
+            constructor.initializers.first.accept(emitter).toString();
+        expect(initializerCode, '_getUser = GetUser(dio)');
       });
     });
 
@@ -110,7 +116,7 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUser() async => GetUser(_dio).call();
+            Future<TonikResult<void>> getUser() async => _getUser();
           ''';
 
           expect(
@@ -176,8 +182,7 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUser({required String id}) async =>
-                GetUser(_dio).call(id: id);
+            Future<TonikResult<void>> getUser({required String id}) async => _getUser(id: id);
           ''';
 
           expect(
@@ -262,8 +267,7 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUsers({int? limit, int? offset}) async =>
-                GetUsers(_dio).call(limit: limit, offset: offset);
+            Future<TonikResult<void>> getUsers({int? limit, int? offset}) async => _getUsers(limit: limit, offset: offset);
           ''';
 
           expect(
@@ -292,12 +296,13 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: RequestBodyObject(
-              name: 'createUser',
-              context: testContext,
               description: 'User data',
               isRequired: true,
+              name: 'createUser',
               content: {
                 RequestContent(
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
                   model: ClassModel(
                     name: 'CreateUserRequestBody',
                     properties: [
@@ -308,20 +313,12 @@ void main() {
                         isNullable: false,
                         isDeprecated: false,
                       ),
-                      Property(
-                        name: 'email',
-                        model: StringModel(context: testContext),
-                        isRequired: true,
-                        isNullable: false,
-                        isDeprecated: false,
-                      ),
                     ],
                     context: testContext,
                   ),
-                  contentType: ContentType.json,
-                  rawContentType: 'application/json',
                 ),
               },
+              context: testContext,
             ),
           );
 
@@ -348,9 +345,8 @@ void main() {
 
           const expectedMethod = '''
             Future<TonikResult<void>> createUser({
-                required CreateUserRequestBody body, 
-            }) async =>
-                CreateUser(_dio).call(body: body);
+              required CreateUserRequestBody body,
+            }) async => _createUser(body: body);
           ''';
 
           expect(
@@ -420,8 +416,7 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUser({required String userId}) async =>
-                GetUser(_dio).call(userId: userId);
+            Future<TonikResult<void>> getUser({required String userId}) async => _getUser(userId: userId);
           ''';
 
           expect(
@@ -453,10 +448,9 @@ void main() {
 
       expect(result.filename, 'users_api.dart');
       expect(result.code, contains('class UsersApi'));
-      expect(result.code, contains('final _i1.Dio _dio;'));
       expect(
         result.code,
-        contains('_i2.Future<_i3.TonikResult<void>> getUser()'),
+        contains('_i3.Future<_i4.TonikResult<void>> getUser()'),
       );
     });
   });

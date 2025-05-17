@@ -9,6 +9,9 @@ class ApiClientFileGenerator {
 
   final ApiClientGenerator apiClientGenerator;
   final log = Logger('ApiClientFileGenerator');
+  
+  // Default tag for operations without any tags
+  static const defaultTag = Tag(name: 'default');
 
   void writeFiles({
     required ApiDocument apiDocument,
@@ -26,7 +29,8 @@ class ApiClientFileGenerator {
     ]);
 
     Directory(clientDirectory).createSync(recursive: true);
-
+    
+    // Process operations with tags
     for (final entry in apiDocument.operationsByTag.entries) {
       final result = apiClientGenerator.generate(entry.value, entry.key);
 
@@ -35,5 +39,29 @@ class ApiClientFileGenerator {
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
     }
+    
+    // Process operations without tags
+    final untaggedOperations = getUntaggedOperations(apiDocument);
+    if (untaggedOperations.isNotEmpty) {
+      final result = apiClientGenerator.generate(untaggedOperations, defaultTag);
+      
+      log.fine('Writing file for untagged operations: ${result.filename}');
+      final file = File(path.join(clientDirectory, result.filename));
+      file.parent.createSync(recursive: true);
+      file.writeAsStringSync(result.code);
+    }
+  }
+  
+  /// Collects all operations from the API document that don't have tags.
+  Set<Operation> getUntaggedOperations(ApiDocument apiDocument) {
+    final untaggedOperations = <Operation>{};
+    
+    for (final operation in apiDocument.operations) {
+      if (operation.tags.isEmpty) {
+        untaggedOperations.add(operation);
+      }
+    }
+    
+    return untaggedOperations;
   }
 } 
