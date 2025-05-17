@@ -12,8 +12,8 @@ import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
-import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating callable operation classes
 /// from Operation definitions.
@@ -143,130 +143,35 @@ class OperationGenerator {
     Operation operation,
     NormalizedRequestParameters normalizedParams,
   ) {
-    final parameters = <Parameter>[];
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+    final parameters = generateParameters(
+      operation: operation,
+      nameManager: nameManager,
+      package: package,
+    );
+
     final pathArgs = <String, Expression>{};
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
     final dataArgs = <String, Expression>{};
 
-    final hasRequestBody =
-        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
-    final hasVariableContent = (operation.requestBody?.contentCount ?? 0) > 1;
-
     if (hasRequestBody) {
-      final requestBody = operation.requestBody!;
-
-      final parameterType =
-          requestBody.contentCount == 1
-              ? typeReference(
-                requestBody.resolvedContent.first.model,
-                nameManager,
-                package,
-                isNullableOverride: !requestBody.isRequired,
-              )
-              : TypeReference(
-                (b) =>
-                    b
-                      ..symbol = nameManager.requestBodyNames(requestBody).$1
-                      ..url = package
-                      ..isNullable = !requestBody.isRequired,
-              );
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = 'body'
-                ..type = parameterType
-                ..named = true
-                ..required = requestBody.isRequired,
-        ),
-      );
-
       dataArgs['body'] = refer('body');
     }
 
-    // Add suffix to any parameter named 'body' if request body exists
-    String normalizeParamName(String name, String suffix) {
-      return name == 'body' && hasRequestBody ? '$name$suffix' : name;
-    }
-
     for (final pathParam in normalizedParams.pathParameters) {
-      final paramName = normalizeParamName(pathParam.normalizedName, 'Path');
-      final resolvedParam = pathParam.parameter;
-
-      final parameterType = typeReference(
-        resolvedParam.model,
-        nameManager,
-        package,
-        isNullableOverride: !resolvedParam.isRequired,
-      );
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
-        ),
-      );
-
-      pathArgs[pathParam.normalizedName] = refer(paramName);
+      pathArgs[pathParam.normalizedName] = refer(pathParam.normalizedName);
     }
 
     for (final queryParam in normalizedParams.queryParameters) {
-      final paramName = normalizeParamName(queryParam.normalizedName, 'Query');
-      final resolvedParam = queryParam.parameter;
-
-      final parameterType = typeReference(
-        resolvedParam.model,
-        nameManager,
-        package,
-        isNullableOverride: !resolvedParam.isRequired,
-      );
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
-        ),
-      );
-
-      queryArgs[queryParam.normalizedName] = refer(paramName);
+      queryArgs[queryParam.normalizedName] = refer(queryParam.normalizedName);
     }
 
     for (final headerParam in normalizedParams.headers) {
-      final paramName = normalizeParamName(
+      headerArgs[headerParam.normalizedName] = refer(
         headerParam.normalizedName,
-        'Header',
       );
-      final resolvedParam = headerParam.parameter;
-
-      final parameterType = typeReference(
-        resolvedParam.model,
-        nameManager,
-        package,
-        isNullableOverride: !resolvedParam.isRequired,
-      );
-
-      parameters.add(
-        Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
-        ),
-      );
-
-      headerArgs[headerParam.normalizedName] = refer(paramName);
     }
 
     final pathExpr =
@@ -288,7 +193,7 @@ class OperationGenerator {
         pathExpr,
         queryExpr,
         hasRequestBody,
-        hasVariableContent,
+        (operation.requestBody?.contentCount ?? 0) > 1,
         headerArgs,
       ),
       _generateResponseStatements(responseVar),

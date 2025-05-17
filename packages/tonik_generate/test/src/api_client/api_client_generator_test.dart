@@ -68,52 +68,367 @@ void main() {
     });
 
     group('method generation', () {
-      late Class generatedClass;
-      late Operation operation;
+      group('basic method', () {
+        late Class generatedClass;
+        late Operation operation;
 
-      setUp(() {
-        operation = Operation(
-          operationId: 'getUser',
-          context: testContext,
-          summary: 'Get user',
-          description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
-          isDeprecated: false,
-          path: '/users/{id}',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          responses: const {},
-          requestBody: null,
-        );
+        setUp(() {
+          operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            description: 'Get user by ID',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
 
-        generatedClass = generator.generateClass({
-          operation,
-        }, const Tag(name: 'users'),);
+          generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'),);
+        });
+
+        test('generates method with correct signature', () {
+          final method = generatedClass.methods.first;
+          expect(method.name, 'getUser');
+          expect(method.modifier, MethodModifier.async);
+          expect(
+            method.returns?.accept(emitter).toString(),
+            'Future<TonikResult<void>>',
+          );
+        });
+
+        test('generates method body with operation call', () {
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+            Future<TonikResult<void>> getUser() async => GetUser(_dio).call();
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
       });
 
-      test('generates method with correct signature', () {
-        final method = generatedClass.methods.first;
-        expect(method.name, 'getUser');
-        expect(method.modifier, MethodModifier.async);
-        expect(
-          method.returns?.accept(emitter).toString(),
-          'Future<TonikResult<void>>',
-        );
+      group('method with path parameters', () {
+        late Class generatedClass;
+        late Operation operation;
+
+        setUp(() {
+          operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            description: 'Get user by ID',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: {
+              PathParameterObject(
+                name: 'id',
+                rawName: 'id',
+                description: 'User ID',
+                isRequired: true,
+                isDeprecated: false,
+                allowEmptyValue: false,
+                explode: false,
+                model: StringModel(context: testContext),
+                encoding: PathParameterEncoding.simple,
+                context: testContext,
+              ),
+            },
+            responses: const {},
+            requestBody: null,
+          );
+
+          generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'),);
+        });
+
+        test('generates method with path parameter', () {
+          final method = generatedClass.methods.first;
+          expect(method.name, 'getUser');
+          expect(method.optionalParameters.length, 1);
+          expect(method.optionalParameters.first.name, 'id');
+          expect(
+            method.optionalParameters.first.type?.accept(emitter).toString(),
+            'String',
+          );
+        });
+
+        test('generates method body with path parameter', () {
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+            Future<TonikResult<void>> getUser({required String id}) async =>
+                GetUser(_dio).call(id: id);
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
       });
 
-      test('generates method body with operation call', () {
-        final generatedCode = format(generatedClass.accept(emitter).toString());
+      group('method with query parameters', () {
+        late Class generatedClass;
+        late Operation operation;
 
-        const expectedMethod = '''
-          Future<TonikResult<void>> getUser() async => GetUser(_dio).call();
-        ''';
+        setUp(() {
+          operation = Operation(
+            operationId: 'getUsers',
+            context: testContext,
+            summary: 'Get users',
+            description: 'Get users with filters',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {
+              QueryParameterObject(
+                name: 'limit',
+                rawName: 'limit',
+                description: 'Limit results',
+                isRequired: false,
+                isDeprecated: false,
+                allowEmptyValue: false,
+                allowReserved: false,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                encoding: QueryParameterEncoding.form,
+                context: testContext,
+              ),
+              QueryParameterObject(
+                name: 'offset',
+                rawName: 'offset',
+                description: 'Offset results',
+                isRequired: false,
+                isDeprecated: false,
+                allowEmptyValue: false,
+                allowReserved: false,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                encoding: QueryParameterEncoding.form,
+                context: testContext,
+              ),
+            },
+            pathParameters: const {},
+            responses: const {},
+            requestBody: null,
+          );
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
+          generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'),);
+        });
+
+        test('generates method with query parameters', () {
+          final method = generatedClass.methods.first;
+          expect(method.name, 'getUsers');
+          expect(method.optionalParameters.length, 2);
+          expect(method.optionalParameters[0].name, 'limit');
+          expect(method.optionalParameters[1].name, 'offset');
+          expect(
+            method.optionalParameters[0].type?.accept(emitter).toString(),
+            'int?',
+          );
+          expect(
+            method.optionalParameters[1].type?.accept(emitter).toString(),
+            'int?',
+          );
+        });
+
+        test('generates method body with query parameters', () {
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+            Future<TonikResult<void>> getUsers({int? limit, int? offset}) async =>
+                GetUsers(_dio).call(limit: limit, offset: offset);
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+      });
+
+      group('method with request body', () {
+        late Class generatedClass;
+        late Operation operation;
+
+        setUp(() {
+          operation = Operation(
+            operationId: 'createUser',
+            context: testContext,
+            summary: 'Create user',
+            description: 'Create a new user',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            requestBody: RequestBodyObject(
+              name: 'createUser',
+              context: testContext,
+              description: 'User data',
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: ClassModel(
+                    name: 'CreateUserRequestBody',
+                    properties: [
+                      Property(
+                        name: 'name',
+                        model: StringModel(context: testContext),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                      Property(
+                        name: 'email',
+                        model: StringModel(context: testContext),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                    ],
+                    context: testContext,
+                  ),
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                ),
+              },
+            ),
+          );
+
+          generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'),);
+        });
+
+        test('generates method with request body', () {
+          final method = generatedClass.methods.first;
+          expect(method.name, 'createUser');
+          expect(method.optionalParameters.length, 1);
+          expect(method.optionalParameters.first.name, 'body');
+          expect(
+            method.optionalParameters.first.type?.accept(emitter).toString(),
+            'CreateUserRequestBody',
+          );
+        });
+
+        test('generates method body with request body', () {
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+            Future<TonikResult<void>> createUser({
+                required CreateUserRequestBody body, 
+            }) async =>
+                CreateUser(_dio).call(body: body);
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+      });
+
+      group('method with aliased parameters', () {
+        late Class generatedClass;
+        late Operation operation;
+
+        setUp(() {
+          operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            description: 'Get user by ID',
+            tags: {const Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{user_id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: {
+              PathParameterAlias(
+                name: 'myAlias',
+                parameter: PathParameterObject(
+                  name: null,
+                  rawName: 'user_id',
+                  description: 'User ID',
+                  isRequired: true,
+                  isDeprecated: false,
+                  allowEmptyValue: false,
+                  explode: false,
+                  encoding: PathParameterEncoding.simple,
+                  model: StringModel(context: testContext),
+                  context: testContext,
+                ),
+                context: testContext,
+              ),
+            },
+            responses: const {},
+            requestBody: null,
+          );
+
+          generatedClass = generator.generateClass({
+            operation,
+          }, const Tag(name: 'users'),);
+        });
+
+        test('generates method with aliased parameter', () {
+          final method = generatedClass.methods.first;
+          expect(method.name, 'getUser');
+          expect(method.optionalParameters.length, 1);
+          expect(method.optionalParameters.first.name, 'userId');
+          expect(
+            method.optionalParameters.first.type?.accept(emitter).toString(),
+            'String',
+          );
+        });
+
+        test('generates method body with aliased parameter', () {
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+            Future<TonikResult<void>> getUser({required String userId}) async =>
+                GetUser(_dio).call(userId: userId);
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
       });
     });
 

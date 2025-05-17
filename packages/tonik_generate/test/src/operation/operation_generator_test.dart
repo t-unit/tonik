@@ -147,7 +147,7 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call({required String xMyHeader}) async {
+          Future<TonikResult<void>> call({required String myHeader}) async {
             final Uri _$uri;
             final Object? _$data;
             final Options _$options;
@@ -155,7 +155,7 @@ void main() {
             try {
               _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
               _$data = _data();
-              _$options = _options(xMyHeader: xMyHeader);
+              _$options = _options(myHeader: myHeader);
             } on Object catch (exception, stackTrace) {
               return TonikError(
                 exception,
@@ -188,7 +188,7 @@ void main() {
         final normalizedParams = NormalizedRequestParameters(
           pathParameters: const [],
           queryParameters: const [],
-          headers: [(normalizedName: 'xMyHeader', parameter: requestHeader)],
+          headers: [(normalizedName: 'myHeader', parameter: requestHeader)],
         );
 
         final method = generator.generateCallMethod(
@@ -206,7 +206,7 @@ void main() {
 
         expect(method.optionalParameters, hasLength(1));
         final param = method.optionalParameters.first;
-        expect(param.name, 'xMyHeader');
+        expect(param.name, 'myHeader');
         expect(param.type?.accept(emitter).toString(), 'String');
         expect(param.named, isTrue);
         expect(param.required, isTrue);
@@ -230,7 +230,20 @@ void main() {
           method: HttpMethod.delete,
           headers: const {},
           queryParameters: const {},
-          pathParameters: const {},
+          pathParameters: {
+            PathParameterObject(
+              name: 'petId',
+              rawName: 'petId',
+              description: 'ID of pet to delete',
+              isRequired: true,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              explode: false,
+              encoding: PathParameterEncoding.simple,
+              model: IntegerModel(context: context),
+              context: context,
+            ),
+          },
           responses: const {},
           requestBody: null,
         );
@@ -990,6 +1003,165 @@ void main() {
 
         final result = generator.generateCallableOperation(operation);
         expect(result.filename, 'get_users.dart');
+      });
+
+      test('generates call method with parameters and body', () {
+        final requestBody = RequestBodyObject(
+          name: 'createUser',
+          context: context,
+          description: 'User to create',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final pathParam = PathParameterObject(
+          name: 'id',
+          rawName: 'id',
+          description: 'User ID',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: PathParameterEncoding.simple,
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final queryParam = QueryParameterObject(
+          name: 'limit',
+          rawName: 'limit',
+          description: 'Limit results',
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          model: IntegerModel(context: context),
+          context: context,
+          allowReserved: false,
+        );
+
+        final operation = Operation(
+          operationId: 'createUser',
+          context: context,
+          summary: 'Create user',
+          description: 'Creates a new user',
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: {pathParam},
+          responses: const {},
+          requestBody: requestBody,
+        );
+
+        final result = generator.generateCallableOperation(operation);
+        final code = result.code;
+
+        // Verify the generated code contains the expected method signature
+        expect(
+          code,
+          contains(
+            ' _i2.Future<_i3.TonikResult<void>> call({\n'
+            '    required _i2.String body,\n'
+            '    required _i2.String id,\n'
+            '    _i2.int? limit,\n'
+            '  }) async',
+          ),
+        );
+      });
+
+      test('handles parameter aliases correctly', () {
+        final pathParam = PathParameterAlias(
+          name: 'userId',
+          parameter: PathParameterObject(
+            name: 'id',
+            rawName: 'user_id',
+            description: 'User ID',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: PathParameterEncoding.simple,
+            model: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+
+        final queryParam = QueryParameterAlias(
+          name: 'pageSize',
+          parameter: QueryParameterObject(
+            name: 'limit',
+            rawName: 'page_size',
+            description: 'Page size',
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: QueryParameterEncoding.form,
+            model: IntegerModel(context: context),
+            context: context,
+            allowReserved: false,
+          ),
+          context: context,
+        );
+
+        final headerParam = RequestHeaderAlias(
+          name: 'authTokenAlias',
+          header: RequestHeaderObject(
+            name: null,
+            rawName: 'auth_token',
+            description: 'Auth token',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: HeaderParameterEncoding.simple,
+            model: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getUser',
+          context: context,
+          summary: 'Get user',
+          description: 'Get user by ID',
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{user_id}',
+          method: HttpMethod.get,
+          headers: {headerParam},
+          queryParameters: {queryParam},
+          pathParameters: {pathParam},
+          responses: const {},
+          requestBody: null,
+        );
+
+        final result = generator.generateCallableOperation(operation);
+        final code = result.code;
+
+        // Verify the generated code uses the raw names
+        expect(
+          code,
+          contains(
+            ' _i2.Future<_i3.TonikResult<void>> call({\n'
+            '    required _i2.String userId,\n'
+            '    _i2.int? pageSize,\n'
+            '    required _i2.String authToken,\n'
+            '  }) async',
+          ),
+        );
       });
     });
 

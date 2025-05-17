@@ -18,6 +18,12 @@ class NormalizedRequestParameters {
   final List<({String normalizedName, QueryParameterObject parameter})>
   queryParameters;
   final List<({String normalizedName, RequestHeaderObject parameter})> headers;
+
+  @override
+  String toString() {
+    return 'NormalizedRequestParameters(pathParameters: $pathParameters, '
+        'queryParameters: $queryParameters, headers: $headers)';
+  }
 }
 
 /// Normalizes request parameters from path, query, and header parameters.
