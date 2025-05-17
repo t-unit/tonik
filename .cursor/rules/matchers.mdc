@@ -6,3 +6,8 @@ alwaysApply: false
  # Use isTrue and isFalse matchers
 - Always `isTrue` and `isFalse` instead of `false` and `true.
 - Never use `equals`, test against value directly.
+
+# When working with the @code_builder package
+- Use `collapseWhitespace` from the [matchers package](https://pub.dev/documentation/matcher/latest/matcher/collapseWhitespace.html), availale via importing `import 'package:test/test.dart';`
+- Avoid testing single lines in generated code, make sure to test full methods
+- Test as much as possible by introspecting objects of the code builder package
