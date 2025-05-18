@@ -27,14 +27,14 @@ class InvalidFormatException extends DecodingException {
 /// Exception thrown when a value cannot be converted to the target type.
 class InvalidTypeException extends DecodingException {
   /// Creates a new [InvalidTypeException] with the specified [value],
-  /// [targetType] and optional [cause].
+  /// [targetType] and optional [context].
   const InvalidTypeException({
     required this.value,
     required this.targetType,
-    this.cause,
+    this.context,
   }) : super(
          'Cannot convert "$value" to type '
-         '$targetType${cause != null ? ': $cause' : ''}',
+         '$targetType${context != null ? ': $context' : ''}',
        );
 
   /// The value that couldn't be converted.
@@ -43,8 +43,8 @@ class InvalidTypeException extends DecodingException {
   /// The target type that was requested.
   final Type targetType;
 
-  /// The underlying cause of the conversion failure, if any.
-  final Object? cause;
+  /// The context of the conversion failure, if any.
+  final String? context;
 
   @override
   String toString() => 'InvalidTypeException: $message';

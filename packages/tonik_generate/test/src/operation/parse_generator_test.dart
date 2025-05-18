@@ -68,9 +68,7 @@ void main() {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
 String _parseResponse(Response<Object?> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -124,9 +122,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         Anonymous _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -188,9 +184,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         User _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -242,9 +236,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         List<int> _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -307,9 +299,7 @@ String _parseResponse(Response<Object?> response) {
         requestBody: null,
       );
 
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         List<User> _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -383,9 +373,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         Pet _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -434,9 +422,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -485,9 +471,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -556,9 +540,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         MultiStatusOpResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -644,9 +626,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
         Anonymous _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -748,9 +728,7 @@ String _parseResponse(Response<Object?> response) {
         },
         requestBody: null,
       );
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = '''
         CombinedOpResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -842,9 +820,7 @@ String _parseResponse(Response<Object?> response) {
         },
       );
 
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
         BaseResponse _parseResponse(Response<Object?> response) {
@@ -926,9 +902,7 @@ String _parseResponse(Response<Object?> response) {
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
         HeaderAliasResponse _parseResponse(Response<Object?> response) {
@@ -1002,9 +976,7 @@ String _parseResponse(Response<Object?> response) {
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
         BodyHeaderResponse _parseResponse(Response<Object?> response) {
@@ -1068,9 +1040,7 @@ String _parseResponse(Response<Object?> response) {
           requestBody: null,
         );
 
-        final method = generator.generateParseResponseMethod(
-          operation,
-        );
+        final method = generator.generateParseResponseMethod(operation);
 
         const expectedMethod = r'''
         UserResponse _parseResponse(Response<Object?> response) {
@@ -1144,9 +1114,7 @@ String _parseResponse(Response<Object?> response) {
         requestBody: null,
       );
 
-      final method = generator.generateParseResponseMethod(
-        operation,
-      );
+      final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
         GetUserResponse _parseResponse(Response<Object?> response) {
@@ -1171,7 +1139,8 @@ String _parseResponse(Response<Object?> response) {
       );
     });
 
-    test('generates without default case when DefaultResponseStatus with null content type exists', () {
+    test('generates without default case when DefaultResponseStatus with null '
+        'content type exists', () {
       final operation = Operation(
         operationId: 'defaultNullContentType',
         context: context,
@@ -1247,9 +1216,7 @@ String _parseResponse(Response<Object?> response) {
           },
         );
 
-        final method = generator.generateParseResponseMethod(
-          operation,
-        );
+        final method = generator.generateParseResponseMethod(operation);
 
         final generated = method.accept(scopedEmitter).toString();
         expect(generated, contains('_i2.Response'));

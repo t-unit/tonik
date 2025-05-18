@@ -8,19 +8,19 @@ extension JsonDecoder on Object? {
   /// Expects ISO 8601 format string.
   /// Throws [InvalidTypeException] if the value is not a valid date string
   /// or if the value is null.
-  DateTime decodeJsonDateTime() {
+  DateTime decodeJsonDateTime({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: DateTime,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! String) {
       throw InvalidTypeException(
         value: toString(),
         targetType: DateTime,
-        cause: 'Value is not a string',
+        context: context,
       );
     }
     try {
@@ -29,7 +29,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: this! as String,
         targetType: DateTime,
-        cause: e.message,
+        context: e.message,
       );
     }
   }
@@ -38,30 +38,30 @@ extension JsonDecoder on Object? {
   ///
   /// Returns null if the value is null or an empty string.
   /// Throws [InvalidTypeException] if the value is not a valid date string.
-  DateTime? decodeJsonNullableDateTime() {
+  DateTime? decodeJsonNullableDateTime({String? context}) {
     if (this == null || (this is String && (this! as String).isEmpty)) {
       return null;
     }
-    return decodeJsonDateTime();
+    return decodeJsonDateTime(context: context);
   }
 
   /// Decodes a JSON value to a BigDecimal.
   ///
   /// Throws [InvalidTypeException] if the value is not a valid decimal string
   /// or if the value is null.
-  BigDecimal decodeJsonBigDecimal() {
+  BigDecimal decodeJsonBigDecimal({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: BigDecimal,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! String) {
       throw InvalidTypeException(
         value: toString(),
         targetType: BigDecimal,
-        cause: 'Value is not a string',
+        context: context,
       );
     }
     try {
@@ -70,7 +70,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: this! as String,
         targetType: BigDecimal,
-        cause: 'Not a valid decimal',
+        context: context,
       );
     }
   }
@@ -79,30 +79,30 @@ extension JsonDecoder on Object? {
   ///
   /// Returns null if the value is null or an empty string.
   /// Throws [InvalidTypeException] if the value is not a valid decimal string.
-  BigDecimal? decodeJsonNullableBigDecimal() {
+  BigDecimal? decodeJsonNullableBigDecimal({String? context}) {
     if (this == null || (this is String && (this! as String).isEmpty)) {
       return null;
     }
-    return decodeJsonBigDecimal();
+    return decodeJsonBigDecimal(context: context);
   }
 
   /// Decodes a JSON value to a String.
   ///
   /// Throws [InvalidTypeException] if the value is not a valid string
   /// or is null.
-  String decodeJsonString() {
+  String decodeJsonString({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: String,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! String) {
       throw InvalidTypeException(
         value: toString(),
         targetType: String,
-        cause: 'Value is not a string',
+        context: context,
       );
     }
     return this! as String;
@@ -112,7 +112,7 @@ extension JsonDecoder on Object? {
   ///
   /// Returns null if the value is null or an empty string.
   /// Throws [InvalidTypeException] if the value is not a valid string.
-  String? decodeJsonNullableString() {
+  String? decodeJsonNullableString({String? context}) {
     if (this == null) {
       return null;
     }
@@ -120,7 +120,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: toString(),
         targetType: String,
-        cause: 'Value is not a string',
+        context: context,
       );
     }
     return this! as String;
@@ -129,19 +129,19 @@ extension JsonDecoder on Object? {
   /// Decodes a JSON value to an int.
   ///
   /// Throws [InvalidTypeException] if the value is not a valid int or is null.
-  int decodeJsonInt() {
+  int decodeJsonInt({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: int,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! int) {
       throw InvalidTypeException(
         value: toString(),
         targetType: int,
-        cause: 'Value is not an int',
+        context: context,
       );
     }
     return this! as int;
@@ -151,7 +151,7 @@ extension JsonDecoder on Object? {
   ///
   /// Returns null if the value is null or an empty string.
   /// Throws [InvalidTypeException] if the value is not a valid int.
-  int? decodeJsonNullableInt() {
+  int? decodeJsonNullableInt({String? context}) {
     if (this == null) {
       return null;
     }
@@ -159,7 +159,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: toString(),
         targetType: int,
-        cause: 'Value is not an int',
+        context: context,
       );
     }
     return this! as int;
@@ -168,19 +168,19 @@ extension JsonDecoder on Object? {
   /// Decodes a JSON value to a num.
   ///
   /// Throws [InvalidTypeException] if the value is not a valid num or is null.
-  num decodeJsonNum() {
+  num decodeJsonNum({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: num,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! num) {
       throw InvalidTypeException(
         value: toString(),
         targetType: num,
-        cause: 'Value is not a num',
+        context: context,
       );
     }
     return this! as num;
@@ -190,7 +190,7 @@ extension JsonDecoder on Object? {
   ///
   /// Returns null if the value is null or an empty string.
   /// Throws [InvalidTypeException] if the value is not a valid num.
-  num? decodeJsonNullableNum() {
+  num? decodeJsonNullableNum({String? context}) {
     if (this == null) {
       return null;
     }
@@ -198,7 +198,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: toString(),
         targetType: num,
-        cause: 'Value is not a num',
+        context: context,
       );
     }
     return this! as num;
@@ -208,19 +208,19 @@ extension JsonDecoder on Object? {
   ///
   /// Throws [InvalidTypeException] if the value is not a valid double or
   /// is null.
-  double decodeJsonDouble() {
+  double decodeJsonDouble({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: double,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! double) {
       throw InvalidTypeException(
         value: toString(),
         targetType: double,
-        cause: 'Value is not a double',
+        context: context,
       );
     }
     return this! as double;
@@ -230,7 +230,7 @@ extension JsonDecoder on Object? {
   ///
   /// Returns null if the value is null or an empty string.
   /// Throws [InvalidTypeException] if the value is not a valid double.
-  double? decodeJsonNullableDouble() {
+  double? decodeJsonNullableDouble({String? context}) {
     if (this == null) {
       return null;
     }
@@ -238,7 +238,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: toString(),
         targetType: double,
-        cause: 'Value is not a double',
+        context: context,
       );
     }
     return this! as double;
@@ -247,19 +247,19 @@ extension JsonDecoder on Object? {
   /// Decodes a JSON value to a List of type [T].
   ///
   /// Throws [InvalidTypeException] if the value is not a list or is null.
-  List<T> decodeJsonList<T>() {
+  List<T> decodeJsonList<T>({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: List<T>,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this is! List) {
       throw InvalidTypeException(
         value: toString(),
         targetType: List<T>,
-        cause: 'Value is not a list',
+        context: context,
       );
     }
 
@@ -270,7 +270,7 @@ extension JsonDecoder on Object? {
       throw InvalidTypeException(
         value: toString(),
         targetType: List<T>,
-        cause: 'Value is not a list of $T',
+        context: context,
       );
     }
 
@@ -282,10 +282,10 @@ extension JsonDecoder on Object? {
   /// Returns null if the value is null or an empty list.
   /// Throws [InvalidTypeException] if the value is not a list of the
   /// expected type.
-  List<T>? decodeJsonNullableList<T>() {
+  List<T>? decodeJsonNullableList<T>({String? context}) {
     if (this == null) {
       return null;
     }
-    return decodeJsonList<T>();
+    return decodeJsonList<T>(context: context);
   }
 }

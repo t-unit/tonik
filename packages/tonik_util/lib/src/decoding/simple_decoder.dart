@@ -7,12 +7,12 @@ extension SimpleDecoder on String? {
   ///
   /// Returns the string value as is.
   /// Throws [InvalidTypeException] if the value is null.
-  String decodeSimpleString() {
+  String decodeSimpleString({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: String,
-        cause: 'Value is null',
+        context: context,
       );
     }
     return Uri.decodeComponent(this!);
@@ -21,30 +21,39 @@ extension SimpleDecoder on String? {
   /// Decodes a string to a nullable string.
   ///
   /// Returns null if the string is empty or null.
-  String? decodeSimpleNullableString() {
+  String? decodeSimpleNullableString({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return Uri.decodeComponent(this!);
+
+    try {
+      return Uri.decodeComponent(this!);
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: String,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a string to an integer.
   ///
   /// Throws [InvalidTypeException] if the string is not a valid integer
   /// or if the value is null.
-  int decodeSimpleInt() {
+  int decodeSimpleInt({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: int,
-        cause: 'Value is null',
+        context: context,
       );
     }
     try {
       return int.parse(this!);
-    } on FormatException catch (e) {
+    } on Object {
       throw InvalidTypeException(
         value: this!,
         targetType: int,
-        cause: e.message,
+        context: context,
       );
     }
   }
@@ -53,30 +62,30 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// Throws [InvalidTypeException] if the string is not a valid integer.
-  int? decodeSimpleNullableInt() {
+  int? decodeSimpleNullableInt({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleInt();
+    return decodeSimpleInt(context: context);
   }
 
   /// Decodes a string to a double.
   ///
   /// Throws [InvalidTypeException] if the string is not a valid double
   /// or if the value is null.
-  double decodeSimpleDouble() {
+  double decodeSimpleDouble({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: double,
-        cause: 'Value is null',
+        context: context,
       );
     }
     try {
       return double.parse(this!);
-    } on FormatException catch (e) {
+    } on Object {
       throw InvalidTypeException(
         value: this!,
         targetType: double,
-        cause: e.message,
+        context: context,
       );
     }
   }
@@ -85,9 +94,9 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// Throws [InvalidTypeException] if the string is not a valid double.
-  double? decodeSimpleNullableDouble() {
+  double? decodeSimpleNullableDouble({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleDouble();
+    return decodeSimpleDouble(context: context);
   }
 
   /// Decodes a string to a boolean.
@@ -95,12 +104,12 @@ extension SimpleDecoder on String? {
   /// Only accepts 'true' or 'false' (case-sensitive).
   /// Throws [InvalidTypeException] if the string is not a valid boolean
   /// or if the value is null.
-  bool decodeSimpleBool() {
+  bool decodeSimpleBool({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: bool,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this == 'true') return true;
@@ -108,7 +117,7 @@ extension SimpleDecoder on String? {
     throw InvalidTypeException(
       value: this!,
       targetType: bool,
-      cause: 'Expected "true" or "false"',
+      context: context,
     );
   }
 
@@ -116,9 +125,9 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// Throws [InvalidTypeException] if the string is not a valid boolean.
-  bool? decodeSimpleNullableBool() {
+  bool? decodeSimpleNullableBool({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleBool();
+    return decodeSimpleBool(context: context);
   }
 
   /// Decodes a string to a DateTime.
@@ -126,21 +135,21 @@ extension SimpleDecoder on String? {
   /// Expects ISO 8601 format.
   /// Throws [InvalidTypeException] if the string is not a valid date
   /// or if the value is null.
-  DateTime decodeSimpleDateTime() {
+  DateTime decodeSimpleDateTime({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: DateTime,
-        cause: 'Value is null',
+        context: context,
       );
     }
     try {
       return DateTime.parse(this!);
-    } on FormatException catch (e) {
+    } on Object {
       throw InvalidTypeException(
         value: this!,
         targetType: DateTime,
-        cause: e.message,
+        context: context,
       );
     }
   }
@@ -149,21 +158,21 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// Throws [InvalidTypeException] if the string is not a valid date.
-  DateTime? decodeSimpleNullableDateTime() {
+  DateTime? decodeSimpleNullableDateTime({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleDateTime();
+    return decodeSimpleDateTime(context: context);
   }
 
   /// Decodes a string to a BigDecimal.
   ///
   /// Throws [InvalidTypeException] if the string is not a valid decimal
   /// or if the value is null.
-  BigDecimal decodeSimpleBigDecimal() {
+  BigDecimal decodeSimpleBigDecimal({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: BigDecimal,
-        cause: 'Value is null',
+        context: context,
       );
     }
     try {
@@ -172,7 +181,7 @@ extension SimpleDecoder on String? {
       throw InvalidTypeException(
         value: this!,
         targetType: BigDecimal,
-        cause: 'Not a valid decimal',
+        context: context,
       );
     }
   }
@@ -181,9 +190,9 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// Throws [InvalidTypeException] if the string is not a valid decimal.
-  BigDecimal? decodeSimpleNullableBigDecimal() {
+  BigDecimal? decodeSimpleNullableBigDecimal({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleBigDecimal();
+    return decodeSimpleBigDecimal(context: context);
   }
 
   /// Decodes a string to a list of strings.
@@ -191,25 +200,28 @@ extension SimpleDecoder on String? {
   /// Splits the string by commas.
   /// Empty string returns an empty list.
   /// Throws [InvalidTypeException] if the value is null.
-  List<String> decodeSimpleStringList() {
+  List<String> decodeSimpleStringList({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: List<String>,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this!.isEmpty) return [];
-    return this!.split(',').map((s) => s.decodeSimpleString()).toList();
+    return this!
+        .split(',')
+        .map((s) => s.decodeSimpleString(context: context))
+        .toList();
   }
 
   /// Decodes a string to a nullable list of strings.
   ///
   /// Returns null if the string is empty or null.
   /// Otherwise splits the string by commas.
-  List<String>? decodeSimpleNullableStringList() {
+  List<String>? decodeSimpleNullableStringList({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleStringList();
+    return decodeSimpleStringList(context: context);
   }
 
   /// Decodes a string to a list of nullable strings.
@@ -218,24 +230,27 @@ extension SimpleDecoder on String? {
   /// Empty elements in the list are converted to null.
   /// Empty string returns an empty list.
   /// Throws [InvalidTypeException] if the value is null.
-  List<String?> decodeSimpleStringNullableList() {
+  List<String?> decodeSimpleStringNullableList({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
         targetType: List<String?>,
-        cause: 'Value is null',
+        context: context,
       );
     }
     if (this!.isEmpty) return [];
-    return this!.split(',').map((s) => s.decodeSimpleNullableString()).toList();
+    return this!
+        .split(',')
+        .map((s) => s.decodeSimpleNullableString(context: context))
+        .toList();
   }
 
   /// Decodes a string to a nullable list of nullable strings.
   ///
   /// Returns null if the string is empty or null.
   /// Otherwise splits the string by commas and converts empty elements to null.
-  List<String?>? decodeSimpleNullableStringNullableList() {
+  List<String?>? decodeSimpleNullableStringNullableList({String? context}) {
     if (this?.isEmpty ?? true) return null;
-    return decodeSimpleStringNullableList();
+    return decodeSimpleStringNullableList(context: context);
   }
 }
