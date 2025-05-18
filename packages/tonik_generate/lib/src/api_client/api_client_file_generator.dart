@@ -29,10 +29,17 @@ class ApiClientFileGenerator {
     ]);
 
     Directory(clientDirectory).createSync(recursive: true);
+    
+    // Get the servers list
+    final servers = apiDocument.servers.toList();
 
     // Process operations with tags
     for (final entry in apiDocument.operationsByTag.entries) {
-      final result = apiClientGenerator.generate(entry.value, entry.key);
+      final result = apiClientGenerator.generate(
+        entry.value, 
+        entry.key,
+        servers,
+      );
 
       log.fine('Writing file ${result.filename}');
       final file = File(path.join(clientDirectory, result.filename));
@@ -46,6 +53,7 @@ class ApiClientFileGenerator {
       final result = apiClientGenerator.generate(
         untaggedOperations,
         defaultTag,
+        servers,
       );
 
       log.fine('Writing file for untagged operations: ${result.filename}');

@@ -11,6 +11,7 @@ void main() {
   late NameManager nameManager;
   late Context testContext;
   late DartEmitter emitter;
+  late List<Server> testServers;
 
   final format =
       DartFormatter(
@@ -21,10 +22,17 @@ void main() {
     nameManager = NameManager(generator: NameGenerator());
     generator = ApiClientGenerator(
       nameManager: nameManager,
-      package: 'test_package',
+      package: 'package:test_package/test_package.dart',
     );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
+
+    testServers = [
+      const Server(
+        url: 'https://api.example.com',
+        description: 'Production server',
+      ),
+    ];
   });
 
   group('ApiClientGenerator', () {
@@ -46,9 +54,11 @@ void main() {
           requestBody: null,
         );
 
-        final generatedClass = generator.generateClass({
-          operation,
-        }, const Tag(name: 'users'),);
+        final generatedClass = generator.generateClass(
+          {operation},
+          const Tag(name: 'users'),
+          testServers,
+        );
 
         // Test class definition
         expect(generatedClass.name, 'UsersApi');
@@ -59,17 +69,78 @@ void main() {
           'GetUser',
         );
 
+        // Get server base class name
+        final serverNames = nameManager.serverNames(testServers);
+        final serverBaseClassName = serverNames.baseName;
+
         // Test constructor
         final constructor = generatedClass.constructors.first;
         expect(constructor.requiredParameters.length, 1);
-        expect(constructor.requiredParameters.first.name, 'dio');
+        expect(constructor.requiredParameters.first.name, 'server');
         expect(constructor.requiredParameters.first.toThis, isFalse);
+        expect(
+          constructor.requiredParameters.first.type?.accept(emitter).toString(),
+          serverBaseClassName,
+        );
 
         // Test constructor initializers
         expect(constructor.initializers.length, 1);
         final initializerCode =
             constructor.initializers.first.accept(emitter).toString();
-        expect(initializerCode, '_getUser = GetUser(dio)');
+        expect(initializerCode, '_getUser = GetUser(server.dio)');
+      });
+
+      test('generates API client class with server instead of Dio', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          description: 'Get user by ID',
+          tags: {const Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          const Tag(name: 'users'),
+          testServers,
+        );
+
+        // Test class definition
+        expect(generatedClass.name, 'UsersApi');
+        expect(generatedClass.fields.length, 1);
+        expect(generatedClass.fields.first.name, '_getUser');
+        expect(
+          generatedClass.fields.first.type?.accept(emitter).toString(),
+          'GetUser',
+        );
+
+        // Get server base class name
+        final serverNames = nameManager.serverNames(testServers);
+        final serverBaseClassName = serverNames.baseName;
+
+        // Test constructor
+        final constructor = generatedClass.constructors.first;
+        expect(constructor.requiredParameters.length, 1);
+        expect(constructor.requiredParameters.first.name, 'server');
+        expect(constructor.requiredParameters.first.toThis, isFalse);
+        expect(
+          constructor.requiredParameters.first.type?.accept(emitter).toString(),
+          serverBaseClassName,
+        );
+
+        // Test constructor initializers
+        expect(constructor.initializers.length, 1);
+        final initializerCode =
+            constructor.initializers.first.accept(emitter).toString();
+        expect(initializerCode, '_getUser = GetUser(server.dio)');
       });
 
       test(
@@ -93,9 +164,11 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users', description: 'User management API'),);
+          final generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users', description: 'User management API'),
+            testServers,
+          );
 
           // Test class has documentation
           expect(generatedClass.docs, isNotEmpty);
@@ -131,6 +204,7 @@ void main() {
             name: 'users',
             description: 'User management API\nWith multiple lines',
           ),
+          testServers,
         );
 
         // Test class has multiline documentation
@@ -163,9 +237,11 @@ void main() {
             requestBody: null,
           );
 
-          generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
         });
 
         test('generates method with correct signature', () {
@@ -238,9 +314,11 @@ void main() {
             requestBody: null,
           );
 
-          generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
         });
 
         test('generates method with path parameter', () {
@@ -318,9 +396,11 @@ void main() {
             requestBody: null,
           );
 
-          generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
         });
 
         test('generates method with query parameters', () {
@@ -400,9 +480,11 @@ void main() {
             ),
           );
 
-          generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
         });
 
         test('generates method with request body', () {
@@ -472,9 +554,11 @@ void main() {
             requestBody: null,
           );
 
-          generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
         });
 
         test('generates method with aliased parameter', () {
@@ -522,9 +606,11 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          final generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
 
           final method = generatedClass.methods.first;
 
@@ -551,9 +637,11 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          final generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
 
           final method = generatedClass.methods.first;
 
@@ -580,9 +668,11 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          final generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
 
           final method = generatedClass.methods.first;
 
@@ -615,9 +705,11 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          final generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
 
           final method = generatedClass.methods.first;
 
@@ -646,9 +738,11 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass({
-            operation,
-          }, const Tag(name: 'users'),);
+          final generatedClass = generator.generateClass(
+            {operation},
+            const Tag(name: 'users'),
+            testServers,
+          );
 
           final method = generatedClass.methods.first;
 
@@ -681,13 +775,17 @@ void main() {
         requestBody: null,
       );
 
-      final result = generator.generate({operation}, const Tag(name: 'users'));
+      final result = generator.generate(
+        {operation},
+        const Tag(name: 'users'),
+        testServers,
+      );
 
       expect(result.filename, 'users_api.dart');
       expect(result.code, contains('class UsersApi'));
       expect(
         result.code,
-        contains('_i3.Future<_i4.TonikResult<void>> getUser()'),
+        contains('_i2.Future<_i3.TonikResult<void>> getUser()'),
       );
     });
   });

@@ -20,12 +20,15 @@ class ApiClientGenerator {
   ({String code, String filename}) generate(
     Set<Operation> operations,
     Tag tag,
+    List<Server> servers,
   ) {
     final className = nameManager.tagName(tag);
     final fileNameSnakeCase = className.toSnakeCase();
     final fileName = '$fileNameSnakeCase.dart';
 
-    final library = Library((b) => b..body.add(generateClass(operations, tag)));
+    final library = Library(
+      (b) => b..body.add(generateClass(operations, tag, servers)),
+    );
 
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(),
@@ -44,7 +47,15 @@ class ApiClientGenerator {
 
   /// Generates the API client class
   @visibleForTesting
-  Class generateClass(Set<Operation> operations, Tag tag) {
+  Class generateClass(
+    Set<Operation> operations,
+    Tag tag,
+    List<Server> servers,
+  ) {
+    // Get the server base class name
+    final serverNames = nameManager.serverNames(servers);
+    final serverBaseClassName = serverNames.baseName;
+
     // Create private fields for each operation
     final operationFields =
         operations.map((operation) {
@@ -66,9 +77,9 @@ class ApiClientGenerator {
           final operationName = nameManager.operationName(operation);
           final fieldName = '_${operationName.toCamelCase()}';
 
-          return refer(
-            fieldName,
-          ).assign(refer(operationName, package).call([refer('dio')])).code;
+          return refer(fieldName)
+              .assign(refer(operationName, package).call([refer('server.dio')]))
+              .code;
         }).toList();
 
     return Class(
@@ -85,8 +96,8 @@ class ApiClientGenerator {
                         Parameter(
                           (b) =>
                               b
-                                ..name = 'dio'
-                                ..type = refer('Dio', 'package:dio/dio.dart'),
+                                ..name = 'server'
+                                ..type = refer(serverBaseClassName, package),
                         ),
                       )
                       ..initializers.addAll(constructorInitializers),
