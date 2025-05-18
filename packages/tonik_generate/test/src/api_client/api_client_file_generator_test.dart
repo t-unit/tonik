@@ -211,13 +211,15 @@ void main() {
       );
       expect(clientDir.listSync(), hasLength(1));
       expect(clientDir.listSync().first.path, endsWith('default_api.dart'));
-      
+
       // Read the generated file to verify it contains the operation
-      final fileContent = File(clientDir.listSync().first.path).readAsStringSync();
+      final fileContent =
+          File(clientDir.listSync().first.path).readAsStringSync();
+          
       expect(fileContent, contains('untaggedOperation'));
       expect(fileContent, contains('class DefaultApi'));
     });
-    
+
     test('generates files for tagged and untagged operations', () {
       final taggedOperation = Operation(
         operationId: 'getUser',
@@ -234,7 +236,7 @@ void main() {
         responses: const {},
         requestBody: null,
       );
-      
+
       final untaggedOperation = Operation(
         operationId: 'untaggedOperation',
         context: testContext,
@@ -276,23 +278,23 @@ void main() {
         path.join(tempDir.path, 'test_package', 'lib', 'src', 'api_client'),
       );
       expect(clientDir.listSync(), hasLength(2));
-      
-      final fileNames = clientDir.listSync()
-          .map((e) => path.basename(e.path))
-          .toList()..sort();
+
+      final fileNames =
+          clientDir.listSync().map((e) => path.basename(e.path)).toList()
+            ..sort();
       expect(fileNames, ['default_api.dart', 'users_api.dart']);
-      
+
       // Check content of default API
-      final defaultApiContent = File(
-        path.join(clientDir.path, 'default_api.dart'),
-      ).readAsStringSync();
+      final defaultApiContent =
+          File(
+            path.join(clientDir.path, 'default_api.dart'),
+          ).readAsStringSync();
       expect(defaultApiContent, contains('untaggedOperation'));
       expect(defaultApiContent, contains('class DefaultApi'));
-      
+
       // Check content of users API
-      final usersApiContent = File(
-        path.join(clientDir.path, 'users_api.dart'),
-      ).readAsStringSync();
+      final usersApiContent =
+          File(path.join(clientDir.path, 'users_api.dart')).readAsStringSync();
       expect(usersApiContent, contains('getUser'));
       expect(usersApiContent, contains('class UsersApi'));
     });

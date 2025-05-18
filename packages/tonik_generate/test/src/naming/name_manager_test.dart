@@ -152,6 +152,7 @@ void main() {
         operations: const [],
         tags: tags,
         requestBodies: const [],
+        servers: const [],
       );
 
       // First model gets Anonymous
@@ -346,6 +347,7 @@ void main() {
         operations: const [],
         tags: const [],
         requestBodies: const [],
+        servers: const [],
       );
 
       // Then: Verify cache contents
@@ -454,6 +456,7 @@ void main() {
           multiContentBody,
           bodyAlias,
         ],
+        servers: const [],
       );
 
       // Then: Verify cache contents
@@ -524,6 +527,7 @@ void main() {
         operations: const [],
         tags: const [],
         requestBodies: const [],
+        servers: const [],
       );
 
       expect(manager.responsAndImplementationNames.length, 1);
@@ -594,6 +598,106 @@ void main() {
       ) = manager.responseNames(response);
       expect(baseName2, baseName);
       expect(identical(implementationNames, implementationNames2), isTrue);
+    });
+  });
+
+  group('Server names with list-based caching', () {
+    late NameGenerator generator;
+    late NameManager manager;
+
+    setUp(() {
+      generator = NameGenerator();
+      manager = NameManager(generator: generator);
+    });
+
+    test('caches and returns the same result for identical server lists', () {
+      final servers = [
+        const Server(url: 'https://api.example.com', description: null),
+        const Server(url: 'https://staging.example.com', description: null),
+        const Server(url: 'https://dev.example.com', description: null),
+      ];
+
+      // First call should generate names
+      final result1 = manager.serverNames(servers);
+
+      // Generate a new identical list to test content equality
+      final identicalContentServers = [
+        const Server(url: 'https://api.example.com', description: null),
+        const Server(url: 'https://staging.example.com', description: null),
+        const Server(url: 'https://dev.example.com', description: null),
+      ];
+      
+      // Identity should be different but content equal
+      expect(identical(servers, identicalContentServers), isFalse);
+      
+      // Second call with different list but same content should use cache
+      final result2 = manager.serverNames(identicalContentServers);
+
+      // Verify results match
+      expect(result1.serverMap.length, result2.serverMap.length);
+      expect(result1.baseName, result2.baseName);
+      expect(result1.customName, result2.customName);
+      
+      // The cache should only have one entry despite using two different lists
+      expect(manager.serverNamesCache.length, 1);
+      
+      // Check that corresponding servers in each list have the same names
+      for (var i = 0; i < servers.length; i++) {
+        final server1 = servers[i];
+        final server2 = identicalContentServers[i];
+        
+        final name1 = result1.serverMap[server1];
+        final name2 = result2.serverMap[server2];
+        
+        expect(name1, name2);
+      }
+    });
+
+    test('primes names for a list of servers', () {
+      final servers = [
+        const Server(url: 'https://api.example.com', description: null),
+        const Server(url: 'https://staging.example.com', description: null),
+      ];
+
+      // Prime the name manager
+      manager.prime(
+        models: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        requestBodies: const [],
+        servers: servers,
+      );
+
+      // Create a cache key from the servers list
+      final cacheKey = manager.createServerCacheKey(servers);
+
+      // Verify the server names are cached
+      expect(manager.serverNamesCache.length, 1);
+      
+      // Verify the cache contains the correct key
+      expect(manager.serverNamesCache.containsKey(cacheKey), isTrue);
+      
+      // Get the cached result
+      final cachedResult = manager.serverNamesCache[cacheKey]!;
+      
+      // Verify the cached result has correct server map size
+      expect(cachedResult.serverMap.length, 2);
+      
+      // Check that the servers are properly mapped to their expected names
+      for (final server in servers) {
+        final name = cachedResult.serverMap[server];
+        expect(name != null, isTrue);
+        
+        if (server.url == 'https://api.example.com') {
+          expect(name!.startsWith('Api'), isTrue);
+        } else if (server.url == 'https://staging.example.com') {
+          expect(name!.startsWith('Staging'), isTrue);
+        }
+      }
+      
+      // Verify custom name exists
+      expect(cachedResult.customName.contains('Custom'), isTrue);
     });
   });
 }

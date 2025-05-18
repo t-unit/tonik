@@ -316,4 +316,98 @@ class NameGenerator {
     _usedNames.add(uniqueName);
     return uniqueName;
   }
+
+  /// Generates names for a list of servers based on their domains.
+  ///
+  /// Returns a record with the server map and a custom server name.
+  ({String baseName, Map<Server, String> serverMap, String customName})
+  generateServerNames(List<Server> servers) {
+    // Try to parse all server URLs
+    final parsedUrls = <Uri>[];
+    try {
+      for (final server in servers) {
+        parsedUrls.add(Uri.parse(server.url));
+      }
+    } on Exception {
+      return _generateFallbackServerNames(servers);
+    }
+
+    final subdomains =
+        parsedUrls.map((uri) {
+          final hostParts = uri.host.split('.');
+          if (hostParts.length > 2) {
+            // For multi-level subdomains, combine all subdomain parts
+            // e.g., api.dev.example.com -> ApiDev
+            final subdomain =
+                hostParts
+                    .sublist(0, hostParts.length - 2)
+                    .map(_sanitizeName)
+                    .join('_')
+                    .toPascalCase();
+            return subdomain;
+          } else {
+            // For single-level subdomains like api.example.com,
+            // just use the first part
+            return _sanitizeName(hostParts.first);
+          }
+        }).toList();
+    final hosts =
+        parsedUrls.map((uri) {
+          final parts = uri.host.split('.');
+          return parts.length > 1 ? _sanitizeName(parts[parts.length - 2]) : '';
+        }).toList();
+    final paths = parsedUrls.map((uri) => _sanitizeName(uri.path)).toList();
+
+    final hasDuplicateSubdomains =
+        subdomains.toSet().length != subdomains.length;
+    final hasDuplicateHosts = hosts.toSet().length != hosts.length;
+    final hasDuplicatePaths = paths.toSet().length != paths.length;
+
+    if (!hasDuplicateSubdomains) {
+      return _generateServerNames(servers, subdomains);
+    } else if (!hasDuplicateHosts) {
+      return _generateServerNames(servers, hosts);
+    } else if (!hasDuplicatePaths) {
+      return _generateServerNames(servers, paths);
+    } else {
+      return _generateFallbackServerNames(servers);
+    }
+  }
+
+  ({String baseName, Map<Server, String> serverMap, String customName})
+  _generateServerNames(List<Server> servers, List<String> uniqueNames) {
+    final baseName = _makeUnique('ApiServer', '');
+
+    final resultMap = <Server, String>{};
+    for (var index = 0; index < servers.length; index++) {
+      final server = servers[index];
+      final name = uniqueNames[index];
+      resultMap[server] = _makeUnique('${name}Server', '');
+    }
+
+    final customName =
+        resultMap.values.contains('CustomServer')
+            ? r'CustomServer$'
+            : 'CustomServer';
+    return (
+      baseName: baseName,
+      serverMap: resultMap,
+      customName: _makeUnique(customName, ''),
+    );
+  }
+
+  ({String baseName, Map<Server, String> serverMap, String customName})
+  _generateFallbackServerNames(List<Server> servers) {
+    final baseName = _makeUnique('ApiServer', '');
+
+    final resultMap = <Server, String>{};
+    for (final server in servers) {
+      resultMap[server] = _makeUnique('Server', '');
+    }
+    return (
+      baseName: baseName,
+      serverMap: resultMap,
+      customName: _makeUnique('CustomServer', ''),
+    );
+  }
 }

@@ -1062,5 +1062,146 @@ void main() {
         expect(name, 'UserResponseApplication');
       });
     });
+
+    group('Server names', () {
+      test('generates names based on subdomain differences', () {
+        final generator = NameGenerator();
+        final servers = [
+          const Server(url: 'https://api.example.com', description: null),
+          const Server(url: 'https://staging.example.com', description: null),
+          const Server(url: 'https://dev.example.com', description: null),
+        ];
+
+        final result = generator.generateServerNames(servers);
+
+        expect(result.serverMap.length, 3);
+        expect(result.serverMap[servers[0]], 'ApiServer2');
+        expect(result.serverMap[servers[1]], 'StagingServer');
+        expect(result.serverMap[servers[2]], 'DevServer');
+        expect(result.customName, 'CustomServer');
+        expect(result.baseName, 'ApiServer');
+      });
+
+      test('generates names based on multi-level subdomain differences', () {
+        final generator = NameGenerator();
+        final servers = [
+          const Server(url: 'https://api.dev.example.com', description: null),
+          const Server(url: 'https://api.staging.example.com', description: null),
+          const Server(url: 'https://api.prod.example.com', description: null),
+        ];
+
+        final result = generator.generateServerNames(servers);
+
+        expect(result.serverMap.length, 3);
+        expect(result.serverMap[servers[0]], 'ApiDevServer');
+        expect(result.serverMap[servers[1]], 'ApiStagingServer');
+        expect(result.serverMap[servers[2]], 'ApiProdServer');
+        expect(result.customName, 'CustomServer');
+        expect(result.baseName, 'ApiServer');
+      });
+
+      test(
+        'generates names based on host differences when subdomains are equal',
+        () {
+          final generator = NameGenerator();
+          final servers = [
+            const Server(url: 'https://api.example.com', description: null),
+            const Server(url: 'https://api.acme.com', description: null),
+            const Server(url: 'https://api.test.com', description: null),
+          ];
+
+          final result = generator.generateServerNames(servers);
+
+          expect(result.serverMap.length, 3);
+          expect(result.serverMap[servers[0]], 'ExampleServer');
+          expect(result.serverMap[servers[1]], 'AcmeServer');
+          expect(result.serverMap[servers[2]], 'TestServer');
+          expect(result.customName, 'CustomServer');
+          expect(result.baseName, 'ApiServer');
+        },
+      );
+
+      test('generates names based on path differences with equal '
+          'domains and subdomains', () {
+        final generator = NameGenerator();
+        final servers = [
+          const Server(url: 'https://api.example.com/v1', description: null),
+          const Server(url: 'https://api.example.com/v2', description: null),
+          const Server(url: 'https://api.example.com/beta', description: null),
+        ];
+
+        final result = generator.generateServerNames(servers);
+
+        expect(result.serverMap.length, 3);
+        expect(result.serverMap[servers[0]], 'V1Server');
+        expect(result.serverMap[servers[1]], 'V2Server');
+        expect(result.serverMap[servers[2]], 'BetaServer');
+        expect(result.customName, 'CustomServer');
+        expect(result.baseName, 'ApiServer');
+      });
+
+      test(
+        'adds numeric suffixes as a last resort when all other parts are equal',
+        () {
+          final generator = NameGenerator();
+          final servers = [
+            const Server(url: 'https://api.example.com', description: 'a'),
+            const Server(url: 'https://api.example.com', description: 'b'),
+            const Server(url: 'https://api.example.com', description: 'c'),
+          ];
+
+          final result = generator.generateServerNames(servers);
+
+          expect(result.serverMap.length, 3);
+          expect(result.serverMap[servers[0]], 'Server');
+          expect(result.serverMap[servers[1]], 'Server2');
+          expect(result.serverMap[servers[2]], 'Server3');
+          expect(result.customName, 'CustomServer');
+          expect(result.baseName, 'ApiServer');
+        },
+      );
+
+      test(
+        'uses CustomServer with dollar sign when CustomServer is already taken',
+        () {
+          final generator = NameGenerator();
+          final servers = [
+            const Server(
+              url: 'https://custom.server.com',
+              description: 'Custom Server',
+            ),
+          ];
+
+          final result = generator.generateServerNames(servers);
+
+          expect(result.serverMap.length, 1);
+          expect(result.serverMap[servers[0]], 'CustomServer');
+          expect(result.customName, r'CustomServer$');
+          expect(result.baseName, 'ApiServer');
+        });
+
+      test('uses default names on invalid URLs', () {
+        final generator = NameGenerator();
+        final servers = [
+          const Server(url: 'This is not a URI', description: null),
+          const Server(
+            url: 'https://staging.example.com/v1',
+            description: null,
+          ),
+          const Server(url: 'https://api.acme.com/v1', description: null),
+          const Server(url: 'https://api.example.com/v2', description: null),
+        ];
+
+        final result = generator.generateServerNames(servers);
+
+        expect(result.serverMap.length, 4);
+        expect(result.serverMap[servers[0]], 'Server');
+        expect(result.serverMap[servers[1]], 'Server2');
+        expect(result.serverMap[servers[2]], 'Server3');
+        expect(result.serverMap[servers[3]], 'Server4');
+        expect(result.customName, 'CustomServer');
+        expect(result.baseName, 'ApiServer');
+      });
+    });
   });
 }

@@ -9,21 +9,23 @@ class NameManager {
 
   final NameGenerator generator;
 
-  @protected
   final modelNames = <Model, String>{};
 
-  @protected
   final operationNames = <Operation, String>{};
 
-  @protected
   final tagNames = <Tag, String>{};
 
-  @protected
+  @visibleForTesting
+  final Map<
+    String,
+    ({String baseName, Map<Server, String> serverMap, String customName})
+  >
+  serverNamesCache = {};
+
   @visibleForTesting
   final Map<RequestBody, (String baseName, Map<String, String> subclassNames)>
   requestBodyNameCache = {};
 
-  @protected
   @visibleForTesting
   final Map<
     Operation,
@@ -31,7 +33,6 @@ class NameManager {
   >
   responseWrapperNameCache = {};
 
-  @protected
   @visibleForTesting
   final Map<
     Response,
@@ -49,11 +50,19 @@ class NameManager {
     required Iterable<Response> responses,
     required Iterable<Operation> operations,
     required Iterable<Tag> tags,
+    required Iterable<Server> servers,
   }) {
+    final serversList = servers.toList();
+    final result = serverNames(serversList);
+    for (final entry in result.serverMap.entries) {
+      _logServerName(entry.value, entry.key);
+    }
+
     for (final model in models) {
       final name = modelName(model);
       _logModelName(name, model);
     }
+
     for (final response in responses) {
       // Generate names for responses with headers or multiple bodies
       if (response.hasHeaders || response.bodyCount > 1) {
@@ -61,14 +70,17 @@ class NameManager {
         _logResponseName(baseName, response);
       }
     }
+
     for (final operation in operations) {
       final name = operationName(operation);
       _logOperationName(name, operation);
     }
+
     for (final tag in tags) {
       final name = tagName(tag);
       _logTagName(name, tag);
     }
+
     for (final requestBody in requestBodies) {
       // Skip request bodies with only one content type as content
       // is used directly.
@@ -83,10 +95,10 @@ class NameManager {
   String modelName(Model model) =>
       modelNames.putIfAbsent(model, () => generator.generateModelName(model));
 
-  /// Gets a cached or generates a new unique response class 
+  /// Gets a cached or generates a new unique response class
   /// name and implementation names.
   ///
-  /// Returns a record with the base name and a map of content 
+  /// Returns a record with the base name and a map of content
   /// types to implementation names.
   ({String baseName, Map<String, String> implementationNames}) responseNames(
     Response response,
@@ -144,6 +156,39 @@ class NameManager {
     );
   }
 
+  /// Helper method to create a cache key from a list of servers
+  /// This ensures that lists with equal content generate the same key
+  @visibleForTesting
+  String createServerCacheKey(List<Server> servers) {
+    return servers.map((s) => '${s.url}|${s.description ?? "null"}').join(',');
+  }
+
+  /// Generates names for a list of servers at once, using a smart algorithm
+  /// that creates concise, intuitive names.
+  ///
+  /// This method caches results based on the content equality of servers,
+  /// so lists with the same server content will always return the same result.
+  ///
+  /// Returns a record with a map of servers to names and a custom server name.
+  ({String baseName, Map<Server, String> serverMap, String customName})
+  serverNames(List<Server> servers) {
+    // Create a cache key based on server content rather than list identity
+    final cacheKey = createServerCacheKey(servers);
+
+    // Check if we already have cached names for this content
+    if (serverNamesCache.containsKey(cacheKey)) {
+      return serverNamesCache[cacheKey]!;
+    }
+
+    // Generate names for all servers in the list
+    final result = generator.generateServerNames(servers);
+
+    // Cache the result using the content-based key
+    serverNamesCache[cacheKey] = result;
+
+    return result;
+  }
+
   void _logModelName(String name, Model model) {
     final modelName =
         model is NamedModel && model.name != null ? model.name : model.context;
@@ -169,5 +214,10 @@ class NameManager {
   void _logRequestBodyNames(RequestBody requestBody) {
     final requestBodyName = requestBody.name ?? requestBody.context;
     log.fine('Name for request body $requestBodyName: $requestBodyName');
+  }
+
+  void _logServerName(String name, Server server) {
+    final serverDesc = server.description ?? server.url;
+    log.fine('Name for server $serverDesc: $name');
   }
 }

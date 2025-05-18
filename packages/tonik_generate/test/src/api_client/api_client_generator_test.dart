@@ -48,7 +48,7 @@ void main() {
 
         final generatedClass = generator.generateClass({
           operation,
-        }, const Tag(name: 'users'));
+        }, const Tag(name: 'users'),);
 
         // Test class definition
         expect(generatedClass.name, 'UsersApi');
@@ -95,7 +95,7 @@ void main() {
 
           final generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users', description: 'User management API'));
+          }, const Tag(name: 'users', description: 'User management API'),);
 
           // Test class has documentation
           expect(generatedClass.docs, isNotEmpty);
@@ -165,7 +165,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
         });
 
         test('generates method with correct signature', () {
@@ -193,17 +193,15 @@ void main() {
           );
         });
 
-        test(
-          'generates method with doc string from operation summary and description',
-          () {
-            final method = generatedClass.methods.first;
+        test('generates method with doc string from operation '
+            'summary and description', () {
+          final method = generatedClass.methods.first;
 
-            // Check that method has documentation
-            expect(method.docs, isNotEmpty);
-            expect(method.docs, contains('/// Get user'));
-            expect(method.docs, contains('/// Get user by ID'));
-          },
-        );
+          // Check that method has documentation
+          expect(method.docs, isNotEmpty);
+          expect(method.docs, contains('/// Get user'));
+          expect(method.docs, contains('/// Get user by ID'));
+        });
       });
 
       group('method with path parameters', () {
@@ -242,7 +240,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
         });
 
         test('generates method with path parameter', () {
@@ -322,7 +320,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
         });
 
         test('generates method with query parameters', () {
@@ -404,7 +402,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
         });
 
         test('generates method with request body', () {
@@ -476,7 +474,7 @@ void main() {
 
           generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
         });
 
         test('generates method with aliased parameter', () {
@@ -526,7 +524,7 @@ void main() {
 
           final generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
 
           final method = generatedClass.methods.first;
 
@@ -555,7 +553,7 @@ void main() {
 
           final generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
 
           final method = generatedClass.methods.first;
 
@@ -584,7 +582,7 @@ void main() {
 
           final generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
 
           final method = generatedClass.methods.first;
 
@@ -619,7 +617,7 @@ void main() {
 
           final generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
 
           final method = generatedClass.methods.first;
 
@@ -650,7 +648,7 @@ void main() {
 
           final generatedClass = generator.generateClass({
             operation,
-          }, const Tag(name: 'users'));
+          }, const Tag(name: 'users'),);
 
           final method = generatedClass.methods.first;
 

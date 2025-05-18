@@ -18,6 +18,8 @@ import 'package:tonik_generate/src/response/response_file_generator.dart';
 import 'package:tonik_generate/src/response/response_generator.dart';
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_file_generator.dart';
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
+import 'package:tonik_generate/src/server/server_file_generator.dart';
+import 'package:tonik_generate/src/server/server_generator.dart';
 
 class Generator {
   const Generator();
@@ -101,12 +103,21 @@ class Generator {
       apiClientGenerator: apiClientGenerator,
     );
 
+    final serverGenerator = ServerGenerator(
+      nameManager: nameManager,
+    );
+
+    final serverFileGenerator = ServerFileGenerator(
+      serverGenerator: serverGenerator,
+    );
+
     nameManager.prime(
       models: apiDocument.models,
-      responses: apiDocument.responses.toList(),
-      requestBodies: apiDocument.requestBodies.toList(),
-      operations: apiDocument.operations.toList(),
-      tags: apiDocument.operationsByTag.keys.toList(),
+      responses: apiDocument.responses,
+      requestBodies: apiDocument.requestBodies,
+      operations: apiDocument.operations,
+      tags: apiDocument.operationsByTag.keys,
+      servers: apiDocument.servers,
     );
 
     generatePubspec(
@@ -146,6 +157,12 @@ class Generator {
     );
 
     apiClientFileGenerator.writeFiles(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+    );
+
+    serverFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
