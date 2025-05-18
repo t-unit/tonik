@@ -70,7 +70,7 @@ class ParseGenerator {
         generateDecodingExceptionExpression(
           r'Unexpected content type: $content for status code: $status',
         ).statement,
-      ]));
+      ]),);
     }
 
     switchCases.add(const Code('}'));

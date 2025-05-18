@@ -75,16 +75,16 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
         factory Sample.fromSimple(String? value) {
-          final properties = value.decodeSimpleStringList();
+          final properties = value.decodeSimpleStringList(context: r'Sample');
           if (properties.length < 5) {
             throw SimpleDecodingException('Invalid value for Sample: $value');
           }
           return Sample(
-            flag: properties[0].decodeSimpleBool(),
-            count: properties[1].decodeSimpleInt(),
-            label: properties[2].decodeSimpleString(),
-            created: properties[3].decodeSimpleDateTime(),
-            amount: properties[4].decodeSimpleBigDecimal(),
+            flag: properties[0].decodeSimpleBool(context: r'Sample.flag'),
+            count: properties[1].decodeSimpleInt(context: r'Sample.count'),
+            label: properties[2].decodeSimpleString(context: r'Sample.label'),
+            created: properties[3].decodeSimpleDateTime(context: r'Sample.created'),
+            amount: properties[4].decodeSimpleBigDecimal(context: r'Sample.amount'),
           );
         }
       ''';
@@ -118,7 +118,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
         factory Order.fromSimple(String? value) {
-          final properties = value.decodeSimpleStringList();
+          final properties = value.decodeSimpleStringList(context: r'Order');
           if (properties.length < 1) {
             throw SimpleDecodingException('Invalid value for Order: $value');
           }
@@ -209,19 +209,30 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
         factory NullableSample.fromSimple(String? value) {
-          final properties = value.decodeSimpleStringList();
+          final properties = value.decodeSimpleStringList(context: r'NullableSample');
           if (properties.length < 5) {
             throw SimpleDecodingException('Invalid value for NullableSample: $value');
           }
           return NullableSample(
-            flag: properties[0].decodeSimpleNullableBool(),
-            count: properties[1].decodeSimpleNullableInt(),
-            label: properties[2].decodeSimpleNullableString(),
-            created: properties[3].decodeSimpleNullableDateTime(),
-            amount: properties[4].decodeSimpleNullableBigDecimal(),
+            flag: properties[0].decodeSimpleNullableBool(
+              context: r'NullableSample.flag',
+            ),
+            count: properties[1].decodeSimpleNullableInt(
+              context: r'NullableSample.count',
+            ),
+            label: properties[2].decodeSimpleNullableString(
+              context: r'NullableSample.label',
+            ),
+            created: properties[3].decodeSimpleNullableDateTime(
+              context: r'NullableSample.created',
+            ),
+            amount: properties[4].decodeSimpleNullableBigDecimal(
+              context: r'NullableSample.amount',
+            ),
           );
         }
       ''';
+      
       expect(
         collapseWhitespace(classCode),
         contains(collapseWhitespace(expectedMethod)),
@@ -258,7 +269,7 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = r'''
           factory Container.fromSimple(String? value) {
-            final properties = value.decodeSimpleStringList();
+            final properties = value.decodeSimpleStringList(context: r'Container');
             if (properties.length < 1) {
               throw SimpleDecodingException('Invalid value for Container: $value');
             }
@@ -335,13 +346,16 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
         factory UserIdHolder.fromSimple(String? value) {
-          final properties = value.decodeSimpleStringList();
+          final properties = value.decodeSimpleStringList(context: r'UserIdHolder');
           if (properties.length < 1) {
             throw SimpleDecodingException('Invalid value for UserIdHolder: $value');
           }
-          return UserIdHolder(id: properties[0].decodeSimpleInt());
+          return UserIdHolder(
+            id: properties[0].decodeSimpleInt(context: r'UserIdHolder.id'),
+          );
         }
       ''';
+      
       expect(
         collapseWhitespace(classCode),
         contains(collapseWhitespace(expectedMethod)),
@@ -380,7 +394,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = r'''
         factory AliasHolder.fromSimple(String? value) {
-          final properties = value.decodeSimpleStringList();
+          final properties = value.decodeSimpleStringList(context: r'AliasHolder');
           if (properties.length < 1) {
             throw SimpleDecodingException('Invalid value for AliasHolder: $value');
           }

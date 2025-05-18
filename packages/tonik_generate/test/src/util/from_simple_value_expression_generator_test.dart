@@ -7,7 +7,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
-import 'package:tonik_generate/src/util/form_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 
 void main() {
   late Context context;
@@ -291,6 +291,54 @@ void main() {
           package: 'tonik_core',
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableString()',
+      );
+    });
+
+    test('passes context parameter to decode methods when provided', () {
+      final value = refer('value');
+      
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: StringModel(context: context),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          contextProperty: 'name',
+        ).accept(emitter).toString(),
+        "value.decodeSimpleString(context: r'name')",
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: IntegerModel(context: context),
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          contextClass: 'Product',
+        ).accept(emitter).toString(),
+        "value.decodeSimpleNullableInt(context: r'Product')",
+      );
+
+      // List type with context
+      final intListModel = ListModel(
+        content: IntegerModel(context: context),
+        context: context,
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: intListModel,
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          contextClass: 'Order',
+          contextProperty: 'quantities',
+        ).accept(emitter).toString(),
+        "value.decodeSimpleStringList(context: r'Order.quantities')"
+        ".map((e) => e.decodeSimpleInt(context: r'Order.quantities')).toList()",
       );
     });
 

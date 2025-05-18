@@ -10,40 +10,59 @@ Expression buildSimpleValueExpression(
   required bool isRequired,
   required NameManager nameManager,
   String? package,
+  String? contextClass,
+  String? contextProperty,
 }) {
+  final contextParam =
+      (contextClass != null || contextProperty != null)
+          ? {
+            'context': literalString(
+              [
+                if (contextClass != null) contextClass,
+                if (contextProperty != null) contextProperty,
+              ].join('.'),
+              raw: true,
+            ),
+          }
+          : <String, Expression>{};
+
   return switch (model) {
     StringModel() =>
       isRequired
-          ? value.property('decodeSimpleString').call([])
-          : value.property('decodeSimpleNullableString').call([]),
+          ? value.property('decodeSimpleString').call([], contextParam)
+          : value.property('decodeSimpleNullableString').call([], contextParam),
     IntegerModel() =>
       isRequired
-          ? value.property('decodeSimpleInt').call([])
-          : value.property('decodeSimpleNullableInt').call([]),
+          ? value.property('decodeSimpleInt').call([], contextParam)
+          : value.property('decodeSimpleNullableInt').call([], contextParam),
     NumberModel() =>
       isRequired
-          ? value.property('decodeSimpleDouble').call([])
-          : value.property('decodeSimpleNullableDouble').call([]),
+          ? value.property('decodeSimpleDouble').call([], contextParam)
+          : value.property('decodeSimpleNullableDouble').call([], contextParam),
     DoubleModel() =>
       isRequired
-          ? value.property('decodeSimpleDouble').call([])
-          : value.property('decodeSimpleNullableDouble').call([]),
+          ? value.property('decodeSimpleDouble').call([], contextParam)
+          : value.property('decodeSimpleNullableDouble').call([], contextParam),
     DecimalModel() =>
       isRequired
-          ? value.property('decodeSimpleBigDecimal').call([])
-          : value.property('decodeSimpleNullableBigDecimal').call([]),
+          ? value.property('decodeSimpleBigDecimal').call([], contextParam)
+          : value
+              .property('decodeSimpleNullableBigDecimal')
+              .call([], contextParam),
     BooleanModel() =>
       isRequired
-          ? value.property('decodeSimpleBool').call([])
-          : value.property('decodeSimpleNullableBool').call([]),
+          ? value.property('decodeSimpleBool').call([], contextParam)
+          : value.property('decodeSimpleNullableBool').call([], contextParam),
     DateTimeModel() =>
       isRequired
-          ? value.property('decodeSimpleDateTime').call([])
-          : value.property('decodeSimpleNullableDateTime').call([]),
+          ? value.property('decodeSimpleDateTime').call([], contextParam)
+          : value
+              .property('decodeSimpleNullableDateTime')
+              .call([], contextParam),
     DateModel() =>
       isRequired
-          ? value.property('decodeSimpleDate').call([])
-          : value.property('decodeSimpleNullableDate').call([]),
+          ? value.property('decodeSimpleDate').call([], contextParam)
+          : value.property('decodeSimpleNullableDate').call([], contextParam),
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
@@ -54,6 +73,8 @@ Expression buildSimpleValueExpression(
       isRequired,
       nameManager,
       package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
     ),
     final ListModel listModel => _buildListFromSimpleExpression(
       value,
@@ -61,6 +82,8 @@ Expression buildSimpleValueExpression(
       isRequired,
       nameManager,
       package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
     ),
     final AliasModel aliasModel => buildSimpleValueExpression(
       value,
@@ -68,6 +91,8 @@ Expression buildSimpleValueExpression(
       isRequired: isRequired,
       nameManager: nameManager,
       package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
     ),
     NamedModel() => throw UnimplementedError('NamedModel is not supported'),
   };
@@ -79,6 +104,8 @@ Expression _buildFromSimpleExpression(
   bool isRequired,
   NameManager nameManager, {
   String? package,
+  String? contextClass,
+  String? contextProperty,
 }) {
   final name = nameManager.modelName(model);
   return isRequired
@@ -94,14 +121,18 @@ Expression _buildFromSimpleExpression(
           );
 }
 
-Expression _buildListDecode(Expression value, bool isRequired) {
+Expression _buildListDecode(
+  Expression value,
+  bool isRequired, {
+  Map<String, Expression> contextParam = const {},
+}) {
   return value
       .property(
         isRequired
             ? 'decodeSimpleStringList'
             : 'decodeSimpleNullableStringList',
       )
-      .call([]);
+      .call([], contextParam);
 }
 
 Expression _buildListFromSimpleExpression(
@@ -110,9 +141,28 @@ Expression _buildListFromSimpleExpression(
   bool isRequired,
   NameManager nameManager, {
   String? package,
+  String? contextClass,
+  String? contextProperty,
 }) {
   final content = model.content;
-  final listDecode = _buildListDecode(value, isRequired);
+  final contextParam =
+      (contextClass != null || contextProperty != null)
+          ? {
+            'context': literalString(
+              [
+                if (contextClass != null) contextClass,
+                if (contextProperty != null) contextProperty,
+              ].join('.'),
+              raw: true,
+            ),
+          }
+          : <String, Expression>{};
+
+  final listDecode = _buildListDecode(
+    value,
+    isRequired,
+    contextParam: contextParam,
+  );
 
   return switch (content) {
     StringModel() => listDecode,
@@ -120,36 +170,43 @@ Expression _buildListFromSimpleExpression(
       listDecode,
       'decodeSimpleInt',
       isRequired,
+      contextParam: contextParam,
     ),
     NumberModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleDouble',
       isRequired,
+      contextParam: contextParam,
     ),
     DoubleModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleDouble',
       isRequired,
+      contextParam: contextParam,
     ),
     DecimalModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleBigDecimal',
       isRequired,
+      contextParam: contextParam,
     ),
     BooleanModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleBool',
       isRequired,
+      contextParam: contextParam,
     ),
     DateTimeModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleDateTime',
       isRequired,
+      contextParam: contextParam,
     ),
     DateModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleDate',
       isRequired,
+      contextParam: contextParam,
     ),
     ClassModel() =>
       throw UnimplementedError(
@@ -164,6 +221,8 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       nameManager,
       package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
     ),
     ListModel() =>
       throw UnimplementedError(
@@ -175,6 +234,8 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       nameManager,
       package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
     ),
     NamedModel() => throw UnimplementedError('NamedModel is not supported'),
   };
@@ -183,14 +244,16 @@ Expression _buildListFromSimpleExpression(
 Expression _buildPrimitiveList(
   Expression listDecode,
   String decodeMethod,
-  bool isRequired,
-) {
+  bool isRequired, {
+  Map<String, Expression> contextParam = const {},
+}) {
   final mapFunction =
       Method(
         (b) =>
             b
               ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body = refer('e').property(decodeMethod).call([]).code,
+              ..body =
+                  refer('e').property(decodeMethod).call([], contextParam).code,
       ).closure;
 
   if (isRequired) {
@@ -215,6 +278,8 @@ Expression _buildClassList(
   bool isRequired,
   NameManager nameManager, {
   String? package,
+  String? contextClass,
+  String? contextProperty,
 }) {
   final className = nameManager.modelName(content);
   final mapFunction =
