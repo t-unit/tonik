@@ -7,6 +7,7 @@ extension FormatWithHeader on DartFormatter {
     'unnecessary_brace_in_string_interps',
     'no_leading_underscores_for_local_identifiers',
     'cascade_invocations',
+    'prefer_is_empty',
   ];
 
   String formatWithHeader(String code) {
