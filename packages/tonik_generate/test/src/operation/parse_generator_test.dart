@@ -751,7 +751,7 @@ String _parseResponse(Response<Object?> response) {
       final method = generator.generateParseResponseMethod(
         operation,
       );
-      const expectedMethod = r'''
+      const expectedMethod = '''
         CombinedOpResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
@@ -767,12 +767,6 @@ String _parseResponse(Response<Object?> response) {
               );
             case (_, _):
               return const CombinedOpResponseDefault();
-            default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw DecodingException(
-                'Unexpected content type: $content for status code: $status',
-              );
           }
         }
       ''';
@@ -1174,6 +1168,45 @@ String _parseResponse(Response<Object?> response) {
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('generates without default case when DefaultResponseStatus with null content type exists', () {
+      final operation = Operation(
+        operationId: 'defaultNullContentType',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/default-null-content',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: {
+          const DefaultResponseStatus(): ResponseObject(
+            name: null,
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: const {}, // Empty bodies will result in null content type
+          ),
+        },
+        requestBody: null,
+      );
+      final method = generator.generateParseResponseMethod(operation);
+      const expectedMethod = '''
+        void _parseResponse(Response<Object?> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (_, _):
+              return;
+          }
+        }
+      ''';
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 

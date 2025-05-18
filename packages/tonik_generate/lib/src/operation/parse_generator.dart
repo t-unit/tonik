@@ -23,10 +23,17 @@ class ParseGenerator {
     ).types.first;
     final cases = <Code>[];
 
+    // Check if we have a default response with null content type
+    var hasDefaultWithNullContentType = false;
+
     for (final entry in responses.entries) {
       final status = entry.key;
       final response = entry.value;
       final contentTypes = _getContentTypes(response);
+
+      if (status is DefaultResponseStatus && contentTypes.contains(null)) {
+        hasDefaultWithNullContentType = true;
+      }
 
       for (final contentType in contentTypes) {
         final casePattern = _casePattern(status, contentType);
@@ -42,28 +49,33 @@ class ParseGenerator {
       }
     }
 
-    // Always add a default case
-    final defaultCase = Block.of([
-      const Code('default:'),
-      const Code(
-        "final content = response.headers.value('content-type') "
-        "?? 'not specified';",
-      ),
-      const Code('final status = response.statusCode;'),
-      generateDecodingExceptionExpression(
-        r'Unexpected content type: $content for status code: $status',
-      ).statement,
-    ]);
-
-    final switchBody = Block.of([
+    // Only add a default case if we don't have a default response with 
+    // null content type
+    final switchCases = <Code>[
       const Code(
         'switch ((response.statusCode, '
         "response.headers.value('content-type'))) {",
       ),
       ...cases,
-      defaultCase,
-      const Code('}'),
-    ]);
+    ];
+
+    if (!hasDefaultWithNullContentType) {
+      switchCases.add(Block.of([
+        const Code('default:'),
+        const Code(
+          "final content = response.headers.value('content-type') "
+          "?? 'not specified';",
+        ),
+        const Code('final status = response.statusCode;'),
+        generateDecodingExceptionExpression(
+          r'Unexpected content type: $content for status code: $status',
+        ).statement,
+      ]));
+    }
+
+    switchCases.add(const Code('}'));
+
+    final switchBody = Block.of(switchCases);
 
     return Method(
       (b) =>
