@@ -904,7 +904,7 @@ void main() {
         );
       });
 
-      test('generates call method without parsing for void return', () {
+      test('generates call method with parsing for void return', () {
         final operation = Operation(
           operationId: 'voidParseTest',
           context: context,
@@ -972,9 +972,96 @@ void main() {
               );
             }
 
+            try {
+              _parseResponse(_$response);
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.decoding,
+                response: _$response,
+              );
+            }
+
             return TonikSuccess(null, _$response);
           }
         ''';
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      });
+
+      test('does not generate parsing code for operations with no '
+          'responses', () {
+        final operation = Operation(
+          operationId: 'noResponseOperation',
+          context: context,
+          summary: 'Operation with no responses',
+          description:
+              'Tests that no parsing is added when no responses are defined',
+          tags: const {},
+          isDeprecated: false,
+          path: '/no-responses',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {}, // Empty responses map
+          requestBody: null,
+        );
+
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+
+        const expectedMethod = r'''
+          Future<TonikResult<void>> call() async {
+            final Uri _$uri;
+            final Object? _$data;
+            final Options _$options;
+
+            try {
+              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
+              _$data = _data();
+              _$options = _options();
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.encoding,
+                response: null,
+              );
+            }
+
+            final Response<dynamic> _$response;
+            try {
+              _$response = await _dio.requestUri<dynamic>(
+                _$uri,
+                data: _$data,
+                options: _$options,
+              );
+            } on Object catch (exception, stackTrace) {
+              return TonikError(
+                exception,
+                stackTrace: stackTrace,
+                type: TonikErrorType.network,
+                response: null,
+              );
+            }
+
+            return TonikSuccess(null, _$response);
+          }
+        ''';
+
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
@@ -1202,6 +1289,81 @@ void main() {
           expect(methodString.contains('Uri(path: _path())'), isTrue);
         },
       );
+
+      test('does not generate _parseResponse method for operations with no '
+          'responses', () {
+        final operation = Operation(
+          operationId: 'noResponsesOperation',
+          context: context,
+          summary: 'Operation with no responses',
+          description: 'Should not generate _parseResponse method',
+          tags: const {},
+          isDeprecated: false,
+          path: '/no-responses',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {}, // Empty responses map
+          requestBody: null,
+        );
+
+        final generatedClass = generator.generateClass(
+          operation,
+          'NoResponsesOperation',
+        );
+
+        // Verify that _parseResponse method is not generated
+        expect(
+          generatedClass.methods.where((m) => m.name == '_parseResponse'),
+          isEmpty,
+        );
+      });
+
+      test('generates _parseResponse method for operations with responses', () {
+        final operation = Operation(
+          operationId: 'withResponsesOperation',
+          context: context,
+          summary: 'Operation with responses',
+          description: 'Should generate _parseResponse method',
+          tags: const {},
+          isDeprecated: false,
+          path: '/with-responses',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: 'Success',
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          requestBody: null,
+        );
+
+        final generatedClass = generator.generateClass(
+          operation,
+          'WithResponsesOperation',
+        );
+
+        // Verify that _parseResponse method is generated
+        expect(
+          generatedClass.methods
+              .where((m) => m.name == '_parseResponse')
+              .length,
+          equals(1),
+        );
+      });
 
       test('generates query parameters method when query parameters exist', () {
         final queryParam = QueryParameterObject(

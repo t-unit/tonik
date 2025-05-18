@@ -132,7 +132,8 @@ class OperationGenerator {
                 operation,
                 normalizedParams.headers,
               ),
-              _parseGenerator.generateParseResponseMethod(operation),
+              if (operation.responses.isNotEmpty)
+                _parseGenerator.generateParseResponseMethod(operation),
             ]),
     );
   }
@@ -199,21 +200,60 @@ class OperationGenerator {
       _generateResponseStatements(responseVar),
     ];
 
-    if (!isVoidReturn) {
-      bodyStatements
-        ..addAll(
-          _generateParsedResponseStatements(
-            responseVar,
-            parsedResponseVar,
-            responseType,
-          ),
-        )
-        ..add(
-          refer('TonikSuccess', 'package:tonik_util/tonik_util.dart')
-              .call([refer(parsedResponseVar), refer(responseVar)])
-              .returned
-              .statement,
-        );
+    // Always parse the response if responses are defined
+    final hasResponses = operation.responses.isNotEmpty;
+
+    if (hasResponses) {
+      if (!isVoidReturn) {
+        bodyStatements
+          ..addAll(
+            _generateParsedResponseStatements(
+              responseVar,
+              parsedResponseVar,
+              responseType,
+            ),
+          )
+          ..add(
+            refer('TonikSuccess', 'package:tonik_util/tonik_util.dart')
+                .call([refer(parsedResponseVar), refer(responseVar)])
+                .returned
+                .statement,
+          );
+      } else {
+        // For void return type, just call the parse method without
+        // assigning to a variable
+        bodyStatements
+          ..add(
+            Block.of([
+              const Code('try {'),
+              refer('_parseResponse').call([refer(responseVar)]).statement,
+              const Code('} on '),
+              refer('Object', 'dart:core').code,
+              const Code(' catch (exception, stackTrace) {'),
+              refer('TonikError', 'package:tonik_util/tonik_util.dart')
+                  .call(
+                    [refer('exception')],
+                    {
+                      'stackTrace': refer('stackTrace'),
+                      'type': refer(
+                        'TonikErrorType.decoding',
+                        'package:tonik_util/tonik_util.dart',
+                      ),
+                      'response': refer(responseVar),
+                    },
+                  )
+                  .returned
+                  .statement,
+              const Code('}\n'),
+            ]),
+          )
+          ..add(
+            refer(
+              'TonikSuccess',
+              'package:tonik_util/tonik_util.dart',
+            ).call([literalNull, refer(responseVar)]).returned.statement,
+          );
+      }
     } else {
       bodyStatements.add(
         refer(
