@@ -17,10 +17,9 @@ Expression buildSimpleValueExpression(
       (contextClass != null || contextProperty != null)
           ? {
             'context': literalString(
-              [
-                if (contextClass != null) contextClass,
-                if (contextProperty != null) contextProperty,
-              ].join('.'),
+              (contextClass != null && contextProperty != null)
+                  ? '$contextClass.$contextProperty'
+                  : contextClass ?? contextProperty!,
               raw: true,
             ),
           }
@@ -149,10 +148,9 @@ Expression _buildListFromSimpleExpression(
       (contextClass != null || contextProperty != null)
           ? {
             'context': literalString(
-              [
-                if (contextClass != null) contextClass,
-                if (contextProperty != null) contextProperty,
-              ].join('.'),
+              (contextClass != null && contextProperty != null)
+                  ? '$contextClass.$contextProperty'
+                  : contextClass ?? contextProperty!,
               raw: true,
             ),
           }

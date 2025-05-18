@@ -310,6 +310,7 @@ class ParseGenerator {
         isRequired: norm.property.isRequired,
         nameManager: nameManager,
         package: package,
+        contextProperty: rawHeaderName,
       );
       assignments[normalizedName] = decode;
     }

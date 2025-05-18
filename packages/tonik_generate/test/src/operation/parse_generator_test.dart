@@ -633,19 +633,25 @@ String _parseResponse(Response<Object?> response) {
             case (200, 'application/json'):
               return Anonymous(
                   body: User.fromJson(response.data),
-                  xRateLimit: response.headers.value(r'x-rate-limit').decodeSimpleNullableInt(),
-                  xExpiresAfter: response.headers.value(r'x-expires-after').decodeSimpleNullableDateTime(),
+                  xRateLimit: response.headers
+                    .value(r'x-rate-limit')
+                    .decodeSimpleNullableInt(context: r'x-rate-limit'),
+                  xExpiresAfter: response.headers
+                    .value(r'x-expires-after')
+                    .decodeSimpleNullableDateTime(context: r'x-expires-after'),
               );
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw DecodingException('Unexpected content type: $content for status code: $status');
+              throw DecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
           }
         }
       ''';
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(format(expectedMethod)),
+        collapseWhitespace(expectedMethod),
       );
     });
 
@@ -736,7 +742,9 @@ String _parseResponse(Response<Object?> response) {
               return CombinedOpResponse200(
                 body: Anonymous(
                   body: User.fromJson(response.data),
-                  xRateLimit: response.headers.value(r'x-rate-limit').decodeSimpleNullableInt(),
+                  xRateLimit: response.headers
+                    .value(r'x-rate-limit')
+                    .decodeSimpleNullableInt(context: r'x-rate-limit'),
                 ),
               );
             case (var status, 'application/json') when status >= 400 && status <= 499:
@@ -828,7 +836,9 @@ String _parseResponse(Response<Object?> response) {
             case (200, 'application/json'):
               return BaseResponse(
                 body: User.fromJson(response.data),
-                xUserId: response.headers.value(r'x-user-id').decodeSimpleString(),
+                xUserId: response.headers
+                    .value(r'x-user-id')
+                    .decodeSimpleString(context: r'x-user-id'),
               );
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
@@ -910,7 +920,9 @@ String _parseResponse(Response<Object?> response) {
             case (200, 'application/json'):
               return HeaderAliasResponse(
                 body: User.fromJson(response.data),
-                xUserId: response.headers.value(r'x-user-id').decodeSimpleString(),
+                xUserId: response.headers
+                    .value(r'x-user-id')
+                    .decodeSimpleString(context: r'x-user-id'),
               );
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
@@ -984,7 +996,9 @@ String _parseResponse(Response<Object?> response) {
             case (200, 'application/json'):
               return BodyHeaderResponse(
                 body: User.fromJson(response.data),
-                bodyHeader: response.headers.value(r'body').decodeSimpleString(),
+                bodyHeader: response.headers
+                    .value(r'body')
+                    .decodeSimpleString(context: r'body'),
               );
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
