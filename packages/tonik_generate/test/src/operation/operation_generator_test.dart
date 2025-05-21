@@ -476,7 +476,10 @@ void main() {
 
             try {
               _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(
-                Uri(path: _path(), query: _queryParameters(filter: filter, sort: sort)),
+                Uri(
+                  path: _path(), 
+                  query: _queryParameters(filter: filter, sort: sort),
+                ),
               );
               _$data = _data();
               _$options = _options();
