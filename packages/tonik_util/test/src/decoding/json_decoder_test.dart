@@ -212,4 +212,38 @@ void main() {
       expect(json.decodeJsonNullableList<int>(), isNull);
     });
   });
+
+  group('decodeMap', () {
+    test('decodes valid map', () {
+      final map = {'key': 'value'};
+      expect(map.decodeMap(), equals(map));
+    });
+
+    test('throws on null', () {
+      expect(
+        () => null.decodeMap(),
+        throwsA(
+          isA<InvalidTypeException>()
+        ),
+      );
+    });
+
+    test('throws on non-map', () {
+      expect(
+        () => 'not a map'.decodeMap(),
+        throwsA(
+          isA<InvalidTypeException>()
+        ),
+      );
+    });
+
+    test('includes context in error message', () {
+      expect(
+        () => null.decodeMap(context: 'test context'),
+        throwsA(
+          isA<InvalidTypeException>(),
+        ),
+      );
+    });
+  });
 }

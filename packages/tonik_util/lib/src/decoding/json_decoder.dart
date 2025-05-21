@@ -288,4 +288,25 @@ extension JsonDecoder on Object? {
     }
     return decodeJsonList<T>(context: context);
   }
+
+  /// Decodes a JSON value to a Map.
+  ///
+  /// Throws [InvalidTypeException] if the value is not a map or is null.
+  Map<String, dynamic> decodeMap({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: Map<String, dynamic>,
+        context: context,
+      );
+    }
+    if (this is! Map<String, dynamic>) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: Map<String, dynamic>,
+        context: context,
+      );
+    }
+    return this! as Map<String, dynamic>;
+  }
 }
