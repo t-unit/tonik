@@ -305,7 +305,7 @@ String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return response.data.decodeJsonList<Object?>()
-                .map((e) => User.fromJson(e))
+                .map(User.fromJson)
                 .toList();
             default:
               final content = response.headers.value('content-type') ?? 'not specified';

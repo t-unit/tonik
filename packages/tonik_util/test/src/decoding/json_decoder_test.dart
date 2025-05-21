@@ -159,6 +159,43 @@ void main() {
         );
       });
     });
+
+    group('bool', () {
+      test('decodeJsonBool decodes a valid bool', () {
+        expect(true.decodeJsonBool(), isTrue);
+        expect(false.decodeJsonBool(), isFalse);
+      });
+
+      test('decodeJsonBool throws on null', () {
+        expect(
+          () => null.decodeJsonBool(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodeJsonBool throws on non-bool', () {
+        expect(
+          () => 'true'.decodeJsonBool(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodeJsonNullableBool decodes a valid bool', () {
+        expect(true.decodeJsonNullableBool(), isTrue);
+        expect(false.decodeJsonNullableBool(), isFalse);
+      });
+
+      test('decodeJsonNullableBool returns null on null', () {
+        expect(null.decodeJsonNullableBool(), isNull);
+      });
+
+      test('decodeJsonNullableBool throws on non-bool', () {
+        expect(
+          () => 'true'.decodeJsonNullableBool(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
   });
 
   group('List', () {
@@ -198,13 +235,10 @@ void main() {
 
     test('decodes nested lists', () {
       final json = jsonDecode('[[1,2],[3,4]]') as Object?;
-      expect(
-        json?.decodeJsonList<List<Object?>>(),
-        [
-          [1, 2],
-          [3, 4],
-        ],
-      );
+      expect(json?.decodeJsonList<List<Object?>>(), [
+        [1, 2],
+        [3, 4],
+      ]);
     });
 
     test('decodes nullable lists', () {
@@ -220,29 +254,20 @@ void main() {
     });
 
     test('throws on null', () {
-      expect(
-        () => null.decodeMap(),
-        throwsA(
-          isA<InvalidTypeException>()
-        ),
-      );
+      expect(() => null.decodeMap(), throwsA(isA<InvalidTypeException>()));
     });
 
     test('throws on non-map', () {
       expect(
         () => 'not a map'.decodeMap(),
-        throwsA(
-          isA<InvalidTypeException>()
-        ),
+        throwsA(isA<InvalidTypeException>()),
       );
     });
 
     test('includes context in error message', () {
       expect(
         () => null.decodeMap(context: 'test context'),
-        throwsA(
-          isA<InvalidTypeException>(),
-        ),
+        throwsA(isA<InvalidTypeException>()),
       );
     });
   });

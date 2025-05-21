@@ -419,6 +419,7 @@ void main() {
       'generates fromJson method with type validation for simple properties',
       () {
         final model = ClassModel(
+          context: context,
           name: 'User',
           properties: [
             Property(
@@ -436,28 +437,16 @@ void main() {
               isDeprecated: false,
             ),
           ],
-          context: context,
         );
 
-        const expectedMethod = r'''
-        factory User.fromJson(dynamic json) {
-          final map = json;
-          if (map is! Map<String, dynamic>) {
-            throw JsonDecodingException('Invalid JSON for User: $json');
-          }
-          final $name = map[r'name'];
-          if ($name is! String) {
-            throw JsonDecodingException(
-              'Expected String for name of User, got ${$name}',
-            );
-          }
-          final $age = map[r'age'];
-          if ($age is! int) {
-            throw JsonDecodingException('Expected int for age of User, got ${$age}');
-          }
-          return User(name: $name, age: $age);
-        }
-        ''';
+        const expectedMethod = '''
+  factory User.fromJson(Object? json) {
+    final map = json.decodeMap(context: 'User');
+    return User(
+      name: map[r'name'].decodeJsonString(context: r'User.name'),
+      age: map[r'age'].decodeJsonInt(context: r'User.age'),
+    );
+  }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
@@ -469,6 +458,7 @@ void main() {
 
     test('generates fromJson method with nullable properties', () {
       final model = ClassModel(
+        context: context,
         name: 'User',
         properties: [
           Property(
@@ -486,30 +476,16 @@ void main() {
             isDeprecated: false,
           ),
         ],
-        context: context,
       );
 
-      const expectedMethod = r'''
-        factory User.fromJson(dynamic json) {
-          final map = json;
-          if (map is! Map<String, dynamic>) {
-            throw JsonDecodingException('Invalid JSON for User: $json');
-          }
-          final $name = map[r'name'];
-          if ($name is! String) {
-            throw JsonDecodingException(
-              'Expected String for name of User, got ${$name}',
-            );
-          }
-          final $bio = map[r'bio'];
-          if ($bio is! String?) {
-            throw JsonDecodingException(
-              'Expected String? for bio of User, got ${$bio}',
-            );
-          }
-          return User(name: $name, bio: $bio);
-        }
-        ''';
+      const expectedMethod = '''
+  factory User.fromJson(Object? json) {
+    final map = json.decodeMap(context: 'User');
+    return User(
+      name: map[r'name'].decodeJsonString(context: r'User.name'),
+      bio: map[r'bio'].decodeJsonNullableString(context: r'User.bio'),
+    );
+  }''';
 
       final generatedClass = generator.generateClass(model);
       expect(
@@ -520,6 +496,7 @@ void main() {
 
     test('generates fromJson method with required nullable properties', () {
       final model = ClassModel(
+        context: context,
         name: 'User',
         properties: [
           Property(
@@ -530,24 +507,15 @@ void main() {
             isDeprecated: false,
           ),
         ],
-        context: context,
       );
 
-      const expectedMethod = r'''
-        factory User.fromJson(dynamic json) {
-          final map = json;
-          if (map is! Map<String, dynamic>) {
-            throw JsonDecodingException('Invalid JSON for User: $json');
-          }
-          final $name = map[r'name'];
-          if ($name is! String?) {
-            throw JsonDecodingException(
-              'Expected String? for name of User, got ${$name}',
-            );
-          }
-          return User(name: $name);
-        }
-        ''';
+      const expectedMethod = '''
+  factory User.fromJson(Object? json) {
+    final map = json.decodeMap(context: 'User');
+    return User(
+      name: map[r'name'].decodeJsonNullableString(context: r'User.name'),
+    );
+  }''';
 
       final generatedClass = generator.generateClass(model);
       expect(
@@ -558,6 +526,7 @@ void main() {
 
     test('generates fromJson method with property name normalization', () {
       final model = ClassModel(
+        context: context,
         name: 'User',
         properties: [
           Property(
@@ -575,30 +544,18 @@ void main() {
             isDeprecated: false,
           ),
         ],
-        context: context,
       );
 
-      const expectedMethod = r'''
-        factory User.fromJson(dynamic json) {
-          final map = json;
-          if (map is! Map<String, dynamic>) {
-            throw JsonDecodingException('Invalid JSON for User: $json');
-          }
-          final $firstName = map[r'first-name'];
-          if ($firstName is! String) {
-            throw JsonDecodingException(
-              'Expected String for first-name of User, got ${$firstName}',
-            );
-          }
-          final $id = map[r'_id'];
-          if ($id is! String) {
-            throw JsonDecodingException(
-              'Expected String for _id of User, got ${$id}',
-            );
-          }
-          return User(firstName: $firstName, id: $id);
-        }
-        ''';
+      const expectedMethod = '''
+  factory User.fromJson(Object? json) {
+    final map = json.decodeMap(context: 'User');
+    return User(
+      firstName: map[r'first-name'].decodeJsonString(
+        context: r'User.first-name',
+      ),
+      id: map[r'_id'].decodeJsonString(context: r'User._id'),
+    );
+  }''';
 
       final generatedClass = generator.generateClass(model);
       expect(
@@ -609,6 +566,7 @@ void main() {
 
     test('generates fromJson method with properties named json and map', () {
       final model = ClassModel(
+        context: context,
         name: 'Test',
         properties: [
           Property(
@@ -626,30 +584,16 @@ void main() {
             isDeprecated: false,
           ),
         ],
-        context: context,
       );
 
-      const expectedMethod = r'''
-        factory Test.fromJson(dynamic json) {
-          final map = json;
-          if (map is! Map<String, dynamic>) {
-            throw JsonDecodingException('Invalid JSON for Test: $json');
-          }
-          final $json = map[r'json'];
-          if ($json is! String) {
-            throw JsonDecodingException(
-              'Expected String for json of Test, got ${$json}',
-            );
-          }
-          final $map = map[r'map'];
-          if ($map is! String) {
-            throw JsonDecodingException(
-              'Expected String for map of Test, got ${$map}',
-            );
-          }
-          return Test(json: $json, map: $map);
-        }
-        ''';
+      const expectedMethod = '''
+  factory Test.fromJson(Object? json) {
+    final map = json.decodeMap(context: 'Test');
+    return Test(
+      json: map[r'json'].decodeJsonString(context: r'Test.json'),
+      map: map[r'map'].decodeJsonString(context: r'Test.map'),
+    );
+  }''';
 
       final generatedClass = generator.generateClass(model);
       expect(

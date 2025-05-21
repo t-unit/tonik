@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Creates a Dart expression that correctly deserializes a JSON value
 /// to its Dart representation.
@@ -9,122 +10,96 @@ Expression buildFromJsonValueExpression(
   required Model model,
   required NameManager nameManager,
   required String package,
+  String? contextClass,
+  String? contextProperty,
+  bool isNullable = false,
 }) {
-  return switch (model) {
-    StringModel() => refer(value).property('decodeJsonString').call([]),
-    IntegerModel() => refer(value).property('decodeJsonInt').call([]),
-    NumberModel() => refer(value).property('decodeJsonNum').call([]),
-    DoubleModel() => refer(value).property('decodeJsonDouble').call([]),
-    DecimalModel() => refer(value).property('decodeJsonBigDecimal').call([]),
-    BooleanModel() => refer(value).property('decodeJsonBool').call([]),
-    DateTimeModel() => refer(value).property('decodeJsonDateTime').call([]),
-    DateModel() => refer(value).property('decodeJsonDate').call([]),
-    EnumModel() ||
-    ClassModel() ||
-    AllOfModel() ||
-    OneOfModel() ||
-    AnyOfModel() => _buildFromJsonExpression(
-      value,
-      model,
-      nameManager,
-      package: package,
-    ),
-    ListModel() => _buildListFromJsonExpression(
-      value,
-      model,
-      nameManager,
-      package: package,
-    ),
-    AliasModel() => buildFromJsonValueExpression(
-      value,
-      model: model.model,
-      nameManager: nameManager,
-      package: package,
-    ),
-    NamedModel() => throw UnimplementedError('NamedModel is not supported'),
-  };
-}
+  final contextParam = _buildContextParam(contextClass, contextProperty);
 
-Expression _buildFromJsonExpression(
-  String value,
-  Model model,
-  NameManager nameManager, {
-  String? package,
-}) {
-  final name = nameManager.modelName(model);
-  return refer(name, package).property('fromJson').call([refer(value)]);
-}
-
-Expression _buildListDecode(String value, String type) {
-  return refer(
-    value,
-  ).property('decodeJsonList').call([], {}, [refer(type, 'dart:core')]);
-}
-
-Expression _buildStringListMap(String value, String decodeMethod) {
-  final mapFunction =
-      Method(
-        (b) =>
-            b
-              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body = refer('e').property(decodeMethod).call([]).code,
-      ).closure;
-
-  return _buildListDecode(
-    value,
-    'String',
-  ).property('map').call([mapFunction]).property('toList').call([]);
-}
-
-Expression _buildNestedList(
-  String value,
-  ListModel content,
-  NameManager nameManager, {
-  String? package,
-}) {
-  final mapFunction =
-      Method(
-        (b) =>
-            b
-              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body =
-                  _buildListFromJsonExpression(
-                    'e',
-                    content,
-                    nameManager,
-                    package: package,
-                  ).code,
-      ).closure;
-
-  return _buildListDecode(
-    value,
-    'Object?',
-  ).property('map').call([mapFunction]).property('toList').call([]);
-}
-
-Expression _buildClassList(
-  String value,
-  Model content,
-  NameManager nameManager, {
-  String? package,
-}) {
-  final className = nameManager.modelName(content);
-  final mapFunction =
-      Method(
-        (b) =>
-            b
-              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body =
-                  refer(
-                    className,
-                    package,
-                  ).property('fromJson').call([refer('e')]).code,
-      ).closure;
-
-  return _buildListDecode(
-    value,
-    'Object?',
-  ).property('map').call([mapFunction]).property('toList').call([]);
+  switch (model) {
+    case IntegerModel():
+      return refer(value)
+          .property(isNullable ? 'decodeJsonNullableInt' : 'decodeJsonInt')
+          .call([], contextParam);
+    case NumberModel():
+      return refer(value)
+          .property(isNullable ? 'decodeJsonNullableNum' : 'decodeJsonNum')
+          .call([], contextParam);
+    case DoubleModel():
+      return refer(value)
+          .property(
+            isNullable ? 'decodeJsonNullableDouble' : 'decodeJsonDouble',
+          )
+          .call([], contextParam);
+    case DecimalModel():
+      return refer(value)
+          .property(
+            isNullable
+                ? 'decodeJsonNullableBigDecimal'
+                : 'decodeJsonBigDecimal',
+          )
+          .call([], contextParam);
+    case StringModel():
+      return refer(value)
+          .property(
+            isNullable ? 'decodeJsonNullableString' : 'decodeJsonString',
+          )
+          .call([], contextParam);
+    case BooleanModel():
+      return refer(value)
+          .property(isNullable ? 'decodeJsonNullableBool' : 'decodeJsonBool')
+          .call([], contextParam);
+    case DateTimeModel():
+      return refer(value)
+          .property(
+            isNullable ? 'decodeJsonNullableDateTime' : 'decodeJsonDateTime',
+          )
+          .call([], contextParam);
+    case DateModel():
+      return refer(value)
+          .property(isNullable ? 'decodeJsonNullableDate' : 'decodeJsonDate')
+          .call([], contextParam);
+    case ListModel():
+      return _buildListFromJsonExpression(
+        value,
+        model,
+        nameManager,
+        package: package,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
+        isNullable: isNullable,
+      );
+    case ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel():
+      final className = nameManager.modelName(model);
+      final expr = refer(
+        className,
+        package,
+      ).property('fromJson').call([refer(value)]);
+      return isNullable
+          ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
+          : expr;
+    case EnumModel():
+      final className = nameManager.modelName(model);
+      final expr = refer(
+        className,
+        package,
+      ).property('fromJson').call([refer(value)]);
+      return isNullable
+          ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
+          : expr;
+    case AliasModel():
+      return buildFromJsonValueExpression(
+        value,
+        model: model.resolved,
+        nameManager: nameManager,
+        package: package,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
+        isNullable: isNullable,
+      );
+    case NamedModel():
+      throw UnimplementedError('NamedModel is not supported');
+  }
 }
 
 Expression _buildListFromJsonExpression(
@@ -132,40 +107,151 @@ Expression _buildListFromJsonExpression(
   ListModel model,
   NameManager nameManager, {
   String? package,
+  String? contextClass,
+  String? contextProperty,
+  bool isNullable = false,
 }) {
   final content = model.content;
+  final contextParam = _buildContextParam(contextClass, contextProperty);
 
-  return switch (content) {
-    IntegerModel() => _buildListDecode(value, 'int'),
-    NumberModel() => _buildListDecode(value, 'num'),
-    DoubleModel() => _buildListDecode(value, 'double'),
-    DecimalModel() => _buildStringListMap(value, 'decodeJsonBigDecimal'),
-    StringModel() => _buildListDecode(value, 'String'),
-    BooleanModel() => _buildListDecode(value, 'bool'),
-    DateTimeModel() => _buildStringListMap(value, 'decodeJsonDateTime'),
-    DateModel() => _buildStringListMap(value, 'decodeJsonDate'),
-    ListModel() => _buildNestedList(
-      value,
-      content,
-      nameManager,
-      package: package,
-    ),
-    ClassModel() ||
-    AllOfModel() ||
-    OneOfModel() ||
-    AnyOfModel() ||
-    EnumModel() => _buildClassList(
-      value,
-      content,
-      nameManager,
-      package: package,
-    ),
-    AliasModel() => _buildListFromJsonExpression(
-      value,
-      ListModel(content: content.model, context: model.context),
-      nameManager,
-      package: package,
-    ),
-    NamedModel() => throw UnimplementedError('NamedModel is not supported'),
-  };
+  // Use nullable list decoder if isNullable
+  final listDecoder = isNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
+
+  // Unwrap alias to get the underlying model
+  final unwrappedContent = content is AliasModel ? content.model : content;
+
+  switch (unwrappedContent) {
+    case final ListModel nestedList:
+      final mapFunction =
+          Method(
+            (b) =>
+                b
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                  ..body =
+                      _buildListFromJsonExpression(
+                        'e',
+                        nestedList,
+                        nameManager,
+                        package: package,
+                        contextClass: contextClass,
+                        contextProperty: contextProperty,
+                      ).code,
+          ).closure;
+      final listExpr = refer(value).property(listDecoder).call(
+        [],
+        contextParam,
+        [refer('Object?', 'dart:core')],
+      );
+      return isNullable
+          ? listExpr
+              .nullSafeProperty('map')
+              .call([mapFunction])
+              .property('toList')
+              .call([])
+          : listExpr
+              .property('map')
+              .call([mapFunction])
+              .property('toList')
+              .call([]);
+
+    case ClassModel() ||
+        AllOfModel() ||
+        OneOfModel() ||
+        AnyOfModel() ||
+        EnumModel():
+      final className = nameManager.modelName(unwrappedContent);
+      // Use tear-off for fromJson
+      final mapFunction = refer(className, package).property('fromJson');
+      final listExpr = refer(value).property(listDecoder).call(
+        [],
+        contextParam,
+        [refer('Object?', 'dart:core')],
+      );
+      return isNullable
+          ? listExpr
+              .nullSafeProperty('map')
+              .call([mapFunction])
+              .property('toList')
+              .call([])
+          : listExpr
+              .property('map')
+              .call([mapFunction])
+              .property('toList')
+              .call([]);
+
+    case DateTimeModel() || DateModel() || DecimalModel():
+      final jsonType = _jsonTypeForPrimitive(unwrappedContent);
+      final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
+      final mapFunction =
+          Method(
+            (b) =>
+                b
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                  ..body =
+                      refer(
+                        'e',
+                      ).property(decodeMethod).call([], contextParam).code,
+          ).closure;
+      final listExpr = refer(value).property(listDecoder).call(
+        [],
+        contextParam,
+        [refer(jsonType, 'dart:core')],
+      );
+      return isNullable
+          ? listExpr
+              .nullSafeProperty('map')
+              .call([mapFunction])
+              .property('toList')
+              .call([])
+          : listExpr
+              .property('map')
+              .call([mapFunction])
+              .property('toList')
+              .call([]);
+
+    default:
+      final typeArg = typeReference(content, nameManager, package ?? '');
+      return refer(
+        value,
+      ).property(listDecoder).call([], contextParam, [typeArg]);
+  }
+}
+
+String? _decodeMethodForPrimitive(Model model) {
+  if (model is IntegerModel) return 'decodeJsonInt';
+  if (model is NumberModel) return 'decodeJsonNum';
+  if (model is DoubleModel) return 'decodeJsonDouble';
+  if (model is DecimalModel) return 'decodeJsonBigDecimal';
+  if (model is StringModel) return 'decodeJsonString';
+  if (model is BooleanModel) return 'decodeJsonBool';
+  if (model is DateTimeModel) return 'decodeJsonDateTime';
+  if (model is DateModel) return 'decodeJsonDate';
+  return null;
+}
+
+String _jsonTypeForPrimitive(Model model) {
+  if (model is DateTimeModel || model is DateModel) return 'String';
+  if (model is IntegerModel) return 'int';
+  if (model is NumberModel || model is DoubleModel) return 'num';
+  if (model is DecimalModel) return 'String';
+  if (model is StringModel) return 'String';
+  if (model is BooleanModel) return 'bool';
+  return 'Object?';
+}
+
+Map<String, Expression> _buildContextParam(
+  String? contextClass,
+  String? contextProperty,
+) {
+  if (contextClass != null || contextProperty != null) {
+    return {
+      'context': literalString(
+        (contextClass != null && contextProperty != null)
+            ? '$contextClass.$contextProperty'
+            : contextClass ?? contextProperty!,
+        raw: true,
+      ),
+    };
+  }
+  return <String, Expression>{};
 }

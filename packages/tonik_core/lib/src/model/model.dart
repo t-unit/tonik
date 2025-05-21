@@ -23,6 +23,11 @@ class AliasModel extends Model with NamedModel {
   final String name;
   final Model model;
 
+  Model get resolved => switch (model) {
+        final AliasModel alias => alias.resolved,
+        _ => model,
+      };
+
   @override
   String toString() => 'AliasModel{name: $name, model: $model}';
 }

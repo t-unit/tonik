@@ -292,21 +292,60 @@ extension JsonDecoder on Object? {
   /// Decodes a JSON value to a Map.
   ///
   /// Throws [InvalidTypeException] if the value is not a map or is null.
-  Map<String, dynamic> decodeMap({String? context}) {
+  Map<String, Object?> decodeMap({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
         value: 'null',
-        targetType: Map<String, dynamic>,
+        targetType: Map<String, Object?>,
         context: context,
       );
     }
-    if (this is! Map<String, dynamic>) {
+    if (this is! Map<String, Object?>) {
       throw InvalidTypeException(
         value: toString(),
-        targetType: Map<String, dynamic>,
+        targetType: Map<String, Object?>,
         context: context,
       );
     }
-    return this! as Map<String, dynamic>;
+    return this! as Map<String, Object?>;
+  }
+
+  /// Decodes a JSON value to a bool.
+  ///
+  /// Throws [InvalidTypeException] if the value is not a valid bool or is null.
+  bool decodeJsonBool({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: bool,
+        context: context,
+      );
+    }
+    if (this is! bool) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: bool,
+        context: context,
+      );
+    }
+    return this! as bool;
+  }
+
+  /// Decodes a JSON value to a nullable bool.
+  ///
+  /// Returns null if the value is null.
+  /// Throws [InvalidTypeException] if the value is not a valid bool.
+  bool? decodeJsonNullableBool({String? context}) {
+    if (this == null) {
+      return null;
+    }
+    if (this is! bool) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: bool,
+        context: context,
+      );
+    }
+    return this! as bool;
   }
 }

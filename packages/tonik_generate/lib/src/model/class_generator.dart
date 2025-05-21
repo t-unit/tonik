@@ -11,6 +11,7 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -28,7 +29,9 @@ class ClassGenerator {
 
   ({String code, String filename}) generate(ClassModel model) {
     final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(),
+      allocator: CorePrefixedAllocator(
+         additionalImports: ['package:tonik_util/tonik_util.dart'],
+      ),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
@@ -246,7 +249,7 @@ class ClassGenerator {
                   (b) =>
                       b
                         ..name = 'json'
-                        ..type = refer('dynamic', 'dart:core'),
+                        ..type = refer('Object?', 'dart:core'),
                 ),
               )
               ..body = _buildFromJsonBody(className, model),
@@ -255,80 +258,40 @@ class ClassGenerator {
   Code _buildFromJsonBody(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final invalidJsonError =
-        generateJsonDecodingExceptionExpression(
-          'Invalid JSON for $className: \$json',
-        ).statement;
-
     final codes = <Code>[
-      const Code('final map = json;'),
-      const Code('if (map is! '),
-      buildMapStringDynamicType().code,
-      const Code(') {'),
-      invalidJsonError,
-      const Code('}'),
+      Code("final map = json.decodeMap(context: '$className');"),
     ];
 
-    final propertyValidations = <Code>[];
-    final propertyAssignments = <String>[];
+    final propertyAssignments = <Code>[];
 
     for (final prop in normalizedProperties) {
       final property = prop.property;
       final normalizedName = prop.normalizedName;
-      final localName = '\$${prop.normalizedName}';
       final jsonKey = property.name;
-      final typeCheckCode = _generateTypeCheck(
-        property,
-        localName,
-        jsonKey,
-        className,
-      );
 
-      propertyValidations.add(typeCheckCode);
-      propertyAssignments.add('$normalizedName: $localName');
+      final valueExpr =
+          buildFromJsonValueExpression(
+            "map[r'$jsonKey']",
+            model: property.model,
+            nameManager: nameManager,
+            package: package,
+            contextClass: className,
+            contextProperty: jsonKey,
+            isNullable: property.isNullable || !property.isRequired,
+          ).code;
+
+      propertyAssignments
+        ..add(Code('$normalizedName: '))
+        ..add(valueExpr)
+        ..add(const Code(','));
     }
 
     codes
-      ..addAll(propertyValidations)
-      ..add(Code('return $className(${propertyAssignments.join(', ')});'));
+      ..add(Code('return $className('))
+      ..addAll(propertyAssignments)
+      ..add(const Code(');'));
 
     return Block.of(codes);
-  }
-
-  Code _generateTypeCheck(
-    Property property,
-    String localName,
-    String jsonKey,
-    String className,
-  ) {
-    final typeRef = typeReference(
-      property.model,
-      nameManager,
-      package,
-      isNullableOverride: property.isNullable || !property.isRequired,
-    );
-    final symbolForMessage = typeRef.symbol;
-
-    final errorMessage =
-        'Expected $symbolForMessage${property.isNullable ? '?' : ''} '
-        'for ${jsonKey.replaceAll(r'$', r'\$')} of $className, '
-        'got \${$localName}';
-
-    final typeCheckError =
-        generateJsonDecodingExceptionExpression(errorMessage).statement;
-
-    const conditionEnd = Code(') {');
-
-    final checkCodes = <Code>[
-      Code("final $localName = map[r'$jsonKey'];"),
-      Code('if ($localName is! '),
-      typeRef.code,
-      conditionEnd,
-      typeCheckError,
-      const Code('}'),
-    ];
-
-    return Block.of(checkCodes);
   }
 
   Method _buildToJsonMethod(ClassModel model) {

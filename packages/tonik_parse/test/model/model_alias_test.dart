@@ -74,4 +74,57 @@ void main() {
 
     expect(doubleNested.context.path, ['components', 'schemas']);
   });
+
+  group('resolved getter', () {
+    test('resolves to non-alias model directly', () {
+      final context = Context.initial();
+      final stringModel = StringModel(context: context);
+      final alias = AliasModel(
+        name: 'TestAlias',
+        model: stringModel,
+        context: context,
+      );
+
+      expect(alias.resolved, equals(stringModel));
+    });
+
+    test('resolves single-level alias', () {
+      final context = Context.initial();
+      final stringModel = StringModel(context: context);
+      final innerAlias = AliasModel(
+        name: 'InnerAlias',
+        model: stringModel,
+        context: context,
+      );
+      final outerAlias = AliasModel(
+        name: 'OuterAlias',
+        model: innerAlias,
+        context: context,
+      );
+
+      expect(outerAlias.resolved, equals(stringModel));
+    });
+
+    test('resolves multi-level alias', () {
+      final context = Context.initial();
+      final stringModel = StringModel(context: context);
+      final level3 = AliasModel(
+        name: 'Level3',
+        model: stringModel,
+        context: context,
+      );
+      final level2 = AliasModel(
+        name: 'Level2',
+        model: level3,
+        context: context,
+      );
+      final level1 = AliasModel(
+        name: 'Level1',
+        model: level2,
+        context: context,
+      );
+
+      expect(level1.resolved, equals(stringModel));
+    });
+  });
 }
