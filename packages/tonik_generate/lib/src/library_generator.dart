@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 
 void generateLibraryFile({
   required ApiDocument apiDocument,
@@ -27,12 +28,28 @@ void generateLibraryFile({
 
   srcFiles.sort();
 
+  final docComments = formatDocComments([
+    apiDocument.title,
+    apiDocument.version,
+    apiDocument.description,
+  ]);
+
   final buffer =
       StringBuffer()
-        ..writeln('/// ${apiDocument.title} ${apiDocument.version}')
-        ..writeln('/// ${apiDocument.description}')
-        ..writeln('library;')
+        ..writeln('// Generated code - do not modify by hand')
+        ..writeln('// ignore_for_file: lines_longer_than_80_chars')
+        ..writeln()
         ..writeln();
+
+  for (final docComment in docComments) {
+    buffer.writeln(docComment);
+  }
+
+  buffer
+    ..writeln()
+    ..writeln()
+    ..writeln('library;')
+    ..writeln();
 
   for (final file in srcFiles) {
     final normalizedPath = file.replaceAll(r'\\', '/');
