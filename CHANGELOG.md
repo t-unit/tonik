@@ -1,4 +1,50 @@
-## 0.0.2
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## 2025-05-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik` - `v0.0.2`](#tonik---v002)
+ - [`tonik_core` - `v0.0.2`](#tonik_core---v002)
+ - [`tonik_generate` - `v0.0.2`](#tonik_generate---v002)
+ - [`tonik_parse` - `v0.0.2`](#tonik_parse---v002)
+ - [`tonik_util` - `v0.0.2`](#tonik_util---v002)
+
+---
+
+#### `tonik` - `v0.0.2`
+
+ - **FEAT**: doc strings for api clients.
+ - **FEAT**: response parsing first part.
+ - **FEAT**: response generator for single body responses.
+ - **FEAT**: improved request and response naming.
+ - **FEAT**: parse request bodies.
+
+#### `tonik_core` - `v0.0.2`
+
+ - **FEAT**: improved json decoding.
+ - **FEAT**: basic api client generation.
+ - **FEAT**: complex responses for response wrappers.
+ - **FEAT**: resolved content and isRequired for request body.
+ - **FEAT**: improved response name genreation.
+ - **FEAT**: allow multiple bodies in responses.
+ - **FEAT**: improved request and response naming.
+ - **FEAT**: support for response aliases.
+ - **FEAT**: parse request bodies.
+ - **FEAT**: add request body in core.
+
+#### `tonik_generate` - `v0.0.2`
 
  - **REFACTOR**: reorg folders.
  - **REFACTOR**: cleanup.
@@ -61,6 +107,32 @@
  - **FEAT**: support for response aliases.
  - **FEAT**: handle parameters for api clients.
 
-## 0.0.1
+#### `tonik_parse` - `v0.0.2`
 
-- Initial version.
+ - **FIX**: correct class names for multi content types response parsing.
+ - **FIX**: avoid duplicated request bodies and responses.
+ - **FIX**: extra alias request bodies.
+ - **FIX**: inline request body missing in global definition.
+ - **FIX**: import request bodies into core objects.
+ - **FIX**: missing inline reponses.
+ - **FEAT**: improved json decoding.
+ - **FEAT**: improve context naming.
+ - **FEAT**: allow multiple bodies in responses.
+ - **FEAT**: support for response aliases.
+ - **FEAT**: parse request bodies.
+ - **FEAT**: add request body in core.
+
+#### `tonik_util` - `v0.0.2`
+
+ - **REFACTOR**: throw JsonDecodingException instead of ArgumentError.
+ - **FIX**: handle url encoding for simple decoding.
+ - **FIX**: catch any thrown objects.
+ - **FEAT**: improved json decoding.
+ - **FEAT**: add date class to util package.
+ - **FEAT**: allow context for decoding exceptions.
+ - **FEAT**: generate server class.
+ - **FEAT**: add json decoding of more types to util.
+ - **FEAT**: fromSimple for classes.
+ - **FEAT**: generate fromSimple factory for enums.
+ - **FEAT**: add simple and json decoder.
+

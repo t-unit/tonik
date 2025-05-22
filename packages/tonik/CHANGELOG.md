@@ -1,3 +1,11 @@
+## 0.0.2
+
+ - **FEAT**: doc strings for api clients.
+ - **FEAT**: response parsing first part.
+ - **FEAT**: response generator for single body responses.
+ - **FEAT**: improved request and response naming.
+ - **FEAT**: parse request bodies.
+
 ## 0.0.1
 
 - Initial version.
