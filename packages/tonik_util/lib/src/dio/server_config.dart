@@ -45,11 +45,11 @@ class ServerConfig {
         ..validateStatus = baseOptions!.validateStatus
         ..maxRedirects = baseOptions!.maxRedirects
         ..listFormat = baseOptions!.listFormat
-        ..extra = Map<String, dynamic>.from(baseOptions!.extra)
-      
-      // Ensure the serverUrl is always used
-      ..baseUrl = serverUrl;
+        ..extra = Map<String, dynamic>.from(baseOptions!.extra);
     }
+
+    // Set the server URL
+    dio.options.baseUrl = serverUrl;
     
     // Add all interceptors
     for (final interceptor in interceptors) {
