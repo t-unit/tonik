@@ -50,43 +50,46 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call() async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<void>> call() async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
 
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+  return TonikSuccess(null, _$response);
+}
+''';
 
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
@@ -147,43 +150,46 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call({required String myHeader}) async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<void>> call({required String myHeader}) async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              _$data = _data();
-              _$options = _options(myHeader: myHeader);
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options(myHeader: myHeader);
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
 
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+  return TonikSuccess(null, _$response);
+}
+''';
 
         final normalizedParams = NormalizedRequestParameters(
           pathParameters: const [],
@@ -249,45 +255,43 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call({required int petId}) async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
-
-            try {
-              _$uri = Uri.parse(
-                _dio.options.baseUrl,
-              ).resolveUri(Uri(path: _path(petId: petId)));
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
-
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
-
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+Future<TonikResult<void>> call({required int petId}) async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path(petId: petId);
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+  return TonikSuccess(null, _$response);
+}
+''';
 
         final normalizedParams = NormalizedRequestParameters(
           pathParameters: [
@@ -357,43 +361,46 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call() async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<void>> call() async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
 
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+  return TonikSuccess(null, _$response);
+}
+''';
 
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
@@ -469,48 +476,47 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call({required String filter, String? sort}) async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<void>> call({required String filter, String? sort}) async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(
-                Uri(
-                  path: _path(), 
-                  query: _queryParameters(filter: filter, sort: sort),
-                ),
-              );
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
-
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
-
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(
+      pathSegments: _$pathSegments,
+      query: _queryParameters(filter: filter, sort: sort),
+    );
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+  return TonikSuccess(null, _$response);
+}
+''';
 
         final normalizedParams = NormalizedRequestParameters(
           pathParameters: const [],
@@ -841,65 +847,72 @@ void main() {
             ),
           },
         );
+
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
           queryParameters: [],
           headers: [],
         );
+
         final method = generator.generateCallMethod(
           operation,
           normalizedParams,
         );
+
         const expectedMethod = r'''
-          Future<TonikResult<String>> call() async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<String>> call() async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
 
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 
-            final String _$parsedResponse;
-            try {
-              _$parsedResponse = _parseResponse(_$response);
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.decoding,
-                response: _$response,
-              );
-            }
+  final String _$parsedResponse;
+  try {
+    _$parsedResponse = _parseResponse(_$response);
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.decoding,
+      response: _$response,
+    );
+  }
 
-            return TonikSuccess(_$parsedResponse, _$response);
-          }
-        ''';
+  return TonikSuccess(_$parsedResponse, _$response);
+}
+''';
+
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
@@ -941,54 +954,57 @@ void main() {
           normalizedParams,
         );
         const expectedMethod = r'''
-          Future<TonikResult<void>> call() async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<void>> call() async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
 
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 
-            try {
-              _parseResponse(_$response);
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.decoding,
-                response: _$response,
-              );
-            }
+  try {
+    _parseResponse(_$response);
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.decoding,
+      response: _$response,
+    );
+  }
 
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+  return TonikSuccess(null, _$response);
+}
+''';
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
@@ -1027,43 +1043,46 @@ void main() {
         );
 
         const expectedMethod = r'''
-          Future<TonikResult<void>> call() async {
-            final Uri _$uri;
-            final Object? _$data;
-            final Options _$options;
+Future<TonikResult<void>> call() async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
 
-            try {
-              _$uri = Uri.parse(_dio.options.baseUrl).resolveUri(Uri(path: _path()));
-              _$data = _data();
-              _$options = _options();
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.encoding,
-                response: null,
-              );
-            }
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
 
-            final Response<dynamic> _$response;
-            try {
-              _$response = await _dio.requestUri<dynamic>(
-                _$uri,
-                data: _$data,
-                options: _$options,
-              );
-            } on Object catch (exception, stackTrace) {
-              return TonikError(
-                exception,
-                stackTrace: stackTrace,
-                type: TonikErrorType.network,
-                response: null,
-              );
-            }
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 
-            return TonikSuccess(null, _$response);
-          }
-        ''';
+  return TonikSuccess(null, _$response);
+}
+''';
 
         final methodString = format(method.accept(emitter).toString());
         expect(
@@ -1260,13 +1279,13 @@ void main() {
         'does not generate query parameters method without query parameters',
         () {
           final operation = Operation(
-            operationId: 'getUsers',
+            operationId: 'getPets',
             context: context,
-            summary: 'Get users',
-            description: 'Gets a list of users',
+            summary: 'Get pets',
+            description: 'Gets a list of pets',
             tags: const {},
             isDeprecated: false,
-            path: '/users',
+            path: '/pets',
             method: HttpMethod.get,
             headers: const {},
             queryParameters: const {},
@@ -1275,21 +1294,12 @@ void main() {
             requestBody: null,
           );
 
-          final generatedClass = generator.generateClass(operation, 'GetUsers');
+          final result = generator.generateClass(operation, 'GetPets');
 
-          // Verify that _queryParameters method is not generated
           expect(
-            generatedClass.methods.where((m) => m.name == '_queryParameters'),
-            isEmpty,
+            result.methods.any((m) => m.name == '_queryParameters'),
+            isFalse,
           );
-
-          // Verify that call method doesn't include query parameter
-          final callMethod = generatedClass.methods.firstWhere(
-            (m) => m.name == 'call',
-          );
-          final methodString = callMethod.accept(emitter).toString();
-          expect(methodString.contains('query:'), isFalse);
-          expect(methodString.contains('Uri(path: _path())'), isTrue);
         },
       );
 
@@ -1384,13 +1394,13 @@ void main() {
         );
 
         final operation = Operation(
-          operationId: 'getUsers',
+          operationId: 'getPets',
           context: context,
-          summary: 'Get users',
-          description: 'Gets a list of users',
+          summary: 'Get pets',
+          description: 'Gets a list of pets',
           tags: const {},
           isDeprecated: false,
-          path: '/users',
+          path: '/pets',
           method: HttpMethod.get,
           headers: const {},
           queryParameters: {queryParam},
@@ -1399,21 +1409,12 @@ void main() {
           requestBody: null,
         );
 
-        final generatedClass = generator.generateClass(operation, 'GetUsers');
+        final result = generator.generateClass(operation, 'GetPets');
 
-        // Verify that _queryParameters method is generated
         expect(
-          generatedClass.methods.where((m) => m.name == '_queryParameters'),
-          isNotEmpty,
+          result.methods.any((m) => m.name == '_queryParameters'),
+          isTrue,
         );
-
-        // Verify that call method includes query parameter
-        final callMethod = generatedClass.methods.firstWhere(
-          (m) => m.name == 'call',
-        );
-        final methodString = callMethod.accept(emitter).toString();
-        expect(methodString.contains('query: _queryParameters('), isTrue);
-        expect(methodString.contains('filter: filter'), isTrue);
       });
     });
   });

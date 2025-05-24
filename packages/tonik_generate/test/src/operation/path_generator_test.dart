@@ -48,15 +48,24 @@ void main() {
       );
 
       const expectedMethod = '''
-        String _path() {
-          return r'/users';
+        List<String> _path() {
+          return [r'users'];
         }
       ''';
 
       final method = generator.generatePathMethod(operation, []);
 
       expect(method, isA<Method>());
-      expect(method.returns?.symbol, equals('String'));
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(method.requiredParameters, isEmpty);
       expect(method.optionalParameters, isEmpty);
       expect(
@@ -103,6 +112,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(method.optionalParameters, hasLength(1));
       expect(method.optionalParameters.first.name, 'userId');
       expect(method.optionalParameters.first.type?.symbol, 'String');
@@ -143,11 +162,13 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required List<String> ids}) {
+      const expectedMethod = '''
+        List<String> _path({required List<String> ids}) {
           const simpleEncoder = SimpleEncoder();
-          return r'/users/'
-            '${simpleEncoder.encode(ids, explode: false, allowEmpty: false)}';
+          return [
+            r'users',
+            simpleEncoder.encode(ids, explode: false, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -159,6 +180,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -198,11 +229,13 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required List<String> ids}) {
+      const expectedMethod = '''
+        List<String> _path({required List<String> ids}) {
           const labelEncoder = LabelEncoder();
-          return r'/users'
-            '${labelEncoder.encode(ids, explode: false, allowEmpty: false)}';
+          return [
+            r'users',
+            labelEncoder.encode(ids, explode: false, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -214,6 +247,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -253,11 +296,13 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required List<String> ids}) {
+      const expectedMethod = '''
+        List<String> _path({required List<String> ids}) {
           const matrixEncoder = MatrixEncoder();
-          return r'/users'
-            '${matrixEncoder.encode(ids, explode: false, allowEmpty: false)}';
+          return [
+            r'users',
+            matrixEncoder.encode(ids, explode: false, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -269,6 +314,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -305,11 +360,13 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required Anonymous filter}) {
+      const expectedMethod = '''
+        List<String> _path({required Anonymous filter}) {
           const simpleEncoder = SimpleEncoder();
-          return r'/users/'
-            '${simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: false)}';
+          return [
+            r'users',
+            simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -321,6 +378,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -357,11 +424,13 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required Anonymous filter}) {
+      const expectedMethod = '''
+        List<String> _path({required Anonymous filter}) {
           const simpleEncoder = SimpleEncoder();
-          return r'/users/'
-            '${simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: true)}';
+          return [
+            r'users',
+            simpleEncoder.encode(filter.toJson(), explode: true, allowEmpty: true),
+          ];
         }
       ''';
 
@@ -373,6 +442,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -438,8 +517,8 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({
+      const expectedMethod = '''
+        List<String> _path({
           required String userId,
           required String type,
           required List<String> roles,
@@ -447,10 +526,12 @@ void main() {
           const simpleEncoder = SimpleEncoder();
           const labelEncoder = LabelEncoder();
           const matrixEncoder = MatrixEncoder();
-          return r'/users/'
-            '${simpleEncoder.encode(userId, explode: false, allowEmpty: false)}'
-            '${labelEncoder.encode(type, explode: false, allowEmpty: false)}'
-            '${matrixEncoder.encode(roles, explode: false, allowEmpty: false)}';
+          return [
+            r'users',
+            simpleEncoder.encode(userId, explode: false, allowEmpty: false),
+            labelEncoder.encode(type, explode: false, allowEmpty: false),
+            matrixEncoder.encode(roles, explode: false, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -464,6 +545,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -547,8 +638,8 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({
+      const expectedMethod = '''
+        List<String> _path({
           required Anonymous role,
           required AnonymousModel filter,
           required OneOfValue id,
@@ -556,12 +647,14 @@ void main() {
           const simpleEncoder = SimpleEncoder();
           const matrixEncoder = MatrixEncoder();
           const labelEncoder = LabelEncoder();
-          return r'/users/'
-            '${simpleEncoder.encode(role.toJson(), explode: false, allowEmpty: false)}'
-            r'/filter/'
-            '${matrixEncoder.encode(filter.toJson(), explode: true, allowEmpty: false)}'
-            r'/id/'
-            '${labelEncoder.encode(id.toJson(), explode: false, allowEmpty: false)}';
+          return [
+            r'users',
+            simpleEncoder.encode(role.toJson(), explode: false, allowEmpty: false),
+            r'filter',
+            matrixEncoder.encode(filter.toJson(), explode: true, allowEmpty: false),
+            r'id',
+            labelEncoder.encode(id.toJson(), explode: false, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -575,6 +668,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -624,14 +727,16 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required String animalId, required String id}) {
+      const expectedMethod = '''
+        List<String> _path({required String animalId, required String id}) {
           const simpleEncoder = SimpleEncoder();
-          return r'images/'
-            '${simpleEncoder.encode(id, explode: false, allowEmpty: false)}'
-            r'/animals/'
-            '${simpleEncoder.encode(animalId, explode: false, allowEmpty: false)}'
-            r'/thumbs';
+          return [
+            r'images',
+            simpleEncoder.encode(id, explode: false, allowEmpty: false),
+            r'animals',
+            simpleEncoder.encode(animalId, explode: false, allowEmpty: false),
+            r'thumbs',
+          ];
         }
       ''';
 
@@ -644,6 +749,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -680,13 +795,15 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-        String _path({required String user}) {
+      const expectedMethod = '''
+        List<String> _path({required String user}) {
           const simpleEncoder = SimpleEncoder();
-          return r'users/'
-            '${simpleEncoder.encode(user, explode: false, allowEmpty: false)}'
-            r'/permissions/'
-            '${simpleEncoder.encode(user, explode: false, allowEmpty: false)}';
+          return [
+            r'users',
+            simpleEncoder.encode(user, explode: false, allowEmpty: false),
+            r'permissions',
+            simpleEncoder.encode(user, explode: false, allowEmpty: false),
+          ];
         }
       ''';
 
@@ -698,6 +815,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),
@@ -742,13 +869,19 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-          String _path({required List<Anonymous> colors}) {
-            const simpleEncoder = SimpleEncoder();
-            return r'/data/'
-              '${simpleEncoder.encode(colors.map((e) => e.toJson()).toList(), explode: true, allowEmpty: false)}';
-          }
-        ''';
+      const expectedMethod = '''
+        List<String> _path({required List<Anonymous> colors}) {
+          const simpleEncoder = SimpleEncoder();
+          return [
+            r'data',
+            simpleEncoder.encode(
+              colors.map((e) => e.toJson()).toList(),
+              explode: true,
+              allowEmpty: false,
+            ),
+          ];
+        }
+      ''';
 
       final pathParameters =
           <({String normalizedName, PathParameterObject parameter})>[
@@ -758,6 +891,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(method.optionalParameters.first.named, isTrue);
       expect(method.optionalParameters.first.required, isTrue);
       expect(
@@ -803,13 +946,19 @@ void main() {
         requestBody: null,
       );
 
-      const expectedMethod = r'''
-          String _path({required List<List<Anonymous>> matrix}) {
-            const simpleEncoder = SimpleEncoder();
-            return r'/data/'
-              '${simpleEncoder.encode(matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(), explode: true, allowEmpty: false)}';
-          }
-        ''';
+      const expectedMethod = '''
+        List<String> _path({required List<List<Anonymous>> matrix}) {
+          const simpleEncoder = SimpleEncoder();
+          return [
+            r'data',
+            simpleEncoder.encode(
+              matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
+              explode: true,
+              allowEmpty: false,
+            ),
+          ];
+        }
+      ''';
 
       final pathParameters =
           <({String normalizedName, PathParameterObject parameter})>[
@@ -819,6 +968,16 @@ void main() {
       final method = generator.generatePathMethod(operation, pathParameters);
 
       expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
       expect(method.optionalParameters.first.named, isTrue);
       expect(method.optionalParameters.first.required, isTrue);
       expect(

@@ -19,13 +19,25 @@ class PathGenerator {
     pathParameters,
   ) {
     if (pathParameters.isEmpty) {
+      final pathSegments = operation.path
+          .split('/')
+          .where((s) => s.isNotEmpty)
+          .map((s) => "r'$s'")
+          .join(', ');
+
       return Method(
         (b) =>
             b
               ..name = '_path'
-              ..returns = refer('String', 'dart:core')
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'List'
+                      ..url = 'dart:core'
+                      ..types.add(refer('String', 'dart:core')),
+              )
               ..lambda = false
-              ..body = Code("return r'${operation.path}';"),
+              ..body = Code('return [$pathSegments];'),
       );
     }
 
@@ -89,7 +101,13 @@ class PathGenerator {
         .where((pathComponent) => pathComponent.isNotEmpty)
         .map((pathComponent) {
           if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
-            return Code("r'$pathComponent'");
+            return Code(
+              pathComponent
+                  .split('/')
+                  .where((s) => s.isNotEmpty)
+                  .map((s) => "r'$s'")
+                  .join(', '),
+            );
           }
 
           final paramName = pathComponent.substring(
@@ -101,7 +119,13 @@ class PathGenerator {
           );
 
           if (param == null) {
-            return Code("r'$pathComponent'");
+            return Code(
+              pathComponent
+                  .split('/')
+                  .where((s) => s.isNotEmpty)
+                  .map((s) => "r'$s'")
+                  .join(', '),
+            );
           }
 
           final encoderName = encoders[param.parameter.encoding]!;
@@ -111,22 +135,28 @@ class PathGenerator {
           );
 
           return Code(
-            "'\${$encoderName.encode($valueExpression, "
+            '$encoderName.encode($valueExpression, '
             'explode: ${param.parameter.explode}, '
-            "allowEmpty: ${param.parameter.allowEmptyValue})}'",
+            'allowEmpty: ${param.parameter.allowEmptyValue})',
           );
         });
 
     body
-      ..add(const Code('return '))
-      ..addAll(pathParts)
-      ..add(const Code(';'));
+      ..add(const Code('return ['))
+      ..addAll(pathParts.map((part) => Code('$part,')).toList())
+      ..add(const Code('];'));
 
     return Method(
       (b) =>
           b
             ..name = '_path'
-            ..returns = refer('String', 'dart:core')
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'List'
+                    ..url = 'dart:core'
+                    ..types.add(refer('String', 'dart:core')),
+            )
             ..optionalParameters.addAll(parameters)
             ..lambda = false
             ..body = Block.of(body),

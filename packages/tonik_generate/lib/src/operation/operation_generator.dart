@@ -196,6 +196,8 @@ class OperationGenerator {
         hasRequestBody,
         (operation.requestBody?.contentCount ?? 0) > 1,
         headerArgs,
+        pathArgs,
+        queryArgs,
       ),
       _generateResponseStatements(responseVar),
     ];
@@ -288,6 +290,8 @@ class OperationGenerator {
     bool hasRequestBody,
     bool hasVariableContent,
     Map<String, Expression> headerArgs,
+    Map<String, Expression> pathArgs,
+    Map<String, Expression> queryArgs,
   ) {
     return Block.of([
       declareFinal(r'_$uri', type: refer('Uri', 'dart:core')).statement,
@@ -298,20 +302,27 @@ class OperationGenerator {
       ).statement,
       Block.of([
         const Code('try {'),
+        declareFinal(r'_$baseUri')
+            .assign(
+              refer('Uri', 'dart:core').property('parse').call([
+                refer('_dio').property('options').property('baseUrl'),
+              ]),
+            )
+            .statement,
+        declareFinal(
+          r'_$pathResult',
+        ).assign(refer('_path').call([], pathArgs)).statement,
+        const Code(
+          r'final _$pathSegments = [..._$baseUri.pathSegments, '
+          r'..._$pathResult];',
+        ),
         refer(r'_$uri')
             .assign(
-              refer('Uri', 'dart:core')
-                  .property('parse')
-                  .call([refer('_dio').property('options').property('baseUrl')])
-                  .property('resolveUri')
-                  .call([
-                    refer('Uri', 'dart:core').call(
-                      [],
-                      operation.queryParameters.isEmpty
-                          ? {'path': pathExpr}
-                          : {'path': pathExpr, 'query': queryExpr},
-                    ),
-                  ]),
+              refer(r'_$baseUri').property('replace').call([], {
+                'pathSegments': refer(r'_$pathSegments'),
+                if (queryArgs.isNotEmpty)
+                  'query': refer('_queryParameters').call([], queryArgs),
+              }),
             )
             .statement,
         refer(r'_$data')
