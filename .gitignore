@@ -3,3 +3,7 @@
 
 # FVM Version Cache
 .fvm/
+
+# Integration Test
+/integration_test/petstore/petstore_api
+/integration_test/imposter.jar
