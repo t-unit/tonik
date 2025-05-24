@@ -17,9 +17,14 @@ fi
 # Generate API code
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore
 
-# Download Imposter JAR
-curl -L https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.6.8/imposter-4.6.8.jar \
-     -o imposter.jar
+# Download Imposter JAR only if it doesn't exist
+if [ ! -f imposter.jar ]; then
+    echo "Downloading Imposter JAR..."
+    curl -L https://github.com/imposter-project/imposter-jvm-engine/releases/download/v4.6.8/imposter-4.6.8.jar \
+         -o imposter.jar
+else
+    echo "Imposter JAR already exists, skipping download."
+fi
 
 # Verify Imposter JAR can be executed
 echo "Verifying Imposter JAR..."
