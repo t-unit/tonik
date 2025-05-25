@@ -1,6 +1,6 @@
 name: tonik_generate
 description: A code generation package for Tonik.
-version: 0.0.2
+version: 0.0.3
 repository: https://github.com/t-unit/tonik
 
 environment:

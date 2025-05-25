@@ -1,3 +1,8 @@
+## 0.0.3
+
+ - **FIX**: honor paths in base urls.
+ - **FIX**: improved handling for multi-line document descriptions.
+
 ## 0.0.2
 
  - **REFACTOR**: reorg folders.

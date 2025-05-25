@@ -1,3 +1,7 @@
+## 0.0.3
+
+ - **FIX**: base url not set if there are no other options set.
+
 ## 0.0.2
 
  - **REFACTOR**: throw JsonDecodingException instead of ArgumentError.

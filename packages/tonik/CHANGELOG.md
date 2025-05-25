@@ -1,3 +1,5 @@
+## 0.0.3
+
 ## 0.0.2
 
  - **FEAT**: doc strings for api clients.

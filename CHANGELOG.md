@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-05-25
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_generate` - `v0.0.3`](#tonik_generate---v003)
+ - [`tonik_util` - `v0.0.3`](#tonik_util---v003)
+ - [`tonik` - `v0.0.3`](#tonik---v003)
+
+---
+
+#### `tonik_generate` - `v0.0.3`
+
+ - **FIX**: honor paths in base urls.
+ - **FIX**: improved handling for multi-line document descriptions.
+
+#### `tonik_util` - `v0.0.3`
+
+ - **FIX**: base url not set if there are no other options set.
+
+#### `tonik` - `v0.0.3`
+
+
 ## 2025-05-22
 
 ### Changes
