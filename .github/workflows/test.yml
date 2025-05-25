@@ -39,4 +39,4 @@ jobs:
         run: |
           cd integration_test/petstore/petstore_test
           dart pub get
-          dart test
+          dart test --concurrency=1
