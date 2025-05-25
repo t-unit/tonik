@@ -27,5 +27,16 @@ jobs:
           dart pub global activate melos
           melos bootstrap
 
+      - name: Setup integration test
+        run: |
+          cd integration_test
+          ./setup.sh
+
       - name: Run tests
         run: melos run test 
+
+      - name: Run integration tests
+        run: |
+          cd integration_test/petstore/petstore_test
+          dart pub get
+          dart test

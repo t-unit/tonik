@@ -16,6 +16,7 @@ fi
 
 # Generate API code
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore
+cd petstore && dart pub get &&cd ..
 
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
