@@ -1,6 +1,6 @@
 <br/>
 <p align="center">                    
-<img  src="https://raw.githubusercontent.com/t-unit/tonik/main/resources/logo_no_bg_small.png" height="120" alt="tonik logo">                    
+<img  src="https://raw.githubusercontent.com/t-unit/tonik/refs/heads/main/resources/logo_no_bg_small.png" height="120" alt="tonik logo">                    
 </p>                    
 
 <p align="center">                    
@@ -33,10 +33,10 @@ This package aims to overcome these shortcomings.
 - `allowReserved` support for query parameters
 - `format: uri` mapping to Dart `Uri`
 - Add custom `Date` model in util package to handle `format: date` properly
-- E2E tests (using imposter?)
+- More E2E tests
 - Full decoding and encoding support for all of, any of and one of
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
-- Annotate deprecated fields methods and classes.
+- Annotate deprecated fields, methods and classes.
 - Respect `nullable` property on schema objects
 - Add doc strings based on fields in the spec to fields, classes and methods
 
