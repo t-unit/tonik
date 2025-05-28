@@ -40,6 +40,10 @@ coming soon
 coming soon
 
 
+## Changelog
+
+For a full list of changes of each release, refer to [release notes](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## Roadmap
 
 ### Short term goals
