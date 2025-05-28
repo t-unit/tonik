@@ -56,6 +56,7 @@ For a full list of changes of each release, refer to [release notes](https://git
 - Annotate deprecated fields, methods and classes.
 - Respect `nullable` property on schema objects
 - Add doc strings based on fields in the spec to fields, classes and methods
+- Rework parameter encoding by generating and using methods like `fromSimple` and `toSimple` for other encodings
 
 ### Long term goals
 - Supporting the `not` keyword

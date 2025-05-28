@@ -44,6 +44,15 @@ Expression generateDecodingExceptionExpression(String message) {
   );
 }
 
+/// Generates a throw expression for EncodingException.
+Expression generateEncodingExceptionExpression(String message) {
+  return _generateExceptionExpression(
+    'EncodingException',
+    message,
+    importUrl: 'package:tonik_util/tonik_util.dart',
+  );
+}
+
 Expression _generateExceptionExpression(
   String type,
   String message, {

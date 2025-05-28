@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/model/all_of_generator.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
 import 'package:tonik_generate/src/model/enum_generator.dart';
 import 'package:tonik_generate/src/model/one_of_generator.dart';
@@ -14,12 +15,14 @@ class ModelFileGenerator {
     required this.enumGenerator,
     required this.oneOfGenerator,
     required this.typedefGenerator,
+    required this.allOfGenerator,
   });
 
   final ClassGenerator classGenerator;
   final EnumGenerator enumGenerator;
   final OneOfGenerator oneOfGenerator;
   final TypedefGenerator typedefGenerator;
+  final AllOfGenerator allOfGenerator;
 
   final log = Logger('ModelGenerator');
 
@@ -53,12 +56,14 @@ class ModelFileGenerator {
           result = enumGenerator.generate<String>(model);
         case OneOfModel():
           result = oneOfGenerator.generate(model);
+        case AllOfModel():
+          result = allOfGenerator.generate(model);
         case AliasModel():
           result = typedefGenerator.generateAlias(model);
         case ListModel():
           result = typedefGenerator.generateList(model);
         default:
-          log.fine('Ingnoring model: $model');
+          log.fine('Ignoring model: $model');
           continue;
       }
 

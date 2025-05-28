@@ -2,6 +2,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
 import 'package:tonik_generate/src/library_generator.dart';
+import 'package:tonik_generate/src/model/all_of_generator.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
 import 'package:tonik_generate/src/model/enum_generator.dart';
 import 'package:tonik_generate/src/model/model_file_generator.dart';
@@ -50,12 +51,17 @@ class Generator {
       nameManager: nameManager,
       package: fullPackage,
     );
+    final allOfGenerator = AllOfGenerator(
+      nameManager: nameManager,
+      package: fullPackage,
+    );
 
     final modelGenerator = ModelFileGenerator(
       classGenerator: classGenerator,
       enumGenerator: enumGenerator,
       oneOfGenerator: oneOfGenerator,
       typedefGenerator: typedefGenerator,
+      allOfGenerator: allOfGenerator,
     );
 
     final operationGenerator = OperationGenerator(

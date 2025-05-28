@@ -15,10 +15,10 @@ if [[ $(echo "$JAVA_VERSION" | cut -d. -f1) -lt 11 ]]; then
 fi
 
 # Generate API code
-dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore  --log-level debug
+dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore  --log-level verbose
 cd petstore/petstore_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level debug
+dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
 # Download Imposter JAR only if it doesn't exist

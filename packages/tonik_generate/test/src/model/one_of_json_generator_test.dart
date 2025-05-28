@@ -57,11 +57,11 @@ void main() {
 
       test('toJson method handles primitive values', () {
         final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
-        expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
+        expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
         final generatedCode = format(baseClass.accept(emitter).toString());
         const expectedMethod = '''
-          dynamic toJson() {
+          Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ResultSuccess(:final value) => (value, 'success'),
               ResultError(:final value) => (value, 'error'),
@@ -84,12 +84,12 @@ void main() {
         expect(fromJson.returns?.accept(emitter).toString(), 'Result');
         expect(
           fromJson.requiredParameters.first.type?.accept(emitter).toString(),
-          'dynamic',
+          'Object?',
         );
 
         final generatedCode = format(baseClass.accept(emitter).toString());
         const expectedMethod = r'''
-          static Result fromJson(dynamic json) {
+          static Result fromJson(Object? json) {
             return switch (json) {
               String s => ResultSuccess(s),
               int s => ResultError(s),
@@ -157,16 +157,16 @@ void main() {
 
       test('toJson method includes discriminator for complex types', () {
         final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
-        expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
+        expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
         const expectedMethod = '''
-          dynamic toJson() {
+          Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ResultSuccess(:final value) => (value.toJson(), 'success'),
               ResultError(:final value) => (value.toJson(), 'error'),
             };
 
-            if (discriminator != null && json is Map<String, dynamic>) {
+            if (discriminator != null && json is Map<String, Object?>) {
               json.putIfAbsent('type', () => discriminator);
             }
 
@@ -187,12 +187,12 @@ void main() {
         expect(fromJson.static, isTrue);
         expect(
           fromJson.requiredParameters.first.type?.accept(emitter).toString(),
-          'dynamic',
+          'Object?',
         );
 
         const expectedMethod = '''
-          static Result fromJson(dynamic json) {
-            final discriminator = json is Map<String, dynamic> ? json['type'] : null;
+          static Result fromJson(Object? json) {
+            final discriminator = json is Map<String, Object?> ? json['type'] : null;
 
             final result = switch (discriminator) {
               'success' => ResultSuccess(Success.fromJson(json)),
@@ -270,17 +270,17 @@ void main() {
           final toJson = baseClass.methods.firstWhere(
             (m) => m.name == 'toJson',
           );
-          expect(toJson.returns?.accept(emitter).toString(), 'dynamic');
+          expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
           const expectedMethod = '''
-          dynamic toJson() {
+          Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ResultSuccess(:final value) => (value.toJson(), null),
               ResultAnonymous(:final value) => (value, null),
               ResultError(:final value) => (value.toJson(), 'error'),
             };
 
-            if (discriminator != null && json is Map<String, dynamic>) {
+            if (discriminator != null && json is Map<String, Object?>) {
               json.putIfAbsent('discriminator', () => discriminator);
             }
 
@@ -302,12 +302,12 @@ void main() {
         expect(fromJson.static, isTrue);
         expect(
           fromJson.requiredParameters.first.type?.accept(emitter).toString(),
-          'dynamic',
+          'Object?',
         );
 
         const expectedMethod = '''
-          static Result fromJson(dynamic json) {
-            final discriminator = json is Map<String, dynamic> ? json['discriminator'] : null;
+          static Result fromJson(Object? json) {
+            final discriminator = json is Map<String, Object?> ? json['discriminator'] : null;
 
             final result = switch (discriminator) {
               'error' => ResultError(Error.fromJson(json)),
