@@ -2,6 +2,7 @@ name: tonik
 description: A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 version: 0.0.4
 repository: https://github.com/t-unit/tonik
+resolution: workspace
 
 executables:
   tonik: tonik
