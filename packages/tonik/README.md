@@ -51,7 +51,7 @@ The package name should be snake_case following the official [guidelines](https:
 The supplied API specification file can be written in json or yaml, and must use version 3.0.x or 3.1.x.
 
 ```bash
-tonik --package-name=my_api_client --spec=path_to_openapi.[yaml|json]
+tonik --package-name=my_api_client --spec=path/to/openapi.[yaml|json]
 ```
 
 ### Usage of Generated Code
