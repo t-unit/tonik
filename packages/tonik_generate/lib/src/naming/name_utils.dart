@@ -87,7 +87,7 @@ const generatedClassTokens = {
   'hashCode',
 };
 
-const allKeywords = {...dartKeywords, ...generatedClassTokens};
+const Set<String> allKeywords = {...dartKeywords, ...generatedClassTokens};
 
 /// Ensures a name is not a Dart keyword by adding a $ prefix if necessary.
 String ensureNotKeyword(String name) {
