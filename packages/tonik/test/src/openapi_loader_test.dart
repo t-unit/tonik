@@ -19,8 +19,8 @@ void main() {
 
   group('loadOpenApiDocument', () {
     test('loads valid JSON file', () {
-      final jsonFile = File(path.join(tempDir.path, 'test.json'));
-      jsonFile.writeAsStringSync('''
+      final jsonFile = File(path.join(tempDir.path, 'test.json'))
+      ..writeAsStringSync('''
 {
   "openapi": "3.0.0",
   "info": {
@@ -38,8 +38,8 @@ void main() {
     });
 
     test('loads valid YAML file', () {
-      final yamlFile = File(path.join(tempDir.path, 'test.yaml'));
-      yamlFile.writeAsStringSync('''
+      final yamlFile = File(path.join(tempDir.path, 'test.yaml'))
+      ..writeAsStringSync('''
 openapi: 3.0.0
 info:
   title: Test API
@@ -68,8 +68,8 @@ info:
     });
 
     test('throws on unsupported file extension', () {
-      final txtFile = File(path.join(tempDir.path, 'test.txt'));
-      txtFile.writeAsStringSync('invalid');
+      final txtFile = File(path.join(tempDir.path, 'test.txt'))
+      ..writeAsStringSync('invalid');
 
       expect(
         () => loadOpenApiDocument(txtFile.path),
@@ -78,8 +78,8 @@ info:
     });
 
     test('throws on invalid JSON', () {
-      final jsonFile = File(path.join(tempDir.path, 'invalid.json'));
-      jsonFile.writeAsStringSync('invalid json');
+      final jsonFile = File(path.join(tempDir.path, 'invalid.json'))
+      ..writeAsStringSync('invalid json');
 
       expect(
         () => loadOpenApiDocument(jsonFile.path),
@@ -94,8 +94,8 @@ info:
     });
 
     test('throws on invalid YAML', () {
-      final yamlFile = File(path.join(tempDir.path, 'invalid.yaml'));
-      yamlFile.writeAsStringSync('''
+      final yamlFile = File(path.join(tempDir.path, 'invalid.yaml'))
+      ..writeAsStringSync('''
 invalid yaml:
   - misaligned:
  wrong indentation
@@ -109,8 +109,8 @@ invalid yaml:
     });
 
     test('handles complex YAML structures', () {
-      final yamlFile = File(path.join(tempDir.path, 'complex.yaml'));
-      yamlFile.writeAsStringSync('''
+      final yamlFile = File(path.join(tempDir.path, 'complex.yaml'))
+      ..writeAsStringSync('''
 openapi: 3.0.0
 info:
   title: Complex API
