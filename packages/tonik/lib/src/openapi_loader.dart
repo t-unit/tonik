@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
@@ -11,13 +11,13 @@ Logger logger = Logger('openapi_loader');
 ///
 /// Returns a Map representation of the OpenAPI document.
 Map<String, dynamic> loadOpenApiDocument(String path) {
-  final File file = File(path);
+  final file = File(path);
   if (!file.existsSync()) {
     throw OpenApiLoaderException('OpenAPI document not found');
   }
 
-  final String content = file.readAsStringSync();
-  final String extension = path.toLowerCase().split('.').last;
+  final content = file.readAsStringSync();
+  final extension = path.toLowerCase().split('.').last;
 
   try {
     final apiSpec = switch (extension) {
@@ -25,14 +25,15 @@ Map<String, dynamic> loadOpenApiDocument(String path) {
       'yaml' || 'yml' => _convertYamlToMap(loadYaml(content)),
       _ =>
         throw OpenApiLoaderException(
-          'Unsupported file extension: .$extension. Must be .json, .yaml, or .yml',
+          'Unsupported file extension: .$extension. '
+          'Must be .json, .yaml, or .yml',
         ),
     };
 
     logger.fine('Parsed OpenAPI document as ${extension.toUpperCase()}');
 
     return apiSpec;
-  } catch (e) {
+  } on Object catch (e) {
     logger.fine('Failed to parse OpenAPI document. $e');
     throw OpenApiLoaderException('Failed to parse OpenAPI document.');
   }
@@ -54,7 +55,7 @@ dynamic _convertYamlNode(dynamic yaml) {
     );
   }
   if (yaml is YamlList) {
-    return yaml.map((node) => _convertYamlNode(node)).toList();
+    return yaml.map(_convertYamlNode).toList();
   }
   return yaml;
 }

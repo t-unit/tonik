@@ -1,10 +1,11 @@
 import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik/src/openapi_loader.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_parse/tonik_parse.dart';
 import 'package:tonik_generate/tonik_generate.dart';
+import 'package:tonik_parse/tonik_parse.dart';
 
 const issueUrl = 'https://github.com/t-unit/tonik/issues';
 
@@ -53,14 +54,14 @@ void printUsage(ArgParser argParser) {
 final Logger logger = Logger('tonik');
 
 void main(List<String> arguments) {
-  final ArgParser argParser = buildParser();
+  final argParser = buildParser();
   String logLevel;
   String packageName;
   String openApiPath;
   String outputDir;
 
   try {
-    final ArgResults results = argParser.parse(arguments);
+    final results = argParser.parse(arguments);
 
     if (results.flag('help')) {
       printUsage(argParser);
@@ -75,7 +76,7 @@ void main(List<String> arguments) {
     print(formatException.message);
     printUsage(argParser);
     exit(128);
-  } catch (_) {
+  } on Object catch (_) {
     printUsage(argParser);
     exit(128);
   }
@@ -110,10 +111,11 @@ void main(List<String> arguments) {
     }
   });
 
-  logger.info('Starting Tonik');
-  logger.fine('Package name: $packageName');
-  logger.fine('OpenAPI document: $openApiPath');
-  logger.fine('Output directory: $outputDir');
+  logger
+    ..info('Starting Tonik')
+    ..fine('Package name: $packageName')
+    ..fine('OpenAPI document: $openApiPath')
+    ..fine('Output directory: $outputDir');
 
   Map<String, dynamic> apiSpec;
   try {
@@ -122,13 +124,14 @@ void main(List<String> arguments) {
   } on OpenApiLoaderException catch (e) {
     logger.severe(e.message);
     exit(1);
-  } catch (e, s) {
-    logger.fine('Failed to load OpenAPI document', e, s);
-    logger.severe(
-      'Unexpected error while loading OpenAPI document. '
-      'Make sure to run with verbose logging and report this issue at '
-      '$issueUrl',
-    );
+  } on Object catch (e, s) {
+    logger
+      ..fine('Failed to load OpenAPI document', e, s)
+      ..severe(
+        'Unexpected error while loading OpenAPI document. '
+        'Make sure to run with verbose logging and report this issue at '
+        '$issueUrl',
+      );
     exit(1);
   }
 
@@ -136,30 +139,32 @@ void main(List<String> arguments) {
   try {
     apiDocument = Importer().import(apiSpec);
     logger.info('Successfully parsed OpenAPI document');
-  } catch (e, s) {
-    logger.fine('Failed to parse OpenAPI document', e, s);
-    logger.severe(
-      'Unexpected error while parsing OpenAPI document. '
-      'If you think your document is valid, please run '
-      'with verbose logging and report this issue at $issueUrl',
-    );
+  } on Object catch (e, s) {
+    logger
+      ..fine('Failed to parse OpenAPI document', e, s)
+      ..severe('Unexpected error while parsing OpenAPI document. '
+        'Unexpected error while parsing OpenAPI document. '
+        'If you think your document is valid, please run '
+        'with verbose logging and report this issue at $issueUrl',
+      );
     exit(1);
   }
 
   try {
-    Generator().generate(
+    const Generator().generate(
       apiDocument: apiDocument,
       outputDirectory: outputDir,
       package: packageName,
     );
     logger.info('Successfully generated code');
-  } catch (e, s) {
-    logger.fine('Failed to generate code', e, s);
-    logger.severe(
-      'Unexpected error while generating code. '
-      'If you think your document is valid, please run with '
-      'verbose logging and report this issue at $issueUrl',
-    );
+  } on Object catch (e, s) {
+    logger
+      ..fine('Failed to generate code', e, s)
+      ..severe(
+        'Unexpected error while generating code. '
+        'If you think your document is valid, please run with '
+        'verbose logging and report this issue at $issueUrl',
+      );
     exit(1);
   }
 }
