@@ -1,4 +1,4 @@
-name: Tests
+name: Lint
 
 on:
   push:
@@ -24,4 +24,3 @@ jobs:
 
       - name: Analyze code
         run: melos exec dart analyze
-        
