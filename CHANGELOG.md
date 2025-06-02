@@ -15,6 +15,37 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`tonik` - `v0.0.5`](#tonik---v005)
+ - [`tonik_core` - `v0.0.5`](#tonik_core---v005)
+ - [`tonik_generate` - `v0.0.5`](#tonik_generate---v005)
+ - [`tonik_parse` - `v0.0.5`](#tonik_parse---v005)
+ - [`tonik_util` - `v0.0.5`](#tonik_util---v005)
+
+---
+
+#### `tonik` - `v0.0.5`
+
+#### `tonik_core` - `v0.0.5`
+
+#### `tonik_generate` - `v0.0.5`
+
+#### `tonik_parse` - `v0.0.5`
+
+#### `tonik_util` - `v0.0.5`
+
+
+## 2025-06-02
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`tonik` - `v0.0.4`](#tonik---v004)
  - [`tonik_core` - `v0.0.4`](#tonik_core---v004)
  - [`tonik_generate` - `v0.0.4`](#tonik_generate---v004)
