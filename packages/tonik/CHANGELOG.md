@@ -1,3 +1,9 @@
+## 0.0.4
+
+ - **FIX**: define executables for tonik.
+ - **FEAT**: generate all of classes.
+ - **FEAT**: improve output on invalid arguments.
+
 ## 0.0.3
 
 ## 0.0.2

@@ -3,6 +3,49 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-02
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik` - `v0.0.4`](#tonik---v004)
+ - [`tonik_core` - `v0.0.4`](#tonik_core---v004)
+ - [`tonik_generate` - `v0.0.4`](#tonik_generate---v004)
+ - [`tonik_parse` - `v0.0.4`](#tonik_parse---v004)
+ - [`tonik_util` - `v0.0.4`](#tonik_util---v004)
+
+---
+
+#### `tonik` - `v0.0.4`
+
+ - **FIX**: define executables for tonik.
+ - **FEAT**: generate all of classes.
+ - **FEAT**: improve output on invalid arguments.
+
+#### `tonik_core` - `v0.0.4`
+
+ - **FEAT**: generate all of classes.
+
+#### `tonik_generate` - `v0.0.4`
+
+ - **FEAT**: generate all of classes.
+
+#### `tonik_parse` - `v0.0.4`
+
+ - no changes
+
+#### `tonik_util` - `v0.0.4`
+
+ - no changes
+
+
 ## 2025-05-25
 
 ### Changes
