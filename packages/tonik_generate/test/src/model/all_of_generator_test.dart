@@ -327,7 +327,7 @@ void main() {
         const expectedHashCode = '''
           @override
           int get hashCode {
-            return Object.hash(base, mixin);
+            return Object.hashAll([base, mixin]);
           }
         ''';
 
@@ -472,7 +472,7 @@ void main() {
         const expectedHashCode = '''
           @override
           int get hashCode {
-            return Object.hash(status, string);
+            return Object.hashAll([status, string]);
           }
         ''';
 

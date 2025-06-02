@@ -311,7 +311,7 @@ void main() {
         const expectedMethod = '''
           @override
           int get hashCode { 
-            return Object.hash(xTest, body);
+            return Object.hashAll([xTest, body]);
           }
         ''';
 
@@ -361,7 +361,7 @@ void main() {
         const expectedMethod = '''
           @override
           int get hashCode { 
-             return Object.hash(xTest, body, xOther);
+             return Object.hashAll([xTest, body, xOther]);
           }
         ''';
 
@@ -406,7 +406,7 @@ void main() {
           @override
           int get hashCode {
             const deepEquals = DeepCollectionEquality(); 
-            return Object.hash(deepEquals.hash(xList), body);
+            return Object.hashAll([deepEquals.hash(xList), body]);
           }
         ''';
 
