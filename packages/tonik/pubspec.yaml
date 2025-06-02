@@ -3,6 +3,9 @@ description: A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 version: 0.0.3
 repository: https://github.com/t-unit/tonik
 
+executables:
+  tonik: tonik
+
 topics:
   - openapi
   - codegeneration
@@ -22,6 +25,6 @@ dependencies:
   tonik_generate: ^0.0.3
 
 dev_dependencies:
-  lints: ^5.0.0
+  very_good_analysis: ^7.0.0
   path: ^1.9.1
   test: ^1.24.0
