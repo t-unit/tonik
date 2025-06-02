@@ -29,6 +29,8 @@ There are already numerous projects available to generate Dart code from OpenAPI
 
 This package aims to overcome these shortcomings.
 
+Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), as this project would not have been possible without him.
+
 ## Features
 
 coming soon
