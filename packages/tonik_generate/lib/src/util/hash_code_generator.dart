@@ -80,7 +80,7 @@ Method generateHashCodeMethod({
       refer(
         'Object',
         'dart:core',
-      ).property('hash').call(hashArgs, {}, []).returned.statement,
+      ).property('hashAll').call([literalList(hashArgs)]).returned.statement,
     );
   }
 
