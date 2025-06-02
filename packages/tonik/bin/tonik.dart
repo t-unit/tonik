@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:args/args.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik/src/openapi_loader.dart';
@@ -7,7 +6,6 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 import 'package:tonik_generate/tonik_generate.dart';
 
-const version = '0.0.1';
 const issueUrl = 'https://github.com/t-unit/tonik/issues';
 
 ArgParser buildParser() {
@@ -44,12 +42,11 @@ ArgParser buildParser() {
       help: 'Set the logging level (verbose, info, warn, silent).',
       defaultsTo: 'warn',
       allowed: ['verbose', 'info', 'warn', 'silent'],
-    )
-    ..addFlag('version', negatable: false, help: 'Print the tool version.');
+    );
 }
 
 void printUsage(ArgParser argParser) {
-  print('Usage: dart tonik.dart <flags> [arguments]');
+  print('Usage: tonik <flags> [arguments]');
   print(argParser.usage);
 }
 
@@ -67,10 +64,6 @@ void main(List<String> arguments) {
 
     if (results.flag('help')) {
       printUsage(argParser);
-      return;
-    }
-    if (results.flag('version')) {
-      print('tonik version: $version');
       return;
     }
 

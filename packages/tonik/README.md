@@ -17,14 +17,12 @@
 # Tonik
 A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 
-<div style="background-color: #664d03; color: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border: 1px solid #ffc107;">
-
 ## ⚠️ Warning
 This project is currently in an early development phase. Users should expect:
 - Breaking changes in future releases
 - Potential bugs and issues
 - Missing features (see Roadmap section below)
-</div>
+
 
 ## Motivation
 There are already numerous projects available to generate Dart code from OpenAPI documents. But all lack certain, most often critical features. They might not support integer enums, composable data types (oneOf, anyOf, allOf), fail if you use existing class names in Dart or dependencies (e.g. `Response` of dio) or handle only success responses. 
@@ -35,10 +33,58 @@ This package aims to overcome these shortcomings.
 
 coming soon
 
-## Usage
 
-coming soon
+## Quick-Start Guide
 
+### Installation
+
+Activate the tonik CLI via:
+```bash
+dart pub global activate tonik
+```
+
+### Client Code Generation
+
+To generate client code you need the path to your OpenAPI specification file ready and define a name for the client package. 
+
+The package name should be snake_case following the official [guidelines](https://dart.dev/tools/pub/pubspec#name).
+The supplied API specification file can be written in json or yaml, and must use version 3.0.x or 3.1.x.
+
+```bash
+tonik --package-name=my_api_client --spec=path/to/openapi.[yaml|json]
+```
+
+### Usage of Generated Code
+
+Add the genearted package as a dependency to your project.
+
+```bash
+dart pub add "my_client_api:{path: path/to/package}"
+```
+
+Tonik generates an `Api` class per tag defined in the specification.
+To use the generated client, simply import it and create an instance.
+
+Here we define a custom server URL (servers defined in the specification file are also available). Afterward we  perform a network call. Finally, we check if the request was successfull or failed.
+
+```dart
+import 'package:my_api_client/my_api_client.dart';
+
+final api = PetApi(
+  CustomServer(baseUrl: 'https://api.example.com'),
+);
+
+// Make API calls with type-safe responses
+final response = await api.getPetById(petId: 1);
+switch (response) {
+  case TonikSuccess<GetPetByIdResponse>(:final value):
+    print('Server response: $value');
+  case TonikError():
+    print('Network error occurred');
+}
+```
+
+Take a look at the [pet store integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart) and our full usage guide (coming soon) for more information.
 
 ## Roadmap
 
