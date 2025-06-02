@@ -71,6 +71,10 @@ void main(List<String> arguments) {
     packageName = results['package-name'] as String;
     openApiPath = results['spec'] as String;
     outputDir = results['output-dir'] as String;
+  } on FormatException catch (formatException) {
+    print(formatException.message);
+    printUsage(argParser);
+    exit(128);
   } catch (_) {
     printUsage(argParser);
     exit(128);

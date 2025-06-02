@@ -1,15 +1,36 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/src/util/context.dart';
 
+enum EncodingShape {
+  simple,
+  complex,
+  mixed,
+}
+
 @immutable
 sealed class Model {
   const Model({required this.context});
 
   final Context context;
+
+  EncodingShape get encodingShape;
 }
 
 mixin NamedModel on Model {
   String? get name;
+}
+
+mixin CompositeModel on Model {
+  Set<Model> get containedModels;
+
+  @override
+  EncodingShape get encodingShape {
+    final shapes = containedModels.map((m) => m.encodingShape).toSet();
+    if (shapes.length == 1) {
+      return shapes.first;
+    }
+    return EncodingShape.mixed;
+  }
 }
 
 class AliasModel extends Model with NamedModel {
@@ -29,6 +50,9 @@ class AliasModel extends Model with NamedModel {
       };
 
   @override
+  EncodingShape get encodingShape => resolved.encodingShape;
+
+  @override
   String toString() => 'AliasModel{name: $name, model: $model}';
 }
 
@@ -39,6 +63,9 @@ class ListModel extends Model with NamedModel {
 
   @override
   final String? name;
+
+  @override
+  EncodingShape get encodingShape => EncodingShape.complex;
 
   @override
   String toString() => 'ListModel{name: $name, content: $content}';
@@ -54,6 +81,9 @@ class ClassModel extends Model with NamedModel {
   @override
   final String? name;
   final List<Property> properties;
+
+  @override
+  EncodingShape get encodingShape => EncodingShape.complex;
 
   @override
   String toString() => 'ClassModel{name: $name, properties: $properties}';
@@ -73,11 +103,14 @@ class EnumModel<T> extends Model with NamedModel {
   final bool isNullable;
 
   @override
+  EncodingShape get encodingShape => EncodingShape.simple;
+
+  @override
   String toString() =>
       'EnumModel<$T>{name: $name, values: $values isNullable: $isNullable}';
 }
 
-class AllOfModel extends Model with NamedModel {
+class AllOfModel extends Model with NamedModel, CompositeModel {
   const AllOfModel({
     required this.models,
     required this.name,
@@ -89,12 +122,15 @@ class AllOfModel extends Model with NamedModel {
   final Set<Model> models;
 
   @override
+  Set<Model> get containedModels => models;
+
+  @override
   String toString() => 'AllOfModel{models: $models}';
 }
 
 typedef DiscriminatedModel = ({String? discriminatorValue, Model model});
 
-class OneOfModel extends Model with NamedModel {
+class OneOfModel extends Model with NamedModel, CompositeModel {
   const OneOfModel({
     required this.models,
     required this.name,
@@ -108,11 +144,14 @@ class OneOfModel extends Model with NamedModel {
   final String? discriminator;
 
   @override
+  Set<Model> get containedModels => models.map((m) => m.model).toSet();
+
+  @override
   String toString() =>
       'OneOfModel{models: $models, discriminator: $discriminator}';
 }
 
-class AnyOfModel extends Model with NamedModel {
+class AnyOfModel extends Model with NamedModel, CompositeModel {
   const AnyOfModel({
     required this.models,
     required this.name,
@@ -126,12 +165,18 @@ class AnyOfModel extends Model with NamedModel {
   final String? discriminator;
 
   @override
+  Set<Model> get containedModels => models.map((m) => m.model).toSet();
+
+  @override
   String toString() =>
       'AnyOfModel{models: $models, discriminator: $discriminator}';
 }
 
 sealed class PrimitiveModel extends Model {
   const PrimitiveModel({required super.context});
+
+  @override
+  EncodingShape get encodingShape => EncodingShape.simple;
 }
 
 class IntegerModel extends PrimitiveModel {

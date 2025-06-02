@@ -97,8 +97,8 @@ Expression buildFromJsonValueExpression(
         contextProperty: contextProperty,
         isNullable: isNullable,
       );
-    case NamedModel():
-      throw UnimplementedError('NamedModel is not supported');
+    case NamedModel() || CompositeModel():
+      throw UnimplementedError('$model is not supported');
   }
 }
 

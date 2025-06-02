@@ -93,7 +93,8 @@ Expression buildSimpleValueExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
     ),
-    NamedModel() => throw UnimplementedError('NamedModel is not supported'),
+    NamedModel() ||
+    CompositeModel() => throw UnimplementedError('$model is not supported'),
   };
 }
 
@@ -235,7 +236,8 @@ Expression _buildListFromSimpleExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
     ),
-    NamedModel() => throw UnimplementedError('NamedModel is not supported'),
+    NamedModel() ||
+    CompositeModel() => throw UnimplementedError('$model is not supported'),
   };
 }
 

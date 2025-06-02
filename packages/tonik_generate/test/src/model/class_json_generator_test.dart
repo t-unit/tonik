@@ -46,7 +46,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {r'name': name};
+        Object? toJson() => {r'name': name};
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -86,11 +86,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {
-          r'name': name,
-          r'age': age,
-          r'isActive': isActive,
-        };
+        Object? toJson() => {r'name': name, r'age': age, r'isActive': isActive};
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -123,7 +119,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {r'name': name, r'bio': bio};
+        Object? toJson() => {r'name': name, r'bio': bio};
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -156,7 +152,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {
+        Object? toJson() => {
           r'name': name,
           if (nickname != null) r'nickname': nickname,
         };
@@ -192,7 +188,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {r'_id': id, r'user-name': userName};
+        Object? toJson() => {r'_id': id, r'user-name': userName};
         ''';
 
       final generatedClass = generator.generateClass(model);
@@ -260,7 +256,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {
+        Object? toJson() => {
           r'name': name,
           r'createdAt': createdAt.toIso8601String(),
           r'status': status.toJson(),
@@ -325,7 +321,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {
+        Object? toJson() => {
           r'tags': tags,
           r'meetingTimes': meetingTimes.map((e) => e.toIso8601String()).toList(),
           r'addresses': addresses?.map((e) => e.toJson()).toList(),
@@ -400,7 +396,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Map<String, dynamic> toJson() => {
+        Object? toJson() => {
           r'combinedData': combinedData.toJson(),
           r'pet': pet?.toJson(),
         };

@@ -97,7 +97,7 @@ class OneOfGenerator {
                 (b) =>
                     b
                       ..name = 'toJson'
-                      ..returns = refer('dynamic', 'dart:core')
+                      ..returns = refer('Object?', 'dart:core')
                       ..body = _generateToJsonBody(
                         className,
                         model,
@@ -116,7 +116,7 @@ class OneOfGenerator {
                           (b) =>
                               b
                                 ..name = 'json'
-                                ..type = refer('dynamic', 'dart:core'),
+                                ..type = refer('Object?', 'dart:core'),
                         ),
                       )
                       ..body = _generateFromJsonBody(
@@ -223,7 +223,7 @@ class OneOfGenerator {
     if (model.discriminator != null) {
       blocks.addAll([
         const Code('if (discriminator != null && json is '),
-        buildMapStringDynamicType().code,
+        buildMapStringObjectType().code,
         const Code(') {'),
         Code(
           "json.putIfAbsent('${model.discriminator}', () => discriminator);",
@@ -247,7 +247,7 @@ class OneOfGenerator {
     if (model.discriminator != null) {
       final discriminatorCode = [
         const Code('final discriminator = json is '),
-        buildMapStringDynamicType().code,
+        buildMapStringObjectType().code,
         const Code(' ? '),
         Code("json['${model.discriminator}']"),
         const Code(' : null;'),

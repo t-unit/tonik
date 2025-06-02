@@ -86,6 +86,10 @@ switch (response) {
 
 Take a look at the [pet store integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart) and our full usage guide (coming soon) for more information.
 
+## Changelog
+
+For a full list of changes of each release, refer to [release notes](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## Roadmap
 
 ### Short term goals
@@ -93,11 +97,14 @@ Take a look at the [pet store integration tests](https://github.com/t-unit/tonik
 - `format: uri` mapping to Dart `Uri`
 - Add custom `Date` model in util package to handle `format: date` properly
 - More E2E tests
-- Full decoding and encoding support for all of, any of and one of
+- Full decoding and encoding support for any of and one of
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
 - Annotate deprecated fields, methods and classes.
 - Respect `nullable` property on schema objects
 - Add doc strings based on fields in the spec to fields, classes and methods
+- Rework parameter encoding by generating and using methods like `fromSimple` and `toSimple` for other encodings
+- Normalize allOf with only added description (see https://github.com/sonallux/spotify-web-api/blob/main/official-spotify-open-api.yml#L4180) to be regular class model
+- Discriminator support for allOf
 
 ### Long term goals
 - Supporting the `not` keyword

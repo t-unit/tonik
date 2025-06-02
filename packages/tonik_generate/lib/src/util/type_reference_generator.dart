@@ -82,14 +82,22 @@ TypeReference typeReference(
             ..url = 'package:big_decimal/big_decimal.dart'
             ..isNullable = isNullableOverride,
     ),
+    final CompositeModel m => TypeReference(
+      (b) =>
+          b
+            ..symbol = nameManager.modelName(m)
+            ..url = package
+            ..isNullable =
+                isNullableOverride,
+    ),
   };
 }
 
-/// Returns a TypeReference for [Map<String, dynamic>].
+/// Returns a TypeReference for [Map<String, Object?>].
 ///
 /// This can be used with Code.scope to create properly
 /// qualified type references in generated code.
-TypeReference buildMapStringDynamicType() => TypeReference(
+TypeReference buildMapStringObjectType() => TypeReference(
   (b) =>
       b
         ..symbol = 'Map'
@@ -104,7 +112,7 @@ TypeReference buildMapStringDynamicType() => TypeReference(
           TypeReference(
             (b) =>
                 b
-                  ..symbol = 'dynamic'
+                  ..symbol = 'Object?'
                   ..url = 'dart:core',
           ),
         ]),

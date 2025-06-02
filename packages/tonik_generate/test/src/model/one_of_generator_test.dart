@@ -265,7 +265,7 @@ void main() {
     final baseClass = classes.firstWhere((c) => c.name == 'TestOneOf');
     final generatedCode = format(baseClass.accept(emitter).toString());
     const expectedMethod = '''
-        TestOneOf fromJson(dynamic json) {
+        TestOneOf fromJson(Object? json) {
           try {
             return TestOneOfTestClass(TestClass.fromJson(json));
           } on Object catch(_) {}

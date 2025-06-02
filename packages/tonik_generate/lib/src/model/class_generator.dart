@@ -30,7 +30,7 @@ class ClassGenerator {
   ({String code, String filename}) generate(ClassModel model) {
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(
-         additionalImports: ['package:tonik_util/tonik_util.dart'],
+        additionalImports: ['package:tonik_util/tonik_util.dart'],
       ),
       orderDirectives: true,
       useNullSafetySyntax: true,
@@ -296,30 +296,28 @@ class ClassGenerator {
 
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
-
-    final parts = [const Code('{')];
+    final propertyAssignments = <String>[];
     for (final prop in normalizedProperties) {
-      final property = prop.property;
       final name = prop.normalizedName;
-      final jsonKeyString = literalString(property.name, raw: true).code;
-      final valueExprString = buildToJsonPropertyExpression(name, property);
+      final property = prop.property;
+      final value = buildToJsonPropertyExpression(name, property);
 
-      if (property.isRequired || property.isNullable) {
-        parts.add(Code('$jsonKeyString: $valueExprString, '));
+      if (!property.isRequired && !property.isNullable) {
+        propertyAssignments.add(
+          "if ($name != null) r'${property.name}': $value",
+        );
       } else {
-        parts.add(Code('if ($name != null) $jsonKeyString: $valueExprString,'));
+        propertyAssignments.add("r'${property.name}': $value");
       }
     }
-
-    parts.add(const Code('}'));
 
     return Method(
       (b) =>
           b
-            ..returns = buildMapStringDynamicType()
             ..name = 'toJson'
+            ..returns = refer('Object?', 'dart:core')
             ..lambda = true
-            ..body = Block.of(parts),
+            ..body = Code('{${propertyAssignments.join(', ')}}'),
     );
   }
 
