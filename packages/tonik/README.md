@@ -63,7 +63,9 @@ dart pub add "my_client_api:{path: path/to/package}"
 ```
 
 Tonik generates an `Api` class per tag defined in the specification.
-To use the generated client, simply import it and create an instance:
+To use the generated client, simply import it and create an instance.
+
+Here we define a custom server URL (servers defined in the specification file are also available). Afterward we  perform a network call. Finally, we check if the request was successfull or failed.
 
 ```dart
 import 'package:my_api_client/my_api_client.dart';
