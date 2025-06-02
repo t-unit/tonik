@@ -1,6 +1,6 @@
 name: tonik_core
 description: Core data structures and utilities for Tonik.
-version: 0.0.2
+version: 0.0.4
 repository: https://github.com/t-unit/tonik
 
 environment:

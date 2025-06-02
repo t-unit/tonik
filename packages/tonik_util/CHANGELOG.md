@@ -1,3 +1,7 @@
+## 0.0.4
+
+ - no changes
+
 ## 0.0.3
 
  - **FIX**: base url not set if there are no other options set.

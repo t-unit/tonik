@@ -1,3 +1,7 @@
+## 0.0.4
+
+ - **FEAT**: generate all of classes.
+
 ## 0.0.3
 
  - **FIX**: honor paths in base urls.

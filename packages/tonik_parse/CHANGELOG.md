@@ -1,3 +1,7 @@
+## 0.0.4
+
+ - no changes
+
 ## 0.0.2
 
  - **FIX**: correct class names for multi content types response parsing.
