@@ -626,10 +626,10 @@ void main() {
         const Server(url: 'https://staging.example.com', description: null),
         const Server(url: 'https://dev.example.com', description: null),
       ];
-      
+
       // Identity should be different but content equal
       expect(identical(servers, identicalContentServers), isFalse);
-      
+
       // Second call with different list but same content should use cache
       final result2 = manager.serverNames(identicalContentServers);
 
@@ -637,18 +637,18 @@ void main() {
       expect(result1.serverMap.length, result2.serverMap.length);
       expect(result1.baseName, result2.baseName);
       expect(result1.customName, result2.customName);
-      
+
       // The cache should only have one entry despite using two different lists
       expect(manager.serverNamesCache.length, 1);
-      
+
       // Check that corresponding servers in each list have the same names
       for (var i = 0; i < servers.length; i++) {
         final server1 = servers[i];
         final server2 = identicalContentServers[i];
-        
+
         final name1 = result1.serverMap[server1];
         final name2 = result2.serverMap[server2];
-        
+
         expect(name1, name2);
       }
     });
@@ -674,28 +674,28 @@ void main() {
 
       // Verify the server names are cached
       expect(manager.serverNamesCache.length, 1);
-      
+
       // Verify the cache contains the correct key
       expect(manager.serverNamesCache.containsKey(cacheKey), isTrue);
-      
+
       // Get the cached result
       final cachedResult = manager.serverNamesCache[cacheKey]!;
-      
+
       // Verify the cached result has correct server map size
       expect(cachedResult.serverMap.length, 2);
-      
+
       // Check that the servers are properly mapped to their expected names
       for (final server in servers) {
         final name = cachedResult.serverMap[server];
         expect(name != null, isTrue);
-        
+
         if (server.url == 'https://api.example.com') {
           expect(name!.startsWith('Api'), isTrue);
         } else if (server.url == 'https://staging.example.com') {
           expect(name!.startsWith('Staging'), isTrue);
         }
       }
-      
+
       // Verify custom name exists
       expect(cachedResult.customName.contains('Custom'), isTrue);
     });

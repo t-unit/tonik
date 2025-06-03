@@ -7,7 +7,6 @@ List<({String normalizedName, Property property, ResponseHeader? header})>
 normalizeResponseProperties(ResponseObject response) {
   final headerMap = <Property, ResponseHeader>{};
 
-
   final headerProperties = response.headers.entries.map((header) {
     final property = Property(
       name:

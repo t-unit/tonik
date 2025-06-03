@@ -1411,10 +1411,7 @@ Future<TonikResult<void>> call() async {
 
         final result = generator.generateClass(operation, 'GetPets');
 
-        expect(
-          result.methods.any((m) => m.name == '_queryParameters'),
-          isTrue,
-        );
+        expect(result.methods.any((m) => m.name == '_queryParameters'), isTrue);
       });
     });
   });

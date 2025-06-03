@@ -87,8 +87,7 @@ TypeReference typeReference(
           b
             ..symbol = nameManager.modelName(m)
             ..url = package
-            ..isNullable =
-                isNullableOverride,
+            ..isNullable = isNullableOverride,
     ),
   };
 }

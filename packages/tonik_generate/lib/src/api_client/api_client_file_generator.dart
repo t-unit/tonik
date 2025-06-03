@@ -29,14 +29,14 @@ class ApiClientFileGenerator {
     ]);
 
     Directory(clientDirectory).createSync(recursive: true);
-    
+
     // Get the servers list
     final servers = apiDocument.servers.toList();
 
     // Process operations with tags
     for (final entry in apiDocument.operationsByTag.entries) {
       final result = apiClientGenerator.generate(
-        entry.value, 
+        entry.value,
         entry.key,
         servers,
       );

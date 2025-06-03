@@ -1,7 +1,5 @@
 import 'package:code_builder/code_builder.dart';
 
-
-
 /// Generates a throw expression for ArgumentError.
 Expression generateArgumentErrorExpression(String message) {
   return _generateExceptionExpression('ArgumentError', message);

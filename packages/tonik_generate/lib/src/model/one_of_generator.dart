@@ -366,8 +366,9 @@ class OneOfGenerator {
 
     // Throw if no match found.
     blocks.add(
-      generateJsonDecodingExceptionExpression('Invalid JSON for $className')
-          .statement,
+      generateJsonDecodingExceptionExpression(
+        'Invalid JSON for $className',
+      ).statement,
     );
 
     return Block.of(blocks);

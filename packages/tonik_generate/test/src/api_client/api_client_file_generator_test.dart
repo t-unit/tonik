@@ -215,7 +215,7 @@ void main() {
       // Read the generated file to verify it contains the operation
       final fileContent =
           File(clientDir.listSync().first.path).readAsStringSync();
-          
+
       expect(fileContent, contains('untaggedOperation'));
       expect(fileContent, contains('class DefaultApi'));
     });

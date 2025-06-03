@@ -109,9 +109,7 @@ class Generator {
       apiClientGenerator: apiClientGenerator,
     );
 
-    final serverGenerator = ServerGenerator(
-      nameManager: nameManager,
-    );
+    final serverGenerator = ServerGenerator(nameManager: nameManager);
 
     final serverFileGenerator = ServerFileGenerator(
       serverGenerator: serverGenerator,

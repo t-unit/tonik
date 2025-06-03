@@ -84,7 +84,7 @@ class ResponseWrapperGenerator {
           (response.bodyCount > 1 || response.hasHeaders)) {
         final responseClassName =
             nameManager.responseNames(response.resolved).baseName;
-            
+
         bodyField = Field(
           (b) =>
               b
