@@ -1,4 +1,5 @@
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/analysis_options_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
 import 'package:tonik_generate/src/library_generator.dart';
@@ -128,6 +129,11 @@ class Generator {
 
     generatePubspec(
       apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+    );
+
+    generateAnalysisOptions(
       outputDirectory: outputDirectory,
       package: package,
     );

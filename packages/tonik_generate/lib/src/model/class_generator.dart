@@ -183,6 +183,26 @@ class ClassGenerator {
 
   Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
+
+    // If there are no properties, just return the constructor call
+    if (normalizedProperties.isEmpty) {
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromSimple'
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..body = Code('return $className();'),
+      );
+    }
+
     final propertyAssignments = <MapEntry<String, Expression>>[];
     for (var i = 0; i < normalizedProperties.length; i++) {
       final prop = normalizedProperties[i];
@@ -257,6 +277,11 @@ class ClassGenerator {
 
   Code _buildFromJsonBody(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
+
+    // If there are no properties, just return the constructor call
+    if (normalizedProperties.isEmpty) {
+      return Block.of([Code('return $className();')]);
+    }
 
     final codes = <Code>[
       Code("final map = json.decodeMap(context: '$className');"),

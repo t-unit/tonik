@@ -597,5 +597,43 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test('generates fromJson method for class without properties', () {
+      final model = ClassModel(
+        context: context,
+        name: 'EmptyClass',
+        properties: const [],
+      );
+
+      const expectedMethod = '''
+  factory EmptyClass.fromJson(Object? json) {
+    return EmptyClass();
+  }''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates fromSimple method for class without properties', () {
+      final model = ClassModel(
+        context: context,
+        name: 'EmptyClass',
+        properties: const [],
+      );
+
+      const expectedMethod = '''
+  factory EmptyClass.fromSimple(String? value) {
+    return EmptyClass();
+  }''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 }
