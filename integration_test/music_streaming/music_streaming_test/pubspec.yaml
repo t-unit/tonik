@@ -1,0 +1,18 @@
+name: music_streaming_test
+description: Integration tests for the music streaming API
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  dio: ^5.8.0
+  music_streaming_api:
+    path: ../music_streaming_api
+  path: ^1.8.3
+  tonik_util: ^0.0.2
+
+dev_dependencies:
+  test: ^1.24.0
+  very_good_analysis: ^7.0.0
