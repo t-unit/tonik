@@ -189,5 +189,56 @@ void main() {
       expect(albumObject.label, isA<String?>());
       expect(albumObject.popularity, isA<int?>());
     });
+  
+    test('401', () async {
+      final albumsApi = buildAlbumsApi(responseStatus: '401');
+
+      final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
+
+      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
+      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(success.response.statusCode, 401);
+      expect(success.value, isA<GetAnAlbumResponse401>());
+
+      final value = success.value as GetAnAlbumResponse401;
+      expect(value.body, isA<UnauthorizedBody>());
+      expect(value.body.error, isA<ErrorObject>());
+      expect(value.body.error.status, isA<int>());
+      expect(value.body.error.message, isA<String>());
+    });
+
+    test('403', () async {
+      final albumsApi = buildAlbumsApi(responseStatus: '403');
+
+      final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
+
+      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
+      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(success.response.statusCode, 403);
+      expect(success.value, isA<GetAnAlbumResponse403>());
+
+      final value = success.value as GetAnAlbumResponse403;
+      expect(value.body, isA<ForbiddenBody>());
+      expect(value.body.error, isA<ErrorObject>());
+      expect(value.body.error.status, isA<int>());
+      expect(value.body.error.message, isA<String>());
+    });
+
+    test('429', () async {
+      final albumsApi = buildAlbumsApi(responseStatus: '429');
+
+      final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
+
+      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
+      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(success.response.statusCode, 429);
+      expect(success.value, isA<GetAnAlbumResponse429>());
+
+      final value = success.value as GetAnAlbumResponse429;
+      expect(value.body, isA<TooManyRequestsBody>());
+      expect(value.body.error, isA<ErrorObject>());
+      expect(value.body.error.status, isA<int>());
+      expect(value.body.error.message, isA<String>());
+    });
   });
 }
