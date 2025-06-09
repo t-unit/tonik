@@ -58,7 +58,16 @@ class NameManager {
       _logServerName(entry.value, entry.key);
     }
 
-    for (final model in models) {
+    for (final model in models.where(
+      (m) => m is NamedModel && m.name != null,
+    )) {
+      final name = modelName(model);
+      _logModelName(name, model);
+    }
+
+    for (final model in models.where(
+      (m) => m is! NamedModel || m.name == null,
+    )) {
       final name = modelName(model);
       _logModelName(name, model);
     }
