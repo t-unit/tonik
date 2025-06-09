@@ -58,19 +58,18 @@ class NameManager {
       _logServerName(entry.value, entry.key);
     }
 
-    // Process models with explicit names first, then anonymous models
-    final modelsList = models.toList();
-    for (final model in modelsList) {
-      if (model is NamedModel && model.name != null) {
-        final name = modelName(model);
-        _logModelName(name, model);
-      }
+    for (final model in models.where(
+      (m) => m is NamedModel && m.name != null,
+    )) {
+      final name = modelName(model);
+      _logModelName(name, model);
     }
-    for (final model in modelsList) {
-      if (model is! NamedModel || model.name == null) {
-        final name = modelName(model);
-        _logModelName(name, model);
-      }
+
+    for (final model in models.where(
+      (m) => m is! NamedModel || m.name == null,
+    )) {
+      final name = modelName(model);
+      _logModelName(name, model);
     }
 
     for (final response in responses) {

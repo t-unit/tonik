@@ -602,18 +602,12 @@ void main() {
 
     group('model naming behavior', () {
       late Context userContext;
-      late Context anonymousContext;
 
       setUp(() {
         userContext = Context.initial().pushAll([
           'components',
           'schemas',
           'user',
-        ]);
-        anonymousContext = Context.initial().pushAll([
-          'components',
-          'schemas',
-          'anonymous',
         ]);
       });
 
