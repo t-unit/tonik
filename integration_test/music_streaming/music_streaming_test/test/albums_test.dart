@@ -189,7 +189,7 @@ void main() {
       expect(albumObject.label, isA<String?>());
       expect(albumObject.popularity, isA<int?>());
     });
-  
+
     test('401', () async {
       final albumsApi = buildAlbumsApi(responseStatus: '401');
 

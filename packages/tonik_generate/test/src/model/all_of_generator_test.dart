@@ -501,14 +501,14 @@ void main() {
         expect(combinedClass.fields, hasLength(2));
         expect(
           combinedClass.fields.map((f) => f.name),
-          containsAll(['dateTime', 'string']),
+          containsAll(['date', 'string']),
         );
 
         // Check field types
         final dateField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'dateTime',
+          (f) => f.name == 'date',
         );
-        expect(dateField.type?.accept(emitter).toString(), 'DateTime');
+        expect(dateField.type?.accept(emitter).toString(), 'Date');
 
         final stringField = combinedClass.fields.firstWhere(
           (f) => f.name == 'string',
@@ -517,7 +517,7 @@ void main() {
 
         // Check toJson - should return the ISO string
         const expectedToJson = '''
-          Object? toJson() => dateTime.toIso8601String();
+          Object? toJson() => date.toJson();
         ''';
 
         expect(
@@ -529,7 +529,7 @@ void main() {
         const expectedFromJson = '''
           factory DateStringModel.fromJson(Object? json) {
             return DateStringModel(
-              dateTime: json.decodeJsonDate(context: r'DateStringModel'),
+              date: json.decodeJsonDate(context: r'DateStringModel'),
               string: json.decodeJsonString(context: r'DateStringModel'),
             );
           }

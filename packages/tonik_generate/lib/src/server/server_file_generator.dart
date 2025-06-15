@@ -40,4 +40,4 @@ class ServerFileGenerator {
     final filePath = path.join(serverDirPath, result.filename);
     File(filePath).writeAsStringSync(result.code);
   }
-} 
+}

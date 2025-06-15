@@ -1,3 +1,10 @@
+## 0.0.6
+
+ - **FIX**: proper handle dates.
+ - **FIX**: priority for exlict defined names of schemas.
+ - **FIX**: prio for explicitly defined names.
+ - **FIX**: proper hash code for classes with >20 properties.
+
 ## 0.0.5
 
 ## 0.0.4

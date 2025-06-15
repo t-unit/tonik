@@ -113,7 +113,7 @@ void main() {
         (model: NumberModel(context: context), expectedType: 'num'),
         (model: BooleanModel(context: context), expectedType: 'bool'),
         (model: DateTimeModel(context: context), expectedType: 'DateTime'),
-        (model: DateModel(context: context), expectedType: 'DateTime'),
+        (model: DateModel(context: context), expectedType: 'Date'),
         (model: DecimalModel(context: context), expectedType: 'BigDecimal'),
       ];
 

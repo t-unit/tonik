@@ -65,7 +65,7 @@ void main() {
 
     test('generates constructor with named parameters', () {
       final constructor = baseClass.constructors.first;
-      // Constructor should not be const since _dio is not final 
+      // Constructor should not be const since _dio is not final
       // and initialized later
       expect(constructor.constant, isFalse);
       expect(constructor.optionalParameters.length, 2);
@@ -121,7 +121,7 @@ void main() {
       final productionClass = generatedClasses[1];
       final productionConstructor = productionClass.constructors.first;
 
-      // Constructor should not be const since base class 
+      // Constructor should not be const since base class
       // constructor isn't const
       expect(productionConstructor.constant, isFalse);
       expect(productionConstructor.optionalParameters.length, 1);
@@ -155,7 +155,7 @@ void main() {
       final stagingClass = generatedClasses[2];
       final stagingConstructor = stagingClass.constructors.first;
 
-      // Constructor should not be const since base class constructor 
+      // Constructor should not be const since base class constructor
       // isn't const
       expect(stagingConstructor.constant, isFalse);
       expect(stagingConstructor.optionalParameters.length, 1);
@@ -191,7 +191,7 @@ void main() {
       final customClass = generatedClasses.last;
       final customConstructor = customClass.constructors.first;
 
-      // Constructor should not be const since base class constructor 
+      // Constructor should not be const since base class constructor
       // isn't const
       expect(customConstructor.constant, isFalse);
       expect(customConstructor.optionalParameters.length, 2);

@@ -16,11 +16,12 @@ class ParseGenerator {
   /// Generates the _parseResponse method for the operation.
   Method generateParseResponseMethod(Operation operation) {
     final responses = operation.responses;
-    final responseType = resultTypeForOperation(
-      operation,
-      nameManager,
-      package,
-    ).types.first;
+    final responseType =
+        resultTypeForOperation(
+          operation,
+          nameManager,
+          package,
+        ).types.first;
     final cases = <Code>[];
 
     // Check if we have a default response with null content type
@@ -49,7 +50,7 @@ class ParseGenerator {
       }
     }
 
-    // Only add a default case if we don't have a default response with 
+    // Only add a default case if we don't have a default response with
     // null content type
     final switchCases = <Code>[
       const Code(
@@ -60,17 +61,19 @@ class ParseGenerator {
     ];
 
     if (!hasDefaultWithNullContentType) {
-      switchCases.add(Block.of([
-        const Code('default:'),
-        const Code(
-          "final content = response.headers.value('content-type') "
-          "?? 'not specified';",
-        ),
-        const Code('final status = response.statusCode;'),
-        generateDecodingExceptionExpression(
-          r'Unexpected content type: $content for status code: $status',
-        ).statement,
-      ]),);
+      switchCases.add(
+        Block.of([
+          const Code('default:'),
+          const Code(
+            "final content = response.headers.value('content-type') "
+            "?? 'not specified';",
+          ),
+          const Code('final status = response.statusCode;'),
+          generateDecodingExceptionExpression(
+            r'Unexpected content type: $content for status code: $status',
+          ).statement,
+        ]),
+      );
     }
 
     switchCases.add(const Code('}'));

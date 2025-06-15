@@ -296,7 +296,7 @@ void main() {
 
     test('passes context parameter to decode methods when provided', () {
       final value = refer('value');
-      
+
       expect(
         buildSimpleValueExpression(
           value,

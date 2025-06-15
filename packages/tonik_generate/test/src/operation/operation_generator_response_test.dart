@@ -169,49 +169,47 @@ void main() {
       );
     });
 
-    test(
-      'returns result with model for single status code with body only',
-      () {
-        final operation = Operation(
-          operationId: 'bodyStatus',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/body',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          requestBody: null,
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: 'BodyResponse',
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: StringModel(context: context),
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                ),
-              },
-            ),
-          },
-        );
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          queryParameters: [],
-          headers: [],
-        );
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
-        expect(
-          method.returns?.accept(emitter).toString(),
+    test('returns result with model for single status code with body only', () {
+      final operation = Operation(
+        operationId: 'bodyStatus',
+        context: context,
+        summary: '',
+        description: '',
+        tags: const {},
+        isDeprecated: false,
+        path: '/body',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBody: null,
+        responses: {
+          const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+            name: 'BodyResponse',
+            context: context,
+            headers: const {},
+            description: '',
+            bodies: {
+              ResponseBody(
+                model: StringModel(context: context),
+                rawContentType: 'application/json',
+                contentType: ContentType.json,
+              ),
+            },
+          ),
+        },
+      );
+      const normalizedParams = NormalizedRequestParameters(
+        pathParameters: [],
+        queryParameters: [],
+        headers: [],
+      );
+      final method = generator.generateCallMethod(
+        operation,
+        normalizedParams,
+      );
+      expect(
+        method.returns?.accept(emitter).toString(),
         'Future<TonikResult<String>>',
       );
     });

@@ -16,7 +16,7 @@ void main() {
     await setupImposterServer(imposterServer);
   });
 
-   StoreApi buildStoreApi({required String responseStatus}) {
+  StoreApi buildStoreApi({required String responseStatus}) {
     return StoreApi(
       CustomServer(
         baseUrl: baseUrl,

@@ -20,7 +20,7 @@ void main() {
   group('loadOpenApiDocument', () {
     test('loads valid JSON file', () {
       final jsonFile = File(path.join(tempDir.path, 'test.json'))
-      ..writeAsStringSync('''
+        ..writeAsStringSync('''
 {
   "openapi": "3.0.0",
   "info": {
@@ -39,7 +39,7 @@ void main() {
 
     test('loads valid YAML file', () {
       final yamlFile = File(path.join(tempDir.path, 'test.yaml'))
-      ..writeAsStringSync('''
+        ..writeAsStringSync('''
 openapi: 3.0.0
 info:
   title: Test API
@@ -69,7 +69,7 @@ info:
 
     test('throws on unsupported file extension', () {
       final txtFile = File(path.join(tempDir.path, 'test.txt'))
-      ..writeAsStringSync('invalid');
+        ..writeAsStringSync('invalid');
 
       expect(
         () => loadOpenApiDocument(txtFile.path),
@@ -79,7 +79,7 @@ info:
 
     test('throws on invalid JSON', () {
       final jsonFile = File(path.join(tempDir.path, 'invalid.json'))
-      ..writeAsStringSync('invalid json');
+        ..writeAsStringSync('invalid json');
 
       expect(
         () => loadOpenApiDocument(jsonFile.path),
@@ -95,7 +95,7 @@ info:
 
     test('throws on invalid YAML', () {
       final yamlFile = File(path.join(tempDir.path, 'invalid.yaml'))
-      ..writeAsStringSync('''
+        ..writeAsStringSync('''
 invalid yaml:
   - misaligned:
  wrong indentation
@@ -110,7 +110,7 @@ invalid yaml:
 
     test('handles complex YAML structures', () {
       final yamlFile = File(path.join(tempDir.path, 'complex.yaml'))
-      ..writeAsStringSync('''
+        ..writeAsStringSync('''
 openapi: 3.0.0
 info:
   title: Complex API

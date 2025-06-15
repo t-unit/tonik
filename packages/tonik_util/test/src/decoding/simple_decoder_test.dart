@@ -1,5 +1,6 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/simple_decoder.dart';
 
@@ -70,6 +71,39 @@ void main() {
           throwsA(isA<InvalidTypeException>()),
         );
       });
+
+      test('decodes Date values', () {
+        final date = Date(2024, 3, 15);
+        expect('2024-03-15'.decodeSimpleDate(), date);
+        expect(
+          () => 'not-a-date'.decodeSimpleDate(),
+          throwsA(isA<FormatException>()),
+        );
+        expect(
+          () => null.decodeSimpleDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-00-15'.decodeSimpleDate(),
+          throwsA(isA<FormatException>()),
+        );
+        expect(
+          () => '2024-13-15'.decodeSimpleDate(),
+          throwsA(isA<FormatException>()),
+        );
+        expect(
+          () => '2024-03-00'.decodeSimpleDate(),
+          throwsA(isA<FormatException>()),
+        );
+        expect(
+          () => '2024-03-32'.decodeSimpleDate(),
+          throwsA(isA<FormatException>()),
+        );
+        expect(
+          () => '2024-02-30'.decodeSimpleDate(),
+          throwsA(isA<FormatException>()),
+        );
+      });
     });
 
     group('Nullable Values', () {
@@ -79,12 +113,14 @@ void main() {
         expect(''.decodeSimpleNullableBool(), isNull);
         expect(''.decodeSimpleNullableDateTime(), isNull);
         expect(''.decodeSimpleNullableBigDecimal(), isNull);
+        expect(''.decodeSimpleNullableDate(), isNull);
 
         expect(null.decodeSimpleNullableInt(), isNull);
         expect(null.decodeSimpleNullableDouble(), isNull);
         expect(null.decodeSimpleNullableBool(), isNull);
         expect(null.decodeSimpleNullableDateTime(), isNull);
         expect(null.decodeSimpleNullableBigDecimal(), isNull);
+        expect(null.decodeSimpleNullableDate(), isNull);
       });
 
       test('decodes non-empty strings for nullable types', () {
@@ -98,6 +134,10 @@ void main() {
         expect(
           '3.14'.decodeSimpleNullableBigDecimal(),
           BigDecimal.parse('3.14'),
+        );
+        expect(
+          '2024-03-15'.decodeSimpleNullableDate(),
+          Date(2024, 3, 15),
         );
       });
     });
@@ -122,6 +162,10 @@ void main() {
         );
         expect(
           () => ''.decodeSimpleBigDecimal(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => ''.decodeSimpleDate(),
           throwsA(isA<InvalidTypeException>()),
         );
       });

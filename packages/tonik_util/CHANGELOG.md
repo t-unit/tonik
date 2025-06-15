@@ -1,3 +1,7 @@
+## 0.0.6
+
+ - **FIX**: proper handle dates.
+
 ## 0.0.5
 
 ## 0.0.4

@@ -98,13 +98,25 @@ void main() {
     });
 
     test('fromJson throws on invalid date values', () {
-      expect(() => Date.fromJson('2024-00-15'), throwsA(isA<RangeError>()));
-      expect(() => Date.fromJson('2024-13-15'), throwsA(isA<RangeError>()));
-      expect(() => Date.fromJson('2024-03-00'), throwsA(isA<RangeError>()));
-      expect(() => Date.fromJson('2024-03-32'), throwsA(isA<RangeError>()));
+      expect(
+        () => Date.fromJson('2024-00-15'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromJson('2024-13-15'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromJson('2024-03-00'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromJson('2024-03-32'),
+        throwsA(isA<FormatException>()),
+      );
       expect(
         () => Date.fromJson('2024-02-30'),
-        throwsA(isA<RangeError>()),
+        throwsA(isA<FormatException>()),
       ); // February 30th
     });
 
@@ -128,24 +140,36 @@ void main() {
     });
 
     test('fromSimple throws on invalid date values', () {
-      expect(() => Date.fromSimple('2024-00-15'), throwsA(isA<RangeError>()));
-      expect(() => Date.fromSimple('2024-13-15'), throwsA(isA<RangeError>()));
-      expect(() => Date.fromSimple('2024-03-00'), throwsA(isA<RangeError>()));
-      expect(() => Date.fromSimple('2024-03-32'), throwsA(isA<RangeError>()));
+      expect(
+        () => Date.fromSimple('2024-00-15'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromSimple('2024-13-15'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromSimple('2024-03-00'),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => Date.fromSimple('2024-03-32'),
+        throwsA(isA<FormatException>()),
+      );
       expect(
         () => Date.fromSimple('2024-02-30'),
-        throwsA(isA<RangeError>()),
+        throwsA(isA<FormatException>()),
       ); // February 30th
     });
 
     test('validates date components', () {
-      expect(() => Date(2024, 0, 15), throwsA(isA<RangeError>()));
-      expect(() => Date(2024, 13, 15), throwsA(isA<RangeError>()));
-      expect(() => Date(2024, 3, 0), throwsA(isA<RangeError>()));
-      expect(() => Date(2024, 3, 32), throwsA(isA<RangeError>()));
+      expect(() => Date(2024, 0, 15), throwsA(isA<FormatException>()));
+      expect(() => Date(2024, 13, 15), throwsA(isA<FormatException>()));
+      expect(() => Date(2024, 3, 0), throwsA(isA<FormatException>()));
+      expect(() => Date(2024, 3, 32), throwsA(isA<FormatException>()));
       expect(
         () => Date(2024, 2, 30),
-        throwsA(isA<RangeError>()),
+        throwsA(isA<FormatException>()),
       ); // February 30th
     });
   });

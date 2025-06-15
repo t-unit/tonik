@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
 /// Extensions for decoding JSON values.
@@ -347,5 +348,47 @@ extension JsonDecoder on Object? {
       );
     }
     return this! as bool;
+  }
+
+  /// Decodes a JSON value to a Date.
+  ///
+  /// Expects ISO 8601 format string (YYYY-MM-DD).
+  /// Throws [InvalidTypeException] if the value is not a valid date string
+  /// or if the value is null.
+  Date decodeJsonDate({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: Date,
+        context: context,
+      );
+    }
+    if (this is! String) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: Date,
+        context: context,
+      );
+    }
+    try {
+      return Date.fromString(this! as String);
+    } on FormatException catch (e) {
+      throw InvalidTypeException(
+        value: this! as String,
+        targetType: Date,
+        context: e.message,
+      );
+    }
+  }
+
+  /// Decodes a JSON value to a nullable Date.
+  ///
+  /// Returns null if the value is null or an empty string.
+  /// Throws [InvalidTypeException] if the value is not a valid date string.
+  Date? decodeJsonNullableDate({String? context}) {
+    if (this == null || (this is String && (this! as String).isEmpty)) {
+      return null;
+    }
+    return decodeJsonDate(context: context);
   }
 }

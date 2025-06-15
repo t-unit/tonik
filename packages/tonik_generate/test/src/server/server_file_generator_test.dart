@@ -100,17 +100,17 @@ void main() {
       final serverDir = Directory(
         path.join(tempDir.path, 'test_package', 'lib', 'src', 'server'),
       );
-      
+
       expect(serverDir.listSync(), hasLength(1));
-      
+
       // Get file name and content
       final generatedFile = serverDir.listSync().first;
       final actualFileName = path.basename(generatedFile.path);
       final fileContent = File(generatedFile.path).readAsStringSync();
-      
+
       // Check file name
       expect(actualFileName, equals('api_server.dart'));
-      
+
       // Check file content
       expect(fileContent, contains('sealed class ApiServer'));
       expect(fileContent, contains('class ProductionServer'));
@@ -128,7 +128,7 @@ void main() {
         models: {},
         responseHeaders: {},
         requestHeaders: {},
-        servers: {},  // Empty servers collection
+        servers: {}, // Empty servers collection
         operations: {},
         responses: <Response>{},
         queryParameters: {},
@@ -148,17 +148,17 @@ void main() {
       );
       expect(serverDir.existsSync(), isTrue);
       expect(serverDir.listSync(), hasLength(1));
-      
+
       // Get file content
       final generatedFile = serverDir.listSync().first;
       final fileContent = File(generatedFile.path).readAsStringSync();
-      
+
       // Expect base class and custom class to be generated
       expect(fileContent, contains('sealed class ApiServer'));
       expect(fileContent, contains('class CustomServer'));
-      
+
       // No server-specific classes should be present
       expect(fileContent.split('class').length, 3);
     });
   });
-} 
+}

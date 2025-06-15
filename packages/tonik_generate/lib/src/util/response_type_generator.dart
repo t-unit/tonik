@@ -4,7 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-/// Generates the appropriate return type for an operation 
+/// Generates the appropriate return type for an operation
 /// based on its responses.
 TypeReference resultTypeForOperation(
   Operation operation,
@@ -63,4 +63,4 @@ TypeReference resultTypeForOperation(
             ),
     ),
   };
-} 
+}

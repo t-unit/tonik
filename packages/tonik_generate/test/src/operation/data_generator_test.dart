@@ -239,8 +239,8 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? _data({required DateTime? body}) {
-          return body?.toIso8601String();
+        Object? _data({required Date? body}) {
+          return body?.toJson();
         }
       ''';
 

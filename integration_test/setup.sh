@@ -21,6 +21,9 @@ cd petstore/petstore_api && dart pub get && cd ../..
 dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
+dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov --log-level verbose
+cd gov/gov_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
