@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 class ImposterServer {
   ImposterServer({required this.port});
-  
+
   Process? _process;
   final int port;
 
@@ -22,22 +22,25 @@ class ImposterServer {
       );
     }
 
-    _process = await Process.start('java', [
-      '-jar',
-      imposterJar,
-      '--listenPort',
-      port.toString(),
-      '--configDir',
-      path.join(Directory.current.path, 'imposter'),
-      '--plugin',
-      'openapi',
-      '--plugin',
-      'rest',
-    ],
-    environment: {
-      ...Platform.environment,
-      'IMPOSTER_LOG_LEVEL': 'DEBUG',
-    });
+    _process = await Process.start(
+      'java',
+      [
+        '-jar',
+        imposterJar,
+        '--listenPort',
+        port.toString(),
+        '--configDir',
+        path.join(Directory.current.path, 'imposter'),
+        '--plugin',
+        'openapi',
+        '--plugin',
+        'rest',
+      ],
+      environment: {
+        ...Platform.environment,
+        'IMPOSTER_LOG_LEVEL': 'DEBUG',
+      },
+    );
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {
       print('Imposter stdout: $data');

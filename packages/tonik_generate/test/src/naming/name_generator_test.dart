@@ -1086,7 +1086,10 @@ void main() {
         final generator = NameGenerator();
         final servers = [
           const Server(url: 'https://api.dev.example.com', description: null),
-          const Server(url: 'https://api.staging.example.com', description: null),
+          const Server(
+            url: 'https://api.staging.example.com',
+            description: null,
+          ),
           const Server(url: 'https://api.prod.example.com', description: null),
         ];
 
@@ -1178,7 +1181,8 @@ void main() {
           expect(result.serverMap[servers[0]], 'CustomServer');
           expect(result.customName, r'CustomServer$');
           expect(result.baseName, 'ApiServer');
-        });
+        },
+      );
 
       test('uses default names on invalid URLs', () {
         final generator = NameGenerator();

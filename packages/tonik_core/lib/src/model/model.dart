@@ -45,9 +45,9 @@ class AliasModel extends Model with NamedModel {
   final Model model;
 
   Model get resolved => switch (model) {
-        final AliasModel alias => alias.resolved,
-        _ => model,
-      };
+    final AliasModel alias => alias.resolved,
+    _ => model,
+  };
 
   @override
   EncodingShape get encodingShape => resolved.encodingShape;

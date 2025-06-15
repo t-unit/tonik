@@ -232,7 +232,7 @@ void main() {
           );
         }
       ''';
-      
+
       expect(
         collapseWhitespace(classCode),
         contains(collapseWhitespace(expectedMethod)),
@@ -355,7 +355,7 @@ void main() {
           );
         }
       ''';
-      
+
       expect(
         collapseWhitespace(classCode),
         contains(collapseWhitespace(expectedMethod)),
