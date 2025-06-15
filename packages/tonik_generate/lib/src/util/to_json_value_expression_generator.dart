@@ -47,8 +47,9 @@ String? _getSerializationSuffix(Model model, bool isNullable) {
       isNullable || (model is EnumModel && model.isNullable) ? '?' : '';
 
   return switch (model) {
-    DateTimeModel() || DateModel() => '$nullablePart.toIso8601String()',
+    DateTimeModel() => '$nullablePart.toIso8601String()',
     DecimalModel() => '$nullablePart.toString()',
+    DateModel() ||
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||

@@ -10,7 +10,7 @@ import 'package:tonik_util/src/decoding/simple_decoder.dart';
 class Date {
   /// Creates a new [Date] instance.
   ///
-  /// Throws [RangeError] if any of the date components are invalid.
+  /// Throws [FormatException] if any of the date components are invalid.
   Date(this.year, this.month, this.day) {
     _validate();
   }
@@ -24,7 +24,8 @@ class Date {
 
   /// Creates a [Date] from an ISO 8601 formatted string (YYYY-MM-DD).
   ///
-  /// Throws [FormatException] if the string is not in the correct format.
+  /// Throws [FormatException] if the string is not in the correct format
+  /// or if any of the date components are invalid.
   factory Date.fromString(String dateString) {
     final parts = dateString.split('-');
     if (parts.length != 3) {
@@ -37,7 +38,7 @@ class Date {
       final day = int.parse(parts[2]);
       final date = Date(year, month, day).._validate();
       return date;
-    } on FormatException {
+    } on Object {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
     }
   }
@@ -114,12 +115,17 @@ class Date {
 
   void _validate() {
     if (month < 1 || month > 12) {
-      throw RangeError.range(month, 1, 12, 'month');
+      throw FormatException(
+        'Invalid month: $month. Month must be between 1 and 12.',
+      );
     }
 
     final daysInMonth = DateTime(year, month + 1, 0).day;
     if (day < 1 || day > daysInMonth) {
-      throw RangeError.range(day, 1, daysInMonth, 'day');
+      throw FormatException(
+        'Invalid day: $day. Day must be between 1 and $daysInMonth for '
+        'month $month.',
+      );
     }
   }
 }

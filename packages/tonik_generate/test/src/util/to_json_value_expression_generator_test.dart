@@ -67,7 +67,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('dueDate', property),
-        'dueDate?.toIso8601String()',
+        'dueDate?.toJson()',
       );
     });
 

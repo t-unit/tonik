@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
 
@@ -192,6 +193,72 @@ void main() {
       test('decodeJsonNullableBool throws on non-bool', () {
         expect(
           () => 'true'.decodeJsonNullableBool(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
+
+    group('Date', () {
+      test('decodes Date values', () {
+        final date = Date(2024, 3, 15);
+        expect('2024-03-15'.decodeJsonDate(), date);
+        expect(
+          () => 123.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-00-15'.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-13-15'.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-03-00'.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-03-32'.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-02-30'.decodeJsonDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable Date values', () {
+        final date = Date(2024, 3, 15);
+        expect('2024-03-15'.decodeJsonNullableDate(), date);
+        expect(null.decodeJsonNullableDate(), isNull);
+        expect(''.decodeJsonNullableDate(), isNull);
+        expect(
+          () => 123.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-00-15'.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-13-15'.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-03-00'.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-03-32'.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => '2024-02-30'.decodeJsonNullableDate(),
           throwsA(isA<InvalidTypeException>()),
         );
       });

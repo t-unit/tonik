@@ -71,8 +71,8 @@ TypeReference typeReference(
     DateModel _ => TypeReference(
       (b) =>
           b
-            ..symbol = 'DateTime'
-            ..url = 'dart:core'
+            ..symbol = 'Date'
+            ..url = 'package:tonik_util/tonik_util.dart'
             ..isNullable = isNullableOverride,
     ),
     DecimalModel _ => TypeReference(
@@ -87,8 +87,7 @@ TypeReference typeReference(
           b
             ..symbol = nameManager.modelName(m)
             ..url = package
-            ..isNullable =
-                isNullableOverride,
+            ..isNullable = isNullableOverride,
     ),
   };
 }

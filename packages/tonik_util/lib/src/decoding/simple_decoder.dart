@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
 /// Extensions for decoding simple form values from strings.
@@ -252,5 +253,50 @@ extension SimpleDecoder on String? {
   List<String?>? decodeSimpleNullableStringNullableList({String? context}) {
     if (this?.isEmpty ?? true) return null;
     return decodeSimpleStringNullableList(context: context);
+  }
+
+  /// Decodes a string to a Date.
+  ///
+  /// The string must be in ISO 8601 format (YYYY-MM-DD).
+  /// Throws [FormatException] if the string is not in the correct format or if 
+  /// any of the date components are invalid.
+  /// Throws [InvalidTypeException] if the value is null or empty.
+  Date decodeSimpleDate({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: Date,
+        context: context,
+      );
+    }
+    if (this!.isEmpty) {
+      throw InvalidTypeException(
+        value: 'empty string',
+        targetType: Date,
+        context: context,
+      );
+    }
+    try {
+      return Date.fromString(this!);
+    } on FormatException {
+      rethrow;
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: Date,
+        context: context,
+      );
+    }
+  }
+
+  /// Decodes a string to a nullable Date.
+  ///
+  /// Returns null if the string is empty or null.
+  /// The string must be in ISO 8601 format (YYYY-MM-DD).
+  /// Throws [FormatException] if the string is not in the correct format or if 
+  /// any of the date components are invalid.
+  Date? decodeSimpleNullableDate({String? context}) {
+    if (this?.isEmpty ?? true) return null;
+    return decodeSimpleDate(context: context);
   }
 }

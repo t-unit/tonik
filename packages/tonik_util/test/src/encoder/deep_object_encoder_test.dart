@@ -7,10 +7,14 @@ void main() {
 
   group('DeepObjectEncoder', () {
     test('encodes a simple object', () {
-      final result = encoder.encode('filter', {
-        'color': 'red',
-        'size': 'large',
-      }, allowEmpty: true,);
+      final result = encoder.encode(
+        'filter',
+        {
+          'color': 'red',
+          'size': 'large',
+        },
+        allowEmpty: true,
+      );
 
       expect(result, [
         (name: 'filter[color]', value: 'red'),
@@ -19,10 +23,14 @@ void main() {
     });
 
     test('encodes boolean properties', () {
-      final result = encoder.encode('filter', {
-        'active': true,
-        'premium': false,
-      }, allowEmpty: true,);
+      final result = encoder.encode(
+        'filter',
+        {
+          'active': true,
+          'premium': false,
+        },
+        allowEmpty: true,
+      );
 
       expect(result, [
         (name: 'filter[active]', value: 'true'),
@@ -31,10 +39,14 @@ void main() {
     });
 
     test('encodes an object with a null value', () {
-      final result = encoder.encode('filter', {
-        'color': null,
-        'size': 'large',
-      }, allowEmpty: true,);
+      final result = encoder.encode(
+        'filter',
+        {
+          'color': null,
+          'size': 'large',
+        },
+        allowEmpty: true,
+      );
 
       expect(result, [
         (name: 'filter[color]', value: ''),
@@ -53,9 +65,13 @@ void main() {
     });
 
     test('encodes nested objects', () {
-      final result = encoder.encode('filter', {
-        'product': {'color': 'blue', 'size': 'medium'},
-      }, allowEmpty: true,);
+      final result = encoder.encode(
+        'filter',
+        {
+          'product': {'color': 'blue', 'size': 'medium'},
+        },
+        allowEmpty: true,
+      );
 
       expect(result, [
         (name: 'filter[product][color]', value: 'blue'),
@@ -64,11 +80,15 @@ void main() {
     });
 
     test('encodes deeply nested objects', () {
-      final result = encoder.encode('filter', {
-        'product': {
-          'attributes': {'color': 'blue', 'size': 'medium'},
+      final result = encoder.encode(
+        'filter',
+        {
+          'product': {
+            'attributes': {'color': 'blue', 'size': 'medium'},
+          },
         },
-      }, allowEmpty: true,);
+        allowEmpty: true,
+      );
 
       expect(result, [
         (name: 'filter[product][attributes][color]', value: 'blue'),
@@ -78,9 +98,13 @@ void main() {
 
     test('throws for objects containing arrays', () {
       expect(
-        () => encoder.encode('filter', {
-          'colors': ['red', 'blue', 'green'],
-        }, allowEmpty: true,),
+        () => encoder.encode(
+          'filter',
+          {
+            'colors': ['red', 'blue', 'green'],
+          },
+          allowEmpty: true,
+        ),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
@@ -95,20 +119,28 @@ void main() {
 
     test('throws for objects containing sets', () {
       expect(
-        () => encoder.encode('filter', {
-          'sizes': {'small', 'medium', 'large'},
-        }, allowEmpty: true,),
+        () => encoder.encode(
+          'filter',
+          {
+            'sizes': {'small', 'medium', 'large'},
+          },
+          allowEmpty: true,
+        ),
         throwsA(isA<UnsupportedEncodingTypeException>()),
       );
     });
 
     test('encodes a complex object with various types', () {
-      final result = encoder.encode('params', {
-        'name': 'John',
-        'age': 30,
-        'active': true,
-        'address': {'street': '123 Main St', 'city': 'New York'},
-      }, allowEmpty: true,);
+      final result = encoder.encode(
+        'params',
+        {
+          'name': 'John',
+          'age': 30,
+          'active': true,
+          'address': {'street': '123 Main St', 'city': 'New York'},
+        },
+        allowEmpty: true,
+      );
 
       expect(result, [
         (name: 'params[name]', value: 'John'),
@@ -180,11 +212,15 @@ void main() {
 
     group('allowEmpty parameter', () {
       test('allows empty values when allowEmpty is true', () {
-        final result = encoder.encode('filter', {
-          'emptyString': '',
-          'emptyMap': <String, dynamic>{},
-          'normalValue': 'test',
-        }, allowEmpty: true,);
+        final result = encoder.encode(
+          'filter',
+          {
+            'emptyString': '',
+            'emptyMap': <String, dynamic>{},
+            'normalValue': 'test',
+          },
+          allowEmpty: true,
+        );
 
         expect(result, [
           (name: 'filter[emptyString]', value: ''),
@@ -195,10 +231,14 @@ void main() {
 
       test('throws when allowEmpty is false and value is empty string', () {
         expect(
-          () => encoder.encode('filter', {
-            'emptyString': '',
-            'normalValue': 'test',
-          }, allowEmpty: false,),
+          () => encoder.encode(
+            'filter',
+            {
+              'emptyString': '',
+              'normalValue': 'test',
+            },
+            allowEmpty: false,
+          ),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -213,10 +253,14 @@ void main() {
 
       test('throws when allowEmpty is false and nested map is empty', () {
         expect(
-          () => encoder.encode('filter', {
-            'nested': <String, dynamic>{},
-            'normalValue': 'test',
-          }, allowEmpty: false,),
+          () => encoder.encode(
+            'filter',
+            {
+              'nested': <String, dynamic>{},
+              'normalValue': 'test',
+            },
+            allowEmpty: false,
+          ),
           throwsA(isA<EmptyValueException>()),
         );
       });
@@ -238,10 +282,14 @@ void main() {
       });
 
       test('allows non-empty values when allowEmpty is false', () {
-        final result = encoder.encode('filter', {
-          'string': 'value',
-          'nested': {'inner': 'value'},
-        }, allowEmpty: false,);
+        final result = encoder.encode(
+          'filter',
+          {
+            'string': 'value',
+            'nested': {'inner': 'value'},
+          },
+          allowEmpty: false,
+        );
 
         expect(result, [
           (name: 'filter[string]', value: 'value'),
