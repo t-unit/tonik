@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-15
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik` - `v0.0.6`](#tonik---v006)
+ - [`tonik_core` - `v0.0.6`](#tonik_core---v006)
+ - [`tonik_generate` - `v0.0.6`](#tonik_generate---v006)
+ - [`tonik_parse` - `v0.0.6`](#tonik_parse---v006)
+ - [`tonik_util` - `v0.0.6`](#tonik_util---v006)
+
+---
+
+#### `tonik` - `v0.0.6`
+
+#### `tonik_core` - `v0.0.6`
+
+#### `tonik_generate` - `v0.0.6`
+
+ - **FIX**: proper handle dates.
+ - **FIX**: priority for exlict defined names of schemas.
+ - **FIX**: prio for explicitly defined names.
+ - **FIX**: proper hash code for classes with >20 properties.
+
+#### `tonik_parse` - `v0.0.6`
+
+#### `tonik_util` - `v0.0.6`
+
+ - **FIX**: proper handle dates.
+
+
 ## 2025-06-02
 
 ### Changes
