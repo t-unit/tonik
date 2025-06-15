@@ -8,3 +8,4 @@
 /integration_test/petstore/petstore_api
 /integration_test/imposter.jar
 /integration_test/music_streaming/music_streaming_api
+/pubspec.lock
