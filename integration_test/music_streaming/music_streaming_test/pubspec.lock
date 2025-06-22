@@ -388,10 +388,10 @@ packages:
     dependency: "direct main"
     description:
       name: tonik_util
-      sha256: f16c86d5349fac40893d1d8ae87f6507192d8886f16ba6acefeabef4a61ae3ef
+      sha256: d1fc175e99d440d654d4be8b78f008d2d0614820fb8d9f40507cd3e5ee34fcca
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.5"
+    version: "0.0.6"
   typed_data:
     dependency: transitive
     description:

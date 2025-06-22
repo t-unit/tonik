@@ -110,7 +110,7 @@ void main() {
       final productionClass = generatedClasses[1];
 
       expect(productionClass.name, 'ProductionServer');
-      expect(productionClass.extend?.accept(emitter).toString(), 'ApiServer');
+      expect(productionClass.extend?.accept(emitter).toString(), 'Server');
       expect(
         productionClass.docs.first,
         '/// Production server - https://production.example.com',
@@ -144,7 +144,7 @@ void main() {
       final stagingClass = generatedClasses[2];
 
       expect(stagingClass.name, 'StagingServer');
-      expect(stagingClass.extend?.accept(emitter).toString(), 'ApiServer');
+      expect(stagingClass.extend?.accept(emitter).toString(), 'Server');
       expect(
         stagingClass.docs.first,
         '/// Staging server - https://staging.example.com',
@@ -180,7 +180,7 @@ void main() {
       final customClass = generatedClasses.last;
 
       expect(customClass.name, 'CustomServer');
-      expect(customClass.extend?.accept(emitter).toString(), 'ApiServer');
+      expect(customClass.extend?.accept(emitter).toString(), 'Server');
       expect(
         customClass.docs.first,
         '/// Custom server with user-defined base URL',

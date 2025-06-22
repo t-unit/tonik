@@ -1075,11 +1075,11 @@ void main() {
         final result = generator.generateServerNames(servers);
 
         expect(result.serverMap.length, 3);
-        expect(result.serverMap[servers[0]], 'ApiServer2');
+        expect(result.serverMap[servers[0]], 'ApiServer');
         expect(result.serverMap[servers[1]], 'StagingServer');
         expect(result.serverMap[servers[2]], 'DevServer');
         expect(result.customName, 'CustomServer');
-        expect(result.baseName, 'ApiServer');
+        expect(result.baseName, 'Server');
       });
 
       test('generates names based on multi-level subdomain differences', () {
@@ -1100,7 +1100,7 @@ void main() {
         expect(result.serverMap[servers[1]], 'ApiStagingServer');
         expect(result.serverMap[servers[2]], 'ApiProdServer');
         expect(result.customName, 'CustomServer');
-        expect(result.baseName, 'ApiServer');
+        expect(result.baseName, 'Server');
       });
 
       test(
@@ -1120,7 +1120,7 @@ void main() {
           expect(result.serverMap[servers[1]], 'AcmeServer');
           expect(result.serverMap[servers[2]], 'TestServer');
           expect(result.customName, 'CustomServer');
-          expect(result.baseName, 'ApiServer');
+          expect(result.baseName, 'Server');
         },
       );
 
@@ -1140,7 +1140,7 @@ void main() {
         expect(result.serverMap[servers[1]], 'V2Server');
         expect(result.serverMap[servers[2]], 'BetaServer');
         expect(result.customName, 'CustomServer');
-        expect(result.baseName, 'ApiServer');
+        expect(result.baseName, 'Server');
       });
 
       test(
@@ -1156,11 +1156,11 @@ void main() {
           final result = generator.generateServerNames(servers);
 
           expect(result.serverMap.length, 3);
-          expect(result.serverMap[servers[0]], 'Server');
-          expect(result.serverMap[servers[1]], 'Server2');
-          expect(result.serverMap[servers[2]], 'Server3');
+          expect(result.serverMap[servers[0]], 'Server2');
+          expect(result.serverMap[servers[1]], 'Server3');
+          expect(result.serverMap[servers[2]], 'Server4');
           expect(result.customName, 'CustomServer');
-          expect(result.baseName, 'ApiServer');
+          expect(result.baseName, 'Server');
         },
       );
 
@@ -1180,7 +1180,7 @@ void main() {
           expect(result.serverMap.length, 1);
           expect(result.serverMap[servers[0]], 'CustomServer');
           expect(result.customName, r'CustomServer$');
-          expect(result.baseName, 'ApiServer');
+          expect(result.baseName, 'Server');
         },
       );
 
@@ -1199,12 +1199,12 @@ void main() {
         final result = generator.generateServerNames(servers);
 
         expect(result.serverMap.length, 4);
-        expect(result.serverMap[servers[0]], 'Server');
-        expect(result.serverMap[servers[1]], 'Server2');
-        expect(result.serverMap[servers[2]], 'Server3');
-        expect(result.serverMap[servers[3]], 'Server4');
+        expect(result.serverMap[servers[0]], 'Server2');
+        expect(result.serverMap[servers[1]], 'Server3');
+        expect(result.serverMap[servers[2]], 'Server4');
+        expect(result.serverMap[servers[3]], 'Server5');
         expect(result.customName, 'CustomServer');
-        expect(result.baseName, 'ApiServer');
+        expect(result.baseName, 'Server');
       });
     });
   });
