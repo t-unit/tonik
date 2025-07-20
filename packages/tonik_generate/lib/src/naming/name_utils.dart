@@ -1,5 +1,4 @@
 import 'package:change_case/change_case.dart';
-import 'package:spell_out_numbers/spell_out_numbers.dart';
 
 /// Default prefix used for empty or invalid enum values.
 const defaultEnumPrefix = 'value';
@@ -89,6 +88,72 @@ const generatedClassTokens = {
 
 const Set<String> allKeywords = {...dartKeywords, ...generatedClassTokens};
 
+/// Converts a number to its English word representation.
+/// Supports numbers up to trillions.
+String _numberToWords(int number) {
+  if (number == 0) return 'zero';
+  
+  const ones = [
+    '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 
+    'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 
+    'sixteen', 'seventeen', 'eighteen', 'nineteen'
+  ];
+  
+  const tens = [
+    '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 
+    'eighty', 'ninety'
+  ];
+  
+  final result = <String>[];
+  var remaining = number;
+  
+  if (remaining >= 1000000000000) {
+    result
+      ..add(_numberToWords(remaining ~/ 1000000000000))
+      ..add('trillion');
+    remaining %= 1000000000000;
+  }
+  
+  if (remaining >= 1000000000) {
+    result
+      ..add(_numberToWords(remaining ~/ 1000000000))
+      ..add('billion');
+    remaining %= 1000000000;
+  }
+
+  if (remaining >= 1000000) {
+    result
+      ..add(_numberToWords(remaining ~/ 1000000))
+      ..add('million');
+    remaining %= 1000000;
+  }
+  
+  if (remaining >= 1000) {
+    result
+      ..add(_numberToWords(remaining ~/ 1000))
+      ..add('thousand');
+    remaining %= 1000;
+  }
+  
+  if (remaining >= 100) {
+    result
+      ..add(ones[remaining ~/ 100])
+      ..add('hundred');
+    remaining %= 100;
+  }
+  
+  if (remaining >= 20) {
+    result.add(tens[remaining ~/ 10]);
+    if (remaining % 10 != 0) {
+      result.add(ones[remaining % 10]);
+    }
+  } else if (remaining > 0) {
+    result.add(ones[remaining]);
+  }
+  
+  return result.join(' ').trim();
+}
+
 /// Ensures a name is not a Dart keyword by adding a $ prefix if necessary.
 String ensureNotKeyword(String name) {
   if (allKeywords.contains(name.toCamelCase()) ||
@@ -98,80 +163,103 @@ String ensureNotKeyword(String name) {
   return name;
 }
 
-/// Processes a part of a name, handling numbers and casing.
-/// If [isFirstPart] is true, numbers at the start will be moved to the end.
-({String processed, String? number}) processPart(
-  String part, {
-  required bool isFirstPart,
-}) {
-  final processedPart = part.replaceAll(RegExp('[^a-zA-Z0-9]'), '');
-  if (processedPart.isEmpty) return (processed: '', number: null);
-
-  // Handle numbers differently for first part vs subsequent parts
-  if (isFirstPart) {
-    final numberMatch = RegExp(r'^(\d+)(.+)$').firstMatch(processedPart);
+/// Splits text into tokens and normalizes each one.
+String _normalizeText(String text, {bool preserveNumbers = false}) {
+  if (text.isEmpty) return '';
+  
+  // Clean invalid characters but preserve separators for splitting
+  final cleaned = text.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s]'), '');
+  
+  // Split on separators and case boundaries
+  final tokens = cleaned
+      .split(RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'))
+      .where((token) => token.isNotEmpty)
+      .toList();
+  
+  if (tokens.isEmpty) return '';
+  
+  final result = <String>[];
+  final numbersToAppend = <String>[];
+  
+  for (var i = 0; i < tokens.length; i++) {
+    final token = tokens[i];
+    final isFirst = i == 0;
+    
+    // Extract numbers from token
+    final numberMatch = 
+        RegExp(r'^(\d+)(.*)$|^(.+?)(\d+)$').firstMatch(token);
+    
+    String textPart;
+    String? numberPart;
+    
     if (numberMatch != null) {
-      final number = numberMatch.group(1)!;
-      final rest = numberMatch.group(2)!;
-      return (processed: rest.toCamelCase(), number: number);
+      if (numberMatch.group(1) != null) {
+        // Leading number: 123abc
+        numberPart = numberMatch.group(1);
+        textPart = numberMatch.group(2) ?? '';
+      } else {
+        // Trailing number: abc123
+        textPart = numberMatch.group(3) ?? '';
+        numberPart = numberMatch.group(4);
+      }
+    } else if (RegExp(r'^\d+$').hasMatch(token)) {
+      // Pure number
+      numberPart = token;
+      textPart = '';
+    } else {
+      // No numbers
+      textPart = token;
+      numberPart = null;
     }
-    return (processed: processedPart.toCamelCase(), number: null);
+    
+    // Process text part
+    if (textPart.isNotEmpty) {
+      final normalized = _normalizeCasing(textPart, isFirst: isFirst);
+      result.add(normalized);
+    }
+    
+    // Handle numbers
+    if (numberPart != null) {
+      if (isFirst && textPart.isNotEmpty && 
+          numberMatch?.group(1) != null) {
+        // Move leading numbers from first token to end
+        // (e.g., "1status" -> "status1")
+        numbersToAppend.add(numberPart);
+      } else {
+        // Keep numbers in place for trailing numbers or non-first tokens
+        result.add(numberPart);
+      }
+    }
+  }
+  
+  // Append any numbers that were moved from the first token
+  result.addAll(numbersToAppend);
+  
+  return result.join();
+}
+
+/// Normalizes the casing of a text token.
+String _normalizeCasing(String text, {required bool isFirst}) {
+  if (text.isEmpty) return text;
+  
+  final isAllCaps = text == text.toUpperCase() && text != text.toLowerCase();
+  
+  // Special handling for keywords - keep them lowercase for first part only
+  if (isFirst && allKeywords.contains(text.toLowerCase())) {
+    return text.toLowerCase();
+  }
+  
+  if (isFirst) {
+    return isAllCaps ? text.toLowerCase() : text.toCamelCase();
   } else {
-    final numberMatch = RegExp(
-      r'^(\d+)(.+)$|^(.+?)(\d+)$',
-    ).firstMatch(processedPart);
-    if (numberMatch != null) {
-      final leadingNumber = numberMatch.group(1);
-      final leadingRest = numberMatch.group(2);
-      final trailingBase = numberMatch.group(3);
-      final trailingNumber = numberMatch.group(4);
-
-      if (leadingNumber != null && leadingRest != null) {
-        return (processed: leadingRest.toPascalCase(), number: leadingNumber);
-      } else if (trailingBase != null && trailingNumber != null) {
-        return (processed: trailingBase.toPascalCase(), number: trailingNumber);
-      }
-    }
-    return (processed: processedPart.toPascalCase(), number: null);
+    return isAllCaps ? text.toPascalCase() : text.toPascalCase();
   }
 }
 
-/// Splits a string into parts based on common separators and case boundaries.
-List<String> splitIntoParts(String value) =>
-    value.split(RegExp(r'[_\- ]|(?=[A-Z])'));
 
-/// Processes parts into a normalized name.
-String processPartsIntoName(List<String> parts) {
-  if (parts.isEmpty) return '';
-
-  final processedParts = <String>[];
-
-  // Process first part
-  final firstResult = processPart(parts.first, isFirstPart: true);
-  if (firstResult.processed.isNotEmpty) {
-    processedParts.add(firstResult.processed);
-    if (firstResult.number != null) {
-      processedParts.add(firstResult.number!);
-    }
-  }
-
-  // Process remaining parts
-  for (var i = 1; i < parts.length; i++) {
-    final result = processPart(parts[i], isFirstPart: false);
-    if (result.processed.isNotEmpty) {
-      processedParts.add(result.processed);
-      if (result.number != null) {
-        processedParts.add(result.number!);
-      }
-    }
-  }
-
-  return processedParts.join();
-}
 
 /// Normalizes a single name to follow Dart guidelines.
 String normalizeSingle(String name, {bool preserveNumbers = false}) {
-  // Handle empty or underscore-only strings
   if (name.isEmpty || RegExp(r'^_+$').hasMatch(name)) {
     return '';
   }
@@ -180,40 +268,43 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
   var processedName = name.replaceAll(RegExp('^_+'), '');
   if (processedName.isEmpty) return '';
 
-  // If we need to preserve numbers and the name is just a number, return it
+  // If preserving numbers and it's just a number, return as-is
   if (preserveNumbers && RegExp(r'^\d+$').hasMatch(processedName)) {
     return processedName;
   }
 
-  final parts = splitIntoParts(processedName);
-  processedName = processPartsIntoName(parts);
-
-  // If preserving numbers, ensure we don't lose them in the normalization
-  if (preserveNumbers) {
-    final originalNumber = RegExp(r'\d+$').firstMatch(name)?.group(0);
-    final processedNumber = RegExp(r'\d+$').firstMatch(processedName)?.group(0);
-    if (originalNumber != null && processedNumber != originalNumber) {
-      // Remove any trailing numbers and append the original number
-      final baseProcessed = processedName.replaceAll(RegExp(r'\d+$'), '');
-      processedName = '$baseProcessed$originalNumber';
-    }
-  }
-
+  processedName = _normalizeText(
+    processedName, 
+    preserveNumbers: preserveNumbers,
+  );
+  
   return ensureNotKeyword(processedName);
 }
 
 /// Normalizes an enum value name, handling special cases like integers.
 String normalizeEnumValueName(String value) {
-  // For integer values, spell out the number
-  if (RegExp(r'^\d+$').hasMatch(value)) {
+  // Only spell out numbers if the entire value is just a number (no prefix)
+  if (RegExp(r'^-?\d+$').hasMatch(value)) {
     final number = int.parse(value);
-    final words = EnglishNumberScheme().toWord(number);
+    final words = number < 0 
+        ? 'minus ${_numberToWords(number.abs())}'
+        : _numberToWords(number);
     final normalized = normalizeSingle(words);
-    return normalized.isEmpty ? defaultEnumPrefix : normalized;
+    return normalized.isEmpty 
+        ? defaultEnumPrefix 
+        : normalized.toCamelCase();
   }
 
-  final normalized = normalizeSingle(value);
-  return normalized.isEmpty ? defaultEnumPrefix : normalized;
+  // For values with prefixes (like ERROR_404), preserve numbers as-is
+  final normalized = normalizeSingle(value, preserveNumbers: true);
+  if (normalized.isEmpty) return defaultEnumPrefix;
+  
+  // Don't apply toCamelCase if the normalized value starts with $
+  if (normalized.startsWith(r'$')) {
+    return normalized;
+  }
+  
+  return normalized.toCamelCase();
 }
 
 /// Ensures uniqueness in a list of normalized names
