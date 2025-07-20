@@ -52,12 +52,12 @@ class LabelEncoder extends BaseEncoder {
       if (explode) {
         // With explode=true, each value gets its own dot prefix
         return value
-            .map((item) => '.${encodeValue(valueToString(item))}')
+            .map((item) => '.${encodeValueDynamic(item)}')
             .join();
       } else {
         // With explode=false (default), comma-separate the values
         final encodedValues = value
-            .map((item) => encodeValue(valueToString(item)))
+            .map(encodeValueDynamic)
             .join(',');
         return '.$encodedValues';
       }
@@ -69,20 +69,20 @@ class LabelEncoder extends BaseEncoder {
         return value.entries
             .map(
               (entry) =>
-                  '.${entry.key}=${encodeValue(valueToString(entry.value))}',
+                  '.${entry.key}=${encodeValueDynamic(entry.value)}',
             )
             .join();
       } else {
         // With explode=false, properties are comma-separated pairs
         final encodedPairs = value.entries
             .expand(
-              (entry) => [entry.key, encodeValue(valueToString(entry.value))],
+              (entry) => [entry.key, encodeValueDynamic(entry.value)],
             )
             .join(',');
         return '.$encodedPairs';
       }
     }
 
-    return '.${encodeValue(valueToString(value))}';
+    return '.${encodeValueDynamic(value)}';
   }
 }

@@ -75,7 +75,7 @@ class DelimitedEncoder extends BaseEncoder {
         return value
             .map(
               (item) =>
-                  encodeValue(valueToString(item), useQueryEncoding: true),
+                  encodeValueDynamic(item, useQueryEncoding: true),
             )
             .toList();
       } else {
@@ -84,14 +84,14 @@ class DelimitedEncoder extends BaseEncoder {
           value
               .map(
                 (item) =>
-                    encodeValue(valueToString(item), useQueryEncoding: true),
+                    encodeValueDynamic(item, useQueryEncoding: true),
               )
               .join(delimiter),
         ];
       }
     }
 
-    return [encodeValue(valueToString(value), useQueryEncoding: true)];
+    return [encodeValueDynamic(value, useQueryEncoding: true)];
   }
 }
 

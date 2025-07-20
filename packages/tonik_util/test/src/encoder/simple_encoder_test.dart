@@ -34,6 +34,22 @@ void main() {
       expect(encoder.encode(false, explode: false, allowEmpty: true), 'false');
     });
 
+    test('encodes Uri value', () {
+      final uri = Uri.parse('https://example.com/api/v1');
+      expect(
+        encoder.encode(uri, explode: false, allowEmpty: true),
+        'https%3A%2F%2Fexample.com%2Fapi%2Fv1',
+      );
+    });
+
+    test('encodes Uri value with special characters', () {
+      final uri = Uri.parse('https://example.com/search?q=hello world');
+      expect(
+        encoder.encode(uri, explode: false, allowEmpty: true),
+        'https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%2520world',
+      );
+    });
+
     test('encodes null value', () {
       expect(encoder.encode(null, explode: false, allowEmpty: true), '');
     });
@@ -199,6 +215,167 @@ void main() {
           ),
           throwsA(isA<UnsupportedEncodingTypeException>()),
         );
+      });
+    });
+
+    group('RFC 3986 reserved character encoding', () {
+      group('gen-delims characters', () {
+        test('encodes colon (:) properly', () {
+          expect(
+            encoder.encode(
+              'http://example.com',
+              explode: false,
+              allowEmpty: true,
+            ),
+            'http%3A%2F%2Fexample.com',
+          );
+        });
+
+        test('encodes forward slash (/) properly', () {
+          expect(
+            encoder.encode('/api/v1/users', explode: false, allowEmpty: true),
+            '%2Fapi%2Fv1%2Fusers',
+          );
+        });
+
+        test('encodes question mark (?) properly', () {
+          expect(
+            encoder.encode(
+              'search?term=test',
+              explode: false,
+              allowEmpty: true,
+            ),
+            'search%3Fterm%3Dtest',
+          );
+        });
+
+        test('encodes hash (#) properly', () {
+          expect(
+            encoder.encode('page#section1', explode: false, allowEmpty: true),
+            'page%23section1',
+          );
+        });
+
+        test('encodes square brackets ([]) properly', () {
+          expect(
+            encoder.encode('[2001:db8::1]', explode: false, allowEmpty: true),
+            '%5B2001%3Adb8%3A%3A1%5D',
+          );
+        });
+
+        test('encodes at symbol (@) properly', () {
+          expect(
+            encoder.encode(
+              'user@example.com',
+              explode: false,
+              allowEmpty: true,
+            ),
+            'user%40example.com',
+          );
+        });
+      });
+
+      group('sub-delims characters', () {
+        test('encodes exclamation mark (!) properly', () {
+          expect(
+            encoder.encode('Hello!', explode: false, allowEmpty: true),
+            'Hello!',
+          );
+        });
+
+        test(r'encodes dollar sign ($) properly', () {
+          expect(
+            encoder.encode(r'$19.99', explode: false, allowEmpty: true),
+            '%2419.99',
+          );
+        });
+
+        test('encodes ampersand (&) properly', () {
+          expect(
+            encoder.encode(
+              'Johnson & Johnson',
+              explode: false,
+              allowEmpty: true,
+            ),
+            'Johnson%20%26%20Johnson',
+          );
+        });
+
+        test("encodes single quote (') properly", () {
+          expect(
+            encoder.encode("It's working", explode: false, allowEmpty: true),
+            "It's%20working",
+          );
+        });
+
+        test('encodes parentheses () properly', () {
+          expect(
+            encoder.encode('(555) 123-4567', explode: false, allowEmpty: true),
+            '(555)%20123-4567',
+          );
+        });
+
+        test('encodes asterisk (*) properly', () {
+          expect(
+            encoder.encode('file*.txt', explode: false, allowEmpty: true),
+            'file*.txt',
+          );
+        });
+
+        test('encodes plus (+) properly', () {
+          expect(
+            encoder.encode('2+2=4', explode: false, allowEmpty: true),
+            '2%2B2%3D4',
+          );
+        });
+
+        test('encodes comma (,) properly', () {
+          expect(
+            encoder.encode(
+              'apple,banana,cherry',
+              explode: false,
+              allowEmpty: true,
+            ),
+            'apple%2Cbanana%2Ccherry',
+          );
+        });
+
+        test('encodes semicolon (;) properly', () {
+          expect(
+            encoder.encode('a=1;b=2', explode: false, allowEmpty: true),
+            'a%3D1%3Bb%3D2',
+          );
+        });
+
+        test('encodes equals (=) properly', () {
+          expect(
+            encoder.encode('x=y', explode: false, allowEmpty: true),
+            'x%3Dy',
+          );
+        });
+      });
+
+      group('percent-encoding normalization', () {
+        test('properly encodes non-ASCII characters', () {
+          expect(
+            encoder.encode('café', explode: false, allowEmpty: true),
+            'caf%C3%A9',
+          );
+        });
+
+        test('properly encodes emoji', () {
+          expect(
+            encoder.encode('👍', explode: false, allowEmpty: true),
+            '%F0%9F%91%8D',
+          );
+        });
+
+        test('properly encodes Chinese characters', () {
+          expect(
+            encoder.encode('你好', explode: false, allowEmpty: true),
+            '%E4%BD%A0%E5%A5%BD',
+          );
+        });
       });
     });
   });

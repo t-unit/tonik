@@ -235,6 +235,13 @@ class DecimalModel extends PrimitiveModel {
   String toString() => 'DecimalModel';
 }
 
+class UriModel extends PrimitiveModel {
+  const UriModel({required super.context});
+
+  @override
+  String toString() => 'UriModel';
+}
+
 @immutable
 class Property {
   const Property({

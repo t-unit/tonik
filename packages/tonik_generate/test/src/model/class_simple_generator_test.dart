@@ -473,5 +473,177 @@ void main() {
       );
       expect(hasFromSimple, isFalse);
     });
+
+    test('fromSimple handles unsupported complex properties', () {
+      final complexModel = ClassModel(
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+      final model = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'address',
+            model: complexModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final constructors = generatedClass.constructors;
+
+      // Should not have fromSimple constructor due to complex property
+      final fromSimpleConstructor =
+          constructors.where((c) => c.name == 'fromSimple').firstOrNull;
+      expect(fromSimpleConstructor, isNull);
+    });
+
+    test('generates fromSimple for Uri property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'endpoint',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = r'''
+        factory Resource.fromSimple(String? value) {
+          final properties = value.decodeSimpleStringList(context: r'Resource');
+          if (properties.length < 1) {
+            throw SimpleDecodingException('Invalid value for Resource: $value');
+          }
+          return Resource(
+            endpoint: properties[0].decodeSimpleUri(context: r'Resource.endpoint'),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates fromSimple for nullable Uri property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'callback',
+            model: UriModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = r'''
+        factory Resource.fromSimple(String? value) {
+          final properties = value.decodeSimpleStringList(context: r'Resource');
+          if (properties.length < 1) {
+            throw SimpleDecodingException('Invalid value for Resource: $value');
+          }
+          return Resource(
+            callback: properties[0].decodeSimpleNullableUri(
+              context: r'Resource.callback',
+            ),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates fromSimple for mixed Uri and primitive properties', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'endpoint',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'port',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'callback',
+            model: UriModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = r'''
+        factory Resource.fromSimple(String? value) {
+          final properties = value.decodeSimpleStringList(context: r'Resource');
+          if (properties.length < 4) {
+            throw SimpleDecodingException('Invalid value for Resource: $value');
+          }
+          return Resource(
+            name: properties[0].decodeSimpleString(context: r'Resource.name'),
+            endpoint: properties[1].decodeSimpleUri(context: r'Resource.endpoint'),
+            port: properties[2].decodeSimpleInt(context: r'Resource.port'),
+            callback: properties[3].decodeSimpleNullableUri(
+              context: r'Resource.callback',
+            ),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 }

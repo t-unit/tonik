@@ -410,6 +410,176 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test('generates toJson method with polymorphic model types', () {
+      final baseModel = ClassModel(
+        name: 'Base',
+        properties: const [],
+        context: context,
+      );
+      final mixinModel = ClassModel(
+        name: 'Mixin',
+        properties: const [],
+        context: context,
+      );
+
+      final allOfModel = AllOfModel(
+        name: 'Combined',
+        models: {baseModel, mixinModel},
+        context: context,
+      );
+
+      final catModel = ClassModel(
+        name: 'Cat',
+        properties: const [],
+        context: context,
+      );
+      final dogModel = ClassModel(
+        name: 'Dog',
+        properties: const [],
+        context: context,
+      );
+
+      final oneOfModel = OneOfModel(
+        name: 'Pet',
+        models: {
+          (discriminatorValue: 'cat', model: catModel),
+          (discriminatorValue: 'dog', model: dogModel),
+        },
+        discriminator: 'petType',
+        context: context,
+      );
+
+      final model = ClassModel(
+        name: 'Container',
+        properties: [
+          Property(
+            name: 'combinedData',
+            model: allOfModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'pet',
+            model: oneOfModel,
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      const expectedMethod = '''
+        Object? toJson() => {
+          r'combinedData': combinedData.toJson(),
+          r'pet': pet?.toJson(),
+        };
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates toJson method for Uri property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'endpoint',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      const expectedMethod = '''
+        Object? toJson() => {r'endpoint': endpoint.toString()};
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates toJson method for nullable Uri property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'callback',
+            model: UriModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      const expectedMethod = '''
+        Object? toJson() => {r'callback': callback?.toString()};
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates toJson method for multiple Uri properties', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'endpoint',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'callback',
+            model: UriModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'webhook',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      const expectedMethod = '''
+        Object? toJson() => {
+          r'endpoint': endpoint.toString(),
+          r'callback': callback?.toString(),
+          r'webhook': webhook.toString(),
+        };
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 
   group('ClassGenerator fromJson generation', () {

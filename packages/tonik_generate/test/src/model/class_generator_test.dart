@@ -372,5 +372,135 @@ void main() {
         expect(field.annotations, isEmpty);
       });
     });
+
+    test(
+      'generates constructor with required fields before non-required fields',
+      () {
+        final model = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final constructor = result.constructors.first;
+
+        expect(constructor.optionalParameters, hasLength(2));
+
+        final idParam = constructor.optionalParameters[0];
+        expect(idParam.name, 'id');
+        expect(idParam.required, isTrue);
+
+        final nameParam = constructor.optionalParameters[1];
+        expect(nameParam.name, 'name');
+        expect(nameParam.required, isFalse);
+      },
+    );
+
+    test('generates field with Uri type for UriModel property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'endpoint',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final field = result.fields.first;
+
+      expect(field.name, 'endpoint');
+      expect(field.modifier, FieldModifier.final$);
+
+      final typeRef = field.type! as TypeReference;
+      expect(typeRef.symbol, 'Uri');
+      expect(typeRef.url, 'dart:core');
+      expect(typeRef.isNullable, isFalse);
+    });
+
+    test('generates nullable Uri field for nullable UriModel property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'optionalEndpoint',
+            model: UriModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final field = result.fields.first;
+
+      expect(field.name, 'optionalEndpoint');
+
+      final typeRef = field.type! as TypeReference;
+      expect(typeRef.symbol, 'Uri');
+      expect(typeRef.url, 'dart:core');
+      expect(typeRef.isNullable, isTrue);
+    });
+
+    test('generates constructor parameter for Uri property', () {
+      final model = ClassModel(
+        name: 'Resource',
+        properties: [
+          Property(
+            name: 'endpoint',
+            model: UriModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'callback',
+            model: UriModel(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final constructor = result.constructors.first;
+
+      expect(constructor.optionalParameters, hasLength(2));
+
+      final endpointParam = constructor.optionalParameters[0];
+      expect(endpointParam.name, 'endpoint');
+      expect(endpointParam.required, isTrue);
+      expect(endpointParam.toThis, isTrue);
+
+      final callbackParam = constructor.optionalParameters[1];
+      expect(callbackParam.name, 'callback');
+      expect(callbackParam.required, isFalse);
+      expect(callbackParam.toThis, isTrue);
+    });
   });
 }

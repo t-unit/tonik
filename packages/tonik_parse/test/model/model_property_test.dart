@@ -26,6 +26,8 @@ void main() {
             'boolean': {'type': 'boolean'},
             'date': {'type': 'string', 'format': 'date'},
             'dateTime': {'type': 'string', 'format': 'date-time'},
+            'uri': {'type': 'string', 'format': 'uri'},
+            'url': {'type': 'string', 'format': 'url'},
           },
         },
       },
@@ -146,5 +148,21 @@ void main() {
     final model = api.models.first as ClassModel;
     final dateTime = model.properties.firstWhere((p) => p.name == 'dateTime');
     expect(dateTime.model, isA<DateTimeModel>());
+  });
+
+  test('imports uri format', () {
+    final api = Importer().import(fileContent);
+
+    final model = api.models.first as ClassModel;
+    final uri = model.properties.firstWhere((p) => p.name == 'uri');
+    expect(uri.model, isA<UriModel>());
+  });
+
+  test('imports url format', () {
+    final api = Importer().import(fileContent);
+
+    final model = api.models.first as ClassModel;
+    final url = model.properties.firstWhere((p) => p.name == 'url');
+    expect(url.model, isA<UriModel>());
   });
 }

@@ -384,12 +384,54 @@ extension JsonDecoder on Object? {
 
   /// Decodes a JSON value to a nullable Date.
   ///
-  /// Returns null if the value is null or an empty string.
+  /// Returns null if the value is null.
   /// Throws [InvalidTypeException] if the value is not a valid date string.
   Date? decodeJsonNullableDate({String? context}) {
-    if (this == null || (this is String && (this! as String).isEmpty)) {
+    if (this == null) {
       return null;
     }
     return decodeJsonDate(context: context);
+  }
+
+  /// Decodes a JSON value to a Uri.
+  ///
+  /// Expects a valid URI string.
+  /// Throws [InvalidTypeException] if the value is not a valid URI string
+  /// or if the value is null.
+  Uri decodeJsonUri({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: Uri,
+        context: context,
+      );
+    }
+    if (this is! String) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: Uri,
+        context: context,
+      );
+    }
+    try {
+      return Uri.parse(this! as String);
+    } on FormatException catch (e) {
+      throw InvalidTypeException(
+        value: this! as String,
+        targetType: Uri,
+        context: e.message,
+      );
+    }
+  }
+
+  /// Decodes a JSON value to a nullable Uri.
+  ///
+  /// Returns null if the value is null.
+  /// Throws [InvalidTypeException] if the value is not a valid URI string.
+  Uri? decodeJsonNullableUri({String? context}) {
+    if (this == null) {
+      return null;
+    }
+    return decodeJsonUri(context: context);
   }
 }
