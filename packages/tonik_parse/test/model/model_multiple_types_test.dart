@@ -66,7 +66,7 @@ void main() {
     expect(stringOrNumber.isNullable, isFalse);
 
     final oneOf = stringOrNumber.model as OneOfModel;
-    expect(oneOf.models.length, equals(2));
+    expect(oneOf.models.length, 2);
     expect(
       oneOf.models.map((m) => m.model).toList(),
       containsAll([isA<StringModel>(), isA<NumberModel>()]),
@@ -109,7 +109,7 @@ void main() {
     expect(nullableMultiType.isNullable, isTrue);
 
     final oneOf = nullableMultiType.model as OneOfModel;
-    expect(oneOf.models.length, equals(2));
+    expect(oneOf.models.length, 2);
     expect(
       oneOf.models.map((m) => m.model).toList(),
       containsAll([isA<StringModel>(), isA<NumberModel>()]),
@@ -128,7 +128,7 @@ void main() {
     expect(nullableMultiType.isNullable, isTrue);
 
     final oneOf = nullableMultiType.model as OneOfModel;
-    expect(oneOf.models.length, equals(2));
+    expect(oneOf.models.length, 2);
     expect(
       oneOf.models.map((m) => m.model).toList(),
       containsAll([isA<StringModel>(), isA<NumberModel>()]),
@@ -150,7 +150,7 @@ void main() {
     expect(listModel.content, isA<OneOfModel>());
 
     final content = listModel.content as OneOfModel;
-    expect(content.models.length, equals(2));
+    expect(content.models.length, 2);
     expect(
       content.models.map((m) => m.model).toList(),
       containsAll([isA<StringModel>(), isA<NumberModel>()]),

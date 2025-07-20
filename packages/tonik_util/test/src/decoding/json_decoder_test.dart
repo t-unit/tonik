@@ -321,7 +321,7 @@ void main() {
   group('decodeMap', () {
     test('decodes valid map', () {
       final map = {'key': 'value'};
-      expect(map.decodeMap(), equals(map));
+      expect(map.decodeMap(), map);
     });
 
     test('throws on null', () {

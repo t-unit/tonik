@@ -13,8 +13,8 @@ void main() {
         final result = utcDateTime.toTimeZonedIso8601String();
         
         // Should match toIso8601String for UTC dates
-        expect(result, equals(utcDateTime.toIso8601String()));
-        expect(result, equals('2023-12-25T15:30:45.123Z'));
+        expect(result, utcDateTime.toIso8601String());
+        expect(result, '2023-12-25T15:30:45.123Z');
       });
     });
 
@@ -34,7 +34,7 @@ void main() {
         final result = estDateTime.toTimeZonedIso8601String();
         
         // Should include EST timezone offset (-05:00)
-        expect(result, equals('2023-12-25T15:30:45-05:00'));
+        expect(result, '2023-12-25T15:30:45-05:00');
       });
 
       test('encodes in PST (UTC-8:00)', () {
@@ -52,7 +52,7 @@ void main() {
         final result = pstDateTime.toTimeZonedIso8601String();
         
         // Should include PST timezone offset (-08:00)
-        expect(result, equals('2023-12-25T18:30:45-08:00'));
+        expect(result, '2023-12-25T18:30:45-08:00');
       });
 
       test('encodes in IST (UTC+5:30)', () {
@@ -70,7 +70,7 @@ void main() {
         final result = istDateTime.toTimeZonedIso8601String();
         
         // Should include IST timezone offset (+05:30)
-        expect(result, equals('2023-12-25T20:00:45+05:30'));
+        expect(result, '2023-12-25T20:00:45+05:30');
       });
 
       test('encodes in CET (UTC+1:00)', () {
@@ -88,7 +88,7 @@ void main() {
         final result = cetDateTime.toTimeZonedIso8601String();
         
         // Should include CET timezone offset (+01:00)
-        expect(result, equals('2023-12-25T16:30:45+01:00'));
+        expect(result, '2023-12-25T16:30:45+01:00');
       });
 
       test('encodes in GMT (UTC+0:00)', () {
@@ -106,7 +106,7 @@ void main() {
         final result = gmtDateTime.toTimeZonedIso8601String();
         
         // Should include GMT timezone offset (+00:00)
-        expect(result, equals('2023-12-25T15:30:45+00:00'));
+        expect(result, '2023-12-25T15:30:45+00:00');
       });
 
       test('encodes with milliseconds in timezone', () {
@@ -125,7 +125,7 @@ void main() {
         final result = estDateTime.toTimeZonedIso8601String();
         
         // Should include EST timezone offset (-05:00) and milliseconds
-        expect(result, equals('2023-12-25T15:30:45.123-05:00'));
+        expect(result, '2023-12-25T15:30:45.123-05:00');
       });
 
       test('encodes with microseconds in timezone', () {
@@ -145,7 +145,7 @@ void main() {
         final result = pstDateTime.toTimeZonedIso8601String();
         
         // Should include PST timezone offset (-08:00) and microseconds
-        expect(result, equals('2023-12-25T18:30:45.123456-08:00'));
+        expect(result, '2023-12-25T18:30:45.123456-08:00');
       });
 
       test('encodes in JST (UTC+9:00)', () {
@@ -155,7 +155,7 @@ void main() {
         final result = jstDateTime.toTimeZonedIso8601String();
         
         // Should include JST timezone offset (+09:00)
-        expect(result, equals('2009-06-30T18:30:00+09:00'));
+        expect(result, '2009-06-30T18:30:00+09:00');
       });
     });
   });

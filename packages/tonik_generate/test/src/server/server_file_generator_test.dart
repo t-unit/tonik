@@ -109,7 +109,7 @@ void main() {
       final fileContent = File(generatedFile.path).readAsStringSync();
 
       // Check file name
-      expect(actualFileName, equals('server.dart'));
+      expect(actualFileName, 'server.dart');
 
       // Check file content
       expect(fileContent, contains('sealed class Server'));

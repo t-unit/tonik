@@ -80,21 +80,21 @@ void main() {
       // Required header field
       final xTestField = fields[0];
       expect(xTestField.name, 'xTest');
-      expect(xTestField.modifier, equals(FieldModifier.final$));
+      expect(xTestField.modifier, FieldModifier.final$);
       expect(xTestField.type?.accept(emitter).toString(), 'String');
       expect(xTestField.annotations.isEmpty, isTrue);
 
       // Optional header field
       final xOptionalField = fields[2];
       expect(xOptionalField.name, 'xOptional');
-      expect(xOptionalField.modifier, equals(FieldModifier.final$));
+      expect(xOptionalField.modifier, FieldModifier.final$);
       expect(xOptionalField.type?.accept(emitter).toString(), 'int?');
       expect(xOptionalField.annotations.isEmpty, isTrue);
 
       // Body field
       final bodyField = fields[1];
       expect(bodyField.name, 'body');
-      expect(bodyField.modifier, equals(FieldModifier.final$));
+      expect(bodyField.modifier, FieldModifier.final$);
       expect(bodyField.type?.accept(emitter).toString(), 'String');
       expect(bodyField.annotations.isEmpty, isTrue);
 
@@ -158,14 +158,14 @@ void main() {
       final headerField = fields[0];
       expect(headerField.name, 'bodyHeader');
       expect(headerField.type?.accept(emitter).toString(), 'String');
-      expect(headerField.modifier, equals(FieldModifier.final$));
+      expect(headerField.modifier, FieldModifier.final$);
       expect(headerField.annotations.isEmpty, isTrue);
 
       // Body field should keep original name
       final bodyField = fields[1];
       expect(bodyField.name, 'body');
       expect(bodyField.type?.accept(emitter).toString(), 'int');
-      expect(bodyField.modifier, equals(FieldModifier.final$));
+      expect(bodyField.modifier, FieldModifier.final$);
       expect(bodyField.annotations.isEmpty, isTrue);
 
       // Verify constructor parameters maintain the same names
