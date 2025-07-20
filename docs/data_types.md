@@ -10,6 +10,7 @@ This document provides information about how Tonik is mapping data types in Open
 | `string` | `date-time` | `DateTime` | `dart:core` | See [Timezone-Aware DateTime Parsing](#timezone-aware-datetime-parsing) |
 | `string` | `date` | `Date` | `tonik_util` | RFC3339 date format (YYYY-MM-DD) |
 | `string` | `decimal`, `currency`, `money`, `number` | `BigDecimal` | `big_decimal` | High-precision decimal numbers |
+| `string` | `uri`, `url` | `Uri` | `dart:core` | URI/URL parsing and validation |
 | `string` | `enum` | `enum` | Generated | Custom enum type |
 | `string` | (default) | `String` | `dart:core` | Standard string type |
 | `number` | `float`, `double` | `double` | `dart:core` | 64-bit floating point |
@@ -42,5 +43,6 @@ For strings with timezone offsets (e.g., `+05:00`), Tonik intelligently selects 
 1. **Prefers common locations** from the timezone package's curated list of 535+ well-known timezones
 2. **Accounts for DST changes** by checking the offset at the specific timestamp
 3. **Avoids deprecated locations** (e.g., `US/Eastern` → `America/New_York`)
-4. **Falls back to fixed offset** locations (`Etc/GMT±N`) when no match is found
+4. **Attempts fixed offset locations** (`Etc/GMT±N`) for standard hour offsets when no timezone match is found
+5. **Falls back to UTC** for non-standard offsets or when `Etc/GMT±N` locations are unavailable
 

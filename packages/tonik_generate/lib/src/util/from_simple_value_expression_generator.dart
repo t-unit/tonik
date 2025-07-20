@@ -62,6 +62,10 @@ Expression buildSimpleValueExpression(
       isRequired
           ? value.property('decodeSimpleDate').call([], contextParam)
           : value.property('decodeSimpleNullableDate').call([], contextParam),
+    UriModel() =>
+      isRequired
+          ? value.property('decodeSimpleUri').call([], contextParam)
+          : value.property('decodeSimpleNullableUri').call([], contextParam),
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
@@ -204,6 +208,12 @@ Expression _buildListFromSimpleExpression(
     DateModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleDate',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    UriModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeSimpleUri',
       isRequired,
       contextParam: contextParam,
     ),

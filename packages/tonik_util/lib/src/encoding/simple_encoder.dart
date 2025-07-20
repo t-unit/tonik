@@ -52,10 +52,10 @@ class SimpleEncoder extends BaseEncoder {
         // but since SimpleEncoder only encodes the value part
         // (not the full parameter), we'll use comma-separated values
         // as a fallback
-        return value.map((item) => encodeValue(valueToString(item))).join(',');
+        return value.map(encodeValueDynamic).join(',');
       } else {
         // With explode=false, comma-separate the values
-        return value.map((item) => encodeValue(valueToString(item))).join(',');
+        return value.map(encodeValueDynamic).join(',');
       }
     }
 
@@ -64,20 +64,19 @@ class SimpleEncoder extends BaseEncoder {
         // With explode=true, key=value pairs are comma-separated
         return value.entries
             .map(
-              (entry) =>
-                  '${entry.key}=${encodeValue(valueToString(entry.value))}',
+              (entry) => '${entry.key}=${encodeValueDynamic(entry.value)}',
             )
             .join(',');
       } else {
         // With explode=false, keys and values are comma-separated
         return value.entries
             .expand(
-              (entry) => [entry.key, encodeValue(valueToString(entry.value))],
+              (entry) => [entry.key, encodeValueDynamic(entry.value)],
             )
             .join(',');
       }
     }
 
-    return encodeValue(valueToString(value));
+    return encodeValueDynamic(value);
   }
 }

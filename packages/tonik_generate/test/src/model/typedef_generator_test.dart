@@ -115,6 +115,7 @@ void main() {
         (model: DateTimeModel(context: context), expectedType: 'DateTime'),
         (model: DateModel(context: context), expectedType: 'Date'),
         (model: DecimalModel(context: context), expectedType: 'BigDecimal'),
+        (model: UriModel(context: context), expectedType: 'Uri'),
       ];
 
       for (final (index, type) in primitiveTypes.indexed) {
@@ -130,6 +131,83 @@ void main() {
           'typedef TestType$index = ${type.expectedType};',
         );
       }
+    });
+
+    group('Uri typedef generation', () {
+      test('generates typedef for Uri type', () {
+        final model = AliasModel(
+          name: 'ApiEndpoint',
+          model: UriModel(context: context),
+          context: context,
+        );
+
+        final result = generator.generateAlias(model);
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(result.filename, 'api_endpoint.dart');
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef ApiEndpoint = Uri;',
+        );
+      });
+
+      test('generates typedef for required Uri type', () {
+        final model = AliasModel(
+          name: 'RequiredEndpoint',
+          model: UriModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RequiredEndpoint = Uri;',
+        );
+      });
+
+      test('generates typedef for list of URIs', () {
+        final model = AliasModel(
+          name: 'EndpointList',
+          model: ListModel(
+            content: UriModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+
+        final result = generator.generateAlias(model);
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(result.filename, 'endpoint_list.dart');
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef EndpointList = List<Uri>;',
+        );
+      });
+
+      test('generates typedef for nested list of URIs', () {
+        final model = AliasModel(
+          name: 'EndpointMatrix',
+          model: ListModel(
+            content: ListModel(
+              content: UriModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          context: context,
+        );
+
+        final result = generator.generateAlias(model);
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(result.filename, 'endpoint_matrix.dart');
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef EndpointMatrix = List<List<Uri>>;',
+        );
+      });
     });
 
     group('generateFromList', () {
@@ -206,6 +284,23 @@ void main() {
         expect(
           typedef.accept(emitter).toString().trim(),
           'typedef Anonymous = List<String>;',
+        );
+      });
+
+      test('generates typedef for list of URIs', () {
+        final model = ListModel(
+          name: 'UriList',
+          content: UriModel(context: context),
+          context: context,
+        );
+
+        final result = generator.generateList(model);
+        final typedef = generator.generateListTypedef(model);
+
+        expect(result.filename, 'uri_list.dart');
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef UriList = List<Uri>;',
         );
       });
     });

@@ -36,6 +36,10 @@ void main() {
         DecimalModel(context: Context.initial()).encodingShape,
         EncodingShape.simple,
       );
+      expect(
+        UriModel(context: Context.initial()).encodingShape,
+        EncodingShape.simple,
+      );
     });
 
     test('Enum models are simple', () {

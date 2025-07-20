@@ -59,6 +59,10 @@ Expression buildFromJsonValueExpression(
       return refer(value)
           .property(isNullable ? 'decodeJsonNullableDate' : 'decodeJsonDate')
           .call([], contextParam);
+    case UriModel():
+      return refer(value)
+          .property(isNullable ? 'decodeJsonNullableUri' : 'decodeJsonUri')
+          .call([], contextParam);
     case ListModel():
       return _buildListFromJsonExpression(
         value,

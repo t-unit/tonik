@@ -82,6 +82,13 @@ TypeReference typeReference(
             ..url = 'package:big_decimal/big_decimal.dart'
             ..isNullable = isNullableOverride,
     ),
+    UriModel _ => TypeReference(
+      (b) =>
+          b
+            ..symbol = 'Uri'
+            ..url = 'dart:core'
+            ..isNullable = isNullableOverride,
+    ),
     final CompositeModel m => TypeReference(
       (b) =>
           b

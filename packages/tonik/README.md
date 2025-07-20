@@ -96,7 +96,6 @@ For a full list of changes of each release, refer to [release notes](https://git
 
 ### Short term goals
 - `allowReserved` support for query parameters
-- `format: uri` mapping to Dart `Uri`
 - More E2E tests
 - Full decoding and encoding support for any of and one of
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`

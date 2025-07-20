@@ -126,6 +126,27 @@ void main() {
           throwsA(isA<FormatException>()),
         );
       });
+
+      test('decodes Uri values', () {
+        final uri = Uri.parse('https://example.com');
+        expect('https://example.com'.decodeSimpleUri(), uri);
+        expect('ftp://files.example.com/file.txt'.decodeSimpleUri(),
+               Uri.parse('ftp://files.example.com/file.txt'));
+        expect('/relative/path'.decodeSimpleUri(), Uri.parse('/relative/path'));
+        expect('mailto:user@example.com'.decodeSimpleUri(),
+               Uri.parse('mailto:user@example.com'));
+        expect(
+          () => null.decodeSimpleUri(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('handles URI parsing errors', () {
+        expect(
+          () => ':::invalid:::'.decodeSimpleUri(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
     });
 
     group('Nullable Values', () {
@@ -136,6 +157,7 @@ void main() {
         expect(''.decodeSimpleNullableDateTime(), isNull);
         expect(''.decodeSimpleNullableBigDecimal(), isNull);
         expect(''.decodeSimpleNullableDate(), isNull);
+        expect(''.decodeSimpleNullableUri(), isNull);
 
         expect(null.decodeSimpleNullableInt(), isNull);
         expect(null.decodeSimpleNullableDouble(), isNull);
@@ -143,6 +165,7 @@ void main() {
         expect(null.decodeSimpleNullableDateTime(), isNull);
         expect(null.decodeSimpleNullableBigDecimal(), isNull);
         expect(null.decodeSimpleNullableDate(), isNull);
+        expect(null.decodeSimpleNullableUri(), isNull);
       });
 
       test('decodes non-empty strings for nullable types', () {
@@ -160,6 +183,10 @@ void main() {
         expect(
           '2024-03-15'.decodeSimpleNullableDate(),
           Date(2024, 3, 15),
+        );
+        expect(
+          'https://example.com'.decodeSimpleNullableUri(),
+          Uri.parse('https://example.com'),
         );
       });
     });
@@ -188,6 +215,10 @@ void main() {
         );
         expect(
           () => ''.decodeSimpleDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => ''.decodeSimpleUri(),
           throwsA(isA<InvalidTypeException>()),
         );
       });

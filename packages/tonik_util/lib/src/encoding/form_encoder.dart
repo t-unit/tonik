@@ -50,7 +50,7 @@ class FormEncoder extends BaseEncoder {
 
     if (value is Iterable) {
       final values = value.map(
-        (item) => encodeValue(valueToString(item), useQueryEncoding: true),
+        (item) => encodeValueDynamic(item, useQueryEncoding: true),
       );
 
       if (explode) {
@@ -67,8 +67,8 @@ class FormEncoder extends BaseEncoder {
             .map(
               (entry) => (
                 name: entry.key,
-                value: encodeValue(
-                  valueToString(entry.value),
+                value: encodeValueDynamic(
+                  entry.value,
                   useQueryEncoding: true,
                 ),
               ),
@@ -83,8 +83,8 @@ class FormEncoder extends BaseEncoder {
                 .expand(
                   (entry) => [
                     entry.key,
-                    encodeValue(
-                      valueToString(entry.value),
+                    encodeValueDynamic(
+                      entry.value,
                       useQueryEncoding: true,
                     ),
                   ],
@@ -98,7 +98,7 @@ class FormEncoder extends BaseEncoder {
     return [
       (
         name: paramName,
-        value: encodeValue(valueToString(value), useQueryEncoding: true),
+        value: encodeValueDynamic(value, useQueryEncoding: true),
       ),
     ];
   }

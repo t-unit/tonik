@@ -17,7 +17,11 @@ abstract class BaseEncoder {
   /// that don't support object encoding).
   @protected
   void checkSupportedType(dynamic value, {bool supportMaps = true}) {
-    if (value == null || value is String || value is num || value is bool) {
+    if (value == null ||
+        value is String ||
+        value is num ||
+        value is bool ||
+        value is Uri) {
       return;
     }
 
@@ -31,6 +35,7 @@ abstract class BaseEncoder {
         return element is! String &&
             element is! num &&
             element is! bool &&
+            element is! Uri &&
             element != null;
       });
 
@@ -63,7 +68,11 @@ abstract class BaseEncoder {
       }
 
       final hasUnsupportedValue = value.values.any((val) {
-        return val is! String && val is! num && val is! bool && val != null;
+        return val is! String &&
+            val is! num &&
+            val is! bool &&
+            val is! Uri &&
+            val != null;
       });
 
       if (hasUnsupportedValue) {
@@ -87,6 +96,10 @@ abstract class BaseEncoder {
       return value.toTimeZonedIso8601String();
     }
 
+    if (value is Uri) {
+      return value.toString();
+    }
+
     return value.toString();
   }
 
@@ -106,5 +119,26 @@ abstract class BaseEncoder {
     } else {
       return Uri.encodeComponent(value);
     }
+  }
+
+  /// Encodes a dynamic value, handling URI objects specially.
+  ///
+  /// For URI objects:
+  /// - When [useQueryEncoding] is true (query parameters), returns the URI
+  ///   string as-is since URIs are already properly encoded
+  /// - When [useQueryEncoding] is false (path parameters), encodes the URI
+  ///   string for use in path segments
+  ///
+  /// For other values, converts to string and applies standard encoding.
+  @protected
+  String encodeValueDynamic(dynamic value, {bool useQueryEncoding = false}) {
+    final stringValue = valueToString(value);
+
+    if (value is Uri && useQueryEncoding) {
+      // URIs are already properly encoded, don't double-encode for query params
+      return stringValue;
+    }
+
+    return encodeValue(stringValue, useQueryEncoding: useQueryEncoding);
   }
 }

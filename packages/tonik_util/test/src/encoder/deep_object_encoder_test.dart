@@ -38,6 +38,39 @@ void main() {
       ]);
     });
 
+    test('encodes Uri properties', () {
+      final result = encoder.encode(
+        'filter',
+        {
+          'endpoint': Uri.parse('https://example.com/api/v1'),
+          'callback': Uri.parse('https://example.com/callback'),
+        },
+        allowEmpty: true,
+      );
+
+      expect(result, [
+        (name: 'filter[endpoint]', value: 'https://example.com/api/v1'),
+        (name: 'filter[callback]', value: 'https://example.com/callback'),
+      ]);
+    });
+
+    test('encodes Uri properties with special characters', () {
+      final result = encoder.encode(
+        'params',
+        {
+          'url': Uri.parse('https://example.com/search?q=hello world'),
+        },
+        allowEmpty: true,
+      );
+
+      expect(result, [
+        (
+          name: 'params[url]',
+          value: 'https://example.com/search?q=hello%20world',
+        ),
+      ]);
+    });
+
     test('encodes an object with a null value', () {
       final result = encoder.encode(
         'filter',

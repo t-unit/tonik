@@ -258,7 +258,10 @@ void main() {
         final date = Date(2024, 3, 15);
         expect('2024-03-15'.decodeJsonNullableDate(), date);
         expect(null.decodeJsonNullableDate(), isNull);
-        expect(''.decodeJsonNullableDate(), isNull);
+        expect(
+          () => ''.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
         expect(
           () => 123.decodeJsonNullableDate(),
           throwsA(isA<InvalidTypeException>()),
@@ -281,6 +284,49 @@ void main() {
         );
         expect(
           () => '2024-02-30'.decodeJsonNullableDate(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+    });
+
+    group('Uri', () {
+      test('decodes Uri values', () {
+        final uri = Uri.parse('https://example.com');
+        expect('https://example.com'.decodeJsonUri(), uri);
+        expect('ftp://files.example.com/file.txt'.decodeJsonUri(), 
+               Uri.parse('ftp://files.example.com/file.txt'));
+        expect('/relative/path'.decodeJsonUri(), Uri.parse('/relative/path'));
+        expect('mailto:user@example.com'.decodeJsonUri(), 
+               Uri.parse('mailto:user@example.com'));
+        expect(
+          () => 123.decodeJsonUri(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => null.decodeJsonUri(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes nullable Uri values', () {
+        final uri = Uri.parse('https://example.com');
+        expect('https://example.com'.decodeJsonNullableUri(), uri);
+        expect('/api/v1/users'.decodeJsonNullableUri(), Uri.parse('/api/v1/users'));
+        expect(null.decodeJsonNullableUri(), isNull);
+        expect(''.decodeJsonNullableUri(), Uri.parse(''));
+        expect(
+          () => 123.decodeJsonNullableUri(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('handles invalid URI strings', () {
+        expect(
+          () => ':::invalid:::'.decodeJsonUri(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => ':::invalid:::'.decodeJsonNullableUri(),
           throwsA(isA<InvalidTypeException>()),
         );
       });

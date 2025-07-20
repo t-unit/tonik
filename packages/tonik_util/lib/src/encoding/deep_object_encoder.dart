@@ -83,8 +83,8 @@ class DeepObjectEncoder extends BaseEncoder {
       } else if (value is String && !allowEmpty && value.isEmpty) {
         throw const EmptyValueException();
       } else {
-        final encodedValue = encodeValue(
-          valueToString(value),
+        final encodedValue = encodeValueDynamic(
+          value,
           useQueryEncoding: true,
         );
         result.add((name: '$path[$key]', value: encodedValue));
@@ -112,7 +112,11 @@ class DeepObjectEncoder extends BaseEncoder {
       for (final entry in value.entries) {
         final val = entry.value;
 
-        if (val == null || val is String || val is num || val is bool) {
+        if (val == null ||
+            val is String ||
+            val is num ||
+            val is bool ||
+            val is Uri) {
           continue;
         }
 
@@ -143,6 +147,11 @@ class DeepObjectEncoder extends BaseEncoder {
     if (value == null) {
       return '';
     }
+
+    if (value is Uri) {
+      return value.toString();
+    }
+
     return value.toString();
   }
 }

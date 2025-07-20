@@ -127,6 +127,8 @@ class ModelImporter {
             'number',
           ].contains(schema.format) =>
         DecimalModel(context: context),
+      'string' when schema.format == 'uri' || schema.format == 'url' =>
+        UriModel(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,
         schema.enumerated!,

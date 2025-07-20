@@ -57,12 +57,12 @@ class MatrixEncoder extends BaseEncoder {
 
       if (explode) {
         return value
-            .map((item) => ';$paramName=${encodeValue(valueToString(item))}')
+            .map((item) => ';$paramName=${encodeValueDynamic(item)}')
             .join();
       } else {
         // With explode=false (default), comma-separate the values
         final encodedValues = value
-            .map((item) => encodeValue(valueToString(item)))
+            .map(encodeValueDynamic)
             .join(',');
         return ';$paramName=$encodedValues';
       }
@@ -83,7 +83,7 @@ class MatrixEncoder extends BaseEncoder {
             .map(
               (entry) =>
                   ';$paramName.${entry.key}='
-                  '${encodeValue(valueToString(entry.value))}',
+                  '${encodeValueDynamic(entry.value)}',
             )
             .join();
       } else {
@@ -91,13 +91,13 @@ class MatrixEncoder extends BaseEncoder {
         // comma-separated pairs: ;point=x,1,y,2
         final encodedPairs = value.entries
             .expand(
-              (entry) => [entry.key, encodeValue(valueToString(entry.value))],
+              (entry) => [entry.key, encodeValueDynamic(entry.value)],
             )
             .join(',');
         return ';$paramName=$encodedPairs';
       }
     }
 
-    return ';$paramName=${encodeValue(valueToString(value))}';
+    return ';$paramName=${encodeValueDynamic(value)}';
   }
 }

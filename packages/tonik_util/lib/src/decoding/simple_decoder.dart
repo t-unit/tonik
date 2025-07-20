@@ -300,4 +300,44 @@ extension SimpleDecoder on String? {
     if (this?.isEmpty ?? true) return null;
     return decodeSimpleDate(context: context);
   }
+
+  /// Decodes a string to a Uri.
+  ///
+  /// Expects a valid URI string.
+  /// Throws [InvalidTypeException] if the value is null or if the string
+  /// is not a valid URI.
+  Uri decodeSimpleUri({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: Uri,
+        context: context,
+      );
+    }
+    if (this!.isEmpty) {
+      throw InvalidTypeException(
+        value: 'empty string',
+        targetType: Uri,
+        context: context,
+      );
+    }
+    try {
+      return Uri.parse(this!);
+    } on FormatException catch (e) {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: Uri,
+        context: e.message,
+      );
+    }
+  }
+
+  /// Decodes a string to a nullable Uri.
+  ///
+  /// Returns null if the string is empty or null.
+  /// Throws [InvalidTypeException] if the string is not a valid URI.
+  Uri? decodeSimpleNullableUri({String? context}) {
+    if (this?.isEmpty ?? true) return null;
+    return decodeSimpleUri(context: context);
+  }
 }
