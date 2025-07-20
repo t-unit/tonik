@@ -1,3 +1,9 @@
+## 0.0.7
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware date time parsing.
+ - **FEAT**: time zone aware encoding of date time objects.
+
 ## 0.0.6
 
  - **FIX**: proper handle dates.
