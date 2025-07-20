@@ -258,7 +258,7 @@ void main() {
       const expectedMethod = '''
         Object? toJson() => {
           r'name': name,
-          r'createdAt': createdAt.toIso8601String(),
+          r'createdAt': createdAt.toTimeZonedIso8601String(),
           r'status': status.toJson(),
           r'homeAddress': homeAddress?.toJson(),
         };
@@ -323,7 +323,9 @@ void main() {
       const expectedMethod = '''
         Object? toJson() => {
           r'tags': tags,
-          r'meetingTimes': meetingTimes.map((e) => e.toIso8601String()).toList(),
+          r'meetingTimes': meetingTimes
+              .map((e) => e.toTimeZonedIso8601String())
+              .toList(),
           r'addresses': addresses?.map((e) => e.toJson()).toList(),
         };
         ''';

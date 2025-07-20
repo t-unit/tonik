@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/simple_decoder.dart';
+import 'package:tonik_util/src/encoding/datetime_extension.dart';
 
 void main() {
   group('SimpleDecoder', () {
@@ -48,7 +49,7 @@ void main() {
 
       test('decodes DateTime values', () {
         final date = DateTime.utc(2024, 3, 14);
-        expect(date.toIso8601String().decodeSimpleDateTime(), date);
+        expect(date.toTimeZonedIso8601String().decodeSimpleDateTime(), date);
         expect(
           () => 'not-a-date'.decodeSimpleDateTime(),
           throwsA(isA<InvalidTypeException>()),
@@ -128,7 +129,11 @@ void main() {
         expect('3.14'.decodeSimpleNullableDouble(), 3.14);
         expect('true'.decodeSimpleNullableBool(), isTrue);
         expect(
-          '2024-03-14T00:00:00.000Z'.decodeSimpleNullableDateTime(),
+          DateTime.utc(
+            2024,
+            3,
+            14,
+          ).toTimeZonedIso8601String().decodeSimpleNullableDateTime(),
           DateTime.utc(2024, 3, 14),
         );
         expect(

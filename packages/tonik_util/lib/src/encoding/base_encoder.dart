@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:tonik_util/src/encoding/encoding_exception.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 /// Base class for OpenAPI parameter style encoders.
 ///
@@ -84,7 +84,7 @@ abstract class BaseEncoder {
     }
 
     if (value is DateTime) {
-      return value.toIso8601String();
+      return value.toTimeZonedIso8601String();
     }
 
     return value.toString();

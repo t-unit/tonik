@@ -6,6 +6,7 @@ export 'src/decoding/decoding_exception.dart';
 export 'src/decoding/json_decoder.dart';
 export 'src/decoding/simple_decoder.dart';
 export 'src/dio/server_config.dart';
+export 'src/encoding/datetime_extension.dart';
 export 'src/encoding/deep_object_encoder.dart';
 export 'src/encoding/delimited_encoder.dart';
 export 'src/encoding/encoding_exception.dart';
