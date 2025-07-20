@@ -1,10 +1,11 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/date.dart';
+import 'package:tonik_util/src/decoding/datetime_decoding_extension.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
 /// Extensions for decoding JSON values.
 extension JsonDecoder on Object? {
-  /// Decodes a JSON value to a DateTime.
+  /// Decodes a JSON value to a DateTime with timezone awareness.
   ///
   /// Expects ISO 8601 format string.
   /// Throws [InvalidTypeException] if the value is not a valid date string
@@ -25,7 +26,7 @@ extension JsonDecoder on Object? {
       );
     }
     try {
-      return DateTime.parse(this! as String);
+      return DateTimeParsingExtension.parseWithTimeZone(this! as String);
     } on FormatException catch (e) {
       throw InvalidTypeException(
         value: this! as String,

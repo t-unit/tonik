@@ -1,11 +1,13 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/simple_decoder.dart';
-import 'package:tonik_util/src/encoding/datetime_extension.dart';
 
 void main() {
+  setUpAll(tz.initializeTimeZones);
   group('SimpleDecoder', () {
     group('Simple Values', () {
       test('decodes integer values', () {
@@ -47,9 +49,28 @@ void main() {
         );
       });
 
-      test('decodes DateTime values', () {
-        final date = DateTime.utc(2024, 3, 14);
-        expect(date.toTimeZonedIso8601String().decodeSimpleDateTime(), date);
+      test('decodes DateTime values with timezone awareness', () {
+        // Test UTC parsing
+        final utcDate = DateTime.utc(2024, 3, 14, 10, 30, 45);
+        const utcString = '2024-03-14T10:30:45Z';
+        final utcResult = utcString.decodeSimpleDateTime();
+        expect(utcResult.isUtc, isTrue);
+        expect(utcResult, utcDate);
+
+        // Test local time parsing
+        const localString = '2024-03-14T10:30:45';
+        final localResult = localString.decodeSimpleDateTime();
+        final expectedLocal = DateTime(2024, 3, 14, 10, 30, 45);
+        expect(localResult.isUtc, isFalse);
+        expect(localResult, expectedLocal);
+
+        // Test timezone offset parsing
+        const offsetString = '2024-03-14T10:30:45+05:00';
+        final offsetResult = offsetString.decodeSimpleDateTime();
+        expect(offsetResult, isA<tz.TZDateTime>());
+        expect(offsetResult.timeZoneOffset.inHours, 5);
+
+        // Test error cases
         expect(
           () => 'not-a-date'.decodeSimpleDateTime(),
           throwsA(isA<InvalidTypeException>()),
@@ -129,12 +150,8 @@ void main() {
         expect('3.14'.decodeSimpleNullableDouble(), 3.14);
         expect('true'.decodeSimpleNullableBool(), isTrue);
         expect(
-          DateTime.utc(
-            2024,
-            3,
-            14,
-          ).toTimeZonedIso8601String().decodeSimpleNullableDateTime(),
-          DateTime.utc(2024, 3, 14),
+          '2024-03-14T10:30:45Z'.decodeSimpleNullableDateTime(),
+          DateTime.utc(2024, 3, 14, 10, 30, 45),
         );
         expect(
           '3.14'.decodeSimpleNullableBigDecimal(),
