@@ -1,12 +1,9 @@
 import 'package:change_case/change_case.dart';
 
-/// Default prefix used for empty or invalid enum values.
 const defaultEnumPrefix = 'value';
 
-/// Default prefix used for empty or invalid field names.
 const defaultFieldPrefix = 'field';
 
-/// Reserved Dart keywords that cannot be used as identifiers.
 const dartKeywords = {
   'abstract',
   'as',

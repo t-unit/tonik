@@ -10,10 +10,10 @@ dependencies:
   dio: ^5.8.0
   gov_api:
     path: ../gov_api
-  path: ^1.8.3
-  tonik_util: ^0.0.6
+  path: ^1.9.1
+  tonik_util: ^0.0.7
 
 dev_dependencies:
-  test: ^1.24.0
+  test: ^1.25.15
   very_good_analysis: ^9.0.0
 

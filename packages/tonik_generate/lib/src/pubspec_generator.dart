@@ -27,7 +27,7 @@ dependencies:
   dio: ^5.8.0+1
   lints: ^6.0.0
   meta: ^1.16.0
-  tonik_util: ^0.0.6
+  tonik_util: ^0.0.7
 ''';
 
   pubspecFile.writeAsStringSync(content);

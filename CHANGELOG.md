@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-07-20
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.0.7`](#tonik_util---v007)
+
+---
+
+#### `tonik_util` - `v0.0.7`
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware date time parsing.
+ - **FEAT**: time zone aware encoding of date time objects.
+
+
 ## 2025-06-15
 
 ### Changes
