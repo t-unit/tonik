@@ -2,16 +2,36 @@ import 'dart:convert';
 
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
 
 void main() {
+  setUpAll(tz.initializeTimeZones);
   group('JsonDecoder', () {
     group('DateTime', () {
-      test('decodes DateTime values', () {
-        final date = DateTime.utc(2024, 3, 14);
-        expect(date.toIso8601String().decodeJsonDateTime(), date);
+      test('decodes DateTime values with timezone awareness', () {
+        // Test UTC parsing
+        const utcString = '2024-03-14T10:30:45Z';
+        final utcResult = utcString.decodeJsonDateTime();
+        expect(utcResult.isUtc, isTrue);
+        expect(utcResult, DateTime.utc(2024, 3, 14, 10, 30, 45));
+
+        // Test local time parsing
+        const localString = '2024-03-14T10:30:45';
+        final localResult = localString.decodeJsonDateTime();
+        expect(localResult.isUtc, isFalse);
+        expect(localResult, DateTime(2024, 3, 14, 10, 30, 45));
+
+        // Test timezone offset parsing
+        const offsetString = '2024-03-14T10:30:45+05:00';
+        final offsetResult = offsetString.decodeJsonDateTime();
+        expect(offsetResult, isA<tz.TZDateTime>());
+        expect(offsetResult.timeZoneOffset.inHours, 5);
+
+        // Test error cases
         expect(
           () => 123.decodeJsonDateTime(),
           throwsA(isA<InvalidTypeException>()),
@@ -22,9 +42,11 @@ void main() {
         );
       });
 
-      test('decodes nullable DateTime values', () {
-        final date = DateTime.utc(2024, 3, 14);
-        expect(date.toIso8601String().decodeJsonNullableDateTime(), date);
+      test('decodes nullable DateTime values with timezone awareness', () {
+        expect(
+          '2024-03-14T10:30:45Z'.decodeJsonNullableDateTime(),
+          DateTime.utc(2024, 3, 14, 10, 30, 45),
+        );
         expect(null.decodeJsonNullableDateTime(), isNull);
         expect(''.decodeJsonNullableDateTime(), isNull);
         expect(
@@ -317,7 +339,7 @@ void main() {
   group('decodeMap', () {
     test('decodes valid map', () {
       final map = {'key': 'value'};
-      expect(map.decodeMap(), equals(map));
+      expect(map.decodeMap(), map);
     });
 
     test('throws on null', () {

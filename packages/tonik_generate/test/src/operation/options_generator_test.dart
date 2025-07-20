@@ -367,7 +367,7 @@ void main() {
               allowEmpty: false,
             );
             headers[r'X-Required-Date'] = headerEncoder.encode(
-              xRequiredDate.toIso8601String(),
+              xRequiredDate.toTimeZonedIso8601String(),
               explode: false,
               allowEmpty: true,
             );

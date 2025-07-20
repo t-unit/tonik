@@ -85,7 +85,7 @@ void main() {
         context: context,
       );
 
-      expect(alias.resolved, equals(stringModel));
+      expect(alias.resolved, stringModel);
     });
 
     test('resolves single-level alias', () {
@@ -102,7 +102,7 @@ void main() {
         context: context,
       );
 
-      expect(outerAlias.resolved, equals(stringModel));
+      expect(outerAlias.resolved, stringModel);
     });
 
     test('resolves multi-level alias', () {
@@ -124,7 +124,7 @@ void main() {
         context: context,
       );
 
-      expect(level1.resolved, equals(stringModel));
+      expect(level1.resolved, stringModel);
     });
   });
 }

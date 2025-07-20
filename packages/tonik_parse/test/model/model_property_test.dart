@@ -118,7 +118,9 @@ void main() {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
-    final numberString = model.properties.firstWhere((p) => p.name == 'numberString');
+    final numberString = model.properties.firstWhere(
+      (p) => p.name == 'numberString',
+    );
     expect(numberString.model, isA<DecimalModel>());
   });
 

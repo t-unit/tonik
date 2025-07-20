@@ -84,7 +84,7 @@ void main() {
         );
 
         final result = generator.generate(aliasResponse);
-        expect(result.filename, equals('alias_response.dart'));
+        expect(result.filename, 'alias_response.dart');
         expect(result.code, contains('typedef AliasResponse ='));
       });
 
@@ -115,7 +115,7 @@ void main() {
         );
 
         final result = generator.generate(response);
-        expect(result.filename, equals('single_body_response.dart'));
+        expect(result.filename, 'single_body_response.dart');
         expect(result.code, contains('class SingleBodyResponse'));
       });
 

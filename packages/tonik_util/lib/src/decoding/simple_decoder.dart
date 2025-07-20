@@ -1,5 +1,6 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/date.dart';
+import 'package:tonik_util/src/decoding/datetime_decoding_extension.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
 /// Extensions for decoding simple form values from strings.
@@ -131,7 +132,7 @@ extension SimpleDecoder on String? {
     return decodeSimpleBool(context: context);
   }
 
-  /// Decodes a string to a DateTime.
+  /// Decodes a string to a DateTime with timezone awareness.
   ///
   /// Expects ISO 8601 format.
   /// Throws [InvalidTypeException] if the string is not a valid date
@@ -145,7 +146,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      return DateTime.parse(this!);
+      return DateTimeParsingExtension.parseWithTimeZone(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,

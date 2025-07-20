@@ -53,7 +53,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('startTime', property),
-        'startTime.toIso8601String()',
+        'startTime.toTimeZonedIso8601String()',
       );
     });
 
@@ -188,7 +188,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
-        'meetingTimes.map((e) => e.toIso8601String()).toList()',
+        'meetingTimes.map((e) => e.toTimeZonedIso8601String()).toList()',
       );
     });
 
@@ -259,7 +259,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('createdAt', property),
-        'createdAt.toIso8601String()',
+        'createdAt.toTimeZonedIso8601String()',
       );
     });
 
@@ -278,7 +278,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('updatedAt', property),
-        'updatedAt?.toIso8601String()',
+        'updatedAt?.toTimeZonedIso8601String()',
       );
     });
 
@@ -497,7 +497,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
-        'meetingTimes.map((e) => e.toIso8601String()).toList()',
+        'meetingTimes.map((e) => e.toTimeZonedIso8601String()).toList()',
       );
     });
 
@@ -519,7 +519,7 @@ void main() {
       );
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
-        'meetingTimes?.map((e) => e.toIso8601String()).toList()',
+        'meetingTimes?.map((e) => e.toTimeZonedIso8601String()).toList()',
       );
     });
 
@@ -626,7 +626,7 @@ void main() {
       );
       expect(
         buildToJsonPathParameterExpression('startTime', parameter),
-        'startTime.toIso8601String()',
+        'startTime.toTimeZonedIso8601String()',
       );
     });
 
@@ -713,7 +713,7 @@ void main() {
       );
       expect(
         buildToJsonQueryParameterExpression('startTime', parameter),
-        'startTime.toIso8601String()',
+        'startTime.toTimeZonedIso8601String()',
       );
     });
 
@@ -779,7 +779,7 @@ void main() {
       );
       expect(
         buildToJsonHeaderParameterExpression('timestamp', parameter),
-        'timestamp.toIso8601String()',
+        'timestamp.toTimeZonedIso8601String()',
       );
     });
 
