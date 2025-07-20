@@ -20,7 +20,9 @@ void main() {
             'float': {'type': 'number', 'format': 'float'},
             'double': {'type': 'number', 'format': 'double'},
             'decimal': {'type': 'string', 'format': 'decimal'},
-            'decimal-alt': {'type': 'string', 'format': 'currency'},
+            'currency': {'type': 'string', 'format': 'currency'},
+            'money': {'type': 'string', 'format': 'money'},
+            'numberString': {'type': 'string', 'format': 'number'},
             'boolean': {'type': 'boolean'},
             'date': {'type': 'string', 'format': 'date'},
             'dateTime': {'type': 'string', 'format': 'date-time'},
@@ -88,17 +90,36 @@ void main() {
     expect(double.model, isA<DoubleModel>());
   });
 
-  test('imports decimal', () {
+  test('imports decimal format', () {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
     final decimal = model.properties.firstWhere((p) => p.name == 'decimal');
     expect(decimal.model, isA<DecimalModel>());
+  });
 
-    final decimalAlt = model.properties.firstWhere(
-      (p) => p.name == 'decimal-alt',
-    );
-    expect(decimalAlt.model, isA<DecimalModel>());
+  test('imports currency format', () {
+    final api = Importer().import(fileContent);
+
+    final model = api.models.first as ClassModel;
+    final currency = model.properties.firstWhere((p) => p.name == 'currency');
+    expect(currency.model, isA<DecimalModel>());
+  });
+
+  test('imports money format', () {
+    final api = Importer().import(fileContent);
+
+    final model = api.models.first as ClassModel;
+    final money = model.properties.firstWhere((p) => p.name == 'money');
+    expect(money.model, isA<DecimalModel>());
+  });
+
+  test('imports number string format', () {
+    final api = Importer().import(fileContent);
+
+    final model = api.models.first as ClassModel;
+    final numberString = model.properties.firstWhere((p) => p.name == 'numberString');
+    expect(numberString.model, isA<DecimalModel>());
   });
 
   test('imports boolean', () {
