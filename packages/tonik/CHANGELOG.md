@@ -1,3 +1,7 @@
+## 0.0.7
+
+ - **FEAT**: Uri property encoding and decoding.
+
 ## 0.0.6
 
 ## 0.0.5

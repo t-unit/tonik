@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-07-20
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.0.7`](#tonik_util---v007)
+ - [`tonik` - `v0.0.7`](#tonik---v007)
+ - [`tonik_core` - `v0.0.7`](#tonik_core---v007)
+ - [`tonik_generate` - `v0.0.7`](#tonik_generate---v007)
+ - [`tonik_parse` - `v0.0.7`](#tonik_parse---v007)
+
+---
+
+#### `tonik_util` - `v0.0.7`
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware date time parsing.
+ - **FEAT**: time zone aware encoding of date time objects.
+
+#### `tonik` - `v0.0.7`
+
+ - **FEAT**: Uri property encoding and decoding.
+
+#### `tonik_core` - `v0.0.7`
+
+ - **FEAT**: Uri property encoding and decoding.
+
+#### `tonik_generate` - `v0.0.7`
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware encoding of date time objects.
+ - **FEAT**: drop api prefix from generated server class.
+
+#### `tonik_parse` - `v0.0.7`
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware date time parsing.
+ - **FEAT**: more verbose decimal parsing.
+
+
 ## 2025-06-15
 
 ### Changes

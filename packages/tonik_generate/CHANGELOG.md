@@ -1,3 +1,9 @@
+## 0.0.7
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware encoding of date time objects.
+ - **FEAT**: drop api prefix from generated server class.
+
 ## 0.0.6
 
  - **FIX**: proper handle dates.
