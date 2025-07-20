@@ -119,7 +119,13 @@ class ModelImporter {
         context: context,
       ),
       'string' when schema.format == 'date' => DateModel(context: context),
-      'string' when schema.format == 'decimal' || schema.format == 'currency' =>
+      'string'
+          when [
+            'decimal',
+            'currency',
+            'money',
+            'number',
+          ].contains(schema.format) =>
         DecimalModel(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,
