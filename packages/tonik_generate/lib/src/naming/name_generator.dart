@@ -376,7 +376,7 @@ class NameGenerator {
 
   ({String baseName, Map<Server, String> serverMap, String customName})
   _generateServerNames(List<Server> servers, List<String> uniqueNames) {
-    final baseName = _makeUnique('ApiServer', '');
+    final baseName = _makeUnique('Server', '');
 
     final resultMap = <Server, String>{};
     for (var index = 0; index < servers.length; index++) {
@@ -398,7 +398,7 @@ class NameGenerator {
 
   ({String baseName, Map<Server, String> serverMap, String customName})
   _generateFallbackServerNames(List<Server> servers) {
-    final baseName = _makeUnique('ApiServer', '');
+    final baseName = _makeUnique('Server', '');
 
     final resultMap = <Server, String>{};
     for (final server in servers) {

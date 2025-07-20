@@ -109,10 +109,10 @@ void main() {
       final fileContent = File(generatedFile.path).readAsStringSync();
 
       // Check file name
-      expect(actualFileName, equals('api_server.dart'));
+      expect(actualFileName, equals('server.dart'));
 
       // Check file content
-      expect(fileContent, contains('sealed class ApiServer'));
+      expect(fileContent, contains('sealed class Server'));
       expect(fileContent, contains('class ProductionServer'));
       expect(fileContent, contains('class StagingServer'));
       expect(fileContent, contains('class CustomServer'));
@@ -154,7 +154,7 @@ void main() {
       final fileContent = File(generatedFile.path).readAsStringSync();
 
       // Expect base class and custom class to be generated
-      expect(fileContent, contains('sealed class ApiServer'));
+      expect(fileContent, contains('sealed class Server'));
       expect(fileContent, contains('class CustomServer'));
 
       // No server-specific classes should be present
