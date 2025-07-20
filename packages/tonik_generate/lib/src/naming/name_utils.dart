@@ -1,5 +1,5 @@
 import 'package:change_case/change_case.dart';
-import 'package:spell_out_numbers/spell_out_numbers.dart';
+import 'package:number_to_words_english/number_to_words_english.dart';
 
 /// Default prefix used for empty or invalid enum values.
 const defaultEnumPrefix = 'value';
@@ -107,15 +107,57 @@ String ensureNotKeyword(String name) {
   final processedPart = part.replaceAll(RegExp('[^a-zA-Z0-9]'), '');
   if (processedPart.isEmpty) return (processed: '', number: null);
 
+  /// Helper function to normalize case: only convert to lowercase if all caps
+  String normalizeCase(String text, {required bool isFirst}) {
+    if (text.isEmpty) return text;
+    
+    final isAllCaps = 
+        text == text.toUpperCase() && text != text.toLowerCase();
+    
+    // Special handling for Dart keywords: keep them lowercase for first part
+    if (isFirst && allKeywords.contains(text.toLowerCase())) {
+      return text.toLowerCase();
+    }
+    
+    if (isFirst) {
+      // For first part, convert to lowercase if all caps, otherwise camelCase
+      if (isAllCaps) {
+        return text.toLowerCase();
+      } else {
+        // For mixed case, convert to proper camelCase (first letter lowercase)
+        return text.length == 1 
+            ? text.toLowerCase() 
+            : text.substring(0, 1).toLowerCase() + text.substring(1);
+      }
+    } else {
+      // For subsequent parts, convert to PascalCase if all caps, otherwise 
+      // ensure PascalCase
+      if (isAllCaps) {
+        return text.toPascalCase();
+      } else {
+        // For mixed case, ensure it starts with uppercase
+        return text.length == 1 
+            ? text.toUpperCase() 
+            : text.substring(0, 1).toUpperCase() + text.substring(1);
+      }
+    }
+  }
+
   // Handle numbers differently for first part vs subsequent parts
   if (isFirstPart) {
     final numberMatch = RegExp(r'^(\d+)(.+)$').firstMatch(processedPart);
     if (numberMatch != null) {
       final number = numberMatch.group(1)!;
       final rest = numberMatch.group(2)!;
-      return (processed: rest.toCamelCase(), number: number);
+      return (
+        processed: normalizeCase(rest, isFirst: true), 
+        number: number,
+      );
     }
-    return (processed: processedPart.toCamelCase(), number: null);
+    return (
+      processed: normalizeCase(processedPart, isFirst: true), 
+      number: null,
+    );
   } else {
     final numberMatch = RegExp(
       r'^(\d+)(.+)$|^(.+?)(\d+)$',
@@ -127,18 +169,33 @@ String ensureNotKeyword(String name) {
       final trailingNumber = numberMatch.group(4);
 
       if (leadingNumber != null && leadingRest != null) {
-        return (processed: leadingRest.toPascalCase(), number: leadingNumber);
+        return (
+          processed: normalizeCase(leadingRest, isFirst: false), 
+          number: leadingNumber,
+        );
       } else if (trailingBase != null && trailingNumber != null) {
-        return (processed: trailingBase.toPascalCase(), number: trailingNumber);
+        return (
+          processed: normalizeCase(trailingBase, isFirst: false), 
+          number: trailingNumber,
+        );
       }
     }
-    return (processed: processedPart.toPascalCase(), number: null);
+    return (
+      processed: normalizeCase(processedPart, isFirst: false), 
+      number: null,
+    );
   }
 }
 
 /// Splits a string into parts based on common separators and case boundaries.
-List<String> splitIntoParts(String value) =>
-    value.split(RegExp(r'[_\- ]|(?=[A-Z])'));
+List<String> splitIntoParts(String value) {
+  // Split on explicit separators and case boundaries
+  final parts = value.split(
+    RegExp(r'[_\- ]|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
+  );
+  
+  return parts.where((part) => part.isNotEmpty).toList();
+}
 
 /// Processes parts into a normalized name.
 String processPartsIntoName(List<String> parts) {
@@ -204,16 +261,28 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
 
 /// Normalizes an enum value name, handling special cases like integers.
 String normalizeEnumValueName(String value) {
-  // For integer values, spell out the number
-  if (RegExp(r'^\d+$').hasMatch(value)) {
+  // Only spell out numbers if the entire value is just a number (no prefix)
+  if (RegExp(r'^-?\d+$').hasMatch(value)) {
     final number = int.parse(value);
-    final words = EnglishNumberScheme().toWord(number);
+    final words = number < 0 
+        ? 'minus ${NumberToWordsEnglish.convert(number.abs())}'
+        : NumberToWordsEnglish.convert(number);
     final normalized = normalizeSingle(words);
-    return normalized.isEmpty ? defaultEnumPrefix : normalized;
+    return normalized.isEmpty 
+        ? defaultEnumPrefix 
+        : normalized.toCamelCase();
   }
 
-  final normalized = normalizeSingle(value);
-  return normalized.isEmpty ? defaultEnumPrefix : normalized;
+  // For values with prefixes (like ERROR_404), preserve numbers as-is
+  final normalized = normalizeSingle(value, preserveNumbers: true);
+  if (normalized.isEmpty) return defaultEnumPrefix;
+  
+  // Don't apply toCamelCase if the normalized value starts with $
+  if (normalized.startsWith(r'$')) {
+    return normalized;
+  }
+  
+  return normalized.toCamelCase();
 }
 
 /// Ensures uniqueness in a list of normalized names
