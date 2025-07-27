@@ -9,6 +9,7 @@ import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating sealed Dart classes from OneOf model definitions.
@@ -196,8 +197,14 @@ class OneOfGenerator {
         .map((discriminatedModel) {
           final variantName = variantNames[discriminatedModel]!;
 
-          final isPrimitive = discriminatedModel.model is PrimitiveModel;
-          final jsonValue = isPrimitive ? 'value' : 'value.toJson()';
+          final property = Property(
+            name: 'value',
+            model: discriminatedModel.model,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          );
+          final jsonValue = buildToJsonPropertyExpression('value', property);
           final discriminatorValue =
               discriminatedModel.discriminatorValue != null
                   ? "'${discriminatedModel.discriminatorValue}'"

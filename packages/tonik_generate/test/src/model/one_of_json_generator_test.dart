@@ -335,5 +335,529 @@ void main() {
         );
       });
     });
+
+    group('with complex data types', () {
+      test('toJson method handles DateTime models correctly', () {
+        final model = OneOfModel(
+          name: 'TimestampValue',
+          models: {
+            (
+              discriminatorValue: 'timestamp',
+              model: DateTimeModel(context: context),
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'TimestampValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              TimestampValueTimestamp(:final value) => ( value.toTimeZonedIso8601String(), 'timestamp', ),
+              TimestampValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles Date models correctly', () {
+        final model = OneOfModel(
+          name: 'DateValue',
+          models: {
+            (
+              discriminatorValue: 'date',
+              model: DateModel(context: context),
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'DateValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              DateValueDate(:final value) => (value.toJson(), 'date'),
+              DateValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles Decimal models correctly', () {
+        final model = OneOfModel(
+          name: 'NumericValue',
+          models: {
+            (
+              discriminatorValue: 'decimal',
+              model: DecimalModel(context: context),
+            ),
+            (
+              discriminatorValue: 'integer',
+              model: IntegerModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'NumericValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              NumericValueDecimal(:final value) => (value.toString(), 'decimal'),
+              NumericValueInteger(:final value) => (value, 'integer'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles Uri models correctly', () {
+        final model = OneOfModel(
+          name: 'UriValue',
+          models: {
+            (
+              discriminatorValue: 'uri',
+              model: UriModel(context: context),
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'UriValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              UriValueUri(:final value) => (value.toString(), 'uri'),
+              UriValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles Enum models correctly', () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: false,
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'StatusValue',
+          models: {
+            (
+              discriminatorValue: 'status',
+              model: enumModel,
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'StatusValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              StatusValueStatus(:final value) => (value.toJson(), 'status'),
+              StatusValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles Class models correctly', () {
+        final classModel = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'UserValue',
+          models: {
+            (
+              discriminatorValue: 'user',
+              model: classModel,
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'UserValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              UserValueUser(:final value) => (value.toJson(), 'user'),
+              UserValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles AllOf models correctly', () {
+        final allOfModel = AllOfModel(
+          name: 'Combined',
+          models: {
+            ClassModel(
+              name: 'Base',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'CombinedValue',
+          models: {
+            (
+              discriminatorValue: 'combined',
+              model: allOfModel,
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'CombinedValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              CombinedValueCombined(:final value) => (value.toJson(), 'combined'),
+              CombinedValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test(
+        'toJson method handles List models with primitive content correctly',
+        () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'ListValue',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: listModel,
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'ListValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              ListValueList(:final value) => (value, 'list'),
+              ListValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+      );
+
+      test(
+        'toJson method handles List models with complex content correctly',
+        () {
+        final classModel = ClassModel(
+          name: 'Item',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final listModel = ListModel(
+          content: classModel,
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'ItemListValue',
+          models: {
+            (
+              discriminatorValue: 'items',
+              model: listModel,
+            ),
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'ItemListValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              ItemListValueItems(:final value) => ( value.map((e) => e.toJson()).toList(), 'items', ),
+              ItemListValueString(:final value) => (value, 'string'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+      );
+
+      test('toJson method handles AnyOf models correctly', () {
+        final anyOfModel = AnyOfModel(
+          name: 'Flexible',
+          models: {
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+            (
+              discriminatorValue: 'int',
+              model: IntegerModel(context: context),
+            ),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'FlexibleValue',
+          models: {
+            (
+              discriminatorValue: 'flexible',
+              model: anyOfModel,
+            ),
+            (
+              discriminatorValue: 'boolean',
+              model: BooleanModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'FlexibleValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              FlexibleValueFlexible(:final value) => (value.toJson(), 'flexible'),
+              FlexibleValueBoolean(:final value) => (value, 'boolean'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('toJson method handles Alias models correctly', () {
+        final aliasModel = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'IdentifierValue',
+          models: {
+            (
+              discriminatorValue: 'userId',
+              model: aliasModel,
+            ),
+            (
+              discriminatorValue: 'number',
+              model: IntegerModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'IdentifierValue',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Object? toJson() {
+            final (dynamic json, String? discriminator) = switch (this) {
+              IdentifierValueUserId(:final value) => (value, 'userId'),
+              IdentifierValueNumber(:final value) => (value, 'number'),
+            };
+
+            return json;
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
   });
 }
