@@ -1,7 +1,7 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/date.dart';
-import 'package:tonik_util/src/decoding/datetime_decoding_extension.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
+import 'package:tonik_util/src/offset_date_time.dart';
 
 /// Extensions for decoding JSON values.
 extension JsonDecoder on Object? {
@@ -26,7 +26,7 @@ extension JsonDecoder on Object? {
       );
     }
     try {
-      return DateTimeParsingExtension.parseWithTimeZone(this! as String);
+      return OffsetDateTime.parse(this! as String);
     } on FormatException catch (e) {
       throw InvalidTypeException(
         value: this! as String,

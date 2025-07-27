@@ -22,16 +22,16 @@ void main() {
 
       final resolved = param.resolve(name: 'newName');
 
-      expect(resolved.name, equals('newName'));
-      expect(resolved.rawName, equals('originalRawName'));
-      expect(resolved.description, equals('description'));
+      expect(resolved.name, 'newName');
+      expect(resolved.rawName, 'originalRawName');
+      expect(resolved.description, 'description');
       expect(resolved.isRequired, isTrue);
       expect(resolved.isDeprecated, isFalse);
       expect(resolved.allowEmptyValue, isFalse);
       expect(resolved.explode, isFalse);
-      expect(resolved.model, equals(model));
-      expect(resolved.encoding, equals(PathParameterEncoding.simple));
-      expect(resolved.context, equals(context));
+      expect(resolved.model, model);
+      expect(resolved.encoding, PathParameterEncoding.simple);
+      expect(resolved.context, context);
     });
 
     test('resolve preserves original name when no new name provided', () {
@@ -53,7 +53,7 @@ void main() {
 
       final resolved = param.resolve();
 
-      expect(resolved.name, equals('originalName'));
+      expect(resolved.name, 'originalName');
     });
 
     test('PathParameterAlias.resolve resolves with alias name', () {
@@ -81,8 +81,8 @@ void main() {
 
       final resolved = alias.resolve();
 
-      expect(resolved.name, equals('aliasName'));
-      expect(resolved.rawName, equals('originalRawName'));
+      expect(resolved.name, 'aliasName');
+      expect(resolved.rawName, 'originalRawName');
     });
 
     test(
@@ -112,7 +112,7 @@ void main() {
 
         final resolved = alias.resolve(name: 'overrideName');
 
-        expect(resolved.name, equals('overrideName'));
+        expect(resolved.name, 'overrideName');
       },
     );
 
@@ -147,8 +147,8 @@ void main() {
 
       final resolved = secondAlias.resolve();
 
-      expect(resolved.name, equals('secondAliasName'));
-      expect(resolved.rawName, equals('originalRawName'));
+      expect(resolved.name, 'secondAliasName');
+      expect(resolved.rawName, 'originalRawName');
     });
   });
 }

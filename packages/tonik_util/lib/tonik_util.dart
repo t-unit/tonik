@@ -15,4 +15,5 @@ export 'src/encoding/label_encoder.dart';
 export 'src/encoding/matrix_encoder.dart';
 export 'src/encoding/parameter_entry.dart';
 export 'src/encoding/simple_encoder.dart';
+export 'src/offset_date_time.dart';
 export 'src/tonik_result.dart';
