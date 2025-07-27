@@ -3,12 +3,27 @@ description: Apply proper matchers in tests
 globs: *test.dart
 alwaysApply: false
 ---
- # Use isTrue and isFalse matchers
+
+# Use isTrue and isFalse matchers
 - Always `isTrue` and `isFalse` instead of `false` and `true.
 - Never use `equals`, test against value directly.
-
 
 # When working with the @code_builder package
 - Use `collapseWhitespace` from the [matchers package](https://pub.dev/documentation/matcher/latest/matcher/collapseWhitespace.html), availale via importing `import 'package:test/test.dart';`
 - Avoid testing single lines in generated code, make sure to test full methods
 - Test as much as possible by introspecting objects of the code builder package
+
+# Code Generation Testing
+- **PREFER object introspection** over string testing for generated code:
+  - Test constructor/method existence: `combinedClass.constructors.firstWhere((c) => c.name == 'fromSimple')`
+  - Test parameter types: `parameter.type?.accept(emitter).toString()`
+  - Test method properties: `method.lambda`, `method.returns`
+  - Test field names: `combinedClass.fields.map((f) => f.name)`
+- **Only use `contains(collapseWhitespace(...))` when absolutely necessary** for testing specific generated code content
+- **NEVER use bare `contains()` without `collapseWhitespace()`** for generated code - formatting differences will cause flaky tests
+- When testing generated code strings, format both expected and actual with `DartFormatter`
+
+  - Test field names: `combinedClass.fields.map((f) => f.name)`
+- **Only use `contains(collapseWhitespace(...))` when absolutely necessary** for testing specific generated code content
+- **NEVER use bare `contains()` without `collapseWhitespace()`** for generated code - formatting differences will cause flaky tests
+- When testing generated code strings, format both expected and actual with `DartFormatter`
