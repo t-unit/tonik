@@ -72,21 +72,21 @@ void main() {
         expect(combinedClass.constructors, hasLength(2));
         expect(combinedClass.constructors.first.constant, isTrue);
 
-        // Should have fields for each model
+        // Should have fields for each model (escaped because base/mixin are Dart keywords)
         expect(combinedClass.fields, hasLength(2));
         expect(
           combinedClass.fields.map((f) => f.name),
-          containsAll(['base', 'mixin']),
+          equals([r'$base', r'$mixin']),
         );
 
         // Check field types
         final baseField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'base',
+          (f) => f.name == r'$base',
         );
         expect(baseField.type?.accept(emitter).toString(), 'Base');
 
         final mixinField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'mixin',
+          (f) => f.name == r'$mixin',
         );
         expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
       });
@@ -190,11 +190,11 @@ void main() {
 
         final combinedClass = generator.generateClass(model);
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory CombinedModel.fromJson(Object? json) {
             return CombinedModel(
-              base: Base.fromJson(json),
-              mixin: Mixin.fromJson(json),
+              $base: Base.fromJson(json),
+              $mixin: Mixin.fromJson(json),
             );
           }
         ''';
@@ -260,17 +260,17 @@ void main() {
         expect(combinedClass.fields, hasLength(2));
         expect(
           combinedClass.fields.map((f) => f.name),
-          containsAll(['base', 'mixin']),
+          equals([r'$base', r'$mixin']),
         );
 
         // Check field types
         final baseField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'base',
+          (f) => f.name == r'$base',
         );
         expect(baseField.type?.accept(emitter).toString(), 'Base');
 
         final mixinField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'mixin',
+          (f) => f.name == r'$mixin',
         );
         expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
       });
@@ -314,20 +314,20 @@ void main() {
 
         final combinedClass = generator.generateClass(model);
 
-        const expectedEquals = '''
+        const expectedEquals = r'''
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             return other is CombinedModel &&
-              other.base == base &&
-              other.mixin == mixin;
+              other.$base == $base &&
+              other.$mixin == $mixin;
           }
         ''';
 
-        const expectedHashCode = '''
+        const expectedHashCode = r'''
           @override
           int get hashCode {
-            return Object.hashAll([base, mixin]);
+            return Object.hashAll([$base, $mixin]);
           }
         ''';
 
@@ -603,6 +603,156 @@ void main() {
           contains(collapseWhitespace(expectedFromJson)),
         );
       });
+    });
+  });
+
+  group('AllOfGenerator property normalization', () {
+    test('normalizes model names with special characters', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'User-Profile',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Account_Info',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      // Should normalize model names to valid field names
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        containsAll(['userProfile', 'accountInfo']),
+      );
+
+      // Check constructor parameters use normalized names
+      final constructor = combinedClass.constructors.first;
+      expect(
+        constructor.optionalParameters.map((p) => p.name),
+        containsAll(['userProfile', 'accountInfo']),
+      );
+    });
+
+    test('handles model name conflicts by making them unique', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'User',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'USER', 
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      // Should make conflicting names unique
+      expect(combinedClass.fields, hasLength(2));
+      final fieldNames = combinedClass.fields.map((f) => f.name).toList();
+      
+      // Should generate exactly these field names
+      expect(fieldNames, equals(['user', 'user2']));
+      
+      // Constructor parameters should also be unique
+      final paramNames = combinedClass.constructors.first.optionalParameters
+          .map((p) => p.name)
+          .toList();
+      expect(paramNames, equals(['user', 'user2']));
+    });
+
+    test('demonstrates need for better conflict resolution', () {
+      // This test shows a scenario where proper property normalization would
+      // help
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'UserProfile',
+            properties: const [],
+            context: context,
+          ),
+          ClassModel(
+            name: 'User-Profile',  // Should conflict with above
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final fieldNames = combinedClass.fields.map((f) => f.name).toList();
+      
+      // Should generate exactly these field names with conflict resolution
+      expect(fieldNames, equals(['userProfile', 'userProfile2']));
+    });
+
+    test('handles primitive models with normalized type names', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          StringModel(context: context),
+          IntegerModel(context: context),
+          DecimalModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      // Should normalize primitive type names to valid field names
+      expect(combinedClass.fields, hasLength(3));
+      final fieldNames = combinedClass.fields.map((f) => f.name).toList();
+      
+      expect(fieldNames, equals(['string', 'int', 'bigDecimal']));
     });
   });
 }

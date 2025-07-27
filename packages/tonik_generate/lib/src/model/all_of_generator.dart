@@ -4,6 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
@@ -50,15 +51,43 @@ class AllOfGenerator {
   Class generateClass(AllOfModel model) {
     final className = nameManager.modelName(model);
     final models = model.models.toList();
-    final properties = _buildProperties(models);
+    
+    final pseudoProperties = models.map((m) {
+      final rawName = switch (m) {
+        final NamedModel named => named.name ?? 'Model',
+        StringModel() => 'String',
+        IntegerModel() => 'int',
+        DoubleModel() => 'double',
+        NumberModel() => 'num',
+        BooleanModel() => 'bool',
+        DateTimeModel() => 'DateTime',
+        DateModel() => 'Date',
+        DecimalModel() => 'BigDecimal',
+        UriModel() => 'Uri',
+        _ => 'Model',
+      };
+      
+      return Property(
+        name: rawName,
+        model: m,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+    }).toList();
+
+    final normalizedProperties = normalizeProperties(pseudoProperties);
+    final properties = _buildPropertiesFromNormalized(normalizedProperties);
 
     return Class(
       (b) =>
           b
             ..name = className
             ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(_buildDefaultConstructor(models))
-            ..constructors.add(_buildFromJsonConstructor(className, models))
+            ..constructors.add(_buildDefaultConstructor(normalizedProperties))
+            ..constructors.add(
+              _buildFromJsonConstructor(className, normalizedProperties),
+            )
             ..methods.addAll([
               _buildToJsonMethod(className, model),
               generateEqualsMethod(
@@ -66,49 +95,56 @@ class AllOfGenerator {
                 properties: properties,
               ),
               generateHashCodeMethod(properties: properties),
-              _buildCopyWithMethod(className, models),
+              _buildCopyWithMethod(className, normalizedProperties),
             ])
-            ..fields.addAll(_buildFields(models)),
+            ..fields.addAll(_buildFields(normalizedProperties)),
     );
   }
 
-  List<Field> _buildFields(List<Model> models) {
-    return models.map((model) {
-      final typeRef = typeReference(model, nameManager, package);
-      final fieldName = typeRef.symbol.toCamelCase();
+  List<Field> _buildFields(
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    return normalizedProperties.map((normalized) {
+      final typeRef = typeReference(
+        normalized.property.model,
+        nameManager,
+        package,
+      );
       return Field(
         (b) =>
             b
-              ..name = fieldName
+              ..name = normalized.normalizedName
               ..modifier = FieldModifier.final$
               ..type = typeRef,
       );
     }).toList();
   }
 
-  List<({String normalizedName, bool hasCollectionValue})> _buildProperties(
-    List<Model> models,
+  List<({String normalizedName, bool hasCollectionValue})>
+      _buildPropertiesFromNormalized(
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    return models.map((model) {
-      final typeRef = typeReference(model, nameManager, package);
-      final fieldName = typeRef.symbol.toCamelCase();
-      return (normalizedName: fieldName, hasCollectionValue: false);
+    return normalizedProperties.map((normalized) {
+      return (
+        normalizedName: normalized.normalizedName, 
+        hasCollectionValue: normalized.property.model is ListModel,
+      );
     }).toList();
   }
 
-  Constructor _buildDefaultConstructor(List<Model> models) {
+  Constructor _buildDefaultConstructor(
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     return Constructor(
       (b) =>
           b
             ..constant = true
             ..optionalParameters.addAll(
-              models.map((model) {
-                final typeRef = typeReference(model, nameManager, package);
-                final fieldName = typeRef.symbol.toCamelCase();
+              normalizedProperties.map((normalized) {
                 return Parameter(
                   (b) =>
                       b
-                        ..name = fieldName
+                        ..name = normalized.normalizedName
                         ..named = true
                         ..required = true
                         ..toThis = true,
@@ -118,17 +154,18 @@ class AllOfGenerator {
     );
   }
 
-  Constructor _buildFromJsonConstructor(String className, List<Model> models) {
+  Constructor _buildFromJsonConstructor(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     final fromJsonParams = <Expression>[];
     final fieldNames = <String>[];
-    for (final model in models) {
-      final typeRef = typeReference(model, nameManager, package);
-      final fieldName = typeRef.symbol.toCamelCase();
-      fieldNames.add(fieldName);
+    for (final normalized in normalizedProperties) {
+      fieldNames.add(normalized.normalizedName);
       fromJsonParams.add(
         buildFromJsonValueExpression(
           'json',
-          model: model,
+          model: normalized.property.model,
           nameManager: nameManager,
           package: package,
           contextClass: className,
@@ -258,14 +295,23 @@ class AllOfGenerator {
     }
   }
 
-  Method _buildCopyWithMethod(String className, List<Model> models) {
+  Method _buildCopyWithMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     return generateCopyWithMethod(
       className: className,
       properties:
-          models.map((model) {
-            final typeRef = typeReference(model, nameManager, package);
-            final fieldName = typeRef.symbol.toCamelCase();
-            return (normalizedName: fieldName, typeRef: typeRef);
+          normalizedProperties.map((normalized) {
+            final typeRef = typeReference(
+              normalized.property.model,
+              nameManager,
+              package,
+            );
+            return (
+              normalizedName: normalized.normalizedName,
+              typeRef: typeRef,
+            );
           }).toList(),
     );
   }
