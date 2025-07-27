@@ -69,7 +69,7 @@ void main() {
 
         // Should have fields for each model
         expect(combinedClass.name, 'CombinedModel');
-        expect(combinedClass.constructors, hasLength(2));
+        expect(combinedClass.constructors, hasLength(3));
         expect(combinedClass.constructors.first.constant, isTrue);
 
         // Should have fields for each model (escaped because base/mixin are Dart keywords)
@@ -130,20 +130,20 @@ void main() {
         const expectedMethod = r'''
           Object? toJson() {
             final map = <String, Object?>{};
-            final baseJson = base.toJson();
-            if (baseJson is! Map<String, Object?>) {
+            final $baseJson = $base.toJson();
+            if ($baseJson is! Map<String, Object?>) {
               throw EncodingException(
-                'Expected base.toJson() to return Map<String, Object?>, got ${baseJson.runtimeType}',
+                'Expected $base.toJson() to return Map<String, Object?>, got ${$baseJson.runtimeType}',
               );
             }
-            map.addAll(baseJson);
-            final mixinJson = mixin.toJson();
-            if (mixinJson is! Map<String, Object?>) {
+            map.addAll($baseJson);
+            final $mixinJson = $mixin.toJson();
+            if ($mixinJson is! Map<String, Object?>) {
               throw EncodingException(
-                'Expected mixin.toJson() to return Map<String, Object?>, got ${mixinJson.runtimeType}',
+                'Expected $mixin.toJson() to return Map<String, Object?>, got ${$mixinJson.runtimeType}',
               );
             }
-            map.addAll(mixinJson);
+            map.addAll($mixinJson);
             return map;
           }
         ''';
@@ -676,7 +676,7 @@ void main() {
             context: context,
           ),
           ClassModel(
-            name: 'USER', 
+            name: 'USER',
             properties: [
               Property(
                 name: 'id',
@@ -697,14 +697,15 @@ void main() {
       // Should make conflicting names unique
       expect(combinedClass.fields, hasLength(2));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
-      
+
       // Should generate exactly these field names
       expect(fieldNames, equals(['user', 'user2']));
-      
+
       // Constructor parameters should also be unique
-      final paramNames = combinedClass.constructors.first.optionalParameters
-          .map((p) => p.name)
-          .toList();
+      final paramNames =
+          combinedClass.constructors.first.optionalParameters
+              .map((p) => p.name)
+              .toList();
       expect(paramNames, equals(['user', 'user2']));
     });
 
@@ -720,7 +721,7 @@ void main() {
             context: context,
           ),
           ClassModel(
-            name: 'User-Profile',  // Should conflict with above
+            name: 'User-Profile', // Should conflict with above
             properties: const [],
             context: context,
           ),
@@ -730,7 +731,7 @@ void main() {
 
       final combinedClass = generator.generateClass(model);
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
-      
+
       // Should generate exactly these field names with conflict resolution
       expect(fieldNames, equals(['userProfile', 'userProfile2']));
     });
@@ -751,8 +752,221 @@ void main() {
       // Should normalize primitive type names to valid field names
       expect(combinedClass.fields, hasLength(3));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
-      
+
       expect(fieldNames, equals(['string', 'int', 'bigDecimal']));
+    });
+  });
+
+  group('AllOfGenerator simple encoding support', () {
+    test('generates fromSimple constructor for simple types', () {
+      final model = AllOfModel(
+        name: 'SimpleAllOf',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      // Should have fromSimple constructor when all types are simple
+      final fromSimpleConstructor = combinedClass.constructors.firstWhere(
+        (c) => c.name == 'fromSimple',
+      );
+      expect(fromSimpleConstructor.factory, isTrue);
+      expect(fromSimpleConstructor.requiredParameters, hasLength(1));
+      expect(fromSimpleConstructor.requiredParameters.first.name, 'value');
+      expect(
+        fromSimpleConstructor.requiredParameters.first.type
+            ?.accept(emitter)
+            .toString(),
+        'String?',
+      );
+    });
+
+    test('generates toSimple method for simple types', () {
+      final model = AllOfModel(
+        name: 'SimpleAllOf',
+        models: <Model>{
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      // Should have toSimple method
+      final toSimpleMethod = combinedClass.methods.firstWhere(
+        (m) => m.name == 'toSimple',
+      );
+      expect(
+        toSimpleMethod.returns?.accept(emitter).toString(),
+        'String?',
+      );
+    });
+
+    test('generates fromSimple/toSimple that throw for complex types', () {
+      final model = AllOfModel(
+        name: 'ComplexAllOf',
+        models: <Model>{
+          ClassModel(
+            name: 'ComplexType',
+            properties: const [],
+            context: context,
+          ),
+          StringModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generatedCode = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromSimpleMethod = '''
+        factory ComplexAllOf.fromSimple(String? value) {
+          throw SimpleDecodingException(
+            'Simple encoding not supported for ComplexAllOf: contains complex types',
+          );
+        }
+      ''';
+
+      const expectedToSimpleMethod = '''
+        String? toSimple() {
+          throw SimpleDecodingException(
+            'Simple encoding not supported: contains complex types',
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromSimpleMethod)),
+      );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedToSimpleMethod)),
+      );
+    });
+
+    test('fromSimple generates correct body for multiple simple fields', () {
+      final model = AllOfModel(
+        name: 'MultiSimpleAllOf',
+        models: <Model>{
+          StringModel(context: context),
+          IntegerModel(context: context),
+          BooleanModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generatedCode = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromSimpleMethod = r'''
+        factory MultiSimpleAllOf.fromSimple(String? value) {
+          final properties = value.decodeSimpleStringList(
+            context: r'MultiSimpleAllOf',
+          );
+          if (properties.length < 3) {
+            throw SimpleDecodingException(
+              'Invalid value for MultiSimpleAllOf: $value',
+            );
+          }
+          return MultiSimpleAllOf(
+            string: properties[0].decodeSimpleString(
+              context: r'MultiSimpleAllOf.string',
+            ),
+            int: properties[1].decodeSimpleInt(context: r'MultiSimpleAllOf.int'),
+            bool: properties[2].decodeSimpleBool(context: r'MultiSimpleAllOf.bool'),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromSimpleMethod)),
+      );
+    });
+
+    test('toSimple generates correct body for multiple simple fields', () {
+      final model = AllOfModel(
+        name: 'MultiSimpleAllOf',
+        models: <Model>{
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generatedCode = format(combinedClass.accept(emitter).toString());
+
+      const expectedToSimpleMethod = '''
+        String? toSimple() => [string, int].encodeSimpleStringList();
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedToSimpleMethod)),
+      );
+    });
+  });
+
+  group('AllOfGenerator toJson field name regression tests', () {
+    test('toJson uses normalized field names correctly', () {
+      // This test covers the regression where toJson was using
+      // typeRef.symbol.toCamelCase() instead of normalized field names
+      final model = AllOfModel(
+        name: 'TestAllOf',
+        models: <Model>{
+          ClassModel(
+            name: 'SimplifiedAlbumObject',
+            properties: const [],
+            context: context,
+          ),
+          ClassModel(
+            name: 'TestAllOfModel',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generatedCode = format(combinedClass.accept(emitter).toString());
+
+      const expectedToJson = r'''
+        Object? toJson() {
+          final map = <String, Object?>{};
+          final simplifiedAlbumObjectJson = simplifiedAlbumObject.toJson();
+          if (simplifiedAlbumObjectJson is! Map<String, Object?>) {
+            throw EncodingException(
+              'Expected simplifiedAlbumObject.toJson() to return Map<String, Object?>, got ${simplifiedAlbumObjectJson.runtimeType}',
+            );
+          }
+          map.addAll(simplifiedAlbumObjectJson);
+          final testAllOfModelJson = testAllOfModel.toJson();
+          if (testAllOfModelJson is! Map<String, Object?>) {
+            throw EncodingException(
+              'Expected testAllOfModel.toJson() to return Map<String, Object?>, got ${testAllOfModelJson.runtimeType}',
+            );
+          }
+          map.addAll(testAllOfModelJson);
+          return map;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+
+      // Also verify that the fields exist with correct names
+      final fieldNames = combinedClass.fields.map((f) => f.name).toList();
+      expect(fieldNames, equals(['simplifiedAlbumObject', 'testAllOfModel']));
     });
   });
 }
