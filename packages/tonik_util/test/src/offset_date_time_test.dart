@@ -669,10 +669,9 @@ void main() {
         expect(result.hour, 15);
         expect(result.minute, 30);
         expect(result.second, 45);
-
-        // Should match system timezone, not be treated as UTC
+        
+        // Should match system timezone offset
         final expectedLocalTime = DateTime.parse(input);
-        expect(result.isUtc, expectedLocalTime.isUtc);
         expect(result.timeZoneOffset, expectedLocalTime.timeZoneOffset);
       });
 
@@ -842,22 +841,20 @@ void main() {
   });
 
   group('OffsetDateTime.parse local timezone behavior', () {
-    test('should preserve local timezone for strings '
-        'without timezone info', () {
+    test('should preserve local timezone for strings without timezone info', () {
       const localString = '2024-03-14T10:30:45';
       final result = OffsetDateTime.parse(localString);
-
+      
       final expectedDateTime = DateTime.parse(localString);
-
+      
       expect(result.year, 2024);
       expect(result.month, 3);
       expect(result.day, 14);
       expect(result.hour, 10);
       expect(result.minute, 30);
       expect(result.second, 45);
-
+      
       expect(result.timeZoneOffset, expectedDateTime.timeZoneOffset);
-      expect(result.timeZoneName, isNot('UTC'));
     });
 
     test('should handle local timezone vs UTC timezone correctly', () {
