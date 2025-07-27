@@ -35,8 +35,20 @@ jobs:
       - name: Run tests
         run: melos run test 
 
-      - name: Run integration tests
+      - name: Run petstore integration tests
         run: |
           cd integration_test/petstore/petstore_test
+          dart pub get
+          dart test --concurrency=1
+
+      - name: Run music streaming integration tests
+        run: |
+          cd integration_test/music_streaming/music_streaming_test
+          dart pub get
+          dart test --concurrency=1
+
+      - name: Run gov integration tests
+        run: |
+          cd integration_test/gov/gov_test
           dart pub get
           dart test --concurrency=1

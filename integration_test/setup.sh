@@ -14,14 +14,36 @@ if [[ $(echo "$JAVA_VERSION" | cut -d. -f1) -lt 11 ]]; then
     exit 1
 fi
 
-# Generate API code
+# Function to add dependency overrides to generated packages
+add_dependency_overrides() {
+    local pubspec_file="$1"
+    
+    if [ -f "$pubspec_file" ]; then
+        echo "Adding dependency overrides to $pubspec_file"
+        
+        # Add dependency_overrides section if it doesn't exist
+        if ! grep -q "dependency_overrides:" "$pubspec_file"; then
+            echo "" >> "$pubspec_file"
+            echo "dependency_overrides:" >> "$pubspec_file"
+            echo "  tonik_util:" >> "$pubspec_file"
+            echo "    path: ../../../packages/tonik_util" >> "$pubspec_file"
+        fi
+    else
+        echo "Warning: $pubspec_file not found"
+    fi
+}
+
+# Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore  --log-level verbose
+add_dependency_overrides "petstore/petstore_api/pubspec.yaml"
 cd petstore/petstore_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
+add_dependency_overrides "music_streaming/music_streaming_api/pubspec.yaml"
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov --log-level verbose
+add_dependency_overrides "gov/gov_api/pubspec.yaml"
 cd gov/gov_api && dart pub get && cd ../..
 
 # Download Imposter JAR only if it doesn't exist
