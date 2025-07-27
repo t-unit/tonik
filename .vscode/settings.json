@@ -1,6 +1,7 @@
 {
   "dart.flutterSdkPath": ".fvm/versions/3.32.0",
   "cSpell.words": [
-    "Pubspec"
+    "Pubspec",
+    "tonik"
   ]
 }

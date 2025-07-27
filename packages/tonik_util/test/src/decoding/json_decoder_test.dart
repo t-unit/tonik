@@ -2,34 +2,62 @@ import 'dart:convert';
 
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
 
 void main() {
-  setUpAll(tz.initializeTimeZones);
   group('JsonDecoder', () {
     group('DateTime', () {
       test('decodes DateTime values with timezone awareness', () {
         // Test UTC parsing
         const utcString = '2024-03-14T10:30:45Z';
         final utcResult = utcString.decodeJsonDateTime();
-        expect(utcResult.isUtc, isTrue);
-        expect(utcResult, DateTime.utc(2024, 3, 14, 10, 30, 45));
+        expect(utcResult.year, 2024);
+        expect(utcResult.month, 3);
+        expect(utcResult.day, 14);
+        expect(utcResult.hour, 10);
+        expect(utcResult.minute, 30);
+        expect(utcResult.second, 45);
+        expect(utcResult.timeZoneOffset, Duration.zero);
 
-        // Test local time parsing
+        // Test local time parsing (no timezone offset)
         const localString = '2024-03-14T10:30:45';
         final localResult = localString.decodeJsonDateTime();
-        expect(localResult.isUtc, isFalse);
-        expect(localResult, DateTime(2024, 3, 14, 10, 30, 45));
+        expect(localResult.year, 2024);
+        expect(localResult.month, 3);
+        expect(localResult.day, 14);
+        expect(localResult.hour, 10);
+        expect(localResult.minute, 30);
+        expect(localResult.second, 45);
+        // Local datetime uses system timezone
+        // should match same date in local timezone
+        final expectedLocalTime = DateTime(2024, 3, 14, 10, 30, 45);
+        expect(localResult.timeZoneOffset, expectedLocalTime.timeZoneOffset);
 
         // Test timezone offset parsing
         const offsetString = '2024-03-14T10:30:45+05:00';
         final offsetResult = offsetString.decodeJsonDateTime();
-        expect(offsetResult, isA<tz.TZDateTime>());
+        expect(offsetResult.year, 2024);
+        expect(offsetResult.month, 3);
+        expect(offsetResult.day, 14);
+        expect(offsetResult.hour, 10);
+        expect(offsetResult.minute, 30);
+        expect(offsetResult.second, 45);
         expect(offsetResult.timeZoneOffset.inHours, 5);
+        expect(offsetResult.timeZoneOffset.inMinutes, 5 * 60);
+
+        // Test negative timezone offset
+        const negativeOffsetString = '2024-03-14T10:30:45-08:00';
+        final negativeOffsetResult = negativeOffsetString.decodeJsonDateTime();
+        expect(negativeOffsetResult.year, 2024);
+        expect(negativeOffsetResult.month, 3);
+        expect(negativeOffsetResult.day, 14);
+        expect(negativeOffsetResult.hour, 10);
+        expect(negativeOffsetResult.minute, 30);
+        expect(negativeOffsetResult.second, 45);
+        expect(negativeOffsetResult.timeZoneOffset.inHours, -8);
+        expect(negativeOffsetResult.timeZoneOffset.inMinutes, -8 * 60);
 
         // Test error cases
         expect(
@@ -43,10 +71,16 @@ void main() {
       });
 
       test('decodes nullable DateTime values with timezone awareness', () {
-        expect(
-          '2024-03-14T10:30:45Z'.decodeJsonNullableDateTime(),
-          DateTime.utc(2024, 3, 14, 10, 30, 45),
-        );
+        final result = '2024-03-14T10:30:45Z'.decodeJsonNullableDateTime();
+        expect(result, isNotNull);
+        expect(result!.year, 2024);
+        expect(result.month, 3);
+        expect(result.day, 14);
+        expect(result.hour, 10);
+        expect(result.minute, 30);
+        expect(result.second, 45);
+        expect(result.timeZoneOffset, Duration.zero);
+        
         expect(null.decodeJsonNullableDateTime(), isNull);
         expect(''.decodeJsonNullableDateTime(), isNull);
         expect(
