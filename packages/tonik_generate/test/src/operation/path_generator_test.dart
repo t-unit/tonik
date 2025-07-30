@@ -985,5 +985,103 @@ void main() {
         collapseWhitespace(expectedMethod),
       );
     });
+
+    test('handles consecutive path parameters correctly', () {
+      final param1 = PathParameterObject(
+        name: 'integer',
+        rawName: 'integer',
+        description: 'Integer value',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: IntegerModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final param2 = PathParameterObject(
+        name: 'string',
+        rawName: 'string',
+        description: 'String value',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final param3 = PathParameterObject(
+        name: 'boolean',
+        rawName: 'boolean',
+        description: 'Boolean value',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: BooleanModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'testConsecutiveParams',
+        context: context,
+        summary: 'Test consecutive parameters',
+        description: 'Tests path with consecutive parameters separated by slashes',
+        tags: const {},
+        isDeprecated: false,
+        path: '/primitive/{integer}/{string}/{boolean}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {param1, param2, param3},
+        responses: const {},
+        requestBody: null,
+      );
+
+      const expectedMethod = '''
+        List<String> _path({
+          required int integer,
+          required String string,
+          required bool boolean,
+        }) {
+          const simpleEncoder = SimpleEncoder();
+          return [
+            r'primitive',
+            simpleEncoder.encode(integer, explode: false, allowEmpty: false),
+            simpleEncoder.encode(string, explode: false, allowEmpty: false),
+            simpleEncoder.encode(boolean, explode: false, allowEmpty: false),
+          ];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'integer', parameter: param1),
+            (normalizedName: 'string', parameter: param2),
+            (normalizedName: 'boolean', parameter: param3),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
   });
 }

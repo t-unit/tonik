@@ -99,15 +99,20 @@ class PathGenerator {
     final pathParts = operation.path
         .splitAndKeep(RegExp(r'\{[^}]+\}'))
         .where((pathComponent) => pathComponent.isNotEmpty)
-        .map((pathComponent) {
+        .map<Code?>((pathComponent) {
           if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
-            return Code(
-              pathComponent
-                  .split('/')
-                  .where((s) => s.isNotEmpty)
-                  .map((s) => "r'$s'")
-                  .join(', '),
-            );
+            final segments = pathComponent
+                .split('/')
+                .where((s) => s.isNotEmpty)
+                .map((s) => "r'$s'")
+                .join(', ');
+            
+            // Skip empty segments to avoid generating invalid commas
+            if (segments.isEmpty) {
+              return null;
+            }
+            
+            return Code(segments);
           }
 
           final paramName = pathComponent.substring(
@@ -119,13 +124,18 @@ class PathGenerator {
           );
 
           if (param == null) {
-            return Code(
-              pathComponent
-                  .split('/')
-                  .where((s) => s.isNotEmpty)
-                  .map((s) => "r'$s'")
-                  .join(', '),
-            );
+            final segments = pathComponent
+                .split('/')
+                .where((s) => s.isNotEmpty)
+                .map((s) => "r'$s'")
+                .join(' ');
+            
+            // Skip empty segments to avoid generating invalid commas
+            if (segments.isEmpty) {
+              return null;
+            }
+            
+            return Code(segments);
           }
 
           final encoderName = encoders[param.parameter.encoding]!;
@@ -139,7 +149,9 @@ class PathGenerator {
             'explode: ${param.parameter.explode}, '
             'allowEmpty: ${param.parameter.allowEmptyValue})',
           );
-        });
+        })
+        .where((code) => code != null)
+        .cast<Code>();
 
     body
       ..add(const Code('return ['))
