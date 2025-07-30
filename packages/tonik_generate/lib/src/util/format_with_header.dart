@@ -1,10 +1,17 @@
 import 'package:dart_style/dart_style.dart';
+import 'package:logging/logging.dart';
 
 extension FormatWithHeader on DartFormatter {
-  String formatWithHeader(String code) {
-    return format('''
-// Generated code - do not modify by hand
+  static final _logger = Logger('formatting');
 
-$code''');
+  String formatWithHeader(String code) {
+    final codeWithHeader = '// Generated code - do not modify by hand\n\n$code';
+
+    try {
+      return format(codeWithHeader);
+    } catch (e) {
+      _logger.fine('Failed to format code:\n$codeWithHeader');
+      rethrow;
+    }
   }
 }
