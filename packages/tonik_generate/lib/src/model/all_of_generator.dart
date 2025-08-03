@@ -55,22 +55,9 @@ class AllOfGenerator {
 
     final pseudoProperties =
         models.map((m) {
-          final rawName = switch (m) {
-            final NamedModel named => named.name ?? 'Model',
-            StringModel() => 'String',
-            IntegerModel() => 'int',
-            DoubleModel() => 'double',
-            NumberModel() => 'num',
-            BooleanModel() => 'bool',
-            DateTimeModel() => 'DateTime',
-            DateModel() => 'Date',
-            DecimalModel() => 'BigDecimal',
-            UriModel() => 'Uri',
-            _ => 'Model',
-          };
-
+          final typeRef = typeReference(m, nameManager, package);
           return Property(
-            name: rawName,
+            name: typeRef.symbol,
             model: m,
             isRequired: true,
             isNullable: false,
@@ -97,6 +84,11 @@ class AllOfGenerator {
             ])
             ..methods.addAll([
               _buildToJsonMethod(className, model, normalizedProperties),
+              _buildSimplePropertiesMethod(
+                className,
+                normalizedProperties,
+                model,
+              ),
               _buildToSimpleMethod(
                 normalizedProperties,
                 model,
@@ -310,7 +302,26 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    if (model.encodingShape != EncodingShape.simple) {
+    if (normalizedProperties.isEmpty) {
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromSimple'
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..body = Code('return $className();'),
+      );
+    }
+
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
       return Constructor(
         (b) =>
             b
@@ -333,7 +344,34 @@ class AllOfGenerator {
       );
     }
 
-    if (normalizedProperties.isEmpty) {
+    // If all types are complex, each model should decode from the same single
+    // value
+    if (model.hasComplexTypes) {
+      final propertyAssignments = <MapEntry<String, Expression>>[];
+
+      for (final normalized in normalizedProperties) {
+        final name = normalized.normalizedName;
+        final modelType = normalized.property.model;
+
+        // Each model attempts to decode from the single value
+        final expression =
+            modelType.encodingShape == EncodingShape.simple
+                ? buildSimpleValueExpression(
+                  refer('value'),
+                  model: modelType,
+                  isRequired: !normalized.property.isNullable,
+                  nameManager: nameManager,
+                  package: package,
+                  contextClass: className,
+                  contextProperty: name,
+                )
+                : typeReference(modelType, nameManager, package)
+                    .property('fromSimple')
+                    .call([refer('value')]);
+
+        propertyAssignments.add(MapEntry(name, expression));
+      }
+
       return Constructor(
         (b) =>
             b
@@ -347,13 +385,21 @@ class AllOfGenerator {
                         ..type = refer('String?', 'dart:core'),
                 ),
               )
-              ..body = Code('return $className();'),
+              ..body =
+                  refer(className, package)
+                      .call([], {
+                        for (final entry in propertyAssignments)
+                          entry.key: entry.value,
+                      })
+                      .returned
+                      .statement,
       );
     }
 
+    // For primitive-only AllOf models, decode from single value to all models
     final propertyAssignments = <MapEntry<String, Expression>>[];
-    for (var i = 0; i < normalizedProperties.length; i++) {
-      final normalized = normalizedProperties[i];
+
+    for (final normalized in normalizedProperties) {
       final name = normalized.normalizedName;
       final modelType = normalized.property.model;
       final isNullable = normalized.property.isNullable;
@@ -362,7 +408,7 @@ class AllOfGenerator {
         MapEntry(
           name,
           buildSimpleValueExpression(
-            refer('properties[$i]'),
+            refer('value'),
             model: modelType,
             isRequired: !isNullable,
             nameManager: nameManager,
@@ -387,36 +433,182 @@ class AllOfGenerator {
                       ..type = refer('String?', 'dart:core'),
               ),
             )
+            ..body =
+                refer(className, package)
+                    .call([], {
+                      for (final entry in propertyAssignments)
+                        entry.key: entry.value,
+                    })
+                    .returned
+                    .statement,
+    );
+  }
+
+  /// Builds a simpleProperties method that returns merged properties from all 
+  /// sub-models or throws for unsupported types.
+  Method _buildSimplePropertiesMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = Block.of([
+                generateSimpleDecodingExceptionExpression(
+                  'Simple properties not supported for $className: '
+                  'contains complex types',
+                ).statement,
+              ]),
+      );
+    }
+
+    // If all types are complex, use property merging approach
+    if (model.hasComplexTypes) {
+      final propertyMergingLines = [
+        declareFinal('mergedProperties')
+            .assign(
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                refer('String', 'dart:core'),
+              ),
+            )
+            .statement,
+      ];
+
+      for (final normalized in normalizedProperties) {
+        propertyMergingLines.add(
+          refer('mergedProperties').property('addAll').call([
+            refer(normalized.normalizedName).property('simpleProperties').call(
+              [],
+              {'allowEmpty': refer('allowEmpty')},
+            ),
+          ]).statement,
+        );
+      }
+
+      propertyMergingLines.add(
+        refer('mergedProperties').returned.statement,
+      );
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = Block.of(propertyMergingLines),
+      );
+    }
+
+    // For primitive-only AllOf models, return an empty map since they 
+    // encode directly as a single value
+    return Method(
+      (b) =>
+          b
+            ..name = 'simpleProperties'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      refer('String', 'dart:core'),
+                      refer('String', 'dart:core'),
+                    ]),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
             ..body = Block.of([
-              const Code('final properties = '),
-              Code("value.decodeSimpleStringList(context: r'$className');"),
-              Code('if (properties.length < ${normalizedProperties.length}) {'),
-              generateSimpleDecodingExceptionExpression(
-                'Invalid value for $className: \$value',
-              ).statement,
-              const Code('}'),
-              refer(className, package)
-                  .call([], {
-                    for (final entry in propertyAssignments)
-                      entry.key: entry.value,
-                  })
-                  .returned
-                  .statement,
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                refer('String', 'dart:core'),
+              ).returned.statement,
             ]),
     );
   }
 
-  /// Builds a toSimple method for simple types.
+  /// Builds a toSimple method that merges properties from all models.
   Method _buildToSimpleMethod(
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    if (model.encodingShape != EncodingShape.simple) {
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
       return Method(
         (b) =>
             b
               ..name = 'toSimple'
               ..returns = refer('String?', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
               ..lambda = false
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -426,18 +618,84 @@ class AllOfGenerator {
       );
     }
 
-    // Build the list of field values to encode
-    final fieldNames = normalizedProperties
-        .map((normalized) => normalized.normalizedName)
-        .join(', ');
+    // If all types are complex, use simpleProperties approach
+    if (model.hasComplexTypes) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toSimple'
+              ..returns = refer('String?', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..lambda = false
+              ..body = Block.of([
+                refer('simpleProperties')
+                    .call([], {'allowEmpty': refer('allowEmpty')})
+                    .property('toSimple')
+                    .call([], {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                    })
+                    .returned
+                    .statement,
+              ]),
+      );
+    }
+
+    // For primitive-only AllOf models, return the primary (first) model's
+    // value
+    final primaryField = normalizedProperties.first;
 
     return Method(
       (b) =>
           b
             ..name = 'toSimple'
             ..returns = refer('String?', 'dart:core')
-            ..lambda = true
-            ..body = Code('[$fieldNames].encodeSimpleStringList()'),
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..lambda = false
+            ..body = Block.of([
+              refer(primaryField.normalizedName)
+                  .property('toSimple')
+                  .call([], {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                  })
+                  .returned
+                  .statement,
+            ]),
     );
   }
 

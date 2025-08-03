@@ -29,105 +29,101 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  group('AllOfGenerator', () {
-    group('with class models', () {
-      test('generates class with references to each model', () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: <Model>{
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
+  group('with class models', () {
+    test('generates class with references to each model', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        // Should have fields for each model
-        expect(combinedClass.name, 'CombinedModel');
-        expect(combinedClass.constructors, hasLength(3));
-        expect(combinedClass.constructors.first.constant, isTrue);
+      expect(combinedClass.name, 'CombinedModel');
+      expect(combinedClass.constructors, hasLength(3));
+      expect(combinedClass.constructors.first.constant, isTrue);
 
-        // Should have fields for each model (escaped because base/mixin are Dart keywords)
-        expect(combinedClass.fields, hasLength(2));
-        expect(
-          combinedClass.fields.map((f) => f.name),
-          equals([r'$base', r'$mixin']),
-        );
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        equals([r'$base', r'$mixin']),
+      );
 
-        // Check field types
-        final baseField = combinedClass.fields.firstWhere(
-          (f) => f.name == r'$base',
-        );
-        expect(baseField.type?.accept(emitter).toString(), 'Base');
+      final baseField = combinedClass.fields.firstWhere(
+        (f) => f.name == r'$base',
+      );
+      expect(baseField.type?.accept(emitter).toString(), 'Base');
 
-        final mixinField = combinedClass.fields.firstWhere(
-          (f) => f.name == r'$mixin',
-        );
-        expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
-      });
+      final mixinField = combinedClass.fields.firstWhere(
+        (f) => f.name == r'$mixin',
+      );
+      expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
+    });
 
-      test('generates toJson method that combines all model properties', () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: <Model>{
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
+    test('generates toJson method that combines all model properties', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           Object? toJson() {
             final map = <String, Object?>{};
             final $baseJson = $base.toJson();
@@ -148,49 +144,49 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      });
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-      test('generates fromJson method that validates all model properties', () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: <Model>{
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
+    test('generates fromJson method that validates all model properties', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        const expectedMethod = r'''
+      const expectedMethod = r'''
           factory CombinedModel.fromJson(Object? json) {
             return CombinedModel(
               $base: Base.fromJson(json),
@@ -199,122 +195,120 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      });
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
 
-      test('handles nested models correctly', () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: <Model>{
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'items',
-                  model: ListModel(
-                    content: StringModel(context: context),
-                    context: context,
-                  ),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
+    test('handles nested models correctly', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'items',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
                 ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'metadata',
-                  model: ClassModel(
-                    name: 'Metadata',
-                    properties: [
-                      Property(
-                        name: 'count',
-                        model: IntegerModel(context: context),
-                        isRequired: true,
-                        isNullable: false,
-                        isDeprecated: false,
-                      ),
-                    ],
-                    context: context,
-                  ),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'metadata',
+                model: ClassModel(
+                  name: 'Metadata',
+                  properties: [
+                    Property(
+                      name: 'count',
+                      model: IntegerModel(context: context),
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
+                    ),
+                  ],
+                  context: context,
                 ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        // Should have fields for each model
-        expect(combinedClass.fields, hasLength(2));
-        expect(
-          combinedClass.fields.map((f) => f.name),
-          equals([r'$base', r'$mixin']),
-        );
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        equals([r'$base', r'$mixin']),
+      );
 
-        // Check field types
-        final baseField = combinedClass.fields.firstWhere(
-          (f) => f.name == r'$base',
-        );
-        expect(baseField.type?.accept(emitter).toString(), 'Base');
+      final baseField = combinedClass.fields.firstWhere(
+        (f) => f.name == r'$base',
+      );
+      expect(baseField.type?.accept(emitter).toString(), 'Base');
 
-        final mixinField = combinedClass.fields.firstWhere(
-          (f) => f.name == r'$mixin',
-        );
-        expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
-      });
+      final mixinField = combinedClass.fields.firstWhere(
+        (f) => f.name == r'$mixin',
+      );
+      expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
+    });
 
-      test('generates equals and hashCode methods', () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: <Model>{
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'items',
-                  model: ListModel(
-                    content: StringModel(context: context),
-                    context: context,
-                  ),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
+    test('generates equals and hashCode methods', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'items',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
                 ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
 
-        final combinedClass = generator.generateClass(model);
+      final combinedClass = generator.generateClass(model);
 
-        const expectedEquals = r'''
+      const expectedEquals = r'''
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
@@ -324,25 +318,263 @@ void main() {
           }
         ''';
 
-        const expectedHashCode = r'''
+      const expectedHashCode = r'''
           @override
           int get hashCode {
             return Object.hashAll([$base, $mixin]);
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          allOf(
-            contains(collapseWhitespace(expectedEquals)),
-            contains(collapseWhitespace(expectedHashCode)),
-          ),
-        );
-      });
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        allOf(
+          contains(collapseWhitespace(expectedEquals)),
+          contains(collapseWhitespace(expectedHashCode)),
+        ),
+      );
     });
 
-    group('with primitive models', () {
-      test('handles string and decimal models with single value', () {
+    test('generates toSimple merging all class properties', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedToSimpleMethod = '''
+        String? toSimple({required bool explode, required bool allowEmpty}) {
+          return simpleProperties(
+            allowEmpty: allowEmpty,
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToSimpleMethod)),
+      );
+    });
+
+    test('generates fromSimple merging properties from single value', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedFromSimpleMethod = r'''
+        factory CombinedModel.fromSimple(String? value) {
+          return CombinedModel(
+            $base: Base.fromSimple(value),
+            $mixin: Mixin.fromSimple(value),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromSimpleMethod)),
+      );
+    });
+
+    test('generates simpleProperties method that merges sub-model properties', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'offset',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'index',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedSimplePropertiesMethod = r'''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          final mergedProperties = <String, String>{};
+          mergedProperties.addAll($base.simpleProperties(allowEmpty: allowEmpty));
+          mergedProperties.addAll($mixin.simpleProperties(allowEmpty: allowEmpty));
+          return mergedProperties;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+      );
+    });
+  });
+
+  group('with primitive models', () {
+    test('handles string and decimal models with single value', () {
+      final model = AllOfModel(
+        name: 'StringDecimalModel',
+        models: <Model>{
+          StringModel(context: context),
+          DecimalModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        containsAll(['string', 'bigDecimal']),
+      );
+
+      final stringField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'string',
+      );
+      expect(stringField.type?.accept(emitter).toString(), 'String');
+
+      final decimalField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'bigDecimal',
+      );
+      expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
+
+      const expectedToJson = '''
+          Object? toJson() => string;
+        ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+
+      const expectedFromJson = '''
+          factory StringDecimalModel.fromJson(Object? json) {
+            return StringDecimalModel(
+              string: json.decodeJsonString(context: r'StringDecimalModel'),
+              bigDecimal: json.decodeJsonBigDecimal(context: r'StringDecimalModel'),
+            );
+          }
+        ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
+
+    test('generates toSimple returning primary primitive value', () {
+      final model = AllOfModel(
+        name: 'StringDecimalModel',
+        models: <Model>{
+          StringModel(context: context),
+          DecimalModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedToSimpleMethod = '''
+        String? toSimple({required bool explode, required bool allowEmpty}) {
+          return string.toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToSimpleMethod)),
+      );
+    });
+
+    test(
+      'generates fromSimple validating single value against all primitive '
+      'types',
+      () {
         final model = AllOfModel(
           name: 'StringDecimalModel',
           models: <Model>{
@@ -354,51 +586,109 @@ void main() {
 
         final combinedClass = generator.generateClass(model);
 
-        // Should have fields for each model
-        expect(combinedClass.fields, hasLength(2));
-        expect(
-          combinedClass.fields.map((f) => f.name),
-          containsAll(['string', 'bigDecimal']),
-        );
-
-        // Check field types
-        final stringField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'string',
-        );
-        expect(stringField.type?.accept(emitter).toString(), 'String');
-
-        final decimalField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'bigDecimal',
-        );
-        expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
-
-        // Check toJson - should return the string value
-        const expectedToJson = '''
-          Object? toJson() => string;
-        ''';
+        const expectedFromSimpleMethod = '''
+        factory StringDecimalModel.fromSimple(String? value) {
+          return StringDecimalModel(
+            string: value.decodeSimpleString(context: r'StringDecimalModel.string'),
+            bigDecimal: value.decodeSimpleBigDecimal(
+              context: r'StringDecimalModel.bigDecimal',
+            ),
+          );
+        }
+      ''';
 
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedToJson)),
+          contains(collapseWhitespace(expectedFromSimpleMethod)),
         );
+      },
+    );
 
-        // Check fromJson - should decode single value into both types
-        const expectedFromJson = '''
-          factory StringDecimalModel.fromJson(Object? json) {
-            return StringDecimalModel(
-              string: json.decodeJsonString(context: r'StringDecimalModel'),
-              bigDecimal: json.decodeJsonBigDecimal(context: r'StringDecimalModel'),
+    test('handles enum and string models with single value', () {
+      final model = AllOfModel(
+        name: 'EnumStringModel',
+        models: {
+          EnumModel(
+            name: 'Status',
+            values: const {'active', 'inactive'},
+            isNullable: false,
+            context: context,
+          ),
+          StringModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        containsAll(['status', 'string']),
+      );
+
+      final enumField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'status',
+      );
+      expect(enumField.type?.accept(emitter).toString(), 'Status');
+
+      final stringField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'string',
+      );
+      expect(stringField.type?.accept(emitter).toString(), 'String');
+
+      const expectedToJson = '''
+          Object? toJson() => status.toJson();
+        ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+
+      const expectedFromJson = '''
+          factory EnumStringModel.fromJson(Object? json) {
+            return EnumStringModel(
+              status: Status.fromJson(json),
+              string: json.decodeJsonString(context: r'EnumStringModel'),
             );
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      });
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
 
-      test('handles enum and string models with single value', () {
+      const expectedEquals = '''
+          @override
+          bool operator ==(Object other) {
+            if (identical(this, other)) return true;
+            return other is EnumStringModel &&
+              other.status == status &&
+              other.string == string;
+          }
+        ''';
+
+      const expectedHashCode = '''
+          @override
+          int get hashCode {
+            return Object.hashAll([status, string]);
+          }
+        ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        allOf(
+          contains(collapseWhitespace(expectedEquals)),
+          contains(collapseWhitespace(expectedHashCode)),
+        ),
+      );
+    });
+
+    test(
+      'generates toSimple returning enum value for enum and string models',
+      () {
         final model = AllOfModel(
           name: 'EnumStringModel',
           models: {
@@ -415,81 +705,31 @@ void main() {
 
         final combinedClass = generator.generateClass(model);
 
-        // Should have fields for each model
-        expect(combinedClass.fields, hasLength(2));
-        expect(
-          combinedClass.fields.map((f) => f.name),
-          containsAll(['status', 'string']),
-        );
-
-        // Check field types
-        final enumField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'status',
-        );
-        expect(enumField.type?.accept(emitter).toString(), 'Status');
-
-        final stringField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'string',
-        );
-        expect(stringField.type?.accept(emitter).toString(), 'String');
-
-        // Check toJson - should return the string value
-        const expectedToJson = '''
-          Object? toJson() => status.toJson();
-        ''';
+        const expectedToSimpleMethod = '''
+        String? toSimple({required bool explode, required bool allowEmpty}) {
+          return status.toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
 
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedToJson)),
+          contains(collapseWhitespace(expectedToSimpleMethod)),
         );
+      },
+    );
 
-        // Check fromJson - should decode single value into both types
-        const expectedFromJson = '''
-          factory EnumStringModel.fromJson(Object? json) {
-            return EnumStringModel(
-              status: Status.fromJson(json),
-              string: json.decodeJsonString(context: r'EnumStringModel'),
-            );
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-
-        // Check equals and hashCode
-        const expectedEquals = '''
-          @override
-          bool operator ==(Object other) {
-            if (identical(this, other)) return true;
-            return other is EnumStringModel &&
-              other.status == status &&
-              other.string == string;
-          }
-        ''';
-
-        const expectedHashCode = '''
-          @override
-          int get hashCode {
-            return Object.hashAll([status, string]);
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          allOf(
-            contains(collapseWhitespace(expectedEquals)),
-            contains(collapseWhitespace(expectedHashCode)),
-          ),
-        );
-      });
-
-      test('handles date and string models with single value', () {
+    test(
+      'generates fromSimple validating single value against enum and string',
+      () {
         final model = AllOfModel(
-          name: 'DateStringModel',
-          models: <Model>{
-            DateModel(context: context),
+          name: 'EnumStringModel',
+          models: {
+            EnumModel(
+              name: 'Status',
+              values: const {'active', 'inactive'},
+              isNullable: false,
+              context: context,
+            ),
             StringModel(context: context),
           },
           context: context,
@@ -497,36 +737,60 @@ void main() {
 
         final combinedClass = generator.generateClass(model);
 
-        // Should have fields for each model
-        expect(combinedClass.fields, hasLength(2));
-        expect(
-          combinedClass.fields.map((f) => f.name),
-          containsAll(['date', 'string']),
-        );
-
-        // Check field types
-        final dateField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'date',
-        );
-        expect(dateField.type?.accept(emitter).toString(), 'Date');
-
-        final stringField = combinedClass.fields.firstWhere(
-          (f) => f.name == 'string',
-        );
-        expect(stringField.type?.accept(emitter).toString(), 'String');
-
-        // Check toJson - should return the ISO string
-        const expectedToJson = '''
-          Object? toJson() => date.toJson();
-        ''';
+        const expectedFromSimpleMethod = '''
+        factory EnumStringModel.fromSimple(String? value) {
+          return EnumStringModel(
+            status: Status.fromSimple(value),
+            string: value.decodeSimpleString(context: r'EnumStringModel.string'),
+          );
+        }
+      ''';
 
         expect(
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedToJson)),
+          contains(collapseWhitespace(expectedFromSimpleMethod)),
         );
+      },
+    );
 
-        // Check fromJson - should decode single value into both types
-        const expectedFromJson = '''
+    test('handles date and string models with single value', () {
+      final model = AllOfModel(
+        name: 'DateStringModel',
+        models: <Model>{
+          DateModel(context: context),
+          StringModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        containsAll(['date', 'string']),
+      );
+
+      final dateField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'date',
+      );
+      expect(dateField.type?.accept(emitter).toString(), 'Date');
+
+      final stringField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'string',
+      );
+      expect(stringField.type?.accept(emitter).toString(), 'String');
+
+      const expectedToJson = '''
+          Object? toJson() => date.toJson();
+        ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+
+      const expectedFromJson = '''
           factory DateStringModel.fromJson(Object? json) {
             return DateStringModel(
               date: json.decodeJsonDate(context: r'DateStringModel'),
@@ -535,13 +799,15 @@ void main() {
           }
         ''';
 
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedFromJson)),
-        );
-      });
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+    });
 
-      test('handles number models with single value', () {
+    test(
+      'handles number models with single value encoded as most general type',
+      () {
         final model = AllOfModel(
           name: 'NumberModel',
           models: <Model>{
@@ -554,14 +820,12 @@ void main() {
 
         final combinedClass = generator.generateClass(model);
 
-        // Should have fields for each model
         expect(combinedClass.fields, hasLength(3));
         expect(
           combinedClass.fields.map((f) => f.name).toList(),
           containsAll(['num', 'double', 'int']),
         );
 
-        // Check field types
         final numberField = combinedClass.fields.firstWhere(
           (f) => f.name == 'num',
         );
@@ -577,7 +841,6 @@ void main() {
         );
         expect(integerField.type?.accept(emitter).toString(), 'int');
 
-        // Check toJson - should return the number value
         const expectedToJson = '''
           Object? toJson() => num;
         ''';
@@ -587,7 +850,6 @@ void main() {
           contains(collapseWhitespace(expectedToJson)),
         );
 
-        // Check fromJson - should decode single value into all number types
         const expectedFromJson = '''
           factory NumberModel.fromJson(Object? json) {
             return NumberModel(
@@ -602,15 +864,204 @@ void main() {
           collapseWhitespace(format(combinedClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedFromJson)),
         );
-      });
-    });
+      },
+    );
   });
 
-  group('AllOfGenerator property normalization', () {
+  group('with mixed models', () {
+    test('generates class combining primitive and complex models', () {
+      final model = AllOfModel(
+        name: 'MixedModel',
+        models: <Model>{
+          StringModel(context: context),
+          ClassModel(
+            name: 'UserData',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      expect(combinedClass.fields, hasLength(2));
+      expect(
+        combinedClass.fields.map((f) => f.name),
+        containsAll(['string', 'userData']),
+      );
+
+      final stringField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'string',
+      );
+      expect(stringField.type?.accept(emitter).toString(), 'String');
+
+      final userDataField = combinedClass.fields.firstWhere(
+        (f) => f.name == 'userData',
+      );
+      expect(userDataField.type?.accept(emitter).toString(), 'UserData');
+    });
+
+    test(
+      'throws exception for mixed types in fromSimple',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: {
+            StringModel(context: context),
+            EnumModel(
+              name: 'Status',
+              values: const {'active', 'inactive'},
+              isNullable: false,
+              context: context,
+            ),
+            ClassModel(
+              name: 'UserData',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedFromSimpleMethod = '''
+        factory MixedModel.fromSimple(String? value) {
+          throw SimpleDecodingException(
+            'Simple encoding not supported for MixedModel: contains complex types',
+          );
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedFromSimpleMethod)),
+        );
+      },
+    );
+
+    test(
+      'throws exception for mixed types in toSimple',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: <Model>{
+            StringModel(context: context),
+            ClassModel(
+              name: 'UserData',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedToSimpleMethod = '''
+          String? toSimple({required bool explode, required bool allowEmpty}) {
+            throw SimpleDecodingException(
+              'Simple encoding not supported: contains complex types',
+            );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedToSimpleMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates toSimple returning primary model value for primitive-only '
+      'mixed types',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: {
+            StringModel(context: context),
+            EnumModel(
+              name: 'Status',
+              values: const {'active', 'inactive'},
+              isNullable: false,
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedToSimpleMethod = '''
+          String? toSimple({required bool explode, required bool allowEmpty}) {
+            return string.toSimple(explode: explode, allowEmpty: allowEmpty);
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedToSimpleMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates toJson returning most appropriate value for mixed types',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: <Model>{
+            StringModel(context: context),
+            DateModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedToJson = '''
+          Object? toJson() => string;
+        ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+  });
+
+  group('property normalization', () {
     test('normalizes model names with special characters', () {
       final model = AllOfModel(
         name: 'CombinedModel',
-        models: <Model>{
+        models: {
           ClassModel(
             name: 'User-Profile',
             properties: [
@@ -643,14 +1094,12 @@ void main() {
 
       final combinedClass = generator.generateClass(model);
 
-      // Should normalize model names to valid field names
       expect(combinedClass.fields, hasLength(2));
       expect(
         combinedClass.fields.map((f) => f.name),
         containsAll(['userProfile', 'accountInfo']),
       );
 
-      // Check constructor parameters use normalized names
       final constructor = combinedClass.constructors.first;
       expect(
         constructor.optionalParameters.map((p) => p.name),
@@ -661,7 +1110,7 @@ void main() {
     test('handles model name conflicts by making them unique', () {
       final model = AllOfModel(
         name: 'CombinedModel',
-        models: <Model>{
+        models: {
           ClassModel(
             name: 'User',
             properties: [
@@ -694,34 +1143,29 @@ void main() {
 
       final combinedClass = generator.generateClass(model);
 
-      // Should make conflicting names unique
       expect(combinedClass.fields, hasLength(2));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
 
-      // Should generate exactly these field names
-      expect(fieldNames, equals(['user', 'user2']));
+      expect(fieldNames, equals(['user', 'userModel']));
 
-      // Constructor parameters should also be unique
       final paramNames =
           combinedClass.constructors.first.optionalParameters
               .map((p) => p.name)
               .toList();
-      expect(paramNames, equals(['user', 'user2']));
+      expect(paramNames, equals(['user', 'userModel']));
     });
 
     test('demonstrates need for better conflict resolution', () {
-      // This test shows a scenario where proper property normalization would
-      // help
       final model = AllOfModel(
         name: 'CombinedModel',
-        models: <Model>{
+        models: {
           ClassModel(
             name: 'UserProfile',
             properties: const [],
             context: context,
           ),
           ClassModel(
-            name: 'User-Profile', // Should conflict with above
+            name: 'User-Profile',
             properties: const [],
             context: context,
           ),
@@ -732,14 +1176,13 @@ void main() {
       final combinedClass = generator.generateClass(model);
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
 
-      // Should generate exactly these field names with conflict resolution
-      expect(fieldNames, equals(['userProfile', 'userProfile2']));
+      expect(fieldNames, equals(['userProfile', 'userProfileModel']));
     });
 
     test('handles primitive models with normalized type names', () {
       final model = AllOfModel(
         name: 'CombinedModel',
-        models: <Model>{
+        models: {
           StringModel(context: context),
           IntegerModel(context: context),
           DecimalModel(context: context),
@@ -749,224 +1192,10 @@ void main() {
 
       final combinedClass = generator.generateClass(model);
 
-      // Should normalize primitive type names to valid field names
       expect(combinedClass.fields, hasLength(3));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
 
       expect(fieldNames, equals(['string', 'int', 'bigDecimal']));
-    });
-  });
-
-  group('AllOfGenerator simple encoding support', () {
-    test('generates fromSimple constructor for simple types', () {
-      final model = AllOfModel(
-        name: 'SimpleAllOf',
-        models: {
-          StringModel(context: context),
-          IntegerModel(context: context),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-
-      // Should have fromSimple constructor when all types are simple
-      final fromSimpleConstructor = combinedClass.constructors.firstWhere(
-        (c) => c.name == 'fromSimple',
-      );
-      expect(fromSimpleConstructor.factory, isTrue);
-      expect(fromSimpleConstructor.requiredParameters, hasLength(1));
-      expect(fromSimpleConstructor.requiredParameters.first.name, 'value');
-      expect(
-        fromSimpleConstructor.requiredParameters.first.type
-            ?.accept(emitter)
-            .toString(),
-        'String?',
-      );
-    });
-
-    test('generates toSimple method for simple types', () {
-      final model = AllOfModel(
-        name: 'SimpleAllOf',
-        models: <Model>{
-          StringModel(context: context),
-          IntegerModel(context: context),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-
-      // Should have toSimple method
-      final toSimpleMethod = combinedClass.methods.firstWhere(
-        (m) => m.name == 'toSimple',
-      );
-      expect(
-        toSimpleMethod.returns?.accept(emitter).toString(),
-        'String?',
-      );
-    });
-
-    test('generates fromSimple/toSimple that throw for complex types', () {
-      final model = AllOfModel(
-        name: 'ComplexAllOf',
-        models: <Model>{
-          ClassModel(
-            name: 'ComplexType',
-            properties: const [],
-            context: context,
-          ),
-          StringModel(context: context),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-      final generatedCode = format(combinedClass.accept(emitter).toString());
-
-      const expectedFromSimpleMethod = '''
-        factory ComplexAllOf.fromSimple(String? value) {
-          throw SimpleDecodingException(
-            'Simple encoding not supported for ComplexAllOf: contains complex types',
-          );
-        }
-      ''';
-
-      const expectedToSimpleMethod = '''
-        String? toSimple() {
-          throw SimpleDecodingException(
-            'Simple encoding not supported: contains complex types',
-          );
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedFromSimpleMethod)),
-      );
-      expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToSimpleMethod)),
-      );
-    });
-
-    test('fromSimple generates correct body for multiple simple fields', () {
-      final model = AllOfModel(
-        name: 'MultiSimpleAllOf',
-        models: <Model>{
-          StringModel(context: context),
-          IntegerModel(context: context),
-          BooleanModel(context: context),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-      final generatedCode = format(combinedClass.accept(emitter).toString());
-
-      const expectedFromSimpleMethod = r'''
-        factory MultiSimpleAllOf.fromSimple(String? value) {
-          final properties = value.decodeSimpleStringList(
-            context: r'MultiSimpleAllOf',
-          );
-          if (properties.length < 3) {
-            throw SimpleDecodingException(
-              'Invalid value for MultiSimpleAllOf: $value',
-            );
-          }
-          return MultiSimpleAllOf(
-            string: properties[0].decodeSimpleString(
-              context: r'MultiSimpleAllOf.string',
-            ),
-            int: properties[1].decodeSimpleInt(context: r'MultiSimpleAllOf.int'),
-            bool: properties[2].decodeSimpleBool(context: r'MultiSimpleAllOf.bool'),
-          );
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedFromSimpleMethod)),
-      );
-    });
-
-    test('toSimple generates correct body for multiple simple fields', () {
-      final model = AllOfModel(
-        name: 'MultiSimpleAllOf',
-        models: <Model>{
-          StringModel(context: context),
-          IntegerModel(context: context),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-      final generatedCode = format(combinedClass.accept(emitter).toString());
-
-      const expectedToSimpleMethod = '''
-        String? toSimple() => [string, int].encodeSimpleStringList();
-      ''';
-
-      expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToSimpleMethod)),
-      );
-    });
-  });
-
-  group('AllOfGenerator toJson field name regression tests', () {
-    test('toJson uses normalized field names correctly', () {
-      // This test covers the regression where toJson was using
-      // typeRef.symbol.toCamelCase() instead of normalized field names
-      final model = AllOfModel(
-        name: 'TestAllOf',
-        models: <Model>{
-          ClassModel(
-            name: 'SimplifiedAlbumObject',
-            properties: const [],
-            context: context,
-          ),
-          ClassModel(
-            name: 'TestAllOfModel',
-            properties: const [],
-            context: context,
-          ),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-      final generatedCode = format(combinedClass.accept(emitter).toString());
-
-      const expectedToJson = r'''
-        Object? toJson() {
-          final map = <String, Object?>{};
-          final simplifiedAlbumObjectJson = simplifiedAlbumObject.toJson();
-          if (simplifiedAlbumObjectJson is! Map<String, Object?>) {
-            throw EncodingException(
-              'Expected simplifiedAlbumObject.toJson() to return Map<String, Object?>, got ${simplifiedAlbumObjectJson.runtimeType}',
-            );
-          }
-          map.addAll(simplifiedAlbumObjectJson);
-          final testAllOfModelJson = testAllOfModel.toJson();
-          if (testAllOfModelJson is! Map<String, Object?>) {
-            throw EncodingException(
-              'Expected testAllOfModel.toJson() to return Map<String, Object?>, got ${testAllOfModelJson.runtimeType}',
-            );
-          }
-          map.addAll(testAllOfModelJson);
-          return map;
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace(expectedToJson)),
-      );
-
-      // Also verify that the fields exist with correct names
-      final fieldNames = combinedClass.fields.map((f) => f.name).toList();
-      expect(fieldNames, equals(['simplifiedAlbumObject', 'testAllOfModel']));
     });
   });
 }

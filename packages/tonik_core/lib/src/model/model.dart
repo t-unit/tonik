@@ -31,6 +31,34 @@ mixin CompositeModel on Model {
     }
     return EncodingShape.mixed;
   }
+
+  /// Returns true if any contained model has simple encoding shape.
+  bool get hasSimpleTypes {
+    return containedModels.any(
+      (model) => model.encodingShape == EncodingShape.simple,
+    );
+  }
+
+  /// Returns true if any contained model has complex encoding shape.
+  bool get hasComplexTypes {
+    return containedModels.any(
+      (model) => model.encodingShape == EncodingShape.complex,
+    );
+  }
+
+  /// Returns true if any contained model has mixed encoding shape.
+  bool get hasMixedTypes {
+    return containedModels.any(
+      (model) => model.encodingShape == EncodingShape.mixed,
+    );
+  }
+
+  /// Returns true if the combination of contained models cannot be simply
+  /// encoded. This happens when there are mixed types, or both simple and
+  /// complex types.
+  bool get cannotBeSimplyEncoded {
+    return hasMixedTypes || (hasComplexTypes && hasSimpleTypes);
+  }
 }
 
 class AliasModel extends Model with NamedModel {

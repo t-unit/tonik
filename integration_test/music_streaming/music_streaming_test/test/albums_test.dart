@@ -91,7 +91,7 @@ void main() {
         'explicit',
       ]);
 
-      final albumObject = value.body.model;
+      final albumObject = value.body.albumObjectModel;
       expect(albumObject, isA<AlbumObjectModel>());
 
       // Note: api document intends to have properties of
@@ -131,10 +131,10 @@ void main() {
         isA<PagingObject>(),
       );
       expect(
-        track?.model.items,
+        track?.pagingSimplifiedTrackObjectModel.items,
         isA<List<SimplifiedTrackObject>>(),
       );
-      final trackItem = track?.model.items?.first;
+      final trackItem = track?.pagingSimplifiedTrackObjectModel.items?.first;
       expect(trackItem?.artists, isA<List<SimplifiedArtistObject>?>());
       expect(trackItem?.availableMarkets, isA<List<String>?>());
       expect(trackItem?.discNumber, isA<int?>());

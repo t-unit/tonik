@@ -1030,7 +1030,7 @@ void main() {
         operationId: 'testConsecutiveParams',
         context: context,
         summary: 'Test consecutive parameters',
-        description: 'Tests path with consecutive parameters separated by slashes',
+        description: 'Tests path with consecutive parameters',
         tags: const {},
         isDeprecated: false,
         path: '/primitive/{integer}/{string}/{boolean}',
