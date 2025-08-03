@@ -371,7 +371,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       const expectedToSimpleMethod = '''
-        String? toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({required bool explode, required bool allowEmpty}) {
           return simpleProperties(
             allowEmpty: allowEmpty,
           ).toSimple(explode: explode, allowEmpty: allowEmpty);
@@ -421,10 +421,10 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       const expectedFromSimpleMethod = r'''
-        factory CombinedModel.fromSimple(String? value) {
+        factory CombinedModel.fromSimple(String? value, {required bool explode}) {
           return CombinedModel(
-            $base: Base.fromSimple(value),
-            $mixin: Mixin.fromSimple(value),
+            $base: Base.fromSimple(value, explode: explode),
+            $mixin: Mixin.fromSimple(value, explode: explode),
           );
         }
       ''';
@@ -562,7 +562,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       const expectedToSimpleMethod = '''
-        String? toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({required bool explode, required bool allowEmpty}) {
           return string.toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
@@ -589,7 +589,10 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedFromSimpleMethod = '''
-        factory StringDecimalModel.fromSimple(String? value) {
+        factory StringDecimalModel.fromSimple(
+          String? value, {
+          required bool explode,
+        }) {
           return StringDecimalModel(
             string: value.decodeSimpleString(context: r'StringDecimalModel.string'),
             bigDecimal: value.decodeSimpleBigDecimal(
@@ -708,7 +711,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToSimpleMethod = '''
-        String? toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({required bool explode, required bool allowEmpty}) {
           return status.toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
@@ -740,7 +743,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedFromSimpleMethod = '''
-        factory EnumStringModel.fromSimple(String? value) {
+        factory EnumStringModel.fromSimple(String? value, {required bool explode}) {
           return EnumStringModel(
             status: Status.fromSimple(value),
             string: value.decodeSimpleString(context: r'EnumStringModel.string'),
@@ -945,7 +948,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedFromSimpleMethod = '''
-        factory MixedModel.fromSimple(String? value) {
+        factory MixedModel.fromSimple(String? value, {required bool explode}) {
           throw SimpleDecodingException(
             'Simple encoding not supported for MixedModel: contains complex types',
           );
@@ -986,7 +989,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToSimpleMethod = '''
-          String? toSimple({required bool explode, required bool allowEmpty}) {
+          String toSimple({required bool explode, required bool allowEmpty}) {
             throw SimpleDecodingException(
               'Simple encoding not supported: contains complex types',
             );
@@ -1021,7 +1024,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToSimpleMethod = '''
-          String? toSimple({required bool explode, required bool allowEmpty}) {
+          String toSimple({required bool explode, required bool allowEmpty}) {
             return string.toSimple(explode: explode, allowEmpty: allowEmpty);
           }
         ''';

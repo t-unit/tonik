@@ -316,6 +316,16 @@ class AllOfGenerator {
                         ..type = refer('String?', 'dart:core'),
                 ),
               )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
               ..body = Code('return $className();'),
       );
     }
@@ -333,6 +343,16 @@ class AllOfGenerator {
                       b
                         ..name = 'value'
                         ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
                 ),
               )
               ..body = Block.of([
@@ -367,7 +387,7 @@ class AllOfGenerator {
                 )
                 : typeReference(modelType, nameManager, package)
                     .property('fromSimple')
-                    .call([refer('value')]);
+                    .call([refer('value')], {'explode': refer('explode')});
 
         propertyAssignments.add(MapEntry(name, expression));
       }
@@ -383,6 +403,16 @@ class AllOfGenerator {
                       b
                         ..name = 'value'
                         ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
                 ),
               )
               ..body =
@@ -431,6 +461,16 @@ class AllOfGenerator {
                     b
                       ..name = 'value'
                       ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
               ),
             )
             ..body =
@@ -590,7 +630,7 @@ class AllOfGenerator {
         (b) =>
             b
               ..name = 'toSimple'
-              ..returns = refer('String?', 'dart:core')
+              ..returns = refer('String', 'dart:core')
               ..optionalParameters.addAll([
                 Parameter(
                   (b) =>
@@ -624,7 +664,7 @@ class AllOfGenerator {
         (b) =>
             b
               ..name = 'toSimple'
-              ..returns = refer('String?', 'dart:core')
+              ..returns = refer('String', 'dart:core')
               ..optionalParameters.addAll([
                 Parameter(
                   (b) =>
@@ -666,7 +706,7 @@ class AllOfGenerator {
       (b) =>
           b
             ..name = 'toSimple'
-            ..returns = refer('String?', 'dart:core')
+            ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll([
               Parameter(
                 (b) =>
