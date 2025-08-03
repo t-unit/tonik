@@ -33,6 +33,12 @@ add_dependency_overrides() {
     fi
 }
 
+# Remove existing generated API projects before regenerating
+echo "Cleaning up existing generated API projects..."
+rm -rf petstore/petstore_api
+rm -rf music_streaming/music_streaming_api
+rm -rf gov/gov_api
+
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore  --log-level verbose
 add_dependency_overrides "petstore/petstore_api/pubspec.yaml"
