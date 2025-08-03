@@ -502,5 +502,246 @@ void main() {
       expect(callbackParam.required, isFalse);
       expect(callbackParam.toThis, isTrue);
     });
+
+    group('simpleProperties method', () {
+      test('generates simpleProperties method with primitive properties', () {
+        final model = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            return {
+              r'id': id.toSimple(explode: false, allowEmpty: allowEmpty),
+              if (name != null) r'name': name!.toSimple(explode: false, allowEmpty: allowEmpty),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('throws exception for model with complex nested class', () {
+        final nestedModel = ClassModel(
+          name: 'Address',
+          properties: [
+            Property(
+              name: 'street',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'address',
+              model: nestedModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            throw EncodingException('simpleProperties not supported for User: contains nested data');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('throws exception for model with list properties', () {
+        final model = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            throw EncodingException('simpleProperties not supported for User: contains nested data');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('handles empty model correctly', () {
+        final model = ClassModel(
+          name: 'Empty',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) => <String, String>{};
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('generates simpleProperties with complex simple types', () {
+        final model = ClassModel(
+          name: 'Product',
+          properties: [
+            Property(
+              name: 'status',
+              model: EnumModel<String>(
+                values: const {'active', 'inactive'},
+                isNullable: false,
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'created_at',
+              model: DateTimeModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'price',
+              model: DoubleModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'precise_value',
+              model: DecimalModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'release_date',
+              model: DateModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            return {
+              r'status': status.toSimple(explode: false, allowEmpty: allowEmpty),
+              r'created_at': createdAt.toSimple(explode: false, allowEmpty: allowEmpty),
+              if (price != null) r'price': price!.toSimple(explode: false, allowEmpty: allowEmpty),
+              r'precise_value': preciseValue.toSimple(explode: false, allowEmpty: allowEmpty),
+              if (releaseDate != null) r'release_date': releaseDate!.toSimple(explode: false, allowEmpty: allowEmpty),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('handles required nullable properties with allowEmpty=true', () {
+        final model = ClassModel(
+          name: 'RequiredNullableModel',
+          properties: [
+            Property(
+              name: 'nullable_name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'nullable_count',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            return {
+              if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
+              if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+    });
   });
 }

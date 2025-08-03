@@ -120,6 +120,7 @@ class ClassGenerator {
               _buildCopyWithMethod(className, normalizedProperties),
               _buildEqualsMethod(className, normalizedProperties),
               _buildHashCodeMethod(normalizedProperties),
+              _buildSimplePropertiesMethod(model, normalizedProperties),
             ])
             ..fields.addAll(
               normalizedProperties.map(
@@ -371,6 +372,146 @@ class ClassGenerator {
       nameManager,
       package,
       isNullableOverride: property.isNullable || !property.isRequired,
+    );
+  }
+
+  Method _buildSimplePropertiesMethod(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel.encodingShape != EncodingShape.simple;
+    });
+
+    if (hasComplexData) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        TypeReference(
+                          (b) =>
+                              b
+                                ..symbol = 'String'
+                                ..url = 'dart:core',
+                        ),
+                        TypeReference(
+                          (b) =>
+                              b
+                                ..symbol = 'String'
+                                ..url = 'dart:core',
+                        ),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..defaultTo = literalBool(true).code,
+                ),
+              )
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'simpleProperties not supported for ${model.name}: '
+                    'contains nested data',
+                  ).statement,
+      );
+    }
+
+    final mapEntries = <Code>[];
+
+    for (final prop in properties) {
+      final property = prop.property;
+      final fieldName = prop.normalizedName;
+      final rawName = property.name;
+
+      if (property.isRequired && property.isNullable) {
+        mapEntries.add(
+          Code(
+            'if (allowEmpty || $fieldName != null) '
+            "r'$rawName': $fieldName?.toSimple(explode: false, "
+            "allowEmpty: allowEmpty) ?? '',",
+          ),
+        );
+      } else if (!property.isRequired) {
+        mapEntries.add(
+          Code(
+            "if ($fieldName != null) r'$rawName': "
+            '$fieldName!.toSimple(explode: false, allowEmpty: allowEmpty),',
+          ),
+        );
+      } else {
+        mapEntries.add(
+          Code(
+            "r'$rawName': $fieldName.toSimple(explode: false, "
+            'allowEmpty: allowEmpty),',
+          ),
+        );
+      }
+    }
+
+    final returnStatement =
+        properties.isEmpty
+            ? literalMap(
+                {},
+                TypeReference(
+                  (b) => b
+                    ..symbol = 'String'
+                    ..url = 'dart:core',
+                ),
+                TypeReference(
+                  (b) => b
+                    ..symbol = 'String'
+                    ..url = 'dart:core',
+                ),
+              ).code
+            : Code('return {\n${mapEntries.map((e) => '  $e').join('\n')}\n};');
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'simpleProperties'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      TypeReference(
+                        (b) =>
+                            b
+                              ..symbol = 'String'
+                              ..url = 'dart:core',
+                      ),
+                      TypeReference(
+                        (b) =>
+                            b
+                              ..symbol = 'String'
+                              ..url = 'dart:core',
+                      ),
+                    ]),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..lambda = properties.isEmpty
+            ..body = returnStatement,
     );
   }
 }

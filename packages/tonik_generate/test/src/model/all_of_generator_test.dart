@@ -435,8 +435,10 @@ void main() {
       );
     });
 
-    test('generates simpleProperties method that merges sub-model properties', () {
-      final model = AllOfModel(
+    test(
+      'generates simpleProperties method that merges sub-model properties',
+      () {
+        final model = AllOfModel(
         name: 'CombinedModel',
         models: {
           ClassModel(

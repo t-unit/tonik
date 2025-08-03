@@ -111,6 +111,9 @@ class EnumGenerator {
                       ..body = const Code('rawValue'),
               ),
             )
+            ..methods.add(
+              _generateToSimpleMethod<T>(),
+            )
             ..fields.add(
               Field(
                 (b) =>
@@ -202,6 +205,37 @@ class EnumGenerator {
               generateFormatExceptionExpression(valueErrorMessage).code,
               const Code(');'),
             ]),
+    );
+  }
+
+  Method _generateToSimpleMethod<T>() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toSimple'
+            ..returns = refer('String', 'dart:core')
+            ..lambda = true
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..body = const Code(
+              'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+            ),
     );
   }
 
