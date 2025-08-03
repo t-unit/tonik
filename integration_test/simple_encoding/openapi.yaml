@@ -1,0 +1,539 @@
+openapi: 3.0.4
+info:
+  title: Simple Encoding API
+  description: OpenAPI specification showcasing simple encoding for path and header parameters only
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: simple-encoding
+    description: Operations demonstrating simple encoding
+
+paths:
+  # Path parameters use simple encoding by default (style: simple)
+  /primitive/{integer}/{double}/{number}/{string}/{boolean}/{datetime}/{date}/{decimal}/{uri}/{enum}:
+    get:
+      operationId: testPrimitiveInPath
+      tags:
+        - simple-encoding
+      summary: Test primitive types in path parameters
+      description: Demonstrates simple encoding for primitive types using path parameters
+      parameters:
+        - name: integer
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: integer
+        - name: double
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: number
+            format: double
+        - name: number
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: number
+        - name: string
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: string
+        - name: boolean
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: boolean
+        - name: datetime
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: date
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: decimal
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: string
+            format: decimal
+        - name: uri
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: enum
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/StatusEnum'
+      responses:
+        '200':
+          description: OK
+
+  # Header parameters only support simple encoding (style: simple is implicit)
+  /headers:
+    get:
+      operationId: testHeaders
+      tags:
+        - simple-encoding
+      summary: Test primitive types in header parameters
+      description: Demonstrates simple encoding for primitive types and arrays using header parameters
+      parameters:
+        - name: X-Integer
+          in: header
+          style: simple
+          schema:
+            type: integer
+        - name: X-Double
+          in: header
+          style: simple
+          schema:
+            type: number
+            format: double
+        - name: X-Number
+          in: header
+          style: simple
+          schema:
+            type: number
+        - name: X-String
+          in: header
+          style: simple
+          schema:
+            type: string
+        - name: X-Boolean
+          in: header
+          style: simple
+          schema:
+            type: boolean
+        - name: X-DateTime
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: date-time
+        - name: X-Date
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: date
+        - name: X-Decimal
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: decimal
+        - name: X-Uri
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: uri
+        - name: X-Status
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/StatusEnum'
+        - name: X-Tags
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+
+  # Complex types in path parameters (simple encoding)
+  /complex/{userProfile}:
+    get:
+      operationId: testComplexInPath
+      tags:
+        - simple-encoding
+      summary: Test complex type in path parameter
+      description: Demonstrates simple encoding for ClassModel using path parameter
+      parameters:
+        - name: userProfile
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserProfile'
+      responses:
+        '200':
+          description: OK
+
+  # AllOf in path parameter (simple encoding)
+  /allof/{entity}:
+    get:
+      operationId: testAllOfInPath
+      tags:
+        - simple-encoding
+      summary: Test AllOf composition in path parameter
+      description: Demonstrates simple encoding for AllOfModel using path parameter
+      parameters:
+        - name: entity
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/CompositeEntity'
+      responses:
+        '200':
+          description: OK
+
+  # OneOf in header parameter (simple encoding)
+  /oneof:
+    get:
+      operationId: testOneOfInHeader
+      tags:
+        - simple-encoding
+      summary: Test OneOf discriminated union in header parameter
+      description: Demonstrates simple encoding for OneOfModel using header parameter
+      parameters:
+        - name: X-Entity
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/EntityType'
+      responses:
+        '200':
+          description: OK
+
+  # AnyOf in path parameter (simple encoding)
+  /anyof/{flexibleValue}:
+    get:
+      operationId: testAnyOfInPath
+      tags:
+        - simple-encoding
+      summary: Test AnyOf flexible union in path parameter
+      description: Demonstrates simple encoding for AnyOfModel using path parameter
+      parameters:
+        - name: flexibleValue
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/FlexibleValue'
+      responses:
+        '200':
+          description: OK
+
+  # Lists in path parameters (simple encoding)
+  /lists/{stringList}:
+    get:
+      operationId: testListInPath
+      tags:
+        - simple-encoding
+      summary: Test ListModel in path parameter
+      description: Demonstrates simple encoding for ListModel using path parameter
+      parameters:
+        - name: stringList
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/StringList'
+        - name: X-Numbers
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NumberList'
+        - name: X-Objects
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/ObjectList'
+      responses:
+        '200':
+          description: OK
+
+  # Aliases in path parameters (simple encoding)
+  /aliases/{userId}/{userName}:
+    get:
+      operationId: testAliasesInPath
+      tags:
+        - simple-encoding
+      summary: Test AliasModel in path parameters
+      description: Demonstrates simple encoding for AliasModel using path parameters
+      parameters:
+        - name: userId
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+        - name: userName
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserName'
+        - name: X-Timestamp
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/Timestamp'
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    StatusEnum:
+      type: string
+      enum:
+        - active
+        - inactive
+        - pending
+        - archived
+
+    PriorityEnum:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+
+    UserProfile:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - is_verified
+        - created_at
+      properties:
+        id:
+          type: integer
+        score:
+          type: number
+          format: double
+        rating:
+          type: number
+        username:
+          type: string
+        is_verified:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        birth_date:
+          type: string
+          format: date
+        balance:
+          type: string
+          format: decimal
+        website:
+          type: string
+          format: uri
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        age:
+          type: integer
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        tags:
+          type: array
+          items:
+            type: string
+        scores:
+          type: array
+          items:
+            type: number
+        dates:
+          type: array
+          items:
+            type: string
+            format: date
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusEnum'
+
+    StringList:
+      type: array
+      items:
+        type: string
+
+    NumberList:
+      type: array
+      items:
+        type: number
+
+    ObjectList:
+      type: array
+      items:
+        $ref: '#/components/schemas/SimpleObject'
+
+    SimpleObject:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: integer
+
+    CompositeEntity:
+      allOf:
+        - $ref: '#/components/schemas/BaseEntity'
+        - $ref: '#/components/schemas/TimestampMixin'
+        - type: object
+          required:
+            - specific_field
+          properties:
+            specific_field:
+              type: string
+
+    BaseEntity:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    TimestampMixin:
+      type: object
+      required:
+        - created_at
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    EntityType:
+      oneOf:
+        - $ref: '#/components/schemas/PersonEntity'
+        - $ref: '#/components/schemas/CompanyEntity'
+        - $ref: '#/components/schemas/SystemEntity'
+      discriminator:
+        propertyName: type
+        mapping:
+          person: '#/components/schemas/PersonEntity'
+          company: '#/components/schemas/CompanyEntity'
+          system: '#/components/schemas/SystemEntity'
+
+    PersonEntity:
+      type: object
+      required: 
+        - type
+        - first_name
+      properties:
+        type:
+          type: string
+          enum: [person]
+        first_name:
+          type: string
+        last_name:
+          type: string
+        age:
+          type: integer
+        birth_date:
+          type: string
+          format: date
+        skills:
+          type: array
+          items:
+            type: string
+
+    CompanyEntity:
+      type: object
+      required: 
+        - type
+        - company_name
+      properties:
+        type:
+          type: string
+          enum: [company]
+        company_name:
+          type: string
+        founded_year:
+          type: integer
+        revenue:
+          type: string
+          format: decimal
+        website:
+          type: string
+          format: uri
+        employees:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonEntity'
+
+    SystemEntity:
+      type: object
+      required: 
+        - type
+        - system_id
+      properties:
+        type:
+          type: string
+          enum: [system]
+        system_id:
+          type: string
+        version:
+          type: string
+        active:
+          type: boolean
+        config:
+          type: object
+          properties:
+            timeout:
+              type: integer
+            retries:
+              type: integer
+
+    FlexibleValue:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: boolean
+        - $ref: '#/components/schemas/SimpleObject'
+      
+    UserId:
+      type: integer
+      
+    UserName:
+      type: string
+      
+    Timestamp:
+      type: string
+      format: date-time
