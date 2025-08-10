@@ -1,0 +1,448 @@
+import 'package:change_case/change_case.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
+import 'package:meta/meta.dart';
+import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/equals_method_generator.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
+
+@immutable
+class AnyOfGenerator {
+  const AnyOfGenerator({required this.nameManager, required this.package});
+
+  final NameManager nameManager;
+  final String package;
+
+  ({String code, String filename}) generate(AnyOfModel model) {
+    final emitter = DartEmitter(
+      allocator: CorePrefixedAllocator(
+        additionalImports: ['package:tonik_util/tonik_util.dart'],
+      ),
+      orderDirectives: true,
+      useNullSafetySyntax: true,
+    );
+
+    final className = nameManager.modelName(model);
+    final snakeCaseName = className.toSnakeCase();
+
+    final library = Library((b) {
+      b.body.add(generateClass(model));
+    });
+
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
+
+    final code = formatter.formatWithHeader(library.accept(emitter).toString());
+
+    return (code: code, filename: '$snakeCaseName.dart');
+  }
+
+  @visibleForTesting
+  Class generateClass(AnyOfModel model) {
+    final className = nameManager.modelName(model);
+
+    final pseudoProperties =
+        model.models.map((discriminated) {
+          final typeRef = typeReference(
+            discriminated.model,
+            nameManager,
+            package,
+          );
+          return Property(
+            name: typeRef.symbol,
+            model: discriminated.model,
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          );
+        }).toList();
+
+    final normalized = normalizeProperties(pseudoProperties);
+    final fields =
+        normalized.map((n) {
+          final ref = typeReference(
+            n.property.model,
+            nameManager,
+            package,
+            isNullableOverride: true,
+          );
+          return Field(
+            (b) =>
+                b
+                  ..name = n.normalizedName
+                  ..modifier = FieldModifier.final$
+                  ..type = ref,
+          );
+        }).toList();
+
+    final defaultCtor = Constructor(
+      (b) =>
+          b
+            ..constant = true
+            ..optionalParameters.addAll(
+              normalized.map(
+                (n) => Parameter(
+                  (p) =>
+                      p
+                        ..name = n.normalizedName
+                        ..named = true
+                        ..toThis = true,
+                ),
+              ),
+            ),
+    );
+
+    final fromJsonCtor = _buildFromJsonConstructor(
+      className,
+      normalized,
+    );
+
+    final fromSimpleCtor = _buildFromSimpleConstructor(
+      className,
+      normalized,
+    );
+
+    final propsForEquality =
+        normalized
+            .map(
+              (n) => (
+                normalizedName: n.normalizedName,
+                hasCollectionValue: n.property.model is ListModel,
+              ),
+            )
+            .toList();
+
+    final copyWithMethod = generateCopyWithMethod(
+      className: className,
+      properties:
+          normalized
+              .map(
+                (n) => (
+                  normalizedName: n.normalizedName,
+                  typeRef: typeReference(
+                    n.property.model,
+                    nameManager,
+                    package,
+                  ),
+                ),
+              )
+              .toList(),
+    );
+
+    final toJsonMethod = _buildToJsonMethod(
+      className,
+      model,
+      normalized,
+    );
+
+    return Class(
+      (b) =>
+          b
+            ..name = className
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+            ..constructors.add(defaultCtor)
+            ..constructors.add(fromJsonCtor)
+            ..constructors.add(fromSimpleCtor)
+            ..methods.addAll([
+              toJsonMethod,
+              generateEqualsMethod(
+                className: className,
+                properties: propsForEquality,
+              ),
+              generateHashCodeMethod(properties: propsForEquality),
+              copyWithMethod,
+            ])
+            ..fields.addAll(fields),
+    );
+  }
+
+  Constructor _buildFromJsonConstructor(
+    String className,
+    List<({String normalizedName, Property property})> normalized,
+  ) {
+    final localDecls = <Code>[];
+
+    for (final n in normalized) {
+      final modelType = n.property.model;
+      final varName = n.normalizedName;
+
+      final decodeExpr = buildFromJsonValueExpression(
+        'json',
+        model: modelType,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+      );
+
+      final typeRefNullable = typeReference(
+        modelType,
+        nameManager,
+        package,
+        isNullableOverride: true,
+      );
+      localDecls.add(
+        Block.of([
+          typeRefNullable.code,
+          Code(' $varName;'),
+          const Code('\ntry {\n  '),
+          Code('$varName = '),
+          decodeExpr.code,
+          const Code(';\n} on '),
+          refer('Object', 'dart:core').code,
+          const Code(' catch (_) {\n  '),
+          Code('$varName = null;'),
+          const Code('\n}\n'),
+        ]),
+      );
+    }
+
+    final ctorArgs = {
+      for (final n in normalized) n.normalizedName: refer(n.normalizedName),
+    };
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromJson'
+            ..requiredParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'json'
+                      ..type = refer('Object?', 'dart:core'),
+              ),
+            )
+            ..body = Block.of([
+              ...localDecls,
+              refer(className, package).call([], ctorArgs).returned.statement,
+            ]),
+    );
+  }
+
+  Method _buildToJsonMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalized,
+  ) {
+    final body = [
+      declareFinal(
+        'values',
+      ).assign(literalList([], refer('Object?', 'dart:core'))).statement,
+      declareFinal(
+        'mapValues',
+      ).assign(literalList([], buildMapStringObjectType())).statement,
+    ];
+
+    final hasDiscriminator = model.discriminator != null;
+    if (hasDiscriminator) {
+      body.add(const Code('String? discriminatorValue;'));
+    }
+
+    for (final n in normalized) {
+      final name = n.normalizedName;
+      final valueExpr = buildToJsonPropertyExpression(
+        name,
+        n.property,
+        forceNonNullReceiver: true,
+      );
+
+      final discriminated = model.models.firstWhere(
+        (dm) => dm.model == n.property.model,
+        orElse: () => (discriminatorValue: null, model: n.property.model),
+      );
+
+      final openIf = Code('if ($name != null) {');
+      final decl = Block.of([
+        const Code('final '),
+        refer('Object?', 'dart:core').code,
+        Code(' ${name}Json = '),
+        Code(valueExpr),
+        const Code(';'),
+      ]);
+      final ifMapOpen = [
+        const Code('if ('),
+        Code('${name}Json'),
+        const Code(' is '),
+        buildMapStringObjectType().code,
+        const Code(') {'),
+      ];
+      final addMap = Code('mapValues.add(${name}Json);');
+      final maybeDisc =
+          hasDiscriminator && discriminated.discriminatorValue != null
+              ? Code(
+                "discriminatorValue ??= '${discriminated.discriminatorValue}';",
+              )
+              : const Code('');
+      const ifMapClose = Code('}');
+      final addValue = Code('values.add(${name}Json);');
+      const closeIf = Code('}');
+
+      body.addAll([
+        openIf,
+        decl,
+        ...ifMapOpen,
+        addMap,
+        maybeDisc,
+        ifMapClose,
+        addValue,
+        closeIf,
+      ]);
+    }
+
+    body.add(const Code('if (values.isEmpty) return null;'));
+
+    final mergeBlocks = [
+      const Code('final map = '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('Object?', 'dart:core'),
+      ).statement,
+      const Code('for (final m in mapValues) { map.addAll(m); }'),
+    ];
+    if (hasDiscriminator) {
+      mergeBlocks.add(
+        Code(
+          'if (discriminatorValue != null) { '
+          "map.putIfAbsent('${model.discriminator}', "
+          '() => discriminatorValue); }',
+        ),
+      );
+    }
+    mergeBlocks.add(const Code('return map;'));
+
+    body.addAll([
+      const Code('if (mapValues.length == values.length) {'),
+      ...mergeBlocks,
+      const Code('}'),
+      declareConst('_deepEquals')
+          .assign(
+            refer(
+              'DeepCollectionEquality',
+              'package:collection/collection.dart',
+            ).call([]),
+          )
+          .statement,
+      const Code('final first = values.firstOrNull;'),
+      const Code('if (first == null) return null;'),
+      const Code('for (final v in values) {'),
+      const Code('  if (!_deepEquals.equals(v, first)) {'),
+      generateEncodingExceptionExpression(
+        'Ambiguous anyOf encoding for $className: inconsistent JSON '
+        'representations',
+      ).statement,
+      const Code('  }'),
+      const Code('}'),
+      const Code('return first;'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toJson'
+            ..returns = refer('Object?', 'dart:core')
+            ..lambda = false
+            ..body = Block.of(body),
+    );
+  }
+
+  Constructor _buildFromSimpleConstructor(
+    String className,
+    List<({String normalizedName, Property property})> normalized,
+  ) {
+    final localDecls = <Code>[];
+
+    for (final n in normalized) {
+      final modelType = n.property.model;
+      final varName = n.normalizedName;
+
+      final decodeExpr = switch (modelType) {
+        ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => refer(
+                nameManager.modelName(modelType),
+                package,
+              )
+              .property('fromSimple')
+              .call([
+                refer('value'),
+              ], {
+                'explode': refer('explode'),
+              }),
+        _ => buildSimpleValueExpression(
+            refer('value'),
+            model: modelType,
+            isRequired: true,
+            nameManager: nameManager,
+            package: package,
+            contextClass: className,
+          ),
+      };
+
+      final typeRefNullable = typeReference(
+        modelType,
+        nameManager,
+        package,
+        isNullableOverride: true,
+      );
+
+      localDecls.add(
+        Block.of([
+          typeRefNullable.code,
+          Code(' $varName;'),
+          const Code('\ntry {\n  '),
+          Code('$varName = '),
+          decodeExpr.code,
+          const Code(';\n} on '),
+          refer('Object', 'dart:core').code,
+          const Code(' catch (_) {\n  '),
+          Code('$varName = null;'),
+          const Code('\n}\n'),
+        ]),
+      );
+    }
+
+    final ctorArgs = {
+      for (final n in normalized) n.normalizedName: refer(n.normalizedName),
+    };
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromSimple'
+            ..requiredParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'explode'
+                      ..named = true
+                      ..required = true
+                      ..type = refer('bool', 'dart:core'),
+              ),
+            )
+            ..body = Block.of([
+              ...localDecls,
+              refer(className, package).call([], ctorArgs).returned.statement,
+            ]),
+    );
+  }
+}

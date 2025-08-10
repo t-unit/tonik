@@ -10,6 +10,8 @@
 /integration_test/music_streaming/music_streaming_api
 /integration_test/gov/gov_api
 /integration_test/simple_encoding/simple_encoding_api
+/integration_test/fastify_type_provider_zod/fastify_type_provider_zod_api
 
 # Dependencies
 /pubspec.lock
+

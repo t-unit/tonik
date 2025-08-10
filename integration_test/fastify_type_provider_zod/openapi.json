@@ -1,0 +1,119 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "summary": "Hii",
+        "title": "Fastify API with Bearer Token",
+        "version": "1.0.0",
+        "description": "API documentation for a Fastify app with Bearer Token authentication"
+    },
+    "components": {
+        "schemas": {
+            "exampleDtoInput": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "anyOf": [
+                            {},
+                            {
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "email",
+                    "password",
+                    "deletedAt"
+                ]
+            },
+            "exampleDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "deletedAt": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "nullable": true,
+                                "enum": [
+                                    null
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "email",
+                    "password",
+                    "deletedAt"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "paths": {
+        "/example/example": {
+            "post": {
+                "tags": [
+                    "example"
+                ],
+                "description": "This endpoint is for undefined",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/exampleDtoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Default Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/exampleDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/favicon.ico": {
+            "get": {
+                "tags": [
+                    ""
+                ],
+                "description": "This endpoint is for undefined",
+                "responses": {
+                    "200": {
+                        "description": "Default Response"
+                    }
+                }
+            }
+        }
+    }
+}

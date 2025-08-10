@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/all_of_generator.dart';
+import 'package:tonik_generate/src/model/any_of_generator.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
 import 'package:tonik_generate/src/model/enum_generator.dart';
 import 'package:tonik_generate/src/model/one_of_generator.dart';
@@ -13,6 +14,7 @@ class ModelFileGenerator {
   ModelFileGenerator({
     required this.classGenerator,
     required this.enumGenerator,
+    required this.anyOfGenerator,
     required this.oneOfGenerator,
     required this.typedefGenerator,
     required this.allOfGenerator,
@@ -20,6 +22,7 @@ class ModelFileGenerator {
 
   final ClassGenerator classGenerator;
   final EnumGenerator enumGenerator;
+  final AnyOfGenerator anyOfGenerator;
   final OneOfGenerator oneOfGenerator;
   final TypedefGenerator typedefGenerator;
   final AllOfGenerator allOfGenerator;
@@ -54,6 +57,8 @@ class ModelFileGenerator {
           result = enumGenerator.generate<int>(model);
         case EnumModel<String>():
           result = enumGenerator.generate<String>(model);
+        case AnyOfModel():
+          result = anyOfGenerator.generate(model);
         case OneOfModel():
           result = oneOfGenerator.generate(model);
         case AllOfModel():
