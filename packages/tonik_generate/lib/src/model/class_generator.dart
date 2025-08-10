@@ -1,6 +1,5 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -65,30 +64,6 @@ class ClassGenerator {
       return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
     });
 
-    // Only add fromSimple if all properties are supported
-    bool isPrimitiveOrSupportedEnumOrOneOf(Model m) {
-      var target = m;
-      while (target is AliasModel) {
-        target = target.model;
-      }
-      if (target is PrimitiveModel) return true;
-      if (target is EnumModel) return true;
-      if (target is OneOfModel) {
-        return target.models.every(
-          (dm) => isPrimitiveOrSupportedEnumOrOneOf(dm.model),
-        );
-      }
-      return false;
-    }
-
-    final unsupported = normalizedProperties.firstWhereOrNull(
-      (prop) => !isPrimitiveOrSupportedEnumOrOneOf(prop.property.model),
-    );
-    final fromSimpleCtor =
-        unsupported == null
-            ? _buildFromSimpleConstructor(className, model)
-            : null;
-
     return Class(
       (b) =>
           b
@@ -112,7 +87,7 @@ class ClassGenerator {
                         ),
                       ),
               ),
-              if (fromSimpleCtor != null) fromSimpleCtor,
+              _buildFromSimpleConstructor(className, model),
               _buildFromJsonConstructor(className, model),
             ])
             ..methods.addAll([
@@ -120,6 +95,8 @@ class ClassGenerator {
               _buildCopyWithMethod(className, normalizedProperties),
               _buildEqualsMethod(className, normalizedProperties),
               _buildHashCodeMethod(normalizedProperties),
+              _buildSimplePropertiesMethod(model, normalizedProperties),
+              _buildToSimpleMethod(className, model, normalizedProperties),
             ])
             ..fields.addAll(
               normalizedProperties.map(
@@ -184,47 +161,9 @@ class ClassGenerator {
   Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    // If there are no properties, just return the constructor call
-    if (normalizedProperties.isEmpty) {
-      return Constructor(
-        (b) =>
-            b
-              ..factory = true
-              ..name = 'fromSimple'
-              ..requiredParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'value'
-                        ..type = refer('String?', 'dart:core'),
-                ),
-              )
-              ..body = Code('return $className();'),
-      );
-    }
-
-    final propertyAssignments = <MapEntry<String, Expression>>[];
-    for (var i = 0; i < normalizedProperties.length; i++) {
-      final prop = normalizedProperties[i];
-      final name = prop.normalizedName;
-      final modelType = prop.property.model;
-      final isNullable = prop.property.isNullable;
-
-      propertyAssignments.add(
-        MapEntry(
-          name,
-          buildSimpleValueExpression(
-            refer('properties[$i]'),
-            model: modelType,
-            isRequired: !isNullable,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-            contextProperty: name,
-          ),
-        ),
-      );
-    }
+    final hasOnlySimpleProperties = model.properties.every((property) {
+      return property.model.encodingShape == EncodingShape.simple;
+    });
 
     return Constructor(
       (b) =>
@@ -239,23 +178,88 @@ class ClassGenerator {
                       ..type = refer('String?', 'dart:core'),
               ),
             )
-            ..body = Block.of([
-              const Code('final properties = '),
-              Code("value.decodeSimpleStringList(context: r'$className');"),
-              Code('if (properties.length < ${normalizedProperties.length}) {'),
-              generateSimpleDecodingExceptionExpression(
-                'Invalid value for $className: \$value',
-              ).statement,
-              const Code('}'),
-              refer(className, package)
-                  .call([], {
-                    for (final entry in propertyAssignments)
-                      entry.key: entry.value,
-                  })
-                  .returned
-                  .statement,
-            ]),
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = _buildFromSimpleBody(
+              className,
+              normalizedProperties,
+              hasOnlySimpleProperties,
+            ),
     );
+  }
+
+  Block _buildFromSimpleBody(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+    bool hasOnlySimpleProperties,
+  ) {
+    if (properties.isEmpty) {
+      return Block.of([Code('return $className();')]);
+    }
+
+    if (!hasOnlySimpleProperties) {
+      return Block.of([
+        generateEncodingExceptionExpression(
+          'Simple encoding not supported for $className: '
+          'contains complex types',
+        ).statement,
+      ]);
+    }
+
+    final propertyNames = properties.map((p) => p.property.name).toSet();
+
+    final constructorArgs = <String, Expression>{};
+    for (final prop in properties) {
+      final normalizedName = prop.normalizedName;
+      final propertyName = prop.property.name;
+      final modelType = prop.property.model;
+      final isNullable = prop.property.isNullable;
+
+      constructorArgs[normalizedName] = buildSimpleValueExpression(
+        refer("values['$propertyName']"),
+        model: modelType,
+        isRequired: !isNullable,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        contextProperty: propertyName,
+      );
+    }
+
+    return Block.of([
+      // Null/empty check
+      const Code('if (value == null || value.isEmpty) {'),
+      generateSimpleDecodingExceptionExpression(
+        'Invalid empty value for $className',
+      ).statement,
+      const Code('}'),
+
+      // Parse into key-value pairs (only part that differs by explode mode)
+      declareFinal('values')
+          .assign(
+            literalMap(
+              {},
+              refer('String', 'dart:core'),
+              refer('String', 'dart:core'),
+            ),
+          )
+          .statement,
+      _buildExplodeParsingLogic(),
+
+      // Shared validation and construction (no duplication)
+      _buildKeyValidationLogic(propertyNames),
+
+      // Constructor call
+      refer(className, package).call([], constructorArgs).returned.statement,
+    ]);
   }
 
   Constructor _buildFromJsonConstructor(String className, ClassModel model) =>
@@ -372,5 +376,340 @@ class ClassGenerator {
       package,
       isNullableOverride: property.isNullable || !property.isRequired,
     );
+  }
+
+  Method _buildSimplePropertiesMethod(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel.encodingShape != EncodingShape.simple;
+    });
+
+    if (hasComplexData) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        TypeReference(
+                          (b) =>
+                              b
+                                ..symbol = 'String'
+                                ..url = 'dart:core',
+                        ),
+                        TypeReference(
+                          (b) =>
+                              b
+                                ..symbol = 'String'
+                                ..url = 'dart:core',
+                        ),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..defaultTo = literalBool(true).code,
+                ),
+              )
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'simpleProperties not supported for ${model.name}: '
+                    'contains nested data',
+                  ).statement,
+      );
+    }
+
+    final mapEntries = <Code>[];
+
+    for (final prop in properties) {
+      final property = prop.property;
+      final fieldName = prop.normalizedName;
+      final rawName = property.name;
+
+      if (property.isRequired && property.isNullable) {
+        mapEntries.add(
+          Code(
+            'if (allowEmpty || $fieldName != null) '
+            "r'$rawName': $fieldName?.toSimple(explode: false, "
+            "allowEmpty: allowEmpty) ?? '',",
+          ),
+        );
+      } else if (!property.isRequired) {
+        mapEntries.add(
+          Code(
+            "if ($fieldName != null) r'$rawName': "
+            '$fieldName!.toSimple(explode: false, allowEmpty: allowEmpty),',
+          ),
+        );
+      } else {
+        mapEntries.add(
+          Code(
+            "r'$rawName': $fieldName.toSimple(explode: false, "
+            'allowEmpty: allowEmpty),',
+          ),
+        );
+      }
+    }
+
+    final returnStatement =
+        properties.isEmpty
+            ? literalMap(
+              {},
+              TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'String'
+                      ..url = 'dart:core',
+              ),
+              TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'String'
+                      ..url = 'dart:core',
+              ),
+            ).code
+            : Code('return {\n${mapEntries.map((e) => '  $e').join('\n')}\n};');
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'simpleProperties'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      TypeReference(
+                        (b) =>
+                            b
+                              ..symbol = 'String'
+                              ..url = 'dart:core',
+                      ),
+                      TypeReference(
+                        (b) =>
+                            b
+                              ..symbol = 'String'
+                              ..url = 'dart:core',
+                      ),
+                    ]),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..lambda = properties.isEmpty
+            ..body = returnStatement,
+    );
+  }
+
+  Method _buildToSimpleMethod(
+    String className,
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel.encodingShape != EncodingShape.simple;
+    });
+
+    if (hasComplexData) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toSimple'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..body = Block.of([
+                generateEncodingExceptionExpression(
+                  'toSimple not supported for $className: '
+                  'contains nested data',
+                ).statement,
+              ]),
+      );
+    }
+
+    if (properties.isEmpty) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toSimple'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..body = Block.of([
+                literalString('').returned.statement,
+              ]),
+      );
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toSimple'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..body = Block.of([
+              refer('simpleProperties')
+                  .call([], {'allowEmpty': refer('allowEmpty')})
+                  .property('toSimple')
+                  .call([], {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                  })
+                  .returned
+                  .statement,
+            ]),
+    );
+  }
+
+  Code _buildExplodeParsingLogic() {
+    return Block.of([
+      const Code('if (explode) {'),
+      // explode=true: prop1=val1,prop2=val2
+      declareFinal('pairs')
+          .assign(
+            refer('value')
+                .property('split')
+                .call([literalString(',')]),
+          )
+          .statement,
+      const Code('for (final pair in pairs) {'),
+      declareFinal('parts')
+          .assign(
+            refer('pair')
+                .property('split')
+                .call([literalString('=')]),
+          )
+          .statement,
+      const Code('if (parts.length != 2) {'),
+      generateSimpleDecodingExceptionExpression(
+        r'Invalid key=value pair format: $pair',
+      ).statement,
+      const Code('}'),
+      refer('values')
+          .index(
+            refer('Uri', 'dart:core').property('decodeComponent').call([
+              refer('parts').index(literalNum(0)),
+            ]),
+          )
+          .assign(refer('parts').index(literalNum(1)))
+          .statement,
+      const Code('}'),
+      const Code('} else {'),
+      // explode=false: prop1,val1,prop2,val2
+      declareFinal('parts')
+          .assign(
+            refer('value')
+                .property('split')
+                .call([literalString(',')]),
+          )
+          .statement,
+      const Code('if (parts.length % 2 != 0) {'),
+      generateSimpleDecodingExceptionExpression(
+        'Invalid alternating key-value format: expected even number of '
+        r'parts, got ${parts.length}',
+      ).statement,
+      const Code('}'),
+      const Code('for (var i = 0; i < parts.length; i += 2) {'),
+      refer('values')
+          .index(
+            refer('Uri', 'dart:core').property('decodeComponent').call([
+              refer('parts').index(refer('i')),
+            ]),
+          )
+          .assign(refer('parts').index(refer('i').operatorAdd(literalNum(1))))
+          .statement,
+      const Code('}'),
+      const Code('}'),
+    ]);
+  }
+
+  Code _buildKeyValidationLogic(Set<String> propertyNames) {
+    final expectedKeysLiteral = literalSet(
+      propertyNames.map(literalString),
+      refer('String', 'dart:core'),
+    );
+
+    return Block.of([
+      // const expectedKeys = {'prop1', 'prop2'};
+      declareConst('expectedKeys').assign(expectedKeysLiteral).statement,
+
+      // for (final key in values.keys) {
+      const Code('for (final key in values.keys) {'),
+      const Code('if (!expectedKeys.contains(key)) {'),
+      generateSimpleDecodingExceptionExpression(
+        r'Unknown property: $key',
+      ).statement,
+      const Code('}'),
+      const Code('}'),
+    ]);
   }
 }

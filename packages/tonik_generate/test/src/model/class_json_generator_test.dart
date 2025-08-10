@@ -797,7 +797,7 @@ void main() {
       );
 
       const expectedMethod = '''
-  factory EmptyClass.fromSimple(String? value) {
+  factory EmptyClass.fromSimple(String? value, {required bool explode}) {
     return EmptyClass();
   }''';
 

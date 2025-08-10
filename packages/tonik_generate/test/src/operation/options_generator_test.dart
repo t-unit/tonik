@@ -220,12 +220,8 @@ void main() {
           Options _options({required String xMyHeader}) {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
-            const headerEncoder = SimpleEncoder();
-            headers[r'X-My-Header'] = headerEncoder.encode(
-              xMyHeader,
-              explode: false,
-              allowEmpty: false,
-            );
+            headers[r'X-My-Header'] =
+                xMyHeader.toSimple(explode: false, allowEmpty: false);
             return Options(
               method: 'GET',
               headers: headers,
@@ -360,30 +356,17 @@ void main() {
           }) {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
-            const headerEncoder = SimpleEncoder();
-            headers[r'X-Required-String'] = headerEncoder.encode(
-              xRequiredString,
-              explode: false,
-              allowEmpty: false,
-            );
-            headers[r'X-Required-Date'] = headerEncoder.encode(
-              xRequiredDate.toTimeZonedIso8601String(),
-              explode: false,
-              allowEmpty: true,
-            );
+            headers[r'X-Required-String'] =
+                xRequiredString.toSimple(explode: false, allowEmpty: false);
+            headers[r'X-Required-Date'] =
+                xRequiredDate.toSimple(explode: false, allowEmpty: true);
             if (xOptionalBool != null) {
-              headers[r'X-Optional-Bool'] = headerEncoder.encode(
-                xOptionalBool,
-                explode: false,
-                allowEmpty: false,
-              );
+              headers[r'X-Optional-Bool'] = xOptionalBool
+                  .toSimple(explode: false, allowEmpty: false);
             }
             if (xOptionalList != null) {
-              headers[r'X-Optional-List'] = headerEncoder.encode(
-                xOptionalList,
-                explode: true,
-                allowEmpty: false,
-              );
+              headers[r'X-Optional-List'] = xOptionalList
+                  .toSimple(explode: true, allowEmpty: false);
             }
             return Options(
               method: 'GET',
@@ -446,12 +429,7 @@ void main() {
         Options _options({required String xMyHeader}) {
           final headers = <String, dynamic>{};
           headers['Accept'] = '*/*';
-          const headerEncoder = SimpleEncoder();
-          headers[r'X-My-Header'] = headerEncoder.encode(
-            xMyHeader,
-            explode: true,
-            allowEmpty: true,
-          );
+          headers[r'X-My-Header'] = xMyHeader.toSimple(explode: true, allowEmpty: true);
           return Options(
             method: 'GET',
             headers: headers,
@@ -515,12 +493,10 @@ void main() {
           Options _options({required List<Anonymous> xColors}) {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
-            const headerEncoder = SimpleEncoder();
-            headers[r'X-Colors'] = headerEncoder.encode(
-              xColors.map((e) => e.toJson()).toList(),
-              explode: true,
-              allowEmpty: false,
-            );
+            headers[r'X-Colors'] = xColors
+                .map((e) => e.toSimple(explode: true, allowEmpty: false))
+                .toList()
+                .toSimple(explode: true, allowEmpty: false);
             return Options(
               method: 'GET',
               headers: headers,
@@ -586,12 +562,7 @@ void main() {
           Options _options({required List<List<Anonymous>> xMatrix}) {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
-            const headerEncoder = SimpleEncoder();
-            headers[r'X-Matrix'] = headerEncoder.encode(
-              xMatrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
-              explode: true,
-              allowEmpty: false,
-            );
+            throw EncodingException('Simple encoding does not support list with complex elements for header X-Matrix');
             return Options(
               method: 'GET',
               headers: headers,
@@ -915,12 +886,7 @@ void main() {
       const expectedMethod = '''
         Options _options({required String accept}) {
           final headers = <String, dynamic>{};
-          const headerEncoder = SimpleEncoder();
-          headers[r'Accept'] = headerEncoder.encode(
-            accept,
-            explode: false,
-            allowEmpty: false,
-          );
+          headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
           return Options(
             method: 'GET',
             headers: headers,
@@ -992,13 +958,8 @@ void main() {
         const expectedMethod = '''
         Options _options({String? accept}) {
           final headers = <String, dynamic>{};
-          const headerEncoder = SimpleEncoder();
           if (accept != null) {
-            headers[r'Accept'] = headerEncoder.encode(
-              accept,
-              explode: false,
-              allowEmpty: false,
-            );
+            headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
           } else {
             headers['Accept'] = 'application/json,application/xml';
           }

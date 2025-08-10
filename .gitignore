@@ -9,6 +9,7 @@
 /integration_test/petstore/petstore_api
 /integration_test/music_streaming/music_streaming_api
 /integration_test/gov/gov_api
+/integration_test/simple_encoding/simple_encoding_api
 
 # Dependencies
 /pubspec.lock

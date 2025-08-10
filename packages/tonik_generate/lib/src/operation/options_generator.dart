@@ -1,7 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating options method for operations.
@@ -165,75 +166,42 @@ class OptionsGenerator {
           .statement,
     );
 
-    // Accept header assignment
-    final hasUserHeaders = headers.any(
-      (h) => h.parameter.rawName.toLowerCase() != 'accept',
-    );
-    final needsHeaderEncoderForAccept = hasAcceptHeader;
-    final needsHeaderEncoder = hasUserHeaders || needsHeaderEncoderForAccept;
-
     // For required Accept header, always assign using encoder
     if (hasAcceptHeader && acceptIsRequired) {
-      if (needsHeaderEncoder) {
-        bodyStatements.add(
-          declareConst('headerEncoder')
-              .assign(
-                refer(
-                  'SimpleEncoder',
-                  'package:tonik_util/tonik_util.dart',
-                ).newInstance([]),
-              )
-              .statement,
-        );
-      }
       bodyStatements.add(
         refer('headers')
             .index(literalString('Accept', raw: true))
             .assign(
-              refer('headerEncoder')
-                  .property('encode')
-                  .call(
-                    [refer(acceptParamName!)],
-                    {
-                      'explode': literalBool(acceptHeader!.parameter.explode),
-                      'allowEmpty': literalBool(
-                        acceptHeader.parameter.allowEmptyValue,
-                      ),
-                    },
+              CodeExpression(
+                Code(
+                  buildToSimpleHeaderParameterExpression(
+                    acceptParamName!,
+                    acceptHeader!.parameter,
+                    explode: acceptHeader.parameter.explode,
+                    allowEmpty: acceptHeader.parameter.allowEmptyValue,
                   ),
+                ),
+              ),
             )
             .statement,
       );
     } else if (hasAcceptHeader && !acceptIsRequired) {
-      if (needsHeaderEncoder) {
-        bodyStatements.add(
-          declareConst('headerEncoder')
-              .assign(
-                refer(
-                  'SimpleEncoder',
-                  'package:tonik_util/tonik_util.dart',
-                ).newInstance([]),
-              )
-              .statement,
-        );
-      }
       bodyStatements
         ..add(Code('if ($acceptParamName != null) {'))
         ..add(
           refer('headers')
               .index(literalString('Accept', raw: true))
               .assign(
-                refer('headerEncoder')
-                    .property('encode')
-                    .call(
-                      [refer(acceptParamName!)],
-                      {
-                        'explode': literalBool(acceptHeader!.parameter.explode),
-                        'allowEmpty': literalBool(
-                          acceptHeader.parameter.allowEmptyValue,
-                        ),
-                      },
+                CodeExpression(
+                  Code(
+                    buildToSimpleHeaderParameterExpression(
+                      acceptParamName!,
+                      acceptHeader!.parameter,
+                      explode: acceptHeader.parameter.explode,
+                      allowEmpty: acceptHeader.parameter.allowEmptyValue,
                     ),
+                  ),
+                ),
               )
               .statement,
         )
@@ -257,18 +225,6 @@ class OptionsGenerator {
 
     // Only add headerEncoder if there are user-defined headers
     // (excluding Accept) or Accept needs encoding
-    if (hasUserHeaders && !(hasAcceptHeader && needsHeaderEncoderForAccept)) {
-      bodyStatements.add(
-        declareConst('headerEncoder')
-            .assign(
-              refer(
-                'SimpleEncoder',
-                'package:tonik_util/tonik_util.dart',
-              ).newInstance([]),
-            )
-            .statement,
-      );
-    }
 
     for (final headerParam in headers) {
       // Skip Accept header, already handled
@@ -283,6 +239,37 @@ class OptionsGenerator {
       }
       final paramName = headerParam.normalizedName;
       final resolvedParam = headerParam.parameter;
+
+      // For simple encoding, reject headers that are lists with 
+      // complex elements
+      if (resolvedParam.encoding == HeaderParameterEncoding.simple &&
+          resolvedParam.model is ListModel &&
+          (resolvedParam.model as ListModel).content.encodingShape !=
+              EncodingShape.simple) {
+        if (resolvedParam.isRequired) {
+          // Required: immediately throw at runtime
+          bodyStatements.add(
+            generateEncodingExceptionExpression(
+              'Simple encoding does not support list with complex elements for'
+              ' header ${resolvedParam.rawName}',
+            ).statement,
+          );
+        } else {
+          // Optional: only throw if provided
+          bodyStatements.add(
+            Block.of([
+              Code('if ($paramName != null) {'),
+              generateEncodingExceptionExpression(
+                'Simple encoding does not support list with complex elements'
+                ' for header ${resolvedParam.rawName}',
+              ).statement,
+              const Code('}'),
+            ]),
+          );
+        }
+        parameters.add(_generateHeaderParameter(paramName, resolvedParam));
+        continue;
+      }
 
       parameters.add(_generateHeaderParameter(paramName, resolvedParam));
       final headerAssignment = _generateHeaderAssignment(
@@ -331,24 +318,16 @@ class OptionsGenerator {
     String paramName,
     RequestHeaderObject resolvedParam,
   ) {
-    final valueExpression = buildToJsonHeaderParameterExpression(
+    final valueExpression = buildToSimpleHeaderParameterExpression(
       paramName,
       resolvedParam,
+      explode: resolvedParam.explode,
+      allowEmpty: resolvedParam.allowEmptyValue,
     );
 
     return refer('headers')
         .index(literalString(resolvedParam.rawName, raw: true))
-        .assign(
-          refer('headerEncoder')
-              .property('encode')
-              .call(
-                [refer(valueExpression)],
-                {
-                  'explode': literalBool(resolvedParam.explode),
-                  'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-                },
-              ),
-        )
+        .assign(CodeExpression(Code(valueExpression)))
         .statement;
   }
 

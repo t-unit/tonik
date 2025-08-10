@@ -33,6 +33,13 @@ add_dependency_overrides() {
     fi
 }
 
+# Remove existing generated API projects before regenerating
+echo "Cleaning up existing generated API projects..."
+rm -rf petstore/petstore_api
+rm -rf music_streaming/music_streaming_api
+rm -rf gov/gov_api
+rm -rf simple_encoding/simple_encoding_api
+
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore  --log-level verbose
 add_dependency_overrides "petstore/petstore_api/pubspec.yaml"
@@ -45,6 +52,10 @@ cd music_streaming/music_streaming_api && dart pub get && cd ../..
 dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov --log-level verbose
 add_dependency_overrides "gov/gov_api/pubspec.yaml"
 cd gov/gov_api && dart pub get && cd ../..
+
+dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding --log-level verbose
+add_dependency_overrides "simple_encoding/simple_encoding_api/pubspec.yaml"
+cd simple_encoding/simple_encoding_api && dart pub get && cd ../..
 
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then

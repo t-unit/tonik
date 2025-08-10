@@ -4,12 +4,14 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -50,65 +52,102 @@ class AllOfGenerator {
   Class generateClass(AllOfModel model) {
     final className = nameManager.modelName(model);
     final models = model.models.toList();
-    final properties = _buildProperties(models);
+
+    final pseudoProperties =
+        models.map((m) {
+          final typeRef = typeReference(m, nameManager, package);
+          return Property(
+            name: typeRef.symbol,
+            model: m,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          );
+        }).toList();
+
+    final normalizedProperties = normalizeProperties(pseudoProperties);
+    final properties = _buildPropertiesFromNormalized(normalizedProperties);
 
     return Class(
       (b) =>
           b
             ..name = className
             ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(_buildDefaultConstructor(models))
-            ..constructors.add(_buildFromJsonConstructor(className, models))
+            ..constructors.add(_buildDefaultConstructor(normalizedProperties))
+            ..constructors.addAll([
+              _buildFromSimpleConstructor(
+                className,
+                normalizedProperties,
+                model,
+              ),
+              _buildFromJsonConstructor(className, normalizedProperties),
+            ])
             ..methods.addAll([
-              _buildToJsonMethod(className, model),
+              _buildToJsonMethod(className, model, normalizedProperties),
+              _buildSimplePropertiesMethod(
+                className,
+                normalizedProperties,
+                model,
+              ),
+              _buildToSimpleMethod(
+                normalizedProperties,
+                model,
+              ),
               generateEqualsMethod(
                 className: className,
                 properties: properties,
               ),
               generateHashCodeMethod(properties: properties),
-              _buildCopyWithMethod(className, models),
+              _buildCopyWithMethod(className, normalizedProperties),
             ])
-            ..fields.addAll(_buildFields(models)),
+            ..fields.addAll(_buildFields(normalizedProperties)),
     );
   }
 
-  List<Field> _buildFields(List<Model> models) {
-    return models.map((model) {
-      final typeRef = typeReference(model, nameManager, package);
-      final fieldName = typeRef.symbol.toCamelCase();
+  List<Field> _buildFields(
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    return normalizedProperties.map((normalized) {
+      final typeRef = typeReference(
+        normalized.property.model,
+        nameManager,
+        package,
+      );
       return Field(
         (b) =>
             b
-              ..name = fieldName
+              ..name = normalized.normalizedName
               ..modifier = FieldModifier.final$
               ..type = typeRef,
       );
     }).toList();
   }
 
-  List<({String normalizedName, bool hasCollectionValue})> _buildProperties(
-    List<Model> models,
+  List<({String normalizedName, bool hasCollectionValue})>
+  _buildPropertiesFromNormalized(
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    return models.map((model) {
-      final typeRef = typeReference(model, nameManager, package);
-      final fieldName = typeRef.symbol.toCamelCase();
-      return (normalizedName: fieldName, hasCollectionValue: false);
+    return normalizedProperties.map((normalized) {
+      return (
+        normalizedName: normalized.normalizedName,
+        hasCollectionValue: normalized.property.model is ListModel,
+      );
     }).toList();
   }
 
-  Constructor _buildDefaultConstructor(List<Model> models) {
+  Constructor _buildDefaultConstructor(
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     return Constructor(
       (b) =>
           b
             ..constant = true
             ..optionalParameters.addAll(
-              models.map((model) {
-                final typeRef = typeReference(model, nameManager, package);
-                final fieldName = typeRef.symbol.toCamelCase();
+              normalizedProperties.map((normalized) {
                 return Parameter(
                   (b) =>
                       b
-                        ..name = fieldName
+                        ..name = normalized.normalizedName
                         ..named = true
                         ..required = true
                         ..toThis = true,
@@ -118,17 +157,18 @@ class AllOfGenerator {
     );
   }
 
-  Constructor _buildFromJsonConstructor(String className, List<Model> models) {
+  Constructor _buildFromJsonConstructor(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     final fromJsonParams = <Expression>[];
     final fieldNames = <String>[];
-    for (final model in models) {
-      final typeRef = typeReference(model, nameManager, package);
-      final fieldName = typeRef.symbol.toCamelCase();
-      fieldNames.add(fieldName);
+    for (final normalized in normalizedProperties) {
+      fieldNames.add(normalized.normalizedName);
       fromJsonParams.add(
         buildFromJsonValueExpression(
           'json',
-          model: model,
+          model: normalized.property.model,
           nameManager: nameManager,
           package: package,
           contextClass: className,
@@ -166,7 +206,11 @@ class AllOfGenerator {
     );
   }
 
-  Method _buildToJsonMethod(String className, AllOfModel model) {
+  Method _buildToJsonMethod(
+    String className,
+    AllOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     switch (model.encodingShape) {
       case EncodingShape.mixed:
         return Method(
@@ -175,17 +219,15 @@ class AllOfGenerator {
                 ..returns = refer('Object?', 'dart:core')
                 ..name = 'toJson'
                 ..lambda = true
-                ..body = Block.of([
-                  generateEncodingExceptionExpression(
-                    'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
-                  ).statement,
-                ]),
+                ..body =
+                    generateEncodingExceptionExpression(
+                      'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
+                    ).code,
         );
 
       case EncodingShape.simple:
         final firstModel = model.models.first;
-        final firstFieldType = typeReference(firstModel, nameManager, package);
-        final firstFieldName = firstFieldType.symbol.toCamelCase();
+        final firstFieldName = normalizedProperties.first.normalizedName;
 
         return Method(
           (b) =>
@@ -193,20 +235,18 @@ class AllOfGenerator {
                 ..returns = refer('Object?', 'dart:core')
                 ..name = 'toJson'
                 ..lambda = true
-                ..body = Block.of([
-                  Code(
-                    buildToJsonPropertyExpression(
-                      firstFieldName,
-                      Property(
-                        name: firstFieldName,
-                        model: firstModel,
-                        isRequired: true,
-                        isNullable: false,
-                        isDeprecated: false,
-                      ),
+                ..body = Code(
+                  buildToJsonPropertyExpression(
+                    firstFieldName,
+                    Property(
+                      name: firstFieldName,
+                      model: firstModel,
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
                     ),
                   ),
-                ]),
+                ),
         );
 
       case EncodingShape.complex:
@@ -220,9 +260,8 @@ class AllOfGenerator {
           ).statement,
         ];
 
-        for (final model in model.models) {
-          final typeRef = typeReference(model, nameManager, package);
-          final fieldName = typeRef.symbol.toCamelCase();
+        for (final normalized in normalizedProperties) {
+          final fieldName = normalized.normalizedName;
           final fieldNameJson = '${fieldName}Json';
 
           mapParts.addAll([
@@ -258,14 +297,465 @@ class AllOfGenerator {
     }
   }
 
-  Method _buildCopyWithMethod(String className, List<Model> models) {
+  Constructor _buildFromSimpleConstructor(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    if (normalizedProperties.isEmpty) {
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromSimple'
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = Code('return $className();'),
+      );
+    }
+
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromSimple'
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = Block.of([
+                generateSimpleDecodingExceptionExpression(
+                  'Simple encoding not supported for $className: '
+                  'contains complex types',
+                ).statement,
+              ]),
+      );
+    }
+
+    // If all types are complex, each model should decode from the same single
+    // value
+    if (model.hasComplexTypes) {
+      final propertyAssignments = <MapEntry<String, Expression>>[];
+
+      for (final normalized in normalizedProperties) {
+        final name = normalized.normalizedName;
+        final modelType = normalized.property.model;
+
+        // Each model attempts to decode from the single value
+        final expression =
+            modelType.encodingShape == EncodingShape.simple
+                ? buildSimpleValueExpression(
+                  refer('value'),
+                  model: modelType,
+                  isRequired: !normalized.property.isNullable,
+                  nameManager: nameManager,
+                  package: package,
+                  contextClass: className,
+                  contextProperty: name,
+                )
+                : typeReference(modelType, nameManager, package)
+                    .property('fromSimple')
+                    .call([refer('value')], {'explode': refer('explode')});
+
+        propertyAssignments.add(MapEntry(name, expression));
+      }
+
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromSimple'
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body =
+                  refer(className, package)
+                      .call([], {
+                        for (final entry in propertyAssignments)
+                          entry.key: entry.value,
+                      })
+                      .returned
+                      .statement,
+      );
+    }
+
+    // For primitive-only AllOf models, decode from single value to all models
+    final propertyAssignments = <MapEntry<String, Expression>>[];
+
+    for (final normalized in normalizedProperties) {
+      final name = normalized.normalizedName;
+      final modelType = normalized.property.model;
+      final isNullable = normalized.property.isNullable;
+
+      propertyAssignments.add(
+        MapEntry(
+          name,
+          buildSimpleValueExpression(
+            refer('value'),
+            model: modelType,
+            isRequired: !isNullable,
+            nameManager: nameManager,
+            package: package,
+            contextClass: className,
+            contextProperty: name,
+          ),
+        ),
+      );
+    }
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromSimple'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body =
+                refer(className, package)
+                    .call([], {
+                      for (final entry in propertyAssignments)
+                        entry.key: entry.value,
+                    })
+                    .returned
+                    .statement,
+    );
+  }
+
+  /// Builds a simpleProperties method that returns merged properties from all 
+  /// sub-models or throws for unsupported types.
+  Method _buildSimplePropertiesMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = Block.of([
+                generateSimpleDecodingExceptionExpression(
+                  'Simple properties not supported for $className: '
+                  'contains complex types',
+                ).statement,
+              ]),
+      );
+    }
+
+    // If all types are complex, use property merging approach
+    if (model.hasComplexTypes) {
+      final propertyMergingLines = [
+        declareFinal('mergedProperties')
+            .assign(
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                refer('String', 'dart:core'),
+              ),
+            )
+            .statement,
+      ];
+
+      for (final normalized in normalizedProperties) {
+        propertyMergingLines.add(
+          refer('mergedProperties').property('addAll').call([
+            refer(normalized.normalizedName).property('simpleProperties').call(
+              [],
+              {'allowEmpty': refer('allowEmpty')},
+            ),
+          ]).statement,
+        );
+      }
+
+      propertyMergingLines.add(
+        refer('mergedProperties').returned.statement,
+      );
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (b) =>
+                    b
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = Block.of(propertyMergingLines),
+      );
+    }
+
+    // For primitive-only AllOf models, return an empty map since they 
+    // encode directly as a single value
+    return Method(
+      (b) =>
+          b
+            ..name = 'simpleProperties'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      refer('String', 'dart:core'),
+                      refer('String', 'dart:core'),
+                    ]),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = Block.of([
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                refer('String', 'dart:core'),
+              ).returned.statement,
+            ]),
+    );
+  }
+
+  /// Builds a toSimple method that merges properties from all models.
+  Method _buildToSimpleMethod(
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toSimple'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..lambda = false
+              ..body = Block.of([
+                generateSimpleDecodingExceptionExpression(
+                  'Simple encoding not supported: contains complex types',
+                ).statement,
+              ]),
+      );
+    }
+
+    // If all types are complex, use simpleProperties approach
+    if (model.hasComplexTypes) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toSimple'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..lambda = false
+              ..body = Block.of([
+                refer('simpleProperties')
+                    .call([], {'allowEmpty': refer('allowEmpty')})
+                    .property('toSimple')
+                    .call([], {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                    })
+                    .returned
+                    .statement,
+              ]),
+      );
+    }
+
+    // For primitive-only AllOf models, return the primary (first) model's
+    // value
+    final primaryField = normalizedProperties.first;
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toSimple'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..lambda = false
+            ..body = Block.of([
+              refer(primaryField.normalizedName)
+                  .property('toSimple')
+                  .call([], {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                  })
+                  .returned
+                  .statement,
+            ]),
+    );
+  }
+
+  Method _buildCopyWithMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
     return generateCopyWithMethod(
       className: className,
       properties:
-          models.map((model) {
-            final typeRef = typeReference(model, nameManager, package);
-            final fieldName = typeRef.symbol.toCamelCase();
-            return (normalizedName: fieldName, typeRef: typeRef);
+          normalizedProperties.map((normalized) {
+            final typeRef = typeReference(
+              normalized.property.model,
+              nameManager,
+              package,
+            );
+            return (
+              normalizedName: normalized.normalizedName,
+              typeRef: typeRef,
+            );
           }).toList(),
     );
   }

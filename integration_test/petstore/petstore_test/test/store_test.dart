@@ -6,7 +6,7 @@ import 'package:tonik_util/tonik_util.dart';
 import 'test_helper.dart';
 
 void main() {
-  const port = 8080;
+  const port = 8083;
   const baseUrl = 'http://localhost:$port/api/v3';
 
   late ImposterServer imposterServer;

@@ -122,7 +122,7 @@ void main() {
 
     test('toSimple and fromSimple', () {
       final date = Date(2024, 3, 15);
-      final simple = date.toSimple();
+      final simple = date.toSimple(explode: false, allowEmpty: true);
       expect(simple, '2024-03-15');
 
       final fromSimple = Date.fromSimple(simple);

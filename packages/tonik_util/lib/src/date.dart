@@ -83,7 +83,7 @@ class Date {
   /// Converts this [Date] to a simple string format.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD).
-  String toSimple() {
+  String toSimple({required bool explode, required bool allowEmpty}) {
     return toString();
   }
 

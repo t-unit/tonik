@@ -502,5 +502,155 @@ void main() {
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
     });
+
+    group('toSimple method', () {
+      test('generates toSimple method for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final toSimple = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+
+        expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toSimple.optionalParameters, hasLength(2));
+
+        final explodeParam = toSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final allowEmptyParam = toSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toSimple.lambda, isTrue);
+      });
+
+      test('generates toSimple method for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toSimple = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+
+        expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toSimple.optionalParameters, hasLength(2));
+
+        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toSimple.lambda, isTrue);
+      });
+
+      test('generates toSimple method for nullable string enum', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toSimple = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+
+        expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toSimple.optionalParameters, hasLength(2));
+
+        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toSimple.lambda, isTrue);
+      });
+
+      test('generates toSimple method for nullable int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {100, 200, 300},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toSimple = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+
+        expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toSimple.optionalParameters, hasLength(2));
+
+        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toSimple.lambda, isTrue);
+      });
+
+      test('generates toSimple in complete enum code for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToSimpleMethod = '''
+          _i2.String toSimple({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToSimpleMethod)),
+        );
+      });
+
+      test('generates toSimple in complete enum code for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToSimpleMethod = '''
+          _i2.String toSimple({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToSimpleMethod)),
+        );
+      });
+    });
   });
 }

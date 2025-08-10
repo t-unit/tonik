@@ -2,7 +2,9 @@ import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating path method for operations.
@@ -70,16 +72,21 @@ class PathGenerator {
 
     for (final encoding
         in pathParameters.map((p) => p.parameter.encoding).toSet()) {
+      if (encoding == PathParameterEncoding.simple) {
+        // Simple encoding uses toSimple(...) extensions directly.
+        continue;
+      }
+
       final encoderName = switch (encoding) {
-        PathParameterEncoding.simple => 'simpleEncoder',
         PathParameterEncoding.label => 'labelEncoder',
         PathParameterEncoding.matrix => 'matrixEncoder',
+        PathParameterEncoding.simple => 'unreachable',
       };
 
       final encoderClass = switch (encoding) {
-        PathParameterEncoding.simple => 'SimpleEncoder',
         PathParameterEncoding.label => 'LabelEncoder',
         PathParameterEncoding.matrix => 'MatrixEncoder',
+        PathParameterEncoding.simple => 'Unreachable',
       };
 
       encoders[encoding] = encoderName;
@@ -96,55 +103,77 @@ class PathGenerator {
       );
     }
 
-    final pathParts = operation.path
+    final pathPartExpressions = <Expression>[];
+
+    for (final pathComponent in operation.path
         .splitAndKeep(RegExp(r'\{[^}]+\}'))
-        .where((pathComponent) => pathComponent.isNotEmpty)
-        .map((pathComponent) {
-          if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
-            return Code(
-              pathComponent
-                  .split('/')
-                  .where((s) => s.isNotEmpty)
-                  .map((s) => "r'$s'")
-                  .join(', '),
-            );
-          }
+        .where((pathComponent) => pathComponent.isNotEmpty)) {
+      if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
+        final segments = pathComponent
+            .split('/')
+            .where((s) => s.isNotEmpty)
+            .map((s) => literalString(s, raw: true));
+        pathPartExpressions.addAll(segments);
+        continue;
+      }
 
-          final paramName = pathComponent.substring(
-            1,
-            pathComponent.length - 1,
+      final paramName = pathComponent.substring(1, pathComponent.length - 1);
+      final param = pathParameters.firstWhereOrNull(
+        (p) => p.parameter.rawName == paramName,
+      );
+
+      if (param == null) {
+        final segments = pathComponent
+            .split('/')
+            .where((s) => s.isNotEmpty)
+            .map((s) => literalString(s, raw: true));
+        pathPartExpressions.addAll(segments);
+        continue;
+      }
+
+      if (param.parameter.encoding == PathParameterEncoding.simple) {
+        final model = param.parameter.model;
+        if (model is ListModel &&
+            model.content.encodingShape != EncodingShape.simple) {
+          body.add(
+            generateEncodingExceptionExpression(
+              'Simple encoding does not support list with complex elements for '
+              'path parameter ${param.parameter.rawName}',
+            ).statement,
           );
-          final param = pathParameters.firstWhereOrNull(
-            (p) => p.parameter.rawName == paramName,
-          );
+          
+          continue;
+        }
 
-          if (param == null) {
-            return Code(
-              pathComponent
-                  .split('/')
-                  .where((s) => s.isNotEmpty)
-                  .map((s) => "r'$s'")
-                  .join(', '),
-            );
-          }
+        final valueExpression = buildToSimplePathParameterExpression(
+          param.normalizedName,
+          param.parameter,
+          explode: param.parameter.explode,
+          allowEmpty: param.parameter.allowEmptyValue,
+        );
+        pathPartExpressions.add(CodeExpression(Code(valueExpression)));
+      } else {
+        final encoderName = encoders[param.parameter.encoding]!;
+        final valueExpression = buildToJsonPathParameterExpression(
+          param.normalizedName,
+          param.parameter,
+        );
+        pathPartExpressions.add(
+          refer(encoderName)
+              .property('encode')
+              .call(
+                [CodeExpression(Code(valueExpression))],
+                {
+                  'explode': literalBool(param.parameter.explode),
+                  'allowEmpty': literalBool(param.parameter.allowEmptyValue),
+                },
+              ),
+        );
+      }
+    }
 
-          final encoderName = encoders[param.parameter.encoding]!;
-          final valueExpression = buildToJsonPathParameterExpression(
-            param.normalizedName,
-            param.parameter,
-          );
-
-          return Code(
-            '$encoderName.encode($valueExpression, '
-            'explode: ${param.parameter.explode}, '
-            'allowEmpty: ${param.parameter.allowEmptyValue})',
-          );
-        });
-
-    body
-      ..add(const Code('return ['))
-      ..addAll(pathParts.map((part) => Code('$part,')).toList())
-      ..add(const Code('];'));
+    final listExpr = literalList(pathPartExpressions);
+    body.add(listExpr.returned.statement);
 
     return Method(
       (b) =>
