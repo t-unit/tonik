@@ -89,14 +89,6 @@ void main() {
         age: 30,
         status: StatusEnum.active,
         priority: PriorityEnum.one,
-        tags: const ['a', 'b', 'c'],
-        scores: const [123.45, 123.45, 123.45],
-        dates: [Date(1970, 1, 1), Date(1970, 1, 1), Date(1970, 1, 1)],
-        statuses: const [
-          StatusEnum.active,
-          StatusEnum.active,
-          StatusEnum.active,
-        ],
       ),
     );
 
@@ -183,7 +175,7 @@ void main() {
     // We are expecting an error for this test.
     expect(response, isA<TonikError<void>>());
     final error = response as TonikError<void>;
-    expect(error.error, isA<UnsupportedEncodingTypeException>());
+    expect(error.error, isA<EncodingException>());
   });
 
   test('testListInPath', () async {

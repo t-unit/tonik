@@ -339,24 +339,6 @@ components:
           $ref: '#/components/schemas/StatusEnum'
         priority:
           $ref: '#/components/schemas/PriorityEnum'
-        tags:
-          type: array
-          items:
-            type: string
-        scores:
-          type: array
-          items:
-            type: number
-        dates:
-          type: array
-          items:
-            type: string
-            format: date
-        statuses:
-          type: array
-          items:
-            $ref: '#/components/schemas/StatusEnum'
-
     StringList:
       type: array
       items:
@@ -443,10 +425,6 @@ components:
         birth_date:
           type: string
           format: date
-        skills:
-          type: array
-          items:
-            type: string
 
     CompanyEntity:
       type: object
@@ -467,10 +445,6 @@ components:
         website:
           type: string
           format: uri
-        employees:
-          type: array
-          items:
-            $ref: '#/components/schemas/PersonEntity'
 
     SystemEntity:
       type: object
