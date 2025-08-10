@@ -85,7 +85,8 @@ void main() {
     // No mixins
     expect(baseClass.mixins, isEmpty, reason: 'Should not have freezed mixins');
 
-    // Base class should have a default const constructor and a fromSimple factory
+    // Base class should have a default const constructor and 
+    // a fromSimple factory
     expect(baseClass.constructors.length, 3);
     final baseConstructor = baseClass.constructors.firstWhere(
       (c) => c.name == null,

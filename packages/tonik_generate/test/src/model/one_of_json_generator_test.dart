@@ -82,7 +82,9 @@ void main() {
         );
         expect(fromJsonCtor.factory, isTrue);
         expect(
-          fromJsonCtor.requiredParameters.first.type?.accept(emitter).toString(),
+          fromJsonCtor.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
           'Object?',
         );
 
@@ -185,7 +187,9 @@ void main() {
         );
         expect(fromJsonCtor.factory, isTrue);
         expect(
-          fromJsonCtor.requiredParameters.first.type?.accept(emitter).toString(),
+          fromJsonCtor.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
           'Object?',
         );
 
@@ -300,7 +304,9 @@ void main() {
         );
         expect(fromJsonCtor.factory, isTrue);
         expect(
-          fromJsonCtor.requiredParameters.first.type?.accept(emitter).toString(),
+          fromJsonCtor.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
           'Object?',
         );
 
@@ -653,34 +659,34 @@ void main() {
       test(
         'toJson method handles List models with primitive content correctly',
         () {
-        final listModel = ListModel(
-          content: StringModel(context: context),
-          context: context,
-        );
+          final listModel = ListModel(
+            content: StringModel(context: context),
+            context: context,
+          );
 
-        final model = OneOfModel(
-          name: 'ListValue',
-          models: {
-            (
-              discriminatorValue: 'list',
-              model: listModel,
-            ),
-            (
-              discriminatorValue: 'string',
-              model: StringModel(context: context),
-            ),
-          },
-          discriminator: null,
-          context: context,
-        );
+          final model = OneOfModel(
+            name: 'ListValue',
+            models: {
+              (
+                discriminatorValue: 'list',
+                model: listModel,
+              ),
+              (
+                discriminatorValue: 'string',
+                model: StringModel(context: context),
+              ),
+            },
+            discriminator: null,
+            context: context,
+          );
 
-        final generatedClasses = generator.generateClasses(model);
-        final baseClass = generatedClasses.firstWhere(
-          (c) => c.name == 'ListValue',
-        );
-        final generatedCode = format(baseClass.accept(emitter).toString());
+          final generatedClasses = generator.generateClasses(model);
+          final baseClass = generatedClasses.firstWhere(
+            (c) => c.name == 'ListValue',
+          );
+          final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+          const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ListValueList(:final value) => (value, 'list'),
@@ -690,58 +696,58 @@ void main() {
             return json;
           }''';
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
       );
 
       test(
         'toJson method handles List models with complex content correctly',
         () {
-        final classModel = ClassModel(
-          name: 'Item',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
+          final classModel = ClassModel(
+            name: 'Item',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
 
-        final listModel = ListModel(
-          content: classModel,
-          context: context,
-        );
+          final listModel = ListModel(
+            content: classModel,
+            context: context,
+          );
 
-        final model = OneOfModel(
-          name: 'ItemListValue',
-          models: {
-            (
-              discriminatorValue: 'items',
-              model: listModel,
-            ),
-            (
-              discriminatorValue: 'string',
-              model: StringModel(context: context),
-            ),
-          },
-          discriminator: null,
-          context: context,
-        );
+          final model = OneOfModel(
+            name: 'ItemListValue',
+            models: {
+              (
+                discriminatorValue: 'items',
+                model: listModel,
+              ),
+              (
+                discriminatorValue: 'string',
+                model: StringModel(context: context),
+              ),
+            },
+            discriminator: null,
+            context: context,
+          );
 
-        final generatedClasses = generator.generateClasses(model);
-        final baseClass = generatedClasses.firstWhere(
-          (c) => c.name == 'ItemListValue',
-        );
-        final generatedCode = format(baseClass.accept(emitter).toString());
+          final generatedClasses = generator.generateClasses(model);
+          final baseClass = generatedClasses.firstWhere(
+            (c) => c.name == 'ItemListValue',
+          );
+          final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+          const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ItemListValueItems(:final value) => ( value.map((e) => e.toJson()).toList(), 'items', ),
@@ -751,11 +757,11 @@ void main() {
             return json;
           }''';
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
       );
 
       test('toJson method handles AnyOf models correctly', () {

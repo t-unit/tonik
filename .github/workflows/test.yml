@@ -52,3 +52,9 @@ jobs:
           cd integration_test/gov/gov_test
           dart pub get
           dart test --concurrency=1
+
+      - name: Run simple encoding integration tests
+        run: |
+          cd integration_test/simple_encoding/simple_encoding_test
+          dart pub get
+          dart test --concurrency=1
