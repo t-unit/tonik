@@ -1,12 +1,8 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
-import 'package:tonik_util/src/encoding/simple_encoder.dart';
 
 /// Extensions for encoding values using simple style parameter encoding.
-///
-/// These extensions provide type-safe encoding methods that match the behavior
-/// of [SimpleEncoder.encode] for each specific type.
 
 /// Extension for encoding Uri values.
 extension SimpleUriEncoder on Uri {
@@ -84,7 +80,6 @@ extension SimpleStringListEncoder on List<String> {
   ///
   /// When [explode] is true, array items are separately encoded.
   /// When false, they are encoded as a single string with comma delimiters.
-  /// For SimpleEncoder, both cases result in comma-separated values.
   ///
   /// The [allowEmpty] parameter controls whether empty lists are allowed:
   /// - When `true`, empty lists are encoded as empty strings
