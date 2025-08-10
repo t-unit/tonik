@@ -135,6 +135,9 @@ String? _handleListExpression(
 
   // Handle different content models
   return switch (contentModel) {
+    ListModel() => throw UnimplementedError(
+        'Nested lists are not supported for simple encoding.'),
+
     // For List<String>, use the extension directly
     StringModel() => '${isNullable ? '?' : ''}.toSimple($paramString)',
 
@@ -172,9 +175,6 @@ String? _handleListExpression(
       allowEmpty,
     ),
 
-    // Default fallback
-    _ =>
-      '${isNullable ? '?' : ''}.map((e) => e.toString())'
-      ' .toList().toSimple($paramString)',
+    _ => throw UnimplementedError(), 
   };
 }
