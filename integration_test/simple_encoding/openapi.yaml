@@ -16,7 +16,6 @@ tags:
     description: Operations demonstrating simple encoding
 
 paths:
-  # Path parameters use simple encoding by default (style: simple)
   /primitive/{integer}/{double}/{number}/{string}/{boolean}/{datetime}/{date}/{decimal}/{uri}/{enum}:
     get:
       operationId: testPrimitiveInPath
@@ -94,7 +93,6 @@ paths:
         '200':
           description: OK
 
-  # Header parameters only support simple encoding (style: simple is implicit)
   /headers:
     get:
       operationId: testHeaders
@@ -169,7 +167,6 @@ paths:
         '200':
           description: OK
 
-  # Complex types in path parameters (simple encoding)
   /complex/{userProfile}:
     get:
       operationId: testComplexInPath
@@ -188,7 +185,6 @@ paths:
         '200':
           description: OK
 
-  # AllOf in path parameter (simple encoding)
   /allof/{entity}:
     get:
       operationId: testAllOfInPath
@@ -207,7 +203,6 @@ paths:
         '200':
           description: OK
 
-  # OneOf in header parameter (simple encoding)
   /oneof:
     get:
       operationId: testOneOfInHeader
@@ -225,26 +220,6 @@ paths:
         '200':
           description: OK
 
-  # AnyOf in path parameter (simple encoding)
-  /anyof/{flexibleValue}:
-    get:
-      operationId: testAnyOfInPath
-      tags:
-        - simple-encoding
-      summary: Test AnyOf flexible union in path parameter
-      description: Demonstrates simple encoding for AnyOfModel using path parameter
-      parameters:
-        - name: flexibleValue
-          in: path
-          style: simple
-          required: true
-          schema:
-            $ref: '#/components/schemas/FlexibleValue'
-      responses:
-        '200':
-          description: OK
-
-  # Lists in path parameters (simple encoding)
   /lists/{stringList}:
     get:
       operationId: testListInPath
@@ -273,7 +248,6 @@ paths:
         '200':
           description: OK
 
-  # Aliases in path parameters (simple encoding)
   /aliases/{userId}/{userName}:
     get:
       operationId: testAliasesInPath
@@ -520,13 +494,6 @@ components:
               type: integer
             retries:
               type: integer
-
-    FlexibleValue:
-      anyOf:
-        - type: string
-        - type: integer
-        - type: boolean
-        - $ref: '#/components/schemas/SimpleObject'
       
     UserId:
       type: integer

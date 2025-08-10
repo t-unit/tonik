@@ -1,5 +1,5 @@
-name: gov_test
-description: Gov API tests for Tonik
+name: simple_encoding_test
+description: Simple encoding tests for Tonik
 version: 1.0.0
 publish_to: none
 
@@ -7,10 +7,11 @@ environment:
   sdk: ^3.8.0
 
 dependencies:
+  big_decimal: ^0.5.0
   dio: ^5.8.0
-  gov_api:
-    path: ../gov_api
   path: ^1.9.1
+  simple_encoding_api:
+    path: ../simple_encoding_api
   tonik_util: ^0.0.7
 
 dev_dependencies:
