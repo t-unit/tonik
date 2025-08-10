@@ -6,7 +6,7 @@ import 'package:tonik_util/tonik_util.dart';
 import 'test_helper.dart';
 
 void main() {
-   const port = 8080;
+  const port = 8080;
   const baseUrl = 'http://localhost:$port';
 
   late ImposterServer imposterServer;
@@ -47,10 +47,13 @@ void main() {
       expect(body.data, isA<List<FormsIndex>>());
 
       final formIndex = body.data.first;
-      expect(formIndex.attributes?.benefitCategories, isA<List<FormsIndexAttributesBenefitCategoriesArray>>());
+      expect(
+        formIndex.attributes?.benefitCategories,
+        isA<List<FormsIndexAttributesBenefitCategoriesArray>>(),
+      );
       expect(formIndex.id, isA<String?>());
       expect(formIndex.$type, isA<String?>());
-      
+
       final attributes = formIndex.attributes;
       final benefitCategory = attributes?.benefitCategories?.first;
       expect(benefitCategory?.name, isA<String?>());

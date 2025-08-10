@@ -7,7 +7,7 @@ import 'package:tonik_util/tonik_util.dart';
 import 'test_helper.dart';
 
 void main() {
-  const port = 8080;
+  const port = 8085;
   const baseUrl = 'http://localhost:$port/v1';
 
   late ImposterServer imposterServer;
@@ -202,7 +202,7 @@ void main() {
     // We are expecting an error for this test.
     expect(response, isA<TonikError<void>>());
     final error = response as TonikError<void>;
-    expect(error.error, isA<UnsupportedEncodingTypeException>());
+    expect(error.error, isA<EncodingException>());
   });
 
   test('testAliasesInPath', () async {

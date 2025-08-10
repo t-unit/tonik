@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -22,7 +23,9 @@ class OneOfGenerator {
 
   ({String code, String filename}) generate(OneOfModel model) {
     final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(),
+      allocator: CorePrefixedAllocator(
+        additionalImports: ['package:tonik_util/tonik_util.dart'],
+      ),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
@@ -93,7 +96,11 @@ class OneOfGenerator {
             ..sealed = true
             ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.add(Constructor((b) => b..constant = true))
+            ..constructors.add(
+              _generateFromSimpleConstructor(className, model, variantNames),
+            )
             ..methods.addAll([
+              _generateToSimpleMethod(className, model, variantNames),
               Method(
                 (b) =>
                     b
@@ -106,28 +113,26 @@ class OneOfGenerator {
                       )
                       ..lambda = false,
               ),
-              Method(
-                (b) =>
-                    b
-                      ..name = 'fromJson'
-                      ..static = true
-                      ..returns = refer(className)
-                      ..requiredParameters.add(
-                        Parameter(
-                          (b) =>
-                              b
-                                ..name = 'json'
-                                ..type = refer('Object?', 'dart:core'),
-                        ),
-                      )
-                      ..body = _generateFromJsonBody(
-                        className,
-                        model,
-                        variantNames,
-                      )
-                      ..lambda = false,
+            ])
+            ..constructors.add(
+              Constructor(
+                (b) => b
+                  ..factory = true
+                  ..name = 'fromJson'
+                  ..requiredParameters.add(
+                    Parameter(
+                      (p) => p
+                        ..name = 'json'
+                        ..type = refer('Object?', 'dart:core'),
+                    ),
+                  )
+                  ..body = _generateFromJsonBody(
+                    className,
+                    model,
+                    variantNames,
+                  ),
               ),
-            ]),
+            )
     );
   }
 
@@ -379,6 +384,139 @@ class OneOfGenerator {
     );
 
     return Block.of(blocks);
+  }
+
+  Constructor _generateFromSimpleConstructor(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final bodyBlocks = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      final modelType = m.model;
+
+      final tryBody = <Code>[];
+
+      if (modelType is PrimitiveModel) {
+        final decodeExpr = buildSimpleValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+        );
+        tryBody.add(
+          refer(variantName).call([decodeExpr]).returned.statement,
+        );
+      } else {
+        final innerFromSimple = refer(
+              nameManager.modelName(modelType),
+              package,
+            )
+            .property('fromSimple')
+            .call(
+              [
+                refer('value'),
+              ],
+              {
+                'explode': refer('explode'),
+              },
+            );
+        tryBody.add(
+          refer(variantName).call([innerFromSimple]).returned.statement,
+        );
+      }
+
+      bodyBlocks.addAll([
+        const Code('try {\n'),
+        ...tryBody,
+        const Code('\n} on '),
+        refer('DecodingException', 'package:tonik_util/tonik_util.dart').code,
+        const Code(' catch (_) {} on '),
+        refer('FormatException', 'dart:core').code,
+        const Code(' catch (_) {}\n'),
+      ]);
+    }
+
+    bodyBlocks.add(
+      generateSimpleDecodingExceptionExpression(
+        'Invalid simple value for $className',
+      ).statement,
+    );
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromSimple'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = Block.of(bodyBlocks),
+    );
+  }
+
+  Method _generateToSimpleMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final cases = model.models
+        .map((m) {
+          final variantName = variantNames[m]!;
+          return '$variantName(:final value) => value.toSimple('
+              ' explode: explode, allowEmpty: allowEmpty)';
+        })
+        .join(',\n');
+
+    final body = Code(
+      'return switch (this) {\n$cases\n};',
+    );
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toSimple'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..lambda = false
+            ..body = body,
+    );
   }
 
   Method _buildHashCodeMethod(bool hasCollectionValue) {

@@ -76,20 +76,19 @@ void main() {
         );
       });
 
-      test('fromJson method handles primitive values', () {
-        final fromJson = baseClass.methods.firstWhere(
-          (m) => m.name == 'fromJson',
+      test('fromJson factory handles primitive values', () {
+        final fromJsonCtor = baseClass.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
         );
-        expect(fromJson.static, isTrue);
-        expect(fromJson.returns?.accept(emitter).toString(), 'Result');
+        expect(fromJsonCtor.factory, isTrue);
         expect(
-          fromJson.requiredParameters.first.type?.accept(emitter).toString(),
+          fromJsonCtor.requiredParameters.first.type?.accept(emitter).toString(),
           'Object?',
         );
 
         final generatedCode = format(baseClass.accept(emitter).toString());
         const expectedMethod = r'''
-          static Result fromJson(Object? json) {
+          factory Result.fromJson(Object? json) {
             return switch (json) {
               String s => ResultSuccess(s),
               int s => ResultError(s),
@@ -180,18 +179,18 @@ void main() {
         );
       });
 
-      test('fromJson method handles discriminator for complex types', () {
-        final fromJson = baseClass.methods.firstWhere(
-          (m) => m.name == 'fromJson',
+      test('fromJson factory handles discriminator for complex types', () {
+        final fromJsonCtor = baseClass.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
         );
-        expect(fromJson.static, isTrue);
+        expect(fromJsonCtor.factory, isTrue);
         expect(
-          fromJson.requiredParameters.first.type?.accept(emitter).toString(),
+          fromJsonCtor.requiredParameters.first.type?.accept(emitter).toString(),
           'Object?',
         );
 
         const expectedMethod = '''
-          static Result fromJson(Object? json) {
+          factory Result.fromJson(Object? json) {
             final discriminator = json is Map<String, Object?> ? json['type'] : null;
 
             final result = switch (discriminator) {
@@ -295,18 +294,18 @@ void main() {
         },
       );
 
-      test('fromJson method with type detection fallbacks', () {
-        final fromJson = baseClass.methods.firstWhere(
-          (m) => m.name == 'fromJson',
+      test('fromJson factory with type detection fallbacks', () {
+        final fromJsonCtor = baseClass.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
         );
-        expect(fromJson.static, isTrue);
+        expect(fromJsonCtor.factory, isTrue);
         expect(
-          fromJson.requiredParameters.first.type?.accept(emitter).toString(),
+          fromJsonCtor.requiredParameters.first.type?.accept(emitter).toString(),
           'Object?',
         );
 
         const expectedMethod = '''
-          static Result fromJson(Object? json) {
+          factory Result.fromJson(Object? json) {
             final discriminator = json is Map<String, Object?> ? json['discriminator'] : null;
 
             final result = switch (discriminator) {

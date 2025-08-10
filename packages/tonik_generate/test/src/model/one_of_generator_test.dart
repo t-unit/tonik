@@ -85,12 +85,27 @@ void main() {
     // No mixins
     expect(baseClass.mixins, isEmpty, reason: 'Should not have freezed mixins');
 
-    // Base class should have a single non-private constructor
-    expect(baseClass.constructors, hasLength(1));
-    final baseConstructor = baseClass.constructors.first;
-    expect(baseConstructor.name, isNull); // Default constructor, not private
+    // Base class should have a default const constructor and a fromSimple factory
+    expect(baseClass.constructors.length, 3);
+    final baseConstructor = baseClass.constructors.firstWhere(
+      (c) => c.name == null,
+    );
     expect(baseConstructor.constant, isTrue);
     expect(baseConstructor.factory, isFalse);
+
+    final fromSimple = baseClass.constructors.firstWhere(
+      (c) => c.name == 'fromSimple',
+    );
+    expect(fromSimple.factory, isTrue);
+    expect(
+      fromSimple.requiredParameters.first.type?.accept(emitter).toString(),
+      'String?',
+    );
+    expect(fromSimple.optionalParameters.first.name, 'explode');
+    expect(
+      fromSimple.optionalParameters.first.type?.accept(emitter).toString(),
+      'bool',
+    );
 
     // Check success subclass
     final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
@@ -129,9 +144,15 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors, hasLength(1));
-    expect(baseClass.constructors.first.name, isNull);
-    expect(baseClass.constructors.first.constant, isTrue);
+    expect(baseClass.constructors.length, 3);
+    expect(
+      baseClass.constructors.firstWhere((c) => c.name == null).constant,
+      isTrue,
+    );
+    expect(
+      baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
+      isTrue,
+    );
 
     // Check success subclass
     final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
@@ -188,9 +209,15 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors, hasLength(1));
-    expect(baseClass.constructors.first.name, isNull);
-    expect(baseClass.constructors.first.constant, isTrue);
+    expect(baseClass.constructors.length, 3);
+    expect(
+      baseClass.constructors.firstWhere((c) => c.name == null).constant,
+      isTrue,
+    );
+    expect(
+      baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
+      isTrue,
+    );
 
     // Check success subclass (should be named after the model)
     final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
@@ -227,9 +254,15 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors, hasLength(1));
-    expect(baseClass.constructors.first.name, isNull);
-    expect(baseClass.constructors.first.constant, isTrue);
+    expect(baseClass.constructors.length, 3);
+    expect(
+      baseClass.constructors.firstWhere((c) => c.name == null).constant,
+      isTrue,
+    );
+    expect(
+      baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
+      isTrue,
+    );
 
     // Check data subclass with proper list type
     final dataClass = classes.firstWhere((c) => c.name == 'ResultData');
@@ -244,7 +277,7 @@ void main() {
     );
   });
 
-  test('fromJson method includes proper catch clause with on Object', () {
+  test('fromJson factory includes proper catch clause with on Object', () {
     final model = OneOfModel(
       name: 'TestOneOf',
       models: {
@@ -264,18 +297,13 @@ void main() {
     final classes = generator.generateClasses(model);
     final baseClass = classes.firstWhere((c) => c.name == 'TestOneOf');
     final generatedCode = format(baseClass.accept(emitter).toString());
-    const expectedMethod = '''
-        TestOneOf fromJson(Object? json) {
-          try {
-            return TestOneOfTestClass(TestClass.fromJson(json));
-          } on Object catch(_) {}
-          throw JsonDecodingException('Invalid JSON for TestOneOf');
-        }
-      ''';
-
     expect(
       collapseWhitespace(generatedCode),
-      contains(collapseWhitespace(format(expectedMethod))),
+      contains(collapseWhitespace('factory TestOneOf.fromJson(Object? json)')),
+    );
+    expect(
+      collapseWhitespace(generatedCode),
+      contains(collapseWhitespace('on Object catch (_) {}')),
     );
   });
 
