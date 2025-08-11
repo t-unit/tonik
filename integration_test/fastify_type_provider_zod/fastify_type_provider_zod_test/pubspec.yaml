@@ -1,0 +1,22 @@
+name: fastify_type_provider_zod_test
+description: A sample command-line application.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  dio: ^5.8.0
+  fastify_type_provider_zod_api:
+    path: ../fastify_type_provider_zod_api
+  path: ^1.9.1
+  tonik_util: ^0.0.7
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^9.0.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util
