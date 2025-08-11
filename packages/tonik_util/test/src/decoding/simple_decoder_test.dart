@@ -86,7 +86,7 @@ void main() {
 
         // Test negative timezone offset
         const negativeOffsetString = '2024-03-14T10:30:45-08:00';
-        final negativeOffsetResult = 
+        final negativeOffsetResult =
             negativeOffsetString.decodeSimpleDateTime();
         expect(negativeOffsetResult.year, 2024);
         expect(negativeOffsetResult.month, 3);
@@ -157,11 +157,15 @@ void main() {
       test('decodes Uri values', () {
         final uri = Uri.parse('https://example.com');
         expect('https://example.com'.decodeSimpleUri(), uri);
-        expect('ftp://files.example.com/file.txt'.decodeSimpleUri(),
-               Uri.parse('ftp://files.example.com/file.txt'));
+        expect(
+          'ftp://files.example.com/file.txt'.decodeSimpleUri(),
+          Uri.parse('ftp://files.example.com/file.txt'),
+        );
         expect('/relative/path'.decodeSimpleUri(), Uri.parse('/relative/path'));
-        expect('mailto:user@example.com'.decodeSimpleUri(),
-               Uri.parse('mailto:user@example.com'));
+        expect(
+          'mailto:user@example.com'.decodeSimpleUri(),
+          Uri.parse('mailto:user@example.com'),
+        );
         expect(
           () => null.decodeSimpleUri(),
           throwsA(isA<InvalidTypeException>()),

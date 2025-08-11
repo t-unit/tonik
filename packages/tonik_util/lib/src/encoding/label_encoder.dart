@@ -51,14 +51,10 @@ class LabelEncoder extends BaseEncoder {
     if (value is Iterable) {
       if (explode) {
         // With explode=true, each value gets its own dot prefix
-        return value
-            .map((item) => '.${encodeValueDynamic(item)}')
-            .join();
+        return value.map((item) => '.${encodeValueDynamic(item)}').join();
       } else {
         // With explode=false (default), comma-separate the values
-        final encodedValues = value
-            .map(encodeValueDynamic)
-            .join(',');
+        final encodedValues = value.map(encodeValueDynamic).join(',');
         return '.$encodedValues';
       }
     }
@@ -68,8 +64,7 @@ class LabelEncoder extends BaseEncoder {
         // With explode=true, each property gets encoded as .key=value
         return value.entries
             .map(
-              (entry) =>
-                  '.${entry.key}=${encodeValueDynamic(entry.value)}',
+              (entry) => '.${entry.key}=${encodeValueDynamic(entry.value)}',
             )
             .join();
       } else {

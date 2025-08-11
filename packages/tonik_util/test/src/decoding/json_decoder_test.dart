@@ -80,7 +80,7 @@ void main() {
         expect(result.minute, 30);
         expect(result.second, 45);
         expect(result.timeZoneOffset, Duration.zero);
-        
+
         expect(null.decodeJsonNullableDateTime(), isNull);
         expect(''.decodeJsonNullableDateTime(), isNull);
         expect(
@@ -327,11 +327,15 @@ void main() {
       test('decodes Uri values', () {
         final uri = Uri.parse('https://example.com');
         expect('https://example.com'.decodeJsonUri(), uri);
-        expect('ftp://files.example.com/file.txt'.decodeJsonUri(), 
-               Uri.parse('ftp://files.example.com/file.txt'));
+        expect(
+          'ftp://files.example.com/file.txt'.decodeJsonUri(),
+          Uri.parse('ftp://files.example.com/file.txt'),
+        );
         expect('/relative/path'.decodeJsonUri(), Uri.parse('/relative/path'));
-        expect('mailto:user@example.com'.decodeJsonUri(), 
-               Uri.parse('mailto:user@example.com'));
+        expect(
+          'mailto:user@example.com'.decodeJsonUri(),
+          Uri.parse('mailto:user@example.com'),
+        );
         expect(
           () => 123.decodeJsonUri(),
           throwsA(isA<InvalidTypeException>()),
@@ -345,7 +349,10 @@ void main() {
       test('decodes nullable Uri values', () {
         final uri = Uri.parse('https://example.com');
         expect('https://example.com'.decodeJsonNullableUri(), uri);
-        expect('/api/v1/users'.decodeJsonNullableUri(), Uri.parse('/api/v1/users'));
+        expect(
+          '/api/v1/users'.decodeJsonNullableUri(),
+          Uri.parse('/api/v1/users'),
+        );
         expect(null.decodeJsonNullableUri(), isNull);
         expect(''.decodeJsonNullableUri(), Uri.parse(''));
         expect(

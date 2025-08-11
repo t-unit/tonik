@@ -439,48 +439,48 @@ void main() {
       'generates simpleProperties method that merges sub-model properties',
       () {
         final model = AllOfModel(
-        name: 'CombinedModel',
-        models: {
-          ClassModel(
-            name: 'Base',
-            properties: [
-              Property(
-                name: 'id',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'offset',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          ),
-          ClassModel(
-            name: 'Mixin',
-            properties: [
-              Property(
-                name: 'index',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          ),
-        },
-        context: context,
-      );
+          name: 'CombinedModel',
+          models: {
+            ClassModel(
+              name: 'Base',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+                Property(
+                  name: 'offset',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+            ClassModel(
+              name: 'Mixin',
+              properties: [
+                Property(
+                  name: 'index',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          },
+          context: context,
+        );
 
-      final combinedClass = generator.generateClass(model);
+        final combinedClass = generator.generateClass(model);
 
-      const expectedSimplePropertiesMethod = r'''
+        const expectedSimplePropertiesMethod = r'''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
           final mergedProperties = <String, String>{};
           mergedProperties.addAll($base.simpleProperties(allowEmpty: allowEmpty));
@@ -489,11 +489,12 @@ void main() {
         }
       ''';
 
-      expect(
-        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      },
+    );
   });
 
   group('with primitive models', () {

@@ -41,10 +41,7 @@ class Generator {
       nameManager: nameManager,
       package: fullPackage,
     );
-    final enumGenerator = EnumGenerator(
-      nameManager: nameManager,
-      package: fullPackage,
-    );
+    final enumGenerator = EnumGenerator(nameManager: nameManager);
     final oneOfGenerator = OneOfGenerator(
       nameManager: nameManager,
       package: fullPackage,

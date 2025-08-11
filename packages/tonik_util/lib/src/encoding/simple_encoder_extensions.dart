@@ -88,11 +88,11 @@ extension SimpleStringListEncoder on List<String> {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    
+
     if (isEmpty) {
       return '';
     }
-    
+
     // For both explode=true and explode=false, SimpleEncoder produces
     // comma-separated values
     return map(Uri.encodeComponent).join(',');
@@ -113,24 +113,26 @@ extension SimpleStringMapEncoder on Map<String, String> {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    
+
     if (isEmpty) {
       return '';
     }
-    
+
     if (explode) {
       // explode=true: key1=value1,key2=value2
       return entries
-          .map((e) => '${Uri.encodeComponent(e.key)}='
-              '${Uri.encodeComponent(e.value)}')
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}='
+                '${Uri.encodeComponent(e.value)}',
+          )
           .join(',');
     } else {
       // explode=false: key1,value1,key2,value2
       return entries
-          .expand((e) => [
-            Uri.encodeComponent(e.key),
-            Uri.encodeComponent(e.value)
-          ])
+          .expand(
+            (e) => [Uri.encodeComponent(e.key), Uri.encodeComponent(e.value)],
+          )
           .join(',');
     }
   }

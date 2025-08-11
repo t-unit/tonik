@@ -12,10 +12,9 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
 class EnumGenerator {
-  const EnumGenerator({required this.nameManager, required this.package});
+  const EnumGenerator({required this.nameManager});
 
   final NameManager nameManager;
-  final String package;
 
   ({String code, String filename}) generate<T>(EnumModel<T> model) {
     final emitter = DartEmitter(

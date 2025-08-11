@@ -13,7 +13,6 @@ void main() {
     nameGenerator = NameGenerator();
     generator = EnumGenerator(
       nameManager: NameManager(generator: nameGenerator),
-      package: 'test_package',
     );
   });
 

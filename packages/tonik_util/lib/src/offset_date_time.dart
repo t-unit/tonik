@@ -43,10 +43,10 @@ class OffsetDateTime implements DateTime {
     );
 
     final offset = _parseTimezoneOffset(offsetString);
-    
+
     // Parse the datetime part (without timezone) as local time
     final localDateTime = DateTime.parse(datetimeString);
-    
+
     // Create OffsetDateTime from the local time and offset
     return OffsetDateTime.from(
       localDateTime,
@@ -59,7 +59,7 @@ class OffsetDateTime implements DateTime {
   /// Always returns an [OffsetDateTime] object:
   /// - For strings ending with 'Z': OffsetDateTime with zero offset (UTC)
   /// - For strings without timezone: OffsetDateTime with system timezone offset
-  /// - For strings with timezone offset: OffsetDateTime with the specified 
+  /// - For strings with timezone offset: OffsetDateTime with the specified
   ///   offset
   ///
   /// Throws [DecodingException] if the string is not a valid ISO8601 format.
@@ -87,7 +87,7 @@ class OffsetDateTime implements DateTime {
 
     if (timezoneMatch != null) {
       return OffsetDateTime._parseWithTimezoneOffset(
-        normalizedInput, 
+        normalizedInput,
         timezoneMatch,
       );
     }
@@ -95,7 +95,7 @@ class OffsetDateTime implements DateTime {
     // Parse as UTC (ends with Z) or local time (no timezone info)
     try {
       final dateTime = DateTime.parse(normalizedInput);
-      
+
       // Create OffsetDateTime from the parsed DateTime
       if (dateTime.isUtc) {
         // UTC datetime - create with zero offset

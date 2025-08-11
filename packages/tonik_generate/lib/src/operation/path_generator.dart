@@ -141,7 +141,7 @@ class PathGenerator {
               'path parameter ${param.parameter.rawName}',
             ).statement,
           );
-          
+
           continue;
         }
 

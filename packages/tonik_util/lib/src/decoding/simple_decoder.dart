@@ -261,7 +261,7 @@ extension SimpleDecoder on String? {
   /// Decodes a string to a Date.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
-  /// Throws [FormatException] if the string is not in the correct format or if 
+  /// Throws [FormatException] if the string is not in the correct format or if
   /// any of the date components are invalid.
   /// Throws [InvalidTypeException] if the value is null or empty.
   Date decodeSimpleDate({String? context}) {
@@ -296,7 +296,7 @@ extension SimpleDecoder on String? {
   ///
   /// Returns null if the string is empty or null.
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
-  /// Throws [FormatException] if the string is not in the correct format or if 
+  /// Throws [FormatException] if the string is not in the correct format or if
   /// any of the date components are invalid.
   Date? decodeSimpleNullableDate({String? context}) {
     if (this?.isEmpty ?? true) return null;

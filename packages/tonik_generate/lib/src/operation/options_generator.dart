@@ -240,7 +240,7 @@ class OptionsGenerator {
       final paramName = headerParam.normalizedName;
       final resolvedParam = headerParam.parameter;
 
-      // For simple encoding, reject headers that are lists with 
+      // For simple encoding, reject headers that are lists with
       // complex elements
       if (resolvedParam.encoding == HeaderParameterEncoding.simple &&
           resolvedParam.model is ListModel &&

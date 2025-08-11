@@ -36,8 +36,6 @@ sealed class ReferenceWrapper<T> {
 
     throw UnimplementedError();
   }
-
-  Map<String, dynamic> toJson() => throw UnimplementedError();
 }
 
 class Reference<T> extends ReferenceWrapper<T> {

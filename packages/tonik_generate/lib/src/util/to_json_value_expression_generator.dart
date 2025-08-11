@@ -40,17 +40,6 @@ String buildToJsonQueryParameterExpression(
   return suffix == null ? parameterName : '$parameterName$suffix';
 }
 
-/// Creates a Dart expression string that correctly serializes a
-/// header parameter to its JSON representation.
-String buildToJsonHeaderParameterExpression(
-  String parameterName,
-  RequestHeaderObject parameter,
-) {
-  final model = parameter.model;
-  final suffix = _getSerializationSuffix(model, false);
-  return suffix == null ? parameterName : '$parameterName$suffix';
-}
-
 String? _getSerializationSuffix(
   Model model,
   bool isNullable, {

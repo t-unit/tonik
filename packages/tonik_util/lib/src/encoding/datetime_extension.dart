@@ -23,27 +23,25 @@ extension DateTimeEncodingExtension on DateTime {
     final hour = _twoDigits(this.hour);
     final minute = _twoDigits(this.minute);
     final second = _twoDigits(this.second);
-    
+
     // Add milliseconds if present
-    final millisecondString = millisecond > 0 
-        ? '.${_threeDigits(millisecond)}' 
-        : '';
-    
+    final millisecondString =
+        millisecond > 0 ? '.${_threeDigits(millisecond)}' : '';
+
     // Add microseconds if present
-    final microsecondString = microsecond > 0 
-        ? _threeDigits(microsecond) 
-        : '';
-    
+    final microsecondString = microsecond > 0 ? _threeDigits(microsecond) : '';
+
     // Get the timezone offset in hours and minutes
     final offset = timeZoneOffset;
     final offsetHours = offset.inHours.abs();
     final offsetMinutes = offset.inMinutes.abs() % 60;
-    
+
     // Format timezone offset
     final offsetSign = offset.isNegative ? '-' : '+';
-    final offsetString = '$offsetSign'
+    final offsetString =
+        '$offsetSign'
         '${_twoDigits(offsetHours)}:${_twoDigits(offsetMinutes)}';
-    
+
     return '$year-$month-${day}T$hour:$minute:$second'
         '$millisecondString$microsecondString$offsetString';
   }
@@ -57,4 +55,4 @@ extension DateTimeEncodingExtension on DateTime {
   static String _threeDigits(int n) {
     return n.toString().padLeft(3, '0');
   }
-} 
+}

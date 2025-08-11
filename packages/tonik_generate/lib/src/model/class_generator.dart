@@ -636,17 +636,13 @@ class ClassGenerator {
       // explode=true: prop1=val1,prop2=val2
       declareFinal('pairs')
           .assign(
-            refer('value')
-                .property('split')
-                .call([literalString(',')]),
+            refer('value').property('split').call([literalString(',')]),
           )
           .statement,
       const Code('for (final pair in pairs) {'),
       declareFinal('parts')
           .assign(
-            refer('pair')
-                .property('split')
-                .call([literalString('=')]),
+            refer('pair').property('split').call([literalString('=')]),
           )
           .statement,
       const Code('if (parts.length != 2) {'),
@@ -667,9 +663,7 @@ class ClassGenerator {
       // explode=false: prop1,val1,prop2,val2
       declareFinal('parts')
           .assign(
-            refer('value')
-                .property('split')
-                .call([literalString(',')]),
+            refer('value').property('split').call([literalString(',')]),
           )
           .statement,
       const Code('if (parts.length % 2 != 0) {'),
