@@ -1,3 +1,9 @@
+## 0.0.8
+
+ - **FEAT**: improved simple en- and decoding for all of models.
+ - **FEAT**: parse time zones agnostic of locations.
+ - **FEAT**: Uri property encoding and decoding.
+
 ## 0.0.6
 
 ## 0.0.5

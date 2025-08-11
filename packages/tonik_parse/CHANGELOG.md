@@ -1,3 +1,9 @@
+## 0.0.8
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware date time parsing.
+ - **FEAT**: more verbose decimal parsing.
+
 ## 0.0.6
 
 ## 0.0.5

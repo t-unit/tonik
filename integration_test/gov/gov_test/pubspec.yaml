@@ -11,7 +11,7 @@ dependencies:
   gov_api:
     path: ../gov_api
   path: ^1.9.1
-  tonik_util: ^0.0.7
+  tonik_util: ^0.0.8
 
 dev_dependencies:
   test: ^1.25.15

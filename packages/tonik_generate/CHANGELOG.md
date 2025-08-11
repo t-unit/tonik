@@ -1,3 +1,23 @@
+## 0.0.8
+
+ - **REFACTOR**: use simple encoding extension for request headers.
+ - **REFACTOR**: remove usage of simple encoder for path parameters.
+ - **FIX**: add missing simple properteis for one of classes.
+ - **FIX**: path parameter encoding when only separated by a slash.
+ - **FIX**: improved property json handling for one of models.
+ - **FEAT**: toSimple for any of classes.
+ - **FEAT**: simple properties for any of models.
+ - **FEAT**: generate any of models.
+ - **FEAT**: oneOf fromSimple / toSimple.
+ - **FEAT**: to simple for classes.
+ - **FEAT**: toSimple for enums.
+ - **FEAT**: improved simple en- and decoding for all of models.
+ - **FEAT**: fromSimple, toSimple for all of.
+ - **FEAT**: property normailization for all of models.
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware encoding of date time objects.
+ - **FEAT**: drop api prefix from generated server class.
+
 ## 0.0.6
 
  - **FIX**: proper handle dates.

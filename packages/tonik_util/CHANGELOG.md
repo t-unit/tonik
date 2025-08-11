@@ -1,3 +1,11 @@
+## 0.0.8
+
+ - **REFACTOR**: use simple encoding extension for request headers.
+ - **FIX**: improved url decoding.
+ - **FIX**: improved property json handling for one of models.
+ - **FEAT**: improved simple en- and decoding for all of models.
+ - **FEAT**: parse time zones agnostic of locations.
+
 ## 0.0.7
 
  - **FEAT**: Uri property encoding and decoding.

@@ -3,6 +3,71 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-08-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_core` - `v0.0.8`](#tonik_core---v008)
+ - [`tonik_util` - `v0.0.8`](#tonik_util---v008)
+ - [`tonik_parse` - `v0.0.8`](#tonik_parse---v008)
+ - [`tonik_generate` - `v0.0.8`](#tonik_generate---v008)
+ - [`tonik` - `v0.0.8`](#tonik---v008)
+
+---
+
+#### `tonik_core` - `v0.0.8`
+
+ - **FEAT**: improved simple en- and decoding for all of models.
+ - **FEAT**: parse time zones agnostic of locations.
+ - **FEAT**: Uri property encoding and decoding.
+
+#### `tonik_util` - `v0.0.8`
+
+ - **REFACTOR**: use simple encoding extension for request headers.
+ - **FIX**: improved url decoding.
+ - **FIX**: improved property json handling for one of models.
+ - **FEAT**: improved simple en- and decoding for all of models.
+ - **FEAT**: parse time zones agnostic of locations.
+
+#### `tonik_parse` - `v0.0.8`
+
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware date time parsing.
+ - **FEAT**: more verbose decimal parsing.
+
+#### `tonik_generate` - `v0.0.8`
+
+ - **REFACTOR**: use simple encoding extension for request headers.
+ - **REFACTOR**: remove usage of simple encoder for path parameters.
+ - **FIX**: add missing simple properteis for one of classes.
+ - **FIX**: path parameter encoding when only separated by a slash.
+ - **FIX**: improved property json handling for one of models.
+ - **FEAT**: toSimple for any of classes.
+ - **FEAT**: simple properties for any of models.
+ - **FEAT**: generate any of models.
+ - **FEAT**: oneOf fromSimple / toSimple.
+ - **FEAT**: to simple for classes.
+ - **FEAT**: toSimple for enums.
+ - **FEAT**: improved simple en- and decoding for all of models.
+ - **FEAT**: fromSimple, toSimple for all of.
+ - **FEAT**: property normailization for all of models.
+ - **FEAT**: Uri property encoding and decoding.
+ - **FEAT**: time zone aware encoding of date time objects.
+ - **FEAT**: drop api prefix from generated server class.
+
+#### `tonik` - `v0.0.8`
+
+ - **FEAT**: Uri property encoding and decoding.
+
+
 ## 2025-07-20
 
 ### Changes
