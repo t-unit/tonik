@@ -181,13 +181,43 @@ class AnyOfGenerator {
     );
   }
 
+  Reference _nullableTypeReference(Model model) => typeReference(
+        model,
+        nameManager,
+        package,
+        isNullableOverride: true,
+      );
+
+  Code _tryAssignLocal({
+    required String variableName,
+    required Reference nullableType,
+    required Expression decodeExpression,
+  }) {
+    return Block.of([
+      nullableType.code,
+      Code(' $variableName;'),
+      const Code('\ntry {\n  '),
+      Code('$variableName = '),
+      decodeExpression.code,
+      const Code(';\n} on '),
+      refer('Object', 'dart:core').code,
+      const Code(' catch (_) {\n  '),
+      Code('$variableName = null;'),
+      const Code('\n}\n'),
+    ]);
+  }
+
+  Map<Model, String?> _discriminatorMap(AnyOfModel model) => {
+        for (final dm in model.models) dm.model: dm.discriminatorValue,
+      };
+
   Constructor _buildFromJsonConstructor(
     String className,
-    List<({String normalizedName, Property property})> normalized,
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final localDecls = <Code>[];
 
-    for (final n in normalized) {
+    for (final n in normalizedProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
@@ -199,30 +229,18 @@ class AnyOfGenerator {
         contextClass: className,
       );
 
-      final typeRefNullable = typeReference(
-        modelType,
-        nameManager,
-        package,
-        isNullableOverride: true,
-      );
       localDecls.add(
-        Block.of([
-          typeRefNullable.code,
-          Code(' $varName;'),
-          const Code('\ntry {\n  '),
-          Code('$varName = '),
-          decodeExpr.code,
-          const Code(';\n} on '),
-          refer('Object', 'dart:core').code,
-          const Code(' catch (_) {\n  '),
-          Code('$varName = null;'),
-          const Code('\n}\n'),
-        ]),
+        _tryAssignLocal(
+          variableName: varName,
+          nullableType: _nullableTypeReference(modelType),
+          decodeExpression: decodeExpr,
+        ),
       );
     }
 
     final ctorArgs = {
-      for (final n in normalized) n.normalizedName: refer(n.normalizedName),
+      for (final n in normalizedProperties)
+        n.normalizedName: refer(n.normalizedName),
     };
 
     return Constructor(
@@ -248,7 +266,7 @@ class AnyOfGenerator {
   Method _buildToJsonMethod(
     String className,
     AnyOfModel model,
-    List<({String normalizedName, Property property})> normalized,
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final body = [
       declareFinal(
@@ -260,11 +278,12 @@ class AnyOfGenerator {
     ];
 
     final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
       body.add(const Code('String? discriminatorValue;'));
     }
 
-    for (final n in normalized) {
+    for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final valueExpr = buildToJsonPropertyExpression(
         name,
@@ -272,10 +291,7 @@ class AnyOfGenerator {
         forceNonNullReceiver: true,
       );
 
-      final discriminated = model.models.firstWhere(
-        (dm) => dm.model == n.property.model,
-        orElse: () => (discriminatorValue: null, model: n.property.model),
-      );
+      final discValue = discMap[n.property.model];
 
       final openIf = Code('if ($name != null) {');
       final decl = Block.of([
@@ -293,12 +309,9 @@ class AnyOfGenerator {
         const Code(') {'),
       ];
       final addMap = Code('mapValues.add(${name}Json);');
-      final maybeDisc =
-          hasDiscriminator && discriminated.discriminatorValue != null
-              ? Code(
-                "discriminatorValue ??= '${discriminated.discriminatorValue}';",
-              )
-              : const Code('');
+      final maybeDisc = hasDiscriminator && discValue != null
+          ? Code("discriminatorValue ??= '$discValue';")
+          : const Code('');
       const ifMapClose = Code('}');
       final addValue = Code('values.add(${name}Json);');
       const closeIf = Code('}');
@@ -375,43 +388,27 @@ class AnyOfGenerator {
   Method _buildToSimpleMethod(
     String className,
     AnyOfModel model,
-    List<({String normalizedName, Property property})> normalized,
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final body = [
       declareFinal(
         'values',
       ).assign(literalList([], refer('String', 'dart:core'))).statement,
       declareFinal('mapValues')
-          .assign(
-            literalList(
-              [],
-              TypeReference(
-                (tb) =>
-                    tb
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        refer('String', 'dart:core'),
-                        refer('String', 'dart:core'),
-                      ]),
-              ),
-            ),
-          )
+          .assign(literalList([], buildMapStringStringType()))
           .statement,
     ];
 
     final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
       body.add(const Code('String? discriminatorValue;'));
     }
 
-    for (final n in normalized) {
+    for (final n in normalizedProperties) {
       final name = n.normalizedName;
 
-      final discriminated = model.models.firstWhere(
-        (dm) => dm.model == n.property.model,
-        orElse: () => (discriminatorValue: null, model: n.property.model),
-      );
+      final discValue = discMap[n.property.model];
 
       final isComplex = n.property.model.encodingShape != EncodingShape.simple;
 
@@ -431,11 +428,9 @@ class AnyOfGenerator {
 
         ..add(Code('mapValues.add($tmp);'));
 
-        if (hasDiscriminator && discriminated.discriminatorValue != null) {
+        if (hasDiscriminator && discValue != null) {
           body.add(
-            Code(
-              "discriminatorValue ??= '${discriminated.discriminatorValue}';",
-            ),
+            Code("discriminatorValue ??= '$discValue';"),
           );
         }
 
@@ -549,11 +544,11 @@ class AnyOfGenerator {
 
   Constructor _buildFromSimpleConstructor(
     String className,
-    List<({String normalizedName, Property property})> normalized,
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final localDecls = <Code>[];
 
-    for (final n in normalized) {
+    for (final n in normalizedProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
@@ -581,31 +576,18 @@ class AnyOfGenerator {
         ),
       };
 
-      final typeRefNullable = typeReference(
-        modelType,
-        nameManager,
-        package,
-        isNullableOverride: true,
-      );
-
       localDecls.add(
-        Block.of([
-          typeRefNullable.code,
-          Code(' $varName;'),
-          const Code('\ntry {\n  '),
-          Code('$varName = '),
-          decodeExpr.code,
-          const Code(';\n} on '),
-          refer('Object', 'dart:core').code,
-          const Code(' catch (_) {\n  '),
-          Code('$varName = null;'),
-          const Code('\n}\n'),
-        ]),
+        _tryAssignLocal(
+          variableName: varName,
+          nullableType: _nullableTypeReference(modelType),
+          decodeExpression: decodeExpr,
+        ),
       );
     }
 
     final ctorArgs = {
-      for (final n in normalized) n.normalizedName: refer(n.normalizedName),
+      for (final n in normalizedProperties)
+        n.normalizedName: refer(n.normalizedName),
     };
 
     return Constructor(
@@ -641,7 +623,7 @@ class AnyOfGenerator {
   Method _buildSimplePropertiesMethod(
     String className,
     AnyOfModel model,
-    List<({String normalizedName, Property property})> normalized,
+    List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final hasSimple = model.models.any(
       (m) => m.model.encodingShape == EncodingShape.simple,
@@ -655,16 +637,7 @@ class AnyOfGenerator {
         (b) =>
             b
               ..name = 'simpleProperties'
-              ..returns = TypeReference(
-                (tb) =>
-                    tb
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        refer('String', 'dart:core'),
-                        refer('String', 'dart:core'),
-                      ]),
-              )
+              ..returns = buildMapStringStringType()
               ..optionalParameters.add(
                 Parameter(
                   (p) =>
@@ -684,25 +657,11 @@ class AnyOfGenerator {
     }
     final body = <Code>[
       declareFinal('maps')
-          .assign(
-            literalList(
-              [],
-              TypeReference(
-                (tb) =>
-                    tb
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        refer('String', 'dart:core'),
-                        refer('String', 'dart:core'),
-                      ]),
-              ),
-            ),
-          )
+          .assign(literalList([], buildMapStringStringType()))
           .statement,
     ];
 
-    for (final n in normalized) {
+    for (final n in normalizedProperties) {
       final isComplex = n.property.model.encodingShape != EncodingShape.simple;
       if (!isComplex) continue;
       final fn = n.normalizedName;
@@ -710,18 +669,7 @@ class AnyOfGenerator {
       body
         ..add(Code('if ($fn != null) { '))
         ..add(const Code('final '))
-        ..add(
-          TypeReference(
-            (tb) =>
-                tb
-                  ..symbol = 'Map'
-                  ..url = 'dart:core'
-                  ..types.addAll([
-                    refer('String', 'dart:core'),
-                    refer('String', 'dart:core'),
-                  ]),
-          ).code,
-        )
+        ..add(buildMapStringStringType().code)
         ..add(Code(' $tmp = '))
         ..add(Code('$fn!.simpleProperties(allowEmpty: allowEmpty);'))
         ..add(const Code(' maps.add('))
@@ -731,7 +679,7 @@ class AnyOfGenerator {
     }
 
     if (hasSimple && hasComplex) {
-      for (final n in normalized) {
+      for (final n in normalizedProperties) {
         final isSimple = n.property.model.encodingShape == EncodingShape.simple;
         if (!isSimple) continue;
         final fn = n.normalizedName;
@@ -768,16 +716,7 @@ class AnyOfGenerator {
       (b) =>
           b
             ..name = 'simpleProperties'
-            ..returns = TypeReference(
-              (tb) =>
-                  tb
-                    ..symbol = 'Map'
-                    ..url = 'dart:core'
-                    ..types.addAll([
-                      refer('String', 'dart:core'),
-                      refer('String', 'dart:core'),
-                    ]),
-            )
+            ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
                 (p) =>

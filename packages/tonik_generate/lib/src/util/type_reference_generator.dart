@@ -123,3 +123,25 @@ TypeReference buildMapStringObjectType() => TypeReference(
           ),
         ]),
 );
+
+/// Returns a TypeReference for [Map<String, String>].
+TypeReference buildMapStringStringType() => TypeReference(
+  (b) =>
+      b
+        ..symbol = 'Map'
+        ..url = 'dart:core'
+        ..types.addAll([
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core',
+          ),
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core',
+          ),
+        ]),
+);
