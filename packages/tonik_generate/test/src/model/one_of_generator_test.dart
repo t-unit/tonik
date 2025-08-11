@@ -85,7 +85,7 @@ void main() {
     // No mixins
     expect(baseClass.mixins, isEmpty, reason: 'Should not have freezed mixins');
 
-    // Base class should have a default const constructor and 
+    // Base class should have a default const constructor and
     // a fromSimple factory
     expect(baseClass.constructors.length, 3);
     final baseConstructor = baseClass.constructors.firstWhere(
@@ -306,6 +306,161 @@ void main() {
       collapseWhitespace(generatedCode),
       contains(collapseWhitespace('on Object catch (_) {}')),
     );
+  });
+
+  group('simpleProperties generation', () {
+    test('generates simpleProperties delegating for class-only variants', () {
+      final classA = ClassModel(
+        name: 'A',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+      final classB = ClassModel(
+        name: 'B',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Choice',
+        models: {
+          (discriminatorValue: 'a', model: classA),
+          (discriminatorValue: 'b', model: classB),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Choice');
+
+      final simpleProps = baseClass.methods.firstWhere(
+        (m) => m.name == 'simpleProperties',
+      );
+      expect(
+        simpleProps.returns?.accept(emitter).toString(),
+        'Map<String,String>',
+      );
+      expect(simpleProps.optionalParameters, hasLength(1));
+      expect(simpleProps.optionalParameters.first.name, 'allowEmpty');
+      expect(simpleProps.optionalParameters.first.required, isTrue);
+
+      final generated = format(baseClass.accept(emitter).toString());
+      const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          return switch (this) {
+            ChoiceA(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
+            ChoiceB(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
+          };
+        }
+      ''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(format(expectedMethod))),
+      );
+    });
+
+    test(
+      'generates simpleProperties empty map for primitive-only variants',
+      () {
+        final model = OneOfModel(
+          name: 'PrimitiveChoice',
+          models: {
+            (discriminatorValue: 'i', model: IntegerModel(context: context)),
+            (discriminatorValue: 's', model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere(
+          (c) => c.name == 'PrimitiveChoice',
+        );
+        final generated = format(baseClass.accept(emitter).toString());
+
+        final simpleProps = baseClass.methods.firstWhere(
+          (m) => m.name == 'simpleProperties',
+        );
+        expect(
+          simpleProps.returns?.accept(emitter).toString(),
+          'Map<String,String>',
+        );
+        expect(simpleProps.optionalParameters.first.required, isTrue);
+
+        const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          return switch (this) {
+            PrimitiveChoiceI(:final value) => <String, String>{},
+            PrimitiveChoiceS(:final value) => <String, String>{},
+          };
+        }
+      ''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(format(expectedMethod))),
+        );
+      },
+    );
+
+    test('generates simpleProperties mixing class and primitive variants', () {
+      final classM = ClassModel(
+        name: 'M',
+        properties: [
+          Property(
+            name: 'flag',
+            model: BooleanModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'MixedChoice',
+        models: {
+          (discriminatorValue: 'm', model: classM),
+          (discriminatorValue: 's', model: StringModel(context: context)),
+        },
+        discriminator: 'kind',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'MixedChoice');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          return switch (this) {
+            MixedChoiceM(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
+            MixedChoiceS(:final value) => <String, String>{},
+          };
+        }
+      ''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(format(expectedMethod))),
+      );
+    });
   });
 
   group('subclass equals', () {

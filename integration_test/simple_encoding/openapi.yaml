@@ -16,6 +16,24 @@ tags:
     description: Operations demonstrating simple encoding
 
 paths:
+  /anyof/{flexibleValue}:
+    get:
+      operationId: testAnyOfInPath
+      tags:
+        - simple-encoding
+      summary: Test AnyOf flexible union in path parameter
+      description: Demonstrates simple encoding for AnyOfModel using path parameter
+      parameters:
+        - name: flexibleValue
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/FlexibleValue'
+      responses:
+        '200':
+          description: OK
+
   /primitive/{integer}/{double}/{number}/{string}/{boolean}/{datetime}/{date}/{decimal}/{uri}/{enum}:
     get:
       operationId: testPrimitiveInPath
@@ -406,6 +424,13 @@ components:
           person: '#/components/schemas/PersonEntity'
           company: '#/components/schemas/CompanyEntity'
           system: '#/components/schemas/SystemEntity'
+
+    FlexibleValue:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: boolean
+        - $ref: '#/components/schemas/SimpleObject'
 
     PersonEntity:
       type: object

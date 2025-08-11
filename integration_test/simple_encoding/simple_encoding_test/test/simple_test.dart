@@ -30,6 +30,41 @@ void main() {
     );
   }
 
+  test('testAnyOfInPath string', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfInPath(
+      flexibleValue: const FlexibleValue(string: 'string'),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
+  test('testAnyOfInPath integer', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfInPath(
+      flexibleValue: const FlexibleValue(int: 1),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
+  test('testAnyOfInPath object', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfInPath(
+      flexibleValue: const FlexibleValue(
+        simpleObject: SimpleObject(value: -1, name: 'John Doe'),
+      ),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
   test('testPrimitiveInPath', () async {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testPrimitiveInPath(

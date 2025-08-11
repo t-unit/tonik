@@ -100,6 +100,7 @@ class OneOfGenerator {
               _generateFromSimpleConstructor(className, model, variantNames),
             )
             ..methods.addAll([
+              _generateSimplePropertiesMethod(className, model, variantNames),
               _generateToSimpleMethod(className, model, variantNames),
               Method(
                 (b) =>
@@ -524,6 +525,70 @@ class OneOfGenerator {
       properties: [
         (normalizedName: 'value', hasCollectionValue: hasCollectionValue),
       ],
+    );
+  }
+
+  Method _generateSimplePropertiesMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      caseCodes.add(Code('$variantName(:final value) => '));
+
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      if (isSimple) {
+        caseCodes.add(
+          literalMap(
+            {},
+            refer('String', 'dart:core'),
+            refer('String', 'dart:core'),
+          ).code,
+        );
+      } else {
+        caseCodes.add(
+          refer('value')
+              .property('simpleProperties')
+              .call([], {'allowEmpty': refer('allowEmpty')}).code,
+        );
+      }
+      caseCodes.add(const Code(',\n'));
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'simpleProperties'
+            ..returns = TypeReference(
+              (b) => b
+                ..symbol = 'Map'
+                ..url = 'dart:core'
+                ..types.addAll([
+                  refer('String', 'dart:core'),
+                  refer('String', 'dart:core'),
+                ]),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..lambda = false
+            ..body = body,
     );
   }
 }
