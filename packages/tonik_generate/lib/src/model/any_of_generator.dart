@@ -146,6 +146,12 @@ class AnyOfGenerator {
       normalized,
     );
 
+    final simplePropsMethod = _buildSimplePropertiesMethod(
+      className,
+      model,
+      normalized,
+    );
+
     return Class(
       (b) =>
           b
@@ -156,6 +162,7 @@ class AnyOfGenerator {
             ..constructors.add(fromSimpleCtor)
             ..methods.addAll([
               toJsonMethod,
+              simplePropsMethod,
               generateEqualsMethod(
                 className: className,
                 properties: propsForEquality,
@@ -370,23 +377,26 @@ class AnyOfGenerator {
 
       final decodeExpr = switch (modelType) {
         ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => refer(
-                nameManager.modelName(modelType),
-                package,
-              )
-              .property('fromSimple')
-              .call([
+              nameManager.modelName(modelType),
+              package,
+            )
+            .property('fromSimple')
+            .call(
+              [
                 refer('value'),
-              ], {
+              ],
+              {
                 'explode': refer('explode'),
-              }),
+              },
+            ),
         _ => buildSimpleValueExpression(
-            refer('value'),
-            model: modelType,
-            isRequired: true,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-          ),
+          refer('value'),
+          model: modelType,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+        ),
       };
 
       final typeRefNullable = typeReference(
@@ -443,6 +453,161 @@ class AnyOfGenerator {
               ...localDecls,
               refer(className, package).call([], ctorArgs).returned.statement,
             ]),
+    );
+  }
+
+  Method _buildSimplePropertiesMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalized,
+  ) {
+    final hasSimple = model.models.any(
+      (m) => m.model.encodingShape == EncodingShape.simple,
+    );
+    final hasComplex = model.models.any(
+      (m) => m.model.encodingShape != EncodingShape.simple,
+    );
+
+    if (hasSimple && !hasComplex) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'simpleProperties'
+              ..returns = TypeReference(
+                (tb) =>
+                    tb
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              )
+              ..optionalParameters.add(
+                Parameter(
+                  (p) =>
+                      p
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'simpleProperties not supported for $className: '
+                    'contains primitive values',
+                  ).statement,
+      );
+    }
+    final body = <Code>[
+      declareFinal('maps')
+          .assign(
+            literalList(
+              [],
+              TypeReference(
+                (tb) =>
+                    tb
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              ),
+            ),
+          )
+          .statement,
+    ];
+
+    for (final n in normalized) {
+      final isComplex =
+          n.property.model.encodingShape != EncodingShape.simple;
+      if (!isComplex) continue;
+      final fn = n.normalizedName;
+      final tmp = '${fn}Simple';
+      body
+        ..add(Code('if ($fn != null) { '))
+        ..add(const Code('final '))
+        ..add(
+          TypeReference(
+            (tb) => tb
+              ..symbol = 'Map'
+              ..url = 'dart:core'
+              ..types.addAll([
+                refer('String', 'dart:core'),
+                refer('String', 'dart:core'),
+              ]),
+          ).code,
+        )
+        ..add(Code(' $tmp = '))
+        ..add(Code('$fn!.simpleProperties( allowEmpty: allowEmpty, );'))
+        ..add(const Code(' maps.add('))
+        ..add(Code(tmp))
+        ..add(const Code(');'))
+        ..add(const Code('}'));
+    }
+
+    if (hasSimple && hasComplex) {
+      for (final n in normalized) {
+        final isSimple =
+            n.property.model.encodingShape == EncodingShape.simple;
+        if (!isSimple) continue;
+        final fn = n.normalizedName;
+        body.addAll([
+          Code('if ($fn != null) {'),
+          generateEncodingExceptionExpression(
+            'simpleProperties not supported for $className: '
+            'mixing simple and complex values',
+          ).statement,
+          const Code('}'),
+        ]);
+      }
+    }
+
+    body.addAll([
+      const Code('if (maps.isEmpty) return '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ).code,
+      const Code(';'),
+      const Code('final map = '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ).statement,
+      const Code('for (final m in maps) { map.addAll(m); }'),
+      const Code('return map;'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'simpleProperties'
+            ..returns = TypeReference(
+              (tb) =>
+                  tb
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      refer('String', 'dart:core'),
+                      refer('String', 'dart:core'),
+                    ]),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = Block.of(body),
     );
   }
 }

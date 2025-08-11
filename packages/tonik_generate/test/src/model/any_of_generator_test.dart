@@ -649,7 +649,7 @@ void main() {
           ).format;
       final generated = format(klass.accept(emitter).toString());
 
-    const expectedMethod = '''
+      const expectedMethod = '''
       Object? toJson() {
         final values = <Object?>[];
         final mapValues = <Map<String, Object?>>[];
@@ -868,5 +868,177 @@ void main() {
       collapseWhitespace(generated),
       contains(collapseWhitespace(expectedMethod)),
     );
+  });
+
+  group('simpleProperties', () {
+    test('primitive-only anyOf throws', () {
+      final model = AnyOfModel(
+        name: 'OnlyPrimitivesSimple',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: BooleanModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(klass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          throw EncodingException(
+            'simpleProperties not supported for OnlyPrimitivesSimple: contains primitive values',
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test(
+      'merges simpleProperties for multiple complex variants like toJson',
+      () {
+        final modelA = ClassModel(
+          name: 'A',
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final modelB = ClassModel(
+          name: 'B',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'PayloadSimple',
+          models: {
+            (discriminatorValue: 'a', model: modelA),
+            (discriminatorValue: 'b', model: modelB),
+          },
+          discriminator: 'disc',
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(klass.accept(emitter).toString());
+
+        const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          final maps = <Map<String, String>>[];
+          if (a != null) {
+            final Map<String, String> aSimple = a!.simpleProperties( allowEmpty: allowEmpty, );
+            maps.add(aSimple);
+          }
+          if (b != null) {
+            final Map<String, String> bSimple = b!.simpleProperties( allowEmpty: allowEmpty, );
+            maps.add(bSimple);
+          }
+          if (maps.isEmpty) return <String, String>{};
+          final map = <String, String>{};
+          for (final m in maps) {
+            map.addAll(m);
+          }
+          return map;
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test('mixed complex and primitive: throw when simple is set', () {
+      final user = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'MixedSimple',
+        models: {
+          (discriminatorValue: 'user', model: user),
+          (discriminatorValue: 'str', model: StringModel(context: context)),
+        },
+        discriminator: 'disc',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(klass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          final maps = <Map<String, String>>[];
+          if (user != null) {
+            final Map<String, String> userSimple = user!.simpleProperties( allowEmpty: allowEmpty, );
+            maps.add(userSimple);
+          }
+          if (string != null) {
+            throw EncodingException(
+              'simpleProperties not supported for MixedSimple: mixing simple and complex values',
+            );
+          }
+          if (maps.isEmpty) return <String, String>{};
+          final map = <String, String>{};
+          for (final m in maps) {
+            map.addAll(m);
+          }
+          return map;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
   });
 }
