@@ -38,7 +38,8 @@ void main() {
 
     test('encodes Uri with special characters', () {
       final value = Uri.parse(
-          'https://example.com/path with spaces?key=value&other=data');
+        'https://example.com/path with spaces?key=value&other=data',
+      );
       expect(
         value.toSimple(explode: false, allowEmpty: true),
         'https%3A%2F%2Fexample.com%2Fpath%2520with%2520spaces'
@@ -131,11 +132,12 @@ void main() {
     group('Uri query parameter edge cases', () {
       test('encodes Uri with multiple query parameters', () {
         final value = Uri.parse(
-          'https://api.example.com/search?q=dart&page=1&size=10');
+          'https://api.example.com/search?q=dart&page=1&size=10',
+        );
         expect(
           value.toSimple(explode: false, allowEmpty: true),
           'https%3A%2F%2Fapi.example.com%2Fsearch'
-        '%3Fq%3Ddart%26page%3D1%26size%3D10',
+          '%3Fq%3Ddart%26page%3D1%26size%3D10',
         );
       });
 
@@ -866,7 +868,7 @@ void main() {
       test('encodes Map with special characters in keys and values', () {
         const value = {
           'user name': 'John Doe',
-          'email@domain': 'test@example.com'
+          'email@domain': 'test@example.com',
         };
         expect(
           value.toSimple(explode: true, allowEmpty: true),
@@ -901,7 +903,7 @@ void main() {
       test('encodes Map with RFC 3986 reserved characters', () {
         const value = {
           'path/to/resource': 'value@example.com',
-          'query?param': 'result#section'
+          'query?param': 'result#section',
         };
         expect(
           value.toSimple(explode: true, allowEmpty: true),
@@ -939,7 +941,7 @@ void main() {
       test('encodes Map with special characters in keys and values', () {
         const value = {
           'user name': 'John Doe',
-          'email@domain': 'test@example.com'
+          'email@domain': 'test@example.com',
         };
         expect(
           value.toSimple(explode: false, allowEmpty: true),
@@ -974,7 +976,7 @@ void main() {
       test('encodes Map with RFC 3986 reserved characters', () {
         const value = {
           'path/to/resource': 'value@example.com',
-          'query?param': 'result#section'
+          'query?param': 'result#section',
         };
         expect(
           value.toSimple(explode: false, allowEmpty: true),
@@ -1043,12 +1045,13 @@ void main() {
         for (var i = 0; i < 50; i++) {
           value['key$i'] = 'value$i';
         }
-        
-        final resultExplode =
-            value.toSimple(explode: true, allowEmpty: true);
-        final resultNoExplode =
-            value.toSimple(explode: false, allowEmpty: true);
-        
+
+        final resultExplode = value.toSimple(explode: true, allowEmpty: true);
+        final resultNoExplode = value.toSimple(
+          explode: false,
+          allowEmpty: true,
+        );
+
         // Check that both formats contain all entries
         for (var i = 0; i < 50; i++) {
           expect(resultExplode, contains('key$i'));
@@ -1056,7 +1059,7 @@ void main() {
           expect(resultNoExplode, contains('key$i'));
           expect(resultNoExplode, contains('value$i'));
         }
-        
+
         // Check format differences
         if (value.isNotEmpty) {
           expect(resultExplode, contains('='));
@@ -1065,17 +1068,13 @@ void main() {
       });
 
       test('encodes Map with AllOf property merge scenario', () {
-        const value = {
-          'id': '123',
-          'offset': '10',
-          'index': '5'
-        };
-        
+        const value = {'id': '123', 'offset': '10', 'index': '5'};
+
         expect(
           value.toSimple(explode: true, allowEmpty: true),
           'id=123,offset=10,index=5',
         );
-        
+
         expect(
           value.toSimple(explode: false, allowEmpty: true),
           'id,123,offset,10,index,5',
@@ -1086,14 +1085,14 @@ void main() {
         const value = {
           'equation': 'a=b,c=d',
           'list': 'x,y,z',
-          'pair': 'key=value'
+          'pair': 'key=value',
         };
-        
+
         expect(
           value.toSimple(explode: true, allowEmpty: true),
           'equation=a%3Db%2Cc%3Dd,list=x%2Cy%2Cz,pair=key%3Dvalue',
         );
-        
+
         expect(
           value.toSimple(explode: false, allowEmpty: true),
           'equation,a%3Db%2Cc%3Dd,list,x%2Cy%2Cz,pair,key%3Dvalue',
@@ -1102,12 +1101,12 @@ void main() {
 
       test('maintains consistent key ordering for same Map', () {
         const value = {'z': '3', 'a': '1', 'm': '2'};
-        
+
         final result1 = value.toSimple(explode: true, allowEmpty: true);
         final result2 = value.toSimple(explode: true, allowEmpty: true);
         final result3 = value.toSimple(explode: false, allowEmpty: true);
         final result4 = value.toSimple(explode: false, allowEmpty: true);
-        
+
         // Results should be consistent for the same parameters
         expect(result1, equals(result2));
         expect(result3, equals(result4));

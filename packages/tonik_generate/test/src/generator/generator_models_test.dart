@@ -85,7 +85,7 @@ void main() {
         );
 
         const packageName = 'test_package';
-        const  Generator().generate(
+        const Generator().generate(
           apiDocument: apiDoc,
           outputDirectory: tempDir.path,
           package: packageName,

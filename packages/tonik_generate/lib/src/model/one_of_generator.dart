@@ -117,23 +117,25 @@ class OneOfGenerator {
             ])
             ..constructors.add(
               Constructor(
-                (b) => b
-                  ..factory = true
-                  ..name = 'fromJson'
-                  ..requiredParameters.add(
-                    Parameter(
-                      (p) => p
-                        ..name = 'json'
-                        ..type = refer('Object?', 'dart:core'),
-                    ),
-                  )
-                  ..body = _generateFromJsonBody(
-                    className,
-                    model,
-                    variantNames,
-                  ),
+                (b) =>
+                    b
+                      ..factory = true
+                      ..name = 'fromJson'
+                      ..requiredParameters.add(
+                        Parameter(
+                          (p) =>
+                              p
+                                ..name = 'json'
+                                ..type = refer('Object?', 'dart:core'),
+                        ),
+                      )
+                      ..body = _generateFromJsonBody(
+                        className,
+                        model,
+                        variantNames,
+                      ),
               ),
-            )
+            ),
     );
   }
 
@@ -550,9 +552,9 @@ class OneOfGenerator {
         );
       } else {
         caseCodes.add(
-          refer('value')
-              .property('simpleProperties')
-              .call([], {'allowEmpty': refer('allowEmpty')}).code,
+          refer('value').property('simpleProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
         );
       }
       caseCodes.add(const Code(',\n'));
@@ -569,13 +571,14 @@ class OneOfGenerator {
           b
             ..name = 'simpleProperties'
             ..returns = TypeReference(
-              (b) => b
-                ..symbol = 'Map'
-                ..url = 'dart:core'
-                ..types.addAll([
-                  refer('String', 'dart:core'),
-                  refer('String', 'dart:core'),
-                ]),
+              (b) =>
+                  b
+                    ..symbol = 'Map'
+                    ..url = 'dart:core'
+                    ..types.addAll([
+                      refer('String', 'dart:core'),
+                      refer('String', 'dart:core'),
+                    ]),
             )
             ..optionalParameters.add(
               Parameter(

@@ -182,11 +182,11 @@ class AnyOfGenerator {
   }
 
   Reference _nullableTypeReference(Model model) => typeReference(
-        model,
-        nameManager,
-        package,
-        isNullableOverride: true,
-      );
+    model,
+    nameManager,
+    package,
+    isNullableOverride: true,
+  );
 
   Code _tryAssignLocal({
     required String variableName,
@@ -208,8 +208,8 @@ class AnyOfGenerator {
   }
 
   Map<Model, String?> _discriminatorMap(AnyOfModel model) => {
-        for (final dm in model.models) dm.model: dm.discriminatorValue,
-      };
+    for (final dm in model.models) dm.model: dm.discriminatorValue,
+  };
 
   Constructor _buildFromJsonConstructor(
     String className,
@@ -309,9 +309,10 @@ class AnyOfGenerator {
         const Code(') {'),
       ];
       final addMap = Code('mapValues.add(${name}Json);');
-      final maybeDisc = hasDiscriminator && discValue != null
-          ? Code("discriminatorValue ??= '$discValue';")
-          : const Code('');
+      final maybeDisc =
+          hasDiscriminator && discValue != null
+              ? Code("discriminatorValue ??= '$discValue';")
+              : const Code('');
       const ifMapClose = Code('}');
       final addValue = Code('values.add(${name}Json);');
       const closeIf = Code('}');
@@ -394,9 +395,9 @@ class AnyOfGenerator {
       declareFinal(
         'values',
       ).assign(literalList([], refer('String', 'dart:core'))).statement,
-      declareFinal('mapValues')
-          .assign(literalList([], buildMapStringStringType()))
-          .statement,
+      declareFinal(
+        'mapValues',
+      ).assign(literalList([], buildMapStringStringType())).statement,
     ];
 
     final hasDiscriminator = model.discriminator != null;
@@ -425,8 +426,7 @@ class AnyOfGenerator {
             const Code(' = '),
             Code('$name!.simpleProperties(allowEmpty: allowEmpty);'),
           ])
-
-        ..add(Code('mapValues.add($tmp);'));
+          ..add(Code('mapValues.add($tmp);'));
 
         if (hasDiscriminator && discValue != null) {
           body.add(
@@ -656,9 +656,9 @@ class AnyOfGenerator {
       );
     }
     final body = <Code>[
-      declareFinal('maps')
-          .assign(literalList([], buildMapStringStringType()))
-          .statement,
+      declareFinal(
+        'maps',
+      ).assign(literalList([], buildMapStringStringType())).statement,
     ];
 
     for (final n in normalizedProperties) {

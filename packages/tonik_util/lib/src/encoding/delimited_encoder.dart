@@ -74,8 +74,7 @@ class DelimitedEncoder extends BaseEncoder {
         // With explode=true, each array item becomes a separate value
         return value
             .map(
-              (item) =>
-                  encodeValueDynamic(item, useQueryEncoding: true),
+              (item) => encodeValueDynamic(item, useQueryEncoding: true),
             )
             .toList();
       } else {
@@ -83,8 +82,7 @@ class DelimitedEncoder extends BaseEncoder {
         return [
           value
               .map(
-                (item) =>
-                    encodeValueDynamic(item, useQueryEncoding: true),
+                (item) => encodeValueDynamic(item, useQueryEncoding: true),
               )
               .join(delimiter),
         ];

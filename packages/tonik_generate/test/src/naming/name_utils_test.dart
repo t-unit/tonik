@@ -37,33 +37,43 @@ void main() {
         expect(normalizeEnumValueName('1000000'), 'oneMillion');
         expect(normalizeEnumValueName('2000000'), 'twoMillion');
         expect(normalizeEnumValueName('5000000'), 'fiveMillion');
-        expect(normalizeEnumValueName('1500000'), 
-            'oneMillionFiveHundredThousand');
+        expect(
+          normalizeEnumValueName('1500000'),
+          'oneMillionFiveHundredThousand',
+        );
       });
 
       test('converts billions to exact expected output', () {
         expect(normalizeEnumValueName('1000000000'), 'oneBillion');
         expect(normalizeEnumValueName('3000000000'), 'threeBillion');
         expect(normalizeEnumValueName('7000000000'), 'sevenBillion');
-        expect(normalizeEnumValueName('1500000000'), 
-            'oneBillionFiveHundredMillion');
+        expect(
+          normalizeEnumValueName('1500000000'),
+          'oneBillionFiveHundredMillion',
+        );
       });
 
       test('converts trillions to exact expected output', () {
         expect(normalizeEnumValueName('1000000000000'), 'oneTrillion');
         expect(normalizeEnumValueName('5000000000000'), 'fiveTrillion');
         expect(normalizeEnumValueName('9000000000000'), 'nineTrillion');
-        expect(normalizeEnumValueName('1500000000000'), 
-            'oneTrillionFiveHundredBillion');
+        expect(
+          normalizeEnumValueName('1500000000000'),
+          'oneTrillionFiveHundredBillion',
+        );
       });
 
       test('handles complex large numbers', () {
-        expect(normalizeEnumValueName('1234567890'), 
-            'oneBillionTwoHundredThirtyFourMillion'
-            'FiveHundredSixtySevenThousandEightHundredNinety');
-        expect(normalizeEnumValueName('999999999999'), 
-            'nineHundredNinetyNineBillionNineHundredNinetyNineMillion'
-            'NineHundredNinetyNineThousandNineHundredNinetyNine');
+        expect(
+          normalizeEnumValueName('1234567890'),
+          'oneBillionTwoHundredThirtyFourMillion'
+          'FiveHundredSixtySevenThousandEightHundredNinety',
+        );
+        expect(
+          normalizeEnumValueName('999999999999'),
+          'nineHundredNinetyNineBillionNineHundredNinetyNineMillion'
+          'NineHundredNinetyNineThousandNineHundredNinetyNine',
+        );
       });
 
       test('produces camelCase identifiers', () {

@@ -484,7 +484,7 @@ class AllOfGenerator {
     );
   }
 
-  /// Builds a simpleProperties method that returns merged properties from all 
+  /// Builds a simpleProperties method that returns merged properties from all
   /// sub-models or throws for unsupported types.
   Method _buildSimplePropertiesMethod(
     String className,
@@ -583,7 +583,7 @@ class AllOfGenerator {
       );
     }
 
-    // For primitive-only AllOf models, return an empty map since they 
+    // For primitive-only AllOf models, return an empty map since they
     // encode directly as a single value
     return Method(
       (b) =>

@@ -89,28 +89,53 @@ const Set<String> allKeywords = {...dartKeywords, ...generatedClassTokens};
 /// Supports numbers up to trillions.
 String _numberToWords(int number) {
   if (number == 0) return 'zero';
-  
+
   const ones = [
-    '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 
-    'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 
-    'sixteen', 'seventeen', 'eighteen', 'nineteen'
+    '',
+    'one',
+    'two',
+    'three',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight',
+    'nine',
+    'ten',
+    'eleven',
+    'twelve',
+    'thirteen',
+    'fourteen',
+    'fifteen',
+    'sixteen',
+    'seventeen',
+    'eighteen',
+    'nineteen',
   ];
-  
+
   const tens = [
-    '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 
-    'eighty', 'ninety'
+    '',
+    '',
+    'twenty',
+    'thirty',
+    'forty',
+    'fifty',
+    'sixty',
+    'seventy',
+    'eighty',
+    'ninety',
   ];
-  
+
   final result = <String>[];
   var remaining = number;
-  
+
   if (remaining >= 1000000000000) {
     result
       ..add(_numberToWords(remaining ~/ 1000000000000))
       ..add('trillion');
     remaining %= 1000000000000;
   }
-  
+
   if (remaining >= 1000000000) {
     result
       ..add(_numberToWords(remaining ~/ 1000000000))
@@ -124,21 +149,21 @@ String _numberToWords(int number) {
       ..add('million');
     remaining %= 1000000;
   }
-  
+
   if (remaining >= 1000) {
     result
       ..add(_numberToWords(remaining ~/ 1000))
       ..add('thousand');
     remaining %= 1000;
   }
-  
+
   if (remaining >= 100) {
     result
       ..add(ones[remaining ~/ 100])
       ..add('hundred');
     remaining %= 100;
   }
-  
+
   if (remaining >= 20) {
     result.add(tens[remaining ~/ 10]);
     if (remaining % 10 != 0) {
@@ -147,7 +172,7 @@ String _numberToWords(int number) {
   } else if (remaining > 0) {
     result.add(ones[remaining]);
   }
-  
+
   return result.join(' ').trim();
 }
 
@@ -163,32 +188,34 @@ String ensureNotKeyword(String name) {
 /// Splits text into tokens and normalizes each one.
 String _normalizeText(String text, {bool preserveNumbers = false}) {
   if (text.isEmpty) return '';
-  
+
   // Clean invalid characters but preserve separators for splitting
   final cleaned = text.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s]'), '');
-  
+
   // Split on separators and case boundaries
-  final tokens = cleaned
-      .split(RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'))
-      .where((token) => token.isNotEmpty)
-      .toList();
-  
+  final tokens =
+      cleaned
+          .split(
+            RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
+          )
+          .where((token) => token.isNotEmpty)
+          .toList();
+
   if (tokens.isEmpty) return '';
-  
+
   final result = <String>[];
   final numbersToAppend = <String>[];
-  
+
   for (var i = 0; i < tokens.length; i++) {
     final token = tokens[i];
     final isFirst = i == 0;
-    
+
     // Extract numbers from token
-    final numberMatch = 
-        RegExp(r'^(\d+)(.*)$|^(.+?)(\d+)$').firstMatch(token);
-    
+    final numberMatch = RegExp(r'^(\d+)(.*)$|^(.+?)(\d+)$').firstMatch(token);
+
     String textPart;
     String? numberPart;
-    
+
     if (numberMatch != null) {
       if (numberMatch.group(1) != null) {
         // Leading number: 123abc
@@ -208,17 +235,16 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
       textPart = token;
       numberPart = null;
     }
-    
+
     // Process text part
     if (textPart.isNotEmpty) {
       final normalized = _normalizeCasing(textPart, isFirst: isFirst);
       result.add(normalized);
     }
-    
+
     // Handle numbers
     if (numberPart != null) {
-      if (isFirst && textPart.isNotEmpty && 
-          numberMatch?.group(1) != null) {
+      if (isFirst && textPart.isNotEmpty && numberMatch?.group(1) != null) {
         // Move leading numbers from first token to end
         // (e.g., "1status" -> "status1")
         numbersToAppend.add(numberPart);
@@ -228,32 +254,30 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
       }
     }
   }
-  
+
   // Append any numbers that were moved from the first token
   result.addAll(numbersToAppend);
-  
+
   return result.join();
 }
 
 /// Normalizes the casing of a text token.
 String _normalizeCasing(String text, {required bool isFirst}) {
   if (text.isEmpty) return text;
-  
+
   final isAllCaps = text == text.toUpperCase() && text != text.toLowerCase();
-  
+
   // Special handling for keywords - keep them lowercase for first part only
   if (isFirst && allKeywords.contains(text.toLowerCase())) {
     return text.toLowerCase();
   }
-  
+
   if (isFirst) {
     return isAllCaps ? text.toLowerCase() : text.toCamelCase();
   } else {
     return isAllCaps ? text.toPascalCase() : text.toPascalCase();
   }
 }
-
-
 
 /// Normalizes a single name to follow Dart guidelines.
 String normalizeSingle(String name, {bool preserveNumbers = false}) {
@@ -271,10 +295,10 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
   }
 
   processedName = _normalizeText(
-    processedName, 
+    processedName,
     preserveNumbers: preserveNumbers,
   );
-  
+
   return ensureNotKeyword(processedName);
 }
 
@@ -283,24 +307,23 @@ String normalizeEnumValueName(String value) {
   // Only spell out numbers if the entire value is just a number (no prefix)
   if (RegExp(r'^-?\d+$').hasMatch(value)) {
     final number = int.parse(value);
-    final words = number < 0 
-        ? 'minus ${_numberToWords(number.abs())}'
-        : _numberToWords(number);
+    final words =
+        number < 0
+            ? 'minus ${_numberToWords(number.abs())}'
+            : _numberToWords(number);
     final normalized = normalizeSingle(words);
-    return normalized.isEmpty 
-        ? defaultEnumPrefix 
-        : normalized.toCamelCase();
+    return normalized.isEmpty ? defaultEnumPrefix : normalized.toCamelCase();
   }
 
   // For values with prefixes (like ERROR_404), preserve numbers as-is
   final normalized = normalizeSingle(value, preserveNumbers: true);
   if (normalized.isEmpty) return defaultEnumPrefix;
-  
+
   // Don't apply toCamelCase if the normalized value starts with $
   if (normalized.startsWith(r'$')) {
     return normalized;
   }
-  
+
   return normalized.toCamelCase();
 }
 

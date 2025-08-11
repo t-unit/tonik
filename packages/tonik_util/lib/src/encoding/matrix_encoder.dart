@@ -61,9 +61,7 @@ class MatrixEncoder extends BaseEncoder {
             .join();
       } else {
         // With explode=false (default), comma-separate the values
-        final encodedValues = value
-            .map(encodeValueDynamic)
-            .join(',');
+        final encodedValues = value.map(encodeValueDynamic).join(',');
         return ';$paramName=$encodedValues';
       }
     }
