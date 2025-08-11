@@ -35,6 +35,9 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 
 coming soon
 
+- [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
+- [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
+
 
 ## Quick-Start Guide
 
@@ -92,33 +95,7 @@ Take a look at the [pet store integration tests](https://github.com/t-unit/tonik
 
 For a full list of changes of each release, refer to [release notes](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
 
+
 ## Roadmap
 
-### Short term goals
-- `allowReserved` support for query parameters
-- More E2E tests
-- Full decoding and encoding support for any of and one of
-- Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
-- Annotate deprecated fields, methods and classes.
-- Respect `nullable` property on schema objects
-- Add doc strings based on fields in the spec to fields, classes and methods
-- Rework parameter encoding by generating and using methods like `fromSimple` and `toSimple` for other encodings
-- Normalize allOf with only added description (see https://github.com/sonallux/spotify-web-api/blob/main/official-spotify-open-api.yml#L4180) to be regular class model
-- Discriminator support for allOf
-
-### Long term goals
-- Supporting the `not` keyword
-- Encoding and decoding of `application/x-www-form-urlencoded` and `text/plain`
-- Optionally generating `unknown` enum case
-- Support for `additionalProperties`
-- Server Templating support 
-- Remove build_runner dependency from all packages
-- Default values
-- Supporting `byte` and `binary` formatted strings
-
-### Non-goals
-- Parameter encoding via content, see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content)
-- XML de- and encoding
-- Min, Max and multiple validation
-- Pattern validation 
-- Remote and URL references
+See [roadmap](https://github.com/t-unit/tonik/blob/main/docs/roadmap.md)
