@@ -146,6 +146,12 @@ class AnyOfGenerator {
       normalized,
     );
 
+    final toSimpleMethod = _buildToSimpleMethod(
+      className,
+      model,
+      normalized,
+    );
+
     final simplePropsMethod = _buildSimplePropertiesMethod(
       className,
       model,
@@ -162,6 +168,7 @@ class AnyOfGenerator {
             ..constructors.add(fromSimpleCtor)
             ..methods.addAll([
               toJsonMethod,
+              toSimpleMethod,
               simplePropsMethod,
               generateEqualsMethod(
                 className: className,
@@ -365,6 +372,181 @@ class AnyOfGenerator {
     );
   }
 
+  Method _buildToSimpleMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalized,
+  ) {
+    final body = [
+      declareFinal(
+        'values',
+      ).assign(literalList([], refer('String', 'dart:core'))).statement,
+      declareFinal('mapValues')
+          .assign(
+            literalList(
+              [],
+              TypeReference(
+                (tb) =>
+                    tb
+                      ..symbol = 'Map'
+                      ..url = 'dart:core'
+                      ..types.addAll([
+                        refer('String', 'dart:core'),
+                        refer('String', 'dart:core'),
+                      ]),
+              ),
+            ),
+          )
+          .statement,
+    ];
+
+    final hasDiscriminator = model.discriminator != null;
+    if (hasDiscriminator) {
+      body.add(const Code('String? discriminatorValue;'));
+    }
+
+    for (final n in normalized) {
+      final name = n.normalizedName;
+
+      final discriminated = model.models.firstWhere(
+        (dm) => dm.model == n.property.model,
+        orElse: () => (discriminatorValue: null, model: n.property.model),
+      );
+
+      final isComplex = n.property.model.encodingShape != EncodingShape.simple;
+
+      body.addAll([
+        Code('if ($name != null) {'),
+      ]);
+
+      if (isComplex) {
+        final tmp = '${name}Simple';
+        body
+          ..addAll([
+            const Code('final '),
+            Code(tmp),
+            const Code(' = '),
+            Code('$name!.simpleProperties(allowEmpty: allowEmpty);'),
+          ])
+
+        ..add(Code('mapValues.add($tmp);'));
+
+        if (hasDiscriminator && discriminated.discriminatorValue != null) {
+          body.add(
+            Code(
+              "discriminatorValue ??= '${discriminated.discriminatorValue}';",
+            ),
+          );
+        }
+
+        body.addAll([
+          const Code('values.add('),
+          Code('$tmp.toSimple('),
+          const Code('explode: explode, '),
+          const Code('allowEmpty: allowEmpty'),
+          const Code('));'),
+        ]);
+      } else {
+        final tmp = '${name}Simple';
+        body
+          ..addAll([
+            const Code('final '),
+            Code(tmp),
+            const Code(' = '),
+            Code('$name!.toSimple('),
+            const Code('explode: explode, '),
+            const Code('allowEmpty: allowEmpty'),
+            const Code(');'),
+          ])
+          ..add(Code('values.add($tmp);'));
+      }
+
+      body.add(const Code('}'));
+    }
+
+    body.addAll([
+      const Code("if (values.isEmpty) return '';"),
+      const Code(
+        'if (mapValues.isNotEmpty && mapValues.length != values.length) {',
+      ),
+      generateEncodingExceptionExpression(
+        'Ambiguous anyOf simple encoding for $className: '
+        'mixing simple and complex values',
+      ).statement,
+      const Code('}'),
+    ]);
+
+    final mergeBlocks = <Code>[
+      const Code('final map = '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ).statement,
+      const Code('for (final m in mapValues) { map.addAll(m); }'),
+    ];
+    if (hasDiscriminator) {
+      mergeBlocks.addAll([
+        const Code('if (discriminatorValue != null) { '),
+        Code("map.putIfAbsent('${model.discriminator}', () => "),
+        const Code('discriminatorValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+    mergeBlocks
+      ..add(const Code('return map.toSimple('))
+      ..addAll([
+        const Code('explode: explode, '),
+        const Code('allowEmpty: allowEmpty'),
+        const Code(');'),
+      ]);
+
+    body.addAll([
+      const Code('if (mapValues.length == values.length) {'),
+      ...mergeBlocks,
+      const Code('}'),
+
+      const Code('final first = values.first;'),
+      const Code('for (final v in values) {'),
+      const Code('  if (v != first) {'),
+      generateEncodingExceptionExpression(
+        'Ambiguous anyOf simple encoding for $className: '
+        'inconsistent simple representations',
+      ).statement,
+      const Code('  }'),
+      const Code('}'),
+      const Code('return first;'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toSimple'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..lambda = false
+            ..body = Block.of(body),
+    );
+  }
+
   Constructor _buildFromSimpleConstructor(
     String className,
     List<({String normalizedName, Property property})> normalized,
@@ -521,8 +703,7 @@ class AnyOfGenerator {
     ];
 
     for (final n in normalized) {
-      final isComplex =
-          n.property.model.encodingShape != EncodingShape.simple;
+      final isComplex = n.property.model.encodingShape != EncodingShape.simple;
       if (!isComplex) continue;
       final fn = n.normalizedName;
       final tmp = '${fn}Simple';
@@ -531,17 +712,18 @@ class AnyOfGenerator {
         ..add(const Code('final '))
         ..add(
           TypeReference(
-            (tb) => tb
-              ..symbol = 'Map'
-              ..url = 'dart:core'
-              ..types.addAll([
-                refer('String', 'dart:core'),
-                refer('String', 'dart:core'),
-              ]),
+            (tb) =>
+                tb
+                  ..symbol = 'Map'
+                  ..url = 'dart:core'
+                  ..types.addAll([
+                    refer('String', 'dart:core'),
+                    refer('String', 'dart:core'),
+                  ]),
           ).code,
         )
         ..add(Code(' $tmp = '))
-        ..add(Code('$fn!.simpleProperties( allowEmpty: allowEmpty, );'))
+        ..add(Code('$fn!.simpleProperties(allowEmpty: allowEmpty);'))
         ..add(const Code(' maps.add('))
         ..add(Code(tmp))
         ..add(const Code(');'))
@@ -550,8 +732,7 @@ class AnyOfGenerator {
 
     if (hasSimple && hasComplex) {
       for (final n in normalized) {
-        final isSimple =
-            n.property.model.encodingShape == EncodingShape.simple;
+        final isSimple = n.property.model.encodingShape == EncodingShape.simple;
         if (!isSimple) continue;
         final fn = n.normalizedName;
         body.addAll([
