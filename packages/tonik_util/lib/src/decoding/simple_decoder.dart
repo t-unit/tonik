@@ -82,7 +82,8 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      return double.parse(this!);
+      final decoded = Uri.decodeComponent(this!);
+      return double.parse(decoded);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -146,7 +147,8 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      return OffsetDateTime.parse(this!);
+      final decoded = Uri.decodeComponent(this!);
+      return OffsetDateTime.parse(decoded);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -322,7 +324,8 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      return Uri.parse(this!);
+      final decoded = Uri.decodeComponent(this!);
+      return Uri.parse(decoded);
     } on FormatException catch (e) {
       throw InvalidTypeException(
         value: this!,

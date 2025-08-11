@@ -390,6 +390,25 @@ void main() {
           );
         },
       );
+
+      test('decodeSimpleDateTime accepts percent-encoded ISO strings', () {
+        expect(
+          '2023-12-25T10%3A30%3A00.000Z'.decodeSimpleDateTime().toUtc(),
+          DateTime.utc(2023, 12, 25, 10, 30),
+        );
+      });
+
+      test('decodeSimpleUri accepts percent-encoded values', () {
+        expect(
+          'https%3A%2F%2Fexample.com%2Fpath%3Fq%3D1'.decodeSimpleUri(),
+          Uri.parse('https://example.com/path?q=1'),
+        );
+      });
+
+      test('decodeSimpleDouble accepts percent-encoded exponent plus sign', () {
+        const s = '1.7976931348623157e%2B308';
+        expect(s.decodeSimpleDouble(), closeTo(1.7976931348623157e308, 0));
+      });
     });
   });
 }
