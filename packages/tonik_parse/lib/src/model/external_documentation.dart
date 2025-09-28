@@ -4,7 +4,7 @@ part 'external_documentation.g.dart';
 
 @JsonSerializable(createToJson: false)
 class ExternalDocumentation {
-  ExternalDocumentation({required this.url, this.description});
+  ExternalDocumentation({required this.url, required this.description});
 
   factory ExternalDocumentation.fromJson(Map<String, dynamic> json) =>
       _$ExternalDocumentationFromJson(json);

@@ -2,30 +2,21 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'security_scheme.g.dart';
 
-enum SecuritySchemeType {
-  apiKey,
-  http,
-  oauth2,
-  openIdConnect,
-}
+enum SecuritySchemeType { apiKey, http, oauth2, openIdConnect }
 
-enum ApiKeyLocation {
-  query,
-  header,
-  cookie,
-}
+enum ApiKeyLocation { query, header, cookie }
 
 @JsonSerializable(createToJson: false)
 class SecurityScheme {
   SecurityScheme({
     required this.type,
-    this.description,
-    this.name,
-    this.$in,
-    this.scheme,
-    this.bearerFormat,
-    this.flows,
-    this.openIdConnectUrl,
+    required this.description,
+    required this.name,
+    required this.$in,
+    required this.scheme,
+    required this.bearerFormat,
+    required this.flows,
+    required this.openIdConnectUrl,
   });
 
   factory SecurityScheme.fromJson(Map<String, dynamic> json) =>
@@ -51,10 +42,10 @@ class SecurityScheme {
 @JsonSerializable(createToJson: false)
 class OAuth2Flows {
   OAuth2Flows({
-    this.implicit,
-    this.password,
-    this.clientCredentials,
-    this.authorizationCode,
+    required this.implicit,
+    required this.password,
+    required this.clientCredentials,
+    required this.authorizationCode,
   });
 
   factory OAuth2Flows.fromJson(Map<String, dynamic> json) =>
@@ -76,9 +67,9 @@ class OAuth2Flows {
 class OAuth2Flow {
   OAuth2Flow({
     required this.scopes,
-    this.authorizationUrl,
-    this.tokenUrl,
-    this.refreshUrl,
+    required this.authorizationUrl,
+    required this.tokenUrl,
+    required this.refreshUrl,
   });
 
   factory OAuth2Flow.fromJson(Map<String, dynamic> json) =>

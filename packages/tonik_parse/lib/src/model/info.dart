@@ -10,9 +10,9 @@ class Info {
     required this.title,
     required this.description,
     required this.version,
-    this.contact,
-    this.license,
-    this.termsOfService,
+    required this.contact,
+    required this.license,
+    required this.termsOfService,
   });
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
