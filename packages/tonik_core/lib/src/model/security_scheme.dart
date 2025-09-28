@@ -43,8 +43,8 @@ class HttpSecurityScheme extends SecurityScheme {
   const HttpSecurityScheme({
     required super.type,
     required this.scheme,
-    super.description,
-    this.bearerFormat,
+    required super.description,
+    required this.bearerFormat,
   });
 
   final String scheme;
@@ -60,7 +60,7 @@ class OAuth2SecurityScheme extends SecurityScheme {
   const OAuth2SecurityScheme({
     required super.type,
     required this.flows,
-    super.description,
+    required super.description,
   });
 
   final OAuth2Flows flows;
@@ -75,7 +75,7 @@ class OpenIdConnectSecurityScheme extends SecurityScheme {
   const OpenIdConnectSecurityScheme({
     required super.type,
     required this.openIdConnectUrl,
-    super.description,
+    required super.description,
   });
 
   final String openIdConnectUrl;
@@ -89,10 +89,10 @@ class OpenIdConnectSecurityScheme extends SecurityScheme {
 @immutable
 class OAuth2Flows {
   const OAuth2Flows({
-    this.implicit,
-    this.password,
-    this.clientCredentials,
-    this.authorizationCode,
+    required this.implicit,
+    required this.password,
+    required this.clientCredentials,
+    required this.authorizationCode,
   });
 
   final OAuth2Flow? implicit;
@@ -113,7 +113,7 @@ class OAuth2Flow {
     required this.authorizationUrl,
     required this.tokenUrl,
     required this.scopes,
-    this.refreshUrl,
+    required this.refreshUrl,
   });
 
   final String authorizationUrl;

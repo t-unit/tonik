@@ -85,11 +85,17 @@ void main() {
       expect(libraryFile.existsSync(), isTrue);
 
       final content = libraryFile.readAsStringSync();
-      
+
       // Check that security schemes are documented
       expect(content, contains('/// Security Schemes:'));
-      expect(content, contains('/// - API Key (header): API Key authentication'));
-      expect(content, contains('/// - HTTP Bearer: Bearer token authentication'));
+      expect(
+        content,
+        contains('/// - API Key (header): API Key authentication'),
+      );
+      expect(
+        content,
+        contains('/// - HTTP Bearer: Bearer token authentication'),
+      );
     });
 
     test('includes OAuth2 security scheme information', () {
@@ -129,7 +135,11 @@ void main() {
                     authorizationUrl: 'https://example.com/auth',
                     tokenUrl: 'https://example.com/token',
                     scopes: {'read': 'Read access', 'write': 'Write access'},
+                    refreshUrl: null,
                   ),
+                  implicit: null,
+                  password: null,
+                  clientCredentials: null,
                 ),
               ),
             },
@@ -156,10 +166,13 @@ void main() {
         path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
       );
       final content = libraryFile.readAsStringSync();
-      
+
       expect(content, contains('/// Security Schemes:'));
       expect(content, contains('/// - OAuth2: OAuth2 authentication'));
-      expect(content, contains('///   Authorization URL: https://example.com/auth'));
+      expect(
+        content,
+        contains('///   Authorization URL: https://example.com/auth'),
+      );
       expect(content, contains('///   Token URL: https://example.com/token'));
       expect(content, contains('///   Scopes: read, write'));
     });
@@ -216,7 +229,7 @@ void main() {
         path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
       );
       final content = libraryFile.readAsStringSync();
-      
+
       // Should not include security schemes section when empty
       expect(content, isNot(contains('/// Security Schemes:')));
     });
@@ -259,6 +272,7 @@ void main() {
                 type: SecuritySchemeType.http,
                 description: '', // Empty description
                 scheme: 'bearer',
+                bearerFormat: null,
               ),
             },
           ),
@@ -284,7 +298,7 @@ void main() {
         path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
       );
       final content = libraryFile.readAsStringSync();
-      
+
       expect(content, contains('/// Security Schemes:'));
       expect(content, contains('/// - API Key (header)'));
       expect(content, contains('/// - HTTP Bearer'));

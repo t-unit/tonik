@@ -103,7 +103,11 @@ void main() {
                 authorizationUrl: 'https://example.com/auth',
                 tokenUrl: 'https://example.com/token',
                 scopes: {'read:profile': 'Read user profile'},
+                refreshUrl: null,
               ),
+              implicit: null,
+              password: null,
+              clientCredentials: null,
             ),
           ),
         },
@@ -233,6 +237,7 @@ void main() {
             type: SecuritySchemeType.http,
             description: 'Basic authentication',
             scheme: 'basic',
+            bearerFormat: null,
           ),
         },
       );
@@ -278,6 +283,7 @@ void main() {
             type: SecuritySchemeType.http,
             description: '', // Empty description
             scheme: 'bearer',
+            bearerFormat: null,
           ),
         },
       );
