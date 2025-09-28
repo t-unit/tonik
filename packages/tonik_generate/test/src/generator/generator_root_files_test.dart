@@ -31,6 +31,10 @@ void main() {
         queryParameters: {},
         pathParameters: {},
         requestBodies: {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'test_package';

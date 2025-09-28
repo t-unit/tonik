@@ -28,11 +28,7 @@ void generateLibraryFile({
 
   srcFiles.sort();
 
-  final docComments = formatDocComments([
-    apiDocument.title,
-    apiDocument.version,
-    apiDocument.description,
-  ]);
+  final docComments = _formatApiDocumentation(apiDocument);
 
   final buffer =
       StringBuffer()
@@ -41,9 +37,7 @@ void generateLibraryFile({
         ..writeln()
         ..writeln();
 
-  for (final docComment in docComments) {
-    buffer.writeln(docComment);
-  }
+  docComments.forEach(buffer.writeln);
 
   buffer
     ..writeln()
@@ -57,4 +51,62 @@ void generateLibraryFile({
   }
 
   libraryFile.writeAsStringSync(buffer.toString());
+}
+
+List<String> _formatApiDocumentation(ApiDocument apiDocument) {
+  final lines = <String>[];
+
+  if (apiDocument.title.isNotEmpty) {
+    lines.add('/// ${apiDocument.title}');
+  }
+
+  if (apiDocument.version.isNotEmpty) {
+    lines.add('/// Version ${apiDocument.version}');
+  }
+
+  if (apiDocument.description != null && apiDocument.description!.isNotEmpty) {
+    lines.addAll(formatDocComment(apiDocument.description));
+  }
+
+  if (apiDocument.contact != null) {
+    lines
+      ..add('///')
+      ..add('/// Contact: ${apiDocument.contact!.name ?? 'N/A'}');
+
+    if (apiDocument.contact!.email != null) {
+      lines.add('/// Email: ${apiDocument.contact!.email}');
+    }
+
+    if (apiDocument.contact!.url != null) {
+      lines.add('/// URL: ${apiDocument.contact!.url}');
+    }
+  }
+
+  if (apiDocument.license != null) {
+    lines
+      ..add('///')
+      ..add('/// License: ${apiDocument.license!.name ?? 'N/A'}');
+
+    if (apiDocument.license!.url != null) {
+      lines.add('/// License URL: ${apiDocument.license!.url}');
+    }
+  }
+
+  if (apiDocument.termsOfService != null) {
+    lines
+      ..add('///')
+      ..add('/// Terms of Service: ${apiDocument.termsOfService}');
+  }
+
+  if (apiDocument.externalDocs != null) {
+    lines
+      ..add('///')
+      ..add('/// Documentation: ${apiDocument.externalDocs!.description ?? 'N/A'}');
+
+    if (apiDocument.externalDocs!.url.isNotEmpty) {
+      lines.add('/// Documentation URL: ${apiDocument.externalDocs!.url}');
+    }
+  }
+
+  return lines;
 }

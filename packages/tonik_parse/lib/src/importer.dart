@@ -1,4 +1,5 @@
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/external_documentation_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/operation_importer.dart';
@@ -49,6 +50,11 @@ class Importer {
       title: openApiObject.info.title,
       version: openApiObject.info.version,
       description: openApiObject.info.description,
+      contact: openApiObject.info.contact,
+      license: openApiObject.info.license,
+      termsOfService: openApiObject.info.termsOfService,
+      externalDocs:
+          ExternalDocumentationImporter(openApiObject: openApiObject).import(),
       models: modelImporter.models,
       responseHeaders: responseHeaderImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),

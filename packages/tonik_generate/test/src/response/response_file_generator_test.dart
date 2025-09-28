@@ -44,6 +44,10 @@ void main() {
         queryParameters: {},
         pathParameters: {},
         requestBodies: {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
       generator.writeFiles(
         apiDocument: apiDoc,
@@ -84,6 +88,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -136,6 +144,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -182,6 +194,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

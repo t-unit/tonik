@@ -116,6 +116,10 @@ void main() {
       pathParameters: const {},
       requestBodies: const {},
       description: null,
+      contact: null,
+      license: null,
+      termsOfService: null,
+      externalDocs: null,
     );
   });
 

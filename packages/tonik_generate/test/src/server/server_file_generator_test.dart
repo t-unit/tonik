@@ -134,6 +134,10 @@ void main() {
         queryParameters: {},
         pathParameters: {},
         requestBodies: {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

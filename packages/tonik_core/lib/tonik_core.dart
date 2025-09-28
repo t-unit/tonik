@@ -2,7 +2,10 @@
 library;
 
 export 'src/model/api_document.dart';
+export 'src/model/contact.dart';
 export 'src/model/content_type.dart';
+export 'src/model/external_documentation.dart';
+export 'src/model/license.dart';
 export 'src/model/model.dart';
 export 'src/model/operation.dart';
 export 'src/model/path_parameter.dart';

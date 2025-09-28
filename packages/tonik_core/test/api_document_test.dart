@@ -17,6 +17,10 @@ void main() {
         pathParameters: {},
         requestBodies: {},
         description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -67,7 +71,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        description: null,
+        description: null, contact: null, license: null, termsOfService: null, externalDocs: null,
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -123,7 +127,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        description: null,
+        description: null, contact: null, license: null, termsOfService: null, externalDocs: null,
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];

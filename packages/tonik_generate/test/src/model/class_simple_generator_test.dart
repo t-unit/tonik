@@ -1150,7 +1150,7 @@ return UserIdHolder(
         containsAll(['explode', 'allowEmpty']),
       );
       expect(
-        toSimpleMethod.optionalParameters.every((p) => p.required == true),
+        toSimpleMethod.optionalParameters.every((p) => p.required),
         isTrue,
       );
 
