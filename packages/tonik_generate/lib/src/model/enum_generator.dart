@@ -100,6 +100,9 @@ class EnumGenerator {
             ..constructors.add(
               _generateFromSimpleConstructor<T>(enumName, actualEnumName),
             )
+            ..constructors.add(
+              _generateFromFormConstructor<T>(enumName, actualEnumName),
+            )
             ..methods.add(
               Method(
                 (b) =>
@@ -112,6 +115,9 @@ class EnumGenerator {
             )
             ..methods.add(
               _generateToSimpleMethod<T>(),
+            )
+            ..methods.add(
+              _generateToFormMethod<T>()
             )
             ..fields.add(
               Field(
@@ -143,6 +149,7 @@ class EnumGenerator {
     String actualEnumName,
   ) {
     const valueParam = 'value';
+    const contextParam = 'context';
     final decodeMethod = T == String ? 'decodeSimpleString' : 'decodeSimpleInt';
 
     return Constructor(
@@ -158,11 +165,66 @@ class EnumGenerator {
                       ..type = refer('String?', 'dart:core'),
               ),
             )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = contextParam
+                      ..type = refer('String?', 'dart:core')
+                      ..named = true,
+              ),
+            )
             ..body = Block.of([
               refer(actualEnumName)
                   .property('fromJson')
                   .call([
-                    refer(valueParam).property(decodeMethod).call([], {}, []),
+                    refer(valueParam)
+                        .property(decodeMethod)
+                        .call([], {contextParam: refer(contextParam)}, []),
+                  ])
+                  .returned
+                  .statement,
+            ]),
+    );
+  }
+
+  Constructor _generateFromFormConstructor<T>(
+    String publicEnumName,
+    String actualEnumName,
+  ) {
+    const valueParam = 'value';
+    const contextParam = 'context';
+    final decodeMethod = T == String ? 'decodeFormString' : 'decodeFormInt';
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromForm'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = valueParam
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = contextParam
+                      ..type = refer('String?', 'dart:core')
+                      ..named = true,
+              ),
+            )
+            ..body = Block.of([
+              refer(actualEnumName)
+                  .property('fromJson')
+                  .call([
+                    refer(valueParam)
+                        .property(decodeMethod)
+                        .call([], {contextParam: refer(contextParam)}, []),
                   ])
                   .returned
                   .statement,
@@ -234,6 +296,37 @@ class EnumGenerator {
             ])
             ..body = const Code(
               'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+            ),
+    );
+  }
+
+  Method _generateToFormMethod<T>() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toForm'
+            ..returns = refer('String', 'dart:core')
+            ..lambda = true
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..body = const Code(
+              'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
             ),
     );
   }

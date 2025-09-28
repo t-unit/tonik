@@ -415,10 +415,17 @@ void main() {
           'String?',
         );
         expect(fromSimple.requiredParameters.single.name, 'value');
+        expect(fromSimple.optionalParameters, hasLength(1));
+
+        final contextParam = fromSimple.optionalParameters.first;
+        expect(contextParam.name, 'context');
+        expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
+        expect(contextParam.named, isTrue);
+        expect(contextParam.required, isFalse);
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
-          return Color.fromJson(value.decodeSimpleString());
+          return Color.fromJson(value.decodeSimpleString(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -444,10 +451,17 @@ void main() {
           'String?',
         );
         expect(fromSimple.requiredParameters.single.name, 'value');
+        expect(fromSimple.optionalParameters, hasLength(1));
+
+        final contextParam = fromSimple.optionalParameters.first;
+        expect(contextParam.name, 'context');
+        expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
+        expect(contextParam.named, isTrue);
+        expect(contextParam.required, isFalse);
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
-          return Status.fromJson(value.decodeSimpleInt());
+          return Status.fromJson(value.decodeSimpleInt(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -467,7 +481,7 @@ void main() {
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
-          return RawStatus.fromJson(value.decodeSimpleString());
+          return RawStatus.fromJson(value.decodeSimpleString(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -496,7 +510,7 @@ void main() {
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
-          return RawStatus.fromJson(value.decodeSimpleInt());
+          return RawStatus.fromJson(value.decodeSimpleInt(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -675,10 +689,17 @@ void main() {
               .toString(),
           'String?',
         );
+        expect(fromSimple.optionalParameters, hasLength(1));
+
+        final contextParam = fromSimple.optionalParameters.first;
+        expect(contextParam.name, 'context');
+        expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
+        expect(contextParam.named, isTrue);
+        expect(contextParam.required, isFalse);
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
-          return Color.fromJson(value.decodeSimpleString());
+          return Color.fromJson(value.decodeSimpleString(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -707,14 +728,297 @@ void main() {
                 .toString(),
             'String?',
           );
+          expect(fromSimple.optionalParameters, hasLength(1));
+
+          final contextParam = fromSimple.optionalParameters.first;
+          expect(contextParam.name, 'context');
+          expect(
+            contextParam.type?.accept(DartEmitter()).toString(),
+            'String?',
+          );
+          expect(contextParam.named, isTrue);
+          expect(contextParam.required, isFalse);
 
           final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
           const expectedBody = '''
-          return Priority.fromJson(value.decodeSimpleInt());
+          return Priority.fromJson(value.decodeSimpleInt(context: context));
         ''';
           expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
         },
       );
+    });
+
+    group('fromForm factory', () {
+      test('generates fromForm constructor for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final fromForm = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+
+        expect(fromForm.factory, isTrue);
+        expect(
+          fromForm.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+        expect(fromForm.requiredParameters.single.name, 'value');
+        expect(fromForm.optionalParameters, hasLength(1));
+
+        final contextParam = fromForm.optionalParameters.first;
+        expect(contextParam.name, 'context');
+        expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
+        expect(contextParam.named, isTrue);
+        expect(contextParam.required, isFalse);
+
+        final body = fromForm.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return Color.fromJson(value.decodeFormString(context: context));
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('generates fromForm constructor for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromForm = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+
+        expect(fromForm.factory, isTrue);
+        expect(
+          fromForm.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+        expect(fromForm.requiredParameters.single.name, 'value');
+        expect(fromForm.optionalParameters, hasLength(1));
+
+        final contextParam = fromForm.optionalParameters.first;
+        expect(contextParam.name, 'context');
+        expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
+        expect(contextParam.named, isTrue);
+        expect(contextParam.required, isFalse);
+
+        final body = fromForm.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return Status.fromJson(value.decodeFormInt(context: context));
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('generates fromForm constructor for nullable string enum', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromForm = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+
+        final body = fromForm.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return RawStatus.fromJson(value.decodeFormString(context: context));
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('generates fromForm constructor for nullable int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromForm = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+
+        expect(fromForm.factory, isTrue);
+        expect(
+          fromForm.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+        expect(fromForm.requiredParameters.single.name, 'value');
+
+        final body = fromForm.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return RawStatus.fromJson(value.decodeFormInt(context: context));
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+    });
+
+    group('toForm method', () {
+      test('generates toForm method for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final toForm = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+
+        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toForm.optionalParameters, hasLength(2));
+
+        final explodeParam = toForm.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final allowEmptyParam = toForm.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toForm.lambda, isTrue);
+      });
+
+      test('generates toForm method for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toForm = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+
+        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toForm.optionalParameters, hasLength(2));
+
+        final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toForm.lambda, isTrue);
+      });
+
+      test('generates toForm method for nullable string enum', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toForm = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+
+        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toForm.optionalParameters, hasLength(2));
+
+        final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toForm.lambda, isTrue);
+      });
+
+      test('generates toForm method for nullable int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {100, 200, 300},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toForm = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+
+        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toForm.optionalParameters, hasLength(2));
+
+        final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+        );
+        expect(toForm.lambda, isTrue);
+      });
+
+      test('generates toForm in complete enum code for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToFormMethod = '''
+          _i2.String toForm({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToFormMethod)),
+        );
+      });
+
+      test('generates toForm in complete enum code for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToFormMethod = '''
+          _i2.String toForm({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToFormMethod)),
+        );
+      });
     });
   });
 }
