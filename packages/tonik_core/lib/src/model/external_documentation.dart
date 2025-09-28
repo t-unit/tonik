@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class ExternalDocumentation {
-  const ExternalDocumentation({required this.url, this.description});
+  const ExternalDocumentation({required this.url, required this.description});
 
   final String? description;
   final String url;

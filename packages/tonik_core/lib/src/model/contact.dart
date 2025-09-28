@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class Contact {
-  const Contact({this.name, this.url, this.email});
+  const Contact({required this.name, required this.url, required this.email});
 
   final String? name;
   final String? url;

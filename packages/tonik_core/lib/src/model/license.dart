@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class License {
-  const License({this.name, this.url});
+  const License({required this.name, required this.url});
 
   final String? name;
   final String? url;
