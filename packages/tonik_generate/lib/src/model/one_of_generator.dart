@@ -544,11 +544,7 @@ class OneOfGenerator {
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       if (isSimple) {
         caseCodes.add(
-          literalMap(
-            {},
-            refer('String', 'dart:core'),
-            refer('String', 'dart:core'),
-          ).code,
+          buildEmptyMapStringString().code,
         );
       } else {
         caseCodes.add(
@@ -570,16 +566,7 @@ class OneOfGenerator {
       (b) =>
           b
             ..name = 'simpleProperties'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'Map'
-                    ..url = 'dart:core'
-                    ..types.addAll([
-                      refer('String', 'dart:core'),
-                      refer('String', 'dart:core'),
-                    ]),
-            )
+            ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
                 (b) =>

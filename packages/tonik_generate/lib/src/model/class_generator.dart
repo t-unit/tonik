@@ -249,11 +249,7 @@ class ClassGenerator {
       // Parse into key-value pairs (only part that differs by explode mode)
       declareFinal('values')
           .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              refer('String', 'dart:core'),
-            ),
+            buildEmptyMapStringString(),
           )
           .statement,
       _buildExplodeParsingLogic(),
@@ -448,11 +444,7 @@ class ClassGenerator {
     }
 
     final returnStatement = properties.isEmpty
-        ? literalMap(
-            {},
-            refer('String', 'dart:core'),
-            refer('String', 'dart:core'),
-          ).code
+        ? buildEmptyMapStringString().code
         : Block.of([
             const Code('return '),
             buildMapStringStringType().code,
@@ -751,11 +743,7 @@ class ClassGenerator {
 
       declareFinal('values')
           .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              refer('String', 'dart:core'),
-            ),
+            buildEmptyMapStringString(),
           )
           .statement,
           
@@ -831,11 +819,7 @@ class ClassGenerator {
     }
 
     final returnStatement = properties.isEmpty
-        ? literalMap(
-            {},
-            refer('String', 'dart:core'),
-            refer('String', 'dart:core'),
-          ).code
+        ? buildEmptyMapStringString().code
         : Block.of([
             const Code('return '),
             buildMapStringStringType().code,

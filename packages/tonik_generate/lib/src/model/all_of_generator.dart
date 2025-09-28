@@ -497,16 +497,7 @@ class AllOfGenerator {
         (b) =>
             b
               ..name = 'simpleProperties'
-              ..returns = TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        refer('String', 'dart:core'),
-                        refer('String', 'dart:core'),
-                      ]),
-              )
+              ..returns = buildMapStringStringType()
               ..optionalParameters.add(
                 Parameter(
                   (b) =>
@@ -559,16 +550,7 @@ class AllOfGenerator {
         (b) =>
             b
               ..name = 'simpleProperties'
-              ..returns = TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        refer('String', 'dart:core'),
-                        refer('String', 'dart:core'),
-                      ]),
-              )
+              ..returns = buildMapStringStringType()
               ..optionalParameters.add(
                 Parameter(
                   (b) =>
@@ -589,16 +571,7 @@ class AllOfGenerator {
       (b) =>
           b
             ..name = 'simpleProperties'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'Map'
-                    ..url = 'dart:core'
-                    ..types.addAll([
-                      refer('String', 'dart:core'),
-                      refer('String', 'dart:core'),
-                    ]),
-            )
+            ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
                 (b) =>
