@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:tonik_util/src/decoding/form_decoder.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
 import 'package:tonik_util/src/decoding/simple_decoder.dart';
 
@@ -57,6 +58,13 @@ class Date {
     return Date.fromString(simple.decodeSimpleString());
   }
 
+  /// Creates a [Date] from a form-encoded string.
+  ///
+  /// The string must be in ISO 8601 format (YYYY-MM-DD) and may be URL-encoded.
+  factory Date.fromForm(String? form) {
+    return Date.fromString(form.decodeFormString());
+  }
+
   /// The year component of the date.
   final int year;
 
@@ -85,6 +93,13 @@ class Date {
   /// Returns the date in ISO 8601 format (YYYY-MM-DD).
   String toSimple({required bool explode, required bool allowEmpty}) {
     return toString();
+  }
+
+  /// Converts this [Date] to a form-encoded string.
+  ///
+  /// Returns the date in ISO 8601 format (YYYY-MM-DD) with proper URL encoding.
+  String toForm({required bool explode, required bool allowEmpty}) {
+    return Uri.encodeQueryComponent(toString());
   }
 
   /// Creates a copy of this [Date] with the given fields replaced

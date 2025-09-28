@@ -10,6 +10,7 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
@@ -89,6 +90,7 @@ class ClassGenerator {
               ),
               _buildFromSimpleConstructor(className, model),
               _buildFromJsonConstructor(className, model),
+              _buildFromFormConstructor(className, model),
             ])
             ..methods.addAll([
               _buildToJsonMethod(model),
@@ -97,6 +99,8 @@ class ClassGenerator {
               _buildHashCodeMethod(normalizedProperties),
               _buildSimplePropertiesMethod(model, normalizedProperties),
               _buildToSimpleMethod(className, model, normalizedProperties),
+              _buildFormPropertiesMethod(model, normalizedProperties),
+              _buildToFormMethod(className, model, normalizedProperties),
             ])
             ..fields.addAll(
               normalizedProperties.map(
@@ -392,26 +396,7 @@ class ClassGenerator {
         (b) =>
             b
               ..name = 'simpleProperties'
-              ..returns = TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'Map'
-                      ..url = 'dart:core'
-                      ..types.addAll([
-                        TypeReference(
-                          (b) =>
-                              b
-                                ..symbol = 'String'
-                                ..url = 'dart:core',
-                        ),
-                        TypeReference(
-                          (b) =>
-                              b
-                                ..symbol = 'String'
-                                ..url = 'dart:core',
-                        ),
-                      ]),
-              )
+              ..returns = buildMapStringStringType()
               ..optionalParameters.add(
                 Parameter(
                   (b) =>
@@ -462,49 +447,23 @@ class ClassGenerator {
       }
     }
 
-    final returnStatement =
-        properties.isEmpty
-            ? literalMap(
-              {},
-              TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'String'
-                      ..url = 'dart:core',
-              ),
-              TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'String'
-                      ..url = 'dart:core',
-              ),
-            ).code
-            : Code('return {\n${mapEntries.map((e) => '  $e').join('\n')}\n};');
+    final returnStatement = properties.isEmpty
+        ? literalMap(
+            {},
+            refer('String', 'dart:core'),
+            refer('String', 'dart:core'),
+          ).code
+        : Block.of([
+            const Code('return '),
+            buildMapStringStringType().code,
+            Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
+          ]);
 
     return Method(
       (b) =>
           b
             ..name = 'simpleProperties'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'Map'
-                    ..url = 'dart:core'
-                    ..types.addAll([
-                      TypeReference(
-                        (b) =>
-                            b
-                              ..symbol = 'String'
-                              ..url = 'dart:core',
-                      ),
-                      TypeReference(
-                        (b) =>
-                            b
-                              ..symbol = 'String'
-                              ..url = 'dart:core',
-                      ),
-                    ]),
-            )
+            ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
                 (b) =>
@@ -705,5 +664,310 @@ class ClassGenerator {
       const Code('}'),
       const Code('}'),
     ]);
+  }
+
+  Constructor _buildFromFormConstructor(String className, ClassModel model) {
+    final normalizedProperties = normalizeProperties(model.properties.toList());
+
+    final hasOnlySimpleProperties = model.properties.every((property) {
+      return property.model.encodingShape == EncodingShape.simple;
+    });
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromForm'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = _buildFromFormBody(
+              className,
+              normalizedProperties,
+              hasOnlySimpleProperties,
+            ),
+    );
+  }
+
+  Block _buildFromFormBody(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+    bool hasOnlySimpleProperties,
+  ) {
+    if (properties.isEmpty) {
+      return Block.of([Code('return $className();')]);
+    }
+
+    if (!hasOnlySimpleProperties) {
+      return Block.of([
+        generateSimpleDecodingExceptionExpression(
+          'Form encoding not supported for $className: '
+          'contains complex types',
+        ).statement,
+      ]);
+    }
+
+    final propertyNames = properties.map((p) => p.property.name).toSet();
+
+    final constructorArgs = <String, Expression>{};
+    for (final prop in properties) {
+      final normalizedName = prop.normalizedName;
+      final propertyName = prop.property.name;
+      final modelType = prop.property.model;
+      final isNullable = prop.property.isNullable;
+
+      constructorArgs[normalizedName] = buildFromFormValueExpression(
+        refer("values['$propertyName']"),
+        model: modelType,
+        isRequired: !isNullable,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        contextProperty: propertyName,
+      );
+    }
+
+    return Block.of([
+      const Code('if (value == null || value.isEmpty) {'),
+      generateSimpleDecodingExceptionExpression(
+        'Invalid empty value for $className',
+      ).statement,
+      const Code('}'),
+
+      declareFinal('values')
+          .assign(
+            literalMap(
+              {},
+              refer('String', 'dart:core'),
+              refer('String', 'dart:core'),
+            ),
+          )
+          .statement,
+          
+      _buildExplodeParsingLogic(),
+      _buildKeyValidationLogic(propertyNames),
+      refer(className, package).call([], constructorArgs).returned.statement,
+    ]);
+  }
+
+  Method _buildFormPropertiesMethod(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel.encodingShape != EncodingShape.simple;
+    });
+
+    if (hasComplexData) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'formProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..defaultTo = literalBool(true).code,
+                ),
+              )
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'formProperties not supported for ${model.name}: '
+                    'contains nested data',
+                  ).statement,
+      );
+    }
+
+    final mapEntries = <Code>[];
+
+    for (final prop in properties) {
+      final property = prop.property;
+      final fieldName = prop.normalizedName;
+      final rawName = property.name;
+
+      if (property.isRequired && property.isNullable) {
+        mapEntries.add(
+          Code(
+            'if (allowEmpty || $fieldName != null) '
+            "r'$rawName': $fieldName?.toForm(explode: false, "
+            "allowEmpty: allowEmpty) ?? '',",
+          ),
+        );
+      } else if (!property.isRequired) {
+        mapEntries.add(
+          Code(
+            "if ($fieldName != null) r'$rawName': "
+            '$fieldName!.toForm(explode: false, allowEmpty: allowEmpty),',
+          ),
+        );
+      } else {
+        mapEntries.add(
+          Code(
+            "r'$rawName': $fieldName.toForm(explode: false, "
+            'allowEmpty: allowEmpty),',
+          ),
+        );
+      }
+    }
+
+    final returnStatement = properties.isEmpty
+        ? literalMap(
+            {},
+            refer('String', 'dart:core'),
+            refer('String', 'dart:core'),
+          ).code
+        : Block.of([
+            const Code('return '),
+            buildMapStringStringType().code,
+            Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
+          ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'formProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..lambda = properties.isEmpty
+            ..body = returnStatement,
+    );
+  }
+
+  Method _buildToFormMethod(
+    String className,
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel.encodingShape != EncodingShape.simple;
+    });
+
+    if (hasComplexData) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toForm'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..body = Block.of([
+                generateEncodingExceptionExpression(
+                  'toForm not supported for $className: '
+                  'contains nested data',
+                ).statement,
+              ]),
+      );
+    }
+
+    if (properties.isEmpty) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toForm'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll([
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'explode'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              ])
+              ..lambda = true
+              ..body = literalString('').code,
+      );
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toForm'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..body = Block.of([
+              refer('formProperties')
+                  .call([], {'allowEmpty': refer('allowEmpty')})
+                  .property('toForm')
+                  .call([], {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                  })
+                  .returned
+                  .statement,
+            ]),
+    );
   }
 }
