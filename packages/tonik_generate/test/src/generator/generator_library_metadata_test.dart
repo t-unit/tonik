@@ -27,7 +27,8 @@ void main() {
       final apiDoc = ApiDocument(
         title: 'Pet Store API',
         version: '1.0.27-SNAPSHOT',
-        description: 'A sample Pet Store Server based on the OpenAPI 3.0 '
+        description:
+            'A sample Pet Store Server based on the OpenAPI 3.0 '
             'specification.',
         contact: const Contact(
           name: 'API Support',
@@ -70,8 +71,13 @@ void main() {
       // Check that all metadata is included in the generated library
       expect(content, contains('/// Pet Store API'));
       expect(content, contains('/// Version 1.0.27-SNAPSHOT'));
-      expect(content, contains('/// A sample Pet Store Server based on the OpenAPI 3.0 '
-          'specification.'));
+      expect(
+        content,
+        contains(
+          '/// A sample Pet Store Server based on the OpenAPI 3.0 '
+          'specification.',
+        ),
+      );
 
       // Contact information
       expect(content, contains('/// Contact: API Support'));
@@ -80,13 +86,24 @@ void main() {
 
       // License information
       expect(content, contains('/// License: Apache 2.0'));
-      expect(content, contains('/// License URL: https://www.apache.org/licenses/LICENSE-2.0.html'));
+      expect(
+        content,
+        contains(
+          '/// License URL: https://www.apache.org/licenses/LICENSE-2.0.html',
+        ),
+      );
 
       // Terms of Service
-      expect(content, contains('/// Terms of Service: https://swagger.io/terms/'));
+      expect(
+        content,
+        contains('/// Terms of Service: https://swagger.io/terms/'),
+      );
 
       // External Documentation
-      expect(content, contains('/// Documentation: Find out more about Swagger'));
+      expect(
+        content,
+        contains('/// Documentation: Find out more about Swagger'),
+      );
       expect(content, contains('/// Documentation URL: https://swagger.io'));
     });
 

@@ -34,6 +34,7 @@ void main() {
         path: '/test',
         method: HttpMethod.post,
         requestBody: null,
+        securitySchemes: const {},
         responses: const {},
         pathParameters: const {},
         queryParameters: const {},
@@ -90,6 +91,7 @@ void main() {
         description: null,
         tags: const <Tag>{},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -146,6 +148,7 @@ void main() {
         description: null,
         tags: const {},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -193,6 +196,7 @@ void main() {
         description: null,
         tags: const {},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -236,6 +240,7 @@ void main() {
         description: null,
         tags: const {},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -279,6 +284,7 @@ void main() {
         description: null,
         tags: const {},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -332,6 +338,7 @@ void main() {
         description: null,
         tags: const {},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -382,6 +389,7 @@ void main() {
         description: null,
         tags: const {},
         isDeprecated: false,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''

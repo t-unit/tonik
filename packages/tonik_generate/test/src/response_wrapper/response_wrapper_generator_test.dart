@@ -72,6 +72,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
     });
 
@@ -141,6 +142,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
       final classes = generator.generateClasses(operation);
       expect(classes, isNotEmpty);
@@ -205,6 +207,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
       expect(() => generator.generateClasses(operation), throwsArgumentError);
     });
@@ -239,6 +242,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final classes = generator.generateClasses(operation);
@@ -288,6 +292,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final classes = generator.generateClasses(operation);
@@ -338,6 +343,7 @@ void main() {
           pathParameters: const {},
           responses: responses,
           requestBody: null,
+          securitySchemes: const {},
         );
         final classes = generator.generateClasses(operation);
         expect(classes, hasLength(2));
@@ -402,6 +408,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
       final classes = generator.generateClasses(operation);
       expect(classes, isNotEmpty);
@@ -529,6 +536,7 @@ void main() {
           pathParameters: const {},
           responses: responses,
           requestBody: null,
+          securitySchemes: const {},
         );
         final classes = generator.generateClasses(operation);
         final subclass201 = classes.firstWhere(
@@ -608,6 +616,7 @@ void main() {
         pathParameters: const {},
         responses: responses,
         requestBody: null,
+        securitySchemes: const {},
       );
       final classes = generator.generateClasses(operation);
       final subclass201 = classes.firstWhere(

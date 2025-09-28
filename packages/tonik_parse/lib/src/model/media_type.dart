@@ -5,7 +5,7 @@ import 'package:tonik_parse/src/model/schema.dart';
 
 part 'media_type.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class MediaType {
   MediaType({required this.schema, required this.encoding});
 

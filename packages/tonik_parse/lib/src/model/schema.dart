@@ -4,7 +4,7 @@ import 'package:tonik_parse/src/model/reference.dart';
 
 part 'schema.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Schema {
   Schema({
     required this.type,

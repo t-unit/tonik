@@ -61,6 +61,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): successResponse,
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
@@ -80,6 +81,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: const {},
       );
 

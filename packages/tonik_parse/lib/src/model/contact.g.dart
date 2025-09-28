@@ -1,14 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'external_documentation.dart';
+part of 'contact.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ExternalDocumentation _$ExternalDocumentationFromJson(
-  Map<String, dynamic> json,
-) => ExternalDocumentation(
-  url: json['url'] as String,
-  description: json['description'] as String?,
+Contact _$ContactFromJson(Map<String, dynamic> json) => Contact(
+  name: json['name'] as String?,
+  url: json['url'] as String?,
+  email: json['email'] as String?,
 );

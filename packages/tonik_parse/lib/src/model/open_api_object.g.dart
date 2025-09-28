@@ -27,15 +27,7 @@ OpenApiObject _$OpenApiObjectFromJson(Map<String, dynamic> json) =>
       externalDocs:
           json['externalDocs'] == null
               ? null
-              : ExternalDocumentation.fromJson(json['externalDocs'] as Map<String, dynamic>),
+              : ExternalDocumentation.fromJson(
+                json['externalDocs'] as Map<String, dynamic>,
+              ),
     );
-
-Map<String, dynamic> _$OpenApiObjectToJson(OpenApiObject instance) =>
-    <String, dynamic>{
-      'info': instance.info,
-      'servers': instance.servers,
-      'paths': instance.paths,
-      'components': instance.components,
-      'tags': instance.tags,
-      'externalDocs': instance.externalDocs,
-    };

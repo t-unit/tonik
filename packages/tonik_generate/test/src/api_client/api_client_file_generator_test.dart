@@ -78,6 +78,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -127,6 +128,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final petOperation = Operation(
@@ -143,6 +145,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -195,6 +198,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -251,6 +255,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final untaggedOperation = Operation(
@@ -267,6 +272,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(

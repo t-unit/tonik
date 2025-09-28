@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'server.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Server {
   Server({required this.url, required this.description});
 

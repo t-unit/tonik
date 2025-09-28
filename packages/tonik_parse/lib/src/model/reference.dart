@@ -4,6 +4,7 @@ import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
 import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/schema.dart';
+import 'package:tonik_parse/src/model/security_scheme.dart';
 import 'package:tonik_parse/src/model/server.dart';
 
 sealed class ReferenceWrapper<T> {
@@ -32,6 +33,8 @@ sealed class ReferenceWrapper<T> {
       return InlinedObject(Response.fromJson(map) as T);
     } else if (T == Header) {
       return InlinedObject(Header.fromJson(map) as T);
+    } else if (T == SecurityScheme) {
+      return InlinedObject(SecurityScheme.fromJson(map) as T);
     }
 
     throw UnimplementedError();

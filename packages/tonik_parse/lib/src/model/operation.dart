@@ -7,7 +7,7 @@ import 'package:tonik_parse/src/model/server.dart';
 
 part 'operation.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Operation {
   Operation({
     required this.tags,
@@ -19,6 +19,7 @@ class Operation {
     required this.responses,
     required this.isDeprecated,
     required this.servers,
+    required this.security,
   });
 
   factory Operation.fromJson(Map<String, dynamic> json) =>
@@ -34,13 +35,14 @@ class Operation {
   @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
   final List<Server>? servers;
+  final List<Map<String, List<String>>>? security;
 
-  // We ignore the externalDocs, security and callbacks properties.
+  // We ignore the externalDocs and callbacks properties.
 
   @override
   String toString() =>
       'Operation{tags: $tags, summary: $summary, description: $description, '
       'operationId: $operationId, parameters: $parameters, '
       'requestBody: $requestBody, responses: $responses, '
-      'isDeprecated: $isDeprecated, servers: $servers}';
+      'isDeprecated: $isDeprecated, servers: $servers, security: $security}';
 }

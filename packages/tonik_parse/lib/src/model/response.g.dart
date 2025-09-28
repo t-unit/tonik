@@ -15,9 +15,3 @@ Response _$ResponseFromJson(Map<String, dynamic> json) => Response(
     (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
   ),
 );
-
-Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
-  'description': instance.description,
-  'headers': instance.headers,
-  'content': instance.content,
-};

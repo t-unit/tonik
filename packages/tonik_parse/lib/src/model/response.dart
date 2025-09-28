@@ -5,7 +5,7 @@ import 'package:tonik_parse/src/model/reference.dart';
 
 part 'response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Response {
   Response({
     required this.description,

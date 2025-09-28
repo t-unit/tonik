@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'external_documentation.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ExternalDocumentation {
   ExternalDocumentation({required this.url, this.description});
 

@@ -42,6 +42,7 @@ void main() {
       parameters: {},
       requestBodies: {},
       headers: {},
+      securitySchemes: {},
     ),
     tags: [],
   );

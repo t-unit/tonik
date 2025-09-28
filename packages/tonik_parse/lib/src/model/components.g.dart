@@ -22,13 +22,7 @@ Components _$ComponentsFromJson(Map<String, dynamic> json) => Components(
   headers: (json['headers'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
   ),
+  securitySchemes: (json['securitySchemes'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, ReferenceWrapper<SecurityScheme>.fromJson(e)),
+  ),
 );
-
-Map<String, dynamic> _$ComponentsToJson(Components instance) =>
-    <String, dynamic>{
-      'schemas': instance.schemas,
-      'responses': instance.responses,
-      'parameters': instance.parameters,
-      'requestBodies': instance.requestBodies,
-      'headers': instance.headers,
-    };

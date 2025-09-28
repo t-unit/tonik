@@ -45,6 +45,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -83,6 +84,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -121,6 +123,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -159,6 +162,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -214,6 +218,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -334,6 +339,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final headers =
@@ -423,6 +429,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -487,6 +494,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -556,6 +564,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -602,6 +611,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -651,6 +661,7 @@ void main() {
           pathParameters: const {},
           responses: const {},
           requestBody: requestBody,
+          securitySchemes: const {},
         );
 
         const expectedMethod = '''
@@ -711,6 +722,7 @@ void main() {
           pathParameters: const {},
           responses: const {},
           requestBody: requestBody,
+          securitySchemes: const {},
         );
 
         const expectedMethod = '''
@@ -773,6 +785,7 @@ void main() {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -818,6 +831,7 @@ void main() {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -881,6 +895,7 @@ void main() {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = '''
@@ -953,6 +968,7 @@ void main() {
             ),
           },
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const expectedMethod = '''

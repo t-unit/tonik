@@ -14,6 +14,7 @@ export 'src/model/request_body.dart';
 export 'src/model/request_header.dart';
 export 'src/model/response.dart';
 export 'src/model/response_header.dart';
+export 'src/model/security_scheme.dart';
 export 'src/model/server.dart';
 export 'src/model/tag.dart';
 export 'src/util/context.dart';

@@ -57,6 +57,14 @@ class ApiDocument {
     return taggedOperations;
   }
 
+  Set<SecurityScheme> get securitySchemes {
+    final schemes = <SecurityScheme>{};
+    for (final operation in operations) {
+      schemes.addAll(operation.securitySchemes);
+    }
+    return schemes;
+  }
+
   @override
   String toString() =>
       'ApiDocument{title: $title, description: $description, '

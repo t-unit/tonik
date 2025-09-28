@@ -101,12 +101,93 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
   if (apiDocument.externalDocs != null) {
     lines
       ..add('///')
-      ..add('/// Documentation: ${apiDocument.externalDocs!.description ?? 'N/A'}');
+      ..add(
+        '/// Documentation: ${apiDocument.externalDocs!.description ?? 'N/A'}',
+      );
 
     if (apiDocument.externalDocs!.url.isNotEmpty) {
       lines.add('/// Documentation URL: ${apiDocument.externalDocs!.url}');
     }
   }
 
+  // Add security schemes information
+  final securitySchemes = apiDocument.securitySchemes;
+  if (securitySchemes.isNotEmpty) {
+    lines
+      ..add('///')
+      ..add('/// Security Schemes:');
+    
+    for (final scheme in securitySchemes) {
+      final schemeInfo = _formatSecurityScheme(scheme);
+      lines.addAll(schemeInfo);
+    }
+  }
+
+  return lines;
+}
+
+List<String> _formatSecurityScheme(SecurityScheme scheme) {
+  final lines = <String>[];
+  
+  switch (scheme) {
+    case ApiKeySecurityScheme():
+      final location = switch (scheme.$in) {
+        ApiKeyLocation.header => 'header',
+        ApiKeyLocation.query => 'query',
+        ApiKeyLocation.cookie => 'cookie',
+      };
+      final description = scheme.description?.isNotEmpty == true ? ': ${scheme.description}' : '';
+      lines.add('/// - API Key ($location)$description');
+      
+    case HttpSecurityScheme():
+      final schemeName = switch (scheme.scheme.toLowerCase()) {
+        'bearer' => 'Bearer',
+        'basic' => 'Basic',
+        _ => scheme.scheme.toUpperCase(),
+      };
+      final description = scheme.description?.isNotEmpty == true ? ': ${scheme.description}' : '';
+      lines.add('/// - HTTP $schemeName$description');
+      if (scheme.bearerFormat != null) {
+        lines.add('///   Format: ${scheme.bearerFormat}');
+      }
+      
+    case OAuth2SecurityScheme():
+      final description = scheme.description?.isNotEmpty == true ? ': ${scheme.description}' : '';
+      lines.add('/// - OAuth2$description');
+      final flows = scheme.flows;
+      
+      if (flows.authorizationCode != null) {
+        final flow = flows.authorizationCode!;
+        lines..add('///   Authorization URL: ${flow.authorizationUrl}')
+        ..add('///   Token URL: ${flow.tokenUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      } else if (flows.implicit != null) {
+        final flow = flows.implicit!;
+        lines.add('///   Authorization URL: ${flow.authorizationUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      } else if (flows.clientCredentials != null) {
+        final flow = flows.clientCredentials!;
+        lines.add('///   Token URL: ${flow.tokenUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      } else if (flows.password != null) {
+        final flow = flows.password!;
+        lines.add('///   Token URL: ${flow.tokenUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      }
+      
+    case OpenIdConnectSecurityScheme():
+      final description = scheme.description?.isNotEmpty == true ? ': ${scheme.description}' : '';
+      lines.add('/// - OpenID Connect$description');
+      lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+  }
+  
   return lines;
 }

@@ -39,6 +39,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: 'Success',
@@ -94,6 +95,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 204): ResponseObject(
             name: 'NoContent',
@@ -130,6 +132,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: 'HeaderResponse',
@@ -183,6 +186,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: 'BodyResponse',

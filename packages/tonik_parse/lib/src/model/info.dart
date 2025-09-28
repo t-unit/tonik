@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/model/contact.dart';
+import 'package:tonik_parse/src/model/license.dart';
 
 part 'info.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Info {
   Info({
     required this.title,
