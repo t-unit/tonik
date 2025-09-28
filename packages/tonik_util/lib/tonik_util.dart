@@ -3,6 +3,7 @@ library;
 
 export 'src/date.dart';
 export 'src/decoding/decoding_exception.dart';
+export 'src/decoding/form_decoder.dart';
 export 'src/decoding/json_decoder.dart';
 export 'src/decoding/simple_decoder.dart';
 export 'src/dio/server_config.dart';
@@ -11,6 +12,7 @@ export 'src/encoding/deep_object_encoder.dart';
 export 'src/encoding/delimited_encoder.dart';
 export 'src/encoding/encoding_exception.dart';
 export 'src/encoding/form_encoder.dart';
+export 'src/encoding/form_encoder_extensions.dart';
 export 'src/encoding/label_encoder.dart';
 export 'src/encoding/matrix_encoder.dart';
 export 'src/encoding/parameter_entry.dart';
