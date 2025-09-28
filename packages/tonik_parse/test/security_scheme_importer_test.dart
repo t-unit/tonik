@@ -88,7 +88,7 @@ void main() {
               as core.ApiKeySecurityScheme;
       expect(scheme.type, core.SecuritySchemeType.apiKey);
       expect(scheme.description, 'API Key authentication');
-      expect(scheme.$in, core.ApiKeyLocation.header);
+      expect(scheme.location, core.ApiKeyLocation.header);
     });
 
     test('imports API key security scheme in query', () {
@@ -100,7 +100,7 @@ void main() {
               as core.ApiKeySecurityScheme;
       expect(scheme.type, core.SecuritySchemeType.apiKey);
       expect(scheme.description, 'API Key in query parameter');
-      expect(scheme.$in, core.ApiKeyLocation.query);
+      expect(scheme.location, core.ApiKeyLocation.query);
     });
 
     test('imports API key security scheme in cookie', () {
@@ -112,7 +112,7 @@ void main() {
               as core.ApiKeySecurityScheme;
       expect(scheme.type, core.SecuritySchemeType.apiKey);
       expect(scheme.description, 'API Key in cookie');
-      expect(scheme.$in, core.ApiKeyLocation.cookie);
+      expect(scheme.location, core.ApiKeyLocation.cookie);
     });
 
     test('imports HTTP Bearer security scheme', () {

@@ -166,7 +166,7 @@ class ApiClientGenerator {
     
     switch (scheme) {
       case ApiKeySecurityScheme():
-        final location = switch (scheme.$in) {
+        final location = switch (scheme.location) {
           ApiKeyLocation.header => 'header',
           ApiKeyLocation.query => 'query',
           ApiKeyLocation.cookie => 'cookie',

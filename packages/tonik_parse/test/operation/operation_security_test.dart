@@ -154,7 +154,7 @@ void main() {
       expect(scheme.description, 'API Key authentication');
       
       final apiKeyScheme = scheme as core.ApiKeySecurityScheme;
-      expect(apiKeyScheme.$in, core.ApiKeyLocation.header);
+      expect(apiKeyScheme.location, core.ApiKeyLocation.header);
     });
 
     test('operation with single Bearer token requirement', () {

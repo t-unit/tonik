@@ -25,16 +25,16 @@ enum SecuritySchemeType {
 class ApiKeySecurityScheme extends SecurityScheme {
   const ApiKeySecurityScheme({
     required super.type,
-    required this.$in,
+    required this.location,
     required super.description,
   });
 
-  final ApiKeyLocation $in;
+  final ApiKeyLocation location;
 
   @override
   String toString() =>
       'ApiKeySecurityScheme{type: $type, description: $description, '
-      'in: ${$in}}';
+      'location: $location}';
 }
 
 enum ApiKeyLocation { query, header, cookie }

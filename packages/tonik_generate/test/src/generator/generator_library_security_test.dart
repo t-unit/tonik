@@ -51,7 +51,7 @@ void main() {
               ApiKeySecurityScheme(
                 type: SecuritySchemeType.apiKey,
                 description: 'API Key authentication',
-                $in: ApiKeyLocation.header,
+                location: ApiKeyLocation.header,
               ),
               HttpSecurityScheme(
                 type: SecuritySchemeType.http,
@@ -253,7 +253,7 @@ void main() {
               ApiKeySecurityScheme(
                 type: SecuritySchemeType.apiKey,
                 description: null, // No description
-                $in: ApiKeyLocation.header,
+                location: ApiKeyLocation.header,
               ),
               HttpSecurityScheme(
                 type: SecuritySchemeType.http,

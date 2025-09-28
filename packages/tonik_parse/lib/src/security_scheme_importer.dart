@@ -63,7 +63,7 @@ class SecuritySchemeImporter {
         return core.ApiKeySecurityScheme(
           type: core.SecuritySchemeType.apiKey,
           description: scheme.description,
-          $in: _parseApiKeyLocation(scheme.$in!),
+          location: _parseApiKeyLocation(scheme.$in!),
         );
       case parse.SecuritySchemeType.http:
         return core.HttpSecurityScheme(

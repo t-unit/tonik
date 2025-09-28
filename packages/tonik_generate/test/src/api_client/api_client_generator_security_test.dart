@@ -46,7 +46,7 @@ void main() {
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
             description: 'API Key authentication',
-            $in: ApiKeyLocation.header,
+            location: ApiKeyLocation.header,
           ),
           HttpSecurityScheme(
             type: SecuritySchemeType.http,
@@ -222,12 +222,12 @@ void main() {
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
             description: 'API Key in header',
-            $in: ApiKeyLocation.header,
+            location: ApiKeyLocation.header,
           ),
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
             description: 'API Key in query',
-            $in: ApiKeyLocation.query,
+            location: ApiKeyLocation.query,
           ),
           HttpSecurityScheme(
             type: SecuritySchemeType.http,
@@ -272,7 +272,7 @@ void main() {
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
             description: null, // No description
-            $in: ApiKeyLocation.header,
+            location: ApiKeyLocation.header,
           ),
           HttpSecurityScheme(
             type: SecuritySchemeType.http,

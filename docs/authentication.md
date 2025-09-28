@@ -270,16 +270,16 @@ final apiClient = YourApiClient(server);
 
 ## Security Scheme Documentation
 
-While Tonik doesn't generate authentication code, it does parse and expose security scheme information from the OpenAPI specification. This information can be found in:
+While Tonik doesn't generate authentication code, it does parse and expose security scheme information from the OpenAPI specification. This information is automatically included in the generated API documentation:
 
-- `ApiDocument.securitySchemes` - Available security schemes
-- Operation-level security requirements in `Operation.security`
+- **Library-level documentation** - All available security schemes are documented in the main library file
+- **Method-level documentation** - Individual API methods include their specific security requirements in doc comments
 
 You can use this information to:
 
-1. **Generate documentation** about required authentication
-2. **Configure interceptors** based on operation requirements
-3. **Create authentication setup guides** for your API
+1. **Understand authentication requirements** from the generated documentation
+2. **Configure interceptors** based on the documented security schemes
+3. **Reference security information** when implementing authentication
 
 ## Best Practices
 
