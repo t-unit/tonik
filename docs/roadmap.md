@@ -26,5 +26,6 @@
 - Parameter encoding via content, see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content)
 - XML de- and encoding
 - Min, Max and multiple validation
-- Pattern validation 
+- Pattern validation
 - Remote and URL references
+- Direct security/authentication code generation - authentication must be handled through ServerConfig interceptors (see [Authentication Guide](authentication.md))

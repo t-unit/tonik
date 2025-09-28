@@ -58,6 +58,7 @@ void main() {
         ),
       },
       requestBody: null,
+      securitySchemes: const {},
     );
 
     opWithTwoStatuses = Operation(
@@ -101,6 +102,7 @@ void main() {
         ),
       },
       requestBody: null,
+      securitySchemes: const {},
     );
 
     apiDocument = ApiDocument(
@@ -116,6 +118,10 @@ void main() {
       pathParameters: const {},
       requestBodies: const {},
       description: null,
+      contact: null,
+      license: null,
+      termsOfService: null,
+      externalDocs: null,
     );
   });
 

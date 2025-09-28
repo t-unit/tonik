@@ -24,13 +24,10 @@ OpenApiObject _$OpenApiObjectFromJson(Map<String, dynamic> json) =>
           (json['tags'] as List<dynamic>?)
               ?.map((e) => Tag.fromJson(e as Map<String, dynamic>))
               .toList(),
+      externalDocs:
+          json['externalDocs'] == null
+              ? null
+              : ExternalDocumentation.fromJson(
+                json['externalDocs'] as Map<String, dynamic>,
+              ),
     );
-
-Map<String, dynamic> _$OpenApiObjectToJson(OpenApiObject instance) =>
-    <String, dynamic>{
-      'info': instance.info,
-      'servers': instance.servers,
-      'paths': instance.paths,
-      'components': instance.components,
-      'tags': instance.tags,
-    };

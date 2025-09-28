@@ -61,6 +61,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): successResponse,
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
@@ -80,6 +81,7 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: const {},
       );
 
@@ -96,6 +98,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'test_package';

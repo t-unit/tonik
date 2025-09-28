@@ -17,6 +17,10 @@ void main() {
         pathParameters: {},
         requestBodies: {},
         description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       expect(document.operationsByTag, isEmpty);
@@ -37,6 +41,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final barOperation = Operation(
@@ -53,6 +58,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final document = ApiDocument(
@@ -68,6 +74,10 @@ void main() {
         pathParameters: const {},
         requestBodies: const {},
         description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
@@ -92,6 +102,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final document = ApiDocument(
@@ -116,6 +127,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           ),
         },
         responses: const {},
@@ -124,6 +136,10 @@ void main() {
         pathParameters: const {},
         requestBodies: const {},
         description: null,
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       final fooOperations = document.operationsByTag[const Tag(name: 'foo')];

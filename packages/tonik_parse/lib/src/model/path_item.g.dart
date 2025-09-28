@@ -51,19 +51,3 @@ PathItem _$PathItemFromJson(Map<String, dynamic> json) => PathItem(
           ? null
           : Operation.fromJson(json['trace'] as Map<String, dynamic>),
 );
-
-Map<String, dynamic> _$PathItemToJson(PathItem instance) => <String, dynamic>{
-  'ref': instance.ref,
-  'summary': instance.summary,
-  'description': instance.description,
-  'get': instance.get,
-  'put': instance.put,
-  'post': instance.post,
-  'delete': instance.delete,
-  'patch': instance.patch,
-  'head': instance.head,
-  'options': instance.options,
-  'trace': instance.trace,
-  'servers': instance.servers,
-  'parameters': instance.parameters,
-};

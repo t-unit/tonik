@@ -13,6 +13,9 @@ void main() {
       title: 'Test API',
       description: 'Test API Description',
       version: '1.0.0',
+      contact: null,
+      license: null,
+      termsOfService: null,
     ),
     servers: [],
     paths: {},
@@ -42,6 +45,7 @@ void main() {
       parameters: {},
       requestBodies: {},
       headers: {},
+      securitySchemes: {},
     ),
     tags: [],
   );

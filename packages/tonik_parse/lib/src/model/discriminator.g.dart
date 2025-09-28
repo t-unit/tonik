@@ -13,9 +13,3 @@ Discriminator _$DiscriminatorFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(k, e as String),
       ),
     );
-
-Map<String, dynamic> _$DiscriminatorToJson(Discriminator instance) =>
-    <String, dynamic>{
-      'propertyName': instance.propertyName,
-      'mapping': instance.mapping,
-    };

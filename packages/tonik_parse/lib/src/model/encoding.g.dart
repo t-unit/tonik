@@ -16,14 +16,6 @@ Encoding _$EncodingFromJson(Map<String, dynamic> json) => Encoding(
   allowReserved: json['allowReserved'] as bool?,
 );
 
-Map<String, dynamic> _$EncodingToJson(Encoding instance) => <String, dynamic>{
-  'contentType': instance.contentType,
-  'headers': instance.headers,
-  'style': _$SerializationStyleEnumMap[instance.style],
-  'explode': instance.explode,
-  'allowReserved': instance.allowReserved,
-};
-
 const _$SerializationStyleEnumMap = {
   SerializationStyle.matrix: 'matrix',
   SerializationStyle.label: 'label',

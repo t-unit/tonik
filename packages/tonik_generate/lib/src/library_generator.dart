@@ -28,11 +28,7 @@ void generateLibraryFile({
 
   srcFiles.sort();
 
-  final docComments = formatDocComments([
-    apiDocument.title,
-    apiDocument.version,
-    apiDocument.description,
-  ]);
+  final docComments = _formatApiDocumentation(apiDocument);
 
   final buffer =
       StringBuffer()
@@ -41,9 +37,7 @@ void generateLibraryFile({
         ..writeln()
         ..writeln();
 
-  for (final docComment in docComments) {
-    buffer.writeln(docComment);
-  }
+  docComments.forEach(buffer.writeln);
 
   buffer
     ..writeln()
@@ -57,4 +51,151 @@ void generateLibraryFile({
   }
 
   libraryFile.writeAsStringSync(buffer.toString());
+}
+
+List<String> _formatApiDocumentation(ApiDocument apiDocument) {
+  final lines = <String>[];
+
+  if (apiDocument.title.isNotEmpty) {
+    lines.add('/// ${apiDocument.title}');
+  }
+
+  if (apiDocument.version.isNotEmpty) {
+    lines.add('/// Version ${apiDocument.version}');
+  }
+
+  if (apiDocument.description != null && apiDocument.description!.isNotEmpty) {
+    lines.addAll(formatDocComment(apiDocument.description));
+  }
+
+  if (apiDocument.contact != null) {
+    lines
+      ..add('///')
+      ..add('/// Contact: ${apiDocument.contact!.name ?? 'N/A'}');
+
+    if (apiDocument.contact!.email != null) {
+      lines.add('/// Email: ${apiDocument.contact!.email}');
+    }
+
+    if (apiDocument.contact!.url != null) {
+      lines.add('/// URL: ${apiDocument.contact!.url}');
+    }
+  }
+
+  if (apiDocument.license != null) {
+    lines
+      ..add('///')
+      ..add('/// License: ${apiDocument.license!.name ?? 'N/A'}');
+
+    if (apiDocument.license!.url != null) {
+      lines.add('/// License URL: ${apiDocument.license!.url}');
+    }
+  }
+
+  if (apiDocument.termsOfService != null) {
+    lines
+      ..add('///')
+      ..add('/// Terms of Service: ${apiDocument.termsOfService}');
+  }
+
+  if (apiDocument.externalDocs != null) {
+    lines
+      ..add('///')
+      ..add(
+        '/// Documentation: ${apiDocument.externalDocs!.description ?? 'N/A'}',
+      );
+
+    if (apiDocument.externalDocs!.url.isNotEmpty) {
+      lines.add('/// Documentation URL: ${apiDocument.externalDocs!.url}');
+    }
+  }
+
+  // Add security schemes information
+  final securitySchemes = apiDocument.securitySchemes;
+  if (securitySchemes.isNotEmpty) {
+    lines
+      ..add('///')
+      ..add('/// Security Schemes:');
+    
+    for (final scheme in securitySchemes) {
+      final schemeInfo = _formatSecurityScheme(scheme);
+      lines.addAll(schemeInfo);
+    }
+  }
+
+  return lines;
+}
+
+List<String> _formatSecurityScheme(SecurityScheme scheme) {
+  final lines = <String>[];
+  
+  switch (scheme) {
+    case ApiKeySecurityScheme():
+      final location = switch (scheme.location) {
+        ApiKeyLocation.header => 'header',
+        ApiKeyLocation.query => 'query',
+        ApiKeyLocation.cookie => 'cookie',
+      };
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
+      lines.add('/// - API Key ($location)$description');
+      
+    case HttpSecurityScheme():
+      final schemeName = switch (scheme.scheme.toLowerCase()) {
+        'bearer' => 'Bearer',
+        'basic' => 'Basic',
+        _ => scheme.scheme.toUpperCase(),
+      };
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
+      lines.add('/// - HTTP $schemeName$description');
+      if (scheme.bearerFormat != null) {
+        lines.add('///   Format: ${scheme.bearerFormat}');
+      }
+      
+    case OAuth2SecurityScheme():
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
+      lines.add('/// - OAuth2$description');
+      final flows = scheme.flows;
+      
+      if (flows.authorizationCode != null) {
+        final flow = flows.authorizationCode!;
+        lines..add('///   Authorization URL: ${flow.authorizationUrl}')
+        ..add('///   Token URL: ${flow.tokenUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      } else if (flows.implicit != null) {
+        final flow = flows.implicit!;
+        lines.add('///   Authorization URL: ${flow.authorizationUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      } else if (flows.clientCredentials != null) {
+        final flow = flows.clientCredentials!;
+        lines.add('///   Token URL: ${flow.tokenUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      } else if (flows.password != null) {
+        final flow = flows.password!;
+        lines.add('///   Token URL: ${flow.tokenUrl}');
+        if (flow.scopes.isNotEmpty) {
+          lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
+        }
+      }
+      
+    case OpenIdConnectSecurityScheme():
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
+      lines.add('/// - OpenID Connect$description');
+      lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+  }
+  
+  return lines;
 }

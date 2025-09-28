@@ -411,7 +411,7 @@ void main() {
 
     test('decodes nested lists', () {
       final json = jsonDecode('[[1,2],[3,4]]') as Object?;
-      expect(json?.decodeJsonList<List<Object?>>(), [
+      expect(json.decodeJsonList<List<Object?>>(), [
         [1, 2],
         [3, 4],
       ]);

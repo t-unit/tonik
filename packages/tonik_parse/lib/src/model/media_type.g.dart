@@ -15,8 +15,3 @@ MediaType _$MediaTypeFromJson(Map<String, dynamic> json) => MediaType(
     (k, e) => MapEntry(k, Encoding.fromJson(e as Map<String, dynamic>)),
   ),
 );
-
-Map<String, dynamic> _$MediaTypeToJson(MediaType instance) => <String, dynamic>{
-  'schema': instance.schema,
-  'encoding': instance.encoding,
-};

@@ -46,6 +46,10 @@ void main() {
         queryParameters: {},
         pathParameters: {},
         requestBodies: {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
       generator.writeFiles(
         apiDocument: apiDoc,
@@ -74,6 +78,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -89,6 +94,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -119,6 +128,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final petOperation = Operation(
@@ -135,6 +145,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -150,6 +161,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -183,6 +198,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -198,6 +214,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -235,6 +255,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final untaggedOperation = Operation(
@@ -251,6 +272,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final apiDoc = ApiDocument(
@@ -266,6 +288,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       generator.writeFiles(

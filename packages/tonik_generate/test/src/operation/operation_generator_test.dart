@@ -47,6 +47,7 @@ void main() {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const expectedMethod = r'''
@@ -147,6 +148,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const expectedMethod = r'''
@@ -252,6 +254,7 @@ Future<TonikResult<void>> call({required String myHeader}) async {
           },
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const expectedMethod = r'''
@@ -358,6 +361,7 @@ Future<TonikResult<void>> call({required int petId}) async {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const expectedMethod = r'''
@@ -473,6 +477,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const expectedMethod = r'''
@@ -577,6 +582,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -626,6 +632,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             pathParameters: const {},
             responses: const {},
             requestBody: requestBody,
+            securitySchemes: const {},
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -683,6 +690,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             pathParameters: const {},
             responses: const {},
             requestBody: requestBody,
+            securitySchemes: const {},
           );
 
           const normalizedParams = NormalizedRequestParameters(
@@ -775,6 +783,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             pathParameters: {pathParam},
             responses: const {},
             requestBody: requestBody,
+            securitySchemes: const {},
           );
 
           final normalizedParams = NormalizedRequestParameters(
@@ -831,6 +840,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
           queryParameters: const {},
           pathParameters: const {},
           requestBody: null,
+          securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: 'ParseResponse',
@@ -934,6 +944,7 @@ Future<TonikResult<String>> call() async {
           queryParameters: const {},
           pathParameters: const {},
           requestBody: null,
+          securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 204): ResponseObject(
               name: 'NoContent',
@@ -1029,6 +1040,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: const {},
           responses: const {}, // Empty responses map
           requestBody: null,
+          securitySchemes: const {},
         );
 
         const normalizedParams = NormalizedRequestParameters(
@@ -1108,6 +1120,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -1170,6 +1183,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: {pathParam},
           responses: const {},
           requestBody: requestBody,
+          securitySchemes: const {},
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -1255,6 +1269,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: {pathParam},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -1292,6 +1307,7 @@ Future<TonikResult<void>> call() async {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final result = generator.generateClass(operation, 'GetPets');
@@ -1319,6 +1335,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: const {},
           responses: const {}, // Empty responses map
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
@@ -1362,6 +1379,7 @@ Future<TonikResult<void>> call() async {
             ),
           },
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
@@ -1407,6 +1425,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final result = generator.generateClass(operation, 'GetPets');

@@ -5,7 +5,7 @@ import 'package:tonik_parse/src/model/serialization_style.dart';
 
 part 'encoding.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Encoding {
   Encoding({
     required this.contentType,

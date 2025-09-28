@@ -27,16 +27,15 @@ Operation _$OperationFromJson(Map<String, dynamic> json) => Operation(
       (json['servers'] as List<dynamic>?)
           ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
           .toList(),
+  security:
+      (json['security'] as List<dynamic>?)
+          ?.map(
+            (e) => (e as Map<String, dynamic>).map(
+              (k, e) => MapEntry(
+                k,
+                (e as List<dynamic>).map((e) => e as String).toList(),
+              ),
+            ),
+          )
+          .toList(),
 );
-
-Map<String, dynamic> _$OperationToJson(Operation instance) => <String, dynamic>{
-  'tags': instance.tags,
-  'summary': instance.summary,
-  'description': instance.description,
-  'operationId': instance.operationId,
-  'parameters': instance.parameters,
-  'requestBody': instance.requestBody,
-  'responses': instance.responses,
-  'deprecated': instance.isDeprecated,
-  'servers': instance.servers,
-};

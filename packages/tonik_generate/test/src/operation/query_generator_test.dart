@@ -45,6 +45,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -96,6 +97,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final queryParameters =
@@ -145,6 +147,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -211,6 +214,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -280,6 +284,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -345,6 +350,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -445,6 +451,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -554,6 +561,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -631,6 +639,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -695,6 +704,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -806,6 +816,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -904,6 +915,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -1060,6 +1072,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -1169,6 +1182,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''
@@ -1242,6 +1256,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       const expectedMethod = r'''

@@ -10,6 +10,7 @@ import 'package:tonik_parse/src/model/tag.dart';
 import 'package:tonik_parse/src/request_body_importer.dart';
 import 'package:tonik_parse/src/request_parameter_importer.dart';
 import 'package:tonik_parse/src/response_importer.dart';
+import 'package:tonik_parse/src/security_scheme_importer.dart';
 
 class OperationImporter {
   OperationImporter({
@@ -17,11 +18,13 @@ class OperationImporter {
     required this.parameterImporter,
     required this.responseImporter,
     required this.requestBodyImporter,
+    required this.securitySchemeImporter,
   });
 
   final RequestParameterImporter parameterImporter;
   final ResponseImporter responseImporter;
   final RequestBodyImporter requestBodyImporter;
+  final SecuritySchemeImporter securitySchemeImporter;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['paths']);
@@ -185,7 +188,29 @@ class OperationImporter {
         pathParameters: pathParams,
         responses: responses,
         requestBody: requestBody,
+        securitySchemes: _importSecuritySchemes(operation.security),
       ),
     );
+  }
+
+  Set<core.SecurityScheme> _importSecuritySchemes(
+    List<Map<String, List<String>>>? security,
+  ) {
+    if (security == null || security.isEmpty) {
+      return const {};
+    }
+
+    final schemes = <core.SecurityScheme>{};
+    
+    for (final requirement in security) {
+      for (final schemeName in requirement.keys) {
+        final scheme = securitySchemeImporter.securitySchemes[schemeName];
+        if (scheme != null) {
+          schemes.add(scheme);
+        }
+      }
+    }
+    
+    return schemes;
   }
 }

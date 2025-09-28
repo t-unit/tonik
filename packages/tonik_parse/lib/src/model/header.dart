@@ -6,7 +6,7 @@ import 'package:tonik_parse/src/model/serialization_style.dart';
 
 part 'header.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Header {
   Header({
     required this.description,

@@ -46,21 +46,3 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   isDeprecated: json['deprecated'] as bool?,
   uniqueItems: json['uniqueItems'] as bool?,
 );
-
-Map<String, dynamic> _$SchemaToJson(Schema instance) => <String, dynamic>{
-  'type': const _SchemaTypeConverter().toJson(instance.type),
-  'format': instance.format,
-  'required': instance.required,
-  'enum': instance.enumerated,
-  'allOf': instance.allOf,
-  'anyOf': instance.anyOf,
-  'oneOf': instance.oneOf,
-  'not': instance.not,
-  'items': instance.items,
-  'properties': instance.properties,
-  'description': instance.description,
-  'nullable': instance.isNullable,
-  'discriminator': instance.discriminator,
-  'deprecated': instance.isDeprecated,
-  'uniqueItems': instance.uniqueItems,
-};

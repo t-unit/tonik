@@ -52,6 +52,7 @@ void main() {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
@@ -105,6 +106,7 @@ void main() {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
@@ -162,6 +164,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
@@ -196,6 +199,7 @@ void main() {
           pathParameters: const {},
           responses: const {},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
@@ -235,6 +239,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -312,6 +317,7 @@ void main() {
             },
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -394,6 +400,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -478,6 +485,7 @@ void main() {
               },
               context: testContext,
             ),
+            securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -552,6 +560,7 @@ void main() {
             },
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -604,6 +613,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
@@ -635,6 +645,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
@@ -666,6 +677,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
@@ -703,6 +715,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
@@ -736,6 +749,7 @@ void main() {
             pathParameters: const {},
             responses: const {},
             requestBody: null,
+            securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
@@ -773,6 +787,7 @@ void main() {
         pathParameters: const {},
         responses: const {},
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final result = generator.generate(

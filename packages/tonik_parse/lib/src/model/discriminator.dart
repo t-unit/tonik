@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'discriminator.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Discriminator {
   Discriminator({required this.propertyName, required this.mapping});
 

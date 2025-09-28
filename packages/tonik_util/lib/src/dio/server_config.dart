@@ -52,9 +52,7 @@ class ServerConfig {
     dio.options.baseUrl = serverUrl;
 
     // Add all interceptors
-    for (final interceptor in interceptors) {
-      dio.interceptors.add(interceptor);
-    }
+    interceptors.forEach(dio.interceptors.add);
 
     // Set httpClientAdapter if provided
     if (httpClientAdapter != null) {

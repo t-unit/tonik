@@ -6,7 +6,7 @@ import 'package:tonik_parse/src/model/serialization_style.dart';
 
 part 'parameter.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class Parameter {
   Parameter({
     required this.name,

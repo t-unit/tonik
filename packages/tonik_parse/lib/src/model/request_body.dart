@@ -3,7 +3,7 @@ import 'package:tonik_parse/src/model/media_type.dart';
 
 part 'request_body.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class RequestBody {
   RequestBody({
     required this.description,

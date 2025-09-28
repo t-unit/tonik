@@ -67,6 +67,7 @@ void main() {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -121,6 +122,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -183,6 +185,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -235,6 +238,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -297,6 +301,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -372,6 +377,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -421,6 +427,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -470,6 +477,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -539,6 +547,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -625,6 +634,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
@@ -733,6 +743,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = '''
@@ -823,6 +834,7 @@ String _parseResponse(Response<Object?> response) {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): aliasedResponse,
         },
@@ -909,6 +921,7 @@ String _parseResponse(Response<Object?> response) {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
@@ -985,6 +998,7 @@ String _parseResponse(Response<Object?> response) {
         queryParameters: const {},
         pathParameters: const {},
         requestBody: null,
+        securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
 
@@ -1052,6 +1066,7 @@ String _parseResponse(Response<Object?> response) {
           pathParameters: const {},
           responses: {const ExplicitResponseStatus(statusCode: 200): response},
           requestBody: null,
+          securitySchemes: const {},
         );
 
         final method = generator.generateParseResponseMethod(operation);
@@ -1126,6 +1141,7 @@ String _parseResponse(Response<Object?> response) {
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
         },
         requestBody: null,
+        securitySchemes: const {},
       );
 
       final method = generator.generateParseResponseMethod(operation);
@@ -1177,6 +1193,7 @@ String _parseResponse(Response<Object?> response) {
           ),
         },
         requestBody: null,
+        securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = '''
@@ -1208,6 +1225,7 @@ String _parseResponse(Response<Object?> response) {
           queryParameters: const {},
           pathParameters: const {},
           requestBody: null,
+          securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               context: context,

@@ -44,6 +44,7 @@ void main() {
       pathParameters: const {},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -101,6 +102,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     final pathParameters =
@@ -159,6 +161,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -222,6 +225,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -289,6 +293,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -353,6 +358,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -413,6 +419,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -502,6 +509,7 @@ void main() {
       pathParameters: {simpleParam, labelParam, matrixParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -622,6 +630,7 @@ void main() {
       pathParameters: {enumParam, classParam, oneOfParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -710,6 +719,7 @@ void main() {
       pathParameters: {animalIdParam, idParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -777,6 +787,7 @@ void main() {
       pathParameters: {userParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -850,6 +861,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -925,6 +937,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''
@@ -1016,6 +1029,7 @@ void main() {
       pathParameters: {param1, param2, param3},
       responses: const {},
       requestBody: null,
+      securitySchemes: const {},
     );
 
     const expectedMethod = '''

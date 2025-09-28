@@ -13,10 +13,3 @@ RequestBody _$RequestBodyFromJson(Map<String, dynamic> json) => RequestBody(
   ),
   isRequired: json['required'] as bool?,
 );
-
-Map<String, dynamic> _$RequestBodyToJson(RequestBody instance) =>
-    <String, dynamic>{
-      'description': instance.description,
-      'content': instance.content,
-      'required': instance.isRequired,
-    };

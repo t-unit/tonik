@@ -25,20 +25,6 @@ Parameter _$ParameterFromJson(Map<String, dynamic> json) => Parameter(
   ),
 );
 
-Map<String, dynamic> _$ParameterToJson(Parameter instance) => <String, dynamic>{
-  'name': instance.name,
-  'in': _$ParameterLocationEnumMap[instance.location]!,
-  'description': instance.description,
-  'required': instance.isRequired,
-  'deprecated': instance.isDeprecated,
-  'allowEmptyValue': instance.allowEmptyValue,
-  'style': _$SerializationStyleEnumMap[instance.style],
-  'explode': instance.explode,
-  'allowReserved': instance.allowReserved,
-  'schema': instance.schema,
-  'content': instance.content,
-};
-
 const _$ParameterLocationEnumMap = {
   ParameterLocation.query: 'query',
   ParameterLocation.header: 'header',

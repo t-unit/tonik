@@ -68,6 +68,7 @@ void main() {
             ),
           },
           requestBody: null,
+          securitySchemes: const {},
         );
         final (baseName, subclassNames) = manager.responseWrapperNames(
           operation,

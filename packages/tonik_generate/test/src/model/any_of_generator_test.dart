@@ -72,9 +72,9 @@ void main() {
         ctorParams.map((p) => p.name),
         containsAll(['int', 'string', 'details']),
       );
-      expect(ctorParams.every((p) => p.named == true), isTrue);
-      expect(ctorParams.every((p) => p.required != true), isTrue);
-      expect(ctorParams.every((p) => p.toThis == true), isTrue);
+      expect(ctorParams.every((p) => p.named), isTrue);
+      expect(ctorParams.every((p) => !p.required), isTrue);
+      expect(ctorParams.every((p) => p.toThis), isTrue);
     });
 
     test(
@@ -212,8 +212,8 @@ void main() {
         ctorParams,
         containsAll(['status', 'date', 'dateTime', 'bool', 'bigDecimal']),
       );
-      expect(ctor.optionalParameters.every((p) => p.named == true), isTrue);
-      expect(ctor.optionalParameters.every((p) => p.required != true), isTrue);
+      expect(ctor.optionalParameters.every((p) => p.named), isTrue);
+      expect(ctor.optionalParameters.every((p) => !p.required), isTrue);
     });
   });
 

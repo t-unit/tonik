@@ -16,11 +16,19 @@ class ApiDocument {
     required this.pathParameters,
     required this.requestBodies,
     required this.description,
+    required this.contact,
+    required this.license,
+    required this.termsOfService,
+    required this.externalDocs,
   });
 
   final String title;
   final String? description;
   final String version;
+  final Contact? contact;
+  final License? license;
+  final String? termsOfService;
+  final ExternalDocumentation? externalDocs;
 
   final Set<Model> models;
   final Set<ResponseHeader> responseHeaders;
@@ -49,10 +57,20 @@ class ApiDocument {
     return taggedOperations;
   }
 
+  Set<SecurityScheme> get securitySchemes {
+    final schemes = <SecurityScheme>{};
+    for (final operation in operations) {
+      schemes.addAll(operation.securitySchemes);
+    }
+    return schemes;
+  }
+
   @override
   String toString() =>
       'ApiDocument{title: $title, description: $description, '
-      'version: $version, models: $models, responseHeaders: $responseHeaders, '
+      'version: $version, contact: $contact, license: $license, '
+      'termsOfService: $termsOfService, externalDocs: $externalDocs, '
+      'models: $models, responseHeaders: $responseHeaders, '
       'requestHeaders: $requestHeaders, servers: $servers, '
       'queryParameters: $queryParameters, pathParameters: $pathParameters, '
       'operations: $operations, responses: $responses, '

@@ -69,9 +69,7 @@ class ResponseWrapperGenerator {
       final response = operation.responses[status];
       Field? bodyField;
 
-      if (response != null &&
-          response.bodyCount == 1 &&
-          response.hasHeaders == false) {
+      if (response != null && response.bodyCount == 1 && !response.hasHeaders) {
         final body = response.resolved.bodies.first;
         bodyField = Field(
           (b) =>

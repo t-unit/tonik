@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/components.dart';
+import 'package:tonik_parse/src/model/external_documentation.dart';
 import 'package:tonik_parse/src/model/info.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/server.dart';
@@ -8,7 +9,7 @@ import 'package:tonik_parse/src/model/tag.dart';
 part 'open_api_object.g.dart';
 
 /// Based on https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.4.md
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class OpenApiObject {
   OpenApiObject({
     required this.info,
@@ -16,6 +17,7 @@ class OpenApiObject {
     required this.paths,
     required this.components,
     required this.tags,
+    this.externalDocs,
   });
 
   factory OpenApiObject.fromJson(Map<String, dynamic> json) =>
@@ -26,11 +28,12 @@ class OpenApiObject {
   final Map<String, PathItem> paths;
   final Components? components;
   final List<Tag>? tags;
+  final ExternalDocumentation? externalDocs;
 
-  // We ignore openapi, security and externalDocs properties.
+  // We ignore openapi and security properties.
 
   @override
   String toString() =>
       'OpenApiObject{info: $info, servers: $servers, paths: $paths, '
-      'components: $components, tags: $tags}';
+      'components: $components, tags: $tags, externalDocs: $externalDocs}';
 }

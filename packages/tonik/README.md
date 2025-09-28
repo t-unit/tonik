@@ -31,12 +31,15 @@ This package aims to overcome these shortcomings.
 
 Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), as this project would not have been possible without him.
 
-## Features
+## Features and Documentation
 
-coming soon
+
 
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
 - [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
+- [Autentication](ttps://github.com/t-unit/tonik/blob/main/docs/authentication.md)
+
+more coming soon
 
 
 ## Quick-Start Guide

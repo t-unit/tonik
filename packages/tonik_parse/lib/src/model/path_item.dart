@@ -6,7 +6,7 @@ import 'package:tonik_parse/src/model/server.dart';
 
 part 'path_item.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class PathItem {
   PathItem({
     required this.ref,

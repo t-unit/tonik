@@ -21,16 +21,6 @@ Header _$HeaderFromJson(Map<String, dynamic> json) => Header(
   ),
 );
 
-Map<String, dynamic> _$HeaderToJson(Header instance) => <String, dynamic>{
-  'description': instance.description,
-  'required': instance.isRequired,
-  'deprecated': instance.isDeprecated,
-  'style': _$SerializationStyleEnumMap[instance.style],
-  'explode': instance.explode,
-  'schema': instance.schema,
-  'content': instance.content,
-};
-
 const _$SerializationStyleEnumMap = {
   SerializationStyle.matrix: 'matrix',
   SerializationStyle.label: 'label',

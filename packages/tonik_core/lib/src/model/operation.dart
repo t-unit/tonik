@@ -18,6 +18,7 @@ class Operation {
     required this.pathParameters,
     required this.responses,
     required this.requestBody,
+    required this.securitySchemes,
   });
 
   final Set<Tag> tags;
@@ -37,6 +38,7 @@ class Operation {
   final RequestBody? requestBody;
 
   final Map<ResponseStatus, Response> responses;
+  final Set<SecurityScheme> securitySchemes;
 
   @override
   bool operator ==(Object other) {
@@ -57,7 +59,8 @@ class Operation {
         deepEquals(queryParameters, other.queryParameters) &&
         deepEquals(pathParameters, other.pathParameters) &&
         requestBody == other.requestBody &&
-        deepEquals(responses, other.responses);
+        deepEquals(responses, other.responses) &&
+        deepEquals(securitySchemes, other.securitySchemes);
   }
 
   @override
@@ -78,6 +81,7 @@ class Operation {
       deepHash(pathParameters),
       requestBody,
       deepHash(responses),
+      deepHash(securitySchemes),
     );
   }
 }

@@ -96,6 +96,10 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: {multiBodyRequest},
+        contact: null,
+        license: null,
+        termsOfService: null,
+        externalDocs: null,
       );
 
       const packageName = 'test_package';
