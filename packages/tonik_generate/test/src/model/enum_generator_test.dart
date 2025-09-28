@@ -651,5 +651,70 @@ void main() {
         );
       });
     });
+
+    group('fromSimple method generation', () {
+      test('generates fromSimple constructor that calls decodeSimpleString '
+          'for string enums', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final fromSimple = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromSimple',
+        );
+
+        expect(fromSimple.factory, isTrue);
+        expect(fromSimple.requiredParameters.single.name, 'value');
+        expect(
+          fromSimple.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String?',
+        );
+
+        final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          return Color.fromJson(value.decodeSimpleString());
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test(
+        'generates fromSimple constructor that calls decodeSimpleInt for '
+        'int enums',
+        () {
+          final model = EnumModel<int>(
+            name: 'Priority',
+            values: const {1, 2, 3},
+            isNullable: false,
+            context: Context.initial(),
+          );
+
+          final generated = generator.generateEnum(model, 'Priority');
+          final fromSimple = generated.enumValue.constructors.firstWhere(
+            (c) => c.name == 'fromSimple',
+          );
+
+          expect(fromSimple.factory, isTrue);
+          expect(fromSimple.requiredParameters.single.name, 'value');
+          expect(
+            fromSimple.requiredParameters.single.type
+                ?.accept(DartEmitter())
+                .toString(),
+            'String?',
+          );
+
+          final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
+          const expectedBody = '''
+          return Priority.fromJson(value.decodeSimpleInt());
+        ''';
+          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        },
+      );
+    });
   });
 }
