@@ -50,6 +50,76 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
+    test('generates currentEncodingShape getter for simple class', () {
+      final model = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.simple',
+      );
+    });
+
+    test('generates currentEncodingShape getter for complex class', () {
+      final nestedClass = ClassModel(
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+
+      final model = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'address',
+            model: nestedClass,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.complex',
+      );
+    });
+
     test('generates constructor with required and optional parameters', () {
       final model = ClassModel(
         name: 'User',

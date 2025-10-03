@@ -114,6 +114,19 @@ class EnumGenerator {
               ),
             )
             ..methods.add(
+              Method(
+                (b) =>
+                    b
+                      ..name = 'currentEncodingShape'
+                      ..type = MethodType.getter
+                      ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+                      ..lambda = true
+                      ..body = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+                          .property('simple')
+                          .code,
+              ),
+            )
+            ..methods.add(
               _generateToSimpleMethod<T>(),
             )
             ..methods.add(

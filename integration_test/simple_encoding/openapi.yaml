@@ -34,6 +34,24 @@ paths:
         '200':
           description: OK
 
+  /anyof-composite/{dynamicValue}:
+    get:
+      operationId: testAnyOfCompositeInPath
+      tags:
+        - simple-encoding
+      summary: Test AnyOf with composite models requiring runtime shape detection
+      description: Demonstrates simple encoding for AnyOfModel containing oneOf/anyOf that need currentEncodingShape switching
+      parameters:
+        - name: dynamicValue
+          in: path
+          style: simple
+          required: true
+          schema:
+            $ref: '#/components/schemas/DynamicCompositeValue'
+      responses:
+        '200':
+          description: OK
+
   /primitive/{integer}/{double}/{number}/{string}/{boolean}/{datetime}/{date}/{decimal}/{uri}/{enum}:
     get:
       operationId: testPrimitiveInPath
@@ -431,6 +449,12 @@ components:
         - type: integer
         - type: boolean
         - $ref: '#/components/schemas/SimpleObject'
+
+    DynamicCompositeValue:
+      anyOf:
+        - $ref: '#/components/schemas/EntityType'
+        - $ref: '#/components/schemas/FlexibleValue'
+        - $ref: '#/components/schemas/CompositeEntity'
 
     PersonEntity:
       type: object

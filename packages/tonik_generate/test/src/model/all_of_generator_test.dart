@@ -29,6 +29,240 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  group('currentEncodingShape', () {
+    test('generates getter for simple allOf', () {
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final getter = combinedClass.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.simple',
+      );
+    });
+
+    test('generates getter for complex allOf', () {
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final getter = combinedClass.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.complex',
+      );
+    });
+
+    test('generates getter for mixed allOf', () {
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          ClassModel(
+            name: 'Base',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final getter = combinedClass.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.mixed',
+      );
+    });
+
+    test('generates getter for simple allOf with full implementation', () {
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape => EncodingShape.simple;
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+
+    test('generates getter for complex allOf with full implementation', () {
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape => EncodingShape.complex;
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+
+    test('generates getter for mixed allOf with full implementation', () {
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          ClassModel(
+            name: 'Data',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape => EncodingShape.mixed;
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+
+    test('generates getter for allOf with nested oneOf composition', () {
+      final oneOfModel = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          oneOfModel,
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape => EncodingShape.mixed;
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+  });
+
   group('with class models', () {
     test('generates class with references to each model', () {
       final model = AllOfModel(
@@ -67,7 +301,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       expect(combinedClass.name, 'CombinedModel');
-      expect(combinedClass.constructors, hasLength(3));
+      expect(combinedClass.constructors, hasLength(4));
       expect(combinedClass.constructors.first.constant, isTrue);
 
       expect(combinedClass.fields, hasLength(2));
@@ -1203,5 +1437,420 @@ void main() {
 
       expect(fieldNames, equals(['string', 'int', 'bigDecimal']));
     });
+  });
+
+  group('form encoding - complex types', () {
+    test('generates fromForm constructor for complex allOf', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: <Model>{
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedFromFormMethod = r'''
+        factory CombinedModel.fromForm(String? value, {required bool explode}) {
+          return CombinedModel(
+            $base: Base.fromForm(value, explode: explode),
+            $mixin: Mixin.fromForm(value, explode: explode),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFromFormMethod)),
+      );
+    });
+
+    test('generates toForm method merging all class properties', () {
+      final model = AllOfModel(
+        name: 'CombinedModel',
+        models: {
+          ClassModel(
+            name: 'Base',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+          ClassModel(
+            name: 'Mixin',
+            properties: [
+              Property(
+                name: 'value',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          return formProperties(
+            allowEmpty: allowEmpty,
+          ).toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
+
+    test(
+      'generates formProperties method that merges sub-model properties',
+      () {
+        final model = AllOfModel(
+          name: 'CombinedModel',
+          models: {
+            ClassModel(
+              name: 'Base',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+            ClassModel(
+              name: 'Mixin',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedFormPropertiesMethod = r'''
+        Map<String, String> formProperties({required bool allowEmpty}) {
+          final mergedProperties = <String, String>{};
+          mergedProperties.addAll($base.formProperties(allowEmpty: allowEmpty));
+          mergedProperties.addAll($mixin.formProperties(allowEmpty: allowEmpty));
+          return mergedProperties;
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedFormPropertiesMethod)),
+        );
+      },
+    );
+  });
+
+  group('form encoding - primitive types', () {
+    test('generates formProperties returning empty map for primitives', () {
+      final model = AllOfModel(
+        name: 'StringDecimalModel',
+        models: <Model>{
+          StringModel(context: context),
+          DecimalModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedFormPropertiesMethod = '''
+        Map<String, String> formProperties({required bool allowEmpty}) {
+          return <String, String>{};
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedFormPropertiesMethod)),
+      );
+    });
+
+    test('generates toForm returning primary primitive value', () {
+      final model = AllOfModel(
+        name: 'StringDecimalModel',
+        models: <Model>{
+          StringModel(context: context),
+          DecimalModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          return string.toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
+
+    test(
+      'generates fromForm validating single value against all primitive types',
+      () {
+        final model = AllOfModel(
+          name: 'StringDecimalModel',
+          models: <Model>{
+            StringModel(context: context),
+            DecimalModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedFromFormMethod = '''
+        factory StringDecimalModel.fromForm(String? value, {required bool explode}) {
+          return StringDecimalModel(
+            string: value.decodeFormString(context: r'StringDecimalModel.string'),
+            bigDecimal: value.decodeFormBigDecimal(
+              context: r'StringDecimalModel.bigDecimal',
+            ),
+          );
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedFromFormMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates toForm returning enum value for enum and string models',
+      () {
+        final model = AllOfModel(
+          name: 'EnumStringModel',
+          models: {
+            EnumModel(
+              name: 'Status',
+              values: const {'active', 'inactive'},
+              isNullable: false,
+              context: context,
+            ),
+            StringModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          return status.toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedToFormMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates fromForm validating single value against enum and string',
+      () {
+        final model = AllOfModel(
+          name: 'EnumStringModel',
+          models: {
+            EnumModel(
+              name: 'Status',
+              values: const {'active', 'inactive'},
+              isNullable: false,
+              context: context,
+            ),
+            StringModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedFromFormMethod = '''
+        factory EnumStringModel.fromForm(String? value, {required bool explode}) {
+          return EnumStringModel(
+            status: Status.fromForm(value),
+            string: value.decodeFormString(context: r'EnumStringModel.string'),
+          );
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedFromFormMethod)),
+        );
+      },
+    );
+  });
+
+  group('form encoding - mixed types', () {
+    test(
+      'throws exception for mixed types in fromForm',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: {
+            StringModel(context: context),
+            ClassModel(
+              name: 'Complex',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedFromFormMethod = '''
+        factory MixedModel.fromForm(String? value, {required bool explode}) {
+          throw SimpleDecodingException(
+            'Simple encoding not supported for MixedModel: contains complex types',
+          );
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedFromFormMethod)),
+        );
+      },
+    );
+
+    test(
+      'throws exception for mixed types in toForm',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: {
+            IntegerModel(context: context),
+            ClassModel(
+              name: 'Complex',
+              properties: const [],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedToFormMethod = '''
+          String toForm({required bool explode, required bool allowEmpty}) {
+            throw SimpleDecodingException(
+              'Simple encoding not supported: contains complex types',
+            );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedToFormMethod)),
+        );
+      },
+    );
+
+    test(
+      'throws exception for mixed types in formProperties',
+      () {
+        final model = AllOfModel(
+          name: 'MixedModel',
+          models: {
+            DecimalModel(context: context),
+            ClassModel(
+              name: 'Complex',
+              properties: const [],
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        const expectedFormPropertiesMethod = '''
+          Map<String, String> formProperties({required bool allowEmpty}) {
+            throw SimpleDecodingException(
+              'Simple properties not supported for MixedModel: contains complex types',
+            );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedFormPropertiesMethod)),
+        );
+      },
+    );
   });
 }

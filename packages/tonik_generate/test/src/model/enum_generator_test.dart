@@ -17,6 +17,33 @@ void main() {
   });
 
   group('EnumGenerator', () {
+    test('generates currentEncodingShape getter', () {
+      final model = EnumModel<String>(
+        name: 'Color',
+        values: const {'red', 'green', 'blue'},
+        isNullable: false,
+        context: Context.initial().push('test'),
+      );
+
+      final generated = generator.generateEnum(model, 'Color');
+      final emitter = DartEmitter(useNullSafetySyntax: true);
+
+      final getter = generated.enumValue.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.simple',
+      );
+    });
+
     test('generates enum with string values', () {
       final model = EnumModel<String>(
         name: 'Color',

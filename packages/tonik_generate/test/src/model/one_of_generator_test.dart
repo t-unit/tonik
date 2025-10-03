@@ -29,6 +29,113 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test('generates currentEncodingShape getter for simple oneOf', () {
+    final model = OneOfModel(
+      name: 'Value',
+      models: {
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (discriminatorValue: null, model: IntegerModel(context: context)),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final generated = format(baseClass.accept(emitter).toString());
+
+    const expectedGetter = '''
+      EncodingShape get currentEncodingShape {
+        return switch (this) {
+          ValueAnonymous() => EncodingShape.simple,
+          ValueAnonymousModel() => EncodingShape.simple,
+        };
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedGetter)),
+    );
+  });
+
+  test('generates currentEncodingShape getter for complex oneOf', () {
+    final classA = ClassModel(
+      name: 'A',
+      properties: const [],
+      context: context,
+    );
+    final classB = ClassModel(
+      name: 'B',
+      properties: const [],
+      context: context,
+    );
+
+    final model = OneOfModel(
+      name: 'Value',
+      models: {
+        (discriminatorValue: null, model: classA),
+        (discriminatorValue: null, model: classB),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final generated = format(baseClass.accept(emitter).toString());
+
+    const expectedGetter = '''
+      EncodingShape get currentEncodingShape {
+        return switch (this) {
+          ValueA(:final value) => value.currentEncodingShape,
+          ValueB(:final value) => value.currentEncodingShape,
+        };
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedGetter)),
+    );
+  });
+
+  test('generates currentEncodingShape getter for mixed oneOf', () {
+    final classA = ClassModel(
+      name: 'A',
+      properties: const [],
+      context: context,
+    );
+
+    final model = OneOfModel(
+      name: 'Value',
+      models: {
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (discriminatorValue: null, model: classA),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final generated = format(baseClass.accept(emitter).toString());
+
+    const expectedGetter = '''
+      EncodingShape get currentEncodingShape {
+        return switch (this) {
+          ValueAnonymous() => EncodingShape.simple,
+          ValueA(:final value) => value.currentEncodingShape,
+        };
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedGetter)),
+    );
+  });
+
   test('generated code does not include freezed part directive', () {
     final model = OneOfModel(
       name: 'Result',

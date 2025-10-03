@@ -13,6 +13,7 @@ import 'package:tonik_generate/src/util/from_simple_value_expression_generator.d
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating sealed Dart classes from OneOf model definitions.
 @immutable
@@ -104,6 +105,7 @@ class OneOfGenerator {
               _generateFromFormConstructor(className, model, variantNames),
             )
             ..methods.addAll([
+              _generateCurrentEncodingShapeGetter(model, variantNames),
               _generateSimplePropertiesMethod(className, model, variantNames),
               _generateToSimpleMethod(className, model, variantNames),
               _generateFormPropertiesMethod(className, model, variantNames),
@@ -860,6 +862,49 @@ class OneOfGenerator {
       properties: [
         (normalizedName: 'value', hasCollectionValue: hasCollectionValue),
       ],
+    );
+  }
+
+  Method _generateCurrentEncodingShapeGetter(
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+
+      if (isSimple) {
+        caseCodes.addAll([
+          Code('$variantName() => '),
+          refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+              .property('simple')
+              .code,
+          const Code(',\n'),
+        ]);
+      } else {
+        caseCodes.addAll([
+          Code('$variantName(:final value) => '),
+          const Code('value.currentEncodingShape'),
+          const Code(',\n'),
+        ]);
+      }
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+        ..lambda = false
+        ..body = body,
     );
   }
 

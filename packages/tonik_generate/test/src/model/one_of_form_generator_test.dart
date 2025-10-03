@@ -18,10 +18,6 @@ void main() {
         languageVersion: DartFormatter.latestLanguageVersion,
       ).format;
 
-  String collapseWhitespace(String input) {
-    return input.replaceAll(RegExp(r'\s+'), ' ').trim();
-  }
-
   setUp(() {
     nameGenerator = NameGenerator();
     nameManager = NameManager(generator: nameGenerator);

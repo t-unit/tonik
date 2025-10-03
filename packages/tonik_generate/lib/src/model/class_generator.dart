@@ -16,6 +16,7 @@ import 'package:tonik_generate/src/util/from_simple_value_expression_generator.d
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating Dart class files from model definitions.
 @immutable
@@ -97,6 +98,7 @@ class ClassGenerator {
               _buildCopyWithMethod(className, normalizedProperties),
               _buildEqualsMethod(className, normalizedProperties),
               _buildHashCodeMethod(normalizedProperties),
+              _buildCurrentEncodingShapeGetter(normalizedProperties),
               _buildSimplePropertiesMethod(model, normalizedProperties),
               _buildToSimpleMethod(className, model, normalizedProperties),
               _buildFormPropertiesMethod(model, normalizedProperties),
@@ -370,6 +372,28 @@ class ClassGenerator {
       nameManager,
       package,
       isNullableOverride: property.isNullable || !property.isRequired,
+    );
+  }
+
+  Method _buildCurrentEncodingShapeGetter(
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final hasComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel.encodingShape != EncodingShape.simple;
+    });
+
+    final shapeRef = hasComplexData
+        ? refer('EncodingShape', 'package:tonik_util/tonik_util.dart').property('complex')
+        : refer('EncodingShape', 'package:tonik_util/tonik_util.dart').property('simple');
+
+    return Method(
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+        ..lambda = true
+        ..body = shapeRef.code,
     );
   }
 

@@ -65,6 +65,79 @@ void main() {
     expect(success.response.statusCode, 200);
   });
 
+  test('testAnyOfCompositeInPath with EntityType', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfCompositeInPath(
+      dynamicValue: DynamicCompositeValue(
+        entityType: EntityTypePerson(
+          PersonEntity(
+            $type: PersonEntityType.person,
+            firstName: 'John',
+            lastName: 'Doe',
+            age: 30,
+            birthDate: Date(1970, 1, 1),
+          ),
+        ),
+      ),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
+  test('testAnyOfCompositeInPath with FlexibleValue string', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfCompositeInPath(
+      dynamicValue: const DynamicCompositeValue(
+        flexibleValue: FlexibleValue(string: 'test-value'),
+      ),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
+  test('testAnyOfCompositeInPath with FlexibleValue object', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfCompositeInPath(
+      dynamicValue: const DynamicCompositeValue(
+        flexibleValue: FlexibleValue(
+          simpleObject: SimpleObject(value: 42, name: 'Test Object'),
+        ),
+      ),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
+  test('testAnyOfCompositeInPath with CompositeEntity', () async {
+    final api = buildAlbumsApi(responseStatus: '200');
+    final response = await api.testAnyOfCompositeInPath(
+      dynamicValue: DynamicCompositeValue(
+        compositeEntity: CompositeEntity(
+          baseEntity: const BaseEntity(
+            name: 'Composite Test',
+            description: 'Testing composite entity',
+          ),
+          timestampMixin: TimestampMixin(
+            createdAt: DateTime(1970, 1, 1, 14, 30),
+          ),
+          compositeEntityModel: const CompositeEntityModel(
+            specificField: 'specific-value',
+          ),
+        ),
+      ),
+    );
+
+    expect(response, isA<TonikSuccess<void>>());
+    final success = response as TonikSuccess<void>;
+    expect(success.response.statusCode, 200);
+  });
+
   test('testPrimitiveInPath', () async {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testPrimitiveInPath(

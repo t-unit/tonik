@@ -10,11 +10,13 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 @immutable
 class AnyOfGenerator {
@@ -113,6 +115,11 @@ class AnyOfGenerator {
       normalized,
     );
 
+    final fromFormCtor = _buildFromFormConstructor(
+      className,
+      normalized,
+    );
+
     final propsForEquality =
         normalized
             .map(
@@ -152,7 +159,19 @@ class AnyOfGenerator {
       normalized,
     );
 
+    final toFormMethod = _buildToFormMethod(
+      className,
+      model,
+      normalized,
+    );
+
     final simplePropsMethod = _buildSimplePropertiesMethod(
+      className,
+      model,
+      normalized,
+    );
+
+    final formPropsMethod = _buildFormPropertiesMethod(
       className,
       model,
       normalized,
@@ -166,10 +185,14 @@ class AnyOfGenerator {
             ..constructors.add(defaultCtor)
             ..constructors.add(fromJsonCtor)
             ..constructors.add(fromSimpleCtor)
+            ..constructors.add(fromFormCtor)
             ..methods.addAll([
+              _buildCurrentEncodingShapeGetter(className, normalized),
               toJsonMethod,
               toSimpleMethod,
+              toFormMethod,
               simplePropsMethod,
+              formPropsMethod,
               generateEqualsMethod(
                 className: className,
                 properties: propsForEquality,
@@ -187,6 +210,111 @@ class AnyOfGenerator {
     package,
     isNullableOverride: true,
   );
+
+  bool needsRuntimeShapeCheck(Model model) {
+    return model is CompositeModel;
+  }
+
+  /// Generates encoding code for a field with proper shape handling.
+  ///
+  /// For static types (primitives, classes), generates direct method calls.
+  /// For dynamic types (oneOf, anyOf, allOf), generates runtime switch on
+  /// currentEncodingShape.
+  List<Code> _generateFieldEncoding({
+    required String fieldName,
+    required Model fieldModel,
+    required String tmpVarName,
+    required bool isForm,
+    String? discriminatorValue,
+  }) {
+    final toMethodName = isForm ? 'toForm' : 'toSimple';
+    final propertiesMethodName = isForm ? 'formProperties' : 'simpleProperties';
+    final codes = <Code>[];
+
+    if (!needsRuntimeShapeCheck(fieldModel)) {
+      if (fieldModel.encodingShape == EncodingShape.simple) {
+        codes
+          ..add(
+            Code(
+              'final $tmpVarName = $fieldName!.$toMethodName( '
+              'explode: explode, allowEmpty: allowEmpty);',
+            ),
+          )
+          ..add(Code('values.add($tmpVarName);'));
+      } else {
+        codes
+          ..add(
+            Code(
+              'final $tmpVarName = '
+              '$fieldName!.$propertiesMethodName(allowEmpty: allowEmpty);',
+            ),
+          )
+          ..add(Code('mapValues.add($tmpVarName);'));
+
+        if (discriminatorValue != null) {
+          codes.add(Code("discriminatorValue ??= '$discriminatorValue';"));
+        }
+
+        codes.add(
+          Code(
+            'values.add($tmpVarName.$toMethodName('
+            'explode: explode, allowEmpty: allowEmpty));',
+          ),
+        );
+      }
+    } else {
+      final encodingShapeRef =
+          refer('EncodingShape', 'package:tonik_util/tonik_util.dart');
+
+      codes
+        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('simple').code)
+        ..add(const Code(':'))
+        ..add(
+          Code(
+            'values.add($fieldName!.$toMethodName('
+            'explode: explode, allowEmpty: allowEmpty));',
+          ),
+        )
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('complex').code)
+        ..add(const Code(':'))
+        ..add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.$propertiesMethodName(allowEmpty: allowEmpty);',
+          ),
+        )
+        ..add(Code('mapValues.add($tmpVarName);'));
+
+      if (discriminatorValue != null) {
+        codes.add(Code("discriminatorValue ??= '$discriminatorValue';"));
+      }
+
+      codes
+        ..add(
+          Code(
+            'values.add($tmpVarName.$toMethodName('
+            'explode: explode, allowEmpty: allowEmpty));',
+          ),
+        )
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('mixed').code)
+        ..add(const Code(':'))
+        ..add(
+          generateEncodingExceptionExpression(
+            'Cannot encode field with mixed encoding shape',
+          ).code,
+        )
+        ..add(const Code(';'))
+        ..add(const Code('}'));
+    }
+
+    return codes;
+  }
 
   Code _tryAssignLocal({
     required String variableName,
@@ -280,7 +408,16 @@ class AnyOfGenerator {
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
-      body.add(const Code('String? discriminatorValue;'));
+      body..add(
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'String'
+                ..url = 'dart:core'
+                ..isNullable = true,
+        ).code,
+      )
+      ..add(const Code(' discriminatorValue;'));
     }
 
     for (final n in normalizedProperties) {
@@ -403,60 +540,33 @@ class AnyOfGenerator {
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
-      body.add(const Code('String? discriminatorValue;'));
+      body..add(
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'String'
+                ..url = 'dart:core'
+                ..isNullable = true,
+        ).code,
+      )
+      ..add(const Code(' discriminatorValue;'));
     }
 
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
-
       final discValue = discMap[n.property.model];
 
-      final isComplex = n.property.model.encodingShape != EncodingShape.simple;
-
-      body.addAll([
-        Code('if ($name != null) {'),
-      ]);
-
-      if (isComplex) {
-        final tmp = '${name}Simple';
-        body
-          ..addAll([
-            const Code('final '),
-            Code(tmp),
-            const Code(' = '),
-            Code('$name!.simpleProperties(allowEmpty: allowEmpty);'),
-          ])
-          ..add(Code('mapValues.add($tmp);'));
-
-        if (hasDiscriminator && discValue != null) {
-          body.add(
-            Code("discriminatorValue ??= '$discValue';"),
-          );
-        }
-
-        body.addAll([
-          const Code('values.add('),
-          Code('$tmp.toSimple('),
-          const Code('explode: explode, '),
-          const Code('allowEmpty: allowEmpty'),
-          const Code('));'),
-        ]);
-      } else {
-        final tmp = '${name}Simple';
-        body
-          ..addAll([
-            const Code('final '),
-            Code(tmp),
-            const Code(' = '),
-            Code('$name!.toSimple('),
-            const Code('explode: explode, '),
-            const Code('allowEmpty: allowEmpty'),
-            const Code(');'),
-          ])
-          ..add(Code('values.add($tmp);'));
-      }
-
-      body.add(const Code('}'));
+      body..add(Code('if ($name != null) {'))
+      ..addAll(
+        _generateFieldEncoding(
+          fieldName: name,
+          fieldModel: n.property.model,
+          tmpVarName: '${name}Simple',
+          isForm: false,
+          discriminatorValue: hasDiscriminator ? discValue : null,
+        ),
+      )
+      ..add(const Code('}'));
     }
 
     body.addAll([
@@ -620,6 +730,137 @@ class AnyOfGenerator {
     );
   }
 
+  Constructor _buildFromFormConstructor(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final localDecls = <Code>[];
+
+    for (final n in normalizedProperties) {
+      final modelType = n.property.model;
+      final varName = n.normalizedName;
+
+      final decodeExpr = switch (modelType) {
+        ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => refer(
+              nameManager.modelName(modelType),
+              package,
+            )
+            .property('fromForm')
+            .call(
+              [
+                refer('value'),
+              ],
+              {
+                'explode': refer('explode'),
+              },
+            ),
+        _ => buildFromFormValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+        ),
+      };
+
+      localDecls.add(
+        _tryAssignLocal(
+          variableName: varName,
+          nullableType: _nullableTypeReference(modelType),
+          decodeExpression: decodeExpr,
+        ),
+      );
+    }
+
+    final ctorArgs = {
+      for (final n in normalizedProperties)
+        n.normalizedName: refer(n.normalizedName),
+    };
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromForm'
+            ..requiredParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'explode'
+                      ..named = true
+                      ..required = true
+                      ..type = refer('bool', 'dart:core'),
+              ),
+            )
+            ..body = Block.of([
+              ...localDecls,
+              refer(className, package).call([], ctorArgs).returned.statement,
+            ]),
+    );
+  }
+
+  Method _buildCurrentEncodingShapeGetter(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final encodingShapeType =
+        refer('EncodingShape', 'package:tonik_util/tonik_util.dart');
+
+    final body = <Code>[
+      const Code('final shapes = <'),
+      encodingShapeType.code,
+      const Code('>{};'),
+    ];
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final isSimple = n.property.model.encodingShape == EncodingShape.simple;
+
+      body.add(Code('if ($name != null) {'));
+      if (isSimple) {
+        body.addAll([
+          const Code('  shapes.add('),
+          encodingShapeType.property('simple').code,
+          const Code(');'),
+        ]);
+      } else {
+        body.add(Code('  shapes.add($name!.currentEncodingShape);'));
+      }
+      body.add(const Code('}'));
+    }
+
+    body.addAll([
+      const Code('if (shapes.isEmpty) {'),
+      const Code('  throw '),
+      refer('StateError', 'dart:core')
+          .call([literalString('At least one field must be non-null in anyOf')])
+          .statement,
+      const Code('}'),
+      const Code('if (shapes.length > 1) return '),
+      encodingShapeType.property('mixed').code,
+      const Code(';'),
+      const Code('return shapes.first;'),
+    ]);
+
+    return Method(
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = encodingShapeType
+        ..lambda = false
+        ..body = Block.of(body),
+    );
+  }
+
   Method _buildSimplePropertiesMethod(
     String className,
     AnyOfModel model,
@@ -662,20 +903,39 @@ class AnyOfGenerator {
     ];
 
     for (final n in normalizedProperties) {
-      final isComplex = n.property.model.encodingShape != EncodingShape.simple;
-      if (!isComplex) continue;
       final fn = n.normalizedName;
       final tmp = '${fn}Simple';
-      body
-        ..add(Code('if ($fn != null) { '))
-        ..add(const Code('final '))
-        ..add(buildMapStringStringType().code)
-        ..add(Code(' $tmp = '))
-        ..add(Code('$fn!.simpleProperties(allowEmpty: allowEmpty);'))
-        ..add(const Code(' maps.add('))
-        ..add(Code(tmp))
-        ..add(const Code(');'))
-        ..add(const Code('}'));
+
+      if (needsRuntimeShapeCheck(n.property.model)) {
+        body
+          ..add(Code('if ($fn != null && '))
+          ..add(Code('$fn!.currentEncodingShape == '))
+          ..add(
+            refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+                .property('complex')
+                .code,
+          )
+          ..add(const Code(') { '))
+          ..add(const Code('final '))
+          ..add(buildMapStringStringType().code)
+          ..add(Code(' $tmp = '))
+          ..add(Code('$fn!.simpleProperties(allowEmpty: allowEmpty);'))
+          ..add(const Code(' maps.add('))
+          ..add(Code(tmp))
+          ..add(const Code(');'))
+          ..add(const Code('}'));
+      } else if (n.property.model.encodingShape == EncodingShape.complex) {
+        body
+          ..add(Code('if ($fn != null) { '))
+          ..add(const Code('final '))
+          ..add(buildMapStringStringType().code)
+          ..add(Code(' $tmp = '))
+          ..add(Code('$fn!.simpleProperties(allowEmpty: allowEmpty);'))
+          ..add(const Code(' maps.add('))
+          ..add(Code(tmp))
+          ..add(const Code(');'))
+          ..add(const Code('}'));
+      }
     }
 
     if (hasSimple && hasComplex) {
@@ -716,6 +976,289 @@ class AnyOfGenerator {
       (b) =>
           b
             ..name = 'simpleProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = Block.of(body),
+    );
+  }
+
+  Method _buildToFormMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final body = [
+      declareFinal(
+        'values',
+      ).assign(literalList([], refer('String', 'dart:core'))).statement,
+      declareFinal(
+        'mapValues',
+      ).assign(literalList([], buildMapStringStringType())).statement,
+    ];
+
+    final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
+    if (hasDiscriminator) {
+      body..add(
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'String'
+                ..url = 'dart:core'
+                ..isNullable = true,
+        ).code,
+      )
+      ..add(const Code(' discriminatorValue;'));
+    }
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final discValue = discMap[n.property.model];
+
+      body..add(Code('if ($name != null) {'))
+      ..addAll(
+        _generateFieldEncoding(
+          fieldName: name,
+          fieldModel: n.property.model,
+          tmpVarName: '${name}Form',
+          isForm: true,
+          discriminatorValue: hasDiscriminator ? discValue : null,
+        ),
+      )
+      ..add(const Code('}'));
+    }
+
+    body.addAll([
+      const Code("if (values.isEmpty) return '';"),
+      const Code(
+        'if (mapValues.isNotEmpty && mapValues.length != values.length) {',
+      ),
+      generateEncodingExceptionExpression(
+        'Ambiguous anyOf form encoding for $className: '
+        'mixing simple and complex values',
+      ).statement,
+      const Code('}'),
+    ]);
+
+    final mergeBlocks = <Code>[
+      const Code('final map = '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ).statement,
+      const Code('for (final m in mapValues) { map.addAll(m); }'),
+    ];
+    if (hasDiscriminator) {
+      mergeBlocks.addAll([
+        const Code('if (discriminatorValue != null) { '),
+        Code("map.putIfAbsent('${model.discriminator}', () => "),
+        const Code('discriminatorValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+    mergeBlocks
+      ..add(const Code('return map.toForm('))
+      ..addAll([
+        const Code('explode: explode, '),
+        const Code('allowEmpty: allowEmpty'),
+        const Code(');'),
+      ]);
+
+    body.addAll([
+      const Code('if (mapValues.length == values.length) {'),
+      ...mergeBlocks,
+      const Code('}'),
+
+      const Code('final first = values.first;'),
+      const Code('for (final v in values) {'),
+      const Code('  if (v != first) {'),
+      generateEncodingExceptionExpression(
+        'Ambiguous anyOf form encoding for $className: '
+        'inconsistent form representations',
+      ).statement,
+      const Code('  }'),
+      const Code('}'),
+      const Code('return first;'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toForm'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (p) =>
+                    p
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..lambda = false
+            ..body = Block.of(body),
+    );
+  }
+
+  Method _buildFormPropertiesMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final hasSimple = model.models.any(
+      (m) => m.model.encodingShape == EncodingShape.simple,
+    );
+    final hasComplex = model.models.any(
+      (m) => m.model.encodingShape != EncodingShape.simple,
+    );
+
+    if (hasSimple && !hasComplex) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'formProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                Parameter(
+                  (p) =>
+                      p
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = literalMap(
+                {},
+                refer('String', 'dart:core'),
+                refer('String', 'dart:core'),
+              ).returned.statement,
+      );
+    }
+
+    final body = <Code>[
+      declareFinal(
+        'maps',
+      ).assign(literalList([], buildMapStringStringType())).statement,
+    ];
+
+    final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
+    if (hasDiscriminator) {
+      body..add(
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'String'
+                ..url = 'dart:core'
+                ..isNullable = true,
+        ).code,
+      )
+      ..add(const Code(' discriminatorValue;'));
+    }
+
+    for (final n in normalizedProperties) {
+      final fn = n.normalizedName;
+      final tmp = '${fn}Form';
+      final discValue = discMap[n.property.model];
+
+      if (needsRuntimeShapeCheck(n.property.model)) {
+        body
+          ..add(Code('if ($fn != null && '))
+          ..add(Code('$fn!.currentEncodingShape == '))
+          ..add(
+            refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+                .property('complex')
+                .code,
+          )
+          ..add(const Code(') {'))
+          ..add(const Code('final '))
+          ..add(Code('$tmp = '))
+          ..add(Code('$fn!.formProperties(allowEmpty: allowEmpty);'))
+          ..add(const Code(' maps.add('))
+          ..add(Code(tmp))
+          ..add(const Code(');'));
+
+        if (hasDiscriminator && discValue != null) {
+          body.add(
+            Code("discriminatorValue ??= '$discValue';"),
+          );
+        }
+
+        body.add(const Code('}'));
+      } else if (n.property.model.encodingShape == EncodingShape.complex) {
+        body
+          ..add(Code('if ($fn != null) { '))
+          ..add(const Code('final '))
+          ..add(Code('$tmp = '))
+          ..add(Code('$fn!.formProperties(allowEmpty: allowEmpty);'))
+          ..add(const Code(' maps.add('))
+          ..add(Code(tmp))
+          ..add(const Code(');'));
+
+        if (hasDiscriminator && discValue != null) {
+          body.add(
+            Code("discriminatorValue ??= '$discValue';"),
+          );
+        }
+
+        body.add(const Code('}'));
+      }
+    }
+
+    body.addAll([
+      const Code('if (maps.isEmpty) return '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ).code,
+      const Code(';'),
+      const Code('final map = '),
+      literalMap(
+        {},
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ).statement,
+      const Code('for (final m in maps) { map.addAll(m); }'),
+    ]);
+
+    if (hasDiscriminator) {
+      body.addAll([
+        const Code('if (discriminatorValue != null) { '),
+        Code("map.putIfAbsent('${model.discriminator}', () => "),
+        const Code('discriminatorValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+
+    body.add(const Code('return map;'));
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
