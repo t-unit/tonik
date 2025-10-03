@@ -218,8 +218,6 @@ class ClassGenerator {
       ]);
     }
 
-    final propertyNames = properties.map((p) => p.property.name).toSet();
-
     final constructorArgs = <String, Expression>{};
     for (final prop in properties) {
       final normalizedName = prop.normalizedName;
@@ -253,9 +251,6 @@ class ClassGenerator {
           )
           .statement,
       _buildExplodeParsingLogic(),
-
-      // Shared validation and construction (no duplication)
-      _buildKeyValidationLogic(propertyNames),
 
       // Constructor call
       refer(className, package).call([], constructorArgs).returned.statement,
@@ -637,26 +632,6 @@ class ClassGenerator {
     ]);
   }
 
-  Code _buildKeyValidationLogic(Set<String> propertyNames) {
-    final expectedKeysLiteral = literalSet(
-      propertyNames.map(literalString),
-      refer('String', 'dart:core'),
-    );
-
-    return Block.of([
-      // const expectedKeys = {'prop1', 'prop2'};
-      declareConst('expectedKeys').assign(expectedKeysLiteral).statement,
-
-      // for (final key in values.keys) {
-      const Code('for (final key in values.keys) {'),
-      const Code('if (!expectedKeys.contains(key)) {'),
-      generateSimpleDecodingExceptionExpression(
-        r'Unknown property: $key',
-      ).statement,
-      const Code('}'),
-      const Code('}'),
-    ]);
-  }
 
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
@@ -714,8 +689,6 @@ class ClassGenerator {
       ]);
     }
 
-    final propertyNames = properties.map((p) => p.property.name).toSet();
-
     final constructorArgs = <String, Expression>{};
     for (final prop in properties) {
       final normalizedName = prop.normalizedName;
@@ -748,7 +721,6 @@ class ClassGenerator {
           .statement,
           
       _buildExplodeParsingLogic(),
-      _buildKeyValidationLogic(propertyNames),
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
   }

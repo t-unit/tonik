@@ -407,15 +407,15 @@ class OneOfGenerator {
           const Code("  final pairs = value.split(',');\n"),
           Block.of([
             refer('String?', 'dart:core').code,
-            const Code(' discriminator = null;'),
+            const Code(' discriminator;'),
           ]),
           const Code('\n  for (final pair in pairs) {\n'),
           const Code("    final parts = pair.split('=');\n"),
           const Code('    if (parts.length == 2) {\n'),
           const Code('      final key = '),
-          refer('Uri', 'dart:core')
-              .property('decodeComponent')
-              .call([refer('parts').index(literalNum(0))]).code,
+          refer('Uri', 'dart:core').property('decodeComponent').call([
+            refer('parts').index(literalNum(0)),
+          ]).code,
           const Code(';\n'),
           Code("      if (key == '${model.discriminator}') {\n"),
           const Code('        discriminator = parts[1];\n'),
@@ -436,12 +436,14 @@ class OneOfGenerator {
             const Code('    return '),
             refer(variantName).call([
               refer(
-                nameManager.modelName(modelType),
-                package,
-              ).property('fromSimple').call(
-                [refer('value')],
-                {'explode': literalBool(true)},
-              ),
+                    nameManager.modelName(modelType),
+                    package,
+                  )
+                  .property('fromSimple')
+                  .call(
+                    [refer('value')],
+                    {'explode': literalBool(true)},
+                  ),
             ]).code,
             const Code(';\n'),
             const Code('  }\n'),
@@ -538,17 +540,56 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    final cases = model.models
-        .map((m) {
-          final variantName = variantNames[m]!;
-          return '$variantName(:final value) => value.toSimple('
-              ' explode: explode, allowEmpty: allowEmpty)';
-        })
-        .join(',\n');
+    final caseCodes = <Code>[];
 
-    final body = Code(
-      'return switch (this) {\n$cases\n};',
-    );
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final discriminatorValue = m.discriminatorValue;
+
+      if (model.discriminator != null &&
+          !isSimple &&
+          discriminatorValue != null) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          const Code('{\n'),
+          const Code('  ...'),
+          refer('value').property('simpleProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+          const Code('}'),
+          const Code('.toSimple('),
+          const Code('explode: '),
+          refer('explode').code,
+          const Code(', allowEmpty: '),
+          refer('allowEmpty').code,
+          const Code(')'),
+          const Code(',\n'),
+        ]);
+      } else {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          refer('value').property('toSimple').call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+        ]);
+      }
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
 
     return Method(
       (b) =>

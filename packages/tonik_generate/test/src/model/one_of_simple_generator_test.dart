@@ -102,54 +102,178 @@ void main() {
     );
   });
 
-  test('toSimple delegates for complex variants', () {
-    final userModel = ClassModel(
-      name: 'User',
-      properties: [
-        Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-        ),
-      ],
-      context: context,
-    );
+  test(
+    'toSimple includes discriminator for complex variant, delegates for '
+    'primitive',
+    () {
+      final userModel = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
 
-    final model = OneOfModel(
-      name: 'Response',
-      models: {
-        (
-          discriminatorValue: 'user',
-          model: userModel,
-        ),
-        (
-          discriminatorValue: 'message',
-          model: StringModel(context: context),
-        ),
-      },
-      discriminator: 'type',
-      context: context,
-    );
+      final model = OneOfModel(
+        name: 'Response',
+        models: {
+          (
+            discriminatorValue: 'user',
+            model: userModel,
+          ),
+          (
+            discriminatorValue: 'message',
+            model: StringModel(context: context),
+          ),
+        },
+        discriminator: 'type',
+        context: context,
+      );
 
-    final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'Response');
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
-    const expectedMethod = '''
+      const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
           return switch (this) {
-            ResponseUser(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
+            ResponseUser(:final value) => {
+              ...value.simpleProperties(allowEmpty: allowEmpty),
+              'type': 'user',
+            }.toSimple(explode: explode, allowEmpty: allowEmpty),
             ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
           };
         }
       ''';
 
-    expect(
-      collapseWhitespace(format(baseClass.accept(emitter).toString())),
-      contains(collapseWhitespace(expectedMethod)),
-    );
-  });
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    },
+  );
+
+  test(
+    'toSimple includes discriminator for all complex variants when '
+    'discriminator is present',
+    () {
+      final person = ClassModel(
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'first_name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final company = ClassModel(
+        name: 'Company',
+        properties: [
+          Property(
+            name: 'company_name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Entity',
+        models: {
+          (discriminatorValue: 'person', model: person),
+          (discriminatorValue: 'company', model: company),
+        },
+        discriminator: 'entity_type',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Entity');
+
+      const expectedMethod = '''
+      String toSimple({required bool explode, required bool allowEmpty}) {
+        return switch (this) {
+          EntityPerson(:final value) => {
+            ...value.simpleProperties(allowEmpty: allowEmpty),
+            'entity_type': 'person',
+          }.toSimple(explode: explode, allowEmpty: allowEmpty),
+          EntityCompany(:final value) => {
+            ...value.simpleProperties(allowEmpty: allowEmpty),
+            'entity_type': 'company',
+          }.toSimple(explode: explode, allowEmpty: allowEmpty),
+        };
+      }
+    ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    },
+  );
+
+  test(
+    'toSimple mixes map+discriminator for complex and delegates for '
+    'primitive (mixed)',
+    () {
+      final person = ClassModel(
+        name: 'Person',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'MixedEntity',
+        models: {
+          (discriminatorValue: 'person', model: person),
+          (discriminatorValue: 'id', model: StringModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
+
+      const expectedMethod = '''
+      String toSimple({required bool explode, required bool allowEmpty}) {
+        return switch (this) {
+          MixedEntityPerson(:final value) => {
+            ...value.simpleProperties(allowEmpty: allowEmpty),
+            'type': 'person',
+          }.toSimple(explode: explode, allowEmpty: allowEmpty),
+          MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
+        };
+      }
+    ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    },
+  );
 
   test('fromSimple tries complex variants using fromSimple with explode', () {
     final person = ClassModel(
@@ -467,11 +591,11 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
-        const expectedMethod = '''
+       const expectedMethod = '''
           factory Entity.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
               final pairs = value.split(',');
-              String? discriminator = null;
+              String? discriminator;
               for (final pair in pairs) {
                 final parts = pair.split('=');
                 if (parts.length == 2) {
@@ -536,11 +660,11 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
-        const expectedMethod = '''
+       const expectedMethod = '''
           factory MixedEntity.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
               final pairs = value.split(',');
-              String? discriminator = null;
+              String? discriminator;
               for (final pair in pairs) {
                 final parts = pair.split('=');
                 if (parts.length == 2) {
