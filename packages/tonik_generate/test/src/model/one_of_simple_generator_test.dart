@@ -186,7 +186,7 @@ void main() {
         (discriminatorValue: 'person', model: person),
         (discriminatorValue: 'company', model: company),
       },
-      discriminator: 'type',
+      discriminator: null,
       context: context,
     );
 
@@ -208,6 +208,431 @@ void main() {
     expect(
       collapseWhitespace(format(baseClass.accept(emitter).toString())),
       contains(collapseWhitespace(expectedMethod)),
+    );
+  });
+
+  group('discriminator support', () {
+    test('simpleProperties returns empty map for primitive variants', () {
+      final model = OneOfModel(
+        name: 'PrimitiveResult',
+        models: {
+          (discriminatorValue: 'text', model: StringModel(context: context)),
+          (discriminatorValue: 'number', model: IntegerModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'PrimitiveResult');
+
+      const expectedMethod = '''
+        Map<String, String> simpleProperties({required bool allowEmpty}) {
+          return switch (this) {
+            PrimitiveResultText(:final value) => <String, String>{},
+            PrimitiveResultNumber(:final value) => <String, String>{},
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test(
+      'simpleProperties delegates to variant for complex types without '
+      'discriminator',
+      () {
+        final person = ClassModel(
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final company = ClassModel(
+          name: 'Company',
+          properties: [
+            Property(
+              name: 'company_name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'EntityNoDisc',
+          models: {
+            (discriminatorValue: null, model: person),
+            (discriminatorValue: null, model: company),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
+
+        const expectedMethod = '''
+          Map<String, String> simpleProperties({required bool allowEmpty}) {
+            return switch (this) {
+              EntityNoDiscPerson(:final value) => value.simpleProperties(
+                allowEmpty: allowEmpty,
+              ),
+              EntityNoDiscCompany(:final value) => value.simpleProperties(
+                allowEmpty: allowEmpty,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'simpleProperties includes discriminator field for complex variants with '
+      'discriminator',
+      () {
+        final person = ClassModel(
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final company = ClassModel(
+          name: 'Company',
+          properties: [
+            Property(
+              name: 'company_name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Entity',
+          models: {
+            (discriminatorValue: 'person', model: person),
+            (discriminatorValue: 'company', model: company),
+          },
+          discriminator: 'entity_type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Entity');
+
+        const expectedMethod = '''
+          Map<String, String> simpleProperties({required bool allowEmpty}) {
+            return switch (this) {
+              EntityPerson(:final value) => {
+                ...value.simpleProperties(allowEmpty: allowEmpty),
+                'entity_type': 'person',
+              },
+              EntityCompany(:final value) => {
+                ...value.simpleProperties(allowEmpty: allowEmpty),
+                'entity_type': 'company',
+              },
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'simpleProperties handles mixed primitive and complex variants with '
+      'discriminator',
+      () {
+        final person = ClassModel(
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'MixedEntity',
+          models: {
+            (discriminatorValue: 'person', model: person),
+            (discriminatorValue: 'id', model: StringModel(context: context)),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
+
+        const expectedMethod = '''
+          Map<String, String> simpleProperties({required bool allowEmpty}) {
+            return switch (this) {
+              MixedEntityPerson(:final value) => {
+                ...value.simpleProperties(allowEmpty: allowEmpty),
+                'type': 'person',
+              },
+              MixedEntityId(:final value) => <String, String>{},
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'fromSimple with discriminator checks discriminator when explode is true',
+      () {
+        final person = ClassModel(
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final company = ClassModel(
+          name: 'Company',
+          properties: [
+            Property(
+              name: 'company_name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Entity',
+          models: {
+            (discriminatorValue: 'person', model: person),
+            (discriminatorValue: 'company', model: company),
+          },
+          discriminator: 'entity_type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Entity');
+
+        const expectedMethod = '''
+          factory Entity.fromSimple(String? value, {required bool explode}) {
+            if (explode && value != null && value.isNotEmpty) {
+              final pairs = value.split(',');
+              String? discriminator = null;
+              for (final pair in pairs) {
+                final parts = pair.split('=');
+                if (parts.length == 2) {
+                  final key = Uri.decodeComponent(parts[0]);
+                  if (key == 'entity_type') {
+                    discriminator = parts[1];
+                    break;
+                  }
+                }
+              }
+              if (discriminator == 'person') {
+                return EntityPerson(Person.fromSimple(value, explode: true));
+              }
+              if (discriminator == 'company') {
+                return EntityCompany(Company.fromSimple(value, explode: true));
+              }
+            }
+            try {
+              return EntityPerson(Person.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            try {
+              return EntityCompany(Company.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException('Invalid simple value for Entity');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'fromSimple with discriminator but mixed primitive and complex variants',
+      () {
+        final person = ClassModel(
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'MixedEntity',
+          models: {
+            (discriminatorValue: 'person', model: person),
+            (discriminatorValue: 'id', model: StringModel(context: context)),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
+
+        const expectedMethod = '''
+          factory MixedEntity.fromSimple(String? value, {required bool explode}) {
+            if (explode && value != null && value.isNotEmpty) {
+              final pairs = value.split(',');
+              String? discriminator = null;
+              for (final pair in pairs) {
+                final parts = pair.split('=');
+                if (parts.length == 2) {
+                  final key = Uri.decodeComponent(parts[0]);
+                  if (key == 'type') {
+                    discriminator = parts[1];
+                    break;
+                  }
+                }
+              }
+              if (discriminator == 'person') {
+                return MixedEntityPerson(Person.fromSimple(value, explode: true));
+              }
+            }
+            try {
+              return MixedEntityPerson(Person.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            try {
+              return MixedEntityId(value.decodeSimpleString(context: r'MixedEntity'));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException('Invalid simple value for MixedEntity');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'fromSimple without discriminator uses only try-catch approach',
+      () {
+        final person = ClassModel(
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final company = ClassModel(
+          name: 'Company',
+          properties: [
+            Property(
+              name: 'company_name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'EntityNoDisc',
+          models: {
+            (discriminatorValue: null, model: person),
+            (discriminatorValue: null, model: company),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
+
+        const expectedMethod = '''
+          factory EntityNoDisc.fromSimple(String? value, {required bool explode}) {
+            try {
+              return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            try {
+              return EntityNoDiscCompany(Company.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException('Invalid simple value for EntityNoDisc');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
     );
   });
 }

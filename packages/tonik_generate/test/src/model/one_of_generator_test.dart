@@ -365,8 +365,14 @@ void main() {
       const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
           return switch (this) {
-            ChoiceA(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
-            ChoiceB(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
+            ChoiceA(:final value) => {
+              ...value.simpleProperties(allowEmpty: allowEmpty),
+              'type': 'a',
+            },
+            ChoiceB(:final value) => {
+              ...value.simpleProperties(allowEmpty: allowEmpty),
+              'type': 'b',
+            },
           };
         }
       ''';
@@ -451,7 +457,10 @@ void main() {
       const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
           return switch (this) {
-            MixedChoiceM(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
+            MixedChoiceM(:final value) => {
+              ...value.simpleProperties(allowEmpty: allowEmpty),
+              'kind': 'm',
+            },
             MixedChoiceS(:final value) => <String, String>{},
           };
         }

@@ -396,6 +396,62 @@ class OneOfGenerator {
   ) {
     final bodyBlocks = <Code>[];
 
+    if (model.discriminator != null) {
+      final hasDiscriminatedComplexTypes = model.models.any(
+        (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
+      );
+
+      if (hasDiscriminatedComplexTypes) {
+        bodyBlocks.addAll([
+          const Code('if (explode && value != null && value.isNotEmpty) {\n'),
+          const Code("  final pairs = value.split(',');\n"),
+          Block.of([
+            refer('String?', 'dart:core').code,
+            const Code(' discriminator = null;'),
+          ]),
+          const Code('\n  for (final pair in pairs) {\n'),
+          const Code("    final parts = pair.split('=');\n"),
+          const Code('    if (parts.length == 2) {\n'),
+          const Code('      final key = '),
+          refer('Uri', 'dart:core')
+              .property('decodeComponent')
+              .call([refer('parts').index(literalNum(0))]).code,
+          const Code(';\n'),
+          Code("      if (key == '${model.discriminator}') {\n"),
+          const Code('        discriminator = parts[1];\n'),
+          const Code('        break;\n'),
+          const Code('      }\n'),
+          const Code('    }\n'),
+          const Code('  }\n'),
+        ]);
+
+        for (final m in model.models.where(
+          (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
+        )) {
+          final variantName = variantNames[m]!;
+          final modelType = m.model;
+
+          bodyBlocks.addAll([
+            Code("  if (discriminator == '${m.discriminatorValue}') {\n"),
+            const Code('    return '),
+            refer(variantName).call([
+              refer(
+                nameManager.modelName(modelType),
+                package,
+              ).property('fromSimple').call(
+                [refer('value')],
+                {'explode': literalBool(true)},
+              ),
+            ]).code,
+            const Code(';\n'),
+            const Code('  }\n'),
+          ]);
+        }
+
+        bodyBlocks.add(const Code('}\n'));
+      }
+    }
+
     for (final m in model.models) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
@@ -542,10 +598,23 @@ class OneOfGenerator {
       caseCodes.add(Code('$variantName(:final value) => '));
 
       final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final discriminatorValue = m.discriminatorValue;
+
       if (isSimple) {
         caseCodes.add(
           buildEmptyMapStringString().code,
         );
+      } else if (discriminatorValue != null) {
+        caseCodes.addAll([
+          const Code('{\n'),
+          const Code('  ...'),
+          refer('value').property('simpleProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+          const Code('}'),
+        ]);
       } else {
         caseCodes.add(
           refer('value').property('simpleProperties').call([], {
