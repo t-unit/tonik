@@ -85,9 +85,9 @@ void main() {
     // No mixins
     expect(baseClass.mixins, isEmpty, reason: 'Should not have freezed mixins');
 
-    // Base class should have a default const constructor and
-    // a fromSimple factory
-    expect(baseClass.constructors.length, 3);
+    // Base class should have a default const constructor,
+    // fromSimple, fromForm, and fromJson factories
+    expect(baseClass.constructors.length, 4);
     final baseConstructor = baseClass.constructors.firstWhere(
       (c) => c.name == null,
     );
@@ -145,7 +145,7 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors.length, 3);
+    expect(baseClass.constructors.length, 4);
     expect(
       baseClass.constructors.firstWhere((c) => c.name == null).constant,
       isTrue,
@@ -210,7 +210,7 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors.length, 3);
+    expect(baseClass.constructors.length, 4);
     expect(
       baseClass.constructors.firstWhere((c) => c.name == null).constant,
       isTrue,
@@ -255,7 +255,7 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors.length, 3);
+    expect(baseClass.constructors.length, 4);
     expect(
       baseClass.constructors.firstWhere((c) => c.name == null).constant,
       isTrue,

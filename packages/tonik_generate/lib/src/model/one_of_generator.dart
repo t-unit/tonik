@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -99,9 +100,14 @@ class OneOfGenerator {
             ..constructors.add(
               _generateFromSimpleConstructor(className, model, variantNames),
             )
+            ..constructors.add(
+              _generateFromFormConstructor(className, model, variantNames),
+            )
             ..methods.addAll([
               _generateSimplePropertiesMethod(className, model, variantNames),
               _generateToSimpleMethod(className, model, variantNames),
+              _generateFormPropertiesMethod(className, model, variantNames),
+              _generateToFormMethod(className, model, variantNames),
               Method(
                 (b) =>
                     b
@@ -535,6 +541,152 @@ class OneOfGenerator {
     );
   }
 
+  Constructor _generateFromFormConstructor(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final bodyBlocks = <Code>[];
+
+    if (model.discriminator != null) {
+      final hasDiscriminatedComplexTypes = model.models.any(
+        (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
+      );
+
+      if (hasDiscriminatedComplexTypes) {
+        bodyBlocks.addAll([
+          const Code('if (explode && value != null && value.isNotEmpty) {\n'),
+          const Code("  final pairs = value.split(',');\n"),
+          Block.of([
+            refer('String?', 'dart:core').code,
+            const Code(' discriminator;'),
+          ]),
+          const Code('\n  for (final pair in pairs) {\n'),
+          const Code("    final parts = pair.split('=');\n"),
+          const Code('    if (parts.length == 2) {\n'),
+          const Code('      final key = '),
+          refer('Uri', 'dart:core').property('decodeComponent').call([
+            refer('parts').index(literalNum(0)),
+          ]).code,
+          const Code(';\n'),
+          Code("      if (key == '${model.discriminator}') {\n"),
+          const Code('        discriminator = parts[1];\n'),
+          const Code('        break;\n'),
+          const Code('      }\n'),
+          const Code('    }\n'),
+          const Code('  }\n'),
+        ]);
+
+        for (final m in model.models.where(
+          (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
+        )) {
+          final variantName = variantNames[m]!;
+          final modelType = m.model;
+
+          bodyBlocks.addAll([
+            Code("  if (discriminator == '${m.discriminatorValue}') {\n"),
+            const Code('    return '),
+            refer(variantName).call([
+              refer(
+                    nameManager.modelName(modelType),
+                    package,
+                  )
+                  .property('fromForm')
+                  .call(
+                    [refer('value')],
+                    {'explode': literalBool(true)},
+                  ),
+            ]).code,
+            const Code(';\n'),
+            const Code('  }\n'),
+          ]);
+        }
+
+        bodyBlocks.add(const Code('}\n'));
+      }
+    }
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      final modelType = m.model;
+
+      final tryBody = <Code>[];
+
+      if (modelType is PrimitiveModel) {
+        final decodeExpr = buildFromFormValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+        );
+        tryBody.add(
+          refer(variantName).call([decodeExpr]).returned.statement,
+        );
+      } else {
+        final innerFromForm = refer(
+              nameManager.modelName(modelType),
+              package,
+            )
+            .property('fromForm')
+            .call(
+              [
+                refer('value'),
+              ],
+              {
+                'explode': refer('explode'),
+              },
+            );
+        tryBody.add(
+          refer(variantName).call([innerFromForm]).returned.statement,
+        );
+      }
+
+      bodyBlocks.addAll([
+        const Code('try {\n'),
+        ...tryBody,
+        const Code('\n} on '),
+        refer('DecodingException', 'package:tonik_util/tonik_util.dart').code,
+        const Code(' catch (_) {} on '),
+        refer('FormatException', 'dart:core').code,
+        const Code(' catch (_) {}\n'),
+      ]);
+    }
+
+    bodyBlocks.add(
+      generateSimpleDecodingExceptionExpression(
+        'Invalid form value for $className',
+      ).statement,
+    );
+
+    return Constructor(
+      (b) =>
+          b
+            ..factory = true
+            ..name = 'fromForm'
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'value'
+                      ..type = refer('String?', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = Block.of(bodyBlocks),
+    );
+  }
+
   Method _generateToSimpleMethod(
     String className,
     OneOfModel model,
@@ -619,6 +771,90 @@ class OneOfGenerator {
     );
   }
 
+  Method _generateToFormMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final discriminatorValue = m.discriminatorValue;
+
+      if (model.discriminator != null &&
+          !isSimple &&
+          discriminatorValue != null) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          const Code('{\n'),
+          const Code('  ...'),
+          refer('value').property('formProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+          const Code('}'),
+          const Code('.toForm('),
+          const Code('explode: '),
+          refer('explode').code,
+          const Code(', allowEmpty: '),
+          refer('allowEmpty').code,
+          const Code(')'),
+          const Code(',\n'),
+        ]);
+      } else {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          refer('value').property('toForm').call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+        ]);
+      }
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toForm'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..lambda = false
+            ..body = body,
+    );
+  }
+
   Method _buildHashCodeMethod(bool hasCollectionValue) {
     return generateHashCodeMethod(
       properties: [
@@ -676,6 +912,59 @@ class OneOfGenerator {
       (b) =>
           b
             ..name = 'simpleProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..lambda = false
+            ..body = body,
+    );
+  }
+
+  Method _generateFormPropertiesMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      caseCodes.add(Code('$variantName(:final value) => '));
+
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+
+      if (isSimple) {
+        caseCodes.add(
+          buildEmptyMapStringString().code,
+        );
+      } else {
+        caseCodes.add(
+          refer('value').property('formProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+        );
+      }
+      caseCodes.add(const Code(',\n'));
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
