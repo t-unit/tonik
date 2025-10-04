@@ -50,7 +50,7 @@ void main() {
           code,
           equals(
             "values['name'].decodeFormNullableString("
-                "context: r'TestClass.name')",
+            "context: r'TestClass.name')",
           ),
         );
       });
@@ -89,7 +89,7 @@ void main() {
           code,
           equals(
             "values['count'].decodeFormNullableInt("
-                "context: r'TestClass.count')",
+            "context: r'TestClass.count')",
           ),
         );
       });
@@ -130,7 +130,7 @@ void main() {
           code,
           equals(
             "values['price'].decodeFormNullableDouble("
-                "context: r'TestClass.price')",
+            "context: r'TestClass.price')",
           ),
         );
       });
@@ -191,7 +191,7 @@ void main() {
           code,
           equals(
             "values['active'].decodeFormNullableBool("
-                "context: r'TestClass.active')",
+            "context: r'TestClass.active')",
           ),
         );
       });
@@ -212,7 +212,7 @@ void main() {
           code,
           equals(
             "values['timestamp'].decodeFormDateTime("
-                "context: r'TestClass.timestamp')",
+            "context: r'TestClass.timestamp')",
           ),
         );
       });
@@ -233,7 +233,7 @@ void main() {
           code,
           equals(
             "values['timestamp'].decodeFormNullableDateTime("
-                "context: r'TestClass.timestamp')",
+            "context: r'TestClass.timestamp')",
           ),
         );
       });
@@ -294,7 +294,7 @@ void main() {
           code,
           equals(
             "values['amount'].decodeFormBigDecimal("
-                "context: r'TestClass.amount')",
+            "context: r'TestClass.amount')",
           ),
         );
       });
@@ -315,7 +315,7 @@ void main() {
           code,
           equals(
             "values['amount'].decodeFormNullableBigDecimal("
-                "context: r'TestClass.amount')",
+            "context: r'TestClass.amount')",
           ),
         );
       });
@@ -356,7 +356,7 @@ void main() {
           code,
           equals(
             "values['url'].decodeFormNullableUri("
-                "context: r'TestClass.url')",
+            "context: r'TestClass.url')",
           ),
         );
       });
@@ -447,7 +447,10 @@ void main() {
         );
 
         final code = expression.accept(DartEmitter()).toString();
-        expect(code, equals("NestedClass.fromForm(values['nested'])"));
+        expect(
+          code,
+          equals("NestedClass.fromForm(values['nested'], explode: true, )"),
+        );
       });
 
       test('generates expression for EnumModel', () {
@@ -465,7 +468,10 @@ void main() {
         );
 
         final code = expression.accept(DartEmitter()).toString();
-        expect(code, equals("Status.fromForm(values['status'])"));
+        expect(
+          code,
+          equals("Status.fromForm(values['status'], explode: true, )"),
+        );
       });
     });
 
@@ -492,7 +498,7 @@ void main() {
           code,
           equals(
             "values['userId'].decodeFormString("
-                "context: r'TestClass.userId')",
+            "context: r'TestClass.userId')",
           ),
         );
       });

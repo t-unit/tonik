@@ -12,6 +12,7 @@ Expression buildSimpleValueExpression(
   String? package,
   String? contextClass,
   String? contextProperty,
+  Expression? explode,
 }) {
   final contextParam =
       (contextClass != null || contextProperty != null)
@@ -78,6 +79,7 @@ Expression buildSimpleValueExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: explode,
     ),
     final ListModel listModel => _buildListFromSimpleExpression(
       value,
@@ -96,6 +98,7 @@ Expression buildSimpleValueExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: explode,
     ),
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
@@ -110,10 +113,13 @@ Expression _buildFromSimpleExpression(
   String? package,
   String? contextClass,
   String? contextProperty,
+  Expression? explode,
 }) {
   final name = nameManager.modelName(model);
+  final explodeParam = {'explode': explode ?? literalBool(true)};
+
   return isRequired
-      ? refer(name, package).property('fromSimple').call([value])
+      ? refer(name, package).property('fromSimple').call([value], explodeParam)
       : value
           .equalTo(literalNull)
           .conditional(
@@ -121,7 +127,7 @@ Expression _buildFromSimpleExpression(
             refer(
               name,
               package,
-            ).property('fromSimple').call([value.nullChecked]),
+            ).property('fromSimple').call([value.nullChecked], explodeParam),
           );
 }
 
@@ -232,6 +238,7 @@ Expression _buildListFromSimpleExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: literalBool(true),
     ),
     ListModel() =>
       throw UnimplementedError(
@@ -290,8 +297,11 @@ Expression _buildClassList(
   String? package,
   String? contextClass,
   String? contextProperty,
+  Expression? explode,
 }) {
   final className = nameManager.modelName(content);
+  final explodeParam = {'explode': explode ?? literalBool(true)};
+
   final mapFunction =
       Method(
         (b) =>
@@ -301,7 +311,9 @@ Expression _buildClassList(
                   refer(
                     className,
                     package,
-                  ).property('fromSimple').call([refer('e')]).code,
+                  ).property('fromSimple').call([
+                    refer('e'),
+                  ], explodeParam).code,
       ).closure;
 
   if (isRequired) {

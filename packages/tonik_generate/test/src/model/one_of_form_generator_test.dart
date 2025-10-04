@@ -263,10 +263,10 @@ void main() {
                 }
               }
               if (discriminator == 'a') {
-                return ChoiceA(A.fromForm(value, explode: true));
+                return ChoiceA(A.fromForm(value, explode: explode));
               }
               if (discriminator == 'b') {
-                return ChoiceB(B.fromForm(value, explode: true));
+                return ChoiceB(B.fromForm(value, explode: explode));
               }
             }
             try {
@@ -372,10 +372,10 @@ void main() {
       final generated = format(baseClass.accept(emitter).toString());
       const expectedMethod = '''
         Map<String, String> formProperties({required bool allowEmpty}) {
-          return switch (this) {
-            SimpleInt(:final value) => <String, String>{},
-            SimpleStr(:final value) => <String, String>{},
-          };
+        return switch (this) {
+          SimpleInt() => <String, String>{},
+          SimpleStr() => <String, String>{},
+        };
         }
       ''';
       expect(
@@ -415,12 +415,12 @@ void main() {
 
       const expectedMethod = '''
           Map<String, String> formProperties({required bool allowEmpty}) {
-            return switch (this) {
-              MixedChoiceM(:final value) => value.formProperties(
-                allowEmpty: allowEmpty,
-              ),
-              MixedChoiceS(:final value) => <String, String>{},
-            };
+        return switch (this) {
+          MixedChoiceM(:final value) => value.formProperties(
+            allowEmpty: allowEmpty,
+          ),
+          MixedChoiceS() => <String, String>{},
+        };
           }
         ''';
       expect(
@@ -464,12 +464,12 @@ void main() {
 
         const expectedMethod = '''
           Map<String, String> formProperties({required bool allowEmpty}) {
-            return switch (this) {
-              NoDiscriminatorA(:final value) => value.formProperties(
-                allowEmpty: allowEmpty,
-              ),
-              NoDiscriminatorAnonymous(:final value) => <String, String>{},
-            };
+        return switch (this) {
+          NoDiscriminatorA(:final value) => value.formProperties(
+            allowEmpty: allowEmpty,
+          ),
+          NoDiscriminatorAnonymous() => <String, String>{},
+        };
           }
         ''';
         expect(

@@ -663,7 +663,11 @@ class AnyOfGenerator {
       final varName = n.normalizedName;
 
       final decodeExpr = switch (modelType) {
-        ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => refer(
+        EnumModel() ||
+        ClassModel() ||
+        AllOfModel() ||
+        OneOfModel() ||
+        AnyOfModel() => refer(
               nameManager.modelName(modelType),
               package,
             )
@@ -741,7 +745,11 @@ class AnyOfGenerator {
       final varName = n.normalizedName;
 
       final decodeExpr = switch (modelType) {
-        ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => refer(
+        EnumModel() ||
+        ClassModel() ||
+        AllOfModel() ||
+        OneOfModel() ||
+        AnyOfModel() => refer(
               nameManager.modelName(modelType),
               package,
             )

@@ -50,7 +50,7 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
-    test('generates currentEncodingShape getter for simple class', () {
+    test('generates currentEncodingShape getter for class with properties', () {
       final model = ClassModel(
         name: 'User',
         properties: [
@@ -78,7 +78,32 @@ void main() {
       expect(getter.lambda, isTrue);
       expect(
         getter.body?.accept(emitter).toString(),
-        'EncodingShape.simple',
+        'EncodingShape.complex',
+      );
+    });
+
+    test('generates currentEncodingShape getter for empty class', () {
+      final model = ClassModel(
+        name: 'Empty',
+        properties: const [],
+        context: context,
+      );
+
+
+      final result = generator.generateClass(model);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.complex',
       );
     });
 

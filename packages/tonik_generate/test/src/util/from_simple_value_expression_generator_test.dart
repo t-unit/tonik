@@ -158,7 +158,7 @@ void main() {
           nameManager: nameManager,
           package: 'tonik_core',
         ).accept(emitter).toString(),
-        'UserRole.fromSimple(value)',
+        'UserRole.fromSimple(value, explode: true, )',
       );
 
       expect(
@@ -169,7 +169,7 @@ void main() {
           nameManager: nameManager,
           package: 'tonik_core',
         ).accept(emitter).toString(),
-        'value == null ? null : UserRole.fromSimple(value!)',
+        'value == null ? null : UserRole.fromSimple(value!, explode: true, )',
       );
     });
 
@@ -189,7 +189,7 @@ void main() {
           nameManager: nameManager,
           package: 'tonik_core',
         ).accept(emitter).toString(),
-        'User.fromSimple(value)',
+        'User.fromSimple(value, explode: true, )',
       );
 
       expect(
@@ -200,7 +200,7 @@ void main() {
           nameManager: nameManager,
           package: 'tonik_core',
         ).accept(emitter).toString(),
-        'value == null ? null : User.fromSimple(value!)',
+        'value == null ? null : User.fromSimple(value!, explode: true, )',
       );
     });
 
@@ -360,7 +360,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/models.dart',
           ).accept(scopedEmitter).toString(),
-          equals('_i1.UserRole.fromSimple(value)'),
+          equals('_i1.UserRole.fromSimple(value, explode: true, )'),
         );
       });
 
@@ -380,7 +380,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/models.dart',
           ).accept(scopedEmitter).toString(),
-          equals('_i1.User.fromSimple(value)'),
+          equals('_i1.User.fromSimple(value, explode: true, )'),
         );
       });
 
@@ -404,7 +404,7 @@ void main() {
           ).accept(scopedEmitter).toString(),
           equals(
             'value.decodeSimpleStringList()'
-            '.map((e) => _i1.UserRole.fromSimple(e)).toList()',
+            '.map((e) => _i1.UserRole.fromSimple(e, explode: true, )).toList()',
           ),
         );
       });

@@ -450,7 +450,7 @@ class OneOfGenerator {
                   .property('fromSimple')
                   .call(
                     [refer('value')],
-                    {'explode': literalBool(true)},
+                    {'explode': refer('explode')},
                   ),
             ]).code,
             const Code(';\n'),
@@ -476,6 +476,7 @@ class OneOfGenerator {
           nameManager: nameManager,
           package: package,
           contextClass: className,
+          explode: refer('explode'),
         );
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
@@ -596,7 +597,7 @@ class OneOfGenerator {
                   .property('fromForm')
                   .call(
                     [refer('value')],
-                    {'explode': literalBool(true)},
+                    {'explode': refer('explode')},
                   ),
             ]).code,
             const Code(';\n'),
@@ -622,6 +623,7 @@ class OneOfGenerator {
           nameManager: nameManager,
           package: package,
           contextClass: className,
+          explode: refer('explode'),
         );
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
@@ -917,32 +919,34 @@ class OneOfGenerator {
 
     for (final m in model.models) {
       final variantName = variantNames[m]!;
-      caseCodes.add(Code('$variantName(:final value) => '));
-
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       final discriminatorValue = m.discriminatorValue;
 
       if (isSimple) {
-        caseCodes.add(
+        caseCodes..add(Code('$variantName() => '))
+        ..add(
           buildEmptyMapStringString().code,
         );
-      } else if (discriminatorValue != null) {
-        caseCodes.addAll([
-          const Code('{\n'),
-          const Code('  ...'),
-          refer('value').property('simpleProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
-          const Code(',\n'),
-          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
-          const Code('}'),
-        ]);
       } else {
-        caseCodes.add(
-          refer('value').property('simpleProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
-        );
+        caseCodes.add(Code('$variantName(:final value) => '));
+        if (discriminatorValue != null) {
+          caseCodes.addAll([
+            const Code('{\n'),
+            const Code('  ...'),
+            refer('value').property('simpleProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('}'),
+          ]);
+        } else {
+          caseCodes.add(
+            refer('value').property('simpleProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+          );
+        }
       }
       caseCodes.add(const Code(',\n'));
     }
@@ -982,16 +986,16 @@ class OneOfGenerator {
 
     for (final m in model.models) {
       final variantName = variantNames[m]!;
-      caseCodes.add(Code('$variantName(:final value) => '));
-
       final isSimple = m.model.encodingShape == EncodingShape.simple;
 
       if (isSimple) {
-        caseCodes.add(
+        caseCodes..add(Code('$variantName() => '))
+        ..add(
           buildEmptyMapStringString().code,
         );
       } else {
-        caseCodes.add(
+        caseCodes..add(Code('$variantName(:final value) => '))
+        ..add(
           refer('value').property('formProperties').call([], {
             'allowEmpty': refer('allowEmpty'),
           }).code,

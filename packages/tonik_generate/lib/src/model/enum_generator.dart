@@ -162,6 +162,7 @@ class EnumGenerator {
     String actualEnumName,
   ) {
     const valueParam = 'value';
+    const explodeParam = 'explode';
     const contextParam = 'context';
     final decodeMethod = T == String ? 'decodeSimpleString' : 'decodeSimpleInt';
 
@@ -178,7 +179,15 @@ class EnumGenerator {
                       ..type = refer('String?', 'dart:core'),
               ),
             )
-            ..optionalParameters.add(
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = explodeParam
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
               Parameter(
                 (b) =>
                     b
@@ -186,7 +195,7 @@ class EnumGenerator {
                       ..type = refer('String?', 'dart:core')
                       ..named = true,
               ),
-            )
+            ])
             ..body = Block.of([
               refer(actualEnumName)
                   .property('fromJson')
@@ -206,6 +215,7 @@ class EnumGenerator {
     String actualEnumName,
   ) {
     const valueParam = 'value';
+    const explodeParam = 'explode';
     const contextParam = 'context';
     final decodeMethod = T == String ? 'decodeFormString' : 'decodeFormInt';
 
@@ -222,7 +232,15 @@ class EnumGenerator {
                       ..type = refer('String?', 'dart:core'),
               ),
             )
-            ..optionalParameters.add(
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = explodeParam
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
               Parameter(
                 (b) =>
                     b
@@ -230,7 +248,7 @@ class EnumGenerator {
                       ..type = refer('String?', 'dart:core')
                       ..named = true,
               ),
-            )
+            ])
             ..body = Block.of([
               refer(actualEnumName)
                   .property('fromJson')

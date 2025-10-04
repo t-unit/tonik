@@ -442,10 +442,18 @@ void main() {
           'String?',
         );
         expect(fromSimple.requiredParameters.single.name, 'value');
-        expect(fromSimple.optionalParameters, hasLength(1));
+        expect(fromSimple.optionalParameters, hasLength(2));
 
-        final contextParam = fromSimple.optionalParameters.first;
-        expect(contextParam.name, 'context');
+        final explodeParam = fromSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final contextParam = fromSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'context',
+        );
         expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
         expect(contextParam.named, isTrue);
         expect(contextParam.required, isFalse);
@@ -478,10 +486,18 @@ void main() {
           'String?',
         );
         expect(fromSimple.requiredParameters.single.name, 'value');
-        expect(fromSimple.optionalParameters, hasLength(1));
+        expect(fromSimple.optionalParameters, hasLength(2));
 
-        final contextParam = fromSimple.optionalParameters.first;
-        expect(contextParam.name, 'context');
+        final explodeParam = fromSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final contextParam = fromSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'context',
+        );
         expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
         expect(contextParam.named, isTrue);
         expect(contextParam.required, isFalse);
@@ -716,10 +732,18 @@ void main() {
               .toString(),
           'String?',
         );
-        expect(fromSimple.optionalParameters, hasLength(1));
+        expect(fromSimple.optionalParameters, hasLength(2));
 
-        final contextParam = fromSimple.optionalParameters.first;
-        expect(contextParam.name, 'context');
+        final explodeParam = fromSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final contextParam = fromSimple.optionalParameters.firstWhere(
+          (p) => p.name == 'context',
+        );
         expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
         expect(contextParam.named, isTrue);
         expect(contextParam.required, isFalse);
@@ -755,10 +779,18 @@ void main() {
                 .toString(),
             'String?',
           );
-          expect(fromSimple.optionalParameters, hasLength(1));
+          expect(fromSimple.optionalParameters, hasLength(2));
 
-          final contextParam = fromSimple.optionalParameters.first;
-          expect(contextParam.name, 'context');
+          final explodeParam = fromSimple.optionalParameters.firstWhere(
+            (p) => p.name == 'explode',
+          );
+          expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+          expect(explodeParam.named, isTrue);
+          expect(explodeParam.required, isTrue);
+
+          final contextParam = fromSimple.optionalParameters.firstWhere(
+            (p) => p.name == 'context',
+          );
           expect(
             contextParam.type?.accept(DartEmitter()).toString(),
             'String?',
@@ -797,10 +829,18 @@ void main() {
           'String?',
         );
         expect(fromForm.requiredParameters.single.name, 'value');
-        expect(fromForm.optionalParameters, hasLength(1));
+        expect(fromForm.optionalParameters, hasLength(2));
 
-        final contextParam = fromForm.optionalParameters.first;
-        expect(contextParam.name, 'context');
+        final explodeParam = fromForm.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final contextParam = fromForm.optionalParameters.firstWhere(
+          (p) => p.name == 'context',
+        );
         expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
         expect(contextParam.named, isTrue);
         expect(contextParam.required, isFalse);
@@ -833,10 +873,18 @@ void main() {
           'String?',
         );
         expect(fromForm.requiredParameters.single.name, 'value');
-        expect(fromForm.optionalParameters, hasLength(1));
+        expect(fromForm.optionalParameters, hasLength(2));
 
-        final contextParam = fromForm.optionalParameters.first;
-        expect(contextParam.name, 'context');
+        final explodeParam = fromForm.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final contextParam = fromForm.optionalParameters.firstWhere(
+          (p) => p.name == 'context',
+        );
         expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
         expect(contextParam.named, isTrue);
         expect(contextParam.required, isFalse);

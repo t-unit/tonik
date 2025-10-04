@@ -519,10 +519,10 @@ void main() {
 
         const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
-          return switch (this) {
-            PrimitiveChoiceI(:final value) => <String, String>{},
-            PrimitiveChoiceS(:final value) => <String, String>{},
-          };
+        return switch (this) {
+          PrimitiveChoiceI() => <String, String>{},
+          PrimitiveChoiceS() => <String, String>{},
+        };
         }
       ''';
         expect(
@@ -563,13 +563,13 @@ void main() {
 
       const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
-          return switch (this) {
-            MixedChoiceM(:final value) => {
-              ...value.simpleProperties(allowEmpty: allowEmpty),
-              'kind': 'm',
-            },
-            MixedChoiceS(:final value) => <String, String>{},
-          };
+        return switch (this) {
+          MixedChoiceM(:final value) => {
+            ...value.simpleProperties(allowEmpty: allowEmpty),
+            'kind': 'm',
+          },
+          MixedChoiceS() => <String, String>{},
+        };
         }
       ''';
       expect(

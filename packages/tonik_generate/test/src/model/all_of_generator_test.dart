@@ -980,7 +980,7 @@ void main() {
         const expectedFromSimpleMethod = '''
         factory EnumStringModel.fromSimple(String? value, {required bool explode}) {
           return EnumStringModel(
-            status: Status.fromSimple(value),
+            status: Status.fromSimple(value, explode: explode),
             string: value.decodeSimpleString(context: r'EnumStringModel.string'),
           );
         }
@@ -1731,7 +1731,7 @@ void main() {
         const expectedFromFormMethod = '''
         factory EnumStringModel.fromForm(String? value, {required bool explode}) {
           return EnumStringModel(
-            status: Status.fromForm(value),
+            status: Status.fromForm(value, explode: explode),
             string: value.decodeFormString(context: r'EnumStringModel.string'),
           );
         }
@@ -1852,5 +1852,307 @@ void main() {
         );
       },
     );
+  });
+
+  group('nested dynamic shapes', () {
+    test('allOf with mixed anyOf and primitive validates at runtime', () {
+      final anyOfModel = AnyOfModel(
+        name: 'FlexibleValue',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          IntegerModel(context: context),
+          anyOfModel,
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          if (flexibleValue.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf Combined: flexibleValue is complex',
+            );
+          }
+          return int.toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+
+      const expectedToSimpleMethod = '''
+        String toSimple({required bool explode, required bool allowEmpty}) {
+          if (flexibleValue.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf Combined: flexibleValue is complex',
+            );
+          }
+          return int.toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToSimpleMethod)),
+      );
+    });
+
+    test('allOf with mixed oneOf and primitive validates at runtime', () {
+      final oneOfModel = OneOfModel(
+        name: 'Choice',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'Combined',
+        models: {
+          IntegerModel(context: context),
+          oneOfModel,
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          if (choice.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf Combined: choice is complex',
+            );
+          }
+          return int.toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
+
+    test('allOf with multiple mixed anyOf models validates all at runtime', () {
+      final anyOfModel1 = AnyOfModel(
+        name: 'FlexibleA',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'DataA',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final anyOfModel2 = AnyOfModel(
+        name: 'FlexibleB',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'DataB',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'MultiDynamic',
+        models: {
+          StringModel(context: context),
+          anyOfModel1,
+          anyOfModel2,
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          if (flexibleA.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf MultiDynamic: flexibleA is complex',
+            );
+          }
+          if (flexibleB.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf MultiDynamic: flexibleB is complex',
+            );
+          }
+          return string.toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
+
+    test('allOf with mixed anyOf, oneOf, and primitives validates all '
+        'dynamic types', () {
+      final anyOfModel = AnyOfModel(
+        name: 'FlexibleValue',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final oneOfModel = OneOfModel(
+        name: 'Choice',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Option',
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'ComplexMixed',
+        models: {
+          StringModel(context: context),
+          anyOfModel,
+          oneOfModel,
+          DecimalModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToFormMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          if (flexibleValue.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf ComplexMixed: flexibleValue is complex',
+            );
+          }
+          if (choice.currentEncodingShape != EncodingShape.simple) {
+            throw EncodingException(
+              'Cannot encode mixed allOf ComplexMixed: choice is complex',
+            );
+          }
+          return string.toForm(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
   });
 }

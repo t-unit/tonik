@@ -352,10 +352,10 @@ void main() {
 
       const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
-          return switch (this) {
-            PrimitiveResultText(:final value) => <String, String>{},
-            PrimitiveResultNumber(:final value) => <String, String>{},
-          };
+        return switch (this) {
+          PrimitiveResultText() => <String, String>{},
+          PrimitiveResultNumber() => <String, String>{},
+        };
         }
       ''';
 
@@ -535,7 +535,7 @@ void main() {
                 ...value.simpleProperties(allowEmpty: allowEmpty),
                 'type': 'person',
               },
-              MixedEntityId(:final value) => <String, String>{},
+              MixedEntityId() => <String, String>{},
             };
           }
         ''';
@@ -607,10 +607,10 @@ void main() {
                 }
               }
               if (discriminator == 'person') {
-                return EntityPerson(Person.fromSimple(value, explode: true));
+                return EntityPerson(Person.fromSimple(value, explode: explode));
               }
               if (discriminator == 'company') {
-                return EntityCompany(Company.fromSimple(value, explode: true));
+                return EntityCompany(Company.fromSimple(value, explode: explode));
               }
             }
             try {
@@ -676,7 +676,7 @@ void main() {
                 }
               }
               if (discriminator == 'person') {
-                return MixedEntityPerson(Person.fromSimple(value, explode: true));
+                return MixedEntityPerson(Person.fromSimple(value, explode: explode));
               }
             }
             try {

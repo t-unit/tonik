@@ -235,6 +235,7 @@ class ClassGenerator {
         package: package,
         contextClass: className,
         contextProperty: propertyName,
+        explode: refer('explode'),
       );
     }
 
@@ -378,22 +379,22 @@ class ClassGenerator {
   Method _buildCurrentEncodingShapeGetter(
     List<({String normalizedName, Property property})> properties,
   ) {
-    final hasComplexData = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel.encodingShape != EncodingShape.simple;
-    });
-
-    final shapeRef = hasComplexData
-        ? refer('EncodingShape', 'package:tonik_util/tonik_util.dart').property('complex')
-        : refer('EncodingShape', 'package:tonik_util/tonik_util.dart').property('simple');
+    final shapeRef = refer(
+      'EncodingShape',
+      'package:tonik_util/tonik_util.dart',
+    ).property('complex');
 
     return Method(
-      (b) => b
-        ..name = 'currentEncodingShape'
-        ..type = MethodType.getter
-        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
-        ..lambda = true
-        ..body = shapeRef.code,
+      (b) =>
+          b
+            ..name = 'currentEncodingShape'
+            ..type = MethodType.getter
+            ..returns = refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            )
+            ..lambda = true
+            ..body = shapeRef.code,
     );
   }
 
@@ -462,13 +463,14 @@ class ClassGenerator {
       }
     }
 
-    final returnStatement = properties.isEmpty
-        ? buildEmptyMapStringString().code
-        : Block.of([
-            const Code('return '),
-            buildMapStringStringType().code,
-            Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
-          ]);
+    final returnStatement =
+        properties.isEmpty
+            ? buildEmptyMapStringString().code
+            : Block.of([
+              const Code('return '),
+              buildMapStringStringType().code,
+              Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
+            ]);
 
     return Method(
       (b) =>
@@ -656,7 +658,6 @@ class ClassGenerator {
     ]);
   }
 
-
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
@@ -728,6 +729,7 @@ class ClassGenerator {
         package: package,
         contextClass: className,
         contextProperty: propertyName,
+        explode: refer('explode'),
       );
     }
 
@@ -743,7 +745,7 @@ class ClassGenerator {
             buildEmptyMapStringString(),
           )
           .statement,
-          
+
       _buildExplodeParsingLogic(),
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
@@ -814,13 +816,14 @@ class ClassGenerator {
       }
     }
 
-    final returnStatement = properties.isEmpty
-        ? buildEmptyMapStringString().code
-        : Block.of([
-            const Code('return '),
-            buildMapStringStringType().code,
-            Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
-          ]);
+    final returnStatement =
+        properties.isEmpty
+            ? buildEmptyMapStringString().code
+            : Block.of([
+              const Code('return '),
+              buildMapStringStringType().code,
+              Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
+            ]);
 
     return Method(
       (b) =>

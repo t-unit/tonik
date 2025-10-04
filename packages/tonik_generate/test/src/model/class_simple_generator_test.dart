@@ -212,7 +212,7 @@ void main() {
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
             }
           }
-          return Order(status: Status.fromSimple(values['status']));
+          return Order(status: Status.fromSimple(values['status'], explode: explode));
         }
       ''';
       expect(
@@ -417,7 +417,9 @@ void main() {
                 values[Uri.decodeComponent(parts[i])] = parts[i + 1];
               }
             }
-            return Container(value: PrimitiveOneOf.fromSimple(values['value']));
+            return Container(
+              value: PrimitiveOneOf.fromSimple(values['value'], explode: explode),
+            );
           }
         ''';
         expect(
@@ -630,7 +632,9 @@ return UserIdHolder(
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
             }
           }
-          return AliasHolder(value: PrimitiveOneOf.fromSimple(values['value']));
+          return AliasHolder(
+            value: PrimitiveOneOf.fromSimple(values['value'], explode: explode),
+          );
         }
       ''';
       expect(
