@@ -69,17 +69,11 @@ class OneOfGenerator {
     final variantNames = <DiscriminatedModel, String>{};
 
     for (final discriminatedModel in model.models) {
-      final rawName =
-          discriminatedModel.discriminatorValue ??
-          nameManager.modelName(discriminatedModel.model);
-
-      final dummyClass = ClassModel(
-        name: '$parentClassName${rawName.toPascalCase()}',
-        properties: const [],
-        context: model.context,
+      final uniqueVariantName = nameManager.generateVariantName(
+        parentClassName: parentClassName,
+        model: discriminatedModel.model,
+        discriminatorValue: discriminatedModel.discriminatorValue,
       );
-
-      final uniqueVariantName = nameManager.modelName(dummyClass);
       variantNames[discriminatedModel] = uniqueVariantName;
     }
 
@@ -152,7 +146,9 @@ class OneOfGenerator {
     String parentClassName,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    return model.models.map((discriminatedModel) {
+    final classes = <Class>[];
+
+    for (final discriminatedModel in model.models) {
       final variantName = variantNames[discriminatedModel]!;
 
       final typeRef = typeReference(
@@ -163,45 +159,49 @@ class OneOfGenerator {
 
       final hasCollectionValue = discriminatedModel.model is ListModel;
 
-      return Class(
-        (b) =>
-            b
-              ..name = variantName
-              ..extend = refer(parentClassName)
-              ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-              ..fields.add(
-                Field(
-                  (b) =>
-                      b
-                        ..name = 'value'
-                        ..modifier = FieldModifier.final$
-                        ..type = typeRef,
-                ),
-              )
-              ..constructors.add(
-                Constructor(
-                  (b) =>
-                      b
-                        ..constant = true
-                        ..requiredParameters.add(
-                          Parameter((b) => b..name = 'this.value'),
-                        ),
-                ),
-              )
-              ..methods.addAll([
-                generateEqualsMethod(
-                  className: variantName,
-                  properties: [
-                    (
-                      normalizedName: 'value',
-                      hasCollectionValue: hasCollectionValue,
-                    ),
-                  ],
-                ),
-                _buildHashCodeMethod(hasCollectionValue),
-              ]),
+      classes.add(
+        Class(
+          (b) =>
+              b
+                ..name = variantName
+                ..extend = refer(parentClassName)
+                ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+                ..fields.add(
+                  Field(
+                    (b) =>
+                        b
+                          ..name = 'value'
+                          ..modifier = FieldModifier.final$
+                          ..type = typeRef,
+                  ),
+                )
+                ..constructors.add(
+                  Constructor(
+                    (b) =>
+                        b
+                          ..constant = true
+                          ..requiredParameters.add(
+                            Parameter((b) => b..name = 'this.value'),
+                          ),
+                  ),
+                )
+                ..methods.addAll([
+                  generateEqualsMethod(
+                    className: variantName,
+                    properties: [
+                      (
+                        normalizedName: 'value',
+                        hasCollectionValue: hasCollectionValue,
+                      ),
+                    ],
+                  ),
+                  _buildHashCodeMethod(hasCollectionValue),
+                ]),
+        ),
       );
-    }).toList();
+    }
+
+    return classes;
   }
 
   Code _generateToJsonBody(
@@ -880,9 +880,10 @@ class OneOfGenerator {
       if (isSimple) {
         caseCodes.addAll([
           Code('$variantName() => '),
-          refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
-              .property('simple')
-              .code,
+          refer(
+            'EncodingShape',
+            'package:tonik_util/tonik_util.dart',
+          ).property('simple').code,
           const Code(',\n'),
         ]);
       } else {
@@ -901,12 +902,16 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) => b
-        ..name = 'currentEncodingShape'
-        ..type = MethodType.getter
-        ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
-        ..lambda = false
-        ..body = body,
+      (b) =>
+          b
+            ..name = 'currentEncodingShape'
+            ..type = MethodType.getter
+            ..returns = refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            )
+            ..lambda = false
+            ..body = body,
     );
   }
 
@@ -923,10 +928,11 @@ class OneOfGenerator {
       final discriminatorValue = m.discriminatorValue;
 
       if (isSimple) {
-        caseCodes..add(Code('$variantName() => '))
-        ..add(
-          buildEmptyMapStringString().code,
-        );
+        caseCodes
+          ..add(Code('$variantName() => '))
+          ..add(
+            buildEmptyMapStringString().code,
+          );
       } else {
         caseCodes.add(Code('$variantName(:final value) => '));
         if (discriminatorValue != null) {
@@ -989,17 +995,19 @@ class OneOfGenerator {
       final isSimple = m.model.encodingShape == EncodingShape.simple;
 
       if (isSimple) {
-        caseCodes..add(Code('$variantName() => '))
-        ..add(
-          buildEmptyMapStringString().code,
-        );
+        caseCodes
+          ..add(Code('$variantName() => '))
+          ..add(
+            buildEmptyMapStringString().code,
+          );
       } else {
-        caseCodes..add(Code('$variantName(:final value) => '))
-        ..add(
-          refer('value').property('formProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
-        );
+        caseCodes
+          ..add(Code('$variantName(:final value) => '))
+          ..add(
+            refer('value').property('formProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+          );
       }
       caseCodes.add(const Code(',\n'));
     }

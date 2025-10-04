@@ -151,7 +151,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (filter != null) {
@@ -218,7 +218,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
@@ -354,7 +354,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
@@ -456,7 +456,7 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({
-          Anonymous? filter,
+          AnonymousModel? filter,
           List<String>? tags,
           List<String>? sort,
         }) {
@@ -565,7 +565,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter, List<String>? tags}) {
+        String _queryParameters({AnonymousModel? filter, List<String>? tags}) {
           final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
@@ -643,7 +643,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({required Anonymous filter}) {
+        String _queryParameters({required AnonymousModel filter}) {
           final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           result.addAll(
@@ -708,7 +708,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (filter != null) {
@@ -919,7 +919,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter, AnonymousModel? range}) {
+        String _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
           final result = <ParameterEntry>[];
           const formEncoder = FormEncoder();
           if (filter != null) {
@@ -1077,7 +1077,7 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({
-          Anonymous? color,
+          AnonymousModel? color,
           required OneOfValue value,
           AnyOfCondition? condition,
           required AllOfComposite composite,
@@ -1186,7 +1186,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-         String _queryParameters({required List<Anonymous> colors}) {
+         String _queryParameters({required List<AnonymousModel> colors}) {
             final result = <ParameterEntry>[];
             const formEncoder = FormEncoder();
             result.addAll(
@@ -1260,7 +1260,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-          String _queryParameters({required List<List<Anonymous>> matrix}) {
+          String _queryParameters({required List<List<AnonymousModel>> matrix}) {
             final result = <ParameterEntry>[];
             const formEncoder = FormEncoder();
             result.addAll(

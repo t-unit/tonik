@@ -126,10 +126,10 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        Anonymous _parseResponse(Response<Object?> response) {
+        AnonymousModel _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return Anonymous.fromJson(response.data);
+              return AnonymousModel.fromJson(response.data);
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
@@ -554,7 +554,7 @@ String _parseResponse(Response<Object?> response) {
         MultiStatusOpResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return MultiStatusOpResponse200(body: User.fromJson(response.data));
+              return MultiStatusOpResponse200( body: User.fromJson(response.data), );
             case (400, _):
               return const MultiStatusOpResponse400();
             default:
@@ -638,10 +638,10 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        Anonymous _parseResponse(Response<Object?> response) {
+        AnonymousResponse _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return Anonymous(
+              return AnonymousResponse(
                   body: User.fromJson(response.data),
                   xRateLimit: response.headers
                     .value(r'x-rate-limit')
@@ -751,7 +751,7 @@ String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
               return CombinedOpResponse200(
-                body: Anonymous(
+                body: AnonymousResponse(
                   body: User.fromJson(response.data),
                   xRateLimit: response.headers
                     .value(r'x-rate-limit')

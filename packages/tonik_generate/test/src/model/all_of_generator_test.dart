@@ -1225,7 +1225,7 @@ void main() {
 
         const expectedToSimpleMethod = '''
           String toSimple({required bool explode, required bool allowEmpty}) {
-            throw SimpleDecodingException(
+            throw EncodingException(
               'Simple encoding not supported: contains complex types',
             );
           }
@@ -1393,30 +1393,6 @@ void main() {
               .map((p) => p.name)
               .toList();
       expect(paramNames, equals(['user', 'userModel']));
-    });
-
-    test('demonstrates need for better conflict resolution', () {
-      final model = AllOfModel(
-        name: 'CombinedModel',
-        models: {
-          ClassModel(
-            name: 'UserProfile',
-            properties: const [],
-            context: context,
-          ),
-          ClassModel(
-            name: 'User-Profile',
-            properties: const [],
-            context: context,
-          ),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-      final fieldNames = combinedClass.fields.map((f) => f.name).toList();
-
-      expect(fieldNames, equals(['userProfile', 'userProfileModel']));
     });
 
     test('handles primitive models with normalized type names', () {
@@ -1807,7 +1783,7 @@ void main() {
 
         const expectedToFormMethod = '''
           String toForm({required bool explode, required bool allowEmpty}) {
-            throw SimpleDecodingException(
+            throw EncodingException(
               'Simple encoding not supported: contains complex types',
             );
           }

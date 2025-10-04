@@ -468,7 +468,7 @@ void main() {
           NoDiscriminatorA(:final value) => value.formProperties(
             allowEmpty: allowEmpty,
           ),
-          NoDiscriminatorAnonymous() => <String, String>{},
+          NoDiscriminatorString() => <String, String>{},
         };
           }
         ''';

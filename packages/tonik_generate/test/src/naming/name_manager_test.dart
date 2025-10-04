@@ -157,9 +157,9 @@ void main() {
       );
 
       // First model gets Anonymous
-      expect(manager.modelName(models[0]), 'Anonymous');
+      expect(manager.modelName(models[0]), 'AnonymousModel');
       // Second model gets Model suffix
-      expect(manager.modelName(models[1]), 'AnonymousModel');
+      expect(manager.modelName(models[1]), 'AnonymousModel2');
 
       // Both responses have headers, so both should be cached
       expect(manager.responseNames(responses[0]).baseName, 'User');
@@ -352,25 +352,25 @@ void main() {
       );
 
       // Then: Verify cache contents
-      expect(manager.responsAndImplementationNames.length, 2);
+      expect(manager.responseAndImplementationNames.length, 2);
       expect(
-        manager.responsAndImplementationNames.containsKey(headersOnlyResponse),
+        manager.responseAndImplementationNames.containsKey(headersOnlyResponse),
         isTrue,
       );
       expect(
-        manager.responsAndImplementationNames.containsKey(completeResponse),
+        manager.responseAndImplementationNames.containsKey(completeResponse),
         isTrue,
       );
       expect(
-        manager.responsAndImplementationNames.containsKey(emptyResponse),
+        manager.responseAndImplementationNames.containsKey(emptyResponse),
         isFalse,
       );
       expect(
-        manager.responsAndImplementationNames.containsKey(bodyOnlyResponse),
+        manager.responseAndImplementationNames.containsKey(bodyOnlyResponse),
         isFalse,
       );
       expect(
-        manager.responsAndImplementationNames.containsKey(emptyAlias),
+        manager.responseAndImplementationNames.containsKey(emptyAlias),
         isFalse,
       );
 
@@ -531,7 +531,7 @@ void main() {
         servers: const [],
       );
 
-      expect(manager.responsAndImplementationNames.length, 1);
+      expect(manager.responseAndImplementationNames.length, 1);
       expect(manager.responseNames(multiBodyResponse).baseName, 'MultiBody');
     });
 

@@ -26,7 +26,7 @@ void main() {
           );
           expect(
             nameGenerator.generateModelName(model),
-            'PetFindByStatusGetResponses200Content',
+            'PetFindByStatusGetResponses200ContentModel',
           );
         });
 
@@ -44,7 +44,7 @@ void main() {
           );
           expect(
             nameGenerator.generateModelName(model),
-            'PetStoreGetResponses404Content',
+            'PetStoreGetResponses404ContentModel',
           );
         });
 
@@ -88,7 +88,7 @@ void main() {
 
           expect(
             nameGenerator.generateModelName(enumModel),
-            'PetFindByTagsParameter',
+            'PetFindByTagsParameterModel',
           );
         });
       });
@@ -152,7 +152,7 @@ void main() {
           context: Context.initial().pushAll(['api', 'models', 'user']),
         );
 
-        expect(nameGenerator.generateModelName(model), 'ApiModelsUser');
+        expect(nameGenerator.generateModelName(model), 'ApiModelsUserModel');
       });
 
       test('converts each path component to PascalCase before joining', () {
@@ -167,7 +167,7 @@ void main() {
 
         expect(
           nameGenerator.generateModelName(model),
-          'ApiUserManagementActiveUsers',
+          'ApiUserManagementActiveUsersModel',
         );
       });
 
@@ -197,7 +197,7 @@ void main() {
           context: Context.initial(),
         );
 
-        expect(nameGenerator.generateModelName(model), 'Anonymous');
+        expect(nameGenerator.generateModelName(model), 'AnonymousModel');
       });
 
       test('makes anonymous names unique using Model suffix', () {
@@ -218,9 +218,9 @@ void main() {
         final name2 = nameGenerator.generateModelName(model2);
         final name3 = nameGenerator.generateModelName(model3);
 
-        expect(name1, 'Anonymous');
-        expect(name2, 'AnonymousModel');
-        expect(name3, 'AnonymousModel2');
+        expect(name1, 'AnonymousModel');
+        expect(name2, 'AnonymousModel2');
+        expect(name3, 'AnonymousModel3');
       });
 
       group('number handling', () {
@@ -483,7 +483,10 @@ void main() {
             bodies: const {},
             context: Context.initial().pushAll(['api', 'models', 'user']),
           );
-          expect(nameGenerator.generateResponseName(response), 'ApiModelsUser');
+          expect(
+            nameGenerator.generateResponseName(response),
+            'ApiModelsUserResponse',
+          );
         });
 
         test('uses Anonymous for response without name or context path', () {
@@ -494,7 +497,10 @@ void main() {
             bodies: const {},
             context: Context.initial(),
           );
-          expect(nameGenerator.generateResponseName(response), 'Anonymous');
+          expect(
+            nameGenerator.generateResponseName(response),
+            'AnonymousResponse',
+          );
         });
 
         test('preserves numbers in names', () {
@@ -1205,6 +1211,193 @@ void main() {
         expect(result.serverMap[servers[3]], 'Server5');
         expect(result.customName, 'CustomServer');
         expect(result.baseName, 'Server');
+      });
+    });
+
+    group('generateDiscriminatorName', () {
+      test('generates meaningful names for primitive models', () {
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            StringModel(context: Context.initial()),
+          ),
+          'string',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            IntegerModel(context: Context.initial()),
+          ),
+          'int',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            BooleanModel(context: Context.initial()),
+          ),
+          'bool',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            NumberModel(context: Context.initial()),
+          ),
+          'number',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            DateModel(context: Context.initial()),
+          ),
+          'date',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            DateTimeModel(context: Context.initial()),
+          ),
+          'dateTime',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            DoubleModel(context: Context.initial()),
+          ),
+          'double',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            DecimalModel(context: Context.initial()),
+          ),
+          'decimal',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            UriModel(context: Context.initial()),
+          ),
+          'uri',
+        );
+      });
+
+      test('generates meaningful names for composite models', () {
+        final context = Context.initial();
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            AllOfModel(name: 'Test', models: const {}, context: context),
+          ),
+          'Test',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            OneOfModel(
+              name: 'Test',
+              models: const {},
+              discriminator: null,
+              context: context,
+            ),
+          ),
+          'Test',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            AnyOfModel(
+              name: 'Test',
+              models: const {},
+              discriminator: null,
+              context: context,
+            ),
+          ),
+          'Test',
+        );
+      });
+
+      test('generates generic names for composite models without names', () {
+        final context = Context.initial();
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            AllOfModel(name: null, models: const {}, context: context),
+          ),
+          'allOf',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            OneOfModel(
+              name: null,
+              models: const {},
+              discriminator: null,
+              context: context,
+            ),
+          ),
+          'oneOf',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            AnyOfModel(
+              name: null,
+              models: const {},
+              discriminator: null,
+              context: context,
+            ),
+          ),
+          'anyOf',
+        );
+      });
+
+      test('generates meaningful names for complex models', () {
+        final context = Context.initial();
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            ClassModel(name: 'User', properties: const [], context: context),
+          ),
+          'User',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            EnumModel<String>(
+              name: 'Status',
+              values: const <String>{},
+              isNullable: false,
+              context: context,
+            ),
+          ),
+          'Status',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            ListModel(
+              name: 'Items',
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          'list',
+        );
+      });
+
+      test('handles models without names', () {
+        final context = Context.initial();
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            ClassModel(properties: const [], context: context),
+          ),
+          'class',
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(
+            EnumModel<String>(
+              values: const <String>{},
+              isNullable: false,
+              context: context,
+            ),
+          ),
+          'enum',
+        );
+      });
+
+      test('handles alias models', () {
+        final context = Context.initial();
+        final aliasModel = AliasModel(
+          name: 'user-profile',
+          model: StringModel(context: context),
+          context: context,
+        );
+        expect(
+          nameGenerator.generateDiscriminatorName(aliasModel),
+          'UserProfile',
+        );
       });
     });
   });

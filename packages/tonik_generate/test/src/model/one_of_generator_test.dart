@@ -47,8 +47,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueAnonymous() => EncodingShape.simple,
-          ValueAnonymousModel() => EncodingShape.simple,
+          ValueString() => EncodingShape.simple,
+          ValueInt() => EncodingShape.simple,
         };
       }
     ''';
@@ -124,7 +124,7 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueAnonymous() => EncodingShape.simple,
+          ValueString() => EncodingShape.simple,
           ValueA(:final value) => value.currentEncodingShape,
         };
       }
@@ -661,6 +661,79 @@ void main() {
         collapseWhitespace(format(listClass.accept(emitter).toString())),
         collapseWhitespace(format(expectedMethod)),
       );
+    });
+
+    test('generates meaningful discriminator names for primitive models', () {
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: BooleanModel(context: context)),
+          (discriminatorValue: null, model: DateTimeModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final classNames = classes.map((c) => c.name).toList();
+
+      expect(classNames, contains('ValueString'));
+      expect(classNames, contains('ValueInt'));
+      expect(classNames, contains('ValueBool'));
+      expect(classNames, contains('ValueDateTime'));
+    });
+
+    test('generates meaningful discriminator names for complex models', () {
+      final classA = ClassModel(
+        name: 'ClassA',
+        properties: const [],
+        context: context,
+      );
+      final allOfModel = AllOfModel(
+        name: 'AllOfExample',
+        models: {classA},
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: classA),
+          (discriminatorValue: null, model: allOfModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final classNames = classes.map((c) => c.name).toList();
+
+      expect(classNames, contains('ValueClassA'));
+      expect(classNames, contains('ValueAllOfExample'));
+    });
+
+    test('generates meaningful discriminator names for alias models', () {
+      final aliasModel = AliasModel(
+        name: 'user-profile',
+        model: StringModel(context: context),
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: aliasModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final classNames = classes.map((c) => c.name).toList();
+
+      expect(classNames, contains('ValueUserProfile'));
     });
   });
 }

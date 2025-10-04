@@ -280,10 +280,10 @@ void main() {
         final result = generator.generateList(model);
         final typedef = generator.generateListTypedef(model);
 
-        expect(result.filename, 'anonymous.dart');
+        expect(result.filename, 'anonymous_model.dart');
         expect(
           typedef.accept(emitter).toString().trim(),
-          'typedef Anonymous = List<String>;',
+          'typedef AnonymousModel = List<String>;',
         );
       });
 

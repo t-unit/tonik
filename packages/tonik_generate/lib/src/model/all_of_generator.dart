@@ -4,7 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
@@ -67,7 +67,7 @@ class AllOfGenerator {
           );
         }).toList();
 
-    final normalizedProperties = normalizeProperties(pseudoProperties);
+    final normalizedProperties = _normalizeModelProperties(pseudoProperties);
     final properties = _buildPropertiesFromNormalized(normalizedProperties);
 
     return Class(
@@ -120,6 +120,31 @@ class AllOfGenerator {
             ..fields.addAll(_buildFields(normalizedProperties)),
     );
   }
+
+  List<({String normalizedName, Property property})> _normalizeModelProperties(
+    List<Property> properties,
+  ) {
+    final normalized = properties
+        .map(
+          (prop) => (
+            normalizedName: normalizeSingle(prop.name, preserveNumbers: true),
+            originalValue: prop,
+          ),
+        )
+        .toList();
+
+    final unique = ensureUniqueness(normalized);
+
+    return unique
+        .map(
+          (item) => (
+            normalizedName: item.normalizedName,
+            property: item.originalValue,
+          ),
+        )
+        .toList();
+  }
+
 
   List<Field> _buildFields(
     List<({String normalizedName, Property property})> normalizedProperties,
@@ -744,7 +769,7 @@ class AllOfGenerator {
               ])
               ..lambda = false
               ..body = Block.of([
-                generateSimpleDecodingExceptionExpression(
+                generateEncodingExceptionExpression(
                   'Simple encoding not supported: contains complex types',
                 ).statement,
               ]),
@@ -1249,7 +1274,7 @@ class AllOfGenerator {
                 ])
                 ..lambda = false
                 ..body = Block.of([
-                  generateSimpleDecodingExceptionExpression(
+                  generateEncodingExceptionExpression(
                     'Simple encoding not supported: contains complex types',
                   ).statement,
                 ]),

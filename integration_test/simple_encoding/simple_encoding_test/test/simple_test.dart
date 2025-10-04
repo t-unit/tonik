@@ -69,9 +69,9 @@ void main() {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testAnyOfCompositeInPath(
       dynamicValue: DynamicCompositeValue(
-        entityType: EntityTypePerson(
+        entityType: EntityTypePersonEntity(
           PersonEntity(
-            $type: PersonEntityType.person,
+            $type: PersonEntityTypeModel.person,
             firstName: 'John',
             lastName: 'Doe',
             age: 30,
@@ -230,9 +230,9 @@ void main() {
   test('testOneOfInHeader Person', () async {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testOneOfInHeader(
-      entity: EntityTypePerson(
+      entity: EntityTypePersonEntity(
         PersonEntity(
-          $type: PersonEntityType.person,
+          $type: PersonEntityTypeModel.person,
           firstName: 'John',
           lastName: 'Doe',
           age: 30,
@@ -249,9 +249,9 @@ void main() {
   test('testOneOfInHeader Company', () async {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testOneOfInHeader(
-      entity: const EntityTypeCompany(
+      entity: const EntityTypeCompanyEntity(
         CompanyEntity(
-          $type: CompanyEntityType.company,
+          $type: CompanyEntityTypeModel.company,
           companyName: 'Capyboi GmbH',
         ),
       ),
@@ -265,13 +265,13 @@ void main() {
   test('testOneOfInHeader System', () async {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testOneOfInHeader(
-      entity: const EntityTypeSystem(
+      entity: const EntityTypeSystemEntity(
         SystemEntity(
-          $type: SystemEntityType.system,
+          $type: SystemEntityTypeModel.system,
           systemId: '1',
           version: '1.0.0',
           active: true,
-          config: SystemEntityConfig(
+          config: SystemEntityConfigModel(
             timeout: 1000,
             retries: -1,
           ),

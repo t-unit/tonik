@@ -5,7 +5,7 @@ import 'package:tonik_util/tonik_util.dart';
 void main() {
   group('OneOfPrimitive', () {
     test('string', () {
-      final oneOf = OneOfPrimitiveOneOfPrimitiveModel('string');
+      final oneOf = OneOfPrimitiveString('string');
       expect(oneOf.toJson(), 'string');
       expect(oneOf.toForm(explode: true, allowEmpty: true), 'string');
       expect(oneOf.toSimple(explode: true, allowEmpty: true), 'string');
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('integer', () {
-      final oneOf = OneOfPrimitiveOneOfPrimitiveModel2(1);
+      final oneOf = OneOfPrimitiveInt(1);
       expect(oneOf.toJson(), 1);
       expect(oneOf.toForm(explode: true, allowEmpty: true), '1');
       expect(oneOf.toSimple(explode: true, allowEmpty: true), '1');
@@ -67,7 +67,7 @@ void main() {
 
   group('OneOfMixed', () {
     test('string', () {
-      final oneOf = OneOfMixedOneOfMixedModel('my value');
+      final oneOf = OneOfMixedString('my value');
       expect(oneOf.toJson(), 'my value');
       expect(oneOf.toForm(explode: true, allowEmpty: true), 'my+value');
       expect(oneOf.toSimple(explode: true, allowEmpty: true), 'my%20value');
@@ -99,7 +99,7 @@ void main() {
     group('oneOfPrimitive', () {
       test('string', () {
         final oneOf = NestedOneOfInOneOfOneOfPrimitive(
-          OneOfPrimitiveOneOfPrimitiveModel('string'),
+          OneOfPrimitiveString('string'),
         );
         expect(oneOf.toJson(), 'string');
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'string');
@@ -109,9 +109,7 @@ void main() {
       });
 
       test('integer', () {
-        final oneOf = NestedOneOfInOneOfOneOfPrimitive(
-          OneOfPrimitiveOneOfPrimitiveModel2(1),
-        );
+        final oneOf = NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveInt(1));
         expect(oneOf.toJson(), 1);
         expect(oneOf.toForm(explode: true, allowEmpty: true), '1');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), '1');
@@ -200,7 +198,7 @@ void main() {
 
     group('string', () {
       test('string', () {
-        final oneOf = NestedAllOfInOneOfNestedAllOfInOneOfModel('Peter');
+        final oneOf = NestedAllOfInOneOfString('Peter');
         expect(oneOf.toJson(), 'Peter');
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'Peter');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), 'Peter');
@@ -268,7 +266,7 @@ void main() {
 
     group('boolean', () {
       test('boolean', () {
-        final oneOf = NestedAnyOfInOneOfNestedAnyOfInOneOfModel(false);
+        final oneOf = NestedAnyOfInOneOfBool(false);
         expect(oneOf.toJson(), false);
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'false');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), 'false');
@@ -283,9 +281,7 @@ void main() {
       group('OneOfPrimitive', () {
         test('string', () {
           final oneOf = DeepNestedOneOfNestedOneOfInOneOf(
-            NestedOneOfInOneOfOneOfPrimitive(
-              OneOfPrimitiveOneOfPrimitiveModel('string'),
-            ),
+            NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveString('string')),
           );
           expect(oneOf.toJson(), 'string');
           expect(oneOf.toForm(explode: true, allowEmpty: true), 'string');
@@ -296,9 +292,7 @@ void main() {
 
         test('integer', () {
           final oneOf = DeepNestedOneOfNestedOneOfInOneOf(
-            NestedOneOfInOneOfOneOfPrimitive(
-              OneOfPrimitiveOneOfPrimitiveModel2(1),
-            ),
+            NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveInt(1)),
           );
           expect(oneOf.toJson(), 1);
           expect(oneOf.toForm(explode: true, allowEmpty: true), '1');
@@ -353,9 +347,7 @@ void main() {
   group('TowLevelOneOf', () {
     group('oneOf', () {
       test('string', () {
-        final oneOf = TwoLevelOneOfTwoLevelOneOfModel(
-          TwoLevelOneOfModelTwoLevelOneOfOneOf('Mark'),
-        );
+        final oneOf = TwoLevelOneOfOneOf(TwoLevelOneOfModelString('Mark'));
         expect(oneOf.toJson(), 'Mark');
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'Mark');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), 'Mark');
@@ -364,9 +356,7 @@ void main() {
       });
 
       test('integer', () {
-        final oneOf = TwoLevelOneOfTwoLevelOneOfModel(
-          TwoLevelOneOfModelTwoLevelOneOfOneOfModel(1),
-        );
+        final oneOf = TwoLevelOneOfOneOf(TwoLevelOneOfModelInt(1));
         expect(oneOf.toJson(), 1);
         expect(oneOf.toForm(explode: true, allowEmpty: true), '1');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), '1');
@@ -377,7 +367,7 @@ void main() {
 
     group('boolean', () {
       test('boolean', () {
-        final oneOf = TwoLevelOneOfTwoLevelOneOfModel2(false);
+        final oneOf = TwoLevelOneOfBool(false);
         expect(oneOf.toJson(), false);
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'false');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), 'false');
@@ -390,12 +380,11 @@ void main() {
   group('TwoLevelMixedOneOfAllOf', () {
     group('allOf', () {
       test('allOf', () {
-        final oneOf = TwoLevelMixedOneOfAllOfTwoLevelMixedOneOfAllOfModel(
-          TwoLevelMixedOneOfAllOfModel(
+        final oneOf = TwoLevelMixedOneOfAllOfAllOf(
+          TwoLevelMixedOneOfAllOfAllOfModel(
             class1: Class1(name: 'Mark'),
-            twoLevelMixedOneOfAllOfAllOf: TwoLevelMixedOneOfAllOfAllOf(
-              timestamp: 400,
-            ),
+            twoLevelMixedOneOfAllOfAllOfModel2:
+                TwoLevelMixedOneOfAllOfAllOfModel2(timestamp: 400),
           ),
         );
         expect(oneOf.toJson(), {'name': 'Mark', 'timestamp': 400});
@@ -417,9 +406,7 @@ void main() {
     });
 
     test('string', () {
-      final oneOf = TwoLevelMixedOneOfAllOfTwoLevelMixedOneOfAllOfModel2(
-        'Mark',
-      );
+      final oneOf = TwoLevelMixedOneOfAllOfString('Mark');
       expect(oneOf.toJson(), 'Mark');
       expect(oneOf.toForm(explode: true, allowEmpty: true), 'Mark');
       expect(oneOf.toSimple(explode: true, allowEmpty: true), 'Mark');
@@ -433,9 +420,9 @@ void main() {
     group('oneOf', () {
       group('oneOf', () {
         test('string', () {
-          final oneOf = ThreeLevelOneOfThreeLevelOneOfModel(
-            ThreeLevelOneOfModelThreeLevelOneOfOneOf(
-              ThreeLevelOneOfOneOfThreeLevelOneOfOneOfOneOf('string'),
+          final oneOf = ThreeLevelOneOfOneOf(
+            ThreeLevelOneOfModelOneOf(
+              ThreeLevelOneOfOneOfModelString('string'),
             ),
           );
           expect(oneOf.toJson(), 'string');
@@ -446,10 +433,8 @@ void main() {
         });
 
         test('integer', () {
-          final oneOf = ThreeLevelOneOfThreeLevelOneOfModel(
-            ThreeLevelOneOfModelThreeLevelOneOfOneOf(
-              ThreeLevelOneOfOneOfThreeLevelOneOfOneOfOneOfModel(1),
-            ),
+          final oneOf = ThreeLevelOneOfOneOf(
+            ThreeLevelOneOfModelOneOf(ThreeLevelOneOfOneOfModelInt(1)),
           );
           expect(oneOf.toJson(), 1);
           expect(oneOf.toForm(explode: true, allowEmpty: true), '1');
@@ -461,9 +446,7 @@ void main() {
 
       group('boolean', () {
         test('boolean', () {
-          final oneOf = ThreeLevelOneOfThreeLevelOneOfModel(
-            ThreeLevelOneOfModelThreeLevelOneOfOneOfModel(true),
-          );
+          final oneOf = ThreeLevelOneOfOneOf(ThreeLevelOneOfModelBool(true));
           expect(oneOf.toJson(), true);
           expect(oneOf.toForm(explode: true, allowEmpty: true), 'true');
           expect(oneOf.toSimple(explode: true, allowEmpty: true), 'true');
@@ -475,7 +458,7 @@ void main() {
 
     group('number', () {
       test('number', () {
-        final oneOf = ThreeLevelOneOfThreeLevelOneOfModel2(-991);
+        final oneOf = ThreeLevelOneOfNumber(-991);
         expect(oneOf.toJson(), -991);
         expect(oneOf.toForm(explode: true, allowEmpty: true), '-991');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), '-991');
@@ -487,16 +470,17 @@ void main() {
 
   group('ThreeLevelMixedOneOfAllOfAnyOf', () {
     group('allOf', () {
-      test('anyfo string', () {
-        final oneOf =
-            ThreeLevelMixedOneOfAllOfAnyOfThreeLevelMixedOneOfAllOfAnyOfModel(
-              ThreeLevelMixedOneOfAllOfAnyOfModel(
-                threeLevelMixedOneOfAllOfAnyOfAllOf:
-                    ThreeLevelMixedOneOfAllOfAnyOfAllOf(string: 'string'),
-                threeLevelMixedOneOfAllOfAnyOfAllOfModel:
-                    ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(flag: false),
+      test('oneOf -> allOf -> anyOf (string) + object with flag', () {
+        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
+          threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
+                string: 'string',
+                int: 123,
               ),
-            );
+          threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: true),
+        );
+        final oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
 
         expect(oneOf.toJson, throwsA(isA<EncodingException>()));
         expect(
@@ -511,16 +495,18 @@ void main() {
         expect(oneOf.currentEncodingShape, EncodingShape.mixed);
       });
 
-      test('anyof integer', () {
-        final oneOf =
-            ThreeLevelMixedOneOfAllOfAnyOfThreeLevelMixedOneOfAllOfAnyOfModel(
-              ThreeLevelMixedOneOfAllOfAnyOfModel(
-                threeLevelMixedOneOfAllOfAnyOfAllOf:
-                    ThreeLevelMixedOneOfAllOfAnyOfAllOf(int: 123),
-                threeLevelMixedOneOfAllOfAnyOfAllOfModel:
-                    ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(flag: false),
+      test('oneOf -> allOf -> anyOf (integer) + object with flag', () {
+        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
+          threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
+                string: null,
+                int: 456,
               ),
-            );
+          threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: false),
+        );
+        final oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
+
         expect(oneOf.toJson, throwsA(isA<EncodingException>()));
         expect(
           () => oneOf.toForm(explode: true, allowEmpty: true),
@@ -532,6 +518,18 @@ void main() {
         );
 
         expect(oneOf.currentEncodingShape, EncodingShape.mixed);
+      });
+
+      test('Class1', () {
+        final oneOf = ThreeLevelMixedOneOfAllOfAnyOfClass1(
+          Class1(name: 'test'),
+        );
+
+        expect(oneOf.toJson(), {'name': 'test'});
+        expect(oneOf.toForm(explode: true, allowEmpty: true), 'name=test');
+        expect(oneOf.toSimple(explode: true, allowEmpty: true), 'name=test');
+
+        expect(oneOf.currentEncodingShape, EncodingShape.complex);
       });
     });
 
@@ -551,9 +549,7 @@ void main() {
     group('TwoLevelOneOf', () {
       test('string', () {
         final oneOf = ThreeLevelWithRefsTwoLevelOneOf(
-          TwoLevelOneOfTwoLevelOneOfModel(
-            TwoLevelOneOfModelTwoLevelOneOfOneOf('string'),
-          ),
+          TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
         );
         expect(oneOf.toJson(), 'string');
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'string');
@@ -564,9 +560,7 @@ void main() {
 
       test('integer', () {
         final oneOf = ThreeLevelWithRefsTwoLevelOneOf(
-          TwoLevelOneOfTwoLevelOneOfModel(
-            TwoLevelOneOfModelTwoLevelOneOfOneOfModel(1),
-          ),
+          TwoLevelOneOfOneOf(TwoLevelOneOfModelInt(1)),
         );
         expect(oneOf.toJson(), 1);
         expect(oneOf.toForm(explode: true, allowEmpty: true), '1');
@@ -580,7 +574,7 @@ void main() {
 
     group('string', () {
       test('string', () {
-        final oneOf = ThreeLevelWithRefsThreeLevelWithRefsModel('string');
+        final oneOf = ThreeLevelWithRefsString('string');
         expect(oneOf.toJson(), 'string');
         expect(oneOf.toForm(explode: true, allowEmpty: true), 'string');
         expect(oneOf.toSimple(explode: true, allowEmpty: true), 'string');
@@ -592,18 +586,26 @@ void main() {
 
   group('ComplexNestedMix2', () {
     test('allOf', () {
-      final oneOf = ComplexNestedMix2ComplexNestedMix2Model(
-        ComplexNestedMix2Model(
+      final oneOf = ComplexNestedMix2AllOf(
+        ComplexNestedMix2AllOfModel2(
           class1: Class1(name: 'Mark'),
-          complexNestedMix2AllOf: ComplexNestedMix2AllOf(
-            extra: 123,
-          ),
+          complexNestedMix2AllOfModel: ComplexNestedMix2AllOfModel(extra: 123),
         ),
       );
+
       expect(oneOf.toJson(), {'name': 'Mark', 'extra': 123});
-      expect(oneOf.toForm(explode: true, allowEmpty: true), 'name=Mark&extra=123');
-      expect(oneOf.toSimple(explode: true, allowEmpty: true), 'name=Mark,extra=123');
-      expect(oneOf.toSimple(explode: false, allowEmpty: true), 'name,Mark,extra,123');
+      expect(
+        oneOf.toForm(explode: true, allowEmpty: true),
+        'name=Mark&extra=123',
+      );
+      expect(
+        oneOf.toSimple(explode: true, allowEmpty: true),
+        'name=Mark,extra=123',
+      );
+      expect(
+        oneOf.toSimple(explode: false, allowEmpty: true),
+        'name,Mark,extra,123',
+      );
 
       expect(oneOf.currentEncodingShape, EncodingShape.complex);
     });
