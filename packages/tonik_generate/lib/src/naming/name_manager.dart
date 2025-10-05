@@ -156,15 +156,6 @@ class NameManager {
   String tagName(Tag tag) =>
       tagNames.putIfAbsent(tag, () => generator.generateTagName(tag));
 
-  /// Generates a meaningful discriminator name based on the model type.
-  ///
-  /// This method delegates to the underlying NameGenerator and is used by
-  /// composite models (OneOf, AllOf, AnyOf) to generate meaningful
-  /// discriminator names for their variants when no explicit discriminator
-  /// value is provided.
-  String generateDiscriminatorName(Model model) =>
-      generator.generateDiscriminatorName(model);
-
   /// Generates a unique variant name for composite model variants.
   ///
   /// This method generates unique names for OneOf, AllOf, and AnyOf variants

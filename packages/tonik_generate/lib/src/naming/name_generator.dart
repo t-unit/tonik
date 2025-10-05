@@ -36,7 +36,7 @@ class NameGenerator {
       return _makeUnique(variantName, '');
     }
 
-    final rawName = discriminatorValue ?? generateDiscriminatorName(model);
+    final rawName = discriminatorValue ?? _generateDiscriminatorName(model);
     final variantName = '$parentClassName${rawName.toPascalCase()}';
     return _makeUnique(variantName, '');
   }
@@ -105,7 +105,7 @@ class NameGenerator {
   /// - ClassModel with name 'User' → 'User'
   /// - ClassModel without name → 'class'
   /// - Model with alias → uses alias name
-  String generateDiscriminatorName(Model model) {
+  String _generateDiscriminatorName(Model model) {
     return switch (model) {
       AliasModel() => _sanitizeName(model.name),
       StringModel() => 'string',
