@@ -21,7 +21,7 @@ A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 This project is currently in an early development phase. Users should expect:
 - Breaking changes in future releases
 - Potential bugs and issues
-- Missing features (see Roadmap section below)
+- Missing features (see Roadmap)
 
 
 ## Motivation
@@ -33,11 +33,9 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 
 ## Features and Documentation
 
-
-
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
 - [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
-- [Autentication](ttps://github.com/t-unit/tonik/blob/main/docs/authentication.md)
+- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md)
 
 more coming soon
 

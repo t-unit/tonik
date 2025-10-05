@@ -14,7 +14,7 @@ dependencies:
   tonik_core: ^0.0.9
 
 dev_dependencies:
-  build_runner: ^2.3.3
-  json_serializable: ^6.8.0
-  test: ^1.24.0
+  build_runner: ^2.9.0
+  json_serializable: ^6.11.1
+  test: ^1.26.3
   very_good_analysis: ^10.0.0
