@@ -253,7 +253,13 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedGetter = '''
-        EncodingShape get currentEncodingShape => EncodingShape.mixed;
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          shapes.add(value.currentEncodingShape);
+          shapes.add(int.currentEncodingShape);
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
       ''';
 
       expect(
@@ -1871,12 +1877,15 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          if (flexibleValue.currentEncodingShape != EncodingShape.simple) {
+          if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode mixed allOf Combined: flexibleValue is complex',
+              'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          return int.toForm(explode: explode, allowEmpty: allowEmpty);
+          final map = <String, String>{};
+          map.addAll(int.formProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleValue.formProperties(allowEmpty: allowEmpty));
+          return map.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1887,12 +1896,14 @@ void main() {
 
       const expectedToSimpleMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          if (flexibleValue.currentEncodingShape != EncodingShape.simple) {
+          if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode mixed allOf Combined: flexibleValue is complex',
+              'Simple encoding not supported: contains complex types',
             );
           }
-          return int.toSimple(explode: explode, allowEmpty: allowEmpty);
+          return simpleProperties(
+            allowEmpty: allowEmpty,
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1942,12 +1953,15 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          if (choice.currentEncodingShape != EncodingShape.simple) {
+          if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode mixed allOf Combined: choice is complex',
+              'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          return int.toForm(explode: explode, allowEmpty: allowEmpty);
+          final map = <String, String>{};
+          map.addAll(int.formProperties(allowEmpty: allowEmpty));
+          map.addAll(choice.formProperties(allowEmpty: allowEmpty));
+          return map.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -2023,17 +2037,16 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          if (flexibleA.currentEncodingShape != EncodingShape.simple) {
+          if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode mixed allOf MultiDynamic: flexibleA is complex',
+              'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          if (flexibleB.currentEncodingShape != EncodingShape.simple) {
-            throw EncodingException(
-              'Cannot encode mixed allOf MultiDynamic: flexibleB is complex',
-            );
-          }
-          return string.toForm(explode: explode, allowEmpty: allowEmpty);
+          final map = <String, String>{};
+          map.addAll(string.formProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleA.formProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleB.formProperties(allowEmpty: allowEmpty));
+          return map.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -2111,17 +2124,17 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          if (flexibleValue.currentEncodingShape != EncodingShape.simple) {
+          if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode mixed allOf ComplexMixed: flexibleValue is complex',
+              'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          if (choice.currentEncodingShape != EncodingShape.simple) {
-            throw EncodingException(
-              'Cannot encode mixed allOf ComplexMixed: choice is complex',
-            );
-          }
-          return string.toForm(explode: explode, allowEmpty: allowEmpty);
+          final map = <String, String>{};
+          map.addAll(string.formProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleValue.formProperties(allowEmpty: allowEmpty));
+          map.addAll(choice.formProperties(allowEmpty: allowEmpty));
+          map.addAll(bigDecimal.formProperties(allowEmpty: allowEmpty));
+          return map.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
