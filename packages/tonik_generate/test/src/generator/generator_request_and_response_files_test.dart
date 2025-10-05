@@ -117,6 +117,7 @@ void main() {
         'request_body',
       );
       expect(Directory(requestDir).existsSync(), isTrue);
+
       expect(
         File(path.join(requestDir, 'multi_body.dart')).existsSync(),
         isTrue,

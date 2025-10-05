@@ -45,7 +45,7 @@ void main() {
       expect(responseBody.name, isA<String?>());
       expect(responseBody.photoUrls, isA<List<String>>());
       expect(responseBody.tags, isA<List<Tag>?>());
-      expect(responseBody.status, isA<PetStatus?>());
+      expect(responseBody.status, isA<PetStatusModel?>());
       expect(responseBody.category, isA<Category?>());
     });
 
@@ -58,7 +58,7 @@ void main() {
           name: 'Bert',
           photoUrls: ['https://example.com/bert.jpg'],
           tags: [Tag(id: 1, name: 'tag1')],
-          status: PetStatus.available,
+          status: PetStatusModel.available,
           category: Category(id: 1, name: 'category1'),
         ),
       );
@@ -111,7 +111,7 @@ void main() {
           name: 'Alfie',
           photoUrls: ['https://example.com/alfie.jpg'],
           tags: [Tag(id: 1, name: 'tag1')],
-          status: PetStatus.available,
+          status: PetStatusModel.available,
           category: Category(id: 1, name: 'category1'),
         ),
       );
@@ -131,7 +131,7 @@ void main() {
           name: 'Alfie',
           photoUrls: ['https://example.com/alfie.jpg'],
           tags: [Tag(id: 1, name: 'tag1')],
-          status: PetStatus.available,
+          status: PetStatusModel.available,
           category: Category(id: 1, name: 'category1'),
         ),
       );
@@ -149,7 +149,7 @@ void main() {
           name: 'Rex',
           photoUrls: ['https://example.com/rex.jpg'],
           tags: [Tag(id: -383928, name: 'tag3309')],
-          status: PetStatus.pending,
+          status: PetStatusModel.pending,
         ),
       );
       final success = pet as TonikSuccess<AddPetResponse>;
@@ -163,7 +163,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.findPetsByStatus(
-        status: PetFindByStatusParameters.available,
+        status: PetFindByStatusParametersModel.available,
       );
       final success = pet as TonikSuccess<FindPetsByStatusResponse>;
       expect(success.response.statusCode, 200);
@@ -176,7 +176,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '400');
 
       final pet = await petApi.findPetsByStatus(
-        status: PetFindByStatusParameters.pending,
+        status: PetFindByStatusParametersModel.pending,
       );
       final success = pet as TonikSuccess<FindPetsByStatusResponse>;
       expect(success.response.statusCode, 400);
@@ -187,7 +187,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '321');
 
       final pet = await petApi.findPetsByStatus(
-        status: PetFindByStatusParameters.sold,
+        status: PetFindByStatusParametersModel.sold,
       );
       final success = pet as TonikSuccess<FindPetsByStatusResponse>;
       expect(success.response.statusCode, 321);

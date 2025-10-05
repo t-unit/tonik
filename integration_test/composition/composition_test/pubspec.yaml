@@ -1,0 +1,22 @@
+name: composition_test
+description: A sample command-line application.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  dio: ^5.8.0
+  composition_api:
+    path: ../composition_api
+  path: ^1.9.1
+  tonik_util: ^0.0.8
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^9.0.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

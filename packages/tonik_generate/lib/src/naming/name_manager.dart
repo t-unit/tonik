@@ -15,6 +15,8 @@ class NameManager {
 
   final tagNames = <Tag, String>{};
 
+  final variantNames = <String, String>{};
+
   @visibleForTesting
   final Map<
     String,
@@ -38,7 +40,7 @@ class NameManager {
     Response,
     ({String baseName, Map<String, String> implementationNames})
   >
-  responsAndImplementationNames = {};
+  responseAndImplementationNames = {};
 
   final log = Logger('NameManager');
 
@@ -52,20 +54,37 @@ class NameManager {
     required Iterable<Tag> tags,
     required Iterable<Server> servers,
   }) {
-    final serversList = servers.toList();
-    final result = serverNames(serversList);
+    final result = serverNames(servers.toList());
     for (final entry in result.serverMap.entries) {
       _logServerName(entry.value, entry.key);
     }
 
-    for (final model in models.where(
+    // Process models in order: root-level models first, then nested models
+    // This prevents naming conflicts where nested models get processed
+    // before root models
+    final sortedModels =
+        models.toList()..sort((a, b) {
+          // First, sort by context path length (shorter paths first)
+          final aPathLength = a.context.path.length;
+          final bPathLength = b.context.path.length;
+          if (aPathLength != bPathLength) {
+            return aPathLength.compareTo(bPathLength);
+          }
+
+          // For models with the same path length, sort by name
+          final aName = a is NamedModel ? (a.name ?? '') : '';
+          final bName = b is NamedModel ? (b.name ?? '') : '';
+          return aName.compareTo(bName);
+        });
+
+    for (final model in sortedModels.where(
       (m) => m is NamedModel && m.name != null,
     )) {
       final name = modelName(model);
       _logModelName(name, model);
     }
 
-    for (final model in models.where(
+    for (final model in sortedModels.where(
       (m) => m is! NamedModel || m.name == null,
     )) {
       final name = modelName(model);
@@ -112,7 +131,7 @@ class NameManager {
   ({String baseName, Map<String, String> implementationNames}) responseNames(
     Response response,
   ) {
-    return responsAndImplementationNames.putIfAbsent(response, () {
+    return responseAndImplementationNames.putIfAbsent(response, () {
       final baseName = generator.generateResponseName(response);
       final implementationNames = <String, String>{};
 
@@ -136,6 +155,35 @@ class NameManager {
   /// Gets a cached or generates a new unique API class name for a tag.
   String tagName(Tag tag) =>
       tagNames.putIfAbsent(tag, () => generator.generateTagName(tag));
+
+  /// Generates a unique variant name for composite model variants.
+  ///
+  /// This method generates unique names for OneOf, AllOf, and AnyOf variants
+  /// without creating dummy models. It uses the original model's name
+  /// if available, falls back to discriminator values, and ensures uniqueness
+  /// within the context.
+  ///
+  /// Parameters:
+  /// - [parentClassName]: The name of the parent composite model
+  /// - [model]: The model to generate a variant name for
+  /// - [discriminatorValue]: Optional discriminator value to use as fallback
+  String generateVariantName({
+    required String parentClassName,
+    required Model model,
+    required String? discriminatorValue,
+  }) {
+    // Create a cache key for this variant
+    final cacheKey =
+        '$parentClassName:${model.hashCode}:${discriminatorValue ?? 'null'}';
+
+    return variantNames.putIfAbsent(cacheKey, () {
+      return generator.generateVariantName(
+        parentClassName,
+        model,
+        discriminatorValue,
+      );
+    });
+  }
 
   /// Returns the base name and subclass names for a request body.
   ///

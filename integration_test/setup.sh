@@ -40,6 +40,7 @@ rm -rf music_streaming/music_streaming_api
 rm -rf gov/gov_api
 rm -rf simple_encoding/simple_encoding_api
 rm -rf fastify_type_provider_zod/fastify_type_provider_zod_api
+rm -rf composition/composition_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore  --log-level verbose
@@ -61,6 +62,10 @@ cd simple_encoding/simple_encoding_api && dart pub get && cd ../..
 dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod --log-level verbose
 add_dependency_overrides "fastify_type_provider_zod/fastify_type_provider_zod_api/pubspec.yaml"
 cd fastify_type_provider_zod/fastify_type_provider_zod_api && dart pub get && cd ../..
+
+dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition --log-level verbose
+add_dependency_overrides "composition/composition_api/pubspec.yaml"
+cd composition/composition_api && dart pub get && cd ../..
 
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then

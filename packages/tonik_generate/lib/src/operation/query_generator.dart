@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -33,15 +34,19 @@ class QueryGenerator {
 
     for (final encoding
         in queryParameters.map((q) => q.parameter.encoding).toSet()) {
+      if (encoding == QueryParameterEncoding.form) {
+        continue;
+      }
+
       final encoderName = switch (encoding) {
-        QueryParameterEncoding.form => 'formEncoder',
+        QueryParameterEncoding.form => 'unreachable',
         QueryParameterEncoding.spaceDelimited => 'spacedEncoder',
         QueryParameterEncoding.pipeDelimited => 'pipedEncoder',
         QueryParameterEncoding.deepObject => 'deepObjectEncoder',
       };
 
       final encoderClass = switch (encoding) {
-        QueryParameterEncoding.form => 'FormEncoder',
+        QueryParameterEncoding.form => 'Unreachable',
         QueryParameterEncoding.spaceDelimited => 'DelimitedEncoder',
         QueryParameterEncoding.pipeDelimited => 'DelimitedEncoder',
         QueryParameterEncoding.deepObject => 'DeepObjectEncoder',
@@ -104,34 +109,83 @@ class QueryGenerator {
       );
 
       final encoding = resolvedParam.encoding;
-      final encoderName = encoders[encoding]!;
-      final valueExpression = buildToJsonQueryParameterExpression(
-        paramName,
-        resolvedParam,
-      );
-      final value = refer(valueExpression);
 
-      final encodeCall = refer(encoderName)
-          .property('encode')
-          .call(
-            [
-              if (encoding == QueryParameterEncoding.deepObject ||
-                  encoding == QueryParameterEncoding.form)
-                literalString(resolvedParam.rawName, raw: true),
-              value,
-            ],
-            {
-              'explode': literalBool(resolvedParam.explode),
-              'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-            },
+      if (encoding == QueryParameterEncoding.form) {
+        final valueExpression = buildToFormQueryParameterExpression(
+          paramName,
+          resolvedParam,
+          explode: resolvedParam.explode,
+          allowEmpty: resolvedParam.allowEmptyValue,
+        );
+
+        if (!resolvedParam.isRequired) {
+          body.add(
+            Block.of([
+              Code('if ($paramName != null) {'),
+              Code(
+                "result.add((name: r'${resolvedParam.rawName}', "
+                'value: $valueExpression,),);',
+              ),
+              const Code('}'),
+            ]),
           );
+        } else {
+          body.add(
+            Code(
+              "result.add((name: r'${resolvedParam.rawName}', "
+              'value: $valueExpression,),);',
+            ),
+          );
+        }
+      } else {
+        final encoderName = encoders[encoding]!;
+        final valueExpression = buildToJsonQueryParameterExpression(
+          paramName,
+          resolvedParam,
+        );
+        final value = refer(valueExpression);
 
-      if (!resolvedParam.isRequired) {
-        body.add(
-          Block.of([
-            Code('if ($paramName != null) {'),
-            if (encoding == QueryParameterEncoding.spaceDelimited ||
-                encoding == QueryParameterEncoding.pipeDelimited)
+        final encodeCall = refer(encoderName)
+            .property('encode')
+            .call(
+              [
+                if (encoding == QueryParameterEncoding.deepObject)
+                  literalString(resolvedParam.rawName, raw: true),
+                value,
+              ],
+              {
+                'explode': literalBool(resolvedParam.explode),
+                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+              },
+            );
+
+        if (!resolvedParam.isRequired) {
+          body.add(
+            Block.of([
+              Code('if ($paramName != null) {'),
+              if (encoding == QueryParameterEncoding.spaceDelimited ||
+                  encoding == QueryParameterEncoding.pipeDelimited)
+                Block.of([
+                  Code('for (final value in $encoderName.encode('),
+                  value.code,
+                  Code(', explode: ${resolvedParam.explode}, '),
+                  Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
+                  const Code(')) {'),
+                  Code(
+                    "result.add((name: '${resolvedParam.rawName}', "
+                    'value: value));',
+                  ),
+                  const Code('}'),
+                ])
+              else
+                refer('result').property('addAll').call([encodeCall]).statement,
+              const Code('}'),
+            ]),
+          );
+        } else {
+          if (encoding == QueryParameterEncoding.spaceDelimited ||
+              encoding == QueryParameterEncoding.pipeDelimited) {
+            body.add(
               Block.of([
                 Code('for (final value in $encoderName.encode('),
                 value.code,
@@ -143,32 +197,13 @@ class QueryGenerator {
                   'value: value));',
                 ),
                 const Code('}'),
-              ])
-            else
+              ]),
+            );
+          } else {
+            body.add(
               refer('result').property('addAll').call([encodeCall]).statement,
-            const Code('}'),
-          ]),
-        );
-      } else {
-        if (encoding == QueryParameterEncoding.spaceDelimited ||
-            encoding == QueryParameterEncoding.pipeDelimited) {
-          body.add(
-            Block.of([
-              Code('for (final value in $encoderName.encode('),
-              value.code,
-              Code(', explode: ${resolvedParam.explode}, '),
-              Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
-              const Code(')) {'),
-              Code(
-                "result.add((name: '${resolvedParam.rawName}', value: value));",
-              ),
-              const Code('}'),
-            ]),
-          );
-        } else {
-          body.add(
-            refer('result').property('addAll').call([encodeCall]).statement,
-          );
+            );
+          }
         }
       }
     }

@@ -109,7 +109,15 @@ extension SimpleStringMapEncoder on Map<String, String> {
   /// The [allowEmpty] parameter controls whether empty maps are allowed:
   /// - When `true`, empty maps are encoded as empty strings
   /// - When `false`, empty maps throw an exception
-  String toSimple({required bool explode, required bool allowEmpty}) {
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the values are already
+  /// URL-encoded. When `true`, values are not re-encoded to prevent double
+  /// encoding.
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool alreadyEncoded = false,
+  }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
@@ -124,14 +132,17 @@ extension SimpleStringMapEncoder on Map<String, String> {
           .map(
             (e) =>
                 '${Uri.encodeComponent(e.key)}='
-                '${Uri.encodeComponent(e.value)}',
+                '${alreadyEncoded ? e.value : Uri.encodeComponent(e.value)}',
           )
           .join(',');
     } else {
       // explode=false: key1,value1,key2,value2
       return entries
           .expand(
-            (e) => [Uri.encodeComponent(e.key), Uri.encodeComponent(e.value)],
+            (e) => [
+              Uri.encodeComponent(e.key),
+              if (alreadyEncoded) e.value else Uri.encodeComponent(e.value),
+            ],
           )
           .join(',');
     }

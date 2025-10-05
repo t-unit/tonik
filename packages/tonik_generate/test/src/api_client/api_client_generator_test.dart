@@ -88,7 +88,10 @@ void main() {
         expect(constructor.initializers.length, 1);
         final initializerCode =
             constructor.initializers.first.accept(emitter).toString();
-        expect(initializerCode, '_getUser = GetUser(server.dio)');
+        expect(
+          initializerCode,
+          '_getUser = GetUser(server.dio)',
+        );
       });
 
       test('generates API client class with server instead of Dio', () {
@@ -142,7 +145,10 @@ void main() {
         expect(constructor.initializers.length, 1);
         final initializerCode =
             constructor.initializers.first.accept(emitter).toString();
-        expect(initializerCode, '_getUser = GetUser(server.dio)');
+        expect(
+          initializerCode,
+          '_getUser = GetUser(server.dio)',
+        );
       });
 
       test(

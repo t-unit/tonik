@@ -1112,5 +1112,127 @@ void main() {
         expect(result3, equals(result4));
       });
     });
+
+    group('alreadyEncoded parameter behavior', () {
+      test(
+        'alreadyEncoded=true prevents double encoding with explode=true',
+        () {
+          const value = {'email': 'user%40example.com', 'name': 'John%20Doe'};
+          expect(
+            value.toSimple(
+              explode: true,
+              allowEmpty: true,
+              alreadyEncoded: true,
+            ),
+            'email=user%40example.com,name=John%20Doe',
+          );
+        },
+      );
+
+      test(
+        'alreadyEncoded=true prevents double encoding with explode=false',
+        () {
+          const value = {'email': 'user%40example.com', 'name': 'John%20Doe'};
+          expect(
+            value.toSimple(
+              explode: false,
+              allowEmpty: true,
+              alreadyEncoded: true,
+            ),
+            'email,user%40example.com,name,John%20Doe',
+          );
+        },
+      );
+
+      test('alreadyEncoded=false encodes values normally', () {
+        const value = {'email': 'user@example.com', 'name': 'John Doe'};
+        expect(
+          value.toSimple(
+            explode: true,
+            allowEmpty: true,
+          ),
+          'email=user%40example.com,name=John%20Doe',
+        );
+      });
+
+      test(
+        'alreadyEncoded=false encodes values normally with explode=false',
+        () {
+          const value = {'email': 'user@example.com', 'name': 'John Doe'};
+          expect(
+            value.toSimple(
+              explode: false,
+              allowEmpty: true,
+            ),
+            'email,user%40example.com,name,John%20Doe',
+          );
+        },
+      );
+
+      test('alreadyEncoded parameter defaults to false', () {
+        const value = {'email': 'user@example.com', 'name': 'John Doe'};
+        expect(
+          value.toSimple(explode: true, allowEmpty: true),
+          value.toSimple(
+            explode: true,
+            allowEmpty: true,
+          ),
+        );
+      });
+
+      test('alreadyEncoded=true with mixed encoded and unencoded values', () {
+        const value = {
+          'encoded': 'user%40example.com',
+          'unencoded': 'user@example.com',
+        };
+        expect(
+          value.toSimple(
+            explode: true,
+            allowEmpty: true,
+            alreadyEncoded: true,
+          ),
+          'encoded=user%40example.com,unencoded=user@example.com',
+        );
+      });
+
+      test('alreadyEncoded=true with special characters in keys', () {
+        const value = {
+          'user name': 'John%20Doe',
+          'email@domain': 'test%40example.com',
+        };
+        expect(
+          value.toSimple(
+            explode: true,
+            allowEmpty: true,
+            alreadyEncoded: true,
+          ),
+          'user%20name=John%20Doe,email%40domain=test%40example.com',
+        );
+      });
+
+      test('alreadyEncoded=true with empty values', () {
+        const value = {'key1': '', 'key2': 'value'};
+        expect(
+          value.toSimple(
+            explode: true,
+            allowEmpty: true,
+            alreadyEncoded: true,
+          ),
+          'key1=,key2=value',
+        );
+      });
+
+      test('alreadyEncoded=true with Unicode characters', () {
+        const value = {'café': '你好', 'emoji': '👍'};
+        expect(
+          value.toSimple(
+            explode: true,
+            allowEmpty: true,
+            alreadyEncoded: true,
+          ),
+          'caf%C3%A9=你好,emoji=👍',
+        );
+      });
+    });
   });
 }

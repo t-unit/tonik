@@ -17,16 +17,114 @@ class NameGenerator {
   ///
   /// Names are generated with the following priority:
   /// 1. Model's explicit name if available
-  /// 2. Combined context path components
-  /// 3. 'Anonymous' as fallback
+  /// 2. Model type-based name for primitive models
+  /// 3. Combined context path components
+  /// 4. 'Anonymous' as fallback
+  /// Generates a unique variant name for composite models
+  /// (OneOf, AnyOf, AllOf).
+  ///
+  /// This method handles the specific naming requirements for variant classes
+  /// within composite models, ensuring proper uniqueness tracking.
+  String generateVariantName(
+    String parentClassName,
+    Model model,
+    String? discriminatorValue,
+  ) {
+    if (model is NamedModel && model.name != null && model.name!.isNotEmpty) {
+      final sanitizedName = _sanitizeName(model.name!);
+      final variantName = '$parentClassName$sanitizedName';
+      return _makeUnique(variantName, '');
+    }
+
+    final rawName = discriminatorValue ?? _generateDiscriminatorName(model);
+    final variantName = '$parentClassName${rawName.toPascalCase()}';
+    return _makeUnique(variantName, '');
+  }
+
   String generateModelName(Model model) {
     String? name;
     if (model is NamedModel) {
       name = model.name;
     }
 
-    final baseName = _generateBaseName(name: name, context: model.context);
-    return _makeUnique(baseName, _modelSuffix);
+    String baseName;
+    if (name == null || name.isEmpty) {
+      final typeBasedName = _getPrimitiveModelName(model);
+      if (typeBasedName != null) {
+        baseName = typeBasedName;
+      } else {
+        baseName = _generateBaseName(name: name, context: model.context);
+      }
+    } else {
+      baseName = _generateBaseName(name: name, context: model.context);
+    }
+
+    if (name == null || name.isEmpty) {
+      final typeSuffix = switch (model) {
+        AllOfModel() => 'AllOf',
+        OneOfModel() => 'OneOf',
+        AnyOfModel() => 'AnyOf',
+        PrimitiveModel() => '',
+        _ => 'Model',
+      };
+
+      if (typeSuffix.isNotEmpty && !baseName.endsWith(typeSuffix)) {
+        baseName = '$baseName$typeSuffix';
+      }
+      return _makeUnique(baseName, _modelSuffix);
+    } else {
+      return _makeUniqueWithTypeSuffix(baseName, _modelSuffix);
+    }
+  }
+
+  /// Get a type-based name for primitive models
+  String? _getPrimitiveModelName(Model model) {
+    return switch (model) {
+      StringModel() => 'String',
+      IntegerModel() => 'Int',
+      BooleanModel() => 'Bool',
+      NumberModel() => 'Number',
+      DateModel() => 'Date',
+      DateTimeModel() => 'DateTime',
+      DoubleModel() => 'Double',
+      DecimalModel() => 'Decimal',
+      UriModel() => 'Uri',
+      _ => null,
+    };
+  }
+
+  /// Generates a meaningful discriminator name based on the model type.
+  ///
+  /// This method is used by composite models (OneOf, AllOf, AnyOf) to generate
+  /// meaningful discriminator names for their variants when no explicit
+  /// discriminator value is provided.
+  ///
+  /// Examples:
+  /// - StringModel → 'string'
+  /// - AllOfModel → 'allOf'
+  /// - ClassModel with name 'User' → 'User'
+  /// - ClassModel without name → 'class'
+  /// - Model with alias → uses alias name
+  String _generateDiscriminatorName(Model model) {
+    return switch (model) {
+      AliasModel() => _sanitizeName(model.name),
+      StringModel() => 'string',
+      IntegerModel() => 'int',
+      BooleanModel() => 'bool',
+      NumberModel() => 'number',
+      DateModel() => 'date',
+      DateTimeModel() => 'dateTime',
+      DoubleModel() => 'double',
+      DecimalModel() => 'decimal',
+      UriModel() => 'uri',
+      AllOfModel() => model.name ?? 'allOf',
+      AnyOfModel() => model.name ?? 'anyOf',
+      OneOfModel() => model.name ?? 'oneOf',
+      ClassModel() => model.name ?? 'class',
+      EnumModel() => model.name ?? 'enum',
+      ListModel() => 'list',
+      _ => 'unknown',
+    };
   }
 
   /// Generates a unique response class name from a Response object.
@@ -40,7 +138,13 @@ class NameGenerator {
       name: response.name,
       context: response.context,
     );
-    return _makeUnique(baseName, _responseSuffix);
+
+    // Only add Response suffix for anonymous responses
+    if (response.name == null || (response.name?.isEmpty ?? false)) {
+      return _makeUnique(baseName, _responseSuffix);
+    } else {
+      return _makeUniqueWithTypeSuffix(baseName, _responseSuffix);
+    }
   }
 
   /// Generates a unique name for an operation.
@@ -54,7 +158,7 @@ class NameGenerator {
       name: operation.operationId,
       context: operation.context,
     );
-    return _makeUnique(baseName, _operationSuffix);
+    return _makeUniqueWithTypeSuffix(baseName, _operationSuffix);
   }
 
   /// Generates a unique API class name for a tag.
@@ -88,7 +192,12 @@ class NameGenerator {
       name: requestBody.name,
       context: requestBody.context,
     );
-    final uniqueBaseName = _makeUnique(baseName, _requestBodySuffix);
+
+    // Only add RequestBody suffix for anonymous request bodies
+    final uniqueBaseName =
+        requestBody.name == null || (requestBody.name?.isEmpty ?? false)
+            ? _makeUnique(baseName, _requestBodySuffix)
+            : _makeUniqueWithTypeSuffix(baseName, _requestBodySuffix);
 
     final subclassNames = <String, String>{};
     if (requestBody is RequestBodyObject && requestBody.contentCount > 1) {
@@ -133,7 +242,10 @@ class NameGenerator {
       return 'Unknown';
     }
 
-    final baseName = _makeUnique('${operationName}Response', 'Wrapper');
+    final baseName = _makeUniqueWithTypeSuffix(
+      '${operationName}Response',
+      'Wrapper',
+    );
 
     final subclassNames = <ResponseStatus, String>{};
     for (final entry in responses.entries) {
@@ -282,26 +394,66 @@ class NameGenerator {
   }
 
   /// Makes a name unique by first trying to add the given suffix,
-  /// then appending an incrementing number if necessary.
+  /// then appending appropriate type-specific suffix for
+  /// conflicts, then numeric suffixes.
   ///
   /// Example with Model suffix: [User, User, User]
   /// → [User, UserModel, UserModel2]
   /// Example with Response suffix: [User, User]
   /// → [User, UserResponse, UserResponse2]
   String _makeUnique(String name, String suffix) {
+    if (suffix.isEmpty) {
+      if (!_usedNames.contains(name)) {
+        _usedNames.add(name);
+        return name;
+      }
+
+      final nameWithModel =
+          name.endsWith(_modelSuffix) ? name : '$name$_modelSuffix';
+      if (!_usedNames.contains(nameWithModel)) {
+        _usedNames.add(nameWithModel);
+        return nameWithModel;
+      }
+
+      return _addNumberSuffix(nameWithModel);
+    }
+
+    final nameWithSuffix = name.endsWith(suffix) ? name : '$name$suffix';
+
+    if (!_usedNames.contains(nameWithSuffix)) {
+      _usedNames.add(nameWithSuffix);
+      return nameWithSuffix;
+    }
+
+    return _addNumberSuffix(nameWithSuffix);
+  }
+
+  /// Makes a name unique by first trying the name as-is,
+  /// then adding the type-specific suffix for conflicts.
+  String _makeUniqueWithTypeSuffix(String name, String typeSuffix) {
     if (!_usedNames.contains(name)) {
       _usedNames.add(name);
       return name;
     }
 
-    final baseName = name.endsWith(suffix) ? name : '$name$suffix';
-
-    if (!name.endsWith(suffix) && !_usedNames.contains(baseName)) {
-      _usedNames.add(baseName);
-      return baseName;
+    final nameWithTypeSuffix =
+        name.endsWith(typeSuffix) ? name : '$name$typeSuffix';
+    if (!_usedNames.contains(nameWithTypeSuffix)) {
+      _usedNames.add(nameWithTypeSuffix);
+      return nameWithTypeSuffix;
     }
 
-    return _addNumberSuffix(baseName);
+    return _addNumberSuffix(nameWithTypeSuffix);
+  }
+
+  /// Makes a name unique by first trying the name as-is,
+  /// then adding numeric suffixes.
+  String _makeUniqueWithNumericSuffix(String name) {
+    if (!_usedNames.contains(name)) {
+      _usedNames.add(name);
+      return name;
+    }
+    return _addNumberSuffix(name);
   }
 
   String _addNumberSuffix(String baseName) {
@@ -376,13 +528,13 @@ class NameGenerator {
 
   ({String baseName, Map<Server, String> serverMap, String customName})
   _generateServerNames(List<Server> servers, List<String> uniqueNames) {
-    final baseName = _makeUnique('Server', '');
+    final baseName = _makeUniqueWithNumericSuffix('Server');
 
     final resultMap = <Server, String>{};
     for (var index = 0; index < servers.length; index++) {
       final server = servers[index];
       final name = uniqueNames[index];
-      resultMap[server] = _makeUnique('${name}Server', '');
+      resultMap[server] = _makeUniqueWithNumericSuffix('${name}Server');
     }
 
     final customName =
@@ -398,16 +550,16 @@ class NameGenerator {
 
   ({String baseName, Map<Server, String> serverMap, String customName})
   _generateFallbackServerNames(List<Server> servers) {
-    final baseName = _makeUnique('Server', '');
+    final baseName = _makeUniqueWithNumericSuffix('Server');
 
     final resultMap = <Server, String>{};
     for (final server in servers) {
-      resultMap[server] = _makeUnique('Server', '');
+      resultMap[server] = _makeUniqueWithNumericSuffix('Server');
     }
     return (
       baseName: baseName,
       serverMap: resultMap,
-      customName: _makeUnique('CustomServer', ''),
+      customName: _makeUniqueWithNumericSuffix('CustomServer'),
     );
   }
 }

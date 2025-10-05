@@ -50,6 +50,100 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
+    test('generates currentEncodingShape getter for class with properties', () {
+      final model = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.complex',
+      );
+    });
+
+    test('generates currentEncodingShape getter for empty class', () {
+      final model = ClassModel(
+        name: 'Empty',
+        properties: const [],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.complex',
+      );
+    });
+
+    test('generates currentEncodingShape getter for complex class', () {
+      final nestedClass = ClassModel(
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+
+      final model = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'address',
+            model: nestedClass,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      expect(getter.type, MethodType.getter);
+      expect(
+        getter.returns?.accept(emitter).toString(),
+        'EncodingShape',
+      );
+      expect(getter.lambda, isTrue);
+      expect(
+        getter.body?.accept(emitter).toString(),
+        'EncodingShape.complex',
+      );
+    });
+
     test('generates constructor with required and optional parameters', () {
       final model = ClassModel(
         name: 'User',
@@ -373,45 +467,6 @@ void main() {
       });
     });
 
-    test(
-      'generates constructor with required fields before non-required fields',
-      () {
-        final model = ClassModel(
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-        final constructor = result.constructors.first;
-
-        expect(constructor.optionalParameters, hasLength(2));
-
-        final idParam = constructor.optionalParameters[0];
-        expect(idParam.name, 'id');
-        expect(idParam.required, isTrue);
-
-        final nameParam = constructor.optionalParameters[1];
-        expect(nameParam.name, 'name');
-        expect(nameParam.required, isFalse);
-      },
-    );
-
     test('generates field with Uri type for UriModel property', () {
       final model = ClassModel(
         name: 'Resource',
@@ -530,10 +585,11 @@ void main() {
 
         const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
-              r'id': id.toSimple(explode: false, allowEmpty: allowEmpty),
-              if (name != null) r'name': name!.toSimple(explode: false, allowEmpty: allowEmpty),
-            };
+            return Map<String,String> 
+              .from({
+                r'id': id.toSimple(explode: false, allowEmpty: allowEmpty),
+                if (name != null) r'name': name!.toSimple(explode: false, allowEmpty: allowEmpty),
+              });
           }
         ''';
 
@@ -688,13 +744,13 @@ void main() {
 
         const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
+            return Map<String,String> .from({
               r'status': status.toSimple(explode: false, allowEmpty: allowEmpty),
               r'created_at': createdAt.toSimple(explode: false, allowEmpty: allowEmpty),
               if (price != null) r'price': price!.toSimple(explode: false, allowEmpty: allowEmpty),
               r'precise_value': preciseValue.toSimple(explode: false, allowEmpty: allowEmpty),
               if (releaseDate != null) r'release_date': releaseDate!.toSimple(explode: false, allowEmpty: allowEmpty),
-            };
+            });
           }
         ''';
 
@@ -730,10 +786,11 @@ void main() {
 
         const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
-              if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
-              if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
-            };
+            return Map<String,String> 
+              .from({
+                if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
+                if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
+              });
           }
         ''';
 
@@ -742,6 +799,614 @@ void main() {
           contains(collapseWhitespace(expectedSimplePropertiesMethod)),
         );
       });
+    });
+
+    group('form encoding', () {
+      test('generates fromForm constructor for simple properties', () {
+        final model = ClassModel(
+          name: 'SimpleModel',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'count',
+              model: IntegerModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        final fromFormConstructor = result.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+
+        expect(fromFormConstructor.factory, isTrue);
+        expect(fromFormConstructor.requiredParameters.length, 1);
+        expect(fromFormConstructor.requiredParameters.first.name, 'value');
+        expect(
+          fromFormConstructor.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'String?',
+        );
+        expect(fromFormConstructor.optionalParameters.length, 1);
+        expect(fromFormConstructor.optionalParameters.first.name, 'explode');
+        expect(fromFormConstructor.optionalParameters.first.required, isTrue);
+        expect(fromFormConstructor.optionalParameters.first.named, isTrue);
+      });
+
+      test(
+        'generates fromForm constructor that throws for complex properties',
+        () {
+          final model = ClassModel(
+            name: 'ComplexModel',
+            properties: [
+              Property(
+                name: 'items',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          const expectedFromFormBody = '''
+          throw SimpleDecodingException('Form encoding not supported for ComplexModel: contains complex types');
+        ''';
+
+          expect(
+            collapseWhitespace(result.accept(emitter).toString()),
+            contains(collapseWhitespace(expectedFromFormBody)),
+          );
+        },
+      );
+
+      test('generates fromForm constructor for empty model', () {
+        final model = ClassModel(
+          name: 'EmptyModel',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedFromFormBody = '''
+          factory EmptyModel.fromForm(String? value, {required bool explode, }) {
+            return EmptyModel();
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedFromFormBody)),
+        );
+      });
+
+      test('generates toForm method for simple properties', () {
+        final model = ClassModel(
+          name: 'SimpleModel',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'count',
+              model: IntegerModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        final toFormMethod = result.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+
+        expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toFormMethod.optionalParameters.length, 2);
+        expect(toFormMethod.optionalParameters.first.name, 'explode');
+        expect(toFormMethod.optionalParameters.first.required, isTrue);
+        expect(toFormMethod.optionalParameters.first.named, isTrue);
+        expect(toFormMethod.optionalParameters.last.name, 'allowEmpty');
+        expect(toFormMethod.optionalParameters.last.required, isTrue);
+        expect(toFormMethod.optionalParameters.last.named, isTrue);
+      });
+
+      test('generates toForm method that throws for complex properties', () {
+        final model = ClassModel(
+          name: 'ComplexModel',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedToFormBody = '''
+          String toForm({required bool explode, required bool allowEmpty, }) {
+            throw EncodingException('toForm not supported for ComplexModel: contains nested data');
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedToFormBody)),
+        );
+      });
+
+      test('generates toForm method for empty model', () {
+        final model = ClassModel(
+          name: 'EmptyModel',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedToFormMethod = '''
+          String toForm({required bool explode, required bool allowEmpty, }) => '';
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedToFormMethod)),
+        );
+      });
+
+      test('generates formProperties method for simple properties', () {
+        final model = ClassModel(
+          name: 'SimpleModel',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'count',
+              model: IntegerModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedFormPropertiesMethod = '''
+          Map<String,String> formProperties({bool allowEmpty = true}) {
+            return Map<String,String>
+              .from({
+                r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
+                if (count != null) r'count': count!.toForm(explode: false, allowEmpty: allowEmpty),
+            });
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedFormPropertiesMethod)),
+        );
+      });
+
+      test(
+        'generates formProperties method that throws for complex properties',
+        () {
+          final model = ClassModel(
+            name: 'ComplexModel',
+            properties: [
+              Property(
+                name: 'items',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          const expectedFormPropertiesMethod = '''
+          Map<String,String> formProperties({bool allowEmpty = true}) {
+            throw EncodingException('formProperties not supported for ComplexModel: contains nested data');
+          }
+        ''';
+
+          expect(
+            collapseWhitespace(result.accept(emitter).toString()),
+            contains(collapseWhitespace(expectedFormPropertiesMethod)),
+          );
+        },
+      );
+
+      test('handles required nullable properties in formProperties', () {
+        final model = ClassModel(
+          name: 'RequiredNullableModel',
+          properties: [
+            Property(
+              name: 'nullable_name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'nullable_count',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedFormPropertiesMethod = '''
+          Map<String,String> formProperties({bool allowEmpty = true}) {
+            return Map<String,String> .from({
+              if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toForm(explode: false, allowEmpty: allowEmpty) ?? '',
+              if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toForm(explode: false, allowEmpty: allowEmpty) ?? '',
+            });
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedFormPropertiesMethod)),
+        );
+      });
+
+      test(
+        'generates fromForm constructor with mixed property types',
+        () {
+          final model = ClassModel(
+            name: 'UserForm',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'age',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'email',
+                model: StringModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          // Test constructor exists using object introspection
+          final fromFormConstructor = result.constructors.firstWhere(
+            (c) => c.name == 'fromForm',
+          );
+          expect(fromFormConstructor.factory, isTrue);
+          expect(fromFormConstructor.requiredParameters.length, 1);
+          expect(fromFormConstructor.optionalParameters.length, 1);
+
+          // Test parameter types
+          expect(
+            fromFormConstructor.requiredParameters.first.type
+                ?.accept(emitter)
+                .toString(),
+            'String?',
+          );
+          expect(
+            fromFormConstructor.optionalParameters.first.type
+                ?.accept(emitter)
+                .toString(),
+            'bool',
+          );
+          final generatedCode = result.accept(emitter).toString();
+          const expectedReturnStatement = '''
+            return UserForm(name: values['name'].decodeFormString(context: r'UserForm.name'), age: values['age'].decodeFormInt(context: r'UserForm.age'), email: values['email'].decodeFormNullableString(context: r'UserForm.email'), );
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedReturnStatement)),
+          );
+        },
+      );
+
+      test(
+        'generates toForm method with mixed property types',
+        () {
+          final model = ClassModel(
+            name: 'UserForm',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'age',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'email',
+                model: StringModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          const expectedToFormMethod = '''
+          String toForm({required bool explode, required bool allowEmpty, }) {
+            return formProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
+        ''';
+
+          expect(
+            collapseWhitespace(result.accept(emitter).toString()),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates formProperties method with mixed property types',
+        () {
+          final model = ClassModel(
+            name: 'ProductForm',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'price',
+                model: DoubleModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'active',
+                model: BooleanModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'created_at',
+                model: DateTimeModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          const expectedFormPropertiesMethod = '''
+          Map<String,String> formProperties({bool allowEmpty = true}) {
+            return Map<String,String>
+              .from({
+                r'id': id.toForm(explode: false, allowEmpty: allowEmpty),
+                r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
+                if (price != null) r'price': price!.toForm(explode: false, allowEmpty: allowEmpty),
+                r'active': active.toForm(explode: false, allowEmpty: allowEmpty),
+                if (createdAt != null) r'created_at': createdAt!.toForm(explode: false, allowEmpty: allowEmpty),
+            });
+          }
+        ''';
+
+          expect(
+            collapseWhitespace(result.accept(emitter).toString()),
+            contains(collapseWhitespace(expectedFormPropertiesMethod)),
+          );
+        },
+      );
+
+      test('generates fromForm constructor with all primitive types', () {
+        final model = ClassModel(
+          name: 'AllTypesForm',
+          properties: [
+            Property(
+              name: 'text',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'number',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'decimal',
+              model: DoubleModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'flag',
+              model: BooleanModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'timestamp',
+              model: DateTimeModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'date_only',
+              model: DateModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'precise_amount',
+              model: DecimalModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'website',
+              model: UriModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        final fromFormConstructor = result.constructors.firstWhere(
+          (c) => c.name == 'fromForm',
+        );
+        expect(fromFormConstructor.factory, isTrue);
+        expect(fromFormConstructor.requiredParameters.length, 1);
+        expect(fromFormConstructor.optionalParameters.length, 1);
+
+        const expectedReturnStatement = '''
+          return AllTypesForm(text: values['text'].decodeFormString(context: r'AllTypesForm.text'), number: values['number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: values['decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: values['flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: values['timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: values['date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: values['precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: values['website'].decodeFormUri(context: r'AllTypesForm.website'), );
+        ''';
+
+        expect(
+          collapseWhitespace(result.accept(emitter).toString()),
+          contains(collapseWhitespace(expectedReturnStatement)),
+        );
+      });
+
+      test(
+        'generates fromForm constructor with required nullable properties',
+        () {
+          final model = ClassModel(
+            name: 'NullableForm',
+            properties: [
+              Property(
+                name: 'required_nullable_name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'required_nullable_count',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          final fromFormConstructor = result.constructors.firstWhere(
+            (c) => c.name == 'fromForm',
+          );
+          expect(fromFormConstructor.factory, isTrue);
+          expect(fromFormConstructor.requiredParameters.length, 1);
+          expect(fromFormConstructor.optionalParameters.length, 1);
+
+          const expectedReturnStatement = '''
+            return NullableForm(requiredNullableName: values['required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: values['required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
+          ''';
+
+          expect(
+            collapseWhitespace(result.accept(emitter).toString()),
+            contains(collapseWhitespace(expectedReturnStatement)),
+          );
+        },
+      );
     });
   });
 }

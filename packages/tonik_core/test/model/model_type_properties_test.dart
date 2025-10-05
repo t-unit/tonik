@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   group('EncodingShape property', () {

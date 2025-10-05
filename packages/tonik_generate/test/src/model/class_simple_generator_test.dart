@@ -122,12 +122,6 @@ void main() {
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
             }
           }
-          const expectedKeys = <String>{ 'flag', 'count', 'label', 'created', 'amount', };
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
-            }
-          }
           return Sample(
             flag: values['flag'].decodeSimpleBool(context: r'Sample.flag'),
             count: values['count'].decodeSimpleInt(context: r'Sample.count'),
@@ -218,13 +212,7 @@ void main() {
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
             }
           }
-          const expectedKeys = <String>{'status'};
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
-            }
-          }
-          return Order(status: Status.fromSimple(values['status']));
+          return Order(status: Status.fromSimple(values['status'], explode: explode));
         }
       ''';
       expect(
@@ -324,12 +312,6 @@ void main() {
             }
             for (var i = 0; i < parts.length; i += 2) {
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
-          const expectedKeys = <String>{ 'flag', 'count', 'label', 'created', 'amount', };
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
             }
           }
           return NullableSample(
@@ -435,13 +417,9 @@ void main() {
                 values[Uri.decodeComponent(parts[i])] = parts[i + 1];
               }
             }
-            const expectedKeys = <String>{'value'};
-            for (final key in values.keys) {
-              if (!expectedKeys.contains(key)) {
-                throw SimpleDecodingException('Unknown property: $key');
-              }
-            }
-            return Container(value: PrimitiveOneOf.fromSimple(values['value']));
+            return Container(
+              value: PrimitiveOneOf.fromSimple(values['value'], explode: explode),
+            );
           }
         ''';
         expect(
@@ -654,13 +632,9 @@ return UserIdHolder(
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
             }
           }
-          const expectedKeys = <String>{'value'};
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
-            }
-          }
-          return AliasHolder(value: PrimitiveOneOf.fromSimple(values['value']));
+          return AliasHolder(
+            value: PrimitiveOneOf.fromSimple(values['value'], explode: explode),
+          );
         }
       ''';
       expect(
@@ -896,12 +870,6 @@ return UserIdHolder(
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
             }
           }
-          const expectedKeys = <String>{'endpoint'};
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
-            }
-          }
           return Resource(
             endpoint: values['endpoint'].decodeSimpleUri(
               context: r'Resource.endpoint',
@@ -980,12 +948,6 @@ return UserIdHolder(
             }
             for (var i = 0; i < parts.length; i += 2) {
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
-          const expectedKeys = <String>{'callback'};
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
             }
           }
           return Resource(
@@ -1087,12 +1049,6 @@ return UserIdHolder(
             }
             for (var i = 0; i < parts.length; i += 2) {
               values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
-          const expectedKeys = <String>{'name', 'endpoint', 'port', 'callback'};
-          for (final key in values.keys) {
-            if (!expectedKeys.contains(key)) {
-              throw SimpleDecodingException('Unknown property: $key');
             }
           }
           return Resource(

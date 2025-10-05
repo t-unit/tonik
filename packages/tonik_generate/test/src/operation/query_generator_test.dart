@@ -151,18 +151,13 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
           if (filter != null) {
-            result.addAll(
-              formEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: false,
-                allowEmpty: true,
-              ),
-            );
+            result.add((
+              name: r'filter',
+              value: filter.toForm(explode: false, allowEmpty: true),
+            ));
           }
           return result.map((e) => '${e.name}=${e.value}').join('&');
         }
@@ -218,7 +213,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
@@ -354,7 +349,7 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
           const deepObjectEncoder = DeepObjectEncoder();
           if (filter != null) {
@@ -456,7 +451,7 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({
-          Anonymous? filter,
+          AnonymousModel? filter,
           List<String>? tags,
           List<String>? sort,
         }) {
@@ -565,19 +560,14 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter, List<String>? tags}) {
+        String _queryParameters({AnonymousModel? filter, List<String>? tags}) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           if (filter != null) {
-            result.addAll(
-              formEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: true,
-                allowEmpty: true,
-              ),
-            );
+            result.add((
+              name: r'filter',
+              value: filter.toForm(explode: true, allowEmpty: true),
+            ));
           }
           if (tags != null) {
             for (final value in spacedEncoder.encode(
@@ -643,17 +633,12 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({required Anonymous filter}) {
+        String _queryParameters({required AnonymousModel filter}) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
-          result.addAll(
-            formEncoder.encode(
-              r'filter',
-              filter.toJson(),
-              explode: false,
-              allowEmpty: false,
-            ),
-          );
+          result.add((
+            name: r'filter',
+            value: filter.toForm(explode: false, allowEmpty: false),
+          ));
           return result.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
@@ -708,18 +693,13 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter}) {
+        String _queryParameters({AnonymousModel? filter}) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
           if (filter != null) {
-            result.addAll(
-              formEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: false,
-                allowEmpty: false,
-              ),
-            );
+            result.add((
+              name: r'filter',
+              value: filter.toForm(explode: false, allowEmpty: false),
+            ));
           }
           return result.map((e) => '${e.name}=${e.value}').join('&');
         }
@@ -827,26 +807,29 @@ void main() {
           bool? active,
         }) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
           if (name != null) {
-            result.addAll(
-              formEncoder.encode(r'name', name, explode: false, allowEmpty: false),
-            );
+            result.add((
+              name: r'name',
+              value: name.toForm(explode: false, allowEmpty: false),
+            ));
           }
           if (tags != null) {
-            result.addAll(
-              formEncoder.encode(r'tags', tags, explode: false, allowEmpty: false),
-            );
+            result.add((
+              name: r'tags',
+              value: tags.toForm(explode: false, allowEmpty: false),
+            ));
           }
           if (age != null) {
-            result.addAll(
-              formEncoder.encode(r'age', age, explode: false, allowEmpty: false),
-            );
+            result.add((
+              name: r'age',
+              value: age.toForm(explode: false, allowEmpty: false),
+            ));
           }
           if (active != null) {
-            result.addAll(
-              formEncoder.encode(r'active', active, explode: false, allowEmpty: false),
-            );
+            result.add((
+              name: r'active',
+              value: active.toForm(explode: false, allowEmpty: false),
+            ));
           }
           return result.map((e) => '${e.name}=${e.value}').join('&');
         }
@@ -919,28 +902,19 @@ void main() {
       );
 
       const expectedMethod = r'''
-        String _queryParameters({Anonymous? filter, AnonymousModel? range}) {
+        String _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
           if (filter != null) {
-            result.addAll(
-              formEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: false,
-                allowEmpty: false,
-              ),
-            );
+            result.add((
+              name: r'filter',
+              value: filter.toForm(explode: false, allowEmpty: false),
+            ));
           }
           if (range != null) {
-            result.addAll(
-              formEncoder.encode(
-                r'range',
-                range.toJson(),
-                explode: false,
-                allowEmpty: false,
-              ),
-            );
+            result.add((
+              name: r'range',
+              value: range.toForm(explode: false, allowEmpty: false),
+            ));
           }
           return result.map((e) => '${e.name}=${e.value}').join('&');
         }
@@ -1077,25 +1051,20 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({
-          Anonymous? color,
+          AnonymousModel? color,
           required OneOfValue value,
           AnyOfCondition? condition,
           required AllOfComposite composite,
         }) {
           final result = <ParameterEntry>[];
-          const formEncoder = FormEncoder();
           const deepObjectEncoder = DeepObjectEncoder();
           final spacedEncoder = DelimitedEncoder.spaced();
           final pipedEncoder = DelimitedEncoder.piped();
           if (color != null) {
-            result.addAll(
-              formEncoder.encode(
-                r'color',
-                color.toJson(),
-                explode: false,
-                allowEmpty: true,
-              ),
-            );
+            result.add((
+              name: r'color',
+              value: color.toForm(explode: false, allowEmpty: true),
+            ));
           }
           result.addAll(
             deepObjectEncoder.encode(
@@ -1186,17 +1155,15 @@ void main() {
       );
 
       const expectedMethod = r'''
-         String _queryParameters({required List<Anonymous> colors}) {
+         String _queryParameters({required List<AnonymousModel> colors}) {
             final result = <ParameterEntry>[];
-            const formEncoder = FormEncoder();
-            result.addAll(
-              formEncoder.encode(
-                r'colors',
-                colors.map((e) => e.toJson()).toList(),
-                explode: true,
-                allowEmpty: false,
-              ),
-            );
+            result.add((
+              name: r'colors',
+              value: colors
+                  .map((e) => e.toForm(explode: true, allowEmpty: false))
+                  .toList()
+                  .toForm(explode: true, allowEmpty: false),
+            ));
             return result.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
@@ -1260,17 +1227,20 @@ void main() {
       );
 
       const expectedMethod = r'''
-          String _queryParameters({required List<List<Anonymous>> matrix}) {
+          String _queryParameters({required List<List<AnonymousModel>> matrix}) {
             final result = <ParameterEntry>[];
-            const formEncoder = FormEncoder();
-            result.addAll(
-              formEncoder.encode(
-                r'matrix',
-                matrix.map((e) => e.map((e) => e.toJson()).toList()).toList(),
-                explode: true,
-                allowEmpty: false,
-              ),
-            );
+            result.add((
+              name: r'matrix',
+              value: matrix
+                  .map(
+                    (e) => e
+                        .map((e) => e.toForm(explode: true, allowEmpty: false))
+                        .toList()
+                        .toForm(explode: true, allowEmpty: false),
+                  )
+                  .toList()
+                  .toForm(explode: true, allowEmpty: false),
+            ));
             return result.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';

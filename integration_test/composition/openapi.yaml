@@ -1,0 +1,397 @@
+openapi: 3.0.4
+info:
+  title: Composition API
+  description: OpenAPI specification showcasing composition of models
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: composition
+    description: Operations demonstrating composition of models
+
+paths:
+  /health:
+    get:
+      operationId: health
+      tags:
+        - composition
+      summary: Health check
+      description: Health check endpoint
+      responses:
+        '200':
+          description: Successful response
+
+components:
+  schemas:
+    Class1:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    Class2:
+      type: object
+      required:
+        - number
+      properties:
+        number:
+          type: integer
+
+    Enum1:
+      type: string
+      enum:
+        - value1
+        - value2
+
+    Enum2:
+      type: integer
+      enum:
+        - 1
+        - 2
+
+    OneOfPrimitive: 
+      oneOf:
+        - type: string
+        - type: integer
+
+    OneOfComplex: 
+      oneOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Class2'
+
+    OneOfEnum: 
+      oneOf:
+        - $ref: '#/components/schemas/Enum1'
+        - $ref: '#/components/schemas/Enum2'
+
+    AllOfPrimitive: 
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+        - type: object
+          properties:
+            count:
+              type: integer
+
+    AllOfComplex: 
+      allOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Class2'
+
+    AllOfEnum: 
+      allOf:
+        - type: object
+          properties:
+            status:
+              $ref: '#/components/schemas/Enum1'
+        - type: object
+          properties:
+            priority:
+              $ref: '#/components/schemas/Enum2'
+
+    AnyOfPrimitive:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: boolean
+
+    AnyOfComplex:
+      anyOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Class2'
+
+    AnyOfEnum:
+      anyOf:
+        - $ref: '#/components/schemas/Enum1'
+        - $ref: '#/components/schemas/Enum2'
+
+    OneOfMixed: 
+      oneOf:
+        - type: string
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Enum1'
+
+    AllOfMixed: 
+      allOf:
+        - type: string
+        - $ref: '#/components/schemas/Class1'
+
+    AnyOfMixed:
+      anyOf:
+        - type: integer
+        - $ref: '#/components/schemas/Class2'
+        - $ref: '#/components/schemas/Enum2'
+
+    NestedOneOfInOneOf: 
+      oneOf:
+        - $ref: '#/components/schemas/OneOfPrimitive'
+        - $ref: '#/components/schemas/OneOfComplex'
+
+    NestedAllOfInAllOf: 
+      allOf:
+        - $ref: '#/components/schemas/AllOfComplex'
+        - type: object
+          properties:
+            extra:
+              type: string
+
+    NestedAnyOfInAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/AnyOfPrimitive'
+        - $ref: '#/components/schemas/AnyOfComplex'
+
+    NestedOneOfInAllOf: 
+      allOf:
+        - $ref: '#/components/schemas/OneOfPrimitive'
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    NestedAllOfInOneOf: 
+      oneOf:
+        - $ref: '#/components/schemas/AllOfComplex'
+        - type: string
+
+    NestedAnyOfInOneOf: 
+      oneOf:
+        - $ref: '#/components/schemas/AnyOfMixed'
+        - type: boolean
+
+    NestedOneOfInAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/OneOfEnum'
+        - type: number
+
+    NestedAllOfInAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/AllOfMixed'
+        - $ref: '#/components/schemas/Class1'
+
+    NestedAnyOfInAllOf:
+      allOf:
+        - $ref: '#/components/schemas/AnyOfComplex'
+        - type: object
+          properties:
+            timestamp:
+              type: integer
+
+    DeepNestedOneOf: 
+      oneOf:
+        - $ref: '#/components/schemas/NestedOneOfInOneOf'
+        - $ref: '#/components/schemas/Class1'
+
+    DeepNestedAllOf:
+      allOf:
+        - $ref: '#/components/schemas/NestedAllOfInAllOf'
+        - type: object
+          properties:
+            deep:
+              type: boolean
+
+    DeepNestedAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/NestedAnyOfInAnyOf'
+        - $ref: '#/components/schemas/Enum1'
+
+    TwoLevelOneOf: 
+      oneOf:
+        - oneOf:
+            - type: string
+            - type: integer
+        - type: boolean
+
+    TwoLevelAllOf: 
+      allOf:
+        - allOf:
+            - type: object
+              properties:
+                id:
+                  type: string
+            - type: object
+              properties:
+                name:
+                  type: string
+        - type: object
+          properties:
+            active:
+              type: boolean
+
+    TwoLevelAnyOf:
+      anyOf:
+        - anyOf:
+            - $ref: '#/components/schemas/Class1'
+            - $ref: '#/components/schemas/Class2'
+        - type: string
+
+    TwoLevelMixedOneOfAllOf: #done
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/Class1'
+            - type: object
+              properties:
+                timestamp:
+                  type: integer
+        - type: string
+
+    TwoLevelMixedAllOfAnyOf: #done
+      allOf:
+        - anyOf:
+            - type: string
+            - type: integer
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    TwoLevelMixedAnyOfOneOf:
+      anyOf:
+        - oneOf:
+            - $ref: '#/components/schemas/Enum1'
+            - $ref: '#/components/schemas/Enum2'
+        - $ref: '#/components/schemas/Class1'
+
+    ThreeLevelOneOf: #done
+      oneOf:
+        - oneOf:
+            - oneOf:
+                - type: string
+                - type: integer
+            - type: boolean
+        - type: number
+
+    ThreeLevelAllOf:
+      allOf:
+        - allOf:
+            - allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                - type: object
+                  properties:
+                    name:
+                      type: string
+            - type: object
+              properties:
+                email:
+                  type: string
+        - type: object
+          properties:
+            verified:
+              type: boolean
+
+    ThreeLevelAnyOf:
+      anyOf:
+        - anyOf:
+            - anyOf:
+                - $ref: '#/components/schemas/Class1'
+                - $ref: '#/components/schemas/Class2'
+            - $ref: '#/components/schemas/Enum1'
+        - type: string
+
+    ThreeLevelMixedOneOfAllOfAnyOf: 
+      oneOf:
+        - allOf:
+            - anyOf:
+                - type: string
+                - type: integer
+            - type: object
+              properties:
+                flag:
+                  type: boolean
+        - $ref: '#/components/schemas/Class1'
+
+    ThreeLevelMixedAllOfOneOfAnyOf: 
+      allOf:
+        - oneOf:
+            - anyOf:
+                - $ref: '#/components/schemas/Enum1'
+                - $ref: '#/components/schemas/Class1'
+            - type: string
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    ThreeLevelMixedAnyOfAllOfOneOf:
+      anyOf:
+        - allOf:
+            - oneOf:
+                - $ref: '#/components/schemas/Class1'
+                - $ref: '#/components/schemas/Class2'
+            - type: object
+              properties:
+                extra:
+                  type: integer
+        - type: boolean
+
+    ThreeLevelWithRefs:
+      oneOf:
+        - $ref: '#/components/schemas/TwoLevelOneOf'
+        - $ref: '#/components/schemas/TwoLevelAllOf'
+        - type: string
+
+    ThreeLevelMixedRefs:
+      allOf:
+        - $ref: '#/components/schemas/TwoLevelMixedAllOfAnyOf'
+        - anyOf:
+            - $ref: '#/components/schemas/Class1'
+            - type: integer
+
+    ComplexNestedMix:
+      allOf:
+        - type: object
+          properties:
+            base:
+              type: string
+        - oneOf:
+            - $ref: '#/components/schemas/Class1'
+            - $ref: '#/components/schemas/Class2'
+
+    ComplexNestedMix2:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/Class1'
+            - type: object
+              properties:
+                extra:
+                  type: integer
+        - $ref: '#/components/schemas/Enum1'
+
+    ComplexNestedMix3:
+      anyOf:
+        - oneOf:
+            - type: string
+            - type: integer
+        - allOf:
+            - $ref: '#/components/schemas/Class2'
+            - type: object
+              properties:
+                flag:
+                  type: boolean
+
+    MultiLevelNesting:
+      allOf:
+        - type: object
+          properties:
+            level1:
+              oneOf:
+                - type: string
+                - anyOf:
+                    - $ref: '#/components/schemas/Class1'
+                    - $ref: '#/components/schemas/Class2'
+        - type: object
+          properties:
+            level2:
+              type: integer

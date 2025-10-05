@@ -1,11 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/src/util/context.dart';
-
-enum EncodingShape {
-  simple,
-  complex,
-  mixed,
-}
+import 'package:tonik_util/tonik_util.dart';
 
 @immutable
 sealed class Model {

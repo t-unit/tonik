@@ -41,7 +41,7 @@ void main() {
       expect(success.value, isA<FindFormsResponse200>());
 
       final value = success.value as FindFormsResponse200;
-      expect(value.body, isA<FormsGet200Body>());
+      expect(value.body, isA<FormsGet200BodyModel>());
 
       final body = value.body;
       expect(body.data, isA<List<FormsIndex>>());
@@ -49,7 +49,7 @@ void main() {
       final formIndex = body.data.first;
       expect(
         formIndex.attributes?.benefitCategories,
-        isA<List<FormsIndexAttributesBenefitCategoriesArray>>(),
+        isA<List<FormsIndexAttributesBenefitCategoriesArrayModel>>(),
       );
       expect(formIndex.id, isA<String?>());
       expect(formIndex.$type, isA<String?>());
@@ -91,7 +91,7 @@ void main() {
       expect(success.value, isA<FindFormsResponse401>());
 
       final value = success.value as FindFormsResponse401;
-      expect(value.body, isA<FormsGet401Body>());
+      expect(value.body, isA<FormsGet401BodyModel>());
 
       final body = value.body;
       expect(body.message, isA<String?>());
@@ -109,7 +109,7 @@ void main() {
       expect(success.value, isA<FindFormsResponse429>());
 
       final value = success.value as FindFormsResponse429;
-      expect(value.body, isA<FormsGet429Body>());
+      expect(value.body, isA<FormsGet429BodyModel>());
     });
 
     test('unexpected status code', () async {

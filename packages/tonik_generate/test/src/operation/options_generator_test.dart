@@ -498,7 +498,7 @@ void main() {
       );
 
       const expectedMethod = '''
-          Options _options({required List<Anonymous> xColors}) {
+          Options _options({required List<AnonymousModel> xColors}) {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
             headers[r'X-Colors'] = xColors
@@ -568,7 +568,7 @@ void main() {
       );
 
       const expectedMethod = '''
-          Options _options({required List<List<Anonymous>> xMatrix}) {
+          Options _options({required List<List<AnonymousModel>> xMatrix}) {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
             throw EncodingException('Simple encoding does not support list with complex elements for header X-Matrix');

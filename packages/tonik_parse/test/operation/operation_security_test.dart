@@ -45,7 +45,9 @@ void main() {
           'operationId': 'getOAuthScoped',
           'summary': 'Endpoint requiring OAuth with specific scopes',
           'security': [
-            {'oauth2': <String>['read:users', 'read:profile']},
+            {
+              'oauth2': <String>['read:users', 'read:profile'],
+            },
           ],
           'responses': {
             '200': {'description': 'Success'},
@@ -59,7 +61,9 @@ void main() {
           'security': [
             {'api_key': <String>[]},
             {'bearer_auth': <String>[]},
-            {'oauth2': <String>['read:basic']},
+            {
+              'oauth2': <String>['read:basic'],
+            },
           ],
           'responses': {
             '200': {'description': 'Success'},
@@ -131,45 +135,45 @@ void main() {
   group('Operation Security Requirements', () {
     test('operation with no security has empty security schemes', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'getPublic',
       );
-      
+
       expect(operation.securitySchemes, isEmpty);
     });
 
     test('operation with single API key requirement', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'getApiKeyOnly',
       );
-      
+
       expect(operation.securitySchemes, hasLength(1));
-      
+
       final scheme = operation.securitySchemes.first;
       expect(scheme, isA<core.ApiKeySecurityScheme>());
       expect(scheme.type, core.SecuritySchemeType.apiKey);
       expect(scheme.description, 'API Key authentication');
-      
+
       final apiKeyScheme = scheme as core.ApiKeySecurityScheme;
       expect(apiKeyScheme.location, core.ApiKeyLocation.header);
     });
 
     test('operation with single Bearer token requirement', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'getBearerOnly',
       );
-      
+
       expect(operation.securitySchemes, hasLength(1));
-      
+
       final scheme = operation.securitySchemes.first;
       expect(scheme, isA<core.HttpSecurityScheme>());
       expect(scheme.type, core.SecuritySchemeType.http);
-      
+
       final httpScheme = scheme as core.HttpSecurityScheme;
       expect(httpScheme.scheme, 'bearer');
       expect(httpScheme.bearerFormat, 'JWT');
@@ -177,24 +181,24 @@ void main() {
 
     test('operation with OAuth2 scoped requirement', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'getOAuthScoped',
       );
-      
+
       expect(operation.securitySchemes, hasLength(1));
-      
+
       final scheme = operation.securitySchemes.first;
       expect(scheme, isA<core.OAuth2SecurityScheme>());
       expect(scheme.type, core.SecuritySchemeType.oauth2);
-      
+
       final oauth2Scheme = scheme as core.OAuth2SecurityScheme;
       expect(oauth2Scheme.flows.authorizationCode, isNotNull);
       expect(
         oauth2Scheme.flows.authorizationCode!.scopes.keys,
         containsAll([
           'read:users',
-          'read:profile', 
+          'read:profile',
           'read:basic',
           'write:users',
         ]),
@@ -203,60 +207,69 @@ void main() {
 
     test('operation with multiple security options (OR logic)', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'getMultipleOptions',
       );
-      
+
       expect(operation.securitySchemes, hasLength(3));
-      
+
       final schemeTypes = operation.securitySchemes.map((s) => s.type).toSet();
-      expect(schemeTypes, containsAll([
-        core.SecuritySchemeType.apiKey,
-        core.SecuritySchemeType.http,
-        core.SecuritySchemeType.oauth2,
-      ]));
+      expect(
+        schemeTypes,
+        containsAll([
+          core.SecuritySchemeType.apiKey,
+          core.SecuritySchemeType.http,
+          core.SecuritySchemeType.oauth2,
+        ]),
+      );
     });
 
     test('operation with combined requirements (AND logic)', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'postCombinedRequirements',
       );
-      
+
       expect(operation.securitySchemes, hasLength(2));
-      
+
       final schemeTypes = operation.securitySchemes.map((s) => s.type).toSet();
-      expect(schemeTypes, containsAll([
-        core.SecuritySchemeType.apiKey,
-        core.SecuritySchemeType.http,
-      ]));
+      expect(
+        schemeTypes,
+        containsAll([
+          core.SecuritySchemeType.apiKey,
+          core.SecuritySchemeType.http,
+        ]),
+      );
     });
 
     test('operation referencing undefined security scheme is ignored', () {
       final api = Importer().import(fileContent);
-      
+
       final operation = api.operations.firstWhere(
         (o) => o.operationId == 'getUndefinedScheme',
       );
-      
+
       // Undefined security schemes should be ignored, not cause errors
       expect(operation.securitySchemes, isEmpty);
     });
 
     test('ApiDocument.securitySchemes contains only used schemes', () {
       final api = Importer().import(fileContent);
-      
+
       // All three defined schemes should be present because they're used
       expect(api.securitySchemes, hasLength(3));
-      
+
       final schemeTypes = api.securitySchemes.map((s) => s.type).toSet();
-      expect(schemeTypes, containsAll([
-        core.SecuritySchemeType.apiKey,
-        core.SecuritySchemeType.http,
-        core.SecuritySchemeType.oauth2,
-      ]));
+      expect(
+        schemeTypes,
+        containsAll([
+          core.SecuritySchemeType.apiKey,
+          core.SecuritySchemeType.http,
+          core.SecuritySchemeType.oauth2,
+        ]),
+      );
     });
 
     test('unused security schemes are filtered out', () {
@@ -264,8 +277,9 @@ void main() {
         ...fileContent,
         'components': {
           'securitySchemes': {
-            ...(fileContent['components']! as Map<String, dynamic>)
-                ['securitySchemes']! as Map<String, dynamic>,
+            ...(fileContent['components']!
+                    as Map<String, dynamic>)['securitySchemes']!
+                as Map<String, dynamic>,
             'unused_scheme': {
               'type': 'http',
               'scheme': 'basic',
@@ -275,10 +289,10 @@ void main() {
       };
 
       final api = Importer().import(contentWithUnusedScheme);
-      
+
       // Should still only have 3 schemes (unused one filtered out)
       expect(api.securitySchemes, hasLength(3));
-      
+
       // Verify the unused scheme is not present
       final hasBasicAuth = api.securitySchemes.any(
         (s) => s is core.HttpSecurityScheme && s.scheme == 'basic',

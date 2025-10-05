@@ -29,6 +29,113 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
+  test('generates simple encoding shape getter for primitive oneOf', () {
+    final model = OneOfModel(
+      name: 'Value',
+      models: {
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (discriminatorValue: null, model: IntegerModel(context: context)),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final generated = format(baseClass.accept(emitter).toString());
+
+    const expectedGetter = '''
+      EncodingShape get currentEncodingShape {
+        return switch (this) {
+          ValueString() => EncodingShape.simple,
+          ValueInt() => EncodingShape.simple,
+        };
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedGetter)),
+    );
+  });
+
+  test('generates complex encoding shape getter for class oneOf', () {
+    final classA = ClassModel(
+      name: 'A',
+      properties: const [],
+      context: context,
+    );
+    final classB = ClassModel(
+      name: 'B',
+      properties: const [],
+      context: context,
+    );
+
+    final model = OneOfModel(
+      name: 'Value',
+      models: {
+        (discriminatorValue: null, model: classA),
+        (discriminatorValue: null, model: classB),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final generated = format(baseClass.accept(emitter).toString());
+
+    const expectedGetter = '''
+      EncodingShape get currentEncodingShape {
+        return switch (this) {
+          ValueA(:final value) => value.currentEncodingShape,
+          ValueB(:final value) => value.currentEncodingShape,
+        };
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedGetter)),
+    );
+  });
+
+  test('generates mixed encoding shape getter for mixed oneOf', () {
+    final classA = ClassModel(
+      name: 'A',
+      properties: const [],
+      context: context,
+    );
+
+    final model = OneOfModel(
+      name: 'Value',
+      models: {
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (discriminatorValue: null, model: classA),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final generated = format(baseClass.accept(emitter).toString());
+
+    const expectedGetter = '''
+      EncodingShape get currentEncodingShape {
+        return switch (this) {
+          ValueString() => EncodingShape.simple,
+          ValueA(:final value) => value.currentEncodingShape,
+        };
+      }
+    ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedGetter)),
+    );
+  });
+
   test('generated code does not include freezed part directive', () {
     final model = OneOfModel(
       name: 'Result',
@@ -85,9 +192,9 @@ void main() {
     // No mixins
     expect(baseClass.mixins, isEmpty, reason: 'Should not have freezed mixins');
 
-    // Base class should have a default const constructor and
-    // a fromSimple factory
-    expect(baseClass.constructors.length, 3);
+    // Base class should have a default const constructor,
+    // fromSimple, fromForm, and fromJson factories
+    expect(baseClass.constructors.length, 4);
     final baseConstructor = baseClass.constructors.firstWhere(
       (c) => c.name == null,
     );
@@ -145,7 +252,7 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors.length, 3);
+    expect(baseClass.constructors.length, 4);
     expect(
       baseClass.constructors.firstWhere((c) => c.name == null).constant,
       isTrue,
@@ -210,7 +317,7 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors.length, 3);
+    expect(baseClass.constructors.length, 4);
     expect(
       baseClass.constructors.firstWhere((c) => c.name == null).constant,
       isTrue,
@@ -255,7 +362,7 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-    expect(baseClass.constructors.length, 3);
+    expect(baseClass.constructors.length, 4);
     expect(
       baseClass.constructors.firstWhere((c) => c.name == null).constant,
       isTrue,
@@ -365,8 +472,14 @@ void main() {
       const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
           return switch (this) {
-            ChoiceA(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
-            ChoiceB(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
+            ChoiceA(:final value) => {
+              ...value.simpleProperties(allowEmpty: allowEmpty),
+              'type': 'a',
+            },
+            ChoiceB(:final value) => {
+              ...value.simpleProperties(allowEmpty: allowEmpty),
+              'type': 'b',
+            },
           };
         }
       ''';
@@ -406,10 +519,10 @@ void main() {
 
         const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
-          return switch (this) {
-            PrimitiveChoiceI(:final value) => <String, String>{},
-            PrimitiveChoiceS(:final value) => <String, String>{},
-          };
+        return switch (this) {
+          PrimitiveChoiceI() => <String, String>{},
+          PrimitiveChoiceS() => <String, String>{},
+        };
         }
       ''';
         expect(
@@ -450,10 +563,13 @@ void main() {
 
       const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
-          return switch (this) {
-            MixedChoiceM(:final value) => value.simpleProperties(allowEmpty: allowEmpty),
-            MixedChoiceS(:final value) => <String, String>{},
-          };
+        return switch (this) {
+          MixedChoiceM(:final value) => {
+            ...value.simpleProperties(allowEmpty: allowEmpty),
+            'kind': 'm',
+          },
+          MixedChoiceS() => <String, String>{},
+        };
         }
       ''';
       expect(
@@ -545,6 +661,79 @@ void main() {
         collapseWhitespace(format(listClass.accept(emitter).toString())),
         collapseWhitespace(format(expectedMethod)),
       );
+    });
+
+    test('generates meaningful discriminator names for primitive models', () {
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: BooleanModel(context: context)),
+          (discriminatorValue: null, model: DateTimeModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final classNames = classes.map((c) => c.name).toList();
+
+      expect(classNames, contains('ValueString'));
+      expect(classNames, contains('ValueInt'));
+      expect(classNames, contains('ValueBool'));
+      expect(classNames, contains('ValueDateTime'));
+    });
+
+    test('generates meaningful discriminator names for complex models', () {
+      final classA = ClassModel(
+        name: 'ClassA',
+        properties: const [],
+        context: context,
+      );
+      final allOfModel = AllOfModel(
+        name: 'AllOfExample',
+        models: {classA},
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: classA),
+          (discriminatorValue: null, model: allOfModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final classNames = classes.map((c) => c.name).toList();
+
+      expect(classNames, contains('ValueClassA'));
+      expect(classNames, contains('ValueAllOfExample'));
+    });
+
+    test('generates meaningful discriminator names for alias models', () {
+      final aliasModel = AliasModel(
+        name: 'user-profile',
+        model: StringModel(context: context),
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: aliasModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final classNames = classes.map((c) => c.name).toList();
+
+      expect(classNames, contains('ValueUserProfile'));
     });
   });
 }

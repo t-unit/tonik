@@ -145,3 +145,23 @@ TypeReference buildMapStringStringType() => TypeReference(
           ),
         ]),
 );
+
+/// Returns a LiteralMapExpression for an empty [Map<String, String>] literal.
+///
+/// This can be used with Code.scope to create properly
+/// qualified empty map literals in generated code.
+LiteralMapExpression buildEmptyMapStringString() => literalMap(
+  {},
+  TypeReference(
+    (b) =>
+        b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+  ),
+  TypeReference(
+    (b) =>
+        b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+  ),
+);

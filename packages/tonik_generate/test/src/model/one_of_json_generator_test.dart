@@ -279,7 +279,7 @@ void main() {
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
               ResultSuccess(:final value) => (value.toJson(), null),
-              ResultAnonymous(:final value) => (value, null),
+              ResultString(:final value) => (value, null),
               ResultError(:final value) => (value.toJson(), 'error'),
             };
 
@@ -324,7 +324,7 @@ void main() {
             }
 
             if (json is String) {
-              return ResultAnonymous(json);
+              return ResultString(json);
             }
 
             try {

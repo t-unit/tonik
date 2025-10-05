@@ -362,7 +362,7 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required Anonymous filter}) {
+        List<String> _path({required AnonymousModel filter}) {
           return [r'users', filter.toSimple(explode: true, allowEmpty: false)];
         }
       ''';
@@ -423,7 +423,7 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required Anonymous filter}) {
+        List<String> _path({required AnonymousModel filter}) {
           return [r'users', filter.toSimple(explode: true, allowEmpty: true)];
         }
       ''';
@@ -635,8 +635,8 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({
-          required Anonymous role,
-          required AnonymousModel filter,
+          required AnonymousModel role,
+          required AnonymousModel2 filter,
           required OneOfValue id,
         }) {
           const matrixEncoder = MatrixEncoder();
@@ -865,7 +865,7 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required List<Anonymous> colors}) {
+        List<String> _path({required List<AnonymousModel> colors}) {
           return [ 
             r'data', 
             colors
@@ -941,7 +941,7 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required List<List<Anonymous>> matrix}) {
+        List<String> _path({required List<List<AnonymousModel>> matrix}) {
           throw EncodingException( 
             'Simple encoding does not support list with complex elements for path parameter matrix',
           );

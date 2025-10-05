@@ -212,12 +212,17 @@ class ModelImporter {
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
     final modelContext = context.push(name ?? 'allOf');
-    final models = schema.allOf!.map(
-      (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
-    );
+    final models =
+        schema.allOf!
+            .map(
+              (allOfSchema) =>
+                  _parseSchemaWrapper(null, allOfSchema, modelContext),
+            )
+            .toList();
+
     final allOfModel = AllOfModel(
       models: models.toSet(),
-      context: context,
+      context: modelContext,
       name: name,
     );
 

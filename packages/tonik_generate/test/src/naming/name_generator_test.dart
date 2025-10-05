@@ -26,7 +26,7 @@ void main() {
           );
           expect(
             nameGenerator.generateModelName(model),
-            'PetFindByStatusGetResponses200Content',
+            'PetFindByStatusGetResponses200ContentModel',
           );
         });
 
@@ -44,7 +44,7 @@ void main() {
           );
           expect(
             nameGenerator.generateModelName(model),
-            'PetStoreGetResponses404Content',
+            'PetStoreGetResponses404ContentModel',
           );
         });
 
@@ -88,7 +88,7 @@ void main() {
 
           expect(
             nameGenerator.generateModelName(enumModel),
-            'PetFindByTagsParameter',
+            'PetFindByTagsParameterModel',
           );
         });
       });
@@ -152,7 +152,7 @@ void main() {
           context: Context.initial().pushAll(['api', 'models', 'user']),
         );
 
-        expect(nameGenerator.generateModelName(model), 'ApiModelsUser');
+        expect(nameGenerator.generateModelName(model), 'ApiModelsUserModel');
       });
 
       test('converts each path component to PascalCase before joining', () {
@@ -167,7 +167,7 @@ void main() {
 
         expect(
           nameGenerator.generateModelName(model),
-          'ApiUserManagementActiveUsers',
+          'ApiUserManagementActiveUsersModel',
         );
       });
 
@@ -197,7 +197,7 @@ void main() {
           context: Context.initial(),
         );
 
-        expect(nameGenerator.generateModelName(model), 'Anonymous');
+        expect(nameGenerator.generateModelName(model), 'AnonymousModel');
       });
 
       test('makes anonymous names unique using Model suffix', () {
@@ -218,9 +218,9 @@ void main() {
         final name2 = nameGenerator.generateModelName(model2);
         final name3 = nameGenerator.generateModelName(model3);
 
-        expect(name1, 'Anonymous');
-        expect(name2, 'AnonymousModel');
-        expect(name3, 'AnonymousModel2');
+        expect(name1, 'AnonymousModel');
+        expect(name2, 'AnonymousModel2');
+        expect(name3, 'AnonymousModel3');
       });
 
       group('number handling', () {
@@ -483,7 +483,10 @@ void main() {
             bodies: const {},
             context: Context.initial().pushAll(['api', 'models', 'user']),
           );
-          expect(nameGenerator.generateResponseName(response), 'ApiModelsUser');
+          expect(
+            nameGenerator.generateResponseName(response),
+            'ApiModelsUserResponse',
+          );
         });
 
         test('uses Anonymous for response without name or context path', () {
@@ -494,7 +497,10 @@ void main() {
             bodies: const {},
             context: Context.initial(),
           );
-          expect(nameGenerator.generateResponseName(response), 'Anonymous');
+          expect(
+            nameGenerator.generateResponseName(response),
+            'AnonymousResponse',
+          );
         });
 
         test('preserves numbers in names', () {

@@ -59,7 +59,7 @@ void main() {
         petId: 1,
         quantity: 1,
         shipDate: DateTime.now(),
-        status: OrderStatus.placed,
+        status: OrderStatusModel.placed,
         complete: true,
       );
 
@@ -73,7 +73,7 @@ void main() {
       expect(responseBody.petId, isA<int?>());
       expect(responseBody.quantity, isA<int?>());
       expect(responseBody.shipDate, isA<DateTime?>());
-      expect(responseBody.status, isA<OrderStatus?>());
+      expect(responseBody.status, isA<OrderStatusModel?>());
       expect(responseBody.complete, isA<bool?>());
     });
 
@@ -100,7 +100,7 @@ void main() {
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '499');
 
-      const body = Order(status: OrderStatus.approved);
+      const body = Order(status: OrderStatusModel.approved);
       final order = await storeApi.placeOrder(body: body);
       final success = order as TonikSuccess<PlaceOrderResponse>;
       expect(success.value, isA<PlaceOrderResponseDefault>());

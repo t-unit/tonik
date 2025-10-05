@@ -45,15 +45,15 @@ void main() {
       final albumBase = value.body.albumBase;
 
       expect(albumBase, isA<AlbumBase>());
-      expect(albumBase.albumType, isA<AlbumBaseAlbumType>());
-      expect(AlbumBaseAlbumType.values.map((v) => v.rawValue), [
+      expect(albumBase.albumType, isA<AlbumBaseAlbumTypeModel>());
+      expect(AlbumBaseAlbumTypeModel.values.map((v) => v.rawValue), [
         'album',
         'single',
         'compilation',
       ]);
       expect(albumBase.totalTracks, isA<int>());
       expect(albumBase.availableMarkets, isA<List<String>>());
-      expect(albumBase.externalUrls, isA<AlbumBaseExternalUrls>());
+      expect(albumBase.externalUrls, isA<AlbumBaseExternalUrlsAllOfModel>());
 
       expect(albumBase.href, isA<String>());
       expect(albumBase.id, isA<String>());
@@ -62,16 +62,16 @@ void main() {
       expect(albumBase.releaseDate, isA<String>());
       expect(
         albumBase.releaseDatePrecision,
-        isA<AlbumBaseReleaseDatePrecision>(),
+        isA<AlbumBaseReleaseDatePrecisionModel>(),
       );
-      expect(AlbumBaseReleaseDatePrecision.values.map((v) => v.rawValue), [
+      expect(AlbumBaseReleaseDatePrecisionModel.values.map((v) => v.rawValue), [
         'year',
         'month',
         'day',
       ]);
-      expect(albumBase.restrictions, isA<AlbumBaseRestrictions?>());
-      expect(albumBase.$type, isA<AlbumBaseType>());
-      expect(AlbumBaseType.values.map((v) => v.rawValue), ['album']);
+      expect(albumBase.restrictions, isA<AlbumBaseRestrictionsAllOfModel?>());
+      expect(albumBase.$type, isA<AlbumBaseTypeModel>());
+      expect(AlbumBaseTypeModel.values.map((v) => v.rawValue), ['album']);
       expect(albumBase.uri, isA<String>());
 
       final externalUrls = albumBase.externalUrls.externalUrlObject;
@@ -84,8 +84,11 @@ void main() {
 
       final releaseDatePrecision =
           albumBase.restrictions?.albumRestrictionObject;
-      expect(releaseDatePrecision?.reason, isA<AlbumRestrictionObjectReason>());
-      expect(AlbumRestrictionObjectReason.values.map((v) => v.rawValue), [
+      expect(
+        releaseDatePrecision?.reason,
+        isA<AlbumRestrictionObjectReasonModel>(),
+      );
+      expect(AlbumRestrictionObjectReasonModel.values.map((v) => v.rawValue), [
         'market',
         'product',
         'explicit',
@@ -100,19 +103,22 @@ void main() {
       // ingnored by tonic.
       expect(albumObject.artists, isA<List<SimplifiedArtistObject>?>());
       final artist = albumObject.artists?.first;
-      expect(artist?.externalUrls, isA<SimplifiedArtistObjectExternalUrls?>());
+      expect(
+        artist?.externalUrls,
+        isA<SimplifiedArtistObjectExternalUrlsAllOfModel?>(),
+      );
       expect(artist?.externalUrls?.externalUrlObject, isA<ExternalUrlObject>());
       expect(artist?.externalUrls?.externalUrlObject.spotify, isA<String?>());
       expect(artist?.href, isA<String?>());
       expect(artist?.id, isA<String?>());
       expect(artist?.name, isA<String?>());
-      expect(artist?.$type, isA<SimplifiedArtistObjectType?>());
-      expect(SimplifiedArtistObjectType.values.map((v) => v.rawValue), [
+      expect(artist?.$type, isA<SimplifiedArtistObjectTypeModel?>());
+      expect(SimplifiedArtistObjectTypeModel.values.map((v) => v.rawValue), [
         'artist',
       ]);
       expect(artist?.uri, isA<String?>());
 
-      expect(albumObject.tracks, isA<AlbumObjectTracks?>());
+      expect(albumObject.tracks, isA<AlbumObjectTracksAllOfModel?>());
       expect(
         albumObject.tracks?.pagingSimplifiedTrackObject,
         isA<PagingSimplifiedTrackObject?>(),
@@ -142,7 +148,7 @@ void main() {
       expect(trackItem?.explicit, isA<bool?>());
       expect(
         trackItem?.externalUrls,
-        isA<SimplifiedTrackObjectExternalUrls?>(),
+        isA<SimplifiedTrackObjectExternalUrlsAllOfModel?>(),
       );
       expect(
         trackItem?.externalUrls?.externalUrlObject,
@@ -155,10 +161,13 @@ void main() {
       expect(trackItem?.href, isA<String?>());
       expect(trackItem?.id, isA<String?>());
       expect(trackItem?.isPlayable, isA<bool?>());
-      expect(trackItem?.linkedFrom, isA<SimplifiedTrackObjectLinkedFrom?>());
+      expect(
+        trackItem?.linkedFrom,
+        isA<SimplifiedTrackObjectLinkedFromAllOfModel?>(),
+      );
       expect(
         trackItem?.linkedFrom?.linkedTrackObject.externalUrls,
-        isA<LinkedTrackObjectExternalUrls?>(),
+        isA<LinkedTrackObjectExternalUrlsAllOfModel?>(),
       );
       expect(trackItem?.linkedFrom?.linkedTrackObject.href, isA<String?>());
       expect(trackItem?.linkedFrom?.linkedTrackObject.id, isA<String?>());
@@ -166,7 +175,7 @@ void main() {
       expect(trackItem?.linkedFrom?.linkedTrackObject.uri, isA<String?>());
       expect(
         trackItem?.restrictions,
-        isA<SimplifiedTrackObjectRestrictions?>(),
+        isA<SimplifiedTrackObjectRestrictionsAllOfModel?>(),
       );
       expect(
         trackItem?.restrictions?.trackRestrictionObject.reason,
@@ -184,7 +193,7 @@ void main() {
       expect(copyright?.text, isA<String?>());
       expect(copyright?.$type, isA<String?>());
 
-      expect(albumObject.externalIds, isA<AlbumObjectExternalIds?>());
+      expect(albumObject.externalIds, isA<AlbumObjectExternalIdsAllOfModel?>());
       expect(albumObject.genres, isA<List<String>?>());
       expect(albumObject.label, isA<String?>());
       expect(albumObject.popularity, isA<int?>());
@@ -201,7 +210,7 @@ void main() {
       expect(success.value, isA<GetAnAlbumResponse401>());
 
       final value = success.value as GetAnAlbumResponse401;
-      expect(value.body, isA<UnauthorizedBody>());
+      expect(value.body, isA<UnauthorizedBodyModel>());
       expect(value.body.error, isA<ErrorObject>());
       expect(value.body.error.status, isA<int>());
       expect(value.body.error.message, isA<String>());
@@ -218,7 +227,7 @@ void main() {
       expect(success.value, isA<GetAnAlbumResponse403>());
 
       final value = success.value as GetAnAlbumResponse403;
-      expect(value.body, isA<ForbiddenBody>());
+      expect(value.body, isA<ForbiddenBodyModel>());
       expect(value.body.error, isA<ErrorObject>());
       expect(value.body.error.status, isA<int>());
       expect(value.body.error.message, isA<String>());
@@ -235,7 +244,7 @@ void main() {
       expect(success.value, isA<GetAnAlbumResponse429>());
 
       final value = success.value as GetAnAlbumResponse429;
-      expect(value.body, isA<TooManyRequestsBody>());
+      expect(value.body, isA<TooManyRequestsBodyModel>());
       expect(value.body.error, isA<ErrorObject>());
       expect(value.body.error.status, isA<int>());
       expect(value.body.error.message, isA<String>());

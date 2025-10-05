@@ -35,9 +35,7 @@ void main() {
       body: const ExampleDtoInput(
         email: 'john.doe@example.com',
         password: 'password',
-        deletedAt: ExampleDtoInputDeletedAt(
-          exampleDtoInputDeletedAtAnyOf: ExampleDtoInputDeletedAtAnyOf(),
-        ),
+        deletedAt: ExampleDtoInputDeletedAtAnyOfModel(),
       ),
     );
 
@@ -48,7 +46,7 @@ void main() {
     final data = success.value;
     expect(data.email, isA<String>());
     expect(data.password, isA<String>());
-    expect(data.deletedAt, isA<ExampleDtoDeletedAt>());
+    expect(data.deletedAt, isA<ExampleDtoDeletedAtAnyOfModel>());
     expect(data.deletedAt.dateTime, isA<DateTime>());
   });
 
@@ -58,9 +56,9 @@ void main() {
       body: const ExampleDtoInput(
         email: 'john.doe@example.com',
         password: 'password',
-        deletedAt: ExampleDtoInputDeletedAt(
-          exampleDtoInputDeletedAtAnyOfModel:
-              ExampleDtoInputDeletedAtAnyOfModel(),
+        deletedAt: ExampleDtoInputDeletedAtAnyOfModel(
+          exampleDtoInputDeletedAtAnyOfModel2:
+              ExampleDtoInputDeletedAtAnyOfModel2(),
         ),
       ),
     );
@@ -72,7 +70,7 @@ void main() {
     final data = success.value;
     expect(data.email, isA<String>());
     expect(data.password, isA<String>());
-    expect(data.deletedAt, isA<ExampleDtoDeletedAt>());
+    expect(data.deletedAt, isA<ExampleDtoDeletedAtAnyOfModel>());
     expect(data.deletedAt.dateTime, isA<DateTime>());
   });
 }

@@ -127,11 +127,12 @@ class ApiClientGenerator {
     };
 
     final docs = formatDocComments([operation.summary, operation.description]);
-    
+
     // Add security information to documentation
     if (operation.securitySchemes.isNotEmpty) {
-      docs..add('///')
-      ..add('/// Security:');
+      docs
+        ..add('///')
+        ..add('/// Security:');
       for (final scheme in operation.securitySchemes) {
         final schemeInfo = _formatSecuritySchemeForMethod(scheme);
         docs.addAll(schemeInfo);
@@ -163,7 +164,7 @@ class ApiClientGenerator {
   /// Formats security scheme information for method documentation
   List<String> _formatSecuritySchemeForMethod(SecurityScheme scheme) {
     final lines = <String>[];
-    
+
     switch (scheme) {
       case ApiKeySecurityScheme():
         final location = switch (scheme.location) {
@@ -171,29 +172,32 @@ class ApiClientGenerator {
           ApiKeyLocation.query => 'query',
           ApiKeyLocation.cookie => 'cookie',
         };
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
+        final description =
+            (scheme.description?.isNotEmpty ?? false)
+                ? ': ${scheme.description}'
+                : '';
         lines.add('/// - API Key ($location)$description');
-        
+
       case HttpSecurityScheme():
         final schemeName = switch (scheme.scheme.toLowerCase()) {
           'bearer' => 'Bearer',
           'basic' => 'Basic',
           _ => scheme.scheme.toUpperCase(),
         };
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
+        final description =
+            (scheme.description?.isNotEmpty ?? false)
+                ? ': ${scheme.description}'
+                : '';
         lines.add('/// - HTTP $schemeName$description');
-        
+
       case OAuth2SecurityScheme():
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
+        final description =
+            (scheme.description?.isNotEmpty ?? false)
+                ? ': ${scheme.description}'
+                : '';
         lines.add('/// - OAuth2$description');
         final flows = scheme.flows;
-        
+
         // Find the first available flow and show its scopes
         OAuth2Flow? activeFlow;
         if (flows.authorizationCode != null) {
@@ -205,19 +209,22 @@ class ApiClientGenerator {
         } else if (flows.password != null) {
           activeFlow = flows.password;
         }
-        
+
         if (activeFlow != null && activeFlow.scopes.isNotEmpty) {
-          lines.add('///   Required scopes: ${activeFlow.scopes.keys.join(', ')}');
+          lines.add(
+            '///   Required scopes: ${activeFlow.scopes.keys.join(', ')}',
+          );
         }
-        
+
       case OpenIdConnectSecurityScheme():
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
+        final description =
+            (scheme.description?.isNotEmpty ?? false)
+                ? ': ${scheme.description}'
+                : '';
         lines.add('/// - OpenID Connect$description');
         lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
     }
-    
+
     return lines;
   }
 }
