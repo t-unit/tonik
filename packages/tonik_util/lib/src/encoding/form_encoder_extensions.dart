@@ -175,7 +175,6 @@ extension FormStringMapEncoder on Map<String, String> {
           .join('&');
     } else {
       // explode=false: comma-separated key,value pairs
-      // Note: Keys are NOT encoded to match FormEncoder behavior
       return entries
           .expand(
             (e) => [
