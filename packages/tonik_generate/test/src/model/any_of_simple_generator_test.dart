@@ -186,26 +186,12 @@ void main() {
               'Ambiguous anyOf simple encoding for PayloadSimple: mixing simple and complex values',
             );
           }
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            if (discriminatorValue != null) {
-              map.putIfAbsent('disc', () => discriminatorValue);
-            }
-            return map.toSimple(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf simple encoding for PayloadSimple: multiple values provided, anyOf requires exactly one value',
+            );
           }
-
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf simple encoding for PayloadSimple: inconsistent simple representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 
@@ -286,23 +272,12 @@ void main() {
               );
             }
 
-            if (mapValues.length == values.length) {
-              final map = <String, String>{};
-              for (final m in mapValues) {
-                map.addAll(m);
-              }
-              return map.toSimple(explode: explode, allowEmpty: allowEmpty);
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf simple encoding for PayloadSimpleNoDisc: multiple values provided, anyOf requires exactly one value',
+              );
             }
-
-            final first = values.first;
-            for (final v in values) {
-              if (v != first) {
-                throw EncodingException(
-                  'Ambiguous anyOf simple encoding for PayloadSimpleNoDisc: inconsistent simple representations',
-                );
-              }
-            }
-            return first;
+            return values.first;
           }
         ''';
 
@@ -358,26 +333,12 @@ void main() {
             );
           }
 
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            if (discriminatorValue != null) {
-              map.putIfAbsent('type', () => discriminatorValue);
-            }
-            return map.toSimple(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf simple encoding for OnlyPrimitivesSimple: multiple values provided, anyOf requires exactly one value',
+            );
           }
-
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf simple encoding for OnlyPrimitivesSimple: inconsistent simple representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 
@@ -449,26 +410,12 @@ void main() {
             );
           }
 
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            if (discriminatorValue != null) {
-              map.putIfAbsent('disc', () => discriminatorValue);
-            }
-            return map.toSimple(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value',
+            );
           }
-
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf simple encoding for MixedSimple: inconsistent simple representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 

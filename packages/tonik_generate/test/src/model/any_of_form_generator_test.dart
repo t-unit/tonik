@@ -163,7 +163,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final shapes = <EncodingShape>[];
           if (string != null) {
             shapes.add(EncodingShape.simple);
           }
@@ -211,7 +211,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final shapes = <EncodingShape>[];
           if (a != null) {
             shapes.add(a!.currentEncodingShape);
           }
@@ -262,7 +262,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final shapes = <EncodingShape>[];
           if (string != null) {
             shapes.add(EncodingShape.simple);
           }
@@ -484,22 +484,12 @@ void main() {
               'Ambiguous anyOf form encoding for Simple: mixing simple and complex values',
             );
           }
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf form encoding for Simple: multiple values provided, anyOf requires exactly one value',
+            );
           }
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf form encoding for Simple: inconsistent form representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 
@@ -551,22 +541,12 @@ void main() {
               'Ambiguous anyOf form encoding for Wrapper: mixing simple and complex values',
             );
           }
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf form encoding for Wrapper: multiple values provided, anyOf requires exactly one value',
+            );
           }
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf form encoding for Wrapper: inconsistent form representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 
@@ -641,25 +621,12 @@ void main() {
               'Ambiguous anyOf form encoding for Combined: mixing simple and complex values',
             );
           }
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            if (discriminatorValue != null) {
-              map.putIfAbsent('type', () => discriminatorValue);
-            }
-            return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf form encoding for Combined: multiple values provided, anyOf requires exactly one value',
+            );
           }
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf form encoding for Combined: inconsistent form representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 
@@ -719,22 +686,12 @@ void main() {
               'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
             );
           }
-          if (mapValues.length == values.length) {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
-            }
-            return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+            );
           }
-          final first = values.first;
-          for (final v in values) {
-            if (v != first) {
-              throw EncodingException(
-                'Ambiguous anyOf form encoding for Mixed: inconsistent form representations',
-              );
-            }
-          }
-          return first;
+          return values.first;
         }
       ''';
 
@@ -1101,22 +1058,12 @@ void main() {
                 'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
-            if (mapValues.length == values.length) {
-              final map = <String, String>{};
-              for (final m in mapValues) {
-                map.addAll(m);
-              }
-              return map.toForm(explode: explode, allowEmpty: allowEmpty);
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+              );
             }
-            final first = values.first;
-            for (final v in values) {
-              if (v != first) {
-                throw EncodingException(
-                  'Ambiguous anyOf form encoding for TestAnyOf: inconsistent form representations',
-                );
-              }
-            }
-            return first;
+            return values.first;
           }
         ''';
 
@@ -1237,10 +1184,10 @@ void main() {
               );
               values.add(stringForm);
             }
-          if (int != null) {
-            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
-            values.add(intForm);
-          }
+            if (int != null) {
+              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+              values.add(intForm);
+            }
             if (myClass != null) {
               final myClassForm = myClass!.formProperties(allowEmpty: allowEmpty);
               mapValues.add(myClassForm);
@@ -1252,22 +1199,12 @@ void main() {
                 'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
-            if (mapValues.length == values.length) {
-              final map = <String, String>{};
-              for (final m in mapValues) {
-                map.addAll(m);
-              }
-              return map.toForm(explode: explode, allowEmpty: allowEmpty);
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+              );
             }
-            final first = values.first;
-            for (final v in values) {
-              if (v != first) {
-                throw EncodingException(
-                  'Ambiguous anyOf form encoding for TestAnyOf: inconsistent form representations',
-                );
-              }
-            }
-            return first;
+            return values.first;
           }
         ''';
 

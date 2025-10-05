@@ -489,28 +489,13 @@ class AnyOfGenerator {
     mergeBlocks.add(const Code('return map;'));
 
     body.addAll([
-      const Code('if (mapValues.length == values.length) {'),
-      ...mergeBlocks,
-      const Code('}'),
-      declareConst('_deepEquals')
-          .assign(
-            refer(
-              'DeepCollectionEquality',
-              'package:collection/collection.dart',
-            ).call([]),
-          )
-          .statement,
-      const Code('final first = values.firstOrNull;'),
-      const Code('if (first == null) return null;'),
-      const Code('for (final v in values) {'),
-      const Code('  if (!_deepEquals.equals(v, first)) {'),
+      const Code('if (values.length > 1) {'),
       generateEncodingExceptionExpression(
-        'Ambiguous anyOf encoding for $className: inconsistent JSON '
-        'representations',
+        'Ambiguous anyOf encoding for $className: multiple values provided, '
+        'anyOf requires exactly one value',
       ).statement,
-      const Code('  }'),
       const Code('}'),
-      const Code('return first;'),
+      const Code('return values.first;'),
     ]);
 
     return Method(
@@ -608,20 +593,13 @@ class AnyOfGenerator {
       ]);
 
     body.addAll([
-      const Code('if (mapValues.length == values.length) {'),
-      ...mergeBlocks,
-      const Code('}'),
-
-      const Code('final first = values.first;'),
-      const Code('for (final v in values) {'),
-      const Code('  if (v != first) {'),
+      const Code('if (values.length > 1) {'),
       generateEncodingExceptionExpression(
         'Ambiguous anyOf simple encoding for $className: '
-        'inconsistent simple representations',
+        'multiple values provided, anyOf requires exactly one value',
       ).statement,
-      const Code('  }'),
       const Code('}'),
-      const Code('return first;'),
+      const Code('return values.first;'),
     ]);
 
     return Method(
@@ -826,7 +804,7 @@ class AnyOfGenerator {
     final body = <Code>[
       const Code('final shapes = <'),
       encodingShapeType.code,
-      const Code('>{};'),
+      const Code('>[];'),
     ];
 
     for (final n in normalizedProperties) {
@@ -1084,20 +1062,13 @@ class AnyOfGenerator {
       ]);
 
     body.addAll([
-      const Code('if (mapValues.length == values.length) {'),
-      ...mergeBlocks,
-      const Code('}'),
-
-      const Code('final first = values.first;'),
-      const Code('for (final v in values) {'),
-      const Code('  if (v != first) {'),
+      const Code('if (values.length > 1) {'),
       generateEncodingExceptionExpression(
         'Ambiguous anyOf form encoding for $className: '
-        'inconsistent form representations',
+        'multiple values provided, anyOf requires exactly one value',
       ).statement,
-      const Code('  }'),
       const Code('}'),
-      const Code('return first;'),
+      const Code('return values.first;'),
     ]);
 
     return Method(

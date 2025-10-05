@@ -179,28 +179,12 @@ void main() {
 
         if (values.isEmpty) return null;
 
-        if (mapValues.length == values.length) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
-          }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('disc', () => discriminatorValue);
-          }
-          return map;
+        if (values.length > 1) {
+          throw EncodingException(
+            'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
+          );
         }
-
-        const _deepEquals = DeepCollectionEquality();
-        final first = values.firstOrNull;
-        if (first == null) return null;
-        for (final v in values) {
-          if (!_deepEquals.equals(v, first)) {
-            throw EncodingException(
-              'Ambiguous anyOf encoding for Payload: inconsistent JSON representations',
-            );
-          }
-        }
-        return first;
+        return values.first;
       }
     ''';
 
@@ -281,25 +265,12 @@ void main() {
 
         if (values.isEmpty) return null;
 
-        if (mapValues.length == values.length) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
-          }
-          return map;
+        if (values.length > 1) {
+          throw EncodingException(
+            'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
+          );
         }
-
-        const _deepEquals = DeepCollectionEquality();
-        final first = values.firstOrNull;
-        if (first == null) return null;
-        for (final v in values) {
-          if (!_deepEquals.equals(v, first)) {
-            throw EncodingException(
-              'Ambiguous anyOf encoding for PayloadNoDisc: inconsistent JSON representations',
-            );
-          }
-        }
-        return first;
+        return values.first;
       }
     ''';
 
@@ -360,28 +331,12 @@ void main() {
 
         if (values.isEmpty) return null;
 
-        if (mapValues.length == values.length) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
-          }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('type', () => discriminatorValue);
-          }
-          return map;
+        if (values.length > 1) {
+          throw EncodingException(
+            'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
+          );
         }
-
-        const _deepEquals = DeepCollectionEquality();
-        final first = values.firstOrNull;
-        if (first == null) return null;
-        for (final v in values) {
-          if (!_deepEquals.equals(v, first)) {
-            throw EncodingException(
-              'Ambiguous anyOf encoding for OnlyPrimitives: inconsistent JSON representations',
-            );
-          }
-        }
-        return first;
+        return values.first;
       }
     ''';
 
@@ -451,28 +406,12 @@ void main() {
 
         if (values.isEmpty) return null;
 
-        if (mapValues.length == values.length) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
-          }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('disc', () => discriminatorValue);
-          }
-          return map;
+        if (values.length > 1) {
+          throw EncodingException(
+            'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+          );
         }
-
-        const _deepEquals = DeepCollectionEquality();
-        final first = values.firstOrNull;
-        if (first == null) return null;
-        for (final v in values) {
-          if (!_deepEquals.equals(v, first)) {
-            throw EncodingException(
-              'Ambiguous anyOf encoding for Mixed: inconsistent JSON representations',
-            );
-          }
-        }
-        return first;
+        return values.first;
       }
     ''';
 

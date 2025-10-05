@@ -57,22 +57,22 @@ components:
         - 1
         - 2
 
-    OneOfPrimitive: # done
+    OneOfPrimitive: 
       oneOf:
         - type: string
         - type: integer
 
-    OneOfComplex: # done
+    OneOfComplex: 
       oneOf:
         - $ref: '#/components/schemas/Class1'
         - $ref: '#/components/schemas/Class2'
 
-    OneOfEnum: # done
+    OneOfEnum: 
       oneOf:
         - $ref: '#/components/schemas/Enum1'
         - $ref: '#/components/schemas/Enum2'
 
-    AllOfPrimitive: # done
+    AllOfPrimitive: 
       allOf:
         - type: object
           properties:
@@ -83,12 +83,12 @@ components:
             count:
               type: integer
 
-    AllOfComplex: # done
+    AllOfComplex: 
       allOf:
         - $ref: '#/components/schemas/Class1'
         - $ref: '#/components/schemas/Class2'
 
-    AllOfEnum: # done
+    AllOfEnum: 
       allOf:
         - type: object
           properties:
@@ -115,13 +115,13 @@ components:
         - $ref: '#/components/schemas/Enum1'
         - $ref: '#/components/schemas/Enum2'
 
-    OneOfMixed: # done
+    OneOfMixed: 
       oneOf:
         - type: string
         - $ref: '#/components/schemas/Class1'
         - $ref: '#/components/schemas/Enum1'
 
-    AllOfMixed: # done
+    AllOfMixed: 
       allOf:
         - type: string
         - $ref: '#/components/schemas/Class1'
@@ -132,12 +132,12 @@ components:
         - $ref: '#/components/schemas/Class2'
         - $ref: '#/components/schemas/Enum2'
 
-    NestedOneOfInOneOf: # done
+    NestedOneOfInOneOf: 
       oneOf:
         - $ref: '#/components/schemas/OneOfPrimitive'
         - $ref: '#/components/schemas/OneOfComplex'
 
-    NestedAllOfInAllOf: # done
+    NestedAllOfInAllOf: 
       allOf:
         - $ref: '#/components/schemas/AllOfComplex'
         - type: object
@@ -150,7 +150,7 @@ components:
         - $ref: '#/components/schemas/AnyOfPrimitive'
         - $ref: '#/components/schemas/AnyOfComplex'
 
-    NestedOneOfInAllOf: # done
+    NestedOneOfInAllOf: 
       allOf:
         - $ref: '#/components/schemas/OneOfPrimitive'
         - type: object
@@ -158,12 +158,12 @@ components:
             metadata:
               type: string
 
-    NestedAllOfInOneOf: # done
+    NestedAllOfInOneOf: 
       oneOf:
         - $ref: '#/components/schemas/AllOfComplex'
         - type: string
 
-    NestedAnyOfInOneOf: # done
+    NestedAnyOfInOneOf: 
       oneOf:
         - $ref: '#/components/schemas/AnyOfMixed'
         - type: boolean
@@ -186,7 +186,7 @@ components:
             timestamp:
               type: integer
 
-    DeepNestedOneOf: # done
+    DeepNestedOneOf: 
       oneOf:
         - $ref: '#/components/schemas/NestedOneOfInOneOf'
         - $ref: '#/components/schemas/Class1'
@@ -204,14 +204,14 @@ components:
         - $ref: '#/components/schemas/NestedAnyOfInAnyOf'
         - $ref: '#/components/schemas/Enum1'
 
-    TwoLevelOneOf: # done
+    TwoLevelOneOf: 
       oneOf:
         - oneOf:
             - type: string
             - type: integer
         - type: boolean
 
-    TwoLevelAllOf: # done
+    TwoLevelAllOf: 
       allOf:
         - allOf:
             - type: object
@@ -300,7 +300,7 @@ components:
             - $ref: '#/components/schemas/Enum1'
         - type: string
 
-    ThreeLevelMixedOneOfAllOfAnyOf: # done
+    ThreeLevelMixedOneOfAllOfAnyOf: 
       oneOf:
         - allOf:
             - anyOf:
@@ -312,7 +312,7 @@ components:
                   type: boolean
         - $ref: '#/components/schemas/Class1'
 
-    ThreeLevelMixedAllOfOneOfAnyOf: # done
+    ThreeLevelMixedAllOfOneOfAnyOf: 
       allOf:
         - oneOf:
             - anyOf:
