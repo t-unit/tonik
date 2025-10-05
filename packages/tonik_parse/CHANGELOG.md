@@ -1,5 +1,8 @@
 ## 0.0.9
 
+ - **FEAT**: improved name generation.
+ - **FEAT**: security information parsing.
+
 ## 0.0.8
 
  - **FEAT**: Uri property encoding and decoding.

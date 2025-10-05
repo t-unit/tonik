@@ -1,5 +1,7 @@
 ## 0.0.9
 
+ - **FEAT**: security information parsing and documentation.
+
 ## 0.0.8
 
  - **FEAT**: Uri property encoding and decoding.

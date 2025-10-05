@@ -1,5 +1,6 @@
 ## 0.0.9
 
+ - **FEAT**: form encoding and decoding support for classes and composition types.
  - **FIX**: double encoded values for simple and form encoding.
 
 ## 0.0.8

@@ -1,5 +1,8 @@
 ## 0.0.9
 
+ - **FEAT**: security information parsing and documentation support.
+ - **FEAT**: contact, license, terms and external docs support.
+
 ## 0.0.8
 
  - **FEAT**: improved simple en- and decoding for all of models.

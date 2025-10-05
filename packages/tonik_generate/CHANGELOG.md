@@ -1,5 +1,11 @@
 ## 0.0.9
 
+ - **FEAT**: form encoding and decoding for enums, classes, oneOf and composition types.
+ - **FEAT**: discriminator support for oneOf simple encoding.
+ - **FEAT**: improved simple encoding.
+ - **FEAT**: security information in generated documentation.
+ - **FEAT**: improved name generation.
+ - **FIX**: oneOf handling and tests.
  - **FIX**: double encoded values for simple and form encoding.
  - **FIX**: runtime check for current encoding type.
 
