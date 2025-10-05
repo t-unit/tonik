@@ -591,7 +591,7 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
-       const expectedMethod = '''
+        const expectedMethod = '''
           factory Entity.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
               final pairs = value.split(',');
@@ -660,7 +660,7 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
-       const expectedMethod = '''
+        const expectedMethod = '''
           factory MixedEntity.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
               final pairs = value.split(',');

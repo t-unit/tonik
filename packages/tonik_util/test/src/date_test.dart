@@ -263,12 +263,11 @@ void main() {
         );
       });
 
-
       test('round-trip form encoding preserves date', () {
         final originalDate = Date(2024, 7, 4);
         final encoded = originalDate.toForm(explode: false, allowEmpty: true);
         final decodedDate = Date.fromForm(encoded);
-        
+
         expect(decodedDate.year, originalDate.year);
         expect(decodedDate.month, originalDate.month);
         expect(decodedDate.day, originalDate.day);
@@ -279,7 +278,7 @@ void main() {
         final encoded = originalDate.toForm(explode: true, allowEmpty: false);
         final urlEncoded = Uri.encodeQueryComponent(encoded);
         final decodedDate = Date.fromForm(urlEncoded);
-        
+
         expect(decodedDate.year, originalDate.year);
         expect(decodedDate.month, originalDate.month);
         expect(decodedDate.day, originalDate.day);
@@ -289,7 +288,7 @@ void main() {
         final leapDate = Date(2024, 2, 29);
         final encoded = leapDate.toForm(explode: false, allowEmpty: true);
         final decoded = Date.fromForm(encoded);
-        
+
         expect(decoded.year, 2024);
         expect(decoded.month, 2);
         expect(decoded.day, 29);
@@ -307,7 +306,7 @@ void main() {
         for (final testDate in testCases) {
           final encoded = testDate.toForm(explode: false, allowEmpty: true);
           final decoded = Date.fromForm(encoded);
-          
+
           expect(decoded.year, testDate.year);
           expect(decoded.month, testDate.month);
           expect(decoded.day, testDate.day);

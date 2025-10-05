@@ -130,93 +130,96 @@ void main() {
     test(
       'generates AnyOf class with enum, date, dateTime, bool, decimal fields',
       () {
-      final enumModel = EnumModel<String>(
-        name: 'Status',
-        values: const {'active', 'inactive'},
-        isNullable: false,
-        context: context,
-      );
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: false,
+          context: context,
+        );
 
-      final model = AnyOfModel(
-        name: 'VariousTypes',
-        models: {
-          (discriminatorValue: null, model: enumModel),
-          (discriminatorValue: null, model: DateModel(context: context)),
-          (discriminatorValue: null, model: DateTimeModel(context: context)),
-          (discriminatorValue: null, model: BooleanModel(context: context)),
-          (discriminatorValue: null, model: DecimalModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
+        final model = AnyOfModel(
+          name: 'VariousTypes',
+          models: {
+            (discriminatorValue: null, model: enumModel),
+            (discriminatorValue: null, model: DateModel(context: context)),
+            (discriminatorValue: null, model: DateTimeModel(context: context)),
+            (discriminatorValue: null, model: BooleanModel(context: context)),
+            (discriminatorValue: null, model: DecimalModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
 
-      final klass = generator.generateClass(model);
+        final klass = generator.generateClass(model);
 
-      expect(klass.name, 'VariousTypes');
-      final defaultCtor = klass.constructors.firstWhere((c) => c.name == null);
-      expect(defaultCtor.constant, isTrue);
+        expect(klass.name, 'VariousTypes');
+        final defaultCtor = klass.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        expect(defaultCtor.constant, isTrue);
 
-      final fieldNames = klass.fields.map((f) => f.name).toList();
-      expect(
-        fieldNames,
-        containsAll(['status', 'date', 'dateTime', 'bool', 'bigDecimal']),
-      );
+        final fieldNames = klass.fields.map((f) => f.name).toList();
+        expect(
+          fieldNames,
+          containsAll(['status', 'date', 'dateTime', 'bool', 'bigDecimal']),
+        );
 
-      expect(
-        klass.fields
-            .firstWhere((f) => f.name == 'status')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'Status?',
-      );
-      expect(
-        klass.fields
-            .firstWhere((f) => f.name == 'date')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'Date?',
-      );
-      expect(
-        klass.fields
-            .firstWhere((f) => f.name == 'dateTime')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'DateTime?',
-      );
-      expect(
-        klass.fields
-            .firstWhere((f) => f.name == 'bool')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'bool?',
-      );
-      expect(
-        klass.fields
-            .firstWhere((f) => f.name == 'bigDecimal')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'BigDecimal?',
-      );
+        expect(
+          klass.fields
+              .firstWhere((f) => f.name == 'status')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'Status?',
+        );
+        expect(
+          klass.fields
+              .firstWhere((f) => f.name == 'date')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'Date?',
+        );
+        expect(
+          klass.fields
+              .firstWhere((f) => f.name == 'dateTime')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'DateTime?',
+        );
+        expect(
+          klass.fields
+              .firstWhere((f) => f.name == 'bool')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'bool?',
+        );
+        expect(
+          klass.fields
+              .firstWhere((f) => f.name == 'bigDecimal')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'BigDecimal?',
+        );
 
-      expect(
-        klass.fields.every((f) => f.modifier == FieldModifier.final$),
-        isTrue,
-      );
+        expect(
+          klass.fields.every((f) => f.modifier == FieldModifier.final$),
+          isTrue,
+        );
 
-      final ctor = klass.constructors.first;
-      final ctorParams = ctor.optionalParameters.map((p) => p.name).toList();
-      expect(
-        ctorParams,
-        containsAll(['status', 'date', 'dateTime', 'bool', 'bigDecimal']),
-      );
-      expect(ctor.optionalParameters.every((p) => p.named), isTrue);
-      expect(ctor.optionalParameters.every((p) => !p.required), isTrue);
-    });
+        final ctor = klass.constructors.first;
+        final ctorParams = ctor.optionalParameters.map((p) => p.name).toList();
+        expect(
+          ctorParams,
+          containsAll(['status', 'date', 'dateTime', 'bool', 'bigDecimal']),
+        );
+        expect(ctor.optionalParameters.every((p) => p.named), isTrue);
+        expect(ctor.optionalParameters.every((p) => !p.required), isTrue);
+      },
+    );
   });
 
   group('equals, hashCode, copyWith', () {
@@ -279,58 +282,58 @@ void main() {
     test(
       'generates copyWith method with nullable parameters and field defaults',
       () {
-      final model = AnyOfModel(
-        name: 'ValueChoice',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
+        final model = AnyOfModel(
+          name: 'ValueChoice',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
 
-      final klass = generator.generateClass(model);
+        final klass = generator.generateClass(model);
 
-      final copyWith = klass.methods.firstWhere((m) => m.name == 'copyWith');
-      expect(copyWith.returns?.accept(emitter).toString(), 'ValueChoice');
-      expect(
-        copyWith.optionalParameters.map((p) => p.name).toList(),
-        containsAll(['string', 'int']),
-      );
-      expect(
-        copyWith.optionalParameters
-            .firstWhere((p) => p.name == 'string')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'String?',
-      );
-      expect(
-        copyWith.optionalParameters
-            .firstWhere((p) => p.name == 'int')
-            .type
-            ?.accept(emitter)
-            .toString(),
-        'int?',
-      );
+        final copyWith = klass.methods.firstWhere((m) => m.name == 'copyWith');
+        expect(copyWith.returns?.accept(emitter).toString(), 'ValueChoice');
+        expect(
+          copyWith.optionalParameters.map((p) => p.name).toList(),
+          containsAll(['string', 'int']),
+        );
+        expect(
+          copyWith.optionalParameters
+              .firstWhere((p) => p.name == 'string')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'String?',
+        );
+        expect(
+          copyWith.optionalParameters
+              .firstWhere((p) => p.name == 'int')
+              .type
+              ?.accept(emitter)
+              .toString(),
+          'int?',
+        );
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
-      final generated = format(klass.accept(emitter).toString());
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(klass.accept(emitter).toString());
 
-      const expectedCopyWithBody = '''
+        const expectedCopyWithBody = '''
         ValueChoice copyWith({String? string, int? int}) {
           return ValueChoice(string: string ?? this.string, int: int ?? this.int);
         }
       ''';
 
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedCopyWithBody)),
-      );
-    });
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedCopyWithBody)),
+        );
+      },
+    );
   });
-
 }

@@ -57,9 +57,10 @@ String? _getFormSerializationSuffix(
       allowEmpty: allowEmpty,
     ),
 
-    _ => throw UnimplementedError(
-      'Unsupported model type for form encoding: $model',
-    ),
+    _ =>
+      throw UnimplementedError(
+        'Unsupported model type for form encoding: $model',
+      ),
   };
 }
 
@@ -87,8 +88,9 @@ String? _handleListExpression(
     StringModel() => '.toForm($paramString)',
 
     // For numeric primitives (int, double, num), convert to strings first:
-    IntegerModel() || DoubleModel() || NumberModel() =>
-      '.map((e) => e.toString()).toList().toForm($paramString)',
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() => '.map((e) => e.toString()).toList().toForm($paramString)',
 
     // For boolean, convert to string:
     BooleanModel() => '.map((e) => e.toString()).toList().toForm($paramString)',
@@ -120,8 +122,9 @@ String? _handleListExpression(
       allowEmpty: allowEmpty,
     ),
 
-    _ => throw UnimplementedError(
-      'Unsupported list content type for form encoding: $contentModel',
-    ),
+    _ =>
+      throw UnimplementedError(
+        'Unsupported list content type for form encoding: $contentModel',
+      ),
   };
 }

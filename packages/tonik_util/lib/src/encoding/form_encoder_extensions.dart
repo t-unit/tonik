@@ -148,7 +148,7 @@ extension FormStringMapEncoder on Map<String, String> {
   /// - When `false`, empty maps throw an exception
   ///
   /// The [alreadyEncoded] parameter indicates whether the values are already
-  /// URL-encoded. When `true`, values are not re-encoded to prevent double 
+  /// URL-encoded. When `true`, values are not re-encoded to prevent double
   /// encoding.
   String toForm({
     required bool explode,
@@ -170,9 +170,7 @@ extension FormStringMapEncoder on Map<String, String> {
           .map(
             (e) =>
                 '${Uri.encodeQueryComponent(e.key)}='
-                '${alreadyEncoded 
-                    ? e.value 
-                    : Uri.encodeQueryComponent(e.value)}',
+                '${alreadyEncoded ? e.value : Uri.encodeQueryComponent(e.value)}',
           )
           .join('&');
     } else {

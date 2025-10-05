@@ -363,7 +363,10 @@ void main() {
       });
 
       test('string with only special characters', () {
-        const original = r'@#$%^&*()+={}[]|\:";' "'" '<>?,./';
+        const original =
+            r'@#$%^&*()+={}[]|\:";'
+            "'"
+            '<>?,./';
         final encoded = original.toForm(explode: false, allowEmpty: true);
         final decoded = encoded.decodeFormString();
         expect(decoded, original);

@@ -89,7 +89,6 @@ void main() {
         context: context,
       );
 
-
       final result = generator.generateClass(model);
       final getter = result.methods.firstWhere(
         (m) => m.name == 'currentEncodingShape',
@@ -467,7 +466,6 @@ void main() {
         expect(field.annotations, isEmpty);
       });
     });
-
 
     test('generates field with Uri type for UriModel property', () {
       final model = ClassModel(

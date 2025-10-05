@@ -159,7 +159,7 @@ class NameManager {
   /// Generates a unique variant name for composite model variants.
   ///
   /// This method generates unique names for OneOf, AllOf, and AnyOf variants
-  /// without creating dummy models. It uses the original model's name 
+  /// without creating dummy models. It uses the original model's name
   /// if available, falls back to discriminator values, and ensures uniqueness
   /// within the context.
   ///

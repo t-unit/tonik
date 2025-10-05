@@ -119,19 +119,22 @@ class EnumGenerator {
                     b
                       ..name = 'currentEncodingShape'
                       ..type = MethodType.getter
-                      ..returns = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
+                      ..returns = refer(
+                        'EncodingShape',
+                        'package:tonik_util/tonik_util.dart',
+                      )
                       ..lambda = true
-                      ..body = refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
-                          .property('simple')
-                          .code,
+                      ..body =
+                          refer(
+                            'EncodingShape',
+                            'package:tonik_util/tonik_util.dart',
+                          ).property('simple').code,
               ),
             )
             ..methods.add(
               _generateToSimpleMethod<T>(),
             )
-            ..methods.add(
-              _generateToFormMethod<T>()
-            )
+            ..methods.add(_generateToFormMethod<T>())
             ..fields.add(
               Field(
                 (b) =>
@@ -200,9 +203,9 @@ class EnumGenerator {
               refer(actualEnumName)
                   .property('fromJson')
                   .call([
-                    refer(valueParam)
-                        .property(decodeMethod)
-                        .call([], {contextParam: refer(contextParam)}, []),
+                    refer(valueParam).property(decodeMethod).call([], {
+                      contextParam: refer(contextParam),
+                    }, []),
                   ])
                   .returned
                   .statement,
@@ -253,9 +256,9 @@ class EnumGenerator {
               refer(actualEnumName)
                   .property('fromJson')
                   .call([
-                    refer(valueParam)
-                        .property(decodeMethod)
-                        .call([], {contextParam: refer(contextParam)}, []),
+                    refer(valueParam).property(decodeMethod).call([], {
+                      contextParam: refer(contextParam),
+                    }, []),
                   ])
                   .returned
                   .statement,

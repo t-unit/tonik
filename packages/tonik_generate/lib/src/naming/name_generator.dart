@@ -394,7 +394,7 @@ class NameGenerator {
   }
 
   /// Makes a name unique by first trying to add the given suffix,
-  /// then appending appropriate type-specific suffix for 
+  /// then appending appropriate type-specific suffix for
   /// conflicts, then numeric suffixes.
   ///
   /// Example with Model suffix: [User, User, User]

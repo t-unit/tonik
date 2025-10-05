@@ -496,8 +496,8 @@ void main() {
 
         expect(
           expression,
-          'ids.map((e) => e.toString()).toList() '
-              '.toForm(explode: false, allowEmpty: false)',
+          '''
+ids.map((e) => e.toString()).toList().toForm(explode: false, allowEmpty: false)''',
         );
       });
 
@@ -532,8 +532,8 @@ void main() {
 
         expect(
           expression,
-          'statuses.map((e) => e.toForm(explode: true, allowEmpty: false)) '
-              '.toList().toForm(explode: true, allowEmpty: false)',
+          '''
+statuses.map((e) => e.toForm(explode: true, allowEmpty: false)).toList().toForm(explode: true, allowEmpty: false)''',
         );
       });
 
@@ -562,9 +562,11 @@ void main() {
         );
 
         expect(
-          expression,
-          'filters.map((e) => e.toForm(explode: false, allowEmpty: false)) '
-              '.toList().toForm(explode: false, allowEmpty: false)',
+          collapseWhitespace(expression),
+          collapseWhitespace(
+            '''
+filters.map((e) => e.toForm(explode: false, allowEmpty: false)).toList().toForm(explode: false, allowEmpty: false)''',
+          ),
         );
       });
 

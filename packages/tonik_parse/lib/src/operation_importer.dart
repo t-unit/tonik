@@ -201,7 +201,7 @@ class OperationImporter {
     }
 
     final schemes = <core.SecurityScheme>{};
-    
+
     for (final requirement in security) {
       for (final schemeName in requirement.keys) {
         final scheme = securitySchemeImporter.securitySchemes[schemeName];
@@ -210,7 +210,7 @@ class OperationImporter {
         }
       }
     }
-    
+
     return schemes;
   }
 }

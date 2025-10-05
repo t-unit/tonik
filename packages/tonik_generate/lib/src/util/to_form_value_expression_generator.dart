@@ -11,7 +11,8 @@ String buildToFormPropertyExpression(String fieldName, Property property) {
     throw UnsupportedError('Form encoding not supported for complex types');
   }
 
-  final baseExpression = '$fieldName${isNullable ? '?' : ''}'
+  final baseExpression =
+      '$fieldName${isNullable ? '?' : ''}'
       '.toForm(explode: explode, allowEmpty: allowEmpty)';
 
   if (property.isRequired && property.isNullable) {

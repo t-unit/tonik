@@ -218,7 +218,10 @@ void main() {
   group('NestedAllOfInAnyOf', () {
     test('with AllOfMixed', () {
       final anyOf = NestedAllOfInAnyOf(
-        allOfMixed: AllOfMixed(string: 'test', class1: Class1(name: 'test')),
+        allOfMixed: AllOfMixed(
+          string: 'test',
+          class1: Class1(name: 'test'),
+        ),
         class1: Class1(name: 'test'),
       );
 
@@ -265,10 +268,7 @@ void main() {
     });
 
     test('with number', () {
-      final anyOf = NestedOneOfInAnyOf(
-        oneOfEnum: null,
-        num: 3.14,
-      );
+      final anyOf = NestedOneOfInAnyOf(oneOfEnum: null, num: 3.14);
 
       expect(anyOf.toJson(), 3.14);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '3.14');
@@ -299,9 +299,7 @@ void main() {
 
   group('TwoLevelAnyOf', () {
     test('with string', () {
-      final anyOf = TwoLevelAnyOf(
-        string: 'test',
-      );
+      final anyOf = TwoLevelAnyOf(string: 'test');
 
       expect(anyOf.toJson(), 'test');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'test');
@@ -339,9 +337,7 @@ void main() {
 
   group('ThreeLevelAnyOf', () {
     test('with string', () {
-      final anyOf = ThreeLevelAnyOf(
-        string: 'deep',
-      );
+      final anyOf = ThreeLevelAnyOf(string: 'deep');
 
       expect(anyOf.toJson(), 'deep');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'deep');
@@ -365,7 +361,9 @@ void main() {
     test('with anyOf', () {
       final anyOf = ThreeLevelAnyOf(
         threeLevelAnyOfModel: ThreeLevelAnyOfModel(
-          threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(class1: Class1(name: 'test')),
+          threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(
+            class1: Class1(name: 'test'),
+          ),
         ),
       );
 
@@ -380,9 +378,7 @@ void main() {
 
   group('DeepNestedAnyOf', () {
     test('with enum1', () {
-      final anyOf = DeepNestedAnyOf(
-        enum1: Enum1.value1,
-      );
+      final anyOf = DeepNestedAnyOf(enum1: Enum1.value1);
 
       expect(anyOf.toJson(), 'value1');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'value1');

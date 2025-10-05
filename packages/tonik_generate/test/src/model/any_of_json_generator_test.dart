@@ -108,53 +108,53 @@ void main() {
   test(
     'generates toJson method with merge-or-equal algorithm for complex models',
     () {
-    final modelA = ClassModel(
-      name: 'A',
-      properties: [
-        Property(
-          name: 'id',
-          model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-        ),
-      ],
-      context: context,
-    );
+      final modelA = ClassModel(
+        name: 'A',
+        properties: [
+          Property(
+            name: 'id',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
 
-    final modelB = ClassModel(
-      name: 'B',
-      properties: [
-        Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-        ),
-      ],
-      context: context,
-    );
+      final modelB = ClassModel(
+        name: 'B',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
 
-    final model = AnyOfModel(
-      name: 'Payload',
-      models: {
-        (discriminatorValue: 'a', model: modelA),
-        (discriminatorValue: 'b', model: modelB),
-      },
-      discriminator: 'disc',
-      context: context,
-    );
+      final model = AnyOfModel(
+        name: 'Payload',
+        models: {
+          (discriminatorValue: 'a', model: modelA),
+          (discriminatorValue: 'b', model: modelB),
+        },
+        discriminator: 'disc',
+        context: context,
+      );
 
-    final klass = generator.generateClass(model);
+      final klass = generator.generateClass(model);
 
-    final format =
-        DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-    final generated = format(klass.accept(emitter).toString());
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(klass.accept(emitter).toString());
 
-    const expectedMethod = '''
+      const expectedMethod = '''
       Object? toJson() {
         final values = <Object?>[];
         final mapValues = <Map<String, Object?>>[];
@@ -188,11 +188,12 @@ void main() {
       }
     ''';
 
-    expect(
-      collapseWhitespace(generated),
-      contains(collapseWhitespace(expectedMethod)),
-    );
-  });
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    },
+  );
 
   test(
     'generates toJson method without discriminator when none configured',
@@ -349,39 +350,39 @@ void main() {
   test(
     'generates toJson method for mixed class and primitive anyOf models',
     () {
-    final user = ClassModel(
-      name: 'User',
-      properties: [
-        Property(
-          name: 'id',
-          model: IntegerModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-        ),
-      ],
-      context: context,
-    );
+      final user = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
 
-    final model = AnyOfModel(
-      name: 'Mixed',
-      models: {
-        (discriminatorValue: 'user', model: user),
-        (discriminatorValue: 'str', model: StringModel(context: context)),
-      },
-      discriminator: 'disc',
-      context: context,
-    );
+      final model = AnyOfModel(
+        name: 'Mixed',
+        models: {
+          (discriminatorValue: 'user', model: user),
+          (discriminatorValue: 'str', model: StringModel(context: context)),
+        },
+        discriminator: 'disc',
+        context: context,
+      );
 
-    final klass = generator.generateClass(model);
+      final klass = generator.generateClass(model);
 
-    final format =
-        DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-    final generated = format(klass.accept(emitter).toString());
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(klass.accept(emitter).toString());
 
-    const expectedMethod = '''
+      const expectedMethod = '''
       Object? toJson() {
         final values = <Object?>[];
         final mapValues = <Map<String, Object?>>[];
@@ -415,9 +416,10 @@ void main() {
       }
     ''';
 
-    expect(
-      collapseWhitespace(generated),
-      contains(collapseWhitespace(expectedMethod)),
-    );
-  });
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    },
+  );
 }

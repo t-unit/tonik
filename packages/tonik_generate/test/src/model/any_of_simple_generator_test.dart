@@ -112,9 +112,7 @@ void main() {
   });
 
   group('toSimple', () {
-    test(
-      'generates toSimple method with merge-or-equal algorithm',
-      () {
+    test('generates toSimple method with merge-or-equal algorithm', () {
       final modelA = ClassModel(
         name: 'A',
         properties: [
@@ -351,38 +349,38 @@ void main() {
     test(
       'throws exception when mixed class and primitive anyOf are both set',
       () {
-      final user = ClassModel(
-        name: 'User',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
+        final user = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
-      final model = AnyOfModel(
-        name: 'MixedSimple',
-        models: {
-          (discriminatorValue: 'user', model: user),
-          (discriminatorValue: 'str', model: StringModel(context: context)),
-        },
-        discriminator: 'disc',
-        context: context,
-      );
+        final model = AnyOfModel(
+          name: 'MixedSimple',
+          models: {
+            (discriminatorValue: 'user', model: user),
+            (discriminatorValue: 'str', model: StringModel(context: context)),
+          },
+          discriminator: 'disc',
+          context: context,
+        );
 
-      final klass = generator.generateClass(model);
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
-      final generated = format(klass.accept(emitter).toString());
+        final klass = generator.generateClass(model);
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+        const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
           final values = <String>[];
           final mapValues = <Map<String, String>>[];
@@ -419,11 +417,12 @@ void main() {
         }
       ''';
 
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 
   group('simpleProperties', () {
@@ -544,39 +543,39 @@ void main() {
     test(
       'throws exception when mixed complex and primitive values are set',
       () {
-      final user = ClassModel(
-        name: 'User',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
+        final user = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
-      final model = AnyOfModel(
-        name: 'MixedSimple',
-        models: {
-          (discriminatorValue: 'user', model: user),
-          (discriminatorValue: 'str', model: StringModel(context: context)),
-        },
-        discriminator: 'disc',
-        context: context,
-      );
+        final model = AnyOfModel(
+          name: 'MixedSimple',
+          models: {
+            (discriminatorValue: 'user', model: user),
+            (discriminatorValue: 'str', model: StringModel(context: context)),
+          },
+          discriminator: 'disc',
+          context: context,
+        );
 
-      final klass = generator.generateClass(model);
+        final klass = generator.generateClass(model);
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
-      final generated = format(klass.accept(emitter).toString());
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+        const expectedMethod = '''
         Map<String, String> simpleProperties({required bool allowEmpty}) {
           final maps = <Map<String, String>>[];
           if (user != null) {
@@ -599,10 +598,11 @@ void main() {
         }
       ''';
 
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 }

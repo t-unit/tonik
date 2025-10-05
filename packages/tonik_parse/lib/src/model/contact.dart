@@ -18,6 +18,5 @@ class Contact {
   final String? email;
 
   @override
-  String toString() =>
-      'Contact{name: $name, url: $url, email: $email}';
+  String toString() => 'Contact{name: $name, url: $url, email: $email}';
 }

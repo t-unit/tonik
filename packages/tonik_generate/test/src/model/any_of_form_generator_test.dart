@@ -920,7 +920,6 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
-
   });
 
   group('Edge cases', () {

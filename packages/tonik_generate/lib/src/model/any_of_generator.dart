@@ -263,8 +263,10 @@ class AnyOfGenerator {
         );
       }
     } else {
-      final encodingShapeRef =
-          refer('EncodingShape', 'package:tonik_util/tonik_util.dart');
+      final encodingShapeRef = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
 
       codes
         ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
@@ -408,16 +410,17 @@ class AnyOfGenerator {
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
-      body..add(
-        TypeReference(
-          (b) =>
-              b
-                ..symbol = 'String'
-                ..url = 'dart:core'
-                ..isNullable = true,
-        ).code,
-      )
-      ..add(const Code(' discriminatorValue;'));
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
     }
 
     for (final n in normalizedProperties) {
@@ -525,33 +528,35 @@ class AnyOfGenerator {
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
-      body..add(
-        TypeReference(
-          (b) =>
-              b
-                ..symbol = 'String'
-                ..url = 'dart:core'
-                ..isNullable = true,
-        ).code,
-      )
-      ..add(const Code(' discriminatorValue;'));
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
     }
 
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final discValue = discMap[n.property.model];
 
-      body..add(Code('if ($name != null) {'))
-      ..addAll(
-        _generateFieldEncoding(
-          fieldName: name,
-          fieldModel: n.property.model,
-          tmpVarName: '${name}Simple',
-          isForm: false,
-          discriminatorValue: hasDiscriminator ? discValue : null,
-        ),
-      )
-      ..add(const Code('}'));
+      body
+        ..add(Code('if ($name != null) {'))
+        ..addAll(
+          _generateFieldEncoding(
+            fieldName: name,
+            fieldModel: n.property.model,
+            tmpVarName: '${name}Simple',
+            isForm: false,
+            discriminatorValue: hasDiscriminator ? discValue : null,
+          ),
+        )
+        ..add(const Code('}'));
     }
 
     body.addAll([
@@ -798,8 +803,10 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    final encodingShapeType =
-        refer('EncodingShape', 'package:tonik_util/tonik_util.dart');
+    final encodingShapeType = refer(
+      'EncodingShape',
+      'package:tonik_util/tonik_util.dart',
+    );
 
     final body = <Code>[
       const Code('final shapes = <'),
@@ -827,9 +834,9 @@ class AnyOfGenerator {
     body.addAll([
       const Code('if (shapes.isEmpty) {'),
       const Code('  throw '),
-      refer('StateError', 'dart:core')
-          .call([literalString('At least one field must be non-null in anyOf')])
-          .statement,
+      refer('StateError', 'dart:core').call([
+        literalString('At least one field must be non-null in anyOf'),
+      ]).statement,
       const Code('}'),
       const Code('if (shapes.length > 1) return '),
       encodingShapeType.property('mixed').code,
@@ -838,12 +845,13 @@ class AnyOfGenerator {
     ]);
 
     return Method(
-      (b) => b
-        ..name = 'currentEncodingShape'
-        ..type = MethodType.getter
-        ..returns = encodingShapeType
-        ..lambda = false
-        ..body = Block.of(body),
+      (b) =>
+          b
+            ..name = 'currentEncodingShape'
+            ..type = MethodType.getter
+            ..returns = encodingShapeType
+            ..lambda = false
+            ..body = Block.of(body),
     );
   }
 
@@ -897,9 +905,10 @@ class AnyOfGenerator {
           ..add(Code('if ($fn != null && '))
           ..add(Code('$fn!.currentEncodingShape == '))
           ..add(
-            refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
-                .property('complex')
-                .code,
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('complex').code,
           )
           ..add(const Code(') { '))
           ..add(const Code('final '))
@@ -994,33 +1003,35 @@ class AnyOfGenerator {
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
-      body..add(
-        TypeReference(
-          (b) =>
-              b
-                ..symbol = 'String'
-                ..url = 'dart:core'
-                ..isNullable = true,
-        ).code,
-      )
-      ..add(const Code(' discriminatorValue;'));
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
     }
 
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final discValue = discMap[n.property.model];
 
-      body..add(Code('if ($name != null) {'))
-      ..addAll(
-        _generateFieldEncoding(
-          fieldName: name,
-          fieldModel: n.property.model,
-          tmpVarName: '${name}Form',
-          isForm: true,
-          discriminatorValue: hasDiscriminator ? discValue : null,
-        ),
-      )
-      ..add(const Code('}'));
+      body
+        ..add(Code('if ($name != null) {'))
+        ..addAll(
+          _generateFieldEncoding(
+            fieldName: name,
+            fieldModel: n.property.model,
+            tmpVarName: '${name}Form',
+            isForm: true,
+            discriminatorValue: hasDiscriminator ? discValue : null,
+          ),
+        )
+        ..add(const Code('}'));
     }
 
     body.addAll([
@@ -1127,11 +1138,12 @@ class AnyOfGenerator {
                         ..required = true,
                 ),
               )
-              ..body = literalMap(
-                {},
-                refer('String', 'dart:core'),
-                refer('String', 'dart:core'),
-              ).returned.statement,
+              ..body =
+                  literalMap(
+                    {},
+                    refer('String', 'dart:core'),
+                    refer('String', 'dart:core'),
+                  ).returned.statement,
       );
     }
 
@@ -1144,16 +1156,17 @@ class AnyOfGenerator {
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
     if (hasDiscriminator) {
-      body..add(
-        TypeReference(
-          (b) =>
-              b
-                ..symbol = 'String'
-                ..url = 'dart:core'
-                ..isNullable = true,
-        ).code,
-      )
-      ..add(const Code(' discriminatorValue;'));
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
     }
 
     for (final n in normalizedProperties) {
@@ -1166,9 +1179,10 @@ class AnyOfGenerator {
           ..add(Code('if ($fn != null && '))
           ..add(Code('$fn!.currentEncodingShape == '))
           ..add(
-            refer('EncodingShape', 'package:tonik_util/tonik_util.dart')
-                .property('complex')
-                .code,
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('complex').code,
           )
           ..add(const Code(') {'))
           ..add(const Code('final '))

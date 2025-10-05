@@ -116,7 +116,7 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
     lines
       ..add('///')
       ..add('/// Security Schemes:');
-    
+
     for (final scheme in securitySchemes) {
       final schemeInfo = _formatSecurityScheme(scheme);
       lines.addAll(schemeInfo);
@@ -128,7 +128,7 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
 
 List<String> _formatSecurityScheme(SecurityScheme scheme) {
   final lines = <String>[];
-  
+
   switch (scheme) {
     case ApiKeySecurityScheme():
       final location = switch (scheme.location) {
@@ -136,36 +136,40 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
         ApiKeyLocation.query => 'query',
         ApiKeyLocation.cookie => 'cookie',
       };
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
+      final description =
+          (scheme.description?.isNotEmpty ?? false)
+              ? ': ${scheme.description}'
+              : '';
       lines.add('/// - API Key ($location)$description');
-      
+
     case HttpSecurityScheme():
       final schemeName = switch (scheme.scheme.toLowerCase()) {
         'bearer' => 'Bearer',
         'basic' => 'Basic',
         _ => scheme.scheme.toUpperCase(),
       };
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
+      final description =
+          (scheme.description?.isNotEmpty ?? false)
+              ? ': ${scheme.description}'
+              : '';
       lines.add('/// - HTTP $schemeName$description');
       if (scheme.bearerFormat != null) {
         lines.add('///   Format: ${scheme.bearerFormat}');
       }
-      
+
     case OAuth2SecurityScheme():
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
+      final description =
+          (scheme.description?.isNotEmpty ?? false)
+              ? ': ${scheme.description}'
+              : '';
       lines.add('/// - OAuth2$description');
       final flows = scheme.flows;
-      
+
       if (flows.authorizationCode != null) {
         final flow = flows.authorizationCode!;
-        lines..add('///   Authorization URL: ${flow.authorizationUrl}')
-        ..add('///   Token URL: ${flow.tokenUrl}');
+        lines
+          ..add('///   Authorization URL: ${flow.authorizationUrl}')
+          ..add('///   Token URL: ${flow.tokenUrl}');
         if (flow.scopes.isNotEmpty) {
           lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
         }
@@ -188,14 +192,15 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
           lines.add('///   Scopes: ${flow.scopes.keys.join(', ')}');
         }
       }
-      
+
     case OpenIdConnectSecurityScheme():
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
+      final description =
+          (scheme.description?.isNotEmpty ?? false)
+              ? ': ${scheme.description}'
+              : '';
       lines.add('/// - OpenID Connect$description');
       lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
   }
-  
+
   return lines;
 }

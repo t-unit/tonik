@@ -393,16 +393,12 @@ void main() {
     test('with integer', () {
       final allOf = ThreeLevelMixedRefs(
         twoLevelMixedAllOfAnyOf: TwoLevelMixedAllOfAnyOf(
-          twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(
-            int: 42,
-          ),
+          twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(int: 42),
           twoLevelMixedAllOfAnyOfModel2: TwoLevelMixedAllOfAnyOfModel2(
             metadata: 'extra',
           ),
         ),
-        threeLevelMixedRefsAnyOfModel: ThreeLevelMixedRefsAnyOfModel(
-          int: 123,
-        ),
+        threeLevelMixedRefsAnyOfModel: ThreeLevelMixedRefsAnyOfModel(int: 123),
       );
 
       expect(allOf.toJson, throwsA(isA<EncodingException>()));
@@ -505,7 +501,10 @@ void main() {
         multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
       );
 
-      expect(allOf.toJson(), {'level1': {'name': 'Albert'}, 'level2': 42});
+      expect(allOf.toJson(), {
+        'level1': {'name': 'Albert'},
+        'level2': 42,
+      });
       expect(
         () => allOf.toForm(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
@@ -522,15 +521,16 @@ void main() {
       final allOf = MultiLevelNesting(
         multiLevelNestingModel: MultiLevelNestingModel(
           level1: MultiLevelNestingLevel1OneOfModelAnyOf(
-            MultiLevelNestingLevel1OneOfAnyOfModel(
-              class2: Class2(number: 123),
-            ),
+            MultiLevelNestingLevel1OneOfAnyOfModel(class2: Class2(number: 123)),
           ),
         ),
         multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
       );
 
-      expect(allOf.toJson(), {'level1': {'number': 123}, 'level2': 42});
+      expect(allOf.toJson(), {
+        'level1': {'number': 123},
+        'level2': 42,
+      });
       expect(
         () => allOf.toForm(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),

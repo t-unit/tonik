@@ -58,7 +58,7 @@ void main() {
       expect(result.filename, 'color.dart');
       expect(result.code, contains('enum Color'));
       expect(result.code, isNot(contains('typedef')));
-      
+
       expect(generated.enumValue.name, 'Color');
       expect(generated.typedefValue, isNull);
       expect(generated.enumValue.values, hasLength(3));
@@ -125,13 +125,12 @@ void main() {
       expect(result.code, contains('enum Color'));
       expect(result.code, isNot(contains('typedef')));
       expect(result.filename, 'color.dart');
-      
+
       expect(generated.enumValue.name, 'Color');
       expect(generated.enumValue.values, hasLength(3));
       expect(generated.enumValue.values.first.name, 'red');
       expect(generated.typedefValue, isNull);
     });
-
 
     test('generates enum with integer values', () {
       final model = EnumModel<int>(
@@ -147,7 +146,7 @@ void main() {
       expect(result.filename, 'status.dart');
       expect(result.code, contains('enum Status'));
       expect(result.code, isNot(contains('typedef')));
-      
+
       expect(generated.enumValue.name, 'Status');
       expect(generated.typedefValue, isNull);
       expect(generated.enumValue.values, hasLength(3));
@@ -166,46 +165,48 @@ void main() {
     test(
       'generates enum with underscore-only values using normalized names',
       () {
-      final model = EnumModel<String>(
-        name: 'Placeholder',
-        values: const {'_', '__', '___'},
-        isNullable: false,
-        context: Context.initial().push('test'),
-      );
+        final model = EnumModel<String>(
+          name: 'Placeholder',
+          values: const {'_', '__', '___'},
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
 
-      final generated = generator.generateEnum(model, 'Placeholder');
+        final generated = generator.generateEnum(model, 'Placeholder');
 
-      expect(generated.enumValue.name, 'Placeholder');
-      expect(generated.typedefValue, isNull);
-      expect(generated.enumValue.values, hasLength(3));
-      expect(generated.enumValue.values[0].name, 'value');
-      expect(generated.enumValue.values[1].name, 'value2');
-      expect(generated.enumValue.values[2].name, 'value3');
+        expect(generated.enumValue.name, 'Placeholder');
+        expect(generated.typedefValue, isNull);
+        expect(generated.enumValue.values, hasLength(3));
+        expect(generated.enumValue.values[0].name, 'value');
+        expect(generated.enumValue.values[1].name, 'value2');
+        expect(generated.enumValue.values[2].name, 'value3');
 
-      final code = generated.enumValue.accept(DartEmitter()).toString();
-      expect(code, contains("value(r'_')"));
-      expect(code, contains("value2(r'__')"));
-      expect(code, contains("value3(r'___')"));
-      expect(code, contains('const Placeholder(this.rawValue);'));
-      expect(code, contains('final String rawValue;'));
-    });
+        final code = generated.enumValue.accept(DartEmitter()).toString();
+        expect(code, contains("value(r'_')"));
+        expect(code, contains("value2(r'__')"));
+        expect(code, contains("value3(r'___')"));
+        expect(code, contains('const Placeholder(this.rawValue);'));
+        expect(code, contains('final String rawValue;'));
+      },
+    );
 
     test(
       'generates enum file with correct name and content for integer values',
       () {
-      final model = EnumModel<int>(
-        name: 'Status',
-        values: const {100, 200, 404},
-        isNullable: false,
-        context: Context.initial().push('test'),
-      );
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {100, 200, 404},
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
 
-      final result = generator.generate(model);
+        final result = generator.generate(model);
 
-      expect(result.filename, 'status.dart');
-      expect(result.code, contains('enum Status'));
-      expect(result.code, isNot(contains('typedef')));
-    });
+        expect(result.filename, 'status.dart');
+        expect(result.code, contains('enum Status'));
+        expect(result.code, isNot(contains('typedef')));
+      },
+    );
 
     test('throws error for unsupported enum value types like double', () {
       final model = EnumModel<double>(
@@ -221,18 +222,19 @@ void main() {
     test(
       'throws ArgumentError for unsupported enum value type in generateEnum',
       () {
-      final model = EnumModel<double>(
-        name: 'Status',
-        values: {1.0, 2.0},
-        isNullable: false,
-        context: Context.initial().push('test'),
-      );
+        final model = EnumModel<double>(
+          name: 'Status',
+          values: {1.0, 2.0},
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
 
-      expect(
-        () => generator.generateEnum(model, 'Status'),
-        throwsArgumentError,
-      );
-    });
+        expect(
+          () => generator.generateEnum(model, 'Status'),
+          throwsArgumentError,
+        );
+      },
+    );
 
     group('enum value name normalization', () {
       test('handles string values', () {
@@ -670,7 +672,6 @@ void main() {
         );
       });
     });
-
 
     group('fromForm factory constructor', () {
       test('generates fromForm constructor for string enum', () {
