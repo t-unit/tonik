@@ -471,14 +471,14 @@ void main() {
   group('ThreeLevelMixedOneOfAllOfAnyOf', () {
     group('allOf', () {
       test('oneOf -> allOf -> anyOf (string) + object with flag', () {
-        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
+        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(
           threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
               ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
                 string: 'string',
                 int: 123,
               ),
-          threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
-              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: true),
+          threeLevelMixedOneOfAllOfAnyOfAllOfModel:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(flag: true),
         );
         final oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
 
@@ -496,14 +496,14 @@ void main() {
       });
 
       test('oneOf -> allOf -> anyOf (integer) + object with flag', () {
-        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
+        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(
           threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
               ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
                 string: null,
                 int: 456,
               ),
-          threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
-              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: false),
+          threeLevelMixedOneOfAllOfAnyOfAllOfModel:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(flag: false),
         );
         final oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
 
