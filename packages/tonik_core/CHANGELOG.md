@@ -1,3 +1,5 @@
+## 0.0.9
+
 ## 0.0.8
 
  - **FEAT**: improved simple en- and decoding for all of models.
