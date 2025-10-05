@@ -468,44 +468,6 @@ void main() {
       });
     });
 
-    test(
-      'generates constructor with required fields before non-required fields',
-      () {
-        final model = ClassModel(
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-        final constructor = result.constructors.first;
-
-        expect(constructor.optionalParameters, hasLength(2));
-
-        final idParam = constructor.optionalParameters[0];
-        expect(idParam.name, 'id');
-        expect(idParam.required, isTrue);
-
-        final nameParam = constructor.optionalParameters[1];
-        expect(nameParam.name, 'name');
-        expect(nameParam.required, isFalse);
-      },
-    );
 
     test('generates field with Uri type for UriModel property', () {
       final model = ClassModel(
@@ -1143,8 +1105,7 @@ void main() {
       });
 
       test(
-        'generates complete fromForm constructor for supported model with '
-        'properties',
+        'generates fromForm constructor with mixed property types',
         () {
           final model = ClassModel(
             name: 'UserForm',
@@ -1210,7 +1171,7 @@ void main() {
       );
 
       test(
-        'generates complete toForm method for supported model with properties',
+        'generates toForm method with mixed property types',
         () {
           final model = ClassModel(
             name: 'UserForm',
@@ -1256,8 +1217,7 @@ void main() {
       );
 
       test(
-        'generates complete formProperties method for supported model with '
-        'mixed property types',
+        'generates formProperties method with mixed property types',
         () {
           final model = ClassModel(
             name: 'ProductForm',

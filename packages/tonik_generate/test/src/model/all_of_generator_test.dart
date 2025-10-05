@@ -30,7 +30,7 @@ void main() {
   });
 
   group('currentEncodingShape', () {
-    test('generates getter for simple allOf', () {
+    test('generates simple encoding shape getter for simple allOf', () {
       final model = AllOfModel(
         name: 'Combined',
         models: {
@@ -56,7 +56,7 @@ void main() {
       );
     });
 
-    test('generates getter for complex allOf', () {
+    test('generates complex encoding shape getter for complex allOf', () {
       final model = AllOfModel(
         name: 'Combined',
         models: {
@@ -117,7 +117,7 @@ void main() {
       );
     });
 
-    test('generates getter for simple allOf with full implementation', () {
+    test('generates encoding shape getter with full implementation', () {
       final model = AllOfModel(
         name: 'Combined',
         models: {
@@ -327,7 +327,7 @@ void main() {
       expect(mixinField.type?.accept(emitter).toString(), 'Mixin');
     });
 
-    test('generates toJson method that combines all model properties', () {
+    test('generates toJson method combining all model properties', () {
       final model = AllOfModel(
         name: 'CombinedModel',
         models: {
@@ -390,7 +390,7 @@ void main() {
       );
     });
 
-    test('generates fromJson method that validates all model properties', () {
+    test('generates fromJson method validating all model properties', () {
       final model = AllOfModel(
         name: 'CombinedModel',
         models: {
@@ -1422,7 +1422,7 @@ void main() {
   });
 
   group('form encoding - complex types', () {
-    test('generates fromForm constructor for complex allOf', () {
+    test('generates fromForm constructor for complex allOf model', () {
       final model = AllOfModel(
         name: 'CombinedModel',
         models: <Model>{

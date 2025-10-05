@@ -53,22 +53,12 @@ void main() {
       );
 
       final result = generator.generate(model);
+      final generated = generator.generateEnum(model, 'Color');
 
       expect(result.filename, 'color.dart');
       expect(result.code, contains('enum Color'));
       expect(result.code, isNot(contains('typedef')));
-    });
-
-    test('generates enum with string values value', () {
-      final model = EnumModel<String>(
-        name: 'Color',
-        values: const {'red', 'green', 'blue'},
-        isNullable: false,
-        context: Context.initial().push('test'),
-      );
-
-      final generated = generator.generateEnum(model, 'Color');
-
+      
       expect(generated.enumValue.name, 'Color');
       expect(generated.typedefValue, isNull);
       expect(generated.enumValue.values, hasLength(3));
@@ -121,7 +111,7 @@ void main() {
       expect(generated.enumValue.values[1].name, 'inactive');
     });
 
-    test('generates non-nullable enum code', () {
+    test('generates non-nullable enum', () {
       final model = EnumModel<String>(
         name: 'Color',
         values: const {'red', 'green', 'blue'},
@@ -130,44 +120,20 @@ void main() {
       );
 
       final result = generator.generate(model);
+      final generated = generator.generateEnum(model, 'Color');
 
       expect(result.code, contains('enum Color'));
       expect(result.code, isNot(contains('typedef')));
       expect(result.filename, 'color.dart');
-    });
-
-    test('generates non-nullable enum value', () {
-      final model = EnumModel<String>(
-        name: 'Color',
-        values: const {'red', 'green', 'blue'},
-        isNullable: false,
-        context: Context.initial(),
-      );
-
-      final generated = generator.generateEnum(model, 'Color');
-
+      
       expect(generated.enumValue.name, 'Color');
       expect(generated.enumValue.values, hasLength(3));
       expect(generated.enumValue.values.first.name, 'red');
       expect(generated.typedefValue, isNull);
     });
 
-    test('generates enum with string values code', () {
-      final model = EnumModel<String>(
-        name: 'Color',
-        values: const {'red', 'green', 'blue'},
-        isNullable: false,
-        context: Context.initial().push('test'),
-      );
 
-      final result = generator.generate(model);
-
-      expect(result.filename, 'color.dart');
-      expect(result.code, contains('enum Color'));
-      expect(result.code, isNot(contains('typedef')));
-    });
-
-    test('generates enum with integer values code', () {
+    test('generates enum with integer values', () {
       final model = EnumModel<int>(
         name: 'Status',
         values: const {1, 2, 3},
@@ -176,22 +142,12 @@ void main() {
       );
 
       final result = generator.generate(model);
+      final generated = generator.generateEnum(model, 'Status');
 
       expect(result.filename, 'status.dart');
       expect(result.code, contains('enum Status'));
       expect(result.code, isNot(contains('typedef')));
-    });
-
-    test('generates enum with integer values value', () {
-      final model = EnumModel<int>(
-        name: 'Status',
-        values: const {1, 2, 3},
-        isNullable: false,
-        context: Context.initial().push('test'),
-      );
-
-      final generated = generator.generateEnum(model, 'Status');
-
+      
       expect(generated.enumValue.name, 'Status');
       expect(generated.typedefValue, isNull);
       expect(generated.enumValue.values, hasLength(3));
@@ -207,7 +163,9 @@ void main() {
       expect(code, contains('final int rawValue;'));
     });
 
-    test('handles underscore-only values', () {
+    test(
+      'generates enum with underscore-only values using normalized names',
+      () {
       final model = EnumModel<String>(
         name: 'Placeholder',
         values: const {'_', '__', '___'},
@@ -232,7 +190,9 @@ void main() {
       expect(code, contains('final String rawValue;'));
     });
 
-    test('generates file with correct name and content', () {
+    test(
+      'generates enum file with correct name and content for integer values',
+      () {
       final model = EnumModel<int>(
         name: 'Status',
         values: const {100, 200, 404},
@@ -247,7 +207,7 @@ void main() {
       expect(result.code, isNot(contains('typedef')));
     });
 
-    test('throws error for unsupported types', () {
+    test('throws error for unsupported enum value types like double', () {
       final model = EnumModel<double>(
         name: 'Rate',
         values: {0.5, 1.5, 2.5},
@@ -258,7 +218,9 @@ void main() {
       expect(() => generator.generate(model), throwsA(isA<ArgumentError>()));
     });
 
-    test('throws for unsupported enum value type', () {
+    test(
+      'throws ArgumentError for unsupported enum value type in generateEnum',
+      () {
       final model = EnumModel<double>(
         name: 'Status',
         values: {1.0, 2.0},
@@ -272,7 +234,7 @@ void main() {
       );
     });
 
-    group('_normalizeEnumValueName', () {
+    group('enum value name normalization', () {
       test('handles string values', () {
         final model = EnumModel<String>(
           name: 'Status',
@@ -301,7 +263,7 @@ void main() {
       });
     });
 
-    group('json serialization', () {
+    group('JSON serialization', () {
       test('generates toJson method', () {
         final model = EnumModel<String>(
           name: 'Color',
@@ -420,7 +382,7 @@ void main() {
       });
     });
 
-    group('fromSimple factory', () {
+    group('fromSimple factory constructor', () {
       test('generates fromSimple constructor for string enum', () {
         final model = EnumModel<String>(
           name: 'Color',
@@ -559,7 +521,7 @@ void main() {
       });
     });
 
-    group('toSimple method', () {
+    group('toSimple method generation', () {
       test('generates toSimple method for string enum', () {
         final model = EnumModel<String>(
           name: 'Color',
@@ -709,105 +671,8 @@ void main() {
       });
     });
 
-    group('fromSimple method generation', () {
-      test('generates fromSimple constructor that calls decodeSimpleString '
-          'for string enums', () {
-        final model = EnumModel<String>(
-          name: 'Color',
-          values: const {'red', 'green', 'blue'},
-          isNullable: false,
-          context: Context.initial(),
-        );
 
-        final generated = generator.generateEnum(model, 'Color');
-        final fromSimple = generated.enumValue.constructors.firstWhere(
-          (c) => c.name == 'fromSimple',
-        );
-
-        expect(fromSimple.factory, isTrue);
-        expect(fromSimple.requiredParameters.single.name, 'value');
-        expect(
-          fromSimple.requiredParameters.single.type
-              ?.accept(DartEmitter())
-              .toString(),
-          'String?',
-        );
-        expect(fromSimple.optionalParameters, hasLength(2));
-
-        final explodeParam = fromSimple.optionalParameters.firstWhere(
-          (p) => p.name == 'explode',
-        );
-        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
-        expect(explodeParam.named, isTrue);
-        expect(explodeParam.required, isTrue);
-
-        final contextParam = fromSimple.optionalParameters.firstWhere(
-          (p) => p.name == 'context',
-        );
-        expect(contextParam.type?.accept(DartEmitter()).toString(), 'String?');
-        expect(contextParam.named, isTrue);
-        expect(contextParam.required, isFalse);
-
-        final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          return Color.fromJson(value.decodeSimpleString(context: context));
-        ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
-      });
-
-      test(
-        'generates fromSimple constructor that calls decodeSimpleInt for '
-        'int enums',
-        () {
-          final model = EnumModel<int>(
-            name: 'Priority',
-            values: const {1, 2, 3},
-            isNullable: false,
-            context: Context.initial(),
-          );
-
-          final generated = generator.generateEnum(model, 'Priority');
-          final fromSimple = generated.enumValue.constructors.firstWhere(
-            (c) => c.name == 'fromSimple',
-          );
-
-          expect(fromSimple.factory, isTrue);
-          expect(fromSimple.requiredParameters.single.name, 'value');
-          expect(
-            fromSimple.requiredParameters.single.type
-                ?.accept(DartEmitter())
-                .toString(),
-            'String?',
-          );
-          expect(fromSimple.optionalParameters, hasLength(2));
-
-          final explodeParam = fromSimple.optionalParameters.firstWhere(
-            (p) => p.name == 'explode',
-          );
-          expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
-          expect(explodeParam.named, isTrue);
-          expect(explodeParam.required, isTrue);
-
-          final contextParam = fromSimple.optionalParameters.firstWhere(
-            (p) => p.name == 'context',
-          );
-          expect(
-            contextParam.type?.accept(DartEmitter()).toString(),
-            'String?',
-          );
-          expect(contextParam.named, isTrue);
-          expect(contextParam.required, isFalse);
-
-          final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
-          const expectedBody = '''
-          return Priority.fromJson(value.decodeSimpleInt(context: context));
-        ''';
-          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
-        },
-      );
-    });
-
-    group('fromForm factory', () {
+    group('fromForm factory constructor', () {
       test('generates fromForm constructor for string enum', () {
         final model = EnumModel<String>(
           name: 'Color',
@@ -946,7 +811,7 @@ void main() {
       });
     });
 
-    group('toForm method', () {
+    group('toForm method generation', () {
       test('generates toForm method for string enum', () {
         final model = EnumModel<String>(
           name: 'Color',

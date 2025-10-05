@@ -29,7 +29,7 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  test('generates currentEncodingShape getter for simple oneOf', () {
+  test('generates simple encoding shape getter for primitive oneOf', () {
     final model = OneOfModel(
       name: 'Value',
       models: {
@@ -59,7 +59,7 @@ void main() {
     );
   });
 
-  test('generates currentEncodingShape getter for complex oneOf', () {
+  test('generates complex encoding shape getter for class oneOf', () {
     final classA = ClassModel(
       name: 'A',
       properties: const [],
@@ -100,7 +100,7 @@ void main() {
     );
   });
 
-  test('generates currentEncodingShape getter for mixed oneOf', () {
+  test('generates mixed encoding shape getter for mixed oneOf', () {
     final classA = ClassModel(
       name: 'A',
       properties: const [],
