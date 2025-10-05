@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-10-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.0.9`](#tonik_util---v009)
+ - [`tonik_core` - `v0.0.9`](#tonik_core---v009)
+ - [`tonik_parse` - `v0.0.9`](#tonik_parse---v009)
+ - [`tonik_generate` - `v0.0.9`](#tonik_generate---v009)
+ - [`tonik` - `v0.0.9`](#tonik---v009)
+
+---
+
+#### `tonik_util` - `v0.0.9`
+
+ - **FIX**: double encoded values for simple and form encoding.
+
+#### `tonik_core` - `v0.0.9`
+
+#### `tonik_parse` - `v0.0.9`
+
+#### `tonik_generate` - `v0.0.9`
+
+ - **FIX**: double encoded values for simple and form encoding.
+ - **FIX**: runtime check for current encoding type.
+
+#### `tonik` - `v0.0.9`
+
+
 ## 2025-08-11
 
 ### Changes

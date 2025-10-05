@@ -1,3 +1,8 @@
+## 0.0.9
+
+ - **FIX**: double encoded values for simple and form encoding.
+ - **FIX**: runtime check for current encoding type.
+
 ## 0.0.8
 
  - **REFACTOR**: use simple encoding extension for request headers.
