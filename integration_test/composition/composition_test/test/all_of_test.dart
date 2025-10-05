@@ -361,9 +361,186 @@ void main() {
     });
   });
 
-  group('ThreeLevelMixedRefs', () {});
+  group('ThreeLevelMixedRefs', () {
+    test('with Class1', () {
+      final allOf = ThreeLevelMixedRefs(
+        twoLevelMixedAllOfAnyOf: TwoLevelMixedAllOfAnyOf(
+          twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(
+            string: 'test',
+          ),
+          twoLevelMixedAllOfAnyOfModel2: TwoLevelMixedAllOfAnyOfModel2(
+            metadata: 'extra',
+          ),
+        ),
+        threeLevelMixedRefsAnyOfModel: ThreeLevelMixedRefsAnyOfModel(
+          class1: Class1(name: 'Albert'),
+        ),
+      );
 
-  group('ComplexNestedMix', () {});
+      expect(allOf.toJson, throwsA(isA<EncodingException>()));
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
-  group('MultiLevelNesting', () {});
+      expect(allOf.currentEncodingShape, EncodingShape.mixed);
+    });
+
+    test('with integer', () {
+      final allOf = ThreeLevelMixedRefs(
+        twoLevelMixedAllOfAnyOf: TwoLevelMixedAllOfAnyOf(
+          twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(
+            int: 42,
+          ),
+          twoLevelMixedAllOfAnyOfModel2: TwoLevelMixedAllOfAnyOfModel2(
+            metadata: 'extra',
+          ),
+        ),
+        threeLevelMixedRefsAnyOfModel: ThreeLevelMixedRefsAnyOfModel(
+          int: 123,
+        ),
+      );
+
+      expect(allOf.toJson, throwsA(isA<EncodingException>()));
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.mixed);
+    });
+  });
+
+  group('ComplexNestedMix', () {
+    test('with Class1', () {
+      final allOf = ComplexNestedMix(
+        complexNestedMixModel: ComplexNestedMixModel($base: 'test'),
+        complexNestedMixOneOfModel: ComplexNestedMixOneOfModelClass1(
+          Class1(name: 'Albert'),
+        ),
+      );
+
+      expect(allOf.toJson(), {'base': 'test', 'name': 'Albert'});
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'base=test&name=Albert',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'base=test,name=Albert',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'base,test,name,Albert',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('with Class2', () {
+      final allOf = ComplexNestedMix(
+        complexNestedMixModel: ComplexNestedMixModel($base: 'test'),
+        complexNestedMixOneOfModel: ComplexNestedMixOneOfModelClass2(
+          Class2(number: 42),
+        ),
+      );
+
+      expect(allOf.toJson(), {'base': 'test', 'number': 42});
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'base=test&number=42',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'base=test,number=42',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'base,test,number,42',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('MultiLevelNesting', () {
+    test('with string level1', () {
+      final allOf = MultiLevelNesting(
+        multiLevelNestingModel: MultiLevelNestingModel(
+          level1: MultiLevelNestingLevel1OneOfModelString('test'),
+        ),
+        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
+      );
+
+      expect(allOf.toJson(), {'level1': 'test', 'level2': 42});
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('with Class1 level1', () {
+      final allOf = MultiLevelNesting(
+        multiLevelNestingModel: MultiLevelNestingModel(
+          level1: MultiLevelNestingLevel1OneOfModelAnyOf(
+            MultiLevelNestingLevel1OneOfAnyOfModel(
+              class1: Class1(name: 'Albert'),
+            ),
+          ),
+        ),
+        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
+      );
+
+      expect(allOf.toJson(), {'level1': {'name': 'Albert'}, 'level2': 42});
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('with Class2 level1', () {
+      final allOf = MultiLevelNesting(
+        multiLevelNestingModel: MultiLevelNestingModel(
+          level1: MultiLevelNestingLevel1OneOfModelAnyOf(
+            MultiLevelNestingLevel1OneOfAnyOfModel(
+              class2: Class2(number: 123),
+            ),
+          ),
+        ),
+        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
+      );
+
+      expect(allOf.toJson(), {'level1': {'number': 123}, 'level2': 42});
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
 }
