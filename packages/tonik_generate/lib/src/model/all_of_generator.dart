@@ -863,7 +863,10 @@ class AllOfGenerator {
         const Code('}'),
         const Code('return simpleProperties('),
         const Code('allowEmpty: allowEmpty,'),
-        const Code(').toSimple(explode: explode, allowEmpty: allowEmpty);'),
+        const Code(
+          ').toSimple('
+          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
+        ),
       ];
 
       return Method(
@@ -1033,6 +1036,7 @@ class AllOfGenerator {
                     .call([], {
                       'explode': refer('explode'),
                       'allowEmpty': refer('allowEmpty'),
+                      'alreadyEncoded': literalBool(true),
                     })
                     .returned
                     .statement,
@@ -1423,7 +1427,8 @@ class AllOfGenerator {
 
       bodyCode.addAll([
         const Code(
-          'return map.toForm(explode: explode, allowEmpty: allowEmpty);',
+          'return map.toForm( '
+          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
         ),
       ]);
 
@@ -1611,6 +1616,7 @@ class AllOfGenerator {
                       .call([], {
                         'explode': refer('explode'),
                         'allowEmpty': refer('allowEmpty'),
+                        'alreadyEncoded': literalBool(true),
                       })
                       .returned
                       .statement,
@@ -1660,7 +1666,8 @@ class AllOfGenerator {
 
       bodyCode.addAll([
         const Code(
-          'return map.toForm(explode: explode, allowEmpty: allowEmpty);',
+          'return map.toForm( '
+          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
         ),
       ]);
 

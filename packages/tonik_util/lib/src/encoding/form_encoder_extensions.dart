@@ -146,7 +146,15 @@ extension FormStringMapEncoder on Map<String, String> {
   /// The [allowEmpty] parameter controls whether empty maps are allowed:
   /// - When `true`, empty maps are encoded as empty strings
   /// - When `false`, empty maps throw an exception
-  String toForm({required bool explode, required bool allowEmpty}) {
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the values are already
+  /// URL-encoded. When `true`, values are not re-encoded to prevent double 
+  /// encoding.
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool alreadyEncoded = false,
+  }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
@@ -162,7 +170,9 @@ extension FormStringMapEncoder on Map<String, String> {
           .map(
             (e) =>
                 '${Uri.encodeQueryComponent(e.key)}='
-                '${Uri.encodeQueryComponent(e.value)}',
+                '${alreadyEncoded 
+                    ? e.value 
+                    : Uri.encodeQueryComponent(e.value)}',
           )
           .join('&');
     } else {
@@ -170,7 +180,13 @@ extension FormStringMapEncoder on Map<String, String> {
       // Note: Keys are NOT encoded to match FormEncoder behavior
       return entries
           .expand(
-            (e) => [e.key, Uri.encodeQueryComponent(e.value)],
+            (e) => [
+              e.key,
+              if (alreadyEncoded)
+                e.value
+              else
+                Uri.encodeQueryComponent(e.value),
+            ],
           )
           .join(',');
     }

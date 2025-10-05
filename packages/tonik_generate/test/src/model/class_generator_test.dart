@@ -1244,7 +1244,7 @@ void main() {
 
           const expectedToFormMethod = '''
           String toForm({required bool explode, required bool allowEmpty, }) {
-            return formProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, );
+            return formProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 

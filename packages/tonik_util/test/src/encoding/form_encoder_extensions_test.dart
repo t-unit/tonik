@@ -309,6 +309,23 @@ void main() {
       );
     });
 
+    test('handles already encoded values when alreadyEncoded=true', () {
+      expect(
+        {
+          'email': 'albert%40example.com',
+          'name': 'John%20Doe',
+        }.toForm(explode: false, allowEmpty: true, alreadyEncoded: true),
+        'email,albert%40example.com,name,John%20Doe',
+      );
+      expect(
+        {
+          'email': 'albert%40example.com',
+          'name': 'John%20Doe',
+        }.toForm(explode: true, allowEmpty: true, alreadyEncoded: true),
+        'email=albert%40example.com&name=John%20Doe',
+      );
+    });
+
     test('maintains consistent key ordering', () {
       final map = {'z': '1', 'a': '2', 'm': '3'};
       final result1 = map.toForm(explode: false, allowEmpty: true);

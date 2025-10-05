@@ -614,7 +614,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return simpleProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 
@@ -1513,7 +1513,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           return formProperties(
             allowEmpty: allowEmpty,
-          ).toForm(explode: explode, allowEmpty: allowEmpty);
+          ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 
@@ -1885,7 +1885,11 @@ void main() {
           final map = <String, String>{};
           map.addAll(int.formProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleValue.formProperties(allowEmpty: allowEmpty));
-          return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -1903,7 +1907,7 @@ void main() {
           }
           return simpleProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 
@@ -1961,7 +1965,11 @@ void main() {
           final map = <String, String>{};
           map.addAll(int.formProperties(allowEmpty: allowEmpty));
           map.addAll(choice.formProperties(allowEmpty: allowEmpty));
-          return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -2046,7 +2054,11 @@ void main() {
           map.addAll(string.formProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleA.formProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleB.formProperties(allowEmpty: allowEmpty));
-          return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -2134,7 +2146,11 @@ void main() {
           map.addAll(flexibleValue.formProperties(allowEmpty: allowEmpty));
           map.addAll(choice.formProperties(allowEmpty: allowEmpty));
           map.addAll(bigDecimal.formProperties(allowEmpty: allowEmpty));
-          return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 

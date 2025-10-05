@@ -947,6 +947,7 @@ class ClassGenerator {
                   .call([], {
                     'explode': refer('explode'),
                     'allowEmpty': refer('allowEmpty'),
+                    'alreadyEncoded': literalBool(true),
                   })
                   .returned
                   .statement,
