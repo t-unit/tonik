@@ -11,7 +11,6 @@ export 'src/encoding/datetime_extension.dart';
 export 'src/encoding/deep_object_encoder.dart';
 export 'src/encoding/delimited_encoder.dart';
 export 'src/encoding/encoding_exception.dart';
-export 'src/encoding/form_encoder.dart';
 export 'src/encoding/form_encoder_extensions.dart';
 export 'src/encoding/label_encoder.dart';
 export 'src/encoding/matrix_encoder.dart';
