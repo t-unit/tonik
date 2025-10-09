@@ -163,7 +163,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>[];
+          final shapes = <EncodingShape>{};
           if (string != null) {
             shapes.add(EncodingShape.simple);
           }
@@ -211,7 +211,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>[];
+          final shapes = <EncodingShape>{};
           if (a != null) {
             shapes.add(a!.currentEncodingShape);
           }
@@ -262,7 +262,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>[];
+          final shapes = <EncodingShape>{};
           if (string != null) {
             shapes.add(EncodingShape.simple);
           }

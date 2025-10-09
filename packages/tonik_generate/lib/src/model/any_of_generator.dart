@@ -811,7 +811,7 @@ class AnyOfGenerator {
     final body = <Code>[
       const Code('final shapes = <'),
       encodingShapeType.code,
-      const Code('>[];'),
+      const Code('>{};'),
     ];
 
     for (final n in normalizedProperties) {

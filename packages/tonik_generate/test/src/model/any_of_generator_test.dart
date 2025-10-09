@@ -336,4 +336,147 @@ void main() {
       },
     );
   });
+
+  group('currentEncodingShape with multiple fields of same shape', () {
+    final format =
+        DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
+
+    test('anyOf with multiple primitives returns simple shape', () {
+      final model = AnyOfModel(
+        name: 'StringOrInt',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (int != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+
+    test('anyOf with multiple complex types returns complex shape', () {
+      final classA = ClassModel(
+        name: 'UserProfile',
+        properties: const [],
+        context: context,
+      );
+      final classB = ClassModel(
+        name: 'AdminProfile',
+        properties: const [],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'Profile',
+        models: {
+          (discriminatorValue: null, model: classA),
+          (discriminatorValue: null, model: classB),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (userProfile != null) {
+            shapes.add(userProfile!.currentEncodingShape);
+          }
+          if (adminProfile != null) {
+            shapes.add(adminProfile!.currentEncodingShape);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+
+    test('anyOf with primitive and complex type returns mixed shape', () {
+      final classModel = ClassModel(
+        name: 'Data',
+        properties: [
+          Property(
+            name: 'value',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'FlexibleData',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: classModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (data != null) {
+            shapes.add(data!.currentEncodingShape);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+    });
+  });
 }
