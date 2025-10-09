@@ -102,6 +102,13 @@ class Date {
     return Uri.encodeQueryComponent(toString());
   }
 
+  /// Converts this [Date] to a label-encoded string.
+  ///
+  /// Returns the date in ISO 8601 format (YYYY-MM-DD) with label prefix.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.${Uri.encodeComponent(toString())}';
+  }
+
   /// Creates a copy of this [Date] with the given fields replaced
   /// with new values.
   Date copyWith({int? year, int? month, int? day}) {

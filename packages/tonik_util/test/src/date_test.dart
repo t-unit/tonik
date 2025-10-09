@@ -314,4 +314,49 @@ void main() {
       });
     });
   });
+
+  group('label encoding', () {
+    test('toLabel returns label-prefixed ISO date string', () {
+      final date = Date(2024, 3, 15);
+      final encoded = date.toLabel(explode: false, allowEmpty: true);
+      expect(encoded, '.2024-03-15');
+    });
+
+    test('toLabel handles explode parameter', () {
+      final date = Date(2024, 12, 31);
+      final encodedNoExplode = date.toLabel(explode: false, allowEmpty: true);
+      final encodedExplode = date.toLabel(explode: true, allowEmpty: true);
+      expect(encodedNoExplode, '.2024-12-31');
+      expect(encodedExplode, '.2024-12-31');
+    });
+
+    test('toLabel handles allowEmpty parameter', () {
+      final date = Date(2024, 1, 1);
+      final encoded1 = date.toLabel(explode: false, allowEmpty: true);
+      final encoded2 = date.toLabel(explode: false, allowEmpty: false);
+      expect(encoded1, '.2024-01-01');
+      expect(encoded2, '.2024-01-01');
+    });
+
+    test('toLabel encodes date with special characters properly', () {
+      final date = Date(2024, 2, 29);
+      final encoded = date.toLabel(explode: false, allowEmpty: true);
+      expect(encoded, '.2024-02-29');
+    });
+
+    test('toLabel handles edge case dates correctly', () {
+      final testCases = [
+        Date(2024, 1, 1),
+        Date(2024, 12, 31),
+        Date(2024, 2, 29),
+        Date(2023, 2, 28),
+      ];
+
+      for (final testDate in testCases) {
+        final encoded = testDate.toLabel(explode: false, allowEmpty: true);
+        expect(encoded, startsWith('.'));
+        expect(encoded.substring(1), testDate.toString());
+      }
+    });
+  });
 }

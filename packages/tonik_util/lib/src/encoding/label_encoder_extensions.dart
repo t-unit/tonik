@@ -1,0 +1,140 @@
+import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/encoding/datetime_extension.dart';
+import 'package:tonik_util/src/encoding/encoding_exception.dart';
+
+/// Extensions for encoding values using label style parameter encoding.
+extension LabelUriEncoder on Uri {
+  /// Encodes this Uri value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.${Uri.encodeComponent(toString())}';
+  }
+}
+
+/// Extension for encoding String values.
+extension LabelStringEncoder on String {
+  /// Encodes this string value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    if (isEmpty) {
+      return '.';
+    }
+    return '.${Uri.encodeComponent(this)}';
+  }
+}
+
+/// Extension for encoding int values.
+extension LabelIntEncoder on int {
+  /// Encodes this int value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.$this';
+  }
+}
+
+/// Extension for encoding double values.
+extension LabelDoubleEncoder on double {
+  /// Encodes this double value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.${Uri.encodeComponent(toString())}';
+  }
+}
+
+/// Extension for encoding num values.
+extension LabelNumEncoder on num {
+  /// Encodes this num value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.$this';
+  }
+}
+
+/// Extension for encoding bool values.
+extension LabelBoolEncoder on bool {
+  /// Encodes this bool value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.$this';
+  }
+}
+
+/// Extension for encoding DateTime values.
+extension LabelDateTimeEncoder on DateTime {
+  /// Encodes this DateTime value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.${Uri.encodeComponent(toTimeZonedIso8601String())}';
+  }
+}
+
+/// Extension for encoding BigDecimal values.
+extension LabelBigDecimalEncoder on BigDecimal {
+  /// Encodes this BigDecimal value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    return '.$this';
+  }
+}
+
+/// Extension for encoding List values.
+extension LabelStringListEncoder on List<String> {
+  /// Encodes this List value using label style encoding.
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    if (isEmpty) {
+      return '.';
+    }
+
+    if (explode) {
+      return map((item) => '.${Uri.encodeComponent(item)}').join();
+    } else {
+      final encodedValues = map(Uri.encodeComponent).join(',');
+      return '.$encodedValues';
+    }
+  }
+}
+
+/// Extension for encoding Map values.
+extension LabelStringMapEncoder on Map<String, String> {
+  /// Encodes this Map value using label style encoding.
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the values are already
+  /// URL-encoded. When `true`, values are not re-encoded to prevent double
+  /// encoding.
+  String toLabel({
+    required bool explode,
+    required bool allowEmpty,
+    bool alreadyEncoded = false,
+  }) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    if (isEmpty) {
+      return '.';
+    }
+
+    if (explode) {
+      return entries
+          .map(
+            (entry) {
+              final value = alreadyEncoded
+                  ? entry.value
+                  : Uri.encodeComponent(entry.value);
+              return '.${entry.key}=$value';
+            },
+          )
+          .join();
+    } else {
+      final encodedPairs = entries
+          .expand(
+            (entry) => [
+              entry.key,
+              if (alreadyEncoded)
+                entry.value
+              else
+                Uri.encodeComponent(entry.value),
+            ],
+          )
+          .join(',');
+      return '.$encodedPairs';
+    }
+  }
+}
