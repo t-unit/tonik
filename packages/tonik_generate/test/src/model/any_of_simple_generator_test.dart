@@ -161,7 +161,6 @@ void main() {
 
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
 
@@ -169,27 +168,23 @@ void main() {
             final aSimple = a!.simpleProperties(allowEmpty: allowEmpty);
             mapValues.add(aSimple);
             discriminatorValue ??= 'a';
-            values.add(aSimple.toSimple(explode: explode, allowEmpty: allowEmpty));
           }
           if (b != null) {
             final bSimple = b!.simpleProperties(allowEmpty: allowEmpty);
             mapValues.add(bSimple);
             discriminatorValue ??= 'b';
-            values.add(bSimple.toSimple(explode: explode, allowEmpty: allowEmpty));
           }
 
-          if (values.isEmpty) return '';
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
-            throw EncodingException(
-              'Ambiguous anyOf simple encoding for PayloadSimple: mixing simple and complex values',
-            );
+          final map = <String, String>{};
+          for (final m in mapValues) { map.addAll(m); }
+          if (discriminatorValue != null) { 
+            map.putIfAbsent('disc', () => discriminatorValue);
           }
-          if (values.length > 1) {
-            throw EncodingException(
-              'Ambiguous anyOf simple encoding for PayloadSimple: multiple values provided, anyOf requires exactly one value',
-            );
-          }
-          return values.first;
+          return map.toSimple(
+            explode: explode, 
+            allowEmpty: allowEmpty, 
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -249,33 +244,24 @@ void main() {
 
         const expectedMethod = '''
           String toSimple({required bool explode, required bool allowEmpty}) {
-            final values = <String>[];
             final mapValues = <Map<String, String>>[];
 
             if (a != null) {
               final aSimple = a!.simpleProperties(allowEmpty: allowEmpty);
               mapValues.add(aSimple);
-              values.add(aSimple.toSimple(explode: explode, allowEmpty: allowEmpty));
             }
             if (b != null) {
               final bSimple = b!.simpleProperties(allowEmpty: allowEmpty);
               mapValues.add(bSimple);
-              values.add(bSimple.toSimple(explode: explode, allowEmpty: allowEmpty));
             }
 
-            if (values.isEmpty) return '';
-            if (mapValues.isNotEmpty && mapValues.length != values.length) {
-              throw EncodingException(
-                'Ambiguous anyOf simple encoding for PayloadSimpleNoDisc: mixing simple and complex values',
-              );
-            }
-
-            if (values.length > 1) {
-              throw EncodingException(
-                'Ambiguous anyOf simple encoding for PayloadSimpleNoDisc: multiple values provided, anyOf requires exactly one value',
-              );
-            }
-            return values.first;
+            final map = <String, String>{};
+            for (final m in mapValues) { map.addAll(m); }
+            return map.toSimple(
+              explode: explode, 
+              allowEmpty: allowEmpty, 
+              alreadyEncoded: true,
+            );
           }
         ''';
 
@@ -307,8 +293,7 @@ void main() {
 
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
-          final mapValues = <Map<String, String>>[];
+          final values = <String>{};
           String? discriminatorValue;
 
           if (string != null) {
@@ -325,11 +310,6 @@ void main() {
           }
 
           if (values.isEmpty) return '';
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
-            throw EncodingException(
-              'Ambiguous anyOf simple encoding for OnlyPrimitivesSimple: mixing simple and complex values',
-            );
-          }
 
           if (values.length > 1) {
             throw EncodingException(
@@ -382,7 +362,7 @@ void main() {
 
         const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
+          final values = <String>{};
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
 
@@ -390,7 +370,6 @@ void main() {
             final userSimple = user!.simpleProperties(allowEmpty: allowEmpty);
             mapValues.add(userSimple);
             discriminatorValue ??= 'user';
-            values.add(userSimple.toSimple(explode: explode, allowEmpty: allowEmpty));
           }
           if (string != null) {
             final stringSimple = string!.toSimple( 
@@ -400,20 +379,33 @@ void main() {
             values.add(stringSimple);
           }
 
-          if (values.isEmpty) return '';
-
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
+          if (values.isEmpty && mapValues.isEmpty) return '';
+          if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
               'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values',
             );
           }
-
-          if (values.length > 1) {
-            throw EncodingException(
-              'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value',
+          if (values.isNotEmpty) {
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          } else {
+            final map = <String, String>{};
+            for (final m in mapValues) { 
+              map.addAll(m); 
+            }
+            if (discriminatorValue != null) { 
+              map.putIfAbsent('disc', () => discriminatorValue);
+            }
+            return map.toSimple(
+              explode: explode, 
+              allowEmpty: allowEmpty, 
+              alreadyEncoded: true,
             );
           }
-          return values.first;
         }
       ''';
 

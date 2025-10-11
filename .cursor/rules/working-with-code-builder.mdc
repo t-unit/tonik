@@ -10,6 +10,7 @@ alwaysApply: false
 2. **ALWAYS use `refer` with package URL for ALL types** - Even dart:core types
 3. **NEVER mix `refer` and string interpolation** - They are incompatible
 4. **Use `Code` with `Block.of`** - Never use `StringBuilder`
+5. **NEVER use `DartEmitter` inside generator methods** - Only the main `generate` method is allowed to use it
 
 ## Examples
 ```dart
@@ -30,4 +31,13 @@ Code('if (condition != ${refer('String', 'dart:core').code})')
 
 // ❌ WRONG - Don't use refer without package URL
 refer('String') // Missing 'dart:core'
+
+// ❌ WRONG - Don't use DartEmitter in generator methods
+Code('${nullableType.accept(emitter)} $variableName;') // emitter not allowed
+
+// ✅ CORRECT - Build code in separate Code objects
+Block.of([
+  nullableType.code,
+  Code(' $variableName;'),
+])
 ```
