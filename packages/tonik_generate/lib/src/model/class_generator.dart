@@ -402,93 +402,11 @@ class ClassGenerator {
     ClassModel model,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final hasComplexData = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel.encodingShape != EncodingShape.simple;
-    });
-
-    if (hasComplexData) {
-      return Method(
-        (b) =>
-            b
-              ..name = 'simpleProperties'
-              ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..defaultTo = literalBool(true).code,
-                ),
-              )
-              ..body =
-                  generateEncodingExceptionExpression(
-                    'simpleProperties not supported for ${model.name}: '
-                    'contains nested data',
-                  ).statement,
-      );
-    }
-
-    final mapEntries = <Code>[];
-
-    for (final prop in properties) {
-      final property = prop.property;
-      final fieldName = prop.normalizedName;
-      final rawName = property.name;
-
-      if (property.isRequired && property.isNullable) {
-        mapEntries.add(
-          Code(
-            'if (allowEmpty || $fieldName != null) '
-            "r'$rawName': $fieldName?.toSimple(explode: false, "
-            "allowEmpty: allowEmpty) ?? '',",
-          ),
-        );
-      } else if (!property.isRequired) {
-        mapEntries.add(
-          Code(
-            "if ($fieldName != null) r'$rawName': "
-            '$fieldName!.toSimple(explode: false, allowEmpty: allowEmpty),',
-          ),
-        );
-      } else {
-        mapEntries.add(
-          Code(
-            "r'$rawName': $fieldName.toSimple(explode: false, "
-            'allowEmpty: allowEmpty),',
-          ),
-        );
-      }
-    }
-
-    final returnStatement =
-        properties.isEmpty
-            ? buildEmptyMapStringString().code
-            : Block.of([
-              const Code('return '),
-              buildMapStringStringType().code,
-              Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
-            ]);
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'simpleProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
-            )
-            ..lambda = properties.isEmpty
-            ..body = returnStatement,
+    return _buildPropertiesMethod(
+      model,
+      properties,
+      'simpleProperties',
+      'toSimple',
     );
   }
 
@@ -497,108 +415,12 @@ class ClassGenerator {
     ClassModel model,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final hasComplexData = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel.encodingShape != EncodingShape.simple;
-    });
-
-    if (hasComplexData) {
-      return Method(
-        (b) =>
-            b
-              ..name = 'toSimple'
-              ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
-              ..body = Block.of([
-                generateEncodingExceptionExpression(
-                  'toSimple not supported for $className: '
-                  'contains nested data',
-                ).statement,
-              ]),
-      );
-    }
-
-    if (properties.isEmpty) {
-      return Method(
-        (b) =>
-            b
-              ..name = 'toSimple'
-              ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
-              ..body = Block.of([
-                literalString('').returned.statement,
-              ]),
-      );
-    }
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'toSimple'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
-            ..body = Block.of([
-              refer('simpleProperties')
-                  .call([], {'allowEmpty': refer('allowEmpty')})
-                  .property('toSimple')
-                  .call([], {
-                    'explode': refer('explode'),
-                    'allowEmpty': refer('allowEmpty'),
-                  })
-                  .returned
-                  .statement,
-            ]),
+    return _buildToMethod(
+      className,
+      model,
+      properties,
+      'toSimple',
+      'simpleProperties',
     );
   }
 
@@ -755,6 +577,35 @@ class ClassGenerator {
     ClassModel model,
     List<({String normalizedName, Property property})> properties,
   ) {
+    return _buildPropertiesMethod(
+      model,
+      properties,
+      'formProperties',
+      'toForm',
+    );
+  }
+
+  Method _buildToFormMethod(
+    String className,
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    return _buildToMethod(
+      className,
+      model,
+      properties,
+      'toForm',
+      'formProperties',
+    );
+  }
+
+  /// Shared method to build properties methods (simpleProperties/formProperties).
+  Method _buildPropertiesMethod(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+    String methodName,
+    String encodingType,
+  ) {
     final hasComplexData = properties.any((prop) {
       final propertyModel = prop.property.model;
       return propertyModel.encodingShape != EncodingShape.simple;
@@ -764,7 +615,7 @@ class ClassGenerator {
       return Method(
         (b) =>
             b
-              ..name = 'formProperties'
+              ..name = methodName
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
                 Parameter(
@@ -778,7 +629,7 @@ class ClassGenerator {
               )
               ..body =
                   generateEncodingExceptionExpression(
-                    'formProperties not supported for ${model.name}: '
+                    '$methodName not supported for ${model.name}: '
                     'contains nested data',
                   ).statement,
       );
@@ -791,29 +642,14 @@ class ClassGenerator {
       final fieldName = prop.normalizedName;
       final rawName = property.name;
 
-      if (property.isRequired && property.isNullable) {
-        mapEntries.add(
-          Code(
-            'if (allowEmpty || $fieldName != null) '
-            "r'$rawName': $fieldName?.toForm(explode: false, "
-            "allowEmpty: allowEmpty) ?? '',",
-          ),
-        );
-      } else if (!property.isRequired) {
-        mapEntries.add(
-          Code(
-            "if ($fieldName != null) r'$rawName': "
-            '$fieldName!.toForm(explode: false, allowEmpty: allowEmpty),',
-          ),
-        );
-      } else {
-        mapEntries.add(
-          Code(
-            "r'$rawName': $fieldName.toForm(explode: false, "
-            'allowEmpty: allowEmpty),',
-          ),
-        );
-      }
+      mapEntries.add(
+        _buildPropertyMapEntryExpression(
+          fieldName,
+          rawName,
+          property,
+          encodingType,
+        ),
+      );
     }
 
     final returnStatement =
@@ -828,7 +664,7 @@ class ClassGenerator {
     return Method(
       (b) =>
           b
-            ..name = 'formProperties'
+            ..name = methodName
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
               Parameter(
@@ -845,10 +681,40 @@ class ClassGenerator {
     );
   }
 
-  Method _buildToFormMethod(
+  /// Creates a Code object that correctly builds a property map entry
+  /// expression with conditional logic for required/nullable properties.
+  Code _buildPropertyMapEntryExpression(
+    String fieldName,
+    String rawName,
+    Property property,
+    String encodingType,
+  ) {
+    if (property.isRequired && property.isNullable) {
+      return Code(
+        'if (allowEmpty || $fieldName != null) '
+        "r'$rawName': $fieldName?.$encodingType(explode: false, "
+        "allowEmpty: allowEmpty) ?? '',",
+      );
+    } else if (!property.isRequired) {
+      return Code(
+        "if ($fieldName != null) r'$rawName': "
+        '$fieldName!.$encodingType(explode: false, allowEmpty: allowEmpty),',
+      );
+    } else {
+      return Code(
+        "r'$rawName': $fieldName.$encodingType(explode: false, "
+        'allowEmpty: allowEmpty),',
+      );
+    }
+  }
+
+  /// Shared method to build to methods (toSimple/toForm).
+  Method _buildToMethod(
     String className,
     ClassModel model,
     List<({String normalizedName, Property property})> properties,
+    String methodName,
+    String propertiesMethodName,
   ) {
     final hasComplexData = properties.any((prop) {
       final propertyModel = prop.property.model;
@@ -859,7 +725,7 @@ class ClassGenerator {
       return Method(
         (b) =>
             b
-              ..name = 'toForm'
+              ..name = methodName
               ..returns = refer('String', 'dart:core')
               ..optionalParameters.addAll([
                 Parameter(
@@ -881,7 +747,7 @@ class ClassGenerator {
               ])
               ..body = Block.of([
                 generateEncodingExceptionExpression(
-                  'toForm not supported for $className: '
+                  '$methodName not supported for $className: '
                   'contains nested data',
                 ).statement,
               ]),
@@ -892,7 +758,7 @@ class ClassGenerator {
       return Method(
         (b) =>
             b
-              ..name = 'toForm'
+              ..name = methodName
               ..returns = refer('String', 'dart:core')
               ..optionalParameters.addAll([
                 Parameter(
@@ -912,15 +778,20 @@ class ClassGenerator {
                         ..required = true,
                 ),
               ])
-              ..lambda = true
-              ..body = literalString('').code,
+              ..lambda = methodName == 'toForm'
+              ..body =
+                  methodName == 'toForm'
+                      ? literalString('').code
+                      : Block.of([
+                        literalString('').returned.statement,
+                      ]),
       );
     }
 
     return Method(
       (b) =>
           b
-            ..name = 'toForm'
+            ..name = methodName
             ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll([
               Parameter(
@@ -941,9 +812,9 @@ class ClassGenerator {
               ),
             ])
             ..body = Block.of([
-              refer('formProperties')
+              refer(propertiesMethodName)
                   .call([], {'allowEmpty': refer('allowEmpty')})
-                  .property('toForm')
+                  .property(methodName)
                   .call([], {
                     'explode': refer('explode'),
                     'allowEmpty': refer('allowEmpty'),

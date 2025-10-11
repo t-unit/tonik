@@ -43,7 +43,7 @@ void main() {
         throwsA(isA<EncodingException>()),
       );
 
-      expect(anyOf.currentEncodingShape, EncodingShape.mixed);
+      expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
   });
 
@@ -73,17 +73,17 @@ void main() {
         class1: Class1(name: 'Alice'),
         class2: Class2(number: 123),
       );
-      expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      expect(anyOf.toJson(), {'name': 'Alice', 'number': 123});
       expect(
-        () => anyOf.toForm(explode: true, allowEmpty: true),
-        throwsA(isA<EncodingException>()),
+        anyOf.toForm(explode: true, allowEmpty: true),
+        'name=Alice&number=123',
       );
       expect(
-        () => anyOf.toSimple(explode: true, allowEmpty: true),
-        throwsA(isA<EncodingException>()),
+        anyOf.toSimple(explode: true, allowEmpty: true),
+        'name=Alice,number=123',
       );
 
-      expect(anyOf.currentEncodingShape, EncodingShape.mixed);
+      expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
   });
 
@@ -118,7 +118,7 @@ void main() {
         throwsA(isA<EncodingException>()),
       );
 
-      expect(anyOf.currentEncodingShape, EncodingShape.mixed);
+      expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
   });
 
@@ -293,7 +293,7 @@ void main() {
         throwsA(isA<EncodingException>()),
       );
 
-      expect(anyOf.currentEncodingShape, EncodingShape.mixed);
+      expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
   });
 

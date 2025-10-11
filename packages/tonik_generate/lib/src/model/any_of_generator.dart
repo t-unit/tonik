@@ -593,7 +593,8 @@ class AnyOfGenerator {
       ..add(const Code('return map.toSimple('))
       ..addAll([
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty'),
+        const Code('allowEmpty: allowEmpty, '),
+        const Code('alreadyEncoded: true'),
         const Code(');'),
       ]);
 

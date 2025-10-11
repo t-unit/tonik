@@ -724,6 +724,7 @@ class OneOfGenerator {
           refer('explode').code,
           const Code(', allowEmpty: '),
           refer('allowEmpty').code,
+          const Code(', alreadyEncoded: true'),
           const Code(')'),
           const Code(',\n'),
         ]);
