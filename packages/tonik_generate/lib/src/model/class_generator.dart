@@ -606,12 +606,14 @@ class ClassGenerator {
     String methodName,
     String encodingType,
   ) {
-    final hasComplexData = properties.any((prop) {
+    // Check if we have any truly complex data (ClassModel, ListModel)
+    // that can never be simple
+    final hasTrulyComplexData = properties.any((prop) {
       final propertyModel = prop.property.model;
-      return propertyModel.encodingShape != EncodingShape.simple;
+      return propertyModel is ClassModel || propertyModel is ListModel;
     });
 
-    if (hasComplexData) {
+    if (hasTrulyComplexData) {
       return Method(
         (b) =>
             b
@@ -635,6 +637,22 @@ class ClassGenerator {
       );
     }
 
+    // Check if we have any composite models that need runtime checking
+    final hasCompositeModels = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel is CompositeModel;
+    });
+
+    if (hasCompositeModels) {
+      return _buildPropertiesMethodWithRuntimeChecks(
+        model,
+        properties,
+        methodName,
+        encodingType,
+      );
+    }
+
+    // Optimized path for simple properties only
     final mapEntries = <Code>[];
 
     for (final prop in properties) {
@@ -681,6 +699,144 @@ class ClassGenerator {
     );
   }
 
+  /// Builds properties method with runtime checks for composite models.
+  Method _buildPropertiesMethodWithRuntimeChecks(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+    String methodName,
+    String encodingType,
+  ) {
+    final className = nameManager.modelName(model);
+    final statements = [
+      const Code('final mergedProperties = '),
+      buildEmptyMapStringString().statement,
+    ];
+
+    for (final prop in properties) {
+      final property = prop.property;
+      final fieldName = prop.normalizedName;
+      final rawName = property.name;
+      final propertyModel = property.model;
+
+      if (propertyModel is CompositeModel) {
+        // Generate runtime check for composite models
+        if (property.isRequired) {
+          statements
+            ..add(Code('if ( $fieldName.currentEncodingShape != '))
+            ..add(
+              refer(
+                'EncodingShape.simple',
+                'package:tonik_util/tonik_util.dart',
+              ).code,
+            )
+            ..add(const Code(' ) {'))
+            ..add(
+              generateEncodingExceptionExpression(
+                '''$methodName not supported for $className: contains complex types''',
+              ).statement,
+            )
+            ..add(const Code('}'))
+            ..add(
+              Code(
+                '''
+                mergedProperties.addAll(
+                  $fieldName.$methodName(allowEmpty: allowEmpty),
+                );
+                ''',
+              ),
+            );
+        } else {
+          // Handle nullable composite models
+          statements
+            ..add(
+              Code(
+                '''
+                if ( $fieldName != null && $fieldName?.currentEncodingShape != ''',
+              ),
+            )
+            ..add(
+              refer(
+                'EncodingShape.simple',
+                'package:tonik_util/tonik_util.dart',
+              ).code,
+            )
+            ..add(const Code(' ) {'))
+            ..add(
+              generateEncodingExceptionExpression(
+                '''$methodName not supported for $className: contains complex types''',
+              ).statement,
+            )
+            ..add(const Code('}'))
+            ..add(
+              Code(
+                '''
+                if ($fieldName != null) { 
+                  mergedProperties.addAll($fieldName!.$methodName(allowEmpty: allowEmpty)); 
+                }''',
+              ),
+            );
+        }
+      } else {
+        // Handle simple properties with optimized path
+        if (property.isRequired && property.isNullable) {
+          statements.add(
+            Code(
+              '''
+            if (allowEmpty || $fieldName != null) { 
+              mergedProperties[r'$rawName'] = $fieldName?.$encodingType(
+                explode: false, 
+                allowEmpty: allowEmpty,
+              ) ?? ''; }''',
+            ),
+          );
+        } else if (!property.isRequired) {
+          statements.add(
+            Code(
+              '''
+              if ($fieldName != null) { 
+                mergedProperties[r'$rawName'] = $fieldName!.$encodingType(
+                  explode: false, 
+                  allowEmpty: allowEmpty,
+                ); 
+              }''',
+            ),
+          );
+        } else {
+          statements.add(
+            Code(
+              '''
+              mergedProperties[r'$rawName'] = $fieldName.$encodingType(
+                explode: false, 
+                allowEmpty: allowEmpty,
+              );
+              ''',
+            ),
+          );
+        }
+      }
+    }
+
+    statements.add(const Code('return mergedProperties;'));
+
+    return Method(
+      (b) =>
+          b
+            ..name = methodName
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..body = Block.of(statements),
+    );
+  }
+
   /// Creates a Code object that correctly builds a property map entry
   /// expression with conditional logic for required/nullable properties.
   Code _buildPropertyMapEntryExpression(
@@ -716,12 +872,14 @@ class ClassGenerator {
     String methodName,
     String propertiesMethodName,
   ) {
-    final hasComplexData = properties.any((prop) {
+    // Check if we have any truly complex data (ClassModel, ListModel)
+    // that can never be simple
+    final hasTrulyComplexData = properties.any((prop) {
       final propertyModel = prop.property.model;
-      return propertyModel.encodingShape != EncodingShape.simple;
+      return propertyModel is ClassModel || propertyModel is ListModel;
     });
 
-    if (hasComplexData) {
+    if (hasTrulyComplexData) {
       return Method(
         (b) =>
             b
@@ -815,11 +973,19 @@ class ClassGenerator {
               refer(propertiesMethodName)
                   .call([], {'allowEmpty': refer('allowEmpty')})
                   .property(methodName)
-                  .call([], {
-                    'explode': refer('explode'),
-                    'allowEmpty': refer('allowEmpty'),
-                    'alreadyEncoded': literalBool(true),
-                  })
+                  .call(
+                    [],
+                    methodName == 'toForm'
+                        ? {
+                          'explode': refer('explode'),
+                          'allowEmpty': refer('allowEmpty'),
+                          'alreadyEncoded': literalBool(true),
+                        }
+                        : {
+                          'explode': refer('explode'),
+                          'allowEmpty': refer('allowEmpty'),
+                        },
+                  )
                   .returned
                   .statement,
             ]),

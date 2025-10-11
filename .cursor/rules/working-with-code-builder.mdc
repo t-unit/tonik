@@ -4,6 +4,30 @@ globs:
 alwaysApply: false
 ---
 # When working with the [code_builder](mdc:https:/pub.dev/packages/code_builder) package
-- Do never not use `Code.scope`.
-- Always use `refer` with an URL provided if referring to types.
-- Never use `StringBuilder`, use `Code` with `Block.of`.
+
+## CRITICAL RULES - NEVER VIOLATE
+1. **NEVER use `Code.scope`**
+2. **ALWAYS use `refer` with package URL for ALL types** - Even dart:core types
+3. **NEVER mix `refer` and string interpolation** - They are incompatible
+4. **Use `Code` with `Block.of`** - Never use `StringBuilder`
+
+## Examples
+```dart
+// ✅ CORRECT - Build code in separate Code objects
+statements
+  ..add(Code('if (condition != '))
+  ..add(refer('String', 'dart:core').code)
+  ..add(Code(') {'))
+
+// ✅ CORRECT - Use refer with package URL
+refer('EncodingShape.simple', 'package:tonik_util/tonik_util.dart')
+
+// ❌ WRONG - Don't use Code.scope
+Code.scope((allocate) => '...')
+
+// ❌ WRONG - Don't mix refer with string interpolation  
+Code('if (condition != ${refer('String', 'dart:core').code})')
+
+// ❌ WRONG - Don't use refer without package URL
+refer('String') // Missing 'dart:core'
+```

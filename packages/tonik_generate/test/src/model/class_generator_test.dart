@@ -1408,5 +1408,388 @@ void main() {
         },
       );
     });
+
+    group('composite model runtime checking', () {
+      test('generates runtime check for class with oneOf property', () {
+        final oneOfModel = OneOfModel(
+          name: 'StringOrClass',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'NestedClass',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'value',
+              model: oneOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            final mergedProperties = <String, String>{};
+            if ( value.currentEncodingShape != EncodingShape.simple ) {
+              throw EncodingException('simpleProperties not supported for Container: contains complex types');
+            }
+            mergedProperties.addAll(
+              value.simpleProperties(allowEmpty: allowEmpty),
+            );
+            return mergedProperties;
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('generates runtime check for class with anyOf property', () {
+        final anyOfModel = AnyOfModel(
+          name: 'StringOrInt',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'FlexibleContainer',
+          properties: [
+            Property(
+              name: 'data',
+              model: anyOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            final mergedProperties = <String, String>{};
+            if ( data.currentEncodingShape != EncodingShape.simple ) {
+              throw EncodingException('simpleProperties not supported for FlexibleContainer: contains complex types');
+            }
+            mergedProperties.addAll(
+              data.simpleProperties(allowEmpty: allowEmpty),
+            );
+            return mergedProperties;
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test('generates runtime check for class with allOf property', () {
+        final stringModel = StringModel(context: context);
+        final intModel = IntegerModel(context: context);
+
+        final allOfModel = AllOfModel(
+          name: 'StringAndInt',
+          models: {stringModel, intModel},
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'CombinedContainer',
+          properties: [
+            Property(
+              name: 'combined',
+              model: allOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            final mergedProperties = <String, String>{};
+            if ( combined.currentEncodingShape != EncodingShape.simple ) {
+              throw EncodingException('simpleProperties not supported for CombinedContainer: contains complex types');
+            }
+            mergedProperties.addAll(
+              combined.simpleProperties(allowEmpty: allowEmpty),
+            );
+            return mergedProperties;
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test(
+        'preserves optimized path for class with only static simple properties',
+        () {
+          final model = ClassModel(
+            name: 'SimpleContainer',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'count',
+                model: IntegerModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            return Map<String,String>
+              .from({
+                r'name': name.toSimple(explode: false, allowEmpty: allowEmpty),
+                if (count != null) r'count': count!.toSimple(explode: false, allowEmpty: allowEmpty),
+              });
+          }
+        ''';
+
+          final generatedCode = result.accept(emitter).toString();
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+          );
+        },
+      );
+
+      test('rejects class with truly complex properties at compile time', () {
+        final model = ClassModel(
+          name: 'ComplexContainer',
+          properties: [
+            Property(
+              name: 'nested',
+              model: ClassModel(
+                name: 'Nested',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            throw EncodingException('simpleProperties not supported for ComplexContainer: contains nested data');
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+        );
+      });
+
+      test(
+        'handles class with multiple properties (mixed optimized/runtime checks)',
+        () {
+          final oneOfModel1 = OneOfModel(
+            name: 'StringOrInt1',
+            models: {
+              (discriminatorValue: null, model: StringModel(context: context)),
+              (discriminatorValue: null, model: IntegerModel(context: context)),
+            },
+            discriminator: null,
+            context: context,
+          );
+
+          final oneOfModel2 = OneOfModel(
+            name: 'StringOrInt2',
+            models: {
+              (discriminatorValue: null, model: StringModel(context: context)),
+              (discriminatorValue: null, model: BooleanModel(context: context)),
+            },
+            discriminator: null,
+            context: context,
+          );
+
+          final anyOfModel = AnyOfModel(
+            name: 'FlexibleData',
+            models: {
+              (discriminatorValue: null, model: StringModel(context: context)),
+              (discriminatorValue: null, model: IntegerModel(context: context)),
+              (discriminatorValue: null, model: BooleanModel(context: context)),
+            },
+            discriminator: null,
+            context: context,
+          );
+
+          final model = ClassModel(
+            name: 'MixedContainer',
+            properties: [
+              // Always simple properties (optimized path)
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'count',
+                model: IntegerModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'active',
+                model: BooleanModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              // Composite properties (runtime checks)
+              Property(
+                name: 'data1',
+                model: oneOfModel1,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'data2',
+                model: oneOfModel2,
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'flexible',
+                model: anyOfModel,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          final simplePropertiesMethod = result.methods.firstWhere(
+            (m) => m.name == 'simpleProperties',
+          );
+          expect(simplePropertiesMethod.type, isNot(MethodType.getter));
+
+          final generatedCode = result.accept(emitter).toString();
+
+          const expectedSimplePropertiesMethod = '''
+          Map<String,String> simpleProperties({bool allowEmpty = true}) {
+            final mergedProperties = <String, String>{};
+            mergedProperties[r'name'] = name.toSimple(
+              explode: false, 
+              allowEmpty: allowEmpty,
+            );
+            if (count != null) { 
+              mergedProperties[r'count'] = count!.toSimple(
+                explode: false, 
+                allowEmpty: allowEmpty,
+              ); 
+            }
+            mergedProperties[r'active'] = active.toSimple(
+              explode: false, 
+              allowEmpty: allowEmpty,
+            );
+            if ( data1.currentEncodingShape != EncodingShape.simple ) {
+              throw EncodingException('simpleProperties not supported for MixedContainer: contains complex types');
+            }
+            mergedProperties.addAll(
+              data1.simpleProperties(allowEmpty: allowEmpty),
+            );
+            if ( data2 != null && data2?.currentEncodingShape != EncodingShape.simple ) {
+              throw EncodingException('simpleProperties not supported for MixedContainer: contains complex types');
+            }
+            if (data2 != null) { 
+              mergedProperties.addAll(data2!.simpleProperties(allowEmpty: allowEmpty)); 
+            }
+            if ( flexible.currentEncodingShape != EncodingShape.simple ) {
+              throw EncodingException('simpleProperties not supported for MixedContainer: contains complex types');
+            }
+            mergedProperties.addAll(
+              flexible.simpleProperties(allowEmpty: allowEmpty),
+            );
+            return mergedProperties;
+          }
+        ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+          );
+        },
+      );
+    });
   });
 }
