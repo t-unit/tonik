@@ -82,6 +82,10 @@ void main() {
         anyOf.toSimple(explode: true, allowEmpty: true),
         'name=Alice,number=123',
       );
+      expect(
+        anyOf.toSimple(explode: false, allowEmpty: true),
+        'name,Alice,number,123',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });

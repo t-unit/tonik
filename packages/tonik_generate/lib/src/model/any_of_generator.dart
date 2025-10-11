@@ -388,10 +388,10 @@ class AnyOfGenerator {
     AnyOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    final body = [
+    final body = <Code>[
       declareFinal(
         'values',
-      ).assign(literalList([], refer('Object?', 'dart:core'))).statement,
+      ).assign(literalSet([], refer('Object?', 'dart:core'))).statement,
       declareFinal(
         'mapValues',
       ).assign(literalList([], buildMapStringObjectType())).statement,
@@ -431,6 +431,11 @@ class AnyOfGenerator {
         Code(valueExpr),
         const Code(';'),
       ]);
+
+      final blocks = <Code>[openIf, decl];
+
+      // Runtime type checking - add to appropriate collection based on actual
+      // type
       final ifMapOpen = [
         const Code('if ('),
         Code('${name}Json'),
@@ -443,24 +448,47 @@ class AnyOfGenerator {
           hasDiscriminator && discValue != null
               ? Code("discriminatorValue ??= '$discValue';")
               : const Code('');
-      const ifMapClose = Code('}');
-      final addValue = Code('values.add(${name}Json);');
-      const closeIf = Code('}');
 
-      body.addAll([
-        openIf,
-        decl,
-        ...ifMapOpen,
-        addMap,
-        maybeDisc,
-        ifMapClose,
-        addValue,
-        closeIf,
-      ]);
+      blocks
+        ..addAll([
+          ...ifMapOpen,
+          addMap,
+          maybeDisc,
+          const Code('} else {'),
+          Code('values.add(${name}Json);'),
+          const Code('}'),
+        ])
+        ..add(const Code('}'));
+
+      body.addAll(blocks);
     }
 
-    body.add(const Code('if (values.isEmpty) return null;'));
+    // Handle empty case
+    body
+      ..add(const Code('if (values.isEmpty && mapValues.isEmpty) return null;'))
+      // Handle mixed encoding at runtime - throw exception
+      ..addAll([
+        const Code('if (values.isNotEmpty && mapValues.isNotEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Mixed encoding not supported for $className: cannot encode both '
+          'simple and complex values',
+        ).statement,
+        const Code('}'),
+      ])
+      // Handle simple values only
+      ..addAll([
+        const Code('if (values.isNotEmpty) {'),
+        const Code('if (values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf encoding for $className: multiple values provided, '
+          'anyOf requires exactly one value',
+        ).statement,
+        const Code('}'),
+        const Code('return values.first;'),
+        const Code('}'),
+      ]);
 
+    // Handle complex values only - merge maps
     final mergeBlocks = [
       const Code('final map = '),
       literalMap(
@@ -481,15 +509,14 @@ class AnyOfGenerator {
     }
     mergeBlocks.add(const Code('return map;'));
 
-    body.addAll([
-      const Code('if (values.length > 1) {'),
-      generateEncodingExceptionExpression(
-        'Ambiguous anyOf encoding for $className: multiple values provided, '
-        'anyOf requires exactly one value',
-      ).statement,
-      const Code('}'),
-      const Code('return values.first;'),
-    ]);
+    body
+      ..addAll([
+        const Code('if (mapValues.isNotEmpty) {'),
+        ...mergeBlocks,
+        const Code('}'),
+      ])
+      // Fallback
+      ..add(const Code('return null;'));
 
     return Method(
       (b) =>

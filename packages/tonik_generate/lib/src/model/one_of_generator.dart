@@ -704,6 +704,11 @@ class OneOfGenerator {
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       final discriminatorValue = m.discriminatorValue;
 
+      // Only include discriminator for complex types (objects) that have
+      // properties where the discriminator can be meaningfully added.
+      // Primitive types (string, integer, boolean) encode as single values
+      // and cannot include discriminators without breaking the encoding
+      // contract.
       if (model.discriminator != null &&
           !isSimple &&
           discriminatorValue != null) {
@@ -789,6 +794,11 @@ class OneOfGenerator {
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       final discriminatorValue = m.discriminatorValue;
 
+      // Only include discriminator for complex types (objects) that have
+      // properties where the discriminator can be meaningfully added.
+      // Primitive types (string, integer, boolean) encode as single values
+      // and cannot include discriminators without breaking the encoding
+      // contract.
       if (model.discriminator != null &&
           !isSimple &&
           discriminatorValue != null) {
