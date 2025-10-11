@@ -510,16 +510,20 @@ class AnyOfGenerator {
       return needsRuntimeShapeCheck(prop.property.model);
     });
 
-    final needsValues = hasRuntimeChecks || normalizedProperties.any((prop) {
-      final model = prop.property.model;
-      return model.encodingShape == EncodingShape.simple &&
-          !needsRuntimeShapeCheck(model);
-    });
-    final needsMapValues = hasRuntimeChecks ||normalizedProperties.any((prop) {
-      final model = prop.property.model;
-      return model.encodingShape != EncodingShape.simple ||
-          needsRuntimeShapeCheck(model);
-    });
+    final needsValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape == EncodingShape.simple &&
+              !needsRuntimeShapeCheck(model);
+        });
+    final needsMapValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape != EncodingShape.simple ||
+              needsRuntimeShapeCheck(model);
+        });
 
     final body = <Code>[];
 
@@ -541,7 +545,16 @@ class AnyOfGenerator {
 
     final hasDiscriminator = model.discriminator != null;
     final discMap = _discriminatorMap(model);
-    if (hasDiscriminator) {
+
+    final hasComplexFields =
+        hasDiscriminator &&
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape != EncodingShape.simple ||
+              needsRuntimeShapeCheck(model);
+        });
+
+    if (hasComplexFields) {
       body
         ..add(
           TypeReference(
@@ -1030,22 +1043,24 @@ class AnyOfGenerator {
     AnyOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-
     final hasRuntimeChecks = normalizedProperties.any((prop) {
       return needsRuntimeShapeCheck(prop.property.model);
     });
 
-    final needsValues = hasRuntimeChecks ||normalizedProperties.any((prop) {
-      final model = prop.property.model;
-      return model.encodingShape == EncodingShape.simple &&
-          !needsRuntimeShapeCheck(model);
-    });
-    final needsMapValues = hasRuntimeChecks || normalizedProperties.any((prop) {
-      final model = prop.property.model;
-      return model.encodingShape != EncodingShape.simple ||
-          needsRuntimeShapeCheck(model);
-    });
-  
+    final needsValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape == EncodingShape.simple &&
+              !needsRuntimeShapeCheck(model);
+        });
+    final needsMapValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape != EncodingShape.simple ||
+              needsRuntimeShapeCheck(model);
+        });
 
     final body = <Code>[];
 

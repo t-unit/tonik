@@ -529,7 +529,11 @@ void main() {
           }
           final map = <String, String>{};
           for (final m in mapValues) { map.addAll(m); }
-          return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -602,7 +606,11 @@ void main() {
           if (discriminatorValue != null) { 
             map.putIfAbsent('type', () => discriminatorValue);
           }
-          return map.toForm(explode: explode, allowEmpty: allowEmpty);
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -677,7 +685,11 @@ void main() {
             for (final m in mapValues) { 
               map.addAll(m); 
             }
-            return map.toForm(explode: explode, allowEmpty: allowEmpty);
+            return map.toForm(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              alreadyEncoded: true,
+            );
           }
         }
       ''';
@@ -1053,7 +1065,11 @@ void main() {
               for (final m in mapValues) { 
                 map.addAll(m); 
               }
-              return map.toForm(explode: explode, allowEmpty: allowEmpty);
+              return map.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
             }
           }
         ''';
@@ -1198,7 +1214,11 @@ void main() {
               for (final m in mapValues) { 
                 map.addAll(m); 
               }
-              return map.toForm(explode: explode, allowEmpty: allowEmpty);
+              return map.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
             }
           }
         ''';

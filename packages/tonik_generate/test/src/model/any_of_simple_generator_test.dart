@@ -294,8 +294,6 @@ void main() {
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
           final values = <String>{};
-          String? discriminatorValue;
-
           if (string != null) {
             final stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, );
             values.add(stringSimple);
