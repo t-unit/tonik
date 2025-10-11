@@ -156,7 +156,7 @@ void main() {
 
       const expectedMethod = '''
       Object? toJson() {
-        final values = <Object?>[];
+        final values = <Object?>{};
         final mapValues = <Map<String, Object?>>[];
         String? discriminatorValue;
 
@@ -165,26 +165,49 @@ void main() {
           if (aJson is Map<String, Object?>) {
             mapValues.add(aJson);
             discriminatorValue ??= 'a';
+          } else {
+            values.add(aJson);
           }
-          values.add(aJson);
         }
         if (b != null) {
           final Object? bJson = b!.toJson();
           if (bJson is Map<String, Object?>) {
             mapValues.add(bJson);
             discriminatorValue ??= 'b';
+          } else {
+            values.add(bJson);
           }
-          values.add(bJson);
         }
 
-        if (values.isEmpty) return null;
+        if (values.isEmpty && mapValues.isEmpty) return null;
 
-        if (values.length > 1) {
+        if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
+            'Mixed encoding not supported for Payload: cannot encode both simple and complex values',
           );
         }
-        return values.first;
+
+        if (values.isNotEmpty) {
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return values.first;
+        }
+
+        if (mapValues.isNotEmpty) {
+          final map = <String, Object?>{};
+          for (final m in mapValues) {
+            map.addAll(m);
+          }
+          if (discriminatorValue != null) {
+            map.putIfAbsent('disc', () => discriminatorValue);
+          }
+          return map;
+        }
+
+        return null;
       }
     ''';
 
@@ -246,32 +269,52 @@ void main() {
 
       const expectedMethod = '''
       Object? toJson() {
-        final values = <Object?>[];
+        final values = <Object?>{};
         final mapValues = <Map<String, Object?>>[];
 
         if (a != null) {
           final Object? aJson = a!.toJson();
           if (aJson is Map<String, Object?>) {
             mapValues.add(aJson);
+          } else {
+            values.add(aJson);
           }
-          values.add(aJson);
         }
         if (b != null) {
           final Object? bJson = b!.toJson();
           if (bJson is Map<String, Object?>) {
             mapValues.add(bJson);
+          } else {
+            values.add(bJson);
           }
-          values.add(bJson);
         }
 
-        if (values.isEmpty) return null;
+        if (values.isEmpty && mapValues.isEmpty) return null;
 
-        if (values.length > 1) {
+        if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
+            'Mixed encoding not supported for PayloadNoDisc: cannot encode both simple and complex values',
           );
         }
-        return values.first;
+
+        if (values.isNotEmpty) {
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return values.first;
+        }
+
+        if (mapValues.isNotEmpty) {
+          final map = <String, Object?>{};
+          for (final m in mapValues) {
+            map.addAll(m);
+          }
+          return map;
+        }
+
+        return null;
       }
     ''';
 
@@ -304,7 +347,7 @@ void main() {
 
     const expectedMethod = '''
       Object? toJson() {
-        final values = <Object?>[];
+        final values = <Object?>{};
         final mapValues = <Map<String, Object?>>[];
         String? discriminatorValue;
 
@@ -312,32 +355,56 @@ void main() {
           final Object? stringJson = string;
           if (stringJson is Map<String, Object?>) {
             mapValues.add(stringJson);
+          } else {
+            values.add(stringJson);
           }
-          values.add(stringJson);
         }
         if (int != null) {
           final Object? intJson = int;
           if (intJson is Map<String, Object?>) {
             mapValues.add(intJson);
+          } else {
+            values.add(intJson);
           }
-          values.add(intJson);
         }
         if (bool != null) {
           final Object? boolJson = bool;
           if (boolJson is Map<String, Object?>) {
             mapValues.add(boolJson);
+          } else {
+            values.add(boolJson);
           }
-          values.add(boolJson);
         }
 
-        if (values.isEmpty) return null;
+        if (values.isEmpty && mapValues.isEmpty) return null;
 
-        if (values.length > 1) {
+        if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
+            'Mixed encoding not supported for OnlyPrimitives: cannot encode both simple and complex values',
           );
         }
-        return values.first;
+
+        if (values.isNotEmpty) {
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return values.first;
+        }
+
+        if (mapValues.isNotEmpty) {
+          final map = <String, Object?>{};
+          for (final m in mapValues) {
+            map.addAll(m);
+          }
+          if (discriminatorValue != null) {
+            map.putIfAbsent('type', () => discriminatorValue);
+          }
+          return map;
+        }
+
+        return null;
       }
     ''';
 
@@ -384,7 +451,7 @@ void main() {
 
       const expectedMethod = '''
       Object? toJson() {
-        final values = <Object?>[];
+        final values = <Object?>{};
         final mapValues = <Map<String, Object?>>[];
         String? discriminatorValue;
 
@@ -393,26 +460,49 @@ void main() {
           if (userJson is Map<String, Object?>) {
             mapValues.add(userJson);
             discriminatorValue ??= 'user';
+          } else {
+            values.add(userJson);
           }
-          values.add(userJson);
         }
         if (string != null) {
           final Object? stringJson = string;
           if (stringJson is Map<String, Object?>) {
             mapValues.add(stringJson);
             discriminatorValue ??= 'str';
+          } else {
+            values.add(stringJson);
           }
-          values.add(stringJson);
         }
 
-        if (values.isEmpty) return null;
+        if (values.isEmpty && mapValues.isEmpty) return null;
 
-        if (values.length > 1) {
+        if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+            'Mixed encoding not supported for Mixed: cannot encode both simple and complex values',
           );
         }
-        return values.first;
+
+        if (values.isNotEmpty) {
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return values.first;
+        }
+
+        if (mapValues.isNotEmpty) {
+          final map = <String, Object?>{};
+          for (final m in mapValues) {
+            map.addAll(m);
+          }
+          if (discriminatorValue != null) {
+            map.putIfAbsent('disc', () => discriminatorValue);
+          }
+          return map;
+        }
+
+        return null;
       }
     ''';
 

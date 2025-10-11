@@ -23,7 +23,11 @@ alwaysApply: false
 - **NEVER use bare `contains()` without `collapseWhitespace()`** for generated code - formatting differences will cause flaky tests
 - When testing generated code strings, format both expected and actual with `DartFormatter`
 
-  - Test field names: `combinedClass.fields.map((f) => f.name)`
-- **Only use `contains(collapseWhitespace(...))` when absolutely necessary** for testing specific generated code content
-- **NEVER use bare `contains()` without `collapseWhitespace()`** for generated code - formatting differences will cause flaky tests
-- When testing generated code strings, format both expected and actual with `DartFormatter`
+- **PREFER object introspection** over string testing when possible
+- **When testing generated code strings**:
+  - Format the entire method/constructor body with `DartFormatter` first
+  - Use `contains(collapseWhitespace(...))` for testing complete code blocks
+  - Acceptable: Testing patterns in a formatted complete method body
+  - NOT acceptable: Testing individual lines without formatting the complete context
+- Test behavior by checking method signatures, parameter types, and method properties
+- Use object introspection to verify logic is present or absent
