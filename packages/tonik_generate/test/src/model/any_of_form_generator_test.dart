@@ -163,7 +163,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>[];
+          final shapes = <EncodingShape>{};
           if (string != null) {
             shapes.add(EncodingShape.simple);
           }
@@ -211,7 +211,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>[];
+          final shapes = <EncodingShape>{};
           if (a != null) {
             shapes.add(a!.currentEncodingShape);
           }
@@ -262,7 +262,7 @@ void main() {
 
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>[];
+          final shapes = <EncodingShape>{};
           if (string != null) {
             shapes.add(EncodingShape.simple);
           }
@@ -465,8 +465,7 @@ void main() {
 
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
-          final mapValues = <Map<String, String>>[];
+          final values = <String>{};
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
@@ -479,11 +478,6 @@ void main() {
             values.add(intForm);
           }
           if (values.isEmpty) return '';
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
-            throw EncodingException(
-              'Ambiguous anyOf form encoding for Simple: mixing simple and complex values',
-            );
-          }
           if (values.length > 1) {
             throw EncodingException(
               'Ambiguous anyOf form encoding for Simple: multiple values provided, anyOf requires exactly one value',
@@ -528,25 +522,18 @@ void main() {
 
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
           final mapValues = <Map<String, String>>[];
           if (a != null) {
             final aForm = a!.formProperties(allowEmpty: allowEmpty);
             mapValues.add(aForm);
-            values.add(aForm.toForm(explode: explode, allowEmpty: allowEmpty));
           }
-          if (values.isEmpty) return '';
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
-            throw EncodingException(
-              'Ambiguous anyOf form encoding for Wrapper: mixing simple and complex values',
-            );
-          }
-          if (values.length > 1) {
-            throw EncodingException(
-              'Ambiguous anyOf form encoding for Wrapper: multiple values provided, anyOf requires exactly one value',
-            );
-          }
-          return values.first;
+          final map = <String, String>{};
+          for (final m in mapValues) { map.addAll(m); }
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -600,33 +587,30 @@ void main() {
 
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
           if (a != null) {
             final aForm = a!.formProperties(allowEmpty: allowEmpty);
             mapValues.add(aForm);
             discriminatorValue ??= 'a';
-            values.add(aForm.toForm(explode: explode, allowEmpty: allowEmpty));
           }
           if (b != null) {
             final bForm = b!.formProperties(allowEmpty: allowEmpty);
             mapValues.add(bForm);
             discriminatorValue ??= 'b';
-            values.add(bForm.toForm(explode: explode, allowEmpty: allowEmpty));
           }
-          if (values.isEmpty) return '';
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
-            throw EncodingException(
-              'Ambiguous anyOf form encoding for Combined: mixing simple and complex values',
-            );
+          final map = <String, String>{};
+          for (final m in mapValues) { 
+            map.addAll(m); 
           }
-          if (values.length > 1) {
-            throw EncodingException(
-              'Ambiguous anyOf form encoding for Combined: multiple values provided, anyOf requires exactly one value',
-            );
+          if (discriminatorValue != null) { 
+            map.putIfAbsent('type', () => discriminatorValue);
           }
-          return values.first;
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
         }
       ''';
 
@@ -666,8 +650,9 @@ void main() {
 
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          final values = <String>[];
+          final values = <String>{};
           final mapValues = <Map<String, String>>[];
+          
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
@@ -675,23 +660,37 @@ void main() {
             );
             values.add(stringForm);
           }
+
           if (data != null) {
             final dataForm = data!.formProperties(allowEmpty: allowEmpty);
             mapValues.add(dataForm);
-            values.add(dataForm.toForm(explode: explode, allowEmpty: allowEmpty));
           }
-          if (values.isEmpty) return '';
-          if (mapValues.isNotEmpty && mapValues.length != values.length) {
+          
+          if (values.isEmpty && mapValues.isEmpty) return '';
+          if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
               'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
             );
           }
-          if (values.length > 1) {
-            throw EncodingException(
-              'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+          
+          if (values.isNotEmpty) {
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          } else {
+            final map = <String, String>{};
+            for (final m in mapValues) { 
+              map.addAll(m); 
+            }
+            return map.toForm(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              alreadyEncoded: true,
             );
           }
-          return values.first;
         }
       ''';
 
@@ -1020,7 +1019,7 @@ void main() {
 
         const expected = '''
           String toForm({required bool explode, required bool allowEmpty}) {
-            final values = <String>[];
+            final values = <String>{};
             final mapValues = <Map<String, String>>[];
             if (string != null) {
               final stringForm = string!.toForm(
@@ -1041,9 +1040,6 @@ void main() {
                     allowEmpty: allowEmpty,
                   );
                   mapValues.add(innerChoiceForm);
-                values.add(
-                  innerChoiceForm.toForm(explode: explode, allowEmpty: allowEmpty),
-                );
                   break;
                 case EncodingShape.mixed:
                   throw EncodingException(
@@ -1051,18 +1047,30 @@ void main() {
                   );
               }
             }
-            if (values.isEmpty) return '';
-            if (mapValues.isNotEmpty && mapValues.length != values.length) {
+            if (values.isEmpty && mapValues.isEmpty) return '';
+            if (mapValues.isNotEmpty && values.isNotEmpty) {
               throw EncodingException(
                 'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
-            if (values.length > 1) {
-              throw EncodingException(
-                'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+            if (values.isNotEmpty) {
+              if (values.length > 1) {
+                throw EncodingException(
+                  'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+                );
+              }
+              return values.first;
+            } else {
+              final map = <String, String>{};
+              for (final m in mapValues) { 
+                map.addAll(m); 
+              }
+              return map.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
               );
             }
-            return values.first;
           }
         ''';
 
@@ -1124,9 +1132,6 @@ void main() {
                   allowEmpty: allowEmpty,
                 );
                 mapValues.add(innerAnyOfForm);
-                values.add(
-                  innerAnyOfForm.toForm(explode: explode, allowEmpty: allowEmpty),
-                );
                 break;
               case EncodingShape.mixed:
                 throw EncodingException(
@@ -1174,7 +1179,7 @@ void main() {
 
         const expected = '''
           String toForm({required bool explode, required bool allowEmpty}) {
-            final values = <String>[];
+            final values = <String>{};
             final mapValues = <Map<String, String>>[];
             if (string != null) {
               final stringForm = string!.toForm(
@@ -1190,20 +1195,31 @@ void main() {
             if (myClass != null) {
               final myClassForm = myClass!.formProperties(allowEmpty: allowEmpty);
               mapValues.add(myClassForm);
-              values.add(myClassForm.toForm(explode: explode, allowEmpty: allowEmpty));
             }
-            if (values.isEmpty) return '';
-            if (mapValues.isNotEmpty && mapValues.length != values.length) {
+            if (values.isEmpty && mapValues.isEmpty) return '';
+            if (mapValues.isNotEmpty && values.isNotEmpty) {
               throw EncodingException(
                 'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
-            if (values.length > 1) {
-              throw EncodingException(
-                'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+            if (values.isNotEmpty) {
+              if (values.length > 1) {
+                throw EncodingException(
+                  'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+                );
+              }
+              return values.first;
+            } else {
+              final map = <String, String>{};
+              for (final m in mapValues) { 
+                map.addAll(m); 
+              }
+              return map.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
               );
             }
-            return values.first;
           }
         ''';
 
@@ -1303,12 +1319,6 @@ void main() {
                   allowEmpty: allowEmpty,
                 );
                 mapValues.add(innerChoiceSimple);
-                values.add(
-                  innerChoiceSimple.toSimple(
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                  ),
-                );
                 break;
               case EncodingShape.mixed:
                 throw EncodingException(
@@ -1340,8 +1350,7 @@ void main() {
 
         const expected = '''
           String toSimple({required bool explode, required bool allowEmpty}) {
-            final values = <String>[];
-            final mapValues = <Map<String, String>>[];
+            final values = <String>{};
             if (string != null) {
               final stringSimple = string!.toSimple(
                 explode: explode,

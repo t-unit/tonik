@@ -145,7 +145,11 @@ void main() {
             ResponseUser(:final value) => {
               ...value.simpleProperties(allowEmpty: allowEmpty),
               'type': 'user',
-            }.toSimple(explode: explode, allowEmpty: allowEmpty),
+            }.toSimple( 
+              explode: explode, 
+              allowEmpty: allowEmpty, 
+              alreadyEncoded: true, 
+            ),
             ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
           };
         }
@@ -209,11 +213,15 @@ void main() {
           EntityPerson(:final value) => {
             ...value.simpleProperties(allowEmpty: allowEmpty),
             'entity_type': 'person',
-          }.toSimple(explode: explode, allowEmpty: allowEmpty),
+          }.toSimple( 
+            explode: explode, 
+            allowEmpty: allowEmpty, 
+            alreadyEncoded: true, 
+          ),
           EntityCompany(:final value) => {
             ...value.simpleProperties(allowEmpty: allowEmpty),
             'entity_type': 'company',
-          }.toSimple(explode: explode, allowEmpty: allowEmpty),
+          }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
         };
       }
     ''';
@@ -262,7 +270,7 @@ void main() {
           MixedEntityPerson(:final value) => {
             ...value.simpleProperties(allowEmpty: allowEmpty),
             'type': 'person',
-          }.toSimple(explode: explode, allowEmpty: allowEmpty),
+          }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
           MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
         };
       }

@@ -836,6 +836,15 @@ class AllOfGenerator {
   }
 
   /// Builds a toSimple method that merges properties from all models.
+  ///
+  /// Two distinct validation strategies are used:
+  /// 1. If allOf contains anyOf/oneOf models (runtime-dynamic encoding):
+  ///    - Check overall currentEncodingShape at runtime
+  ///    - Delegate to simpleProperties() for encoding
+  /// 2. If allOf contains statically-mixed nested composites:
+  ///    - Validate each nested composite individually
+  ///    - Return primary field's encoding directly
+  /// These cases do NOT overlap and both are necessary.
   Method _buildToSimpleMethod(
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
