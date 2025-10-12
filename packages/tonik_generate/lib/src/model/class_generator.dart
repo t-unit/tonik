@@ -103,6 +103,8 @@ class ClassGenerator {
               _buildToSimpleMethod(className, model, normalizedProperties),
               _buildFormPropertiesMethod(model, normalizedProperties),
               _buildToFormMethod(className, model, normalizedProperties),
+              _buildLabelPropertiesMethod(model, normalizedProperties),
+              _buildToLabelMethod(className, model, normalizedProperties),
             ])
             ..fields.addAll(
               normalizedProperties.map(
@@ -675,8 +677,9 @@ class ClassGenerator {
             ? buildEmptyMapStringString().code
             : Block.of([
               const Code('return '),
-              buildMapStringStringType().code,
-              Code('.from({\n${mapEntries.map((e) => '  $e').join('\n')}\n});'),
+              const Code('{'),
+              ...mapEntries,
+              const Code('};'),
             ]);
 
     return Method(
@@ -988,6 +991,290 @@ class ClassGenerator {
                   )
                   .returned
                   .statement,
+            ]),
+    );
+  }
+
+  Method _buildLabelPropertiesMethod(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    // Check if we have any truly complex data (ClassModel, ListModel)
+    // that can never be simple
+    final hasTrulyComplexData = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel is ClassModel || propertyModel is ListModel;
+    });
+
+    if (hasTrulyComplexData) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'labelProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..defaultTo = literalBool(true).code,
+                ),
+              )
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'labelProperties not supported for ${model.name}: '
+                    'contains nested data',
+                  ).statement,
+      );
+    }
+
+    // Check if we have any composite models that need runtime checking
+    final hasCompositeModels = properties.any((prop) {
+      final propertyModel = prop.property.model;
+      return propertyModel is CompositeModel;
+    });
+
+    if (hasCompositeModels) {
+      return _buildLabelPropertiesMethodWithRuntimeChecks(
+        model,
+        properties,
+      );
+    }
+
+    // Optimized path for simple properties only
+    final mapEntries = <Code>[];
+
+    for (final prop in properties) {
+      final property = prop.property;
+      final fieldName = prop.normalizedName;
+      final rawName = property.name;
+
+      mapEntries.add(
+        _buildPropertyMapEntryExpression(
+          fieldName,
+          rawName,
+          property,
+          'toLabel',
+        ),
+      );
+    }
+
+    final returnStatement =
+        properties.isEmpty
+            ? buildEmptyMapStringString().code
+            : Block.of([
+              const Code('return {'),
+              ...mapEntries,
+              const Code('};'),
+            ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'labelProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..lambda = properties.isEmpty
+            ..body = returnStatement,
+    );
+  }
+
+  /// Builds a labelProperties method with runtime checks for composite models.
+  Method _buildLabelPropertiesMethodWithRuntimeChecks(
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final statements = <Code>[
+      const Code('final mergedProperties = '),
+      buildEmptyMapStringString().statement,
+    ];
+
+    for (final prop in properties) {
+      final property = prop.property;
+      final fieldName = prop.normalizedName;
+      final rawName = property.name;
+      final propertyModel = property.model;
+
+      if (propertyModel is CompositeModel) {
+        // Runtime check for composite models
+        if (property.isRequired && !property.isNullable) {
+          // Required non-nullable composite property
+          statements.addAll([
+            Code('if ($fieldName.currentEncodingShape != '),
+            refer(
+              'EncodingShape.simple',
+              'package:tonik_util/tonik_util.dart',
+            ).code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'labelProperties not supported for Container: '
+              'contains complex types',
+            ).statement,
+            const Code('}'),
+            Code('''
+              mergedProperties['$rawName'] = $fieldName.toLabel(
+                explode: false, 
+                allowEmpty: allowEmpty
+              );
+            '''),
+          ]);
+        } else if (property.isRequired && property.isNullable) {
+          // Required nullable composite property
+          statements.addAll([
+            Code('if (allowEmpty || $fieldName != null) {'),
+            Code(
+              'if ($fieldName != null && $fieldName!.currentEncodingShape != ',
+            ),
+            refer(
+              'EncodingShape.simple',
+              'package:tonik_util/tonik_util.dart',
+            ).code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'labelProperties not supported for Container: '
+              'contains complex types',
+            ).statement,
+            const Code('}'),
+            Code('if ($fieldName != null) {'),
+            Code('''
+              mergedProperties['$rawName'] = $fieldName!.toLabel(explode: false, allowEmpty: allowEmpty) ?? '';
+            '''),
+            const Code('}'),
+            const Code('}'),
+          ]);
+        } else {
+          // Optional composite property
+          statements.addAll([
+            Code('if (allowEmpty || $fieldName != null) {'),
+            Code(
+              'if ($fieldName != null && $fieldName!.currentEncodingShape != ',
+            ),
+            refer(
+              'EncodingShape.simple',
+              'package:tonik_util/tonik_util.dart',
+            ).code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'labelProperties not supported for Container: '
+              'contains complex types',
+            ).statement,
+            const Code('}'),
+            Code('if ($fieldName != null) {'),
+            Code(
+              "  mergedProperties['$rawName'] = "
+              '$fieldName!.toLabel(explode: false, allowEmpty: allowEmpty);',
+            ),
+            const Code('}'),
+            const Code('}'),
+          ]);
+        }
+      } else {
+        // Simple property - use the standard pattern
+        if (property.isRequired && property.isNullable) {
+          statements.add(
+            Code('''
+              if (allowEmpty || $fieldName != null) {
+                mergedProperties['$rawName'] = $fieldName?.toLabel(
+                  explode: false, 
+                  allowEmpty: allowEmpty
+                ) ?? '';
+              }
+            '''),
+          );
+        } else if (!property.isRequired) {
+          statements.add(
+            Code('''
+              if ($fieldName != null) {
+                mergedProperties['$rawName'] = $fieldName!.toLabel(
+                  explode: false, 
+                  allowEmpty: allowEmpty
+                );
+              }
+            '''),
+          );
+        } else {
+          statements.add(
+            Code('''
+              mergedProperties['$rawName'] = $fieldName.toLabel(
+                explode: false, 
+                allowEmpty: allowEmpty
+              );
+            '''),
+          );
+        }
+      }
+    }
+
+    statements.add(const Code('return mergedProperties;'));
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'labelProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..body = Block.of(statements),
+    );
+  }
+
+  /// Builds a toLabel method for label encoding.
+  ///
+  /// This method delegates to labelProperties and then calls toLabel on the
+  /// result.
+  Method _buildToLabelMethod(
+    String className,
+    ClassModel model,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toLabel'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(false).code,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            ])
+            ..body = Block.of([
+              const Code('return labelProperties(allowEmpty: allowEmpty)'),
+              const Code(
+                '\n  .toLabel(explode: explode, allowEmpty: allowEmpty, '
+                'alreadyEncoded: true);',
+              ),
             ]),
     );
   }
