@@ -104,6 +104,8 @@ class OneOfGenerator {
               _generateToSimpleMethod(className, model, variantNames),
               _generateFormPropertiesMethod(className, model, variantNames),
               _generateToFormMethod(className, model, variantNames),
+              _generateLabelPropertiesMethod(className, model, variantNames),
+              _generateToLabelMethod(className, model, variantNames),
               Method(
                 (b) =>
                     b
@@ -1044,6 +1046,157 @@ class OneOfGenerator {
                       ..required = true,
               ),
             )
+            ..lambda = false
+            ..body = body,
+    );
+  }
+
+  Method _generateLabelPropertiesMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final discriminatorValue = m.discriminatorValue;
+
+      if (isSimple) {
+        caseCodes
+          ..add(Code('$variantName() => '))
+          ..add(
+            buildEmptyMapStringString().code,
+          );
+      } else {
+        caseCodes.add(Code('$variantName(:final value) => '));
+        if (discriminatorValue != null) {
+          caseCodes.addAll([
+            const Code('{ ...'),
+            refer('value').property('labelProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            Code(",  '${model.discriminator}': '$discriminatorValue',\n}"),
+          ]);
+        } else {
+          caseCodes.add(
+            refer('value').property('labelProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+          );
+        }
+      }
+      caseCodes.add(const Code(',\n'));
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'labelProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            )
+            ..lambda = false
+            ..body = body,
+    );
+  }
+
+  Method _generateToLabelMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+
+      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final discriminatorValue = m.discriminatorValue;
+
+      // Only include discriminator for complex types (objects) that have
+      // properties where the discriminator can be meaningfully added.
+      // Primitive types (string, integer, boolean) encode as single values
+      // and cannot include discriminators without breaking the encoding
+      // contract.
+      if (model.discriminator != null &&
+          !isSimple &&
+          discriminatorValue != null) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          const Code('{  ...'),
+          refer('value').property('labelProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+          const Code('}'),
+          const Code('.toLabel(explode: '),
+          refer('explode').code,
+          const Code(', allowEmpty: '),
+          refer('allowEmpty').code,
+          const Code(', alreadyEncoded: true),\n'),
+        ]);
+      } else {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          refer('value').property('toLabel').call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(',\n'),
+        ]);
+      }
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {\n'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toLabel'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(false).code,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..defaultTo = literalBool(true).code,
+              ),
+            ])
             ..lambda = false
             ..body = body,
     );

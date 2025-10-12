@@ -585,11 +585,10 @@ void main() {
 
         const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return Map<String,String> 
-              .from({
-                r'id': id.toSimple(explode: false, allowEmpty: allowEmpty),
-                if (name != null) r'name': name!.toSimple(explode: false, allowEmpty: allowEmpty),
-              });
+            return {
+              r'id': id.toSimple(explode: false, allowEmpty: allowEmpty),
+              if (name != null) r'name': name!.toSimple(explode: false, allowEmpty: allowEmpty),
+            };
           }
         ''';
 
@@ -744,13 +743,13 @@ void main() {
 
         const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return Map<String,String> .from({
+            return {
               r'status': status.toSimple(explode: false, allowEmpty: allowEmpty),
               r'created_at': createdAt.toSimple(explode: false, allowEmpty: allowEmpty),
               if (price != null) r'price': price!.toSimple(explode: false, allowEmpty: allowEmpty),
               r'precise_value': preciseValue.toSimple(explode: false, allowEmpty: allowEmpty),
               if (releaseDate != null) r'release_date': releaseDate!.toSimple(explode: false, allowEmpty: allowEmpty),
-            });
+            };
           }
         ''';
 
@@ -786,11 +785,10 @@ void main() {
 
         const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return Map<String,String> 
-              .from({
-                if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
-                if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
-              });
+            return {
+              if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
+              if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
+            };
           }
         ''';
 
@@ -1014,11 +1012,10 @@ void main() {
 
         const expectedFormPropertiesMethod = '''
           Map<String,String> formProperties({bool allowEmpty = true}) {
-            return Map<String,String>
-              .from({
-                r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
-                if (count != null) r'count': count!.toForm(explode: false, allowEmpty: allowEmpty),
-            });
+            return {
+              r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
+              if (count != null) r'count': count!.toForm(explode: false, allowEmpty: allowEmpty),
+            };
           }
         ''';
 
@@ -1089,10 +1086,10 @@ void main() {
 
         const expectedFormPropertiesMethod = '''
           Map<String,String> formProperties({bool allowEmpty = true}) {
-            return Map<String,String> .from({
+            return {
               if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toForm(explode: false, allowEmpty: allowEmpty) ?? '',
               if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toForm(explode: false, allowEmpty: allowEmpty) ?? '',
-            });
+            };
           }
         ''';
 
@@ -1263,14 +1260,13 @@ void main() {
 
           const expectedFormPropertiesMethod = '''
           Map<String,String> formProperties({bool allowEmpty = true}) {
-            return Map<String,String>
-              .from({
-                r'id': id.toForm(explode: false, allowEmpty: allowEmpty),
-                r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
-                if (price != null) r'price': price!.toForm(explode: false, allowEmpty: allowEmpty),
-                r'active': active.toForm(explode: false, allowEmpty: allowEmpty),
-                if (createdAt != null) r'created_at': createdAt!.toForm(explode: false, allowEmpty: allowEmpty),
-            });
+            return {
+              r'id': id.toForm(explode: false, allowEmpty: allowEmpty),
+              r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
+              if (price != null) r'price': price!.toForm(explode: false, allowEmpty: allowEmpty),
+              r'active': active.toForm(explode: false, allowEmpty: allowEmpty),
+              if (createdAt != null) r'created_at': createdAt!.toForm(explode: false, allowEmpty: allowEmpty),
+            };
           }
         ''';
 
@@ -1593,11 +1589,10 @@ void main() {
 
           const expectedSimplePropertiesMethod = '''
           Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return Map<String,String>
-              .from({
-                r'name': name.toSimple(explode: false, allowEmpty: allowEmpty),
-                if (count != null) r'count': count!.toSimple(explode: false, allowEmpty: allowEmpty),
-              });
+            return {
+              r'name': name.toSimple(explode: false, allowEmpty: allowEmpty),
+              if (count != null) r'count': count!.toSimple(explode: false, allowEmpty: allowEmpty),
+            };
           }
         ''';
 
