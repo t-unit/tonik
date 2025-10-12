@@ -135,6 +135,7 @@ class EnumGenerator {
               _generateToSimpleMethod<T>(),
             )
             ..methods.add(_generateToFormMethod<T>())
+            ..methods.add(_generateToLabelMethod<T>())
             ..fields.add(
               Field(
                 (b) =>
@@ -361,6 +362,37 @@ class EnumGenerator {
             ])
             ..body = const Code(
               'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+            ),
+    );
+  }
+
+  Method _generateToLabelMethod<T>() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toLabel'
+            ..returns = refer('String', 'dart:core')
+            ..lambda = true
+            ..optionalParameters.addAll([
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'explode'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            ])
+            ..body = const Code(
+              'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
             ),
     );
   }
