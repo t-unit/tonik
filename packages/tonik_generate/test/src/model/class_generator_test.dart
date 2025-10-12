@@ -1473,7 +1473,22 @@ void main() {
           name: 'StringOrInt',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
-            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'ComplexData',
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
           },
           discriminator: null,
           context: context,
@@ -1517,11 +1532,23 @@ void main() {
 
       test('generates runtime check for class with allOf property', () {
         final stringModel = StringModel(context: context);
-        final intModel = IntegerModel(context: context);
+        final complexModel = ClassModel(
+          name: 'ComplexData',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
         final allOfModel = AllOfModel(
           name: 'StringAndInt',
-          models: {stringModel, intModel},
+          models: {stringModel, complexModel},
           context: context,
         );
 
@@ -1653,7 +1680,22 @@ void main() {
             name: 'StringOrInt1',
             models: {
               (discriminatorValue: null, model: StringModel(context: context)),
-              (discriminatorValue: null, model: IntegerModel(context: context)),
+              (
+                discriminatorValue: null,
+                model: ClassModel(
+                  name: 'ComplexData1',
+                  properties: [
+                    Property(
+                      name: 'id',
+                      model: IntegerModel(context: context),
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
+                    ),
+                  ],
+                  context: context,
+                ),
+              ),
             },
             discriminator: null,
             context: context,
@@ -1663,7 +1705,22 @@ void main() {
             name: 'StringOrInt2',
             models: {
               (discriminatorValue: null, model: StringModel(context: context)),
-              (discriminatorValue: null, model: BooleanModel(context: context)),
+              (
+                discriminatorValue: null,
+                model: ClassModel(
+                  name: 'ComplexData2',
+                  properties: [
+                    Property(
+                      name: 'flag',
+                      model: BooleanModel(context: context),
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
+                    ),
+                  ],
+                  context: context,
+                ),
+              ),
             },
             discriminator: null,
             context: context,
@@ -1673,8 +1730,22 @@ void main() {
             name: 'FlexibleData',
             models: {
               (discriminatorValue: null, model: StringModel(context: context)),
-              (discriminatorValue: null, model: IntegerModel(context: context)),
-              (discriminatorValue: null, model: BooleanModel(context: context)),
+              (
+                discriminatorValue: null,
+                model: ClassModel(
+                  name: 'FlexibleComplex',
+                  properties: [
+                    Property(
+                      name: 'value',
+                      model: IntegerModel(context: context),
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
+                    ),
+                  ],
+                  context: context,
+                ),
+              ),
             },
             discriminator: null,
             context: context,

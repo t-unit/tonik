@@ -342,8 +342,20 @@ void main() {
                     model: StringModel(context: context),
                   ),
                   (
-                    discriminatorValue: 'integer',
-                    model: IntegerModel(context: context),
+                    discriminatorValue: 'complex',
+                    model: ClassModel(
+                      name: 'ComplexValue',
+                      properties: [
+                        Property(
+                          name: 'id',
+                          model: IntegerModel(context: context),
+                          isRequired: true,
+                          isNullable: false,
+                          isDeprecated: false,
+                        ),
+                      ],
+                      context: context,
+                    ),
                   ),
                 },
               ),
@@ -398,8 +410,20 @@ void main() {
                     model: StringModel(context: context),
                   ),
                   (
-                    discriminatorValue: 'integer',
-                    model: IntegerModel(context: context),
+                    discriminatorValue: 'complex',
+                    model: ClassModel(
+                      name: 'ComplexValue',
+                      properties: [
+                        Property(
+                          name: 'id',
+                          model: IntegerModel(context: context),
+                          isRequired: true,
+                          isNullable: false,
+                          isDeprecated: false,
+                        ),
+                      ],
+                      context: context,
+                    ),
                   ),
                 },
               ),
@@ -449,7 +473,19 @@ void main() {
                 name: 'Value',
                 models: {
                   StringModel(context: context),
-                  IntegerModel(context: context),
+                  ClassModel(
+                    name: 'ComplexValue',
+                    properties: [
+                      Property(
+                        name: 'id',
+                        model: IntegerModel(context: context),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                    ],
+                    context: context,
+                  ),
                 },
               ),
               isRequired: true,
@@ -507,8 +543,20 @@ void main() {
                   model: StringModel(context: context),
                 ),
                 (
-                  discriminatorValue: 'integer',
-                  model: IntegerModel(context: context),
+                  discriminatorValue: 'complex',
+                  model: ClassModel(
+                    name: 'ComplexData',
+                    properties: [
+                      Property(
+                        name: 'id',
+                        model: IntegerModel(context: context),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                    ],
+                    context: context,
+                  ),
                 ),
               },
             ),
@@ -528,8 +576,20 @@ void main() {
                   model: StringModel(context: context),
                 ),
                 (
-                  discriminatorValue: 'integer',
-                  model: IntegerModel(context: context),
+                  discriminatorValue: 'complex',
+                  model: ClassModel(
+                    name: 'OptionalComplexData',
+                    properties: [
+                      Property(
+                        name: 'value',
+                        model: IntegerModel(context: context),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                    ],
+                    context: context,
+                  ),
                 ),
               },
             ),
@@ -597,8 +657,20 @@ void main() {
                   model: StringModel(context: context),
                 ),
                 (
-                  discriminatorValue: 'integer',
-                  model: IntegerModel(context: context),
+                  discriminatorValue: 'complex',
+                  model: ClassModel(
+                    name: 'ComplexData',
+                    properties: [
+                      Property(
+                        name: 'id',
+                        model: IntegerModel(context: context),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                    ],
+                    context: context,
+                  ),
                 ),
               },
             ),
@@ -678,8 +750,20 @@ void main() {
                     model: StringModel(context: context),
                   ),
                   (
-                    discriminatorValue: 'number',
-                    model: IntegerModel(context: context),
+                    discriminatorValue: 'complex',
+                    model: ClassModel(
+                      name: 'ComplexData',
+                      properties: [
+                        Property(
+                          name: 'id',
+                          model: IntegerModel(context: context),
+                          isRequired: true,
+                          isNullable: false,
+                          isDeprecated: false,
+                        ),
+                      ],
+                      context: context,
+                    ),
                   ),
                 },
               ),
@@ -699,8 +783,20 @@ void main() {
                     model: DateTimeModel(context: context),
                   ),
                   (
-                    discriminatorValue: 'decimal',
-                    model: DecimalModel(context: context),
+                    discriminatorValue: 'complex',
+                    model: ClassModel(
+                      name: 'ComplexValue',
+                      properties: [
+                        Property(
+                          name: 'name',
+                          model: StringModel(context: context),
+                          isRequired: true,
+                          isNullable: false,
+                          isDeprecated: false,
+                        ),
+                      ],
+                      context: context,
+                    ),
                   ),
                 },
               ),
@@ -715,7 +811,19 @@ void main() {
                 name: 'AllOfValue',
                 models: {
                   StringModel(context: context),
-                  IntegerModel(context: context),
+                  ClassModel(
+                    name: 'ComplexAllOf',
+                    properties: [
+                      Property(
+                        name: 'value',
+                        model: IntegerModel(context: context),
+                        isRequired: true,
+                        isNullable: false,
+                        isDeprecated: false,
+                      ),
+                    ],
+                    context: context,
+                  ),
                 },
               ),
               isRequired: true,

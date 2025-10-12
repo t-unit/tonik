@@ -627,8 +627,7 @@ class ClassGenerator {
 
     // Check if we have any composite models that need runtime checking
     final hasCompositeModels = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel is CompositeModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasCompositeModels) {
@@ -700,7 +699,7 @@ class ClassGenerator {
       final rawName = property.name;
       final propertyModel = property.model;
 
-      if (propertyModel is CompositeModel) {
+      if (propertyModel.encodingShape == EncodingShape.mixed) {
         // Generate runtime check for composite models
         if (property.isRequired) {
           statements
@@ -967,8 +966,7 @@ class ClassGenerator {
 
     // Check if we have any composite models that need runtime checking
     final hasCompositeModels = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel is CompositeModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasCompositeModels) {
@@ -1034,7 +1032,7 @@ class ClassGenerator {
       final rawName = property.name;
       final propertyModel = property.model;
 
-      if (propertyModel is CompositeModel) {
+      if (propertyModel.encodingShape == EncodingShape.mixed) {
         // Runtime check for composite models
         if (property.isRequired && !property.isNullable) {
           // Required non-nullable composite property

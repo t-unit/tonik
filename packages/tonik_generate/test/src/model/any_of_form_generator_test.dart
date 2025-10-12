@@ -1234,7 +1234,22 @@ void main() {
           name: 'InnerChoice',
           models: {
             (discriminatorValue: 'a', model: StringModel(context: context)),
-            (discriminatorValue: 'b', model: IntegerModel(context: context)),
+            (
+              discriminatorValue: 'b',
+              model: ClassModel(
+                name: 'ComplexData',
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
           },
           discriminator: 'type',
           context: context,

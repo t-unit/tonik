@@ -207,9 +207,6 @@ class AnyOfGenerator {
     isNullableOverride: true,
   );
 
-  bool needsRuntimeShapeCheck(Model model) {
-    return model is CompositeModel;
-  }
 
   /// Generates encoding code for a field with proper shape handling.
   ///
@@ -229,7 +226,7 @@ class AnyOfGenerator {
     final propertiesMethodName = isForm ? 'formProperties' : 'simpleProperties';
     final codes = <Code>[];
 
-    if (!needsRuntimeShapeCheck(fieldModel)) {
+    if (fieldModel.encodingShape != EncodingShape.mixed) {
       if (fieldModel.encodingShape == EncodingShape.simple) {
         codes.add(
           Code(
@@ -537,7 +534,7 @@ class AnyOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final hasRuntimeChecks = normalizedProperties.any((prop) {
-      return needsRuntimeShapeCheck(prop.property.model);
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     final needsValues =
@@ -545,14 +542,13 @@ class AnyOfGenerator {
         normalizedProperties.any((prop) {
           final model = prop.property.model;
           return model.encodingShape == EncodingShape.simple &&
-              !needsRuntimeShapeCheck(model);
+              model.encodingShape != EncodingShape.mixed;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     final body = <Code>[];
@@ -580,8 +576,7 @@ class AnyOfGenerator {
         hasDiscriminator &&
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     if (hasComplexFields) {
@@ -939,7 +934,7 @@ class AnyOfGenerator {
       final fn = n.normalizedName;
       final tmp = '${fn}Simple';
 
-      if (needsRuntimeShapeCheck(n.property.model)) {
+      if (n.property.model.encodingShape == EncodingShape.mixed) {
         body
           ..add(Code('if ($fn != null && '))
           ..add(Code('$fn!.currentEncodingShape == '))
@@ -1015,7 +1010,7 @@ class AnyOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final hasRuntimeChecks = normalizedProperties.any((prop) {
-      return needsRuntimeShapeCheck(prop.property.model);
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     final needsValues =
@@ -1023,14 +1018,13 @@ class AnyOfGenerator {
         normalizedProperties.any((prop) {
           final model = prop.property.model;
           return model.encodingShape == EncodingShape.simple &&
-              !needsRuntimeShapeCheck(model);
+              model.encodingShape != EncodingShape.mixed;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     final body = <Code>[];
@@ -1217,7 +1211,7 @@ class AnyOfGenerator {
       final tmp = '${fn}Form';
       final discValue = discMap[n.property.model];
 
-      if (needsRuntimeShapeCheck(n.property.model)) {
+      if (n.property.model.encodingShape == EncodingShape.mixed) {
         body
           ..add(Code('if ($fn != null && '))
           ..add(Code('$fn!.currentEncodingShape == '))
@@ -1309,7 +1303,7 @@ class AnyOfGenerator {
   }) {
     final codes = <Code>[];
 
-    if (!needsRuntimeShapeCheck(fieldModel)) {
+    if (fieldModel.encodingShape != EncodingShape.mixed) {
       if (fieldModel.encodingShape == EncodingShape.simple) {
         if (needsValues) {
           codes.add(
@@ -1399,7 +1393,7 @@ class AnyOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final hasRuntimeChecks = normalizedProperties.any((prop) {
-      return needsRuntimeShapeCheck(prop.property.model);
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     // For labelProperties, we only need to process complex values
@@ -1409,8 +1403,7 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     // We don't need values for labelProperties since primitives don't have
@@ -1451,7 +1444,7 @@ class AnyOfGenerator {
       final needsProcessing =
           needsMapValues &&
           (fieldModel.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(fieldModel));
+              fieldModel.encodingShape == EncodingShape.mixed);
 
       if (needsProcessing) {
         body

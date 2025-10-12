@@ -144,7 +144,22 @@ void main() {
         name: 'NestedAnyOf',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
-          (discriminatorValue: 'int', model: IntegerModel(context: context)),
+          (
+            discriminatorValue: 'complex',
+            model: ClassModel(
+              name: 'ComplexData',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
         },
         discriminator: 'type',
         context: context,

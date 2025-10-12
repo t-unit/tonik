@@ -273,8 +273,7 @@ class AllOfGenerator {
 
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -332,8 +331,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -657,8 +655,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -791,8 +788,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -1116,8 +1112,7 @@ class AllOfGenerator {
     if (model.hasComplexTypes) {
       final allDynamicModels =
           normalizedProperties.where((prop) {
-            final propModel = prop.property.model;
-            return propModel is CompositeModel;
+            return prop.property.model.encodingShape == EncodingShape.mixed;
           }).toList();
 
       // If there are NO dynamic models AND we still have simple+complex mix,
@@ -1202,8 +1197,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -1321,8 +1315,7 @@ class AllOfGenerator {
       // Find all dynamic types (anyOf/oneOf) that need runtime validation.
       final allDynamicModels =
           normalizedProperties.where((prop) {
-            final propModel = prop.property.model;
-            return propModel is AnyOfModel || propModel is OneOfModel;
+            return prop.property.model.encodingShape == EncodingShape.mixed;
           }).toList();
 
       // If there are NO dynamic models AND we still have simple+complex mix,
@@ -1453,12 +1446,11 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    // Check if any of the models have dynamic encoding shapes
+    // Check if the parent model has mixed encoding shape
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is CompositeModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
-
+    
     if (hasDynamicModels) {
       // Generate dynamic logic that checks encoding shape at runtime
       final encodingShapeType = refer(
@@ -1578,12 +1570,11 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    // Check if any of the models have dynamic encoding shapes
+    // Check if the parent model has mixed encoding shape
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is CompositeModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
-
+    
     if (hasDynamicModels) {
       // Generate dynamic logic that checks encoding shape at runtime
       final encodingShapeType = refer(
