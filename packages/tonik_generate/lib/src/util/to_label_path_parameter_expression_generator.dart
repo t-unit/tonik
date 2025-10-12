@@ -1,6 +1,6 @@
 import 'package:tonik_core/tonik_core.dart';
 
-/// Generates a String expression for encoding a path parameter using 
+/// Generates a String expression for encoding a path parameter using
 /// label style.
 ///
 /// Label encoding is used for path parameters in OpenAPI and follows the

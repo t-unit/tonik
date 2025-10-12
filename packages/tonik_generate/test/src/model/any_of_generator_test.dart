@@ -557,12 +557,12 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   if (person != null) {
     final personSimple = person!.simpleProperties(allowEmpty: allowEmpty);
     mapValues.add(personSimple);
-    discriminatorValue ??= 'person';
+    discriminatorValue ??= r'person';
   }
   if (company != null) {
     final companySimple = company!.simpleProperties(allowEmpty: allowEmpty);
     mapValues.add(companySimple);
-    discriminatorValue ??= 'company';
+    discriminatorValue ??= r'company';
   }
   final map = <String, String>{};
   for (final m in mapValues) {
@@ -661,12 +661,12 @@ String toForm({required bool explode, required bool allowEmpty}) {
   if (person != null) {
     final personForm = person!.formProperties(allowEmpty: allowEmpty);
     mapValues.add(personForm);
-    discriminatorValue ??= 'person';
+    discriminatorValue ??= r'person';
   }
   if (company != null) {
     final companyForm = company!.formProperties(allowEmpty: allowEmpty);
     mapValues.add(companyForm);
-    discriminatorValue ??= 'company';
+    discriminatorValue ??= r'company';
   }
   final map = <String, String>{};
   for (final m in mapValues) {
@@ -803,7 +803,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   if (data != null) {
     final dataSimple = data!.simpleProperties(allowEmpty: allowEmpty);
     mapValues.add(dataSimple);
-    discriminatorValue ??= 'data';
+    discriminatorValue ??= r'data';
   }
   if (values.isEmpty && mapValues.isEmpty) return '';
   if (mapValues.isNotEmpty && values.isNotEmpty) {

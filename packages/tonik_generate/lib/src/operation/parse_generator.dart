@@ -175,7 +175,7 @@ class ParseGenerator {
     } else if (bodyDecode != null) {
       return _generateMultiResponseWithBody(wrapperName, bodyDecode);
     } else {
-      return _generateMultiResponseNoBody(wrapperName);
+      return refer(wrapperName, package).call([]).returned.statement;
     }
   }
 
@@ -192,9 +192,9 @@ class ParseGenerator {
         bodyDecode,
       );
     } else if (bodyDecode != null) {
-      return _generateSingleResponseWithBody(bodyDecode);
+      return bodyDecode.returned.statement;
     } else {
-      return _generateSingleResponseNoBody();
+      return const Code('return;');
     }
   }
 
@@ -221,30 +221,17 @@ class ParseGenerator {
       ).call([], responseArgs),
     };
 
-    return Block.of([
-      const Code('return '),
-      refer(wrapperName, package).call([], wrapperArgs).code,
-      const Code(';'),
-    ]);
+    return refer(wrapperName, package).call([], wrapperArgs).returned.statement;
   }
 
   Code _generateMultiResponseWithBody(
     String wrapperName,
     Expression bodyDecode,
   ) {
-    return Block.of([
-      const Code('return '),
-      refer(wrapperName, package).call([], {'body': bodyDecode}).code,
-      const Code(';'),
-    ]);
-  }
-
-  Code _generateMultiResponseNoBody(String wrapperName) {
-    return Block.of([
-      const Code('return const '),
-      refer(wrapperName, package).call([]).code,
-      const Code(';'),
-    ]);
+    return refer(
+      wrapperName,
+      package,
+    ).call([], {'body': bodyDecode}).returned.statement;
   }
 
   Code _generateSingleResponseWithHeaders(
@@ -267,17 +254,8 @@ class ParseGenerator {
                 .implementationNames[contentType]!
             : nameManager.responseNames(response).baseName,
         package,
-      ).call([], args).code,
-      const Code(';'),
+      ).call([], args).statement,
     ]);
-  }
-
-  Code _generateSingleResponseWithBody(Expression bodyDecode) {
-    return Block.of([const Code('return '), bodyDecode.code, const Code(';')]);
-  }
-
-  Code _generateSingleResponseNoBody() {
-    return const Code('return;');
   }
 
   Expression _decodeBody(String expr, Model model, NameManager nameManager) {

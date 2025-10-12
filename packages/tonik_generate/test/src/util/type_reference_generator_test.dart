@@ -93,27 +93,27 @@ void main() {
       });
     });
 
-  group('buildEncodingParameters', () {
-    test('returns correct list of encoding parameters', () {
-      final result = buildEncodingParameters();
+    group('buildEncodingParameters', () {
+      test('returns correct list of encoding parameters', () {
+        final result = buildEncodingParameters();
 
-      expect(result, hasLength(2));
+        expect(result, hasLength(2));
 
-      final explodeParam = result[0];
-      expect(explodeParam.name, equals('explode'));
-      expect(explodeParam.type?.symbol, equals('bool'));
-      expect(explodeParam.type?.url, equals('dart:core'));
-      expect(explodeParam.named, isTrue);
-      expect(explodeParam.required, isTrue);
+        final explodeParam = result[0];
+        expect(explodeParam.name, equals('explode'));
+        expect(explodeParam.type?.symbol, equals('bool'));
+        expect(explodeParam.type?.url, equals('dart:core'));
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
 
-      final allowEmptyParam = result[1];
-      expect(allowEmptyParam.name, equals('allowEmpty'));
-      expect(allowEmptyParam.type?.symbol, equals('bool'));
-      expect(allowEmptyParam.type?.url, equals('dart:core'));
-      expect(allowEmptyParam.named, isTrue);
-      expect(allowEmptyParam.required, isTrue);
+        final allowEmptyParam = result[1];
+        expect(allowEmptyParam.name, equals('allowEmpty'));
+        expect(allowEmptyParam.type?.symbol, equals('bool'));
+        expect(allowEmptyParam.type?.url, equals('dart:core'));
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+      });
     });
-  });
 
     group('buildEmptyMapStringString', () {
       test(

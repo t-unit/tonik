@@ -74,7 +74,7 @@ class PathGenerator {
 
     for (final encoding
         in pathParameters.map((p) => p.parameter.encoding).toSet()) {
-      if (encoding == PathParameterEncoding.simple || 
+      if (encoding == PathParameterEncoding.simple ||
           encoding == PathParameterEncoding.label) {
         // Simple and label encoding use direct method calls.
         continue;
@@ -156,7 +156,7 @@ class PathGenerator {
         );
         pathPartExpressions.add(CodeExpression(Code(valueExpression)));
       } else if (param.parameter.encoding == PathParameterEncoding.label) {
-        final valueExpression =         buildToLabelPathParameterExpression(
+        final valueExpression = buildToLabelPathParameterExpression(
           param.normalizedName,
           param.parameter,
         );

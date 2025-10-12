@@ -112,16 +112,13 @@ extension LabelStringMapEncoder on Map<String, String> {
     }
 
     if (explode) {
-      return entries
-          .map(
-            (entry) {
-              final value = alreadyEncoded
-                  ? entry.value
-                  : Uri.encodeComponent(entry.value);
-              return '.${entry.key}=$value';
-            },
-          )
-          .join();
+      return entries.map(
+        (entry) {
+          final value =
+              alreadyEncoded ? entry.value : Uri.encodeComponent(entry.value);
+          return '.${entry.key}=$value';
+        },
+      ).join();
     } else {
       final encodedPairs = entries
           .expand(

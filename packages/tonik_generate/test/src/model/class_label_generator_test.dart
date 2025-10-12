@@ -612,7 +612,7 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = '''
+      const expectedMethod = '''
           Map<String, String> labelProperties({bool allowEmpty = true}) {
             final mergedProperties = <String, String>{};
             if (allowEmpty || data != null) {

@@ -167,12 +167,12 @@ void main() {
           if (a != null) {
             final aSimple = a!.simpleProperties(allowEmpty: allowEmpty);
             mapValues.add(aSimple);
-            discriminatorValue ??= 'a';
+              discriminatorValue ??= r'a';
           }
           if (b != null) {
             final bSimple = b!.simpleProperties(allowEmpty: allowEmpty);
             mapValues.add(bSimple);
-            discriminatorValue ??= 'b';
+              discriminatorValue ??= r'b';
           }
 
           final map = <String, String>{};
@@ -367,7 +367,7 @@ void main() {
           if (user != null) {
             final userSimple = user!.simpleProperties(allowEmpty: allowEmpty);
             mapValues.add(userSimple);
-            discriminatorValue ??= 'user';
+              discriminatorValue ??= r'user';
           }
           if (string != null) {
             final stringSimple = string!.toSimple( 

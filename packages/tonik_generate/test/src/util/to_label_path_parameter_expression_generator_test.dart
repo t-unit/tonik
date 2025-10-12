@@ -23,10 +23,10 @@ void main() {
         isDeprecated: false,
         context: context,
       );
-        expect(
-          buildToLabelPathParameterExpression('userId', parameter),
-          'userId.toLabel(explode: false, allowEmpty: false)',
-        );
+      expect(
+        buildToLabelPathParameterExpression('userId', parameter),
+        'userId.toLabel(explode: false, allowEmpty: false)',
+      );
     });
 
     test(

@@ -164,7 +164,7 @@ void main() {
           final Object? aJson = a!.toJson();
           if (aJson is Map<String, Object?>) {
             mapValues.add(aJson);
-            discriminatorValue ??= 'a';
+              discriminatorValue ??= r'a';
           } else {
             values.add(aJson);
           }
@@ -173,7 +173,7 @@ void main() {
           final Object? bJson = b!.toJson();
           if (bJson is Map<String, Object?>) {
             mapValues.add(bJson);
-            discriminatorValue ??= 'b';
+              discriminatorValue ??= r'b';
           } else {
             values.add(bJson);
           }
@@ -459,7 +459,7 @@ void main() {
           final Object? userJson = user!.toJson();
           if (userJson is Map<String, Object?>) {
             mapValues.add(userJson);
-            discriminatorValue ??= 'user';
+              discriminatorValue ??= r'user';
           } else {
             values.add(userJson);
           }
@@ -468,7 +468,7 @@ void main() {
           final Object? stringJson = string;
           if (stringJson is Map<String, Object?>) {
             mapValues.add(stringJson);
-            discriminatorValue ??= 'str';
+              discriminatorValue ??= r'str';
           } else {
             values.add(stringJson);
           }
