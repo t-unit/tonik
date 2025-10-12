@@ -284,7 +284,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return switch (this) {
             PrimitiveChoiceI(:final value) => value.toLabel(explode: explode, allowEmpty: allowEmpty),
             PrimitiveChoiceS(:final value) => value.toLabel(explode: explode, allowEmpty: allowEmpty),
@@ -326,7 +326,7 @@ void main() {
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return switch (this) {
             ChoiceA(:final value) => {
               ...value.labelProperties(allowEmpty: allowEmpty),
@@ -371,7 +371,7 @@ void main() {
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return switch (this) {
             MixedChoiceM(:final value) => {
               ...value.labelProperties(allowEmpty: allowEmpty),

@@ -187,14 +187,7 @@ class ClassGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = _buildFromSimpleBody(
               className,
@@ -503,14 +496,7 @@ class ClassGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = _buildFromFormBody(
               className,
@@ -688,14 +674,7 @@ class ClassGenerator {
             ..name = methodName
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
+              buildBoolParameter('allowEmpty', defaultValue: true),
             )
             ..lambda = properties.isEmpty
             ..body = returnStatement,
@@ -827,14 +806,7 @@ class ClassGenerator {
             ..name = methodName
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
+              buildBoolParameter('allowEmpty', defaultValue: true),
             )
             ..body = Block.of(statements),
     );
@@ -889,22 +861,7 @@ class ClassGenerator {
               ..name = methodName
               ..returns = refer('String', 'dart:core')
               ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                ...buildEncodingParameters(),
               ])
               ..body = Block.of([
                 generateEncodingExceptionExpression(
@@ -922,22 +879,7 @@ class ClassGenerator {
               ..name = methodName
               ..returns = refer('String', 'dart:core')
               ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                ...buildEncodingParameters(),
               ])
               ..lambda = methodName == 'toForm'
               ..body =
@@ -955,14 +897,7 @@ class ClassGenerator {
             ..name = methodName
             ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
               Parameter(
                 (b) =>
                     b
@@ -1076,14 +1011,7 @@ class ClassGenerator {
             ..name = 'labelProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
+              buildBoolParameter('allowEmpty', defaultValue: true),
             )
             ..lambda = properties.isEmpty
             ..body = returnStatement,
@@ -1224,14 +1152,7 @@ class ClassGenerator {
             ..name = 'labelProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
+              buildBoolParameter('allowEmpty', defaultValue: true),
             )
             ..body = Block.of(statements),
     );
@@ -1251,24 +1172,7 @@ class ClassGenerator {
           b
             ..name = 'toLabel'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(false).code,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..body = Block.of([
               const Code('return labelProperties(allowEmpty: allowEmpty)'),
               const Code(

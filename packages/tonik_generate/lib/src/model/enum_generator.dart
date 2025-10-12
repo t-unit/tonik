@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
@@ -311,24 +312,7 @@ class EnumGenerator {
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
             ..lambda = true
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..body = const Code(
               'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
             ),
@@ -342,24 +326,7 @@ class EnumGenerator {
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
             ..lambda = true
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..body = const Code(
               'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
             ),
@@ -373,24 +340,7 @@ class EnumGenerator {
             ..name = 'toLabel'
             ..returns = refer('String', 'dart:core')
             ..lambda = true
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..body = const Code(
               'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
             ),

@@ -691,24 +691,7 @@ class AnyOfGenerator {
           b
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of(body),
     );
@@ -780,14 +763,7 @@ class AnyOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..named = true
-                      ..required = true
-                      ..type = refer('bool', 'dart:core'),
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = Block.of([
               ...localDecls,
@@ -862,14 +838,7 @@ class AnyOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..named = true
-                      ..required = true
-                      ..type = refer('bool', 'dart:core'),
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = Block.of([
               ...localDecls,
@@ -953,14 +922,7 @@ class AnyOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (p) =>
-                      p
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body =
                   generateEncodingExceptionExpression(
@@ -1052,14 +1014,7 @@ class AnyOfGenerator {
             ..name = 'simpleProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of(body),
     );
@@ -1219,24 +1174,7 @@ class AnyOfGenerator {
           b
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of(body),
     );
@@ -1261,14 +1199,7 @@ class AnyOfGenerator {
               ..name = 'formProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (p) =>
-                      p
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body =
                   literalMap(
@@ -1386,14 +1317,7 @@ class AnyOfGenerator {
             ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of(body),
     );

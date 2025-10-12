@@ -264,7 +264,7 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return labelProperties(
             allowEmpty: allowEmpty,
           ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
@@ -308,7 +308,7 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return labelProperties(
             allowEmpty: allowEmpty,
           ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
@@ -809,7 +809,7 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return labelProperties(
             allowEmpty: allowEmpty,
           ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
@@ -863,7 +863,7 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return labelProperties(
             allowEmpty: allowEmpty,
           ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
@@ -918,7 +918,7 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return labelProperties(
             allowEmpty: allowEmpty,
           ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
@@ -941,7 +941,7 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-        String toLabel({bool explode = false, bool allowEmpty = true}) {
+        String toLabel({required bool explode, required bool allowEmpty}) {
           return labelProperties(
             allowEmpty: allowEmpty,
           ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);

@@ -493,14 +493,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Code('return $className();'),
       );
@@ -522,14 +515,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -588,14 +574,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body =
                   refer(className, package)
@@ -647,14 +626,7 @@ class AllOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body =
                 refer(className, package)
@@ -720,14 +692,7 @@ class AllOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..lambda = false
               ..body = Block.of(bodyCode),
@@ -742,14 +707,7 @@ class AllOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -795,14 +753,7 @@ class AllOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body = Block.of(propertyMergingLines),
       );
@@ -816,14 +767,7 @@ class AllOfGenerator {
             ..name = 'simpleProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of([
               literalMap(
@@ -883,24 +827,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(bodyCode),
       );
@@ -957,24 +884,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(validationCode),
       );
@@ -986,24 +896,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of([
                 generateEncodingExceptionExpression(
@@ -1019,24 +912,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of([
                 refer('simpleProperties')
@@ -1060,24 +936,7 @@ class AllOfGenerator {
           b
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of([
               refer(primaryField.normalizedName)
@@ -1112,14 +971,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Code('return $className();'),
       );
@@ -1140,14 +992,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -1203,14 +1048,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body =
                   refer(className, package)
@@ -1261,14 +1099,7 @@ class AllOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body =
                 refer(className, package)
@@ -1354,14 +1185,7 @@ class AllOfGenerator {
               ..name = 'formProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body = Block.of(propertyMergingLines),
       );
@@ -1373,14 +1197,7 @@ class AllOfGenerator {
             ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of([
               literalMap(
@@ -1446,24 +1263,7 @@ class AllOfGenerator {
             b
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(bodyCode),
       );
@@ -1520,24 +1320,7 @@ class AllOfGenerator {
             b
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(validationCode),
       );
@@ -1565,24 +1348,7 @@ class AllOfGenerator {
               b
                 ..name = 'toForm'
                 ..returns = refer('String', 'dart:core')
-                ..optionalParameters.addAll([
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'explode'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'allowEmpty'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                ])
+                ..optionalParameters.addAll(buildEncodingParameters())
                 ..lambda = false
                 ..body = Block.of([
                   generateEncodingExceptionExpression(
@@ -1599,24 +1365,7 @@ class AllOfGenerator {
               b
                 ..name = 'toForm'
                 ..returns = refer('String', 'dart:core')
-                ..optionalParameters.addAll([
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'explode'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'allowEmpty'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                ])
+                ..optionalParameters.addAll(buildEncodingParameters())
                 ..lambda = false
                 ..body = Block.of([
                   refer('formProperties')
@@ -1685,24 +1434,7 @@ class AllOfGenerator {
             b
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(bodyCode),
       );
@@ -1715,24 +1447,7 @@ class AllOfGenerator {
           b
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of([
               refer(primaryField.normalizedName)

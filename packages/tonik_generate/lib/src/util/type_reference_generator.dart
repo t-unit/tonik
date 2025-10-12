@@ -146,6 +146,46 @@ TypeReference buildMapStringStringType() => TypeReference(
         ]),
 );
 
+/// Returns a Parameter for a boolean named parameter with default value.
+Parameter buildBoolParameter(
+  String name, {
+  bool defaultValue = false,
+  bool required = false,
+}) =>
+    Parameter(
+      (b) =>
+          b
+            ..name = name
+            ..type = refer('bool', 'dart:core')
+            ..named = true
+            ..required = required
+            ..defaultTo = required ? null : literalBool(defaultValue).code,
+    );
+
+/// Returns a Parameter for a String named parameter with default value.
+Parameter buildStringParameter(
+  String name, {
+  String? defaultValue,
+  bool required = false,
+}) =>
+    Parameter(
+      (b) =>
+          b
+            ..name = name
+            ..type = refer('String', 'dart:core')
+            ..named = true
+            ..required = required
+            ..defaultTo = required || defaultValue == null
+                ? null
+                : literalString(defaultValue).code,
+    );
+
+/// Returns a list of common encoding parameters (explode and allowEmpty).
+List<Parameter> buildEncodingParameters() => [
+      buildBoolParameter('explode', required: true),
+      buildBoolParameter('allowEmpty', required: true),
+    ];
+
 /// Returns a LiteralMapExpression for an empty [Map<String, String>] literal.
 ///
 /// This can be used with Code.scope to create properly

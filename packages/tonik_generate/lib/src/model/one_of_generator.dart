@@ -533,14 +533,7 @@ class OneOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = Block.of(bodyBlocks),
     );
@@ -680,14 +673,7 @@ class OneOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = Block.of(bodyBlocks),
     );
@@ -760,24 +746,7 @@ class OneOfGenerator {
           b
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = body,
     );
@@ -849,24 +818,7 @@ class OneOfGenerator {
           b
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = body,
     );
@@ -982,14 +934,7 @@ class OneOfGenerator {
             ..name = 'simpleProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..lambda = false
             ..body = body,
@@ -1037,14 +982,7 @@ class OneOfGenerator {
             ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..lambda = false
             ..body = body,
@@ -1102,14 +1040,7 @@ class OneOfGenerator {
             ..name = 'labelProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
+              buildBoolParameter('allowEmpty', defaultValue: true),
             )
             ..lambda = false
             ..body = body,
@@ -1179,24 +1110,7 @@ class OneOfGenerator {
           b
             ..name = 'toLabel'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(false).code,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..defaultTo = literalBool(true).code,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = body,
     );
