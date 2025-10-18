@@ -111,6 +111,16 @@ class AllOfGenerator {
                 normalizedProperties,
                 model,
               ),
+              _buildLabelPropertiesMethod(
+                className,
+                normalizedProperties,
+                model,
+              ),
+              _buildToLabelMethod(
+                className,
+                normalizedProperties,
+                model,
+              ),
               generateEqualsMethod(
                 className: className,
                 properties: properties,
@@ -263,8 +273,7 @@ class AllOfGenerator {
 
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -282,8 +291,7 @@ class AllOfGenerator {
 
       bodyCode.addAll([
         const Code('if (shapes.length > 1) return '),
-        encodingShapeType.property('mixed').code,
-        const Code(';'),
+        encodingShapeType.property('mixed').statement,
         const Code('return shapes.first;'),
       ]);
 
@@ -323,8 +331,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -493,14 +500,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Code('return $className();'),
       );
@@ -522,14 +522,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -588,14 +581,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body =
                   refer(className, package)
@@ -647,14 +633,7 @@ class AllOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body =
                 refer(className, package)
@@ -676,8 +655,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -696,11 +674,8 @@ class AllOfGenerator {
           'complex types',
         ).statement,
         const Code('}'),
-        const Code('final mergedProperties = <'),
-        refer('String', 'dart:core').code,
-        const Code(', '),
-        refer('String', 'dart:core').code,
-        const Code('>{};'),
+        const Code('final mergedProperties = '),
+        buildEmptyMapStringString().statement,
       ];
 
       for (final prop in normalizedProperties) {
@@ -720,14 +695,7 @@ class AllOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..lambda = false
               ..body = Block.of(bodyCode),
@@ -742,14 +710,7 @@ class AllOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -763,15 +724,9 @@ class AllOfGenerator {
     // If all types are complex, use property merging approach
     if (model.hasComplexTypes) {
       final propertyMergingLines = [
-        declareFinal('mergedProperties')
-            .assign(
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                refer('String', 'dart:core'),
-              ),
-            )
-            .statement,
+        declareFinal(
+          'mergedProperties',
+        ).assign(buildEmptyMapStringString()).statement,
       ];
 
       for (final normalized in normalizedProperties) {
@@ -795,14 +750,7 @@ class AllOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body = Block.of(propertyMergingLines),
       );
@@ -816,21 +764,10 @@ class AllOfGenerator {
             ..name = 'simpleProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of([
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                refer('String', 'dart:core'),
-              ).returned.statement,
+              buildEmptyMapStringString().returned.statement,
             ]),
     );
   }
@@ -851,8 +788,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -883,24 +819,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(bodyCode),
       );
@@ -957,24 +876,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(validationCode),
       );
@@ -986,24 +888,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of([
                 generateEncodingExceptionExpression(
@@ -1019,24 +904,7 @@ class AllOfGenerator {
             b
               ..name = 'toSimple'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of([
                 refer('simpleProperties')
@@ -1060,24 +928,7 @@ class AllOfGenerator {
           b
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of([
               refer(primaryField.normalizedName)
@@ -1112,14 +963,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Code('return $className();'),
       );
@@ -1140,14 +984,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body = Block.of([
                 generateSimpleDecodingExceptionExpression(
@@ -1203,14 +1040,7 @@ class AllOfGenerator {
                 ),
               )
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('explode', required: true),
               )
               ..body =
                   refer(className, package)
@@ -1261,14 +1091,7 @@ class AllOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body =
                 refer(className, package)
@@ -1289,8 +1112,7 @@ class AllOfGenerator {
     if (model.hasComplexTypes) {
       final allDynamicModels =
           normalizedProperties.where((prop) {
-            final propModel = prop.property.model;
-            return propModel is CompositeModel;
+            return prop.property.model.encodingShape == EncodingShape.mixed;
           }).toList();
 
       // If there are NO dynamic models AND we still have simple+complex mix,
@@ -1322,15 +1144,9 @@ class AllOfGenerator {
       }
 
       final propertyMergingLines = [
-        declareFinal('mergedProperties')
-            .assign(
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                refer('String', 'dart:core'),
-              ),
-            )
-            .statement,
+        declareFinal(
+          'mergedProperties',
+        ).assign(buildEmptyMapStringString()).statement,
       ];
 
       for (final normalized in normalizedProperties) {
@@ -1354,14 +1170,7 @@ class AllOfGenerator {
               ..name = 'formProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body = Block.of(propertyMergingLines),
       );
@@ -1373,21 +1182,10 @@ class AllOfGenerator {
             ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of([
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                refer('String', 'dart:core'),
-              ).returned.statement,
+              buildEmptyMapStringString().returned.statement,
             ]),
     );
   }
@@ -1399,8 +1197,7 @@ class AllOfGenerator {
   ) {
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
-      final propModel = prop.property.model;
-      return propModel is AnyOfModel || propModel is OneOfModel;
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
@@ -1446,24 +1243,7 @@ class AllOfGenerator {
             b
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(bodyCode),
       );
@@ -1520,24 +1300,7 @@ class AllOfGenerator {
             b
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(validationCode),
       );
@@ -1552,8 +1315,7 @@ class AllOfGenerator {
       // Find all dynamic types (anyOf/oneOf) that need runtime validation.
       final allDynamicModels =
           normalizedProperties.where((prop) {
-            final propModel = prop.property.model;
-            return propModel is AnyOfModel || propModel is OneOfModel;
+            return prop.property.model.encodingShape == EncodingShape.mixed;
           }).toList();
 
       // If there are NO dynamic models AND we still have simple+complex mix,
@@ -1565,24 +1327,7 @@ class AllOfGenerator {
               b
                 ..name = 'toForm'
                 ..returns = refer('String', 'dart:core')
-                ..optionalParameters.addAll([
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'explode'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'allowEmpty'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                ])
+                ..optionalParameters.addAll(buildEncodingParameters())
                 ..lambda = false
                 ..body = Block.of([
                   generateEncodingExceptionExpression(
@@ -1599,24 +1344,7 @@ class AllOfGenerator {
               b
                 ..name = 'toForm'
                 ..returns = refer('String', 'dart:core')
-                ..optionalParameters.addAll([
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'explode'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                  Parameter(
-                    (b) =>
-                        b
-                          ..name = 'allowEmpty'
-                          ..type = refer('bool', 'dart:core')
-                          ..named = true
-                          ..required = true,
-                  ),
-                ])
+                ..optionalParameters.addAll(buildEncodingParameters())
                 ..lambda = false
                 ..body = Block.of([
                   refer('formProperties')
@@ -1685,24 +1413,7 @@ class AllOfGenerator {
             b
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'explode'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
-              ])
+              ..optionalParameters.addAll(buildEncodingParameters())
               ..lambda = false
               ..body = Block.of(bodyCode),
       );
@@ -1715,28 +1426,297 @@ class AllOfGenerator {
           b
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of([
               refer(primaryField.normalizedName)
                   .property('toForm')
+                  .call([], {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                  })
+                  .returned
+                  .statement,
+            ]),
+    );
+  }
+
+  Method _buildLabelPropertiesMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    // Check if the parent model has mixed encoding shape
+    final hasDynamicModels = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+    
+    if (hasDynamicModels) {
+      // Generate dynamic logic that checks encoding shape at runtime
+      final encodingShapeType = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      final bodyCode = <Code>[
+        const Code('if (currentEncodingShape == '),
+        encodingShapeType.property('mixed').code,
+        const Code(') {'),
+        generateSimpleDecodingExceptionExpression(
+          'Simple properties not supported for $className: '
+          'contains complex types',
+        ).statement,
+        const Code('}'),
+        const Code('final mergedProperties = '),
+        buildEmptyMapStringString().statement,
+      ];
+
+      for (final prop in normalizedProperties) {
+        bodyCode.add(
+          Code(
+            'mergedProperties.addAll(${prop.normalizedName} '
+            '.labelProperties(allowEmpty: allowEmpty));',
+          ),
+        );
+      }
+
+      bodyCode.add(const Code('return mergedProperties;'));
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'labelProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                buildBoolParameter('allowEmpty', required: true),
+              )
+              ..lambda = false
+              ..body = Block.of(bodyCode),
+      );
+    }
+
+    // If the model cannot be simply encoded, throw an exception
+    if (model.cannotBeSimplyEncoded) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'labelProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                buildBoolParameter('allowEmpty', required: true),
+              )
+              ..body = Block.of([
+                generateSimpleDecodingExceptionExpression(
+                  'Simple properties not supported for $className: '
+                  'contains complex types',
+                ).statement,
+              ]),
+      );
+    }
+
+    // If all types are complex, use property merging approach
+    if (model.hasComplexTypes) {
+      final propertyMergingLines = [
+        declareFinal(
+          'mergedProperties',
+        ).assign(buildEmptyMapStringString()).statement,
+      ];
+
+      for (final normalized in normalizedProperties) {
+        propertyMergingLines.add(
+          refer('mergedProperties').property('addAll').call([
+            refer(normalized.normalizedName).property('labelProperties').call(
+              [],
+              {'allowEmpty': refer('allowEmpty')},
+            ),
+          ]).statement,
+        );
+      }
+
+      propertyMergingLines.add(
+        refer('mergedProperties').returned.statement,
+      );
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'labelProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                buildBoolParameter('allowEmpty', required: true),
+              )
+              ..body = Block.of(propertyMergingLines),
+      );
+    }
+
+    // For primitive-only AllOf models, return an empty map since they
+    // encode directly as a single value
+    return Method(
+      (b) =>
+          b
+            ..name = 'labelProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              buildBoolParameter('allowEmpty', required: true),
+            )
+            ..body = Block.of([
+              buildEmptyMapStringString().returned.statement,
+            ]),
+    );
+  }
+
+  Method _buildToLabelMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    // Check if the parent model has mixed encoding shape
+    final hasDynamicModels = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+    
+    if (hasDynamicModels) {
+      // Generate dynamic logic that checks encoding shape at runtime
+      final encodingShapeType = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      final bodyCode = <Code>[
+        const Code('if (currentEncodingShape == '),
+        encodingShapeType.property('mixed').code,
+        const Code(') {'),
+        generateEncodingExceptionExpression(
+          'Simple encoding not supported: contains complex types',
+        ).statement,
+        const Code('}'),
+        const Code('return labelProperties('),
+        const Code('allowEmpty: allowEmpty,'),
+        const Code(
+          ').toLabel('
+          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
+        ),
+      ];
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'toLabel'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body = Block.of(bodyCode),
+      );
+    }
+
+    final dynamicModels =
+        normalizedProperties.where((prop) {
+          final shape = prop.property.model.encodingShape;
+          return shape == EncodingShape.mixed;
+        }).toList();
+
+    final hasDynamicModelsOld = dynamicModels.isNotEmpty;
+    final needsRuntimeValidation = hasDynamicModelsOld && model.hasSimpleTypes;
+
+    if (needsRuntimeValidation) {
+      final encodingShapeType = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+      final validationCode = <Code>[];
+
+      for (final prop in dynamicModels) {
+        validationCode.addAll([
+          Code('if (${prop.normalizedName}.currentEncodingShape != '),
+          encodingShapeType.property('simple').code,
+          const Code(') {'),
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Cannot encode mixed allOf ${model.name}: '
+                  '${prop.normalizedName} is complex',
+                ),
+              ])
+              .thrown
+              .statement,
+          const Code('}'),
+        ]);
+      }
+
+      final primaryField = normalizedProperties.first;
+      validationCode.addAll([
+        refer(primaryField.normalizedName)
+            .property('toLabel')
+            .call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+            })
+            .returned
+            .statement,
+      ]);
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'toLabel'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body = Block.of(validationCode),
+      );
+    }
+
+    if (model.cannotBeSimplyEncoded) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toLabel'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body = Block.of([
+                generateEncodingExceptionExpression(
+                  'Simple encoding not supported: contains complex types',
+                ).statement,
+              ]),
+      );
+    }
+
+    if (model.hasComplexTypes) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toLabel'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body = Block.of([
+                refer('labelProperties')
+                    .call([], {'allowEmpty': refer('allowEmpty')})
+                    .property('toLabel')
+                    .call([], {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                      'alreadyEncoded': literalBool(true),
+                    })
+                    .returned
+                    .statement,
+              ]),
+      );
+    }
+
+    final primaryField = normalizedProperties.first;
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toLabel'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = Block.of([
+              refer(primaryField.normalizedName)
+                  .property('toLabel')
                   .call([], {
                     'explode': refer('explode'),
                     'allowEmpty': refer('allowEmpty'),

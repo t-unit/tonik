@@ -4,6 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -73,8 +74,9 @@ class PathGenerator {
 
     for (final encoding
         in pathParameters.map((p) => p.parameter.encoding).toSet()) {
-      if (encoding == PathParameterEncoding.simple) {
-        // Simple encoding uses toSimple(...) extensions directly.
+      if (encoding == PathParameterEncoding.simple ||
+          encoding == PathParameterEncoding.label) {
+        // Simple and label encoding use direct method calls.
         continue;
       }
 
@@ -151,6 +153,12 @@ class PathGenerator {
           param.parameter,
           explode: param.parameter.explode,
           allowEmpty: param.parameter.allowEmptyValue,
+        );
+        pathPartExpressions.add(CodeExpression(Code(valueExpression)));
+      } else if (param.parameter.encoding == PathParameterEncoding.label) {
+        final valueExpression = buildToLabelPathParameterExpression(
+          param.normalizedName,
+          param.parameter,
         );
         pathPartExpressions.add(CodeExpression(Code(valueExpression)));
       } else {

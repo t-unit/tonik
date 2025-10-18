@@ -592,12 +592,12 @@ void main() {
           if (a != null) {
             final aForm = a!.formProperties(allowEmpty: allowEmpty);
             mapValues.add(aForm);
-            discriminatorValue ??= 'a';
+              discriminatorValue ??= r'a';
           }
           if (b != null) {
             final bForm = b!.formProperties(allowEmpty: allowEmpty);
             mapValues.add(bForm);
-            discriminatorValue ??= 'b';
+              discriminatorValue ??= r'b';
           }
           final map = <String, String>{};
           for (final m in mapValues) { 
@@ -895,12 +895,12 @@ void main() {
           if (a != null) {
           final aForm = a!.formProperties(allowEmpty: allowEmpty);
           maps.add(aForm);
-            discriminatorValue ??= 'a';
+              discriminatorValue ??= r'a';
           }
           if (b != null) {
           final bForm = b!.formProperties(allowEmpty: allowEmpty);
           maps.add(bForm);
-            discriminatorValue ??= 'b';
+              discriminatorValue ??= r'b';
           }
           if (maps.isEmpty) return <String, String>{};
           final map = <String, String>{};
@@ -1234,7 +1234,22 @@ void main() {
           name: 'InnerChoice',
           models: {
             (discriminatorValue: 'a', model: StringModel(context: context)),
-            (discriminatorValue: 'b', model: IntegerModel(context: context)),
+            (
+              discriminatorValue: 'b',
+              model: ClassModel(
+                name: 'ComplexData',
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
           },
           discriminator: 'type',
           context: context,

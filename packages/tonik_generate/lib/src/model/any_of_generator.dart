@@ -187,6 +187,8 @@ class AnyOfGenerator {
               toFormMethod,
               simplePropsMethod,
               formPropsMethod,
+              _buildLabelPropertiesMethod(className, model, normalized),
+              _buildToLabelMethod(className, model, normalized),
               generateEqualsMethod(
                 className: className,
                 properties: propsForEquality,
@@ -205,9 +207,6 @@ class AnyOfGenerator {
     isNullableOverride: true,
   );
 
-  bool needsRuntimeShapeCheck(Model model) {
-    return model is CompositeModel;
-  }
 
   /// Generates encoding code for a field with proper shape handling.
   ///
@@ -227,7 +226,7 @@ class AnyOfGenerator {
     final propertiesMethodName = isForm ? 'formProperties' : 'simpleProperties';
     final codes = <Code>[];
 
-    if (!needsRuntimeShapeCheck(fieldModel)) {
+    if (fieldModel.encodingShape != EncodingShape.mixed) {
       if (fieldModel.encodingShape == EncodingShape.simple) {
         codes.add(
           Code(
@@ -250,7 +249,9 @@ class AnyOfGenerator {
         }
 
         if (discriminatorValue != null) {
-          codes.add(Code("discriminatorValue ??= '$discriminatorValue';"));
+          codes.add(
+            Code("discriminatorValue ??= r'$discriminatorValue';"),
+          );
         }
       }
     } else {
@@ -288,7 +289,7 @@ class AnyOfGenerator {
       }
 
       if (discriminatorValue != null) {
-        codes.add(Code("discriminatorValue ??= '$discriminatorValue';"));
+        codes.add(Code("discriminatorValue ??= r'$discriminatorValue';"));
       }
 
       codes
@@ -299,9 +300,8 @@ class AnyOfGenerator {
         ..add(
           generateEncodingExceptionExpression(
             'Cannot encode field with mixed encoding shape',
-          ).code,
+          ).statement,
         )
-        ..add(const Code(';'))
         ..add(const Code('}'));
     }
 
@@ -446,7 +446,7 @@ class AnyOfGenerator {
       final addMap = Code('mapValues.add(${name}Json);');
       final maybeDisc =
           hasDiscriminator && discValue != null
-              ? Code("discriminatorValue ??= '$discValue';")
+              ? Code("discriminatorValue ??= r'$discValue';")
               : const Code('');
 
       blocks
@@ -534,7 +534,7 @@ class AnyOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final hasRuntimeChecks = normalizedProperties.any((prop) {
-      return needsRuntimeShapeCheck(prop.property.model);
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     final needsValues =
@@ -542,14 +542,13 @@ class AnyOfGenerator {
         normalizedProperties.any((prop) {
           final model = prop.property.model;
           return model.encodingShape == EncodingShape.simple &&
-              !needsRuntimeShapeCheck(model);
+              model.encodingShape != EncodingShape.mixed;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     final body = <Code>[];
@@ -577,8 +576,7 @@ class AnyOfGenerator {
         hasDiscriminator &&
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     if (hasComplexFields) {
@@ -617,11 +615,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code('final map = '),
-      literalMap(
-        {},
-        refer('String', 'dart:core'),
-        refer('String', 'dart:core'),
-      ).statement,
+      buildEmptyMapStringString().statement,
     ];
 
     if (needsMapValues) {
@@ -691,24 +685,7 @@ class AnyOfGenerator {
           b
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of(body),
     );
@@ -780,14 +757,7 @@ class AnyOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..named = true
-                      ..required = true
-                      ..type = refer('bool', 'dart:core'),
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = Block.of([
               ...localDecls,
@@ -862,14 +832,7 @@ class AnyOfGenerator {
               ),
             )
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..named = true
-                      ..required = true
-                      ..type = refer('bool', 'dart:core'),
-              ),
+              buildBoolParameter('explode', required: true),
             )
             ..body = Block.of([
               ...localDecls,
@@ -918,8 +881,7 @@ class AnyOfGenerator {
       ]).statement,
       const Code('}'),
       const Code('if (shapes.length > 1) return '),
-      encodingShapeType.property('mixed').code,
-      const Code(';'),
+      encodingShapeType.property('mixed').statement,
       const Code('return shapes.first;'),
     ]);
 
@@ -953,14 +915,7 @@ class AnyOfGenerator {
               ..name = 'simpleProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (p) =>
-                      p
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
               ..body =
                   generateEncodingExceptionExpression(
@@ -979,7 +934,7 @@ class AnyOfGenerator {
       final fn = n.normalizedName;
       final tmp = '${fn}Simple';
 
-      if (needsRuntimeShapeCheck(n.property.model)) {
+      if (n.property.model.encodingShape == EncodingShape.mixed) {
         body
           ..add(Code('if ($fn != null && '))
           ..add(Code('$fn!.currentEncodingShape == '))
@@ -1030,18 +985,9 @@ class AnyOfGenerator {
 
     body.addAll([
       const Code('if (maps.isEmpty) return '),
-      literalMap(
-        {},
-        refer('String', 'dart:core'),
-        refer('String', 'dart:core'),
-      ).code,
-      const Code(';'),
+      buildEmptyMapStringString().statement,
       const Code('final map = '),
-      literalMap(
-        {},
-        refer('String', 'dart:core'),
-        refer('String', 'dart:core'),
-      ).statement,
+      buildEmptyMapStringString().statement,
       const Code('for (final m in maps) { map.addAll(m); }'),
       const Code('return map;'),
     ]);
@@ -1052,14 +998,7 @@ class AnyOfGenerator {
             ..name = 'simpleProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of(body),
     );
@@ -1071,7 +1010,7 @@ class AnyOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     final hasRuntimeChecks = normalizedProperties.any((prop) {
-      return needsRuntimeShapeCheck(prop.property.model);
+      return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     final needsValues =
@@ -1079,14 +1018,13 @@ class AnyOfGenerator {
         normalizedProperties.any((prop) {
           final model = prop.property.model;
           return model.encodingShape == EncodingShape.simple &&
-              !needsRuntimeShapeCheck(model);
+              model.encodingShape != EncodingShape.mixed;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape != EncodingShape.simple ||
-              needsRuntimeShapeCheck(model);
+          return model.encodingShape != EncodingShape.simple;
         });
 
     final body = <Code>[];
@@ -1145,11 +1083,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code('final map = '),
-      literalMap(
-        {},
-        refer('String', 'dart:core'),
-        refer('String', 'dart:core'),
-      ).statement,
+      buildEmptyMapStringString().statement,
     ];
 
     if (needsMapValues) {
@@ -1219,24 +1153,7 @@ class AnyOfGenerator {
           b
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'explode'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
+            ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of(body),
     );
@@ -1261,21 +1178,9 @@ class AnyOfGenerator {
               ..name = 'formProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (p) =>
-                      p
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = true,
-                ),
+                buildBoolParameter('allowEmpty', required: true),
               )
-              ..body =
-                  literalMap(
-                    {},
-                    refer('String', 'dart:core'),
-                    refer('String', 'dart:core'),
-                  ).returned.statement,
+              ..body = buildEmptyMapStringString().returned.statement,
       );
     }
 
@@ -1306,7 +1211,7 @@ class AnyOfGenerator {
       final tmp = '${fn}Form';
       final discValue = discMap[n.property.model];
 
-      if (needsRuntimeShapeCheck(n.property.model)) {
+      if (n.property.model.encodingShape == EncodingShape.mixed) {
         body
           ..add(Code('if ($fn != null && '))
           ..add(Code('$fn!.currentEncodingShape == '))
@@ -1326,7 +1231,7 @@ class AnyOfGenerator {
 
         if (hasDiscriminator && discValue != null) {
           body.add(
-            Code("discriminatorValue ??= '$discValue';"),
+            Code("discriminatorValue ??= r'$discValue';"),
           );
         }
 
@@ -1343,7 +1248,7 @@ class AnyOfGenerator {
 
         if (hasDiscriminator && discValue != null) {
           body.add(
-            Code("discriminatorValue ??= '$discValue';"),
+            Code("discriminatorValue ??= r'$discValue';"),
           );
         }
 
@@ -1353,18 +1258,9 @@ class AnyOfGenerator {
 
     body.addAll([
       const Code('if (maps.isEmpty) return '),
-      literalMap(
-        {},
-        refer('String', 'dart:core'),
-        refer('String', 'dart:core'),
-      ).code,
-      const Code(';'),
+      buildEmptyMapStringString().statement,
       const Code('final map = '),
-      literalMap(
-        {},
-        refer('String', 'dart:core'),
-        refer('String', 'dart:core'),
-      ).statement,
+      buildEmptyMapStringString().statement,
       const Code('for (final m in maps) { map.addAll(m); }'),
     ]);
 
@@ -1386,16 +1282,243 @@ class AnyOfGenerator {
             ..name = 'formProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
+              buildBoolParameter('allowEmpty', required: true),
             )
             ..body = Block.of(body),
+    );
+  }
+
+  /// Generates label encoding code for a field with proper shape handling.
+  ///
+  /// For static types (primitives, classes), generates direct method calls.
+  /// For dynamic types (oneOf, anyOf, allOf), generates runtime switch on
+  /// currentEncodingShape.
+  List<Code> _generateFieldLabelEncoding({
+    required String fieldName,
+    required Model fieldModel,
+    required String tmpVarName,
+    required bool needsValues,
+    required bool needsMapValues,
+    String? discriminatorValue,
+  }) {
+    final codes = <Code>[];
+
+    if (fieldModel.encodingShape != EncodingShape.mixed) {
+      if (fieldModel.encodingShape == EncodingShape.simple) {
+        if (needsValues) {
+          codes.add(
+            Code(
+              'values.add($fieldName!.toLabel( '
+              'explode: explode, allowEmpty: allowEmpty));',
+            ),
+          );
+        }
+      } else {
+        // Classes have fixed EncodingShape.complex, so no runtime check needed
+        codes.add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.labelProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+        if (needsMapValues) {
+          codes.add(Code('mapValues.add($tmpVarName);'));
+        }
+
+        if (discriminatorValue != null) {
+          codes.add(
+            Code("discriminatorValue ??= r'$discriminatorValue';"),
+          );
+        }
+      }
+    } else {
+      final encodingShapeRef = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      codes
+        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('simple').code)
+        ..add(const Code(':'));
+      if (needsValues) {
+        codes.add(
+          Code(
+            'values.add($fieldName!.toLabel('
+            'explode: explode, allowEmpty: allowEmpty));',
+          ),
+        );
+      }
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('complex').code)
+        ..add(const Code(':'))
+        ..add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.labelProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+      if (needsMapValues) {
+        codes.add(Code('mapValues.add($tmpVarName);'));
+      }
+
+      if (discriminatorValue != null) {
+        codes.add(
+          Code("discriminatorValue ??= r'$discriminatorValue';"),
+        );
+      }
+
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('mixed').code)
+        ..add(const Code(':'))
+        ..add(
+          generateEncodingExceptionExpression(
+            'Cannot encode field with mixed encoding shape',
+          ).statement,
+        )
+        ..add(const Code('}'));
+    }
+
+    return codes;
+  }
+
+  Method _buildLabelPropertiesMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final hasRuntimeChecks = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+
+    // For labelProperties, we only need to process complex values
+    // (ClassModel, ListModel).
+    // Primitive values don't have properties, so they should be ignored
+    final needsMapValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape != EncodingShape.simple;
+        });
+
+    // We don't need values for labelProperties since primitives don't have
+    // properties
+    final body = <Code>[];
+
+    if (needsMapValues) {
+      body.addAll([
+        const Code('final mapValues = <'),
+        buildMapStringStringType().code,
+        const Code('>[];'),
+      ]);
+    }
+
+    final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
+
+    if (hasDiscriminator) {
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
+    }
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final discValue = discMap[n.property.model];
+      final fieldModel = n.property.model;
+
+      // Only process fields that actually need processing
+      final needsProcessing =
+          needsMapValues &&
+          (fieldModel.encodingShape != EncodingShape.simple ||
+              fieldModel.encodingShape == EncodingShape.mixed);
+
+      if (needsProcessing) {
+        body
+          ..add(Code('if ($name != null) {'))
+          ..addAll(
+            _generateFieldLabelEncoding(
+              fieldName: name,
+              fieldModel: fieldModel,
+              tmpVarName: '${name}Label',
+              needsValues: false,
+              needsMapValues: needsMapValues,
+              discriminatorValue: hasDiscriminator ? discValue : null,
+            ),
+          )
+          ..add(const Code('}'));
+      }
+    }
+
+    final mergeBlocks = <Code>[
+      const Code('final map = '),
+      buildEmptyMapStringString().statement,
+    ];
+
+    if (needsMapValues) {
+      mergeBlocks.add(
+        const Code('for (final m in mapValues) { map.addAll(m); }'),
+      );
+    }
+    if (hasDiscriminator) {
+      mergeBlocks.addAll([
+        const Code('if (discriminatorValue != null) { '),
+        Code("map.putIfAbsent('${model.discriminator}', () => "),
+        const Code('discriminatorValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+    mergeBlocks.add(const Code('return map;'));
+
+    if (needsMapValues) {
+      body.addAll(mergeBlocks);
+    } else {
+      body.add(buildEmptyMapStringString().returned.statement);
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'labelProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              buildBoolParameter('allowEmpty', required: true),
+            )
+            ..lambda = false
+            ..body = Block.of(body),
+    );
+  }
+
+  Method _buildToLabelMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toLabel'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = const Code('''
+              return labelProperties(allowEmpty: allowEmpty).toLabel(
+                explode: explode, allowEmpty: allowEmpty);
+            '''),
     );
   }
 }

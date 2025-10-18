@@ -556,7 +556,7 @@ String _parseResponse(Response<Object?> response) {
             case (200, 'application/json'):
               return MultiStatusOpResponse200( body: User.fromJson(response.data), );
             case (400, _):
-              return const MultiStatusOpResponse400();
+              return MultiStatusOpResponse400();
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
@@ -763,7 +763,7 @@ String _parseResponse(Response<Object?> response) {
                 body: AnonymousModel.fromJson(response.data),
               );
             case (_, _):
-              return const CombinedOpResponseDefault();
+              return CombinedOpResponseDefault();
           }
         }
       ''';

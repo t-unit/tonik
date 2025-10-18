@@ -961,5 +961,150 @@ void main() {
         );
       });
     });
+
+    group('toLabel method generation', () {
+      test('generates toLabel method for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final toLabel = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+
+        expect(toLabel.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toLabel.optionalParameters, hasLength(2));
+
+        final explodeParam = toLabel.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final allowEmptyParam = toLabel.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+        );
+      });
+
+      test('generates toLabel method for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toLabel = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+
+        expect(toLabel.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toLabel.optionalParameters, hasLength(2));
+
+        final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+        );
+      });
+
+      test('generates toLabel method for nullable enum', () {
+        final model = EnumModel<String>(
+          name: 'Priority',
+          values: const {'low', 'medium', 'high'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Priority');
+        final toLabel = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+
+        expect(toLabel.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toLabel.optionalParameters, hasLength(2));
+
+        final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+        );
+      });
+
+      test('toLabel method is included in generated code for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToLabelMethod = '''
+          _i2.String toLabel({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToLabelMethod)),
+        );
+      });
+
+      test('toLabel method is included in generated code for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToLabelMethod = '''
+          _i2.String toLabel({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToLabelMethod)),
+        );
+      });
+
+      test(
+        'toLabel method is included in generated code for nullable enum',
+        () {
+          final model = EnumModel<String>(
+            name: 'Priority',
+            values: const {'low', 'medium', 'high'},
+            isNullable: true,
+            context: Context.initial(),
+          );
+
+          final result = generator.generate(model);
+
+          const expectedToLabelMethod = '''
+          _i2.String toLabel({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+        ''';
+          expect(
+            collapseWhitespace(result.code),
+            contains(collapseWhitespace(expectedToLabelMethod)),
+          );
+        },
+      );
+    });
   });
 }

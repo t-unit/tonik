@@ -169,10 +169,9 @@ extension FormStringMapEncoder on Map<String, String> {
       return entries
           .map(
             (e) {
-              final key = Uri.encodeQueryComponent(e.key);
               final value =
                   alreadyEncoded ? e.value : Uri.encodeQueryComponent(e.value);
-              return '$key=$value';
+              return '${Uri.encodeQueryComponent(e.key)}=$value';
             },
           )
           .join('&');

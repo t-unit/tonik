@@ -230,11 +230,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          const labelEncoder = LabelEncoder();
-          return [ 
-            r'users', 
-            labelEncoder.encode(ids, explode: false, allowEmpty: false), 
-          ];
+          return [r'users', ids.toLabel(explode: false, allowEmpty: false)];
         }
       ''';
 
@@ -518,13 +514,12 @@ void main() {
           required String type,
           required List<String> roles,
         }) {
-          const labelEncoder = LabelEncoder();
           const matrixEncoder = MatrixEncoder();
           return [
-            r'users', 
-            userId.toSimple(explode: false, allowEmpty: false), 
-            labelEncoder.encode(type, explode: false, allowEmpty: false), 
-            matrixEncoder.encode(roles, explode: false, allowEmpty: false), 
+            r'users',
+            userId.toSimple(explode: false, allowEmpty: false),
+            type.toLabel(explode: false, allowEmpty: false),
+            matrixEncoder.encode(roles, explode: false, allowEmpty: false),
           ];
         }
       ''';
@@ -640,14 +635,13 @@ void main() {
           required OneOfValue id,
         }) {
           const matrixEncoder = MatrixEncoder();
-          const labelEncoder = LabelEncoder();
-          return [ 
-            r'users', 
-            role.toSimple(explode: false, allowEmpty: false), 
-            r'filter', 
-            matrixEncoder.encode(filter.toJson(), explode: true, allowEmpty: false), 
-            r'id', 
-            labelEncoder.encode(id.toJson(), explode: false, allowEmpty: false), 
+          return [
+            r'users',
+            role.toSimple(explode: false, allowEmpty: false),
+            r'filter',
+            matrixEncoder.encode(filter.toJson(), explode: true, allowEmpty: false),
+            r'id',
+            id.toLabel(explode: false, allowEmpty: false),
           ];
         }
       ''';
