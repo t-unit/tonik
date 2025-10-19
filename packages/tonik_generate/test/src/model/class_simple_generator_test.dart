@@ -1113,7 +1113,7 @@ return UserIdHolder(
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return simpleProperties(
+          return parameterProperties(
             allowEmpty: allowEmpty,
           ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
@@ -1126,7 +1126,7 @@ return UserIdHolder(
     });
 
     test(
-      'generates toSimple for class with complex properties (throws exception)',
+      'generates toSimple for class with complex properties',
       () {
         final model = ClassModel(
           name: 'ComplexClass',
@@ -1163,9 +1163,9 @@ return UserIdHolder(
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          throw EncodingException(
-            'toSimple not supported for ComplexClass: contains nested data',
-          );
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1193,7 +1193,9 @@ return UserIdHolder(
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return '';
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 

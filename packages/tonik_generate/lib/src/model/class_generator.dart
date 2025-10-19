@@ -98,13 +98,11 @@ class ClassGenerator {
               _buildCopyWithMethod(className, normalizedProperties),
               _buildEqualsMethod(className, normalizedProperties),
               _buildHashCodeMethod(normalizedProperties),
-              _buildCurrentEncodingShapeGetter(normalizedProperties),
-              _buildSimplePropertiesMethod(model, normalizedProperties),
-              _buildToSimpleMethod(className, model, normalizedProperties),
-              _buildFormPropertiesMethod(model, normalizedProperties),
-              _buildToFormMethod(className, model, normalizedProperties),
-              _buildLabelPropertiesMethod(model, normalizedProperties),
-              _buildToLabelMethod(className, model, normalizedProperties),
+              _buildCurrentEncodingShapeGetter(),
+              _buildParameterPropertiesMethod(model, normalizedProperties),
+              _buildToSimpleMethod(),
+              _buildToFormMethod(),
+              _buildToLabelMethod(),
             ])
             ..fields.addAll(
               normalizedProperties.map(
@@ -318,7 +316,7 @@ class ClassGenerator {
 
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
-    final propertyAssignments = <String>[];
+    final propertyAssignments = <Code>[];
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
       final property = prop.property;
@@ -326,10 +324,10 @@ class ClassGenerator {
 
       if (!property.isRequired && !property.isNullable) {
         propertyAssignments.add(
-          "if ($name != null) r'${property.name}': $value",
+          Code("if ($name != null) r'${property.name}': $value"),
         );
       } else {
-        propertyAssignments.add("r'${property.name}': $value");
+        propertyAssignments.add(Code("r'${property.name}': $value"));
       }
     }
 
@@ -371,9 +369,7 @@ class ClassGenerator {
     );
   }
 
-  Method _buildCurrentEncodingShapeGetter(
-    List<({String normalizedName, Property property})> properties,
-  ) {
+  Method _buildCurrentEncodingShapeGetter() {
     final shapeRef = refer(
       'EncodingShape',
       'package:tonik_util/tonik_util.dart',
@@ -393,31 +389,286 @@ class ClassGenerator {
     );
   }
 
-  Method _buildSimplePropertiesMethod(
+  /// Builds the unified parameterProperties method that replaces
+  /// simpleProperties, formProperties, and labelProperties.
+  Method _buildParameterPropertiesMethod(
     ClassModel model,
     List<({String normalizedName, Property property})> properties,
   ) {
-    return _buildPropertiesMethod(
-      model,
-      properties,
-      'simpleProperties',
-      'toSimple',
+    final className = nameManager.modelName(model);
+
+    final hasOnlySimpleProperties = properties.every(
+      (prop) => prop.property.model.encodingShape == EncodingShape.simple,
+    );
+
+    if (hasOnlySimpleProperties) {
+      return _buildSimpleParameterPropertiesMethod(className, properties);
+    }
+
+    final hasComplexProperties = properties.any(
+      (prop) => prop.property.model.encodingShape == EncodingShape.complex,
+    );
+
+    if (hasComplexProperties) {
+      return _buildComplexParameterPropertiesMethod(className, properties);
+    }
+
+    return _buildMixedParameterPropertiesMethod(className, properties);
+  }
+
+  /// Builds parameterProperties method for classes with only simple properties.
+  Method _buildSimpleParameterPropertiesMethod(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    if (properties.isEmpty) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'parameterProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = false
+                        ..defaultTo = literalTrue.code,
+                ),
+              )
+              ..body = buildEmptyMapStringString().returned.statement,
+      );
+    }
+
+    final propertyAssignments = <Code>[];
+
+    for (final prop in properties) {
+      final name = prop.normalizedName;
+      final propertyName = prop.property.name;
+      final isRequired = prop.property.isRequired;
+      final isNullable = prop.property.isNullable;
+
+      if (isRequired && !isNullable) {
+        // Required non-nullable property
+        propertyAssignments.add(
+          Code(
+            "result['$propertyName'] = "
+            '$name.uriEncode(allowEmpty: allowEmpty);',
+          ),
+        );
+      } else if (isRequired && isNullable) {
+        // Required nullable property
+        propertyAssignments.add(
+          Code('''
+if ($name != null) {
+  result['$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+} else if (allowEmpty) {
+  result['$propertyName'] = '';
+}'''),
+        );
+      } else {
+        // Optional property
+        propertyAssignments.add(
+          Code('''
+if ($name != null) {
+  result['$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+} else if (allowEmpty) {
+  result['$propertyName'] = '';
+}'''),
+        );
+      }
+    }
+
+    final methodBody = [
+      const Code('final result = '),
+      buildEmptyMapStringString().statement,
+      ...propertyAssignments,
+      const Code('return result;'),
+    ];
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'parameterProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = false
+                      ..defaultTo = literalTrue.code,
+              ),
+            )
+            ..body = Block.of(methodBody),
     );
   }
 
-  Method _buildToSimpleMethod(
+  /// Builds parameterProperties method for classes with complex properties.
+  Method _buildComplexParameterPropertiesMethod(
     String className,
-    ClassModel model,
     List<({String normalizedName, Property property})> properties,
   ) {
-    return _buildToMethod(
-      className,
-      model,
-      properties,
-      'toSimple',
-      'simpleProperties',
+    return Method(
+      (b) =>
+          b
+            ..name = 'parameterProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = false
+                      ..defaultTo = literalTrue.code,
+              ),
+            )
+            ..body =
+                generateEncodingExceptionExpression(
+                  'parameterProperties not supported for $className: '
+                  'contains complex types',
+                ).code,
     );
   }
+
+  /// Builds parameterProperties method for classes with composite properties.
+  Method _buildMixedParameterPropertiesMethod(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final propertyAssignments = <Code>[];
+
+    for (final prop in properties) {
+      final name = prop.normalizedName;
+      final propertyName = prop.property.name;
+      final isRequired = prop.property.isRequired;
+      final isNullable = prop.property.isNullable;
+      final model = prop.property.model;
+
+      if (model.encodingShape == EncodingShape.simple) {
+        // Simple property - direct encoding
+        if (isRequired && !isNullable) {
+          propertyAssignments.add(
+            Code(
+              "result['$propertyName'] = "
+              '$name.uriEncode(allowEmpty: allowEmpty);',
+            ),
+          );
+        } else if (isRequired && isNullable) {
+          propertyAssignments.add(
+            Code('''
+if ($name != null) {
+  result['$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
+} else if (allowEmpty) {
+  result['$propertyName'] = '';
+}'''),
+          );
+        } else {
+          propertyAssignments.add(
+            Code('''
+if ($name != null) {
+  result['$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
+} else if (allowEmpty) {
+  result['$propertyName'] = '';
+}'''),
+          );
+        }
+      } else {
+        // Composite property - runtime check
+        if (isNullable) {
+          propertyAssignments.addAll([
+            Code('if ($name != null && '),
+            Code('$name.currentEncodingShape != '),
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('simple').code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'parameterProperties not supported for $className: '
+              'contains complex types',
+            ).statement,
+            const Code('}'),
+            Code('if ($name != null) {'),
+            Code(
+              '  result.addAll('
+              '$name.parameterProperties(allowEmpty: allowEmpty));',
+            ),
+            const Code('}'),
+          ]);
+        } else {
+          propertyAssignments.addAll([
+            Code('if ($name.currentEncodingShape != '),
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('simple').code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'parameterProperties not supported for $className: '
+              'contains complex types',
+            ).statement,
+            const Code('}'),
+            Code(
+              'result.addAll('
+              '$name.parameterProperties(allowEmpty: allowEmpty));',
+            ),
+          ]);
+        }
+      }
+    }
+
+    final methodBody = [
+      const Code('final result = '),
+      buildEmptyMapStringString().statement,
+      ...propertyAssignments,
+      const Code('return result;'),
+    ];
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'parameterProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = false
+                      ..defaultTo = literalTrue.code,
+              ),
+            )
+            ..body = Block.of(methodBody),
+    );
+  }
+
+  Method _buildToSimpleMethod() => Method(
+    (b) =>
+        b
+          ..name = 'toSimple'
+          ..returns = refer('String', 'dart:core')
+          ..optionalParameters.addAll(buildEncodingParameters())
+          ..body = Block.of([
+            refer('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .property('toSimple')
+                .call([], {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                })
+                .returned
+                .statement,
+          ]),
+  );
 
   Code _buildExplodeParsingLogic() {
     return Block.of([
@@ -561,623 +812,47 @@ class ClassGenerator {
     ]);
   }
 
-  Method _buildFormPropertiesMethod(
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return _buildPropertiesMethod(
-      model,
-      properties,
-      'formProperties',
-      'toForm',
-    );
-  }
-
-  Method _buildToFormMethod(
-    String className,
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return _buildToMethod(
-      className,
-      model,
-      properties,
-      'toForm',
-      'formProperties',
-    );
-  }
-
-  /// Shared method to build properties methods (simpleProperties/formProperties).
-  Method _buildPropertiesMethod(
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-    String methodName,
-    String encodingType,
-  ) {
-    // Check if we have any truly complex data (ClassModel, ListModel)
-    // that can never be simple
-    final hasTrulyComplexData = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel is ClassModel || propertyModel is ListModel;
-    });
-
-    if (hasTrulyComplexData) {
-      return Method(
-        (b) =>
-            b
-              ..name = methodName
-              ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..defaultTo = literalBool(true).code,
-                ),
-              )
-              ..body =
-                  generateEncodingExceptionExpression(
-                    '$methodName not supported for ${model.name}: '
-                    'contains nested data',
-                  ).statement,
-      );
-    }
-
-    // Check if we have any composite models that need runtime checking
-    final hasCompositeModels = properties.any((prop) {
-      return prop.property.model.encodingShape == EncodingShape.mixed;
-    });
-
-    if (hasCompositeModels) {
-      return _buildPropertiesMethodWithRuntimeChecks(
-        model,
-        properties,
-        methodName,
-        encodingType,
-      );
-    }
-
-    // Optimized path for simple properties only
-    final mapEntries = <Code>[];
-
-    for (final prop in properties) {
-      final property = prop.property;
-      final fieldName = prop.normalizedName;
-      final rawName = property.name;
-
-      mapEntries.add(
-        _buildPropertyMapEntryExpression(
-          fieldName,
-          rawName,
-          property,
-          encodingType,
-        ),
-      );
-    }
-
-    final returnStatement =
-        properties.isEmpty
-            ? buildEmptyMapStringString().code
-            : Block.of([
-              const Code('return '),
-              const Code('{'),
-              ...mapEntries,
-              const Code('};'),
-            ]);
-
-    return Method(
-      (b) =>
-          b
-            ..name = methodName
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', defaultValue: true),
-            )
-            ..lambda = properties.isEmpty
-            ..body = returnStatement,
-    );
-  }
-
-  /// Builds properties method with runtime checks for composite models.
-  Method _buildPropertiesMethodWithRuntimeChecks(
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-    String methodName,
-    String encodingType,
-  ) {
-    final className = nameManager.modelName(model);
-    final statements = [
-      const Code('final mergedProperties = '),
-      buildEmptyMapStringString().statement,
-    ];
-
-    for (final prop in properties) {
-      final property = prop.property;
-      final fieldName = prop.normalizedName;
-      final rawName = property.name;
-      final propertyModel = property.model;
-
-      if (propertyModel.encodingShape == EncodingShape.mixed) {
-        // Generate runtime check for composite models
-        if (property.isRequired) {
-          statements
-            ..add(Code('if ( $fieldName.currentEncodingShape != '))
-            ..add(
-              refer(
-                'EncodingShape.simple',
-                'package:tonik_util/tonik_util.dart',
-              ).code,
-            )
-            ..add(const Code(' ) {'))
-            ..add(
-              generateEncodingExceptionExpression(
-                '''$methodName not supported for $className: contains complex types''',
-              ).statement,
-            )
-            ..add(const Code('}'))
-            ..add(
-              Code(
-                '''
-                mergedProperties.addAll(
-                  $fieldName.$methodName(allowEmpty: allowEmpty),
-                );
-                ''',
-              ),
-            );
-        } else {
-          // Handle nullable composite models
-          statements
-            ..add(
-              Code(
-                '''
-                if ( $fieldName != null && $fieldName?.currentEncodingShape != ''',
-              ),
-            )
-            ..add(
-              refer(
-                'EncodingShape.simple',
-                'package:tonik_util/tonik_util.dart',
-              ).code,
-            )
-            ..add(const Code(' ) {'))
-            ..add(
-              generateEncodingExceptionExpression(
-                '''$methodName not supported for $className: contains complex types''',
-              ).statement,
-            )
-            ..add(const Code('}'))
-            ..add(
-              Code(
-                '''
-                if ($fieldName != null) { 
-                  mergedProperties.addAll($fieldName!.$methodName(allowEmpty: allowEmpty)); 
-                }''',
-              ),
-            );
-        }
-      } else {
-        // Handle simple properties with optimized path
-        if (property.isRequired && property.isNullable) {
-          statements.add(
-            Code(
-              '''
-            if (allowEmpty || $fieldName != null) { 
-              mergedProperties[r'$rawName'] = $fieldName?.$encodingType(
-                explode: false, 
-                allowEmpty: allowEmpty,
-              ) ?? ''; }''',
-            ),
-          );
-        } else if (!property.isRequired) {
-          statements.add(
-            Code(
-              '''
-              if ($fieldName != null) { 
-                mergedProperties[r'$rawName'] = $fieldName!.$encodingType(
-                  explode: false, 
-                  allowEmpty: allowEmpty,
-                ); 
-              }''',
-            ),
-          );
-        } else {
-          statements.add(
-            Code(
-              '''
-              mergedProperties[r'$rawName'] = $fieldName.$encodingType(
-                explode: false, 
-                allowEmpty: allowEmpty,
-              );
-              ''',
-            ),
-          );
-        }
-      }
-    }
-
-    statements.add(const Code('return mergedProperties;'));
-
-    return Method(
-      (b) =>
-          b
-            ..name = methodName
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', defaultValue: true),
-            )
-            ..body = Block.of(statements),
-    );
-  }
-
-  /// Creates a Code object that correctly builds a property map entry
-  /// expression with conditional logic for required/nullable properties.
-  Code _buildPropertyMapEntryExpression(
-    String fieldName,
-    String rawName,
-    Property property,
-    String encodingType,
-  ) {
-    if (property.isRequired && property.isNullable) {
-      return Code(
-        'if (allowEmpty || $fieldName != null) '
-        "r'$rawName': $fieldName?.$encodingType(explode: false, "
-        "allowEmpty: allowEmpty) ?? '',",
-      );
-    } else if (!property.isRequired) {
-      return Code(
-        "if ($fieldName != null) r'$rawName': "
-        '$fieldName!.$encodingType(explode: false, allowEmpty: allowEmpty),',
-      );
-    } else {
-      return Code(
-        "r'$rawName': $fieldName.$encodingType(explode: false, "
-        'allowEmpty: allowEmpty),',
-      );
-    }
-  }
-
-  /// Shared method to build to methods (toSimple/toForm).
-  Method _buildToMethod(
-    String className,
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-    String methodName,
-    String propertiesMethodName,
-  ) {
-    // Check if we have any truly complex data (ClassModel, ListModel)
-    // that can never be simple
-    final hasTrulyComplexData = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel is ClassModel || propertyModel is ListModel;
-    });
-
-    if (hasTrulyComplexData) {
-      return Method(
-        (b) =>
-            b
-              ..name = methodName
-              ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                ...buildEncodingParameters(),
-              ])
-              ..body = Block.of([
-                generateEncodingExceptionExpression(
-                  '$methodName not supported for $className: '
-                  'contains nested data',
-                ).statement,
-              ]),
-      );
-    }
-
-    if (properties.isEmpty) {
-      return Method(
-        (b) =>
-            b
-              ..name = methodName
-              ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll([
-                ...buildEncodingParameters(),
-              ])
-              ..lambda = methodName == 'toForm'
-              ..body =
-                  methodName == 'toForm'
-                      ? literalString('').code
-                      : Block.of([
-                        literalString('').returned.statement,
-                      ]),
-      );
-    }
-
-    return Method(
-      (b) =>
-          b
-            ..name = methodName
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll([
-              buildBoolParameter('explode', required: true),
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            ])
-            ..body = Block.of([
-              refer(propertiesMethodName)
-                  .call([], {'allowEmpty': refer('allowEmpty')})
-                  .property(methodName)
-                  .call(
-                    [],
-                    methodName == 'toForm'
-                        ? {
-                          'explode': refer('explode'),
-                          'allowEmpty': refer('allowEmpty'),
-                          'alreadyEncoded': literalBool(true),
-                        }
-                        : {
-                          'explode': refer('explode'),
-                          'allowEmpty': refer('allowEmpty'),
-                        },
-                  )
-                  .returned
-                  .statement,
-            ]),
-    );
-  }
-
-  Method _buildLabelPropertiesMethod(
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    // Check if we have any truly complex data (ClassModel, ListModel)
-    // that can never be simple
-    final hasTrulyComplexData = properties.any((prop) {
-      final propertyModel = prop.property.model;
-      return propertyModel is ClassModel || propertyModel is ListModel;
-    });
-
-    if (hasTrulyComplexData) {
-      return Method(
-        (b) =>
-            b
-              ..name = 'labelProperties'
-              ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..defaultTo = literalBool(true).code,
-                ),
-              )
-              ..body =
-                  generateEncodingExceptionExpression(
-                    'labelProperties not supported for ${model.name}: '
-                    'contains nested data',
-                  ).statement,
-      );
-    }
-
-    // Check if we have any composite models that need runtime checking
-    final hasCompositeModels = properties.any((prop) {
-      return prop.property.model.encodingShape == EncodingShape.mixed;
-    });
-
-    if (hasCompositeModels) {
-      return _buildLabelPropertiesMethodWithRuntimeChecks(
-        model,
-        properties,
-      );
-    }
-
-    // Optimized path for simple properties only
-    final mapEntries = <Code>[];
-
-    for (final prop in properties) {
-      final property = prop.property;
-      final fieldName = prop.normalizedName;
-      final rawName = property.name;
-
-      mapEntries.add(
-        _buildPropertyMapEntryExpression(
-          fieldName,
-          rawName,
-          property,
-          'toLabel',
-        ),
-      );
-    }
-
-    final returnStatement =
-        properties.isEmpty
-            ? buildEmptyMapStringString().code
-            : Block.of([
-              const Code('return {'),
-              ...mapEntries,
-              const Code('};'),
-            ]);
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'labelProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', defaultValue: true),
-            )
-            ..lambda = properties.isEmpty
-            ..body = returnStatement,
-    );
-  }
-
-  /// Builds a labelProperties method with runtime checks for composite models.
-  Method _buildLabelPropertiesMethodWithRuntimeChecks(
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    final statements = <Code>[
-      const Code('final mergedProperties = '),
-      buildEmptyMapStringString().statement,
-    ];
-
-    for (final prop in properties) {
-      final property = prop.property;
-      final fieldName = prop.normalizedName;
-      final rawName = property.name;
-      final propertyModel = property.model;
-
-      if (propertyModel.encodingShape == EncodingShape.mixed) {
-        // Runtime check for composite models
-        if (property.isRequired && !property.isNullable) {
-          // Required non-nullable composite property
-          statements.addAll([
-            Code('if ($fieldName.currentEncodingShape != '),
-            refer(
-              'EncodingShape.simple',
-              'package:tonik_util/tonik_util.dart',
-            ).code,
-            const Code(') {'),
-            generateEncodingExceptionExpression(
-              'labelProperties not supported for Container: '
-              'contains complex types',
-            ).statement,
-            const Code('}'),
-            Code('''
-              mergedProperties['$rawName'] = $fieldName.toLabel(
-                explode: false, 
-                allowEmpty: allowEmpty
-              );
-            '''),
-          ]);
-        } else if (property.isRequired && property.isNullable) {
-          // Required nullable composite property
-          statements.addAll([
-            Code('if (allowEmpty || $fieldName != null) {'),
-            Code(
-              'if ($fieldName != null && $fieldName!.currentEncodingShape != ',
-            ),
-            refer(
-              'EncodingShape.simple',
-              'package:tonik_util/tonik_util.dart',
-            ).code,
-            const Code(') {'),
-            generateEncodingExceptionExpression(
-              'labelProperties not supported for Container: '
-              'contains complex types',
-            ).statement,
-            const Code('}'),
-            Code('if ($fieldName != null) {'),
-            Code('''
-              mergedProperties['$rawName'] = $fieldName!.toLabel(explode: false, allowEmpty: allowEmpty) ?? '';
-            '''),
-            const Code('}'),
-            const Code('}'),
-          ]);
-        } else {
-          // Optional composite property
-          statements.addAll([
-            Code('if (allowEmpty || $fieldName != null) {'),
-            Code(
-              'if ($fieldName != null && $fieldName!.currentEncodingShape != ',
-            ),
-            refer(
-              'EncodingShape.simple',
-              'package:tonik_util/tonik_util.dart',
-            ).code,
-            const Code(') {'),
-            generateEncodingExceptionExpression(
-              'labelProperties not supported for Container: '
-              'contains complex types',
-            ).statement,
-            const Code('}'),
-            Code('if ($fieldName != null) {'),
-            Code(
-              "  mergedProperties['$rawName'] = "
-              '$fieldName!.toLabel(explode: false, allowEmpty: allowEmpty);',
-            ),
-            const Code('}'),
-            const Code('}'),
-          ]);
-        }
-      } else {
-        // Simple property - use the standard pattern
-        if (property.isRequired && property.isNullable) {
-          statements.add(
-            Code('''
-              if (allowEmpty || $fieldName != null) {
-                mergedProperties['$rawName'] = $fieldName?.toLabel(
-                  explode: false, 
-                  allowEmpty: allowEmpty
-                ) ?? '';
-              }
-            '''),
-          );
-        } else if (!property.isRequired) {
-          statements.add(
-            Code('''
-              if ($fieldName != null) {
-                mergedProperties['$rawName'] = $fieldName!.toLabel(
-                  explode: false, 
-                  allowEmpty: allowEmpty
-                );
-              }
-            '''),
-          );
-        } else {
-          statements.add(
-            Code('''
-              mergedProperties['$rawName'] = $fieldName.toLabel(
-                explode: false, 
-                allowEmpty: allowEmpty
-              );
-            '''),
-          );
-        }
-      }
-    }
-
-    statements.add(const Code('return mergedProperties;'));
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'labelProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', defaultValue: true),
-            )
-            ..body = Block.of(statements),
-    );
-  }
+  Method _buildToFormMethod() => Method(
+    (b) =>
+        b
+          ..name = 'toForm'
+          ..returns = refer('String', 'dart:core')
+          ..optionalParameters.addAll(buildEncodingParameters())
+          ..body = Block.of([
+            refer('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .property('toForm')
+                .call([], {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                  'alreadyEncoded': literalBool(true),
+                })
+                .returned
+                .statement,
+          ]),
+  );
 
   /// Builds a toLabel method for label encoding.
   ///
-  /// This method delegates to labelProperties and then calls toLabel on the
+  /// This method delegates to parameterProperties and then calls toLabel on the
   /// result.
-  Method _buildToLabelMethod(
-    String className,
-    ClassModel model,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return Method(
-      (b) =>
-          b
-            ..name = 'toLabel'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = Block.of([
-              const Code('return labelProperties(allowEmpty: allowEmpty)'),
-              const Code(
-                '\n  .toLabel(explode: explode, allowEmpty: allowEmpty, '
-                'alreadyEncoded: true);',
-              ),
-            ]),
-    );
-  }
+  Method _buildToLabelMethod() => Method(
+    (b) =>
+        b
+          ..name = 'toLabel'
+          ..returns = refer('String', 'dart:core')
+          ..optionalParameters.addAll(buildEncodingParameters())
+          ..body = Block.of([
+            refer('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .property('toLabel')
+                .call([], {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                  'alreadyEncoded': literalBool(true),
+                })
+                .returned
+                .statement,
+          ]),
+  );
 }
