@@ -1,13 +1,12 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
+import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// Extensions for encoding values using label style parameter encoding.
 extension LabelUriEncoder on Uri {
   /// Encodes this Uri value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.${Uri.encodeComponent(toString())}';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding String values.
@@ -20,56 +19,50 @@ extension LabelStringEncoder on String {
     if (isEmpty) {
       return '.';
     }
-    return '.${Uri.encodeComponent(this)}';
+    return '.${uriEncode(allowEmpty: allowEmpty)}';
   }
 }
 
 /// Extension for encoding int values.
 extension LabelIntEncoder on int {
   /// Encodes this int value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.$this';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding double values.
 extension LabelDoubleEncoder on double {
   /// Encodes this double value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.${Uri.encodeComponent(toString())}';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding num values.
 extension LabelNumEncoder on num {
   /// Encodes this num value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.$this';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding bool values.
 extension LabelBoolEncoder on bool {
   /// Encodes this bool value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.$this';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding DateTime values.
 extension LabelDateTimeEncoder on DateTime {
   /// Encodes this DateTime value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.${Uri.encodeComponent(toTimeZonedIso8601String())}';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding BigDecimal values.
 extension LabelBigDecimalEncoder on BigDecimal {
   /// Encodes this BigDecimal value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.$this';
-  }
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      '.${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding List values.
@@ -84,9 +77,9 @@ extension LabelStringListEncoder on List<String> {
     }
 
     if (explode) {
-      return map((item) => '.${Uri.encodeComponent(item)}').join();
+      return map((item) => '.${item.uriEncode(allowEmpty: allowEmpty)}').join();
     } else {
-      final encodedValues = map(Uri.encodeComponent).join(',');
+      final encodedValues = uriEncode(allowEmpty: allowEmpty);
       return '.$encodedValues';
     }
   }
@@ -115,22 +108,17 @@ extension LabelStringMapEncoder on Map<String, String> {
       return entries.map(
         (entry) {
           final value =
-              alreadyEncoded ? entry.value : Uri.encodeComponent(entry.value);
+              alreadyEncoded
+                  ? entry.value
+                  : entry.value.uriEncode(allowEmpty: allowEmpty);
           return '.${entry.key}=$value';
         },
       ).join();
     } else {
-      final encodedPairs = entries
-          .expand(
-            (entry) => [
-              entry.key,
-              if (alreadyEncoded)
-                entry.value
-              else
-                Uri.encodeComponent(entry.value),
-            ],
-          )
-          .join(',');
+      final encodedPairs = uriEncode(
+        allowEmpty: allowEmpty,
+        alreadyEncoded: alreadyEncoded,
+      );
       return '.$encodedPairs';
     }
   }

@@ -2,7 +2,6 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  group('OffsetDateTime', () {
     group('constructor', () {
       test('should create OffsetDateTime with explicit timezone name', () {
         // Arrange
@@ -594,7 +593,6 @@ void main() {
         expect(offsetDateTime.timeZoneName, 'UTC+00:30');
       });
     });
-  });
 
   group('OffsetDateTime.parse', () {
     group('UTC parsing', () {
