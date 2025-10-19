@@ -388,7 +388,7 @@ void main() {
     test('handles Date with useQueryComponent false', () {
       final date = Date(2023, 12, 25);
       expect(
-        date.uriEncode(allowEmpty: true, useQueryComponent: false),
+        date.uriEncode(allowEmpty: true),
         '2023-12-25',
       );
     });
