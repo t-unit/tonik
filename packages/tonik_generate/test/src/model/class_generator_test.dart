@@ -558,7 +558,6 @@ void main() {
       expect(callbackParam.toThis, isTrue);
     });
 
-
     group('form encoding', () {
       test('generates fromForm constructor for simple properties', () {
         final model = ClassModel(
@@ -748,7 +747,6 @@ void main() {
         );
       });
 
-
       test(
         'generates fromForm constructor with mixed property types',
         () {
@@ -860,7 +858,6 @@ void main() {
           );
         },
       );
-
 
       test('generates fromForm constructor with all primitive types', () {
         final model = ClassModel(
@@ -990,5 +987,210 @@ void main() {
       );
     });
 
+    group('toMatrix method', () {
+      test('generates toMatrix method for simple properties', () {
+        final model = ClassModel(
+          name: 'SimpleModel',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'count',
+              model: IntegerModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.requiredParameters.length, 1);
+        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
+        expect(
+          toMatrixMethod.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'String',
+        );
+        expect(toMatrixMethod.optionalParameters.length, 2);
+        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
+        expect(toMatrixMethod.optionalParameters.first.required, isTrue);
+        expect(toMatrixMethod.optionalParameters.first.named, isTrue);
+        expect(
+          toMatrixMethod.optionalParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'bool',
+        );
+        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
+        expect(toMatrixMethod.optionalParameters.last.required, isTrue);
+        expect(toMatrixMethod.optionalParameters.last.named, isTrue);
+        expect(
+          toMatrixMethod.optionalParameters.last.type
+              ?.accept(emitter)
+              .toString(),
+          'bool',
+        );
+
+        const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
+        );
+      });
+
+      test('generates toMatrix method for complex properties', () {
+        final model = ClassModel(
+          name: 'ComplexModel',
+          properties: [
+            Property(
+              name: 'simpleProp',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'complexProp',
+              model: ClassModel(
+                name: 'NestedModel',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        // Test method signature
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.requiredParameters.length, 1);
+        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
+        expect(toMatrixMethod.optionalParameters.length, 2);
+        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
+        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
+
+        const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
+        );
+      });
+
+      test('generates toMatrix method for empty model', () {
+        final model = ClassModel(
+          name: 'EmptyModel',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.requiredParameters.length, 1);
+        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
+        expect(toMatrixMethod.optionalParameters.length, 2);
+        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
+        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
+
+        const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
+        );
+      });
+
+      test(
+        'toMatrix method generates proper method body for single '
+        'property model',
+        () {
+          final model = ClassModel(
+            name: 'TestModel',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+
+          final toMatrixMethod = result.methods.firstWhere(
+            (m) => m.name == 'toMatrix',
+          );
+          expect(toMatrixMethod.name, 'toMatrix');
+          expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+          expect(
+            toMatrixMethod.lambda,
+            isNot(isTrue),
+          );
+
+          const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
+        ''';
+
+          final generatedCode = result.accept(emitter).toString();
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToMatrixMethod)),
+          );
+        },
+      );
+    });
   });
 }

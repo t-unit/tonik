@@ -103,6 +103,7 @@ class ClassGenerator {
               _buildToSimpleMethod(),
               _buildToFormMethod(),
               _buildToLabelMethod(),
+              _buildToMatrixMethod(),
             ])
             ..fields.addAll(
               normalizedProperties.map(
@@ -847,6 +848,35 @@ if ($name != null) {
                 .call([], {'allowEmpty': refer('allowEmpty')})
                 .property('toLabel')
                 .call([], {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                  'alreadyEncoded': literalBool(true),
+                })
+                .returned
+                .statement,
+          ]),
+  );
+
+  Method _buildToMatrixMethod() => Method(
+    (b) =>
+        b
+          ..name = 'toMatrix'
+          ..returns = refer('String', 'dart:core')
+          ..requiredParameters.add(
+            Parameter(
+              (b) =>
+                  b
+                    ..name = 'paramName'
+                    ..type = refer('String', 'dart:core'),
+            ),
+          )
+          ..optionalParameters.addAll(buildEncodingParameters())
+          ..body = Block.of([
+            refer('parameterProperties')
+                .call([], {'allowEmpty': refer('allowEmpty')})
+                .property('toMatrix')
+                .call([], {
+                  'paramName': refer('paramName'),
                   'explode': refer('explode'),
                   'allowEmpty': refer('allowEmpty'),
                   'alreadyEncoded': literalBool(true),
