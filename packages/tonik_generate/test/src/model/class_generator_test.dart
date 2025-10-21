@@ -1046,7 +1046,7 @@ void main() {
 
         const expectedToMatrixMethod = '''
           String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
@@ -1106,7 +1106,7 @@ void main() {
 
         const expectedToMatrixMethod = '''
           String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
@@ -1137,7 +1137,7 @@ void main() {
 
         const expectedToMatrixMethod = '''
           String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
@@ -1180,7 +1180,7 @@ void main() {
 
           const expectedToMatrixMethod = '''
           String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName: paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 

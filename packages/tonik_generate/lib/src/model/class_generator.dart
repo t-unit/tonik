@@ -875,8 +875,7 @@ if ($name != null) {
             refer('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')})
                 .property('toMatrix')
-                .call([], {
-                  'paramName': refer('paramName'),
+                .call([refer('paramName')], {
                   'explode': refer('explode'),
                   'allowEmpty': refer('allowEmpty'),
                   'alreadyEncoded': literalBool(true),

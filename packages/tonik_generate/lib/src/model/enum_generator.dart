@@ -137,6 +137,8 @@ class EnumGenerator {
             )
             ..methods.add(_generateToFormMethod<T>())
             ..methods.add(_generateToLabelMethod<T>())
+            ..methods.add(_generateUriEncodeMethod<T>())
+            ..methods.add(_generateToMatrixMethod<T>())
             ..fields.add(
               Field(
                 (b) =>
@@ -343,6 +345,51 @@ class EnumGenerator {
             ..optionalParameters.addAll(buildEncodingParameters())
             ..body = const Code(
               'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+            ),
+    );
+  }
+
+  Method _generateUriEncodeMethod<T>() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'uriEncode'
+            ..returns = refer('String', 'dart:core')
+            ..lambda = true
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
+            ..body = const Code(
+              'rawValue.uriEncode(allowEmpty: allowEmpty)',
+            ),
+    );
+  }
+
+  Method _generateToMatrixMethod<T>() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toMatrix'
+            ..returns = refer('String', 'dart:core')
+            ..lambda = true
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..body = const Code(
+              'rawValue.toMatrix(paramName, allowEmpty: allowEmpty)',
             ),
     );
   }
