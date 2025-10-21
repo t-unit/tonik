@@ -1149,7 +1149,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1181,7 +1181,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1213,7 +1213,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1245,7 +1245,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1261,7 +1261,7 @@ void main() {
         final result = generator.generate(model);
 
         const expectedToMatrixMethod = '''
-          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, allowEmpty: allowEmpty);
+          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
         ''';
         expect(
           collapseWhitespace(result.code),
@@ -1280,7 +1280,7 @@ void main() {
         final result = generator.generate(model);
 
         const expectedToMatrixMethod = '''
-          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, allowEmpty: allowEmpty);
+          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
         ''';
         expect(
           collapseWhitespace(result.code),
@@ -1301,7 +1301,7 @@ void main() {
           final result = generator.generate(model);
 
           const expectedToMatrixMethod = '''
-          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, allowEmpty: allowEmpty);
+          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
         ''';
           expect(
             collapseWhitespace(result.code),

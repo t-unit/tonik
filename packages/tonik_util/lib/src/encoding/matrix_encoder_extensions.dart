@@ -13,57 +13,81 @@ extension MatrixUriEncoder on Uri {
   ///
   /// The [allowEmpty] parameter is accepted for consistency
   /// but has no effect on Uri encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding String values.
 extension MatrixStringEncoder on String {
   /// Encodes this string value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding int values.
 extension MatrixIntEncoder on int {
   /// Encodes this int value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding double values.
 extension MatrixDoubleEncoder on double {
   /// Encodes this double value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding num values.
 extension MatrixNumEncoder on num {
   /// Encodes this num value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding bool values.
 extension MatrixBoolEncoder on bool {
   /// Encodes this bool value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding DateTime values.
 extension MatrixDateTimeEncoder on DateTime {
   /// Encodes this DateTime value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding BigDecimal values.
 extension MatrixBigDecimalEncoder on BigDecimal {
   /// Encodes this BigDecimal value using matrix style encoding.
-  String toMatrix(String paramName, {required bool allowEmpty}) =>
-      ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
 }
 
 /// Extension for encoding List values.
