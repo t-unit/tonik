@@ -52,9 +52,7 @@ class OneOfGenerator {
   List<Class> generateClasses(OneOfModel model) {
     final className = nameManager.modelName(model);
 
-    // Pre-generate variant names and store them for reuse
     final variantNames = _generateVariantNames(model, className);
-
     final baseClass = _generateBaseClass(model, className, variantNames);
     final subClasses = _generateSubClasses(model, className, variantNames);
 
@@ -243,7 +241,7 @@ class OneOfGenerator {
         return 'final (${allocate(dynamicRef)} json, '
             '${allocate(stringNullableRef)} discriminator) = switch (this) {\n'
             '$cases\n'
-            '};\n';
+            '};';
       }),
     ];
 
@@ -299,7 +297,7 @@ class OneOfGenerator {
               package,
             ).property('fromJson').call([refer('json')]),
           ]).code,
-          const Code(',\n'),
+          const Code(','),
         ]);
       }
 
@@ -307,17 +305,15 @@ class OneOfGenerator {
 
       blocks.addAll([
         ...discriminatorCode,
-        const Code('final result = '),
-        const Code('switch (discriminator) {\n'),
+        const Code('final result = switch (discriminator) {'),
         ...resultCases,
-        const Code('\n};\n'),
-        const Code('if (result != null) {\n'),
-        const Code('  return result;\n'),
-        const Code('}\n'),
+        const Code('};'),
+        const Code('if (result != null) {'),
+        const Code('return result;'),
+        const Code('}'),
       ]);
     }
 
-    // Check for primitive types
     final hasPrimitives = model.models.any((m) => m.model is PrimitiveModel);
     final hasOnlyPrimitives =
         !model.models.any((m) => m.model is! PrimitiveModel);
@@ -330,7 +326,7 @@ class OneOfGenerator {
 
         cases.addAll([
           typeReference(m.model, nameManager, package).code,
-          Code(' s => $variantName(s), '),
+          Code(' s => $variantName(s),'),
         ]);
       }
 
@@ -343,55 +339,48 @@ class OneOfGenerator {
       ]);
 
       return Block.of([
-        const Code('return switch (json) {\n'),
+        const Code('return switch (json) {'),
         ...cases,
-        const Code('\n};'),
+        const Code('};'),
       ]);
     }
 
-    // Handle primitive types.
     for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
       final typeRef = typeReference(m.model, nameManager, package);
       final variantName = variantNames[m]!;
 
-      blocks.add(
-        Block.of([
-          const Code('if ('),
-          refer('json').isA(typeRef).code,
-          const Code(') {\n'),
-          const Code('  return '),
-          refer(variantName).call([refer('json')]).statement,
-          const Code('}\n'),
-        ]),
-      );
+      blocks.addAll([
+        const Code('if ('),
+        refer('json').isA(typeRef).code,
+        const Code(') {'),
+        refer(variantName).call([refer('json')]).returned.statement,
+        const Code('}'),
+      ]);
     }
 
-    // Try complex types.
     for (final m in model.models.where(
       (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
     )) {
       final modelName = nameManager.modelName(m.model);
       final variantName = variantNames[m]!;
 
-      blocks.add(
-        Block.of([
-          const Code('try {\n'),
-          const Code('  return '),
-          refer(variantName).call([
-            refer(
-              modelName,
-              package,
-            ).property('fromJson').call([refer('json')]),
-          ]).code,
-          const Code(';\n'),
-          const Code('} on '),
-          refer('Object', 'dart:core').code,
-          const Code(' catch(_) {}\n'),
-        ]),
-      );
+      blocks.addAll([
+        const Code('try {'),
+        refer(variantName)
+            .call([
+              refer(
+                modelName,
+                package,
+              ).property('fromJson').call([refer('json')]),
+            ])
+            .returned
+            .statement,
+        const Code('} on '),
+        refer('Object', 'dart:core').code,
+        const Code(' catch(_) {}'),
+      ]);
     }
 
-    // Throw if no match found.
     blocks.add(
       generateJsonDecodingExceptionExpression(
         'Invalid JSON for $className',
@@ -415,26 +404,23 @@ class OneOfGenerator {
 
       if (hasDiscriminatedComplexTypes) {
         bodyBlocks.addAll([
-          const Code('if (explode && value != null && value.isNotEmpty) {\n'),
-          const Code("  final pairs = value.split(',');\n"),
-          Block.of([
-            refer('String?', 'dart:core').code,
-            const Code(' discriminator;'),
-          ]),
-          const Code('\n  for (final pair in pairs) {\n'),
-          const Code("    final parts = pair.split('=');\n"),
-          const Code('    if (parts.length == 2) {\n'),
-          const Code('      final key = '),
+          const Code('if (explode && value != null && value.isNotEmpty) {'),
+          const Code("final pairs = value.split(',');"),
+          refer('String?', 'dart:core').code,
+          const Code(' discriminator;'),
+          const Code('for (final pair in pairs) {'),
+          const Code("final parts = pair.split('=');"),
+          const Code('if (parts.length == 2) {'),
+          const Code('final key = '),
           refer('Uri', 'dart:core').property('decodeComponent').call([
             refer('parts').index(literalNum(0)),
-          ]).code,
-          const Code(';\n'),
-          Code("      if (key == '${model.discriminator}') {\n"),
-          const Code('        discriminator = parts[1];\n'),
-          const Code('        break;\n'),
-          const Code('      }\n'),
-          const Code('    }\n'),
-          const Code('  }\n'),
+          ]).statement,
+          Code("if (key == '${model.discriminator}') {"),
+          const Code('discriminator = parts[1];'),
+          const Code('break;'),
+          const Code('}'),
+          const Code('}'),
+          const Code('}'),
         ]);
 
         for (final m in model.models.where(
@@ -444,8 +430,8 @@ class OneOfGenerator {
           final modelType = m.model;
 
           bodyBlocks.addAll([
-            Code("  if (discriminator == '${m.discriminatorValue}') {\n"),
-            const Code('    return '),
+            Code("if (discriminator == '${m.discriminatorValue}') {"),
+            const Code('return '),
             refer(variantName).call([
               refer(
                     nameManager.modelName(modelType),
@@ -456,13 +442,12 @@ class OneOfGenerator {
                     [refer('value')],
                     {'explode': refer('explode')},
                   ),
-            ]).code,
-            const Code(';\n'),
-            const Code('  }\n'),
+            ]).statement,
+            const Code('}'),
           ]);
         }
 
-        bodyBlocks.add(const Code('}\n'));
+        bodyBlocks.add(const Code('}'));
       }
     }
 
@@ -492,12 +477,8 @@ class OneOfGenerator {
             )
             .property('fromSimple')
             .call(
-              [
-                refer('value'),
-              ],
-              {
-                'explode': refer('explode'),
-              },
+              [refer('value')],
+              {'explode': refer('explode')},
             );
         tryBody.add(
           refer(variantName).call([innerFromSimple]).returned.statement,
@@ -505,13 +486,13 @@ class OneOfGenerator {
       }
 
       bodyBlocks.addAll([
-        const Code('try {\n'),
+        const Code('try {'),
         ...tryBody,
-        const Code('\n} on '),
+        const Code('} on '),
         refer('DecodingException', 'package:tonik_util/tonik_util.dart').code,
         const Code(' catch (_) {} on '),
         refer('FormatException', 'dart:core').code,
-        const Code(' catch (_) {}\n'),
+        const Code(' catch (_) {}'),
       ]);
     }
 
@@ -555,26 +536,23 @@ class OneOfGenerator {
 
       if (hasDiscriminatedComplexTypes) {
         bodyBlocks.addAll([
-          const Code('if (explode && value != null && value.isNotEmpty) {\n'),
-          const Code("  final pairs = value.split(',');\n"),
-          Block.of([
-            refer('String?', 'dart:core').code,
-            const Code(' discriminator;'),
-          ]),
-          const Code('\n  for (final pair in pairs) {\n'),
-          const Code("    final parts = pair.split('=');\n"),
-          const Code('    if (parts.length == 2) {\n'),
-          const Code('      final key = '),
+          const Code('if (explode && value != null && value.isNotEmpty) {'),
+          const Code("final pairs = value.split(',');"),
+          refer('String?', 'dart:core').code,
+          const Code(' discriminator;'),
+          const Code('for (final pair in pairs) {'),
+          const Code("final parts = pair.split('=');"),
+          const Code('if (parts.length == 2) {'),
+          const Code('final key = '),
           refer('Uri', 'dart:core').property('decodeComponent').call([
             refer('parts').index(literalNum(0)),
-          ]).code,
-          const Code(';\n'),
-          Code("      if (key == '${model.discriminator}') {\n"),
-          const Code('        discriminator = parts[1];\n'),
-          const Code('        break;\n'),
-          const Code('      }\n'),
-          const Code('    }\n'),
-          const Code('  }\n'),
+          ]).statement,
+          Code("if (key == '${model.discriminator}') {"),
+          const Code('discriminator = parts[1];'),
+          const Code('break;'),
+          const Code('}'),
+          const Code('}'),
+          const Code('}'),
         ]);
 
         for (final m in model.models.where(
@@ -584,8 +562,8 @@ class OneOfGenerator {
           final modelType = m.model;
 
           bodyBlocks.addAll([
-            Code("  if (discriminator == '${m.discriminatorValue}') {\n"),
-            const Code('    return '),
+            Code("if (discriminator == '${m.discriminatorValue}') {"),
+            const Code('return '),
             refer(variantName).call([
               refer(
                     nameManager.modelName(modelType),
@@ -596,13 +574,12 @@ class OneOfGenerator {
                     [refer('value')],
                     {'explode': refer('explode')},
                   ),
-            ]).code,
-            const Code(';\n'),
-            const Code('  }\n'),
+            ]).statement,
+            const Code('}'),
           ]);
         }
 
-        bodyBlocks.add(const Code('}\n'));
+        bodyBlocks.add(const Code('}'));
       }
     }
 
@@ -622,36 +599,27 @@ class OneOfGenerator {
           contextClass: className,
           explode: refer('explode'),
         );
-        tryBody.add(
-          refer(variantName).call([decodeExpr]).returned.statement,
-        );
+        tryBody.add(refer(variantName).call([decodeExpr]).returned.statement);
       } else {
         final innerFromForm = refer(
               nameManager.modelName(modelType),
               package,
             )
             .property('fromForm')
-            .call(
-              [
-                refer('value'),
-              ],
-              {
-                'explode': refer('explode'),
-              },
-            );
+            .call([refer('value')], {'explode': refer('explode')});
         tryBody.add(
           refer(variantName).call([innerFromForm]).returned.statement,
         );
       }
 
       bodyBlocks.addAll([
-        const Code('try {\n'),
+        const Code('try {'),
         ...tryBody,
-        const Code('\n} on '),
+        const Code('} on '),
         refer('DecodingException', 'package:tonik_util/tonik_util.dart').code,
         const Code(' catch (_) {} on '),
         refer('FormatException', 'dart:core').code,
-        const Code(' catch (_) {}\n'),
+        const Code(' catch (_) {}'),
       ]);
     }
 
@@ -694,15 +662,9 @@ class OneOfGenerator {
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      // Only include discriminator for complex types (objects) that have
-      // properties where the discriminator can be meaningfully added.
-      // Primitive types (string, integer, boolean) encode as single values
-      // and cannot include discriminators without breaking the encoding
-      // contract.
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
-        // For mixed encoding, we need runtime checks.
         if (encodingShape == EncodingShape.mixed) {
           caseCodes.addAll([
             Code.scope(
@@ -712,48 +674,41 @@ class OneOfGenerator {
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
                 .code,
-            const Code('\n'),
-            const Code('  ? {\n'),
-            const Code('      ...'),
+            const Code('? {'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("      '${model.discriminator}': '$discriminatorValue',\n"),
-            const Code('    }'),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
+            const Code('}'),
             const Code(
               '.toSimple(explode: explode, allowEmpty: allowEmpty, '
-              'alreadyEncoded: true)\n',
+              'alreadyEncoded: true) : ',
             ),
-            const Code('  : '),
             refer('value').property('toSimple').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
+            const Code(','),
           ]);
         } else {
-          // Complex encoding - always use parameterProperties.
           caseCodes.addAll([
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
-            const Code('{\n'),
-            const Code('  ...'),
+            const Code('{'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
             const Code('}'),
-            const Code('.toSimple('),
-            const Code('explode: '),
-            refer('explode').code,
-            const Code(', allowEmpty: '),
-            refer('allowEmpty').code,
-            const Code(', alreadyEncoded: true'),
-            const Code(')'),
-            const Code(',\n'),
+            const Code(
+              '.toSimple(explode: '
+              'explode, allowEmpty: allowEmpty, alreadyEncoded: true),',
+            ),
           ]);
         }
       } else {
@@ -765,13 +720,13 @@ class OneOfGenerator {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
           }).code,
-          const Code(',\n'),
+          const Code(','),
         ]);
       }
     }
 
     final body = Block.of([
-      const Code('return switch (this) {\n'),
+      const Code('return switch (this) {'),
       ...caseCodes,
       const Code('};'),
     ]);
@@ -800,15 +755,9 @@ class OneOfGenerator {
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      // Only include discriminator for complex types (objects) that have
-      // properties where the discriminator can be meaningfully added.
-      // Primitive types (string, integer, boolean) encode as single values
-      // and cannot include discriminators without breaking the encoding
-      // contract.
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
-        // For mixed encoding, we need runtime checks.
         if (encodingShape == EncodingShape.mixed) {
           caseCodes.addAll([
             Code.scope(
@@ -818,44 +767,38 @@ class OneOfGenerator {
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
                 .code,
-            const Code('\n'),
-            const Code('  ? {\n'),
-            const Code('      ...'),
+            const Code('? {'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("      '${model.discriminator}': '$discriminatorValue',\n"),
-            const Code('    }'),
-            const Code('.toForm(explode: explode, allowEmpty: allowEmpty)\n'),
-            const Code('  : '),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
+            const Code('}'),
+            const Code('.toForm(explode: explode, allowEmpty: allowEmpty) : '),
             refer('value').property('toForm').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
+            const Code(','),
           ]);
         } else {
-          // Complex encoding - always use parameterProperties.
           caseCodes.addAll([
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
-            const Code('{\n'),
-            const Code('  ...'),
+            const Code('{'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
             const Code('}'),
-            const Code('.toForm('),
-            const Code('explode: '),
-            refer('explode').code,
-            const Code(', allowEmpty: '),
-            refer('allowEmpty').code,
-            const Code(')'),
-            const Code(',\n'),
+            const Code(
+              '.toForm(explode: '
+              'explode, allowEmpty: allowEmpty),',
+            ),
           ]);
         }
       } else {
@@ -867,13 +810,13 @@ class OneOfGenerator {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
           }).code,
-          const Code(',\n'),
+          const Code(','),
         ]);
       }
     }
 
     final body = Block.of([
-      const Code('return switch (this) {\n'),
+      const Code('return switch (this) {'),
       ...caseCodes,
       const Code('};'),
     ]);
@@ -914,19 +857,18 @@ class OneOfGenerator {
             'EncodingShape',
             'package:tonik_util/tonik_util.dart',
           ).property('simple').code,
-          const Code(',\n'),
+          const Code(','),
         ]);
       } else {
         caseCodes.addAll([
           Code('$variantName(:final value) => '),
-          const Code('value.currentEncodingShape'),
-          const Code(',\n'),
+          const Code('value.currentEncodingShape,'),
         ]);
       }
     }
 
     final body = Block.of([
-      const Code('return switch (this) {\n'),
+      const Code('return switch (this) {'),
       ...caseCodes,
       const Code('};'),
     ]);
@@ -953,7 +895,6 @@ class OneOfGenerator {
     final hasOnlyPrimitives =
         !model.models.any((m) => m.model is! PrimitiveModel);
 
-    // For primitive-only OneOf, throw since there are no properties.
     if (hasOnlyPrimitives) {
       return Method(
         (b) =>
@@ -987,7 +928,6 @@ class OneOfGenerator {
       final discriminatorValue = m.discriminatorValue;
 
       if (encodingShape == EncodingShape.simple) {
-        // Primitive types: throw at runtime.
         caseCodes
           ..add(Code('$variantName() => '))
           ..add(
@@ -997,25 +937,22 @@ class OneOfGenerator {
             ).code,
           );
       } else if (encodingShape == EncodingShape.mixed) {
-        // Mixed types (OneOf, AnyOf with both simple and complex): need
-        // runtime check.
         caseCodes.add(Code('$variantName(:final value) => '));
 
         if (discriminatorValue != null) {
-          // With discriminator: check if complex, inject discriminator if so.
           caseCodes.addAll([
             const Code('value.currentEncodingShape == '),
             refer(
               'EncodingShape',
               'package:tonik_util/tonik_util.dart',
             ).property('complex').code,
-            const Code(' ? {\n'),
-            const Code('  ...'),
+            const Code('? {'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
             const Code('} : '),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1023,18 +960,17 @@ class OneOfGenerator {
             ).code,
           ]);
         } else {
-          // Without discriminator: check if complex, delegate if so.
           caseCodes.addAll([
             const Code('value.currentEncodingShape == '),
             refer(
               'EncodingShape',
               'package:tonik_util/tonik_util.dart',
             ).property('complex').code,
-            const Code(' ? '),
+            const Code('? '),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(' : '),
+            const Code(': '),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'cannot determine properties at runtime',
@@ -1042,17 +978,16 @@ class OneOfGenerator {
           ]);
         }
       } else {
-        // Complex types: always delegate.
         caseCodes.add(Code('$variantName(:final value) => '));
         if (discriminatorValue != null) {
           caseCodes.addAll([
-            const Code('{\n'),
-            const Code('  ...'),
+            const Code('{'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
             const Code('}'),
           ]);
         } else {
@@ -1063,11 +998,11 @@ class OneOfGenerator {
           );
         }
       }
-      caseCodes.add(const Code(',\n'));
+      caseCodes.add(const Code(','));
     }
 
     final body = Block.of([
-      const Code('return switch (this) {\n'),
+      const Code('return switch (this) {'),
       ...caseCodes,
       const Code('};'),
     ]);
@@ -1106,15 +1041,9 @@ class OneOfGenerator {
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      // Only include discriminator for complex types (objects) that have
-      // properties where the discriminator can be meaningfully added.
-      // Primitive types (string, integer, boolean) encode as single values
-      // and cannot include discriminators without breaking the encoding
-      // contract.
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
-        // For mixed encoding, we need runtime checks.
         if (encodingShape == EncodingShape.mixed) {
           caseCodes.addAll([
             Code.scope(
@@ -1124,28 +1053,25 @@ class OneOfGenerator {
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
                 .code,
-            const Code('\n'),
-            const Code('  ? {\n'),
-            const Code('      ...'),
+            const Code('? {'),
+            const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("      '${model.discriminator}': '$discriminatorValue',\n"),
-            const Code('    }'),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
+            const Code('}'),
             const Code(
               '.toLabel(explode: explode, allowEmpty: allowEmpty, '
-              'alreadyEncoded: true)\n',
+              'alreadyEncoded: true) : ',
             ),
-            const Code('  : '),
             refer('value').property('toLabel').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
+            const Code(','),
           ]);
         } else {
-          // Complex encoding - always use parameterProperties.
           caseCodes.addAll([
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
@@ -1154,14 +1080,13 @@ class OneOfGenerator {
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
-            const Code(',\n'),
-            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code(','),
+            Code("'${model.discriminator}': '$discriminatorValue',"),
             const Code('}'),
-            const Code('.toLabel(explode: '),
-            refer('explode').code,
-            const Code(', allowEmpty: '),
-            refer('allowEmpty').code,
-            const Code(', alreadyEncoded: true),\n'),
+            const Code(
+              '.toLabel(explode: explode, allowEmpty: allowEmpty, '
+              'alreadyEncoded: true),',
+            ),
           ]);
         }
       } else {
@@ -1173,13 +1098,13 @@ class OneOfGenerator {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
           }).code,
-          const Code(',\n'),
+          const Code(','),
         ]);
       }
     }
 
     final body = Block.of([
-      const Code('return switch (this) {\n'),
+      const Code('return switch (this) {'),
       ...caseCodes,
       const Code('};'),
     ]);
