@@ -389,7 +389,7 @@ class EnumGenerator {
             )
             ..optionalParameters.addAll(buildEncodingParameters())
             ..body = const Code(
-              'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
+              '''rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)''',
             ),
     );
   }

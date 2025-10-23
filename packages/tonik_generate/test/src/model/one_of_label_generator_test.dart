@@ -29,231 +29,6 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  group('OneOfGenerator labelProperties generation', () {
-    test('generates labelProperties for primitive-only variants', () {
-      final model = OneOfModel(
-        name: 'PrimitiveChoice',
-        models: {
-          (discriminatorValue: 'i', model: IntegerModel(context: context)),
-          (discriminatorValue: 's', model: StringModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere(
-        (c) => c.name == 'PrimitiveChoice',
-      );
-      final generated = format(baseClass.accept(emitter).toString());
-
-      final labelProps = baseClass.methods.firstWhere(
-        (m) => m.name == 'labelProperties',
-      );
-      expect(
-        labelProps.returns?.accept(emitter).toString(),
-        'Map<String,String>',
-      );
-      expect(labelProps.optionalParameters.length, 1);
-      expect(labelProps.optionalParameters.first.name, 'allowEmpty');
-      expect(labelProps.optionalParameters.first.required, isFalse);
-
-      const expectedMethod = '''
-        Map<String, String> labelProperties({bool allowEmpty = true}) {
-          return switch (this) {
-            PrimitiveChoiceI() => <String, String>{},
-            PrimitiveChoiceS() => <String, String>{},
-          };
-        }
-      ''';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-
-    test(
-      'generates labelProperties for class-only variants with discriminator',
-      () {
-        final classA = ClassModel(
-          name: 'A',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-        final classB = ClassModel(
-          name: 'B',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = OneOfModel(
-          name: 'Choice',
-          models: {
-            (discriminatorValue: 'a', model: classA),
-            (discriminatorValue: 'b', model: classB),
-          },
-          discriminator: 'type',
-          context: context,
-        );
-
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Choice');
-
-        final labelProps = baseClass.methods.firstWhere(
-          (m) => m.name == 'labelProperties',
-        );
-        expect(
-          labelProps.returns?.accept(emitter).toString(),
-          'Map<String,String>',
-        );
-        expect(labelProps.optionalParameters.length, 1);
-        expect(labelProps.optionalParameters.first.name, 'allowEmpty');
-        expect(labelProps.optionalParameters.first.required, isFalse);
-
-        final generated = format(baseClass.accept(emitter).toString());
-        const expectedMethod = '''
-        Map<String, String> labelProperties({bool allowEmpty = true}) {
-          return switch (this) {
-            ChoiceA(:final value) => {
-              ...value.labelProperties(allowEmpty: allowEmpty),
-              'type': 'a',
-            },
-            ChoiceB(:final value) => {
-              ...value.labelProperties(allowEmpty: allowEmpty),
-              'type': 'b',
-            },
-          };
-        }
-      ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(format(expectedMethod))),
-        );
-      },
-    );
-
-    test('generates labelProperties for mixed variants', () {
-      final classM = ClassModel(
-        name: 'M',
-        properties: [
-          Property(
-            name: 'flag',
-            model: BooleanModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = OneOfModel(
-        name: 'MixedChoice',
-        models: {
-          (discriminatorValue: 'm', model: classM),
-          (discriminatorValue: 's', model: StringModel(context: context)),
-        },
-        discriminator: 'kind',
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'MixedChoice');
-      final generated = format(baseClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> labelProperties({bool allowEmpty = true}) {
-          return switch (this) {
-            MixedChoiceM(:final value) => {
-              ...value.labelProperties(allowEmpty: allowEmpty),
-              'kind': 'm',
-            },
-            MixedChoiceS() => <String, String>{},
-          };
-        }
-      ''';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-
-    test(
-      'generates labelProperties for class variants without discriminator',
-      () {
-        final classA = ClassModel(
-          name: 'A',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-        final classB = ClassModel(
-          name: 'B',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = OneOfModel(
-          name: 'Choice',
-          models: {
-            (discriminatorValue: null, model: classA),
-            (discriminatorValue: null, model: classB),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Choice');
-        final generated = format(baseClass.accept(emitter).toString());
-
-        const expectedMethod = '''
-        Map<String, String> labelProperties({bool allowEmpty = true}) {
-          return switch (this) {
-            ChoiceA(:final value) => value.labelProperties(allowEmpty: allowEmpty),
-            ChoiceB(:final value) => value.labelProperties(allowEmpty: allowEmpty),
-          };
-        }
-      ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(format(expectedMethod))),
-        );
-      },
-    );
-  });
-
   group('OneOfGenerator toLabel generation', () {
     test('generates toLabel for primitive-only variants', () {
       final model = OneOfModel(
@@ -329,7 +104,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return switch (this) {
             ChoiceA(:final value) => {
-              ...value.labelProperties(allowEmpty: allowEmpty),
+              ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'a',
             }.toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true),
           };
@@ -374,7 +149,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return switch (this) {
             MixedChoiceM(:final value) => {
-              ...value.labelProperties(allowEmpty: allowEmpty),
+              ...value.parameterProperties(allowEmpty: allowEmpty),
               'kind': 'm',
             }.toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true),
             MixedChoiceS(:final value) => value.toLabel(explode: explode, allowEmpty: allowEmpty),
@@ -386,5 +161,218 @@ void main() {
         contains(collapseWhitespace(format(expectedMethod))),
       );
     });
+
+    test('toLabel handles mixed-encoded variant without discriminator', () {
+      final innerOneOf = OneOfModel(
+        name: 'Inner',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Outer',
+        models: {
+          (discriminatorValue: null, model: innerOneOf),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+
+      const expectedMethod = '''
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          return switch (this) {
+            OuterInner(:final value) => value.toLabel( explode: explode, allowEmpty: allowEmpty, ),
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('toLabel handles mixed-encoded variant with discriminator', () {
+      final innerOneOf = OneOfModel(
+        name: 'Inner',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Outer',
+        models: {
+          (discriminatorValue: 'inner', model: innerOneOf),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+
+      const expectedMethod = '''
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          return switch (this) {
+            OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(allowEmpty: allowEmpty),
+                  'type': 'inner',
+                }.toLabel(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                )
+              : value.toLabel(explode: explode, allowEmpty: allowEmpty),
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test(
+      'toLabel handles multiple mixed-encoded variants with discriminator',
+      () {
+        final innerOneOfA = OneOfModel(
+          name: 'InnerA',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'DataA',
+                properties: [
+                  Property(
+                    name: 'a',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final innerOneOfB = OneOfModel(
+          name: 'InnerB',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'DataB',
+                properties: [
+                  Property(
+                    name: 'b',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Outer',
+          models: {
+            (discriminatorValue: 'a', model: innerOneOfA),
+            (discriminatorValue: 'b', model: innerOneOfB),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+
+        const expectedMethod = '''
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          return switch (this) {
+            OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(allowEmpty: allowEmpty),
+                  'type': 'a',
+                }.toLabel(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                )
+              : value.toLabel(explode: explode, allowEmpty: allowEmpty),
+            OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(allowEmpty: allowEmpty),
+                  'type': 'b',
+                }.toLabel(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                )
+              : value.toLabel(explode: explode, allowEmpty: allowEmpty),
+          };
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 }

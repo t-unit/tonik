@@ -100,11 +100,13 @@ class OneOfGenerator {
             )
             ..methods.addAll([
               _generateCurrentEncodingShapeGetter(model, variantNames),
-              _generateSimplePropertiesMethod(className, model, variantNames),
+              _generateParameterPropertiesMethod(
+                className,
+                model,
+                variantNames,
+              ),
               _generateToSimpleMethod(className, model, variantNames),
-              _generateFormPropertiesMethod(className, model, variantNames),
               _generateToFormMethod(className, model, variantNames),
-              _generateLabelPropertiesMethod(className, model, variantNames),
               _generateToLabelMethod(className, model, variantNames),
               Method(
                 (b) =>
@@ -689,7 +691,7 @@ class OneOfGenerator {
     for (final m in model.models) {
       final variantName = variantNames[m]!;
 
-      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
       // Only include discriminator for complex types (objects) that have
@@ -698,29 +700,62 @@ class OneOfGenerator {
       // and cannot include discriminators without breaking the encoding
       // contract.
       if (model.discriminator != null &&
-          !isSimple &&
+          encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-          ),
-          const Code('{\n'),
-          const Code('  ...'),
-          refer('value').property('simpleProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
-          const Code(',\n'),
-          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
-          const Code('}'),
-          const Code('.toSimple('),
-          const Code('explode: '),
-          refer('explode').code,
-          const Code(', allowEmpty: '),
-          refer('allowEmpty').code,
-          const Code(', alreadyEncoded: true'),
-          const Code(')'),
-          const Code(',\n'),
-        ]);
+        // For mixed encoding, we need runtime checks.
+        if (encodingShape == EncodingShape.mixed) {
+          caseCodes.addAll([
+            Code.scope(
+              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+            ),
+            refer('value')
+                .property('currentEncodingShape')
+                .equalTo(refer('EncodingShape').property('complex'))
+                .code,
+            const Code('\n'),
+            const Code('  ? {\n'),
+            const Code('      ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("      '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('    }'),
+            const Code(
+              '.toSimple(explode: explode, allowEmpty: allowEmpty, '
+              'alreadyEncoded: true)\n',
+            ),
+            const Code('  : '),
+            refer('value').property('toSimple').call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+          ]);
+        } else {
+          // Complex encoding - always use parameterProperties.
+          caseCodes.addAll([
+            Code.scope(
+              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+            ),
+            const Code('{\n'),
+            const Code('  ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('}'),
+            const Code('.toSimple('),
+            const Code('explode: '),
+            refer('explode').code,
+            const Code(', allowEmpty: '),
+            refer('allowEmpty').code,
+            const Code(', alreadyEncoded: true'),
+            const Code(')'),
+            const Code(',\n'),
+          ]);
+        }
       } else {
         caseCodes.addAll([
           Code.scope(
@@ -762,7 +797,7 @@ class OneOfGenerator {
     for (final m in model.models) {
       final variantName = variantNames[m]!;
 
-      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
       // Only include discriminator for complex types (objects) that have
@@ -771,28 +806,58 @@ class OneOfGenerator {
       // and cannot include discriminators without breaking the encoding
       // contract.
       if (model.discriminator != null &&
-          !isSimple &&
+          encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-          ),
-          const Code('{\n'),
-          const Code('  ...'),
-          refer('value').property('formProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
-          const Code(',\n'),
-          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
-          const Code('}'),
-          const Code('.toForm('),
-          const Code('explode: '),
-          refer('explode').code,
-          const Code(', allowEmpty: '),
-          refer('allowEmpty').code,
-          const Code(')'),
-          const Code(',\n'),
-        ]);
+        // For mixed encoding, we need runtime checks.
+        if (encodingShape == EncodingShape.mixed) {
+          caseCodes.addAll([
+            Code.scope(
+              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+            ),
+            refer('value')
+                .property('currentEncodingShape')
+                .equalTo(refer('EncodingShape').property('complex'))
+                .code,
+            const Code('\n'),
+            const Code('  ? {\n'),
+            const Code('      ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("      '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('    }'),
+            const Code('.toForm(explode: explode, allowEmpty: allowEmpty)\n'),
+            const Code('  : '),
+            refer('value').property('toForm').call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+          ]);
+        } else {
+          // Complex encoding - always use parameterProperties.
+          caseCodes.addAll([
+            Code.scope(
+              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+            ),
+            const Code('{\n'),
+            const Code('  ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('}'),
+            const Code('.toForm('),
+            const Code('explode: '),
+            refer('explode').code,
+            const Code(', allowEmpty: '),
+            refer('allowEmpty').code,
+            const Code(')'),
+            const Code(',\n'),
+          ]);
+        }
       } else {
         caseCodes.addAll([
           Code.scope(
@@ -880,31 +945,110 @@ class OneOfGenerator {
     );
   }
 
-  Method _generateSimplePropertiesMethod(
+  Method _generateParameterPropertiesMethod(
     String className,
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
+    final hasOnlyPrimitives =
+        !model.models.any((m) => m.model is! PrimitiveModel);
+
+    // For primitive-only OneOf, throw since there are no properties.
+    if (hasOnlyPrimitives) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'parameterProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = false
+                        ..defaultTo = literalTrue.code,
+                ),
+              )
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'parameterProperties not supported for $className: '
+                    'only contains primitive types',
+                  ).code,
+      );
+    }
+
     final caseCodes = <Code>[];
 
     for (final m in model.models) {
       final variantName = variantNames[m]!;
-      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      if (isSimple) {
+      if (encodingShape == EncodingShape.simple) {
+        // Primitive types: throw at runtime.
         caseCodes
           ..add(Code('$variantName() => '))
           ..add(
-            buildEmptyMapStringString().code,
+            generateEncodingExceptionExpression(
+              'parameterProperties not supported for $className: '
+              'cannot determine properties at runtime',
+            ).code,
           );
+      } else if (encodingShape == EncodingShape.mixed) {
+        // Mixed types (OneOf, AnyOf with both simple and complex): need
+        // runtime check.
+        caseCodes.add(Code('$variantName(:final value) => '));
+
+        if (discriminatorValue != null) {
+          // With discriminator: check if complex, inject discriminator if so.
+          caseCodes.addAll([
+            const Code('value.currentEncodingShape == '),
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('complex').code,
+            const Code(' ? {\n'),
+            const Code('  ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('} : '),
+            generateEncodingExceptionExpression(
+              'parameterProperties not supported for $className: '
+              'cannot determine properties at runtime',
+            ).code,
+          ]);
+        } else {
+          // Without discriminator: check if complex, delegate if so.
+          caseCodes.addAll([
+            const Code('value.currentEncodingShape == '),
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('complex').code,
+            const Code(' ? '),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(' : '),
+            generateEncodingExceptionExpression(
+              'parameterProperties not supported for $className: '
+              'cannot determine properties at runtime',
+            ).code,
+          ]);
+        }
       } else {
+        // Complex types: always delegate.
         caseCodes.add(Code('$variantName(:final value) => '));
         if (discriminatorValue != null) {
           caseCodes.addAll([
             const Code('{\n'),
             const Code('  ...'),
-            refer('value').property('simpleProperties').call([], {
+            refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(',\n'),
@@ -913,7 +1057,7 @@ class OneOfGenerator {
           ]);
         } else {
           caseCodes.add(
-            refer('value').property('simpleProperties').call([], {
+            refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
             }).code,
           );
@@ -931,116 +1075,18 @@ class OneOfGenerator {
     return Method(
       (b) =>
           b
-            ..name = 'simpleProperties'
+            ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', required: true),
-            )
-            ..lambda = false
-            ..body = body,
-    );
-  }
-
-  Method _generateFormPropertiesMethod(
-    String className,
-    OneOfModel model,
-    Map<DiscriminatedModel, String> variantNames,
-  ) {
-    final caseCodes = <Code>[];
-
-    for (final m in model.models) {
-      final variantName = variantNames[m]!;
-      final isSimple = m.model.encodingShape == EncodingShape.simple;
-
-      if (isSimple) {
-        caseCodes
-          ..add(Code('$variantName() => '))
-          ..add(
-            buildEmptyMapStringString().code,
-          );
-      } else {
-        caseCodes
-          ..add(Code('$variantName(:final value) => '))
-          ..add(
-            refer('value').property('formProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
-          );
-      }
-      caseCodes.add(const Code(',\n'));
-    }
-
-    final body = Block.of([
-      const Code('return switch (this) {\n'),
-      ...caseCodes,
-      const Code('};'),
-    ]);
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'formProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', required: true),
-            )
-            ..lambda = false
-            ..body = body,
-    );
-  }
-
-  Method _generateLabelPropertiesMethod(
-    String className,
-    OneOfModel model,
-    Map<DiscriminatedModel, String> variantNames,
-  ) {
-    final caseCodes = <Code>[];
-
-    for (final m in model.models) {
-      final variantName = variantNames[m]!;
-      final isSimple = m.model.encodingShape == EncodingShape.simple;
-      final discriminatorValue = m.discriminatorValue;
-
-      if (isSimple) {
-        caseCodes
-          ..add(Code('$variantName() => '))
-          ..add(
-            buildEmptyMapStringString().code,
-          );
-      } else {
-        caseCodes.add(Code('$variantName(:final value) => '));
-        if (discriminatorValue != null) {
-          caseCodes.addAll([
-            const Code('{ ...'),
-            refer('value').property('labelProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
-            Code(",  '${model.discriminator}': '$discriminatorValue',\n}"),
-          ]);
-        } else {
-          caseCodes.add(
-            refer('value').property('labelProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
-          );
-        }
-      }
-      caseCodes.add(const Code(',\n'));
-    }
-
-    final body = Block.of([
-      const Code('return switch (this) {\n'),
-      ...caseCodes,
-      const Code('};'),
-    ]);
-
-    return Method(
-      (b) =>
-          b
-            ..name = 'labelProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              buildBoolParameter('allowEmpty', defaultValue: true),
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = false
+                      ..defaultTo = literalTrue.code,
+              ),
             )
             ..lambda = false
             ..body = body,
@@ -1057,7 +1103,7 @@ class OneOfGenerator {
     for (final m in model.models) {
       final variantName = variantNames[m]!;
 
-      final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
       // Only include discriminator for complex types (objects) that have
@@ -1066,25 +1112,58 @@ class OneOfGenerator {
       // and cannot include discriminators without breaking the encoding
       // contract.
       if (model.discriminator != null &&
-          !isSimple &&
+          encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-          ),
-          const Code('{  ...'),
-          refer('value').property('labelProperties').call([], {
-            'allowEmpty': refer('allowEmpty'),
-          }).code,
-          const Code(',\n'),
-          Code("  '${model.discriminator}': '$discriminatorValue',\n"),
-          const Code('}'),
-          const Code('.toLabel(explode: '),
-          refer('explode').code,
-          const Code(', allowEmpty: '),
-          refer('allowEmpty').code,
-          const Code(', alreadyEncoded: true),\n'),
-        ]);
+        // For mixed encoding, we need runtime checks.
+        if (encodingShape == EncodingShape.mixed) {
+          caseCodes.addAll([
+            Code.scope(
+              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+            ),
+            refer('value')
+                .property('currentEncodingShape')
+                .equalTo(refer('EncodingShape').property('complex'))
+                .code,
+            const Code('\n'),
+            const Code('  ? {\n'),
+            const Code('      ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("      '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('    }'),
+            const Code(
+              '.toLabel(explode: explode, allowEmpty: allowEmpty, '
+              'alreadyEncoded: true)\n',
+            ),
+            const Code('  : '),
+            refer('value').property('toLabel').call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+          ]);
+        } else {
+          // Complex encoding - always use parameterProperties.
+          caseCodes.addAll([
+            Code.scope(
+              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+            ),
+            const Code('{  ...'),
+            refer('value').property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }).code,
+            const Code(',\n'),
+            Code("  '${model.discriminator}': '$discriminatorValue',\n"),
+            const Code('}'),
+            const Code('.toLabel(explode: '),
+            refer('explode').code,
+            const Code(', allowEmpty: '),
+            refer('allowEmpty').code,
+            const Code(', alreadyEncoded: true),\n'),
+          ]);
+        }
       } else {
         caseCodes.addAll([
           Code.scope(

@@ -143,7 +143,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return switch (this) {
             ResponseUser(:final value) => {
-              ...value.simpleProperties(allowEmpty: allowEmpty),
+              ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'user',
             }.toSimple( 
               explode: explode, 
@@ -211,7 +211,7 @@ void main() {
       String toSimple({required bool explode, required bool allowEmpty}) {
         return switch (this) {
           EntityPerson(:final value) => {
-            ...value.simpleProperties(allowEmpty: allowEmpty),
+            ...value.parameterProperties(allowEmpty: allowEmpty),
             'entity_type': 'person',
           }.toSimple( 
             explode: explode, 
@@ -219,7 +219,7 @@ void main() {
             alreadyEncoded: true, 
           ),
           EntityCompany(:final value) => {
-            ...value.simpleProperties(allowEmpty: allowEmpty),
+            ...value.parameterProperties(allowEmpty: allowEmpty),
             'entity_type': 'company',
           }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
         };
@@ -268,7 +268,7 @@ void main() {
       String toSimple({required bool explode, required bool allowEmpty}) {
         return switch (this) {
           MixedEntityPerson(:final value) => {
-            ...value.simpleProperties(allowEmpty: allowEmpty),
+            ...value.parameterProperties(allowEmpty: allowEmpty),
             'type': 'person',
           }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
           MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
@@ -344,217 +344,6 @@ void main() {
   });
 
   group('discriminator support', () {
-    test('simpleProperties returns empty map for primitive variants', () {
-      final model = OneOfModel(
-        name: 'PrimitiveResult',
-        models: {
-          (discriminatorValue: 'text', model: StringModel(context: context)),
-          (discriminatorValue: 'number', model: IntegerModel(context: context)),
-        },
-        discriminator: 'type',
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'PrimitiveResult');
-
-      const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-        return switch (this) {
-          PrimitiveResultText() => <String, String>{},
-          PrimitiveResultNumber() => <String, String>{},
-        };
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(format(baseClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test(
-      'simpleProperties delegates to variant for complex types without '
-      'discriminator',
-      () {
-        final person = ClassModel(
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final company = ClassModel(
-          name: 'Company',
-          properties: [
-            Property(
-              name: 'company_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = OneOfModel(
-          name: 'EntityNoDisc',
-          models: {
-            (discriminatorValue: null, model: person),
-            (discriminatorValue: null, model: company),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
-
-        const expectedMethod = '''
-          Map<String, String> simpleProperties({required bool allowEmpty}) {
-            return switch (this) {
-              EntityNoDiscPerson(:final value) => value.simpleProperties(
-                allowEmpty: allowEmpty,
-              ),
-              EntityNoDiscCompany(:final value) => value.simpleProperties(
-                allowEmpty: allowEmpty,
-              ),
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
-
-    test(
-      'simpleProperties includes discriminator field for complex variants with '
-      'discriminator',
-      () {
-        final person = ClassModel(
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final company = ClassModel(
-          name: 'Company',
-          properties: [
-            Property(
-              name: 'company_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = OneOfModel(
-          name: 'Entity',
-          models: {
-            (discriminatorValue: 'person', model: person),
-            (discriminatorValue: 'company', model: company),
-          },
-          discriminator: 'entity_type',
-          context: context,
-        );
-
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Entity');
-
-        const expectedMethod = '''
-          Map<String, String> simpleProperties({required bool allowEmpty}) {
-            return switch (this) {
-              EntityPerson(:final value) => {
-                ...value.simpleProperties(allowEmpty: allowEmpty),
-                'entity_type': 'person',
-              },
-              EntityCompany(:final value) => {
-                ...value.simpleProperties(allowEmpty: allowEmpty),
-                'entity_type': 'company',
-              },
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
-
-    test(
-      'simpleProperties handles mixed primitive and complex variants with '
-      'discriminator',
-      () {
-        final person = ClassModel(
-          name: 'Person',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = OneOfModel(
-          name: 'MixedEntity',
-          models: {
-            (discriminatorValue: 'person', model: person),
-            (discriminatorValue: 'id', model: StringModel(context: context)),
-          },
-          discriminator: 'type',
-          context: context,
-        );
-
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
-
-        const expectedMethod = '''
-          Map<String, String> simpleProperties({required bool allowEmpty}) {
-            return switch (this) {
-              MixedEntityPerson(:final value) => {
-                ...value.simpleProperties(allowEmpty: allowEmpty),
-                'type': 'person',
-              },
-              MixedEntityId() => <String, String>{},
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(format(baseClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
-
     test(
       'fromSimple with discriminator checks discriminator when explode is true',
       () {

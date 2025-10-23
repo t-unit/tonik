@@ -8,7 +8,7 @@ void main() {
     test('encodes Uri with allowEmpty=true', () {
       final uri = Uri.parse('https://example.com/path');
       expect(
-        uri.toMatrix('url', allowEmpty: true),
+        uri.toMatrix('url', allowEmpty: true, explode: true),
         ';url=https%3A%2F%2Fexample.com%2Fpath',
       );
     });
@@ -16,7 +16,7 @@ void main() {
     test('encodes Uri with allowEmpty=false', () {
       final uri = Uri.parse('https://example.com/path');
       expect(
-        uri.toMatrix('url', allowEmpty: false),
+        uri.toMatrix('url', allowEmpty: false, explode: true),
         ';url=https%3A%2F%2Fexample.com%2Fpath',
       );
     });
@@ -25,32 +25,32 @@ void main() {
   group('MatrixStringEncoder', () {
     test('encodes string with allowEmpty=true', () {
       expect(
-        'hello world'.toMatrix('name', allowEmpty: true),
+        'hello world'.toMatrix('name', allowEmpty: true, explode: true),
         ';name=hello%20world',
       );
     });
 
     test('encodes string with allowEmpty=false', () {
       expect(
-        'hello world'.toMatrix('name', allowEmpty: false),
+        'hello world'.toMatrix('name', allowEmpty: false, explode: true),
         ';name=hello%20world',
       );
     });
 
     test('encodes empty string with allowEmpty=true', () {
-      expect(''.toMatrix('name', allowEmpty: true), ';name=');
+      expect(''.toMatrix('name', allowEmpty: true, explode: true), ';name=');
     });
 
     test('encodes empty string with allowEmpty=false', () {
       expect(
-        () => ''.toMatrix('name', allowEmpty: false),
+        () => ''.toMatrix('name', allowEmpty: false, explode: true),
         throwsA(isA<EmptyValueException>()),
       );
     });
 
     test('encodes special characters', () {
       expect(
-        'hello & world'.toMatrix('name', allowEmpty: true),
+        'hello & world'.toMatrix('name', allowEmpty: true, explode: true),
         ';name=hello%20%26%20world',
       );
     });
@@ -58,75 +58,109 @@ void main() {
 
   group('MatrixIntEncoder', () {
     test('encodes int with allowEmpty=true', () {
-      expect(42.toMatrix('count', allowEmpty: true), ';count=42');
+      expect(
+        42.toMatrix('count', allowEmpty: true, explode: true),
+        ';count=42',
+      );
     });
 
     test('encodes int with allowEmpty=false', () {
-      expect(42.toMatrix('count', allowEmpty: false), ';count=42');
+      expect(
+        42.toMatrix('count', allowEmpty: false, explode: true),
+        ';count=42',
+      );
     });
 
     test('encodes zero', () {
-      expect(0.toMatrix('count', allowEmpty: true), ';count=0');
+      expect(0.toMatrix('count', allowEmpty: true, explode: true), ';count=0');
     });
 
     test('encodes negative int', () {
-      expect((-42).toMatrix('count', allowEmpty: true), ';count=-42');
+      expect(
+        (-42).toMatrix('count', allowEmpty: true, explode: true),
+        ';count=-42',
+      );
     });
   });
 
   group('MatrixDoubleEncoder', () {
     test('encodes double with allowEmpty=true', () {
-      expect(3.14.toMatrix('pi', allowEmpty: true), ';pi=3.14');
+      expect(3.14.toMatrix('pi', allowEmpty: true, explode: true), ';pi=3.14');
     });
 
     test('encodes double with allowEmpty=false', () {
-      expect(3.14.toMatrix('pi', allowEmpty: false), ';pi=3.14');
+      expect(3.14.toMatrix('pi', allowEmpty: false, explode: true), ';pi=3.14');
     });
 
     test('encodes zero double', () {
-      expect(0.0.toMatrix('value', allowEmpty: true), ';value=0.0');
+      expect(
+        0.0.toMatrix('value', allowEmpty: true, explode: true),
+        ';value=0.0',
+      );
     });
 
     test('encodes negative double', () {
-      expect((-3.14).toMatrix('pi', allowEmpty: true), ';pi=-3.14');
+      expect(
+        (-3.14).toMatrix('pi', allowEmpty: true, explode: true),
+        ';pi=-3.14',
+      );
     });
   });
 
   group('MatrixNumEncoder', () {
     test('encodes num with allowEmpty=true', () {
-      expect((42 as num).toMatrix('count', allowEmpty: true), ';count=42');
+      expect(
+        (42 as num).toMatrix('count', allowEmpty: true, explode: true),
+        ';count=42',
+      );
     });
 
     test('encodes num with allowEmpty=false', () {
-      expect((42 as num).toMatrix('count', allowEmpty: false), ';count=42');
+      expect(
+        (42 as num).toMatrix('count', allowEmpty: false, explode: true),
+        ';count=42',
+      );
     });
   });
 
   group('MatrixBoolEncoder', () {
     test('encodes true with allowEmpty=true', () {
-      expect(true.toMatrix('flag', allowEmpty: true), ';flag=true');
+      expect(
+        true.toMatrix('flag', allowEmpty: true, explode: true),
+        ';flag=true',
+      );
     });
 
     test('encodes false with allowEmpty=true', () {
-      expect(false.toMatrix('flag', allowEmpty: true), ';flag=false');
+      expect(
+        false.toMatrix('flag', allowEmpty: true, explode: true),
+        ';flag=false',
+      );
     });
 
     test('encodes bool with allowEmpty=false', () {
-      expect(true.toMatrix('flag', allowEmpty: false), ';flag=true');
+      expect(
+        true.toMatrix('flag', allowEmpty: false, explode: true),
+        ';flag=true',
+      );
     });
   });
 
   group('MatrixDateTimeEncoder', () {
     test('encodes DateTime with allowEmpty=true', () {
       final dateTime = DateTime(2023, 12, 25, 10, 30, 45);
-      final result = dateTime.toMatrix('date', allowEmpty: true);
+      final result = dateTime.toMatrix('date', allowEmpty: true, explode: true);
       expect(result, startsWith(';date='));
       expect(result, contains('2023-12-25T10%3A30%3A45'));
     });
 
     test('encodes DateTime with allowEmpty=false', () {
       final dateTime = DateTime(2023, 12, 25, 10, 30, 45);
-      final result = dateTime.toMatrix('date', allowEmpty: false);
+      final result = dateTime.toMatrix(
+        'date',
+        allowEmpty: false,
+        explode: true,
+      );
       expect(result, startsWith(';date='));
       expect(result, contains('2023-12-25T10%3A30%3A45'));
     });
@@ -136,7 +170,7 @@ void main() {
     test('encodes BigDecimal with allowEmpty=true', () {
       final bigDecimal = BigDecimal.parse('123.456');
       expect(
-        bigDecimal.toMatrix('amount', allowEmpty: true),
+        bigDecimal.toMatrix('amount', allowEmpty: true, explode: true),
         ';amount=123.456',
       );
     });
@@ -144,14 +178,17 @@ void main() {
     test('encodes BigDecimal with allowEmpty=false', () {
       final bigDecimal = BigDecimal.parse('123.456');
       expect(
-        bigDecimal.toMatrix('amount', allowEmpty: false),
+        bigDecimal.toMatrix('amount', allowEmpty: false, explode: true),
         ';amount=123.456',
       );
     });
 
     test('encodes zero BigDecimal', () {
       final bigDecimal = BigDecimal.zero;
-      expect(bigDecimal.toMatrix('amount', allowEmpty: true), ';amount=0');
+      expect(
+        bigDecimal.toMatrix('amount', allowEmpty: true, explode: true),
+        ';amount=0',
+      );
     });
   });
 

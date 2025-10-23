@@ -1149,7 +1149,8 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1181,7 +1182,8 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1213,7 +1215,8 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
@@ -1245,7 +1248,8 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
       });
