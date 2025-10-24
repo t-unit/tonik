@@ -204,3 +204,20 @@ LiteralMapExpression buildEmptyMapStringString() => literalMap(
           ..url = 'dart:core',
   ),
 );
+
+/// Returns a LiteralMapExpression for an empty [Map<String, Object?>] literal.
+LiteralMapExpression buildEmptyMapStringObject() => literalMap(
+  {},
+  TypeReference(
+    (b) =>
+        b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+  ),
+  TypeReference(
+    (b) =>
+        b
+          ..symbol = 'Object?'
+          ..url = 'dart:core',
+  ),
+);

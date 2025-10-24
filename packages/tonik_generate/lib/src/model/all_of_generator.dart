@@ -339,11 +339,7 @@ class AllOfGenerator {
         ).statement,
         const Code('}'),
         const Code('final map = '),
-        literalMap(
-          {},
-          refer('String', 'dart:core'),
-          refer('Object?', 'dart:core'),
-        ).statement,
+        buildEmptyMapStringObject().statement,
       ];
 
       final mapType = buildMapStringObjectType();
@@ -425,11 +421,7 @@ class AllOfGenerator {
         final mapType = buildMapStringObjectType();
         final mapParts = <Code>[
           const Code('final map = '),
-          literalMap(
-            {},
-            refer('String', 'dart:core'),
-            refer('Object?', 'dart:core'),
-          ).statement,
+          buildEmptyMapStringObject().statement,
         ];
 
         for (final normalized in normalizedProperties) {
@@ -646,15 +638,7 @@ class AllOfGenerator {
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = false
-                        ..defaultTo = literalTrue.code,
-                ),
+                buildBoolParameter('allowEmpty', defaultValue: true),
               )
               ..body = buildEmptyMapStringString().returned.statement,
       );
@@ -667,19 +651,12 @@ class AllOfGenerator {
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
               ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = false
-                        ..defaultTo = literalTrue.code,
-                ),
+                buildBoolParameter('allowEmpty', defaultValue: true),
               )
               ..body =
                   generateEncodingExceptionExpression(
-                    'parameterProperties not supported for $className: contains primitive types',
+                    'parameterProperties not supported for $className: '
+                    'contains primitive types',
                   ).statement,
       );
     }
@@ -711,15 +688,7 @@ class AllOfGenerator {
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
             ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = literalTrue.code,
-              ),
+              buildBoolParameter('allowEmpty', defaultValue: true),
             )
             ..body = Block.of(propertyMergingLines),
     );

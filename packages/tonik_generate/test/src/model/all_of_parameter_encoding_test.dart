@@ -102,10 +102,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final combinedClass = generator.generateClass(model);
       final classCode = format(combinedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final mergedProperties = <String, String>{};
-  mergedProperties.addAll(\$base.parameterProperties(allowEmpty: allowEmpty));
+  mergedProperties.addAll($base.parameterProperties(allowEmpty: allowEmpty));
   return mergedProperties;
 }
 ''';
