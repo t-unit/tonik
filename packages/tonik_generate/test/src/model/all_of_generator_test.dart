@@ -612,7 +612,7 @@ void main() {
 
       const expectedToSimpleMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return simpleProperties(
+          return parameterProperties(
             allowEmpty: allowEmpty,
           ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
@@ -674,67 +674,6 @@ void main() {
         contains(collapseWhitespace(expectedFromSimpleMethod)),
       );
     });
-
-    test(
-      'generates simpleProperties method that merges sub-model properties',
-      () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: {
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-                Property(
-                  name: 'offset',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'index',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
-
-        final combinedClass = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = r'''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-          final mergedProperties = <String, String>{};
-          mergedProperties.addAll($base.simpleProperties(allowEmpty: allowEmpty));
-          mergedProperties.addAll($mixin.simpleProperties(allowEmpty: allowEmpty));
-          return mergedProperties;
-        }
-      ''';
-
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      },
-    );
   });
 
   group('with primitive models', () {
@@ -1511,7 +1450,7 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          return formProperties(
+          return parameterProperties(
             allowEmpty: allowEmpty,
           ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
@@ -1522,86 +1461,9 @@ void main() {
         contains(collapseWhitespace(expectedToFormMethod)),
       );
     });
-
-    test(
-      'generates formProperties method that merges sub-model properties',
-      () {
-        final model = AllOfModel(
-          name: 'CombinedModel',
-          models: {
-            ClassModel(
-              name: 'Base',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-            ClassModel(
-              name: 'Mixin',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          },
-          context: context,
-        );
-
-        final combinedClass = generator.generateClass(model);
-
-        const expectedFormPropertiesMethod = r'''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-          final mergedProperties = <String, String>{};
-          mergedProperties.addAll($base.formProperties(allowEmpty: allowEmpty));
-          mergedProperties.addAll($mixin.formProperties(allowEmpty: allowEmpty));
-          return mergedProperties;
-        }
-      ''';
-
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedFormPropertiesMethod)),
-        );
-      },
-    );
   });
 
   group('form encoding - primitive types', () {
-    test('generates formProperties returning empty map for primitives', () {
-      final model = AllOfModel(
-        name: 'StringDecimalModel',
-        models: <Model>{
-          StringModel(context: context),
-          DecimalModel(context: context),
-        },
-        context: context,
-      );
-
-      final combinedClass = generator.generateClass(model);
-
-      const expectedFormPropertiesMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-          return <String, String>{};
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-        contains(collapseWhitespace(expectedFormPropertiesMethod)),
-      );
-    });
 
     test('generates toForm returning primary primitive value', () {
       final model = AllOfModel(
@@ -1801,39 +1663,6 @@ void main() {
         );
       },
     );
-
-    test(
-      'throws exception for mixed types in formProperties',
-      () {
-        final model = AllOfModel(
-          name: 'MixedModel',
-          models: {
-            DecimalModel(context: context),
-            ClassModel(
-              name: 'Complex',
-              properties: const [],
-              context: context,
-            ),
-          },
-          context: context,
-        );
-
-        final combinedClass = generator.generateClass(model);
-
-        const expectedFormPropertiesMethod = '''
-          Map<String, String> formProperties({required bool allowEmpty}) {
-            throw SimpleDecodingException(
-              'Simple properties not supported for MixedModel: contains complex types',
-            );
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(format(combinedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedFormPropertiesMethod)),
-        );
-      },
-    );
   });
 
   group('nested dynamic shapes', () {
@@ -1883,8 +1712,8 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(int.formProperties(allowEmpty: allowEmpty));
-          map.addAll(flexibleValue.formProperties(allowEmpty: allowEmpty));
+          map.addAll(int.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleValue.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
@@ -1905,7 +1734,7 @@ void main() {
               'Simple encoding not supported: contains complex types',
             );
           }
-          return simpleProperties(
+          return parameterProperties(
             allowEmpty: allowEmpty,
           ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
@@ -1963,8 +1792,8 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(int.formProperties(allowEmpty: allowEmpty));
-          map.addAll(choice.formProperties(allowEmpty: allowEmpty));
+          map.addAll(int.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
@@ -2051,9 +1880,9 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(string.formProperties(allowEmpty: allowEmpty));
-          map.addAll(flexibleA.formProperties(allowEmpty: allowEmpty));
-          map.addAll(flexibleB.formProperties(allowEmpty: allowEmpty));
+          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleA.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleB.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
@@ -2142,10 +1971,10 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(string.formProperties(allowEmpty: allowEmpty));
-          map.addAll(flexibleValue.formProperties(allowEmpty: allowEmpty));
-          map.addAll(choice.formProperties(allowEmpty: allowEmpty));
-          map.addAll(bigDecimal.formProperties(allowEmpty: allowEmpty));
+          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(flexibleValue.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(bigDecimal.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,

@@ -29,7 +29,7 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  group('OneOfGenerator toLabel generation', () {
+  group('toLabel', () {
     test('generates toLabel for primitive-only variants', () {
       final model = OneOfModel(
         name: 'PrimitiveChoice',
