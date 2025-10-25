@@ -390,8 +390,6 @@ class ClassGenerator {
     );
   }
 
-  /// Builds the unified parameterProperties method that replaces
-  /// simpleProperties, formProperties, and labelProperties.
   Method _buildParameterPropertiesMethod(
     ClassModel model,
     List<({String normalizedName, Property property})> properties,
@@ -582,10 +580,11 @@ if ($name != null) {
         }
       } else {
         // Composite property - runtime check
-        if (isNullable) {
+        final isFieldNullable = isNullable || !isRequired;
+        if (isFieldNullable) {
           propertyAssignments.addAll([
             Code('if ($name != null && '),
-            Code('$name.currentEncodingShape != '),
+            Code('$name!.currentEncodingShape != '),
             refer(
               'EncodingShape',
               'package:tonik_util/tonik_util.dart',
@@ -599,7 +598,7 @@ if ($name != null) {
             Code('if ($name != null) {'),
             Code(
               '  result.addAll('
-              '$name.parameterProperties(allowEmpty: allowEmpty));',
+              '$name!.parameterProperties(allowEmpty: allowEmpty));',
             ),
             const Code('}'),
           ]);

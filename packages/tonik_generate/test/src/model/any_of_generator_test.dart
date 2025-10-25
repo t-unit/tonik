@@ -555,12 +555,12 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
   if (person != null) {
-    final personSimple = person!.simpleProperties(allowEmpty: allowEmpty);
+    final personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(personSimple);
     discriminatorValue ??= r'person';
   }
   if (company != null) {
-    final companySimple = company!.simpleProperties(allowEmpty: allowEmpty);
+    final companySimple = company!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(companySimple);
     discriminatorValue ??= r'company';
   }
@@ -659,12 +659,12 @@ String toForm({required bool explode, required bool allowEmpty}) {
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
   if (person != null) {
-    final personForm = person!.formProperties(allowEmpty: allowEmpty);
+    final personForm = person!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(personForm);
     discriminatorValue ??= r'person';
   }
   if (company != null) {
-    final companyForm = company!.formProperties(allowEmpty: allowEmpty);
+    final companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(companyForm);
     discriminatorValue ??= r'company';
   }
@@ -801,7 +801,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     values.add(stringSimple);
   }
   if (data != null) {
-    final dataSimple = data!.simpleProperties(allowEmpty: allowEmpty);
+    final dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(dataSimple);
     discriminatorValue ??= r'data';
   }
@@ -838,5 +838,557 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         expect(generated.trim(), equals(expectedMethod.trim()));
       },
     );
+  });
+
+  group('parameterProperties', () {
+    test('method exists with correct signature for anyOf', () {
+      final model = AnyOfModel(
+        name: 'FlexibleChoice',
+        models: {
+          (
+            discriminatorValue: 'user',
+            model: ClassModel(
+              name: 'User',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'admin',
+            model: ClassModel(
+              name: 'Admin',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+        orElse: () => throw StateError('parameterProperties method not found'),
+      );
+
+      expect(method.name, 'parameterProperties');
+      expect(
+        method.returns?.accept(emitter).toString().replaceAll(' ', ''),
+        'Map<String,String>',
+      );
+      expect(method.optionalParameters.length, 1);
+      expect(method.optionalParameters.first.name, 'allowEmpty');
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isFalse);
+      expect(
+        method.optionalParameters.first.defaultTo?.accept(emitter).toString(),
+        'true',
+      );
+    });
+
+    test('generates complete method for single complex variant', () {
+      final userModel = ClassModel(
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'FlexibleChoice',
+        models: {
+          (discriminatorValue: 'user', model: userModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (user != null) {
+    _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('generates complete method for multiple complex variants', () {
+      final user = ClassModel(
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+
+      final admin = ClassModel(
+        name: 'Admin',
+        properties: const [],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'MultiChoice',
+        models: {
+          (discriminatorValue: 'user', model: user),
+          (discriminatorValue: 'admin', model: admin),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (user != null) {
+    _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  if (admin != null) {
+    _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('generates complete method with discriminator', () {
+      final classModel = ClassModel(
+        name: 'Data',
+        properties: [
+          Property(
+            name: 'value',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'DiscriminatedChoice',
+        models: {
+          (
+            discriminatorValue: 'data',
+            model: classModel,
+          ),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  String? _$discriminatorValue;
+  if (data != null) {
+    _$mapValues.add(data!.parameterProperties(allowEmpty: allowEmpty));
+    _$discriminatorValue ??= r'data';
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  if (_$discriminatorValue != null) {
+    _$map.putIfAbsent('type', () => _$discriminatorValue);
+  }
+  return _$map;
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('generates complete method for anyOf with dynamic encoding shape', () {
+      final anyOfModel = AnyOfModel(
+        name: 'InnerChoice',
+        models: {
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+          (
+            discriminatorValue: 'data',
+            model: ClassModel(
+              name: 'Data',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'MixedChoice',
+        models: {
+          (discriminatorValue: 'inner', model: anyOfModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (innerChoice != null) {
+    switch (innerChoice!.currentEncodingShape) {
+      case EncodingShape.simple:
+        throw EncodingException(
+          'Cannot encode simple type to map in parameterProperties',
+        );
+      case EncodingShape.complex:
+        _$mapValues.add(
+          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
+        );
+        break;
+      case EncodingShape.mixed:
+        throw EncodingException(
+          'Cannot encode field with mixed encoding shape',
+        );
+    }
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test(
+      'generates complete method for anyOf with dynamic encoding shape '
+      'and discriminator',
+      () {
+        final anyOfModel = AnyOfModel(
+          name: 'InnerChoice',
+          models: {
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+            (
+              discriminatorValue: 'data',
+              model: ClassModel(
+                name: 'Data',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'MixedChoice',
+          models: {
+            (discriminatorValue: 'inner', model: anyOfModel),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final method = klass.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(method.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  String? _$discriminatorValue;
+  if (innerChoice != null) {
+    switch (innerChoice!.currentEncodingShape) {
+      case EncodingShape.simple:
+        throw EncodingException(
+          'Cannot encode simple type to map in parameterProperties',
+        );
+      case EncodingShape.complex:
+        _$mapValues.add(
+          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
+        );
+        _$discriminatorValue ??= r'inner';
+        break;
+      case EncodingShape.mixed:
+        throw EncodingException(
+          'Cannot encode field with mixed encoding shape',
+        );
+    }
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  if (_$discriminatorValue != null) {
+    _$map.putIfAbsent('type', () => _$discriminatorValue);
+  }
+  return _$map;
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test(
+      'generates complete method for anyOf with dynamic encoding shape and '
+      'complex class',
+      () {
+        final anyOfModel = AnyOfModel(
+          name: 'InnerChoice',
+          models: {
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+            (
+              discriminatorValue: 'number',
+              model: IntegerModel(context: context),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classModel = ClassModel(
+          name: 'ComplexData',
+          properties: const [],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'MixedChoice',
+          models: {
+            (discriminatorValue: 'inner', model: anyOfModel),
+            (discriminatorValue: 'complex', model: classModel),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final method = klass.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(method.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (innerChoice != null) {
+    switch (innerChoice!.currentEncodingShape) {
+      case EncodingShape.simple:
+        throw EncodingException(
+          'Cannot encode simple type to map in parameterProperties',
+        );
+      case EncodingShape.complex:
+        _$mapValues.add(
+          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
+        );
+        break;
+      case EncodingShape.mixed:
+        throw EncodingException(
+          'Cannot encode field with mixed encoding shape',
+        );
+    }
+  }
+  if (complexData != null) {
+    _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test(
+      'generates complete method for anyOf with mixed simple and complex '
+      'at top level',
+      () {
+        final classModel = ClassModel(
+          name: 'ComplexData',
+          properties: const [],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'MixedTopLevel',
+          models: {
+            (
+              discriminatorValue: 'string',
+              model: StringModel(context: context),
+            ),
+            (discriminatorValue: 'complex', model: classModel),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final method = klass.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(method.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (complexData != null) {
+    _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  if (string != null) {
+    throw EncodingException(
+      'Cannot encode anyOf with simple type to map in parameterProperties',
+    );
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test('generates complete method for anyOf with only simple types', () {
+      final model = AnyOfModel(
+        name: 'SimpleChoice',
+        models: {
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+          (discriminatorValue: 'number', model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  throw EncodingException(
+    'parameterProperties not supported for SimpleChoice: contains only simple types',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
   });
 }

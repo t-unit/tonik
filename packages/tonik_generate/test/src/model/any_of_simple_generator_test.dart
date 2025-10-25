@@ -165,12 +165,12 @@ void main() {
           String? discriminatorValue;
 
           if (a != null) {
-            final aSimple = a!.simpleProperties(allowEmpty: allowEmpty);
+            final aSimple = a!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(aSimple);
               discriminatorValue ??= r'a';
           }
           if (b != null) {
-            final bSimple = b!.simpleProperties(allowEmpty: allowEmpty);
+            final bSimple = b!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(bSimple);
               discriminatorValue ??= r'b';
           }
@@ -247,11 +247,11 @@ void main() {
             final mapValues = <Map<String, String>>[];
 
             if (a != null) {
-              final aSimple = a!.simpleProperties(allowEmpty: allowEmpty);
+              final aSimple = a!.parameterProperties(allowEmpty: allowEmpty);
               mapValues.add(aSimple);
             }
             if (b != null) {
-              final bSimple = b!.simpleProperties(allowEmpty: allowEmpty);
+              final bSimple = b!.parameterProperties(allowEmpty: allowEmpty);
               mapValues.add(bSimple);
             }
 
@@ -365,7 +365,7 @@ void main() {
           String? discriminatorValue;
 
           if (user != null) {
-            final userSimple = user!.simpleProperties(allowEmpty: allowEmpty);
+            final userSimple = user!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(userSimple);
               discriminatorValue ??= r'user';
           }
@@ -404,187 +404,6 @@ void main() {
               alreadyEncoded: true,
             );
           }
-        }
-      ''';
-
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
-  });
-
-  group('simpleProperties', () {
-    test('throws exception for primitive-only anyOf in simpleProperties', () {
-      final model = AnyOfModel(
-        name: 'OnlyPrimitivesSimple',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (discriminatorValue: null, model: IntegerModel(context: context)),
-          (discriminatorValue: null, model: BooleanModel(context: context)),
-        },
-        discriminator: 'type',
-        context: context,
-      );
-
-      final klass = generator.generateClass(model);
-
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
-      final generated = format(klass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-          throw EncodingException(
-            'simpleProperties not supported for OnlyPrimitivesSimple: contains primitive values',
-          );
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test(
-      'merges simpleProperties for multiple complex variants',
-      () {
-        final modelA = ClassModel(
-          name: 'A',
-          properties: [
-            Property(
-              name: 'id',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final modelB = ClassModel(
-          name: 'B',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = AnyOfModel(
-          name: 'PayloadSimple',
-          models: {
-            (discriminatorValue: 'a', model: modelA),
-            (discriminatorValue: 'b', model: modelB),
-          },
-          discriminator: 'disc',
-          context: context,
-        );
-
-        final klass = generator.generateClass(model);
-
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
-        final generated = format(klass.accept(emitter).toString());
-
-        const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-          final maps = <Map<String, String>>[];
-          if (a != null) {
-            final Map<String, String> aSimple = a!.simpleProperties( 
-              allowEmpty: allowEmpty, 
-            );
-            maps.add(aSimple);
-          }
-          if (b != null) {
-            final Map<String, String> bSimple = b!.simpleProperties( 
-              allowEmpty: allowEmpty, 
-            );
-            maps.add(bSimple);
-          }
-          if (maps.isEmpty) return <String, String>{};
-          final map = <String, String>{};
-          for (final m in maps) {
-            map.addAll(m);
-          }
-          return map;
-        }
-      ''';
-
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedMethod)),
-        );
-      },
-    );
-
-    test(
-      'throws exception when mixed complex and primitive values are set',
-      () {
-        final user = ClassModel(
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = AnyOfModel(
-          name: 'MixedSimple',
-          models: {
-            (discriminatorValue: 'user', model: user),
-            (discriminatorValue: 'str', model: StringModel(context: context)),
-          },
-          discriminator: 'disc',
-          context: context,
-        );
-
-        final klass = generator.generateClass(model);
-
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
-        final generated = format(klass.accept(emitter).toString());
-
-        const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-          final maps = <Map<String, String>>[];
-          if (user != null) {
-            final Map<String, String> userSimple = user!.simpleProperties( 
-              allowEmpty: allowEmpty, 
-            );
-            maps.add(userSimple);
-          }
-          if (string != null) {
-            throw EncodingException(
-              'simpleProperties not supported for MixedSimple: mixing simple and complex values',
-            );
-          }
-          if (maps.isEmpty) return <String, String>{};
-          final map = <String, String>{};
-          for (final m in maps) {
-            map.addAll(m);
-          }
-          return map;
         }
       ''';
 

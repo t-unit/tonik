@@ -513,6 +513,74 @@ Map<String, String> parameterProperties({
     });
 
     test(
+      'generates runtime check with null checks for optional (not required) '
+      'oneOf property',
+      () {
+        final oneOfModel = OneOfModel(
+          name: 'StringOrClass',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'NestedClass',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'value',
+              model: oneOfModel,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final result = <String, String>{};
+  if (value != null && value!.currentEncodingShape != EncodingShape.simple) {
+    throw EncodingException(
+      'parameterProperties not supported for Container: contains complex types',
+    );
+  }
+  if (value != null) {
+    result.addAll(value!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
       'handles class with multiple properties (mixed optimized/runtime checks)',
       () {
         final oneOfModel1 = OneOfModel(
@@ -660,13 +728,13 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
     );
   }
   result.addAll(data1.parameterProperties(allowEmpty: allowEmpty));
-  if (data2 != null && data2.currentEncodingShape != EncodingShape.simple) {
+  if (data2 != null && data2!.currentEncodingShape != EncodingShape.simple) {
     throw EncodingException(
       'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
   if (data2 != null) {
-    result.addAll(data2.parameterProperties(allowEmpty: allowEmpty));
+    result.addAll(data2!.parameterProperties(allowEmpty: allowEmpty));
   }
   if (flexible.currentEncodingShape != EncodingShape.simple) {
     throw EncodingException(
