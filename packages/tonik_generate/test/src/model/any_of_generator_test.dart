@@ -5,6 +5,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/any_of_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late AnyOfGenerator generator;
@@ -1211,7 +1212,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
     );
 
     test(
-      'generates complete method for anyOf with dynamic encoding shape and '
+      'generates complete method for anyOf with simple composite and '
       'complex class',
       () {
         final anyOfModel = AnyOfModel(
@@ -1260,25 +1261,13 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         const expectedMethod = r'''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final _$mapValues = <Map<String, String>>[];
-  if (innerChoice != null) {
-    switch (innerChoice!.currentEncodingShape) {
-      case EncodingShape.simple:
-        throw EncodingException(
-          'Cannot encode simple type to map in parameterProperties',
-        );
-      case EncodingShape.complex:
-        _$mapValues.add(
-          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
-        );
-        break;
-      case EncodingShape.mixed:
-        throw EncodingException(
-          'Cannot encode field with mixed encoding shape',
-        );
-    }
-  }
   if (complexData != null) {
     _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  if (innerChoice != null) {
+    throw EncodingException(
+      'Cannot encode anyOf with simple type to map in parameterProperties',
+    );
   }
   final _$map = <String, String>{};
   for (final m in _$mapValues) {
@@ -1388,6 +1377,177 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       expect(
         collapseWhitespace(generated),
         collapseWhitespace(expectedMethod),
+      );
+    });
+  });
+
+  group('AnyOfGenerator with nested composite models', () {
+    test('handles AllOfModel with simple encoding shape correctly', () {
+      final allOfModel = AllOfModel(
+        name: 'SimpleAllOf',
+        models: {
+          StringModel(context: context),
+          EnumModel<String>(
+            values: const {'value1', 'value2'},
+            isNullable: false,
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (discriminatorValue: 'simple', model: allOfModel),
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generatedCode = klass.accept(emitter).toString();
+
+      expect(allOfModel.encodingShape, EncodingShape.simple);
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+      );
+    });
+
+    test('handles AllOfModel with complex encoding shape correctly', () {
+      final allOfModel = AllOfModel(
+        name: 'ComplexAllOf',
+        models: {
+          ClassModel(name: 'Model1', properties: const [], context: context),
+          ClassModel(name: 'Model2', properties: const [], context: context),
+        },
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (discriminatorValue: 'complex', model: allOfModel),
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generatedCode = klass.accept(emitter).toString();
+
+      expect(allOfModel.encodingShape, EncodingShape.complex);
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+      );
+    });
+
+    test('handles AllOfModel with mixed encoding shape correctly', () {
+      final allOfModel = AllOfModel(
+        name: 'MixedAllOf',
+        models: {
+          StringModel(context: context),
+          ClassModel(name: 'Model1', properties: const [], context: context),
+        },
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (discriminatorValue: 'mixed', model: allOfModel),
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generatedCode = klass.accept(emitter).toString();
+
+      expect(allOfModel.encodingShape, EncodingShape.mixed);
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+      );
+    });
+
+    test('handles OneOfModel with simple encoding shape correctly', () {
+      final oneOfModel = OneOfModel(
+        name: 'SimpleOneOf',
+        models: {
+          (discriminatorValue: 'str', model: StringModel(context: context)),
+          (discriminatorValue: 'int', model: IntegerModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (discriminatorValue: 'oneof', model: oneOfModel),
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generatedCode = klass.accept(emitter).toString();
+
+      expect(oneOfModel.encodingShape, EncodingShape.simple);
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+      );
+    });
+
+    test('handles nested AnyOfModel with complex encoding shape correctly', () {
+      final nestedAnyOfModel = AnyOfModel(
+        name: 'NestedAnyOf',
+        models: {
+          (
+            discriminatorValue: 'class',
+            model: ClassModel(
+              name: 'Model1',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'list',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (discriminatorValue: 'nested', model: nestedAnyOfModel),
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generatedCode = klass.accept(emitter).toString();
+
+      expect(nestedAnyOfModel.encodingShape, EncodingShape.complex);
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
       );
     });
   });

@@ -1172,16 +1172,10 @@ class AnyOfGenerator {
       final discValue = discMap[n.property.model];
       final fieldModel = n.property.model;
 
-      final isComposite =
-          fieldModel is AnyOfModel ||
-          fieldModel is OneOfModel ||
-          fieldModel is AllOfModel;
-
       final needsProcessing =
           needsMapValues &&
-          (fieldModel.encodingShape != EncodingShape.simple ||
-              fieldModel.encodingShape == EncodingShape.mixed ||
-              isComposite);
+          (fieldModel.encodingShape == EncodingShape.complex ||
+              fieldModel.encodingShape == EncodingShape.mixed);
 
       if (needsProcessing) {
         body
@@ -1203,12 +1197,7 @@ class AnyOfGenerator {
         final name = n.normalizedName;
         final fieldModel = n.property.model;
 
-        final isComposite =
-            fieldModel is AnyOfModel ||
-            fieldModel is OneOfModel ||
-            fieldModel is AllOfModel;
-
-        if (fieldModel.encodingShape == EncodingShape.simple && !isComposite) {
+        if (fieldModel.encodingShape == EncodingShape.simple) {
           body.addAll([
             Code('if ($name != null) {'),
             generateEncodingExceptionExpression(
@@ -1271,30 +1260,20 @@ class AnyOfGenerator {
   }) {
     final codes = <Code>[];
 
-    final isComposite =
-        fieldModel is AnyOfModel ||
-        fieldModel is OneOfModel ||
-        fieldModel is AllOfModel;
+    if (fieldModel.encodingShape == EncodingShape.complex) {
+      codes.add(
+        Code(
+          r'_$mapValues.add('
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
+        ),
+      );
 
-    final needsRuntimeCheck =
-        fieldModel.encodingShape == EncodingShape.mixed || isComposite;
-
-    if (!needsRuntimeCheck) {
-      if (fieldModel.encodingShape == EncodingShape.complex) {
+      if (discriminatorValue != null) {
         codes.add(
-          Code(
-            r'_$mapValues.add('
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
-          ),
+          Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
         );
-
-        if (discriminatorValue != null) {
-          codes.add(
-            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
-          );
-        }
       }
-    } else {
+    } else if (fieldModel.encodingShape == EncodingShape.mixed) {
       final encodingShapeRef = refer(
         'EncodingShape',
         'package:tonik_util/tonik_util.dart',
