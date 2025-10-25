@@ -295,7 +295,7 @@ void main() {
       final map = {'x': '1', 'y': '2'};
       expect(
         map.toMatrix('point', explode: true, allowEmpty: true),
-        ';point.x=1;point.y=2',
+        ';x=1;y=2',
       );
     });
 
@@ -303,7 +303,7 @@ void main() {
       final map = {'x': '1', 'y': '2'};
       expect(
         map.toMatrix('point', explode: true, allowEmpty: false),
-        ';point.x=1;point.y=2',
+        ';x=1;y=2',
       );
     });
 
@@ -337,7 +337,7 @@ void main() {
       final map = {'key & name': 'value,test', 'other': 'normal'};
       expect(
         map.toMatrix('data', explode: true, allowEmpty: true),
-        ';data.key%20%26%20name=value%2Ctest;data.other=normal',
+        ';key%20%26%20name=value%2Ctest;other=normal',
       );
     });
 
@@ -363,7 +363,7 @@ void main() {
           allowEmpty: true,
           alreadyEncoded: true,
         ),
-        ';point.x=1%2C2;point.y=3%2C4',
+        ';x=1%2C2;y=3%2C4',
       );
     });
 
@@ -371,7 +371,7 @@ void main() {
       final map = {'single': 'value'};
       expect(
         map.toMatrix('item', explode: true, allowEmpty: true),
-        ';item.single=value',
+        ';single=value',
       );
     });
   });

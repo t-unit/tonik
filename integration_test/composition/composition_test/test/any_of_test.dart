@@ -9,6 +9,15 @@ void main() {
       expect(anyOf.toJson(), 'hello');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'hello');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'hello');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'hello');
+      expect(
+        anyOf.toMatrix('anyOf', explode: false, allowEmpty: true),
+        ';anyOf=hello',
+      );
+      expect(
+        anyOf.toMatrix('anyOf', explode: true, allowEmpty: true),
+        ';anyOf=hello',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -18,6 +27,15 @@ void main() {
       expect(anyOf.toJson(), 42);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '42');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), '42');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), '42');
+      expect(
+        anyOf.toMatrix('anyOf', explode: false, allowEmpty: true),
+        ';anyOf=42',
+      );
+      expect(
+        anyOf.toMatrix('anyOf', explode: true, allowEmpty: true),
+        ';anyOf=42',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -27,6 +45,15 @@ void main() {
       expect(anyOf.toJson(), true);
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'true');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'true');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'true');
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=true',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';asdf=true',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -42,6 +69,10 @@ void main() {
         () => anyOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => anyOf.toMatrix('paramName', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -54,6 +85,14 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'name=Alice');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'name=Alice');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'name,Alice');
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=name,Alice',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';name=Alice',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -64,6 +103,14 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'number=123');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'number=123');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'number,123');
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=number,123',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';number=123',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -86,6 +133,14 @@ void main() {
         anyOf.toSimple(explode: false, allowEmpty: true),
         'name,Alice,number,123',
       );
+      expect(
+        anyOf.toMatrix('io', explode: false, allowEmpty: true),
+        ';io=name,Alice,number,123',
+      );
+      expect(
+        anyOf.toMatrix('io', explode: true, allowEmpty: true),
+        ';name=Alice;number=123',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -97,6 +152,9 @@ void main() {
       expect(anyOf.toJson(), 'value1');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'value1');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value1');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'value1');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=value1');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=value1');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -106,6 +164,9 @@ void main() {
       expect(anyOf.toJson(), 2);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '2');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), '2');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), '2');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=2');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=2');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -121,6 +182,10 @@ void main() {
         () => anyOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -132,6 +197,9 @@ void main() {
       expect(anyOf.toJson(), 42);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '42');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), '42');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), '42');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=42');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=42');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -142,6 +210,8 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'number=123');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'number=123');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'number,123');
+      expect(anyOf.toMatrix('value', explode: false, allowEmpty: true), ';value=number,123');
+      expect(anyOf.toMatrix('value', explode: true, allowEmpty: true), ';number=123');
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -151,6 +221,9 @@ void main() {
       expect(anyOf.toJson(), 1);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '1');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), '1');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), '1');
+      expect(anyOf.toMatrix('value', explode: false, allowEmpty: true), ';value=1');
+      expect(anyOf.toMatrix('value', explode: true, allowEmpty: true), ';value=1');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -164,6 +237,10 @@ void main() {
       );
       expect(
         () => anyOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -191,6 +268,14 @@ void main() {
         anyOf.toSimple(explode: false, allowEmpty: true),
         'name,Bob,timestamp,123',
       );
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=name,Bob,timestamp,123',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';name=Bob;timestamp=123',
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -213,6 +298,14 @@ void main() {
       expect(
         anyOf.toSimple(explode: false, allowEmpty: true),
         'number,456,timestamp,123',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=number,456,timestamp,123',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';number=456;timestamp=123',
       );
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
@@ -238,6 +331,10 @@ void main() {
         () => anyOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.mixed);
     });
@@ -252,7 +349,14 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'name=Charlie');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'name=Charlie');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'name,Charlie');
-
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=name,Charlie',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';name=Charlie',
+      );
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
   });
@@ -267,6 +371,9 @@ void main() {
       expect(anyOf.toJson(), 'value2');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'value2');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value2');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'value2');
+      expect(anyOf.toMatrix('zxcv', explode: false, allowEmpty: true), ';zxcv=value2');
+      expect(anyOf.toMatrix('zxcv', explode: true, allowEmpty: true), ';zxcv=value2');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -277,6 +384,9 @@ void main() {
       expect(anyOf.toJson(), 3.14);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '3.14');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), '3.14');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), '3.14');
+      expect(anyOf.toMatrix('zxcv', explode: false, allowEmpty: true), ';zxcv=3.14');
+      expect(anyOf.toMatrix('zxcv', explode: true, allowEmpty: true), ';zxcv=3.14');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -296,6 +406,10 @@ void main() {
         () => anyOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -308,6 +422,9 @@ void main() {
       expect(anyOf.toJson(), 'test');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'test');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'test');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'test');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=test');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=test');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -321,6 +438,8 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'name=test');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'name=test');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'name,test');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=name,test');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';name=test');
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -334,6 +453,8 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'number=42');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'number=42');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'number,42');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=number,42');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';number=42');
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -346,6 +467,9 @@ void main() {
       expect(anyOf.toJson(), 'deep');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'deep');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'deep');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'deep');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=deep');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=deep');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -358,6 +482,9 @@ void main() {
       expect(anyOf.toJson(), 'value1');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'value1');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value1');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'value1');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=value1');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=value1');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -375,6 +502,8 @@ void main() {
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'name=test');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'name=test');
       expect(anyOf.toSimple(explode: false, allowEmpty: true), 'name,test');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=name,test');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';name=test');
 
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -387,6 +516,9 @@ void main() {
       expect(anyOf.toJson(), 'value1');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'value1');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value1');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'value1');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=value1');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=value1');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -402,6 +534,9 @@ void main() {
       expect(anyOf.toJson(), 'test');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'test');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'test');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'test');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=test');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=test');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -418,6 +553,9 @@ void main() {
       expect(anyOf.toJson(), 'value1');
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'value1');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value1');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'value1');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=value1');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=value1');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });
@@ -432,6 +570,9 @@ void main() {
       expect(anyOf.toJson(), 2);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '2');
       expect(anyOf.toSimple(explode: true, allowEmpty: true), '2');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), '2');
+      expect(anyOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=2');
+      expect(anyOf.toMatrix('asdf', explode: true, allowEmpty: true), ';asdf=2');
 
       expect(anyOf.currentEncodingShape, EncodingShape.simple);
     });

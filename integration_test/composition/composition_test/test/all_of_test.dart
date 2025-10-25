@@ -14,6 +14,14 @@ void main() {
       expect(allOf.toForm(explode: true, allowEmpty: true), 'id=1&count=1');
       expect(allOf.toSimple(explode: true, allowEmpty: true), 'id=1,count=1');
       expect(allOf.toSimple(explode: false, allowEmpty: true), 'id,1,count,1');
+      expect(
+        allOf.toMatrix('allOf', explode: false, allowEmpty: true),
+        ';allOf=id,1,count,1',
+      );
+      expect(
+        allOf.toMatrix('allOf', explode: true, allowEmpty: true),
+        ';id=1;count=1',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -35,6 +43,14 @@ void main() {
         allOf.toSimple(explode: false, allowEmpty: true),
         'name,1,number,1',
       );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=name,1,number,1',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';name=1;number=1',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -55,6 +71,14 @@ void main() {
         allOf.toSimple(explode: true, allowEmpty: true),
         'status=value1,priority=1',
       );
+      expect(
+        allOf.toMatrix('1234', explode: false, allowEmpty: true),
+        ';1234=status,value1,priority,1',
+      );
+      expect(
+        allOf.toMatrix('1234', explode: true, allowEmpty: true),
+        ';status=value1;priority=1',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -73,6 +97,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('paramName', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -101,6 +129,14 @@ void main() {
         allOf.toSimple(explode: false, allowEmpty: true),
         'name,Albert,number,1,extra,extra',
       );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=name,Albert,number,1,extra,extra',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';name=Albert;number=1;extra=extra',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -122,6 +158,10 @@ void main() {
         () => allOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => allOf.toMatrix('name', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.mixed);
     });
@@ -139,6 +179,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('int', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -168,6 +212,14 @@ void main() {
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
         'id,123,name,Albert,active,true',
+      );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=id,123,name,Albert,active,true',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';id=123;name=Albert;active=true',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -211,6 +263,14 @@ void main() {
         allOf.toSimple(explode: false, allowEmpty: true),
         'id,123,name,Albert,email,albert%40example.com,verified,true',
       );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=id,123,name,Albert,email,albert%40example.com,verified,true',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';id=123;name=Albert;email=albert%40example.com;verified=true',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -232,6 +292,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('int', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -257,6 +321,10 @@ void main() {
         () => allOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => allOf.toMatrix('string', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
     });
 
     test('integeger and string', () {
@@ -277,6 +345,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('int', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -304,6 +376,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('enum1', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -335,6 +411,14 @@ void main() {
         allOf.toSimple(explode: false, allowEmpty: true),
         'name,qwerty,metadata,asdf',
       );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=name,qwerty,metadata,asdf',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';name=qwerty;metadata=asdf',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -354,6 +438,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('string', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -386,6 +474,10 @@ void main() {
         () => allOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
+      expect(
+        () => allOf.toMatrix('x', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.mixed);
     });
@@ -408,6 +500,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('int', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -437,6 +533,14 @@ void main() {
         allOf.toSimple(explode: false, allowEmpty: true),
         'base,test,name,Albert',
       );
+      expect(
+        allOf.toMatrix('complexNestedMix', explode: false, allowEmpty: true),
+        ';complexNestedMix=base,test,name,Albert',
+      );
+      expect(
+        allOf.toMatrix('complexNestedMix', explode: true, allowEmpty: true),
+        ';base=test;name=Albert',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -462,6 +566,14 @@ void main() {
         allOf.toSimple(explode: false, allowEmpty: true),
         'base,test,number,42',
       );
+      expect(
+        allOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=base,test,number,42',
+      );
+      expect(
+        allOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';base=test;number=42',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -477,9 +589,26 @@ void main() {
       );
 
       expect(allOf.toJson(), {'level1': 'test', 'level2': 42});
-      expect(allOf.toForm(explode: true, allowEmpty: true), 'level1=test&level2=42');
-      expect(allOf.toSimple(explode: true, allowEmpty: true), 'level1=test,level2=42');
-      expect(allOf.toSimple(explode: false, allowEmpty: true), 'level1,test,level2,42');
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'level1=test&level2=42',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'level1=test,level2=42',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'level1,test,level2,42',
+      );
+      expect(
+        allOf.toMatrix('level1', explode: false, allowEmpty: true),
+        ';level1=level1,test,level2,42',
+      );
+      expect(
+        allOf.toMatrix('level1', explode: true, allowEmpty: true),
+        ';level1=test;level2=42',
+      );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -501,11 +630,15 @@ void main() {
         'level2': 42,
       });
       expect(
-       () => allOf.toForm(explode: true, allowEmpty: true),
+        () => allOf.toForm(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('level1', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -532,6 +665,10 @@ void main() {
       );
       expect(
         () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('level1', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 

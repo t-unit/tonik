@@ -151,7 +151,7 @@ extension MatrixStringMapEncoder on Map<String, String> {
       return entries
           .map(
             (e) =>
-                ';$paramName.${Uri.encodeComponent(e.key)}='
+                ';${Uri.encodeComponent(e.key)}='
                 '${alreadyEncoded ? e.value : Uri.encodeComponent(e.value)}',
           )
           .join();
