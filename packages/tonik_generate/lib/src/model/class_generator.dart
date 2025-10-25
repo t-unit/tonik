@@ -415,7 +415,6 @@ class ClassGenerator {
     return _buildMixedParameterPropertiesMethod(className, properties);
   }
 
-  /// Builds parameterProperties method for classes with only simple properties.
   Method _buildSimpleParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
@@ -507,7 +506,6 @@ if ($name != null) {
     );
   }
 
-  /// Builds parameterProperties method for classes with complex properties.
   Method _buildComplexParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
@@ -536,7 +534,6 @@ if ($name != null) {
     );
   }
 
-  /// Builds parameterProperties method for classes with composite properties.
   Method _buildMixedParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,

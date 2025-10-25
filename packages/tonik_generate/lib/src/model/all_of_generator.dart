@@ -15,6 +15,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -1551,6 +1552,72 @@ class AllOfGenerator {
     }
 
     if (model.hasComplexTypes) {
+      // Check if all complex types are lists with simple content
+      final allComplexAreSimpleLists = normalizedProperties
+          .where((p) => p.property.model.encodingShape == EncodingShape.complex)
+          .every(
+            (p) =>
+                p.property.model is ListModel &&
+                (p.property.model as ListModel).hasSimpleContent,
+          );
+
+      if (allComplexAreSimpleLists) {
+        // Lists with simple content can be encoded directly with toMatrix
+        final valueCollectionCode = <Code>[
+          declareFinal(
+            'values',
+          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        ];
+
+        for (final prop in normalizedProperties) {
+          valueCollectionCode.addAll([
+            declareFinal('${prop.normalizedName}Matrix')
+                .assign(
+                  buildMatrixParameterExpression(
+                    refer(prop.normalizedName),
+                    prop.property.model,
+                    paramName: refer('paramName'),
+                    explode: refer('explode'),
+                    allowEmpty: refer('allowEmpty'),
+                  ),
+                )
+                .statement,
+            refer('values').property('add').call([
+              refer('${prop.normalizedName}Matrix'),
+            ]).statement,
+          ]);
+        }
+
+        valueCollectionCode.addAll([
+          const Code('if (values.length > 1) {'),
+          generateEncodingExceptionExpression(
+            'Inconsistent allOf matrix encoding for $className: '
+            'all values must encode to the same result',
+          ).statement,
+          const Code('}'),
+          const Code('return values.first;'),
+        ]);
+
+        return Method(
+          (b) =>
+              b
+                ..name = 'toMatrix'
+                ..returns = refer('String', 'dart:core')
+                ..requiredParameters.add(
+                  Parameter(
+                    (b) =>
+                        b
+                          ..name = 'paramName'
+                          ..type = refer('String', 'dart:core'),
+                  ),
+                )
+                ..optionalParameters.addAll(buildEncodingParameters())
+                ..lambda = false
+                ..body = Block.of(valueCollectionCode),
+        );
+      }
+
+      // For non-list complex types, use parameterProperties
       final propertyMergingLines = [
         declareFinal(
           'mergedProperties',
@@ -1638,15 +1705,13 @@ class AllOfGenerator {
       valueCollectionCode.addAll([
         declareFinal('${prop.normalizedName}Matrix')
             .assign(
-              refer(prop.normalizedName)
-                  .property('toMatrix')
-                  .call(
-                    [refer('paramName')],
-                    {
-                      'explode': refer('explode'),
-                      'allowEmpty': refer('allowEmpty'),
-                    },
-                  ),
+              buildMatrixParameterExpression(
+                refer(prop.normalizedName),
+                prop.property.model,
+                paramName: refer('paramName'),
+                explode: refer('explode'),
+                allowEmpty: refer('allowEmpty'),
+              ),
             )
             .statement,
         refer('values').property('add').call([

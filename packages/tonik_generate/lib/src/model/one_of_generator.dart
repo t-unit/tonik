@@ -12,6 +12,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -106,6 +107,7 @@ class OneOfGenerator {
               _generateToSimpleMethod(className, model, variantNames),
               _generateToFormMethod(className, model, variantNames),
               _generateToLabelMethod(className, model, variantNames),
+              _generateToMatrixMethod(className, model, variantNames),
               Method(
                 (b) =>
                     b
@@ -1114,6 +1116,56 @@ class OneOfGenerator {
           b
             ..name = 'toLabel'
             ..returns = refer('String', 'dart:core')
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = body,
+    );
+  }
+
+  Method _generateToMatrixMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+
+      caseCodes.addAll([
+        Code.scope(
+          (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+        ),
+        buildMatrixParameterExpression(
+          refer('value'),
+          m.model,
+          paramName: refer('paramName'),
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+        ).code,
+        const Code(','),
+      ]);
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toMatrix'
+            ..returns = refer('String', 'dart:core')
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
             ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = body,

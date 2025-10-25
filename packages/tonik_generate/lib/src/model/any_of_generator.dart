@@ -15,6 +15,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -1487,13 +1488,20 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape == EncodingShape.simple &&
-              model.encodingShape != EncodingShape.mixed;
+          // Lists with simple content can be encoded directly to strings
+          if (model is ListModel) {
+            return model.hasSimpleContent;
+          }
+          return model.encodingShape == EncodingShape.simple;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
+          // Lists with complex content need parameterProperties
+          if (model is ListModel) {
+            return !model.hasSimpleContent;
+          }
           return model.encodingShape != EncodingShape.simple;
         });
 
@@ -1649,29 +1657,56 @@ class AnyOfGenerator {
 
     if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
-        Code(
-          'final $tmpVarName = $fieldName!.toMatrix(paramName, '
-          'explode: explode, allowEmpty: allowEmpty);',
-        ),
+        Block.of([
+          Code('final $tmpVarName = '),
+          buildMatrixParameterExpression(
+            refer(fieldName).nullChecked,
+            fieldModel,
+            paramName: refer('paramName'),
+            explode: refer('explode'),
+            allowEmpty: refer('allowEmpty'),
+          ).statement,
+        ]),
       );
       if (needsValues) {
         codes.add(Code('values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      codes.add(
-        Code(
-          'final $tmpVarName = '
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
-        ),
-      );
-      if (needsMapValues) {
-        codes.add(Code('mapValues.add($tmpVarName);'));
-      }
-
-      if (discriminatorValue != null) {
+      // Lists with simple content can be encoded directly with toMatrix
+      if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
-          Code("discriminatorValue ??= r'$discriminatorValue';"),
+          Block.of([
+            Code('final $tmpVarName = '),
+            buildMatrixParameterExpression(
+              refer(fieldName).nullChecked,
+              fieldModel,
+              paramName: refer('paramName'),
+              explode: refer('explode'),
+              allowEmpty: refer('allowEmpty'),
+            ).statement,
+          ]),
         );
+        if (needsValues) {
+          codes.add(Code('values.add($tmpVarName);'));
+        }
+      } else {
+        // For complex types (including lists with complex content), 
+        // use parameterProperties
+        codes.add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+        if (needsMapValues) {
+          codes.add(Code('mapValues.add($tmpVarName);'));
+        }
+
+        if (discriminatorValue != null) {
+          codes.add(
+            Code("discriminatorValue ??= r'$discriminatorValue';"),
+          );
+        }
       }
     } else {
       final encodingShapeRef = refer(
@@ -1679,49 +1714,75 @@ class AnyOfGenerator {
         'package:tonik_util/tonik_util.dart',
       );
 
-      codes
-        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
-        ..add(const Code('case '))
-        ..add(encodingShapeRef.property('simple').code)
-        ..add(const Code(':'));
-      if (needsValues) {
+      // For mixed encoding shape, check at runtime if it's a list
+      if (fieldModel is ListModel) {
+        // Lists can be encoded directly even though they have complex shape
         codes.add(
-          Code(
-            'values.add($fieldName!.toMatrix(paramName, '
-            'explode: explode, allowEmpty: allowEmpty));',
-          ),
+          Block.of([
+            Code('final $tmpVarName = '),
+            buildMatrixParameterExpression(
+              refer(fieldName).nullChecked,
+              fieldModel,
+              paramName: refer('paramName'),
+              explode: refer('explode'),
+              allowEmpty: refer('allowEmpty'),
+            ).statement,
+          ]),
         );
-      }
-      codes
-        ..add(const Code('break;'))
-        ..add(const Code('case '))
-        ..add(encodingShapeRef.property('complex').code)
-        ..add(const Code(':'))
-        ..add(
-          Code(
-            'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
-          ),
-        );
-      if (needsMapValues) {
-        codes.add(Code('mapValues.add($tmpVarName);'));
-      }
+        if (needsValues) {
+          codes.add(Code('values.add($tmpVarName);'));
+        }
+      } else {
+        // For non-list mixed types, use runtime switch
+        codes
+          ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+          ..add(const Code('case '))
+          ..add(encodingShapeRef.property('simple').code)
+          ..add(const Code(':'));
+        if (needsValues) {
+          codes.add(
+            refer('values').property('add').call([
+              buildMatrixParameterExpression(
+                refer(fieldName).nullChecked,
+                fieldModel,
+                paramName: refer('paramName'),
+                explode: refer('explode'),
+                allowEmpty: refer('allowEmpty'),
+              ),
+            ]).statement,
+          );
+        }
+        codes
+          ..add(const Code('break;'))
+          ..add(const Code('case '))
+          ..add(encodingShapeRef.property('complex').code)
+          ..add(const Code(':'))
+          ..add(
+            Code(
+              'final $tmpVarName = '
+              '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+            ),
+          );
+        if (needsMapValues) {
+          codes.add(Code('mapValues.add($tmpVarName);'));
+        }
 
-      if (discriminatorValue != null) {
-        codes.add(Code("discriminatorValue ??= r'$discriminatorValue';"));
-      }
+        if (discriminatorValue != null) {
+          codes.add(Code("discriminatorValue ??= r'$discriminatorValue';"));
+        }
 
-      codes
-        ..add(const Code('break;'))
-        ..add(const Code('case '))
-        ..add(encodingShapeRef.property('mixed').code)
-        ..add(const Code(':'))
-        ..add(
-          generateEncodingExceptionExpression(
-            'Cannot encode field with mixed encoding shape',
-          ).statement,
-        )
-        ..add(const Code('}'));
+        codes
+          ..add(const Code('break;'))
+          ..add(const Code('case '))
+          ..add(encodingShapeRef.property('mixed').code)
+          ..add(const Code(':'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Cannot encode field with mixed encoding shape',
+            ).statement,
+          )
+          ..add(const Code('}'));
+      }
     }
 
     return codes;

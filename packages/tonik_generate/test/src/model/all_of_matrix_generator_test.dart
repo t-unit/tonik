@@ -443,5 +443,145 @@ void main() {
         contains(collapseWhitespace(format(expectedMethod))),
       );
     });
+
+    group('toMatrix with list models', () {
+      test('generates toMatrix for AllOf with List<String> model', () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final model = AllOfModel(
+          name: 'AllOfList',
+          models: {listModel},
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final values = <String>{};
+            final listMatrix = list.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(listMatrix);
+            if (values.length > 1) {
+              throw EncodingException(
+                'Inconsistent allOf matrix encoding for AllOfList: all values must encode to the same result',
+              );
+            }
+            return values.first;
+          }
+        ''';
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toMatrix for AllOf with List<int> model', () {
+        final listModel = ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        );
+
+        final model = AllOfModel(
+          name: 'AllOfIntList',
+          models: {listModel},
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final values = <String>{};
+            final listMatrix = list
+                .map(
+                  (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                )
+                .toList()
+                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+            values.add(listMatrix);
+            if (values.length > 1) {
+              throw EncodingException(
+                'Inconsistent allOf matrix encoding for AllOfIntList: all values must encode to the same result',
+              );
+            }
+            return values.first;
+          }
+        ''';
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toMatrix for AllOf with multiple list models', () {
+        final listStringModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+        final listIntModel = ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        );
+
+        final model = AllOfModel(
+          name: 'AllOfMultipleLists',
+          models: {listStringModel, listIntModel},
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final values = <String>{};
+            final listMatrix = list.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(listMatrix);
+            final list2Matrix = list2
+                .map(
+                  (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                )
+                .toList()
+                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+            values.add(list2Matrix);
+            if (values.length > 1) {
+              throw EncodingException(
+                'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',
+              );
+            }
+            return values.first;
+          }
+        ''';
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
   });
 }

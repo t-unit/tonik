@@ -90,6 +90,8 @@ class ListModel extends Model with NamedModel {
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
 
+  bool get hasSimpleContent => content.encodingShape == EncodingShape.simple;
+
   @override
   String toString() => 'ListModel{name: $name, content: $content}';
 }

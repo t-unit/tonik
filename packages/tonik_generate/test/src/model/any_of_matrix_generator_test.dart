@@ -560,5 +560,184 @@ void main() {
         contains(collapseWhitespace(expected)),
       );
     });
+
+    group('toMatrix with list models', () {
+      test('generates toMatrix for AnyOf with List<String> variant', () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'StringOrList',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: listModel),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final values = <String>{};
+            if (string != null) {
+              final stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(stringMatrix);
+            }
+            if (list != null) {
+              final listMatrix = list!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(listMatrix);
+            }
+            if (values.isEmpty) return '';
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf matrix encoding for StringOrList: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          }
+        ''';
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toMatrix for AnyOf with List<int> variant', () {
+        final listModel = ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'StringOrIntList',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: listModel),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final values = <String>{};
+            if (string != null) {
+              final stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(stringMatrix);
+            }
+            if (list != null) {
+              final listMatrix = list!
+                  .map(
+                    (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                  )
+                  .toList()
+                  .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+              values.add(listMatrix);
+            }
+            if (values.isEmpty) return '';
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf matrix encoding for StringOrIntList: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          }
+        ''';
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toMatrix for AnyOf with only list variants', () {
+        final listStringModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+        final listIntModel = ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'StringListOrIntList',
+          models: {
+            (discriminatorValue: null, model: listStringModel),
+            (discriminatorValue: null, model: listIntModel),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          String toMatrix(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+          }) {
+            final values = <String>{};
+            if (list != null) {
+              final listMatrix = list!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(listMatrix);
+            }
+            if (list2 != null) {
+              final list2Matrix = list2!
+                  .map(
+                    (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                  )
+                  .toList()
+                  .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+              values.add(list2Matrix);
+            }
+            if (values.isEmpty) return '';
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf matrix encoding for StringListOrIntList: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          }
+        ''';
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
   });
 }
