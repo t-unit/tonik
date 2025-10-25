@@ -105,7 +105,7 @@ class Date {
     bool useQueryComponent = false,
   }) {
     final dateString = toString();
-    return useQueryComponent 
+    return useQueryComponent
         ? Uri.encodeQueryComponent(dateString)
         : Uri.encodeComponent(dateString);
   }

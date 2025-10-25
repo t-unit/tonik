@@ -141,24 +141,6 @@ class AnyOfGenerator {
               .toList(),
     );
 
-    final toJsonMethod = _buildToJsonMethod(
-      className,
-      model,
-      normalized,
-    );
-
-    final toSimpleMethod = _buildToSimpleMethod(
-      className,
-      model,
-      normalized,
-    );
-
-    final toFormMethod = _buildToFormMethod(
-      className,
-      model,
-      normalized,
-    );
-
     return Class(
       (b) =>
           b
@@ -170,11 +152,12 @@ class AnyOfGenerator {
             ..constructors.add(fromFormCtor)
             ..methods.addAll([
               _buildCurrentEncodingShapeGetter(className, normalized),
-              toJsonMethod,
+              _buildToJsonMethod(className, model, normalized),
               _buildParameterPropertiesMethod(className, model, normalized),
-              toSimpleMethod,
-              toFormMethod,
+              _buildToSimpleMethod(className, model, normalized),
+              _buildToFormMethod(className, model, normalized),
               _buildToLabelMethod(className, model, normalized),
+              _buildToMatrixMethod(className, model, normalized),
               generateEqualsMethod(
                 className: className,
                 properties: propsForEquality,
@@ -192,12 +175,6 @@ class AnyOfGenerator {
     package,
     isNullableOverride: true,
   );
-
-  /// Generates encoding code for a field with proper shape handling.
-  ///
-  /// For static types (primitives, classes), generates direct method calls.
-  /// For dynamic types (oneOf, anyOf, allOf), generates runtime switch on
-  /// currentEncodingShape.
   List<Code> _generateFieldEncoding({
     required String fieldName,
     required Model fieldModel,
@@ -210,33 +187,31 @@ class AnyOfGenerator {
     final toMethodName = isForm ? 'toForm' : 'toSimple';
     final codes = <Code>[];
 
-    if (fieldModel.encodingShape != EncodingShape.mixed) {
-      if (fieldModel.encodingShape == EncodingShape.simple) {
-        codes.add(
-          Code(
-            'final $tmpVarName = $fieldName!.$toMethodName( '
-            'explode: explode, allowEmpty: allowEmpty);',
-          ),
-        );
-        if (needsValues) {
-          codes.add(Code('values.add($tmpVarName);'));
-        }
-      } else {
-        codes.add(
-          Code(
-            'final $tmpVarName = '
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
-          ),
-        );
-        if (needsMapValues) {
-          codes.add(Code('mapValues.add($tmpVarName);'));
-        }
+    if (fieldModel.encodingShape == EncodingShape.simple) {
+      codes.add(
+        Code(
+          'final $tmpVarName = $fieldName!.$toMethodName( '
+          'explode: explode, allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsValues) {
+        codes.add(Code('values.add($tmpVarName);'));
+      }
+    } else if (fieldModel.encodingShape == EncodingShape.complex) {
+      codes.add(
+        Code(
+          'final $tmpVarName = '
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsMapValues) {
+        codes.add(Code('mapValues.add($tmpVarName);'));
+      }
 
-        if (discriminatorValue != null) {
-          codes.add(
-            Code("discriminatorValue ??= r'$discriminatorValue';"),
-          );
-        }
+      if (discriminatorValue != null) {
+        codes.add(
+          Code("discriminatorValue ??= r'$discriminatorValue';"),
+        );
       }
     } else {
       final encodingShapeRef = refer(
@@ -253,6 +228,96 @@ class AnyOfGenerator {
         codes.add(
           Code(
             'values.add($fieldName!.$toMethodName('
+            'explode: explode, allowEmpty: allowEmpty));',
+          ),
+        );
+      }
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('complex').code)
+        ..add(const Code(':'))
+        ..add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+      if (needsMapValues) {
+        codes.add(Code('mapValues.add($tmpVarName);'));
+      }
+
+      if (discriminatorValue != null) {
+        codes.add(Code("discriminatorValue ??= r'$discriminatorValue';"));
+      }
+
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('mixed').code)
+        ..add(const Code(':'))
+        ..add(
+          generateEncodingExceptionExpression(
+            'Cannot encode field with mixed encoding shape',
+          ).statement,
+        )
+        ..add(const Code('}'));
+    }
+
+    return codes;
+  }
+
+  List<Code> _generateFieldEncodingLabel({
+    required String fieldName,
+    required Model fieldModel,
+    required String tmpVarName,
+    required bool needsValues,
+    required bool needsMapValues,
+    String? discriminatorValue,
+  }) {
+    final codes = <Code>[];
+
+    if (fieldModel.encodingShape == EncodingShape.simple) {
+      codes.add(
+        Code(
+          'final $tmpVarName = $fieldName!.toLabel( '
+          'explode: explode, allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsValues) {
+        codes.add(Code('values.add($tmpVarName);'));
+      }
+    } else if (fieldModel.encodingShape == EncodingShape.complex) {
+      codes.add(
+        Code(
+          'final $tmpVarName = '
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsMapValues) {
+        codes.add(Code('mapValues.add($tmpVarName);'));
+      }
+
+      if (discriminatorValue != null) {
+        codes.add(
+          Code("discriminatorValue ??= r'$discriminatorValue';"),
+        );
+      }
+    } else {
+      final encodingShapeRef = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      codes
+        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('simple').code)
+        ..add(const Code(':'));
+      if (needsValues) {
+        codes.add(
+          Code(
+            'values.add($fieldName!.toLabel('
             'explode: explode, allowEmpty: allowEmpty));',
           ),
         );
@@ -1281,6 +1346,144 @@ class AnyOfGenerator {
     AnyOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    final hasRuntimeChecks = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+
+    final needsValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape == EncodingShape.simple &&
+              model.encodingShape != EncodingShape.mixed;
+        });
+    final needsMapValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape != EncodingShape.simple;
+        });
+
+    final body = <Code>[];
+
+    if (needsValues) {
+      body.add(
+        declareFinal(
+          'values',
+        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+      );
+    }
+
+    if (needsMapValues) {
+      body.add(
+        declareFinal(
+          'mapValues',
+        ).assign(literalList([], buildMapStringStringType())).statement,
+      );
+    }
+
+    final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
+    if (hasDiscriminator) {
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
+    }
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final discValue = discMap[n.property.model];
+
+      body
+        ..add(Code('if ($name != null) {'))
+        ..addAll(
+          _generateFieldEncodingLabel(
+            fieldName: name,
+            fieldModel: n.property.model,
+            tmpVarName: '${name}Label',
+            needsValues: needsValues,
+            needsMapValues: needsMapValues,
+            discriminatorValue: hasDiscriminator ? discValue : null,
+          ),
+        )
+        ..add(const Code('}'));
+    }
+
+    final mergeBlocks = <Code>[
+      const Code('final map = '),
+      buildEmptyMapStringString().statement,
+    ];
+
+    if (needsMapValues) {
+      mergeBlocks.add(
+        const Code('for (final m in mapValues) { map.addAll(m); }'),
+      );
+    }
+
+    if (hasDiscriminator) {
+      mergeBlocks.addAll([
+        const Code('if (discriminatorValue != null) { '),
+        Code("map.putIfAbsent('${model.discriminator}', () => "),
+        const Code('discriminatorValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+    mergeBlocks
+      ..add(const Code('return map.toLabel('))
+      ..addAll([
+        const Code('explode: explode, '),
+        const Code('allowEmpty: allowEmpty, '),
+        const Code('alreadyEncoded: true'),
+        const Code(');'),
+      ]);
+
+    if (needsValues && needsMapValues) {
+      body.addAll([
+        const Code("if (values.isEmpty && mapValues.isEmpty) return '';"),
+        const Code('if (mapValues.isNotEmpty && values.isNotEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf label encoding for $className: '
+          'mixing simple and complex values',
+        ).statement,
+        const Code('}'),
+        const Code('if (values.isNotEmpty) {'),
+        const Code('if (values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf label encoding for $className: '
+          'multiple values provided, anyOf requires exactly one value',
+        ).statement,
+        const Code('}'),
+        const Code('return values.first;'),
+        const Code('} else {'),
+        ...mergeBlocks,
+        const Code('}'),
+      ]);
+    } else if (needsValues) {
+      body.addAll([
+        const Code("if (values.isEmpty) return '';"),
+        const Code('if (values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf label encoding for $className: '
+          'multiple values provided, anyOf requires exactly one value',
+        ).statement,
+        const Code('}'),
+        const Code('return values.first;'),
+      ]);
+    } else if (needsMapValues) {
+      body.addAll(mergeBlocks);
+    } else {
+      body.add(const Code("return '';"));
+    }
+
     return Method(
       (b) =>
           b
@@ -1288,10 +1491,260 @@ class AnyOfGenerator {
             ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
-            ..body = const Code('''
-              return parameterProperties(allowEmpty: allowEmpty).toLabel(
-                explode: explode, allowEmpty: allowEmpty);
-            '''),
+            ..body = Block.of(body),
     );
+  }
+
+  Method _buildToMatrixMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final hasRuntimeChecks = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+
+    final needsValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape == EncodingShape.simple &&
+              model.encodingShape != EncodingShape.mixed;
+        });
+    final needsMapValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          return model.encodingShape != EncodingShape.simple;
+        });
+
+    final body = <Code>[];
+
+    if (needsValues) {
+      body.add(
+        declareFinal(
+          'values',
+        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+      );
+    }
+
+    if (needsMapValues) {
+      body.add(
+        declareFinal(
+          'mapValues',
+        ).assign(literalList([], buildMapStringStringType())).statement,
+      );
+    }
+
+    final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
+    if (hasDiscriminator) {
+      body
+        ..add(
+          TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'String'
+                  ..url = 'dart:core'
+                  ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(' discriminatorValue;'));
+    }
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final discValue = discMap[n.property.model];
+
+      body
+        ..add(Code('if ($name != null) {'))
+        ..addAll(
+          _generateFieldEncodingMatrix(
+            fieldName: name,
+            fieldModel: n.property.model,
+            tmpVarName: '${name}Matrix',
+            needsValues: needsValues,
+            needsMapValues: needsMapValues,
+            discriminatorValue: hasDiscriminator ? discValue : null,
+          ),
+        )
+        ..add(const Code('}'));
+    }
+
+    final mergeBlocks = <Code>[
+      const Code('final map = '),
+      buildEmptyMapStringString().statement,
+    ];
+
+    if (needsMapValues) {
+      mergeBlocks.add(
+        const Code('for (final m in mapValues) { map.addAll(m); }'),
+      );
+    }
+
+    if (hasDiscriminator) {
+      mergeBlocks.addAll([
+        const Code('if (discriminatorValue != null) { '),
+        Code("map.putIfAbsent('${model.discriminator}', () => "),
+        const Code('discriminatorValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+    mergeBlocks
+      ..add(const Code('return map.toMatrix('))
+      ..addAll([
+        const Code('paramName, '),
+        const Code('explode: explode, '),
+        const Code('allowEmpty: allowEmpty, '),
+        const Code('alreadyEncoded: true'),
+        const Code(');'),
+      ]);
+
+    if (needsValues && needsMapValues) {
+      body.addAll([
+        const Code("if (values.isEmpty && mapValues.isEmpty) return '';"),
+        const Code('if (mapValues.isNotEmpty && values.isNotEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf matrix encoding for $className: '
+          'mixing simple and complex values',
+        ).statement,
+        const Code('}'),
+        const Code('if (values.isNotEmpty) {'),
+        const Code('if (values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf matrix encoding for $className: '
+          'multiple values provided, anyOf requires exactly one value',
+        ).statement,
+        const Code('}'),
+        const Code('return values.first;'),
+        const Code('} else {'),
+        ...mergeBlocks,
+        const Code('}'),
+      ]);
+    } else if (needsValues) {
+      body.addAll([
+        const Code("if (values.isEmpty) return '';"),
+        const Code('if (values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf matrix encoding for $className: '
+          'multiple values provided, anyOf requires exactly one value',
+        ).statement,
+        const Code('}'),
+        const Code('return values.first;'),
+      ]);
+    } else if (needsMapValues) {
+      body.addAll(mergeBlocks);
+    } else {
+      body.add(const Code("return '';"));
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toMatrix'
+            ..returns = refer('String', 'dart:core')
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = Block.of(body),
+    );
+  }
+
+  List<Code> _generateFieldEncodingMatrix({
+    required String fieldName,
+    required Model fieldModel,
+    required String tmpVarName,
+    required bool needsValues,
+    required bool needsMapValues,
+    String? discriminatorValue,
+  }) {
+    final codes = <Code>[];
+
+    if (fieldModel.encodingShape == EncodingShape.simple) {
+      codes.add(
+        Code(
+          'final $tmpVarName = $fieldName!.toMatrix(paramName, '
+          'explode: explode, allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsValues) {
+        codes.add(Code('values.add($tmpVarName);'));
+      }
+    } else if (fieldModel.encodingShape == EncodingShape.complex) {
+      codes.add(
+        Code(
+          'final $tmpVarName = '
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsMapValues) {
+        codes.add(Code('mapValues.add($tmpVarName);'));
+      }
+
+      if (discriminatorValue != null) {
+        codes.add(
+          Code("discriminatorValue ??= r'$discriminatorValue';"),
+        );
+      }
+    } else {
+      final encodingShapeRef = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      codes
+        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('simple').code)
+        ..add(const Code(':'));
+      if (needsValues) {
+        codes.add(
+          Code(
+            'values.add($fieldName!.toMatrix(paramName, '
+            'explode: explode, allowEmpty: allowEmpty));',
+          ),
+        );
+      }
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('complex').code)
+        ..add(const Code(':'))
+        ..add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+      if (needsMapValues) {
+        codes.add(Code('mapValues.add($tmpVarName);'));
+      }
+
+      if (discriminatorValue != null) {
+        codes.add(Code("discriminatorValue ??= r'$discriminatorValue';"));
+      }
+
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('mixed').code)
+        ..add(const Code(':'))
+        ..add(
+          generateEncodingExceptionExpression(
+            'Cannot encode field with mixed encoding shape',
+          ).statement,
+        )
+        ..add(const Code('}'));
+    }
+
+    return codes;
   }
 }

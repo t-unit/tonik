@@ -28,7 +28,6 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-
   group('ClassGenerator toLabel generation', () {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
@@ -123,7 +122,6 @@ void main() {
       },
     );
   });
-
 
   group('ClassGenerator toLabel method for label encoding', () {
     test('generates toLabel for class with only simple properties', () {

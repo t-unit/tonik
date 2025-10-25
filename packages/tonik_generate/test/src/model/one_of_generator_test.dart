@@ -462,7 +462,7 @@ void main() {
       );
     });
   });
-  
+
   group('subclass names', () {
     test('generates meaningful names for primitive models', () {
       final model = OneOfModel(

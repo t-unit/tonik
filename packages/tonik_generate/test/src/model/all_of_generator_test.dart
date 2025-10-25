@@ -1464,7 +1464,6 @@ void main() {
   });
 
   group('form encoding - primitive types', () {
-
     test('generates toForm returning primary primitive value', () {
       final model = AllOfModel(
         name: 'StringDecimalModel',

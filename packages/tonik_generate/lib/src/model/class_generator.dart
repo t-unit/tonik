@@ -585,7 +585,7 @@ if ($name != null) {
           'EncodingShape',
           'package:tonik_util/tonik_util.dart',
         );
-        
+
         if (isFieldNullable) {
           propertyAssignments.addAll([
             Code('if ($name != null) {'),
@@ -873,11 +873,14 @@ if ($name != null) {
             refer('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')})
                 .property('toMatrix')
-                .call([refer('paramName')], {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                })
+                .call(
+                  [refer('paramName')],
+                  {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                    'alreadyEncoded': literalBool(true),
+                  },
+                )
                 .returned
                 .statement,
           ]),
