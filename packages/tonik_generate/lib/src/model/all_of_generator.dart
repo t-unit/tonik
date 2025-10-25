@@ -111,6 +111,11 @@ class AllOfGenerator {
                 normalizedProperties,
                 model,
               ),
+              _buildToMatrixMethod(
+                className,
+                normalizedProperties,
+                model,
+              ),
               generateEqualsMethod(
                 className: className,
                 properties: properties,
@@ -1454,6 +1459,228 @@ class AllOfGenerator {
                     })
                     .returned
                     .statement,
+    );
+  }
+
+  Method _buildToMatrixMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    final hasDynamicModels = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+
+    if (hasDynamicModels) {
+      final encodingShapeType = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      final bodyCode = <Code>[
+        const Code('if (currentEncodingShape == '),
+        encodingShapeType.property('mixed').code,
+        const Code(') {'),
+        generateEncodingExceptionExpression(
+          'Simple encoding not supported: contains complex types',
+        ).statement,
+        const Code('}'),
+        const Code('final mergedProperties = '),
+        buildEmptyMapStringString().statement,
+      ];
+
+      for (final prop in normalizedProperties) {
+        bodyCode.add(
+          refer('mergedProperties').property('addAll').call([
+            refer(prop.normalizedName).property('parameterProperties').call(
+              [],
+              {'allowEmpty': refer('allowEmpty')},
+            ),
+          ]).statement,
+        );
+      }
+
+      bodyCode.addAll([
+        const Code(
+          'return mergedProperties.toMatrix( '
+          'paramName, explode: explode, allowEmpty: allowEmpty, '
+          'alreadyEncoded: true);',
+        ),
+      ]);
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'toMatrix'
+              ..returns = refer('String', 'dart:core')
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'paramName'
+                        ..type = refer('String', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body = Block.of(bodyCode),
+      );
+    }
+
+    if (model.cannotBeSimplyEncoded) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toMatrix'
+              ..returns = refer('String', 'dart:core')
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'paramName'
+                        ..type = refer('String', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'Simple encoding not supported: contains complex types',
+                  ).statement,
+      );
+    }
+
+    if (model.hasComplexTypes) {
+      final propertyMergingLines = [
+        declareFinal(
+          'mergedProperties',
+        ).assign(buildEmptyMapStringString()).statement,
+      ];
+
+      for (final normalized in normalizedProperties) {
+        propertyMergingLines.add(
+          refer('mergedProperties').property('addAll').call([
+            refer(
+              normalized.normalizedName,
+            ).property('parameterProperties').call([], {
+              'allowEmpty': refer('allowEmpty'),
+            }),
+          ]).statement,
+        );
+      }
+
+      propertyMergingLines.add(
+        const Code(
+          'return mergedProperties.toMatrix( '
+          'paramName, explode: explode, allowEmpty: allowEmpty, '
+          'alreadyEncoded: true);',
+        ),
+      );
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'toMatrix'
+              ..returns = refer('String', 'dart:core')
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'paramName'
+                        ..type = refer('String', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body = Block.of(propertyMergingLines),
+      );
+    }
+
+    if (normalizedProperties.isEmpty) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toMatrix'
+              ..returns = refer('String', 'dart:core')
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'paramName'
+                        ..type = refer('String', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..lambda = false
+              ..body =
+                  literalString('')
+                      .property('toMatrix')
+                      .call(
+                        [refer('paramName')],
+                        {
+                          'explode': refer('explode'),
+                          'allowEmpty': refer('allowEmpty'),
+                        },
+                      )
+                      .returned
+                      .statement,
+      );
+    }
+
+    // For primitive-only AllOf, collect all values and validate they're equal
+    final valueCollectionCode = <Code>[
+      declareFinal(
+        'values',
+      ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+    ];
+
+    for (final prop in normalizedProperties) {
+      valueCollectionCode.addAll([
+        declareFinal('${prop.normalizedName}Matrix')
+            .assign(
+              refer(prop.normalizedName)
+                  .property('toMatrix')
+                  .call(
+                    [refer('paramName')],
+                    {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                    },
+                  ),
+            )
+            .statement,
+        refer('values').property('add').call([
+          refer('${prop.normalizedName}Matrix'),
+        ]).statement,
+      ]);
+    }
+
+    valueCollectionCode.addAll([
+      const Code('if (values.length > 1) {'),
+      generateEncodingExceptionExpression(
+        'Inconsistent allOf matrix encoding for $className: '
+        'all values must encode to the same result',
+      ).statement,
+      const Code('}'),
+      const Code('return values.first;'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toMatrix'
+            ..returns = refer('String', 'dart:core')
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = Block.of(valueCollectionCode),
     );
   }
 
