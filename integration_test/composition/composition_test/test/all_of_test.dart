@@ -477,9 +477,9 @@ void main() {
       );
 
       expect(allOf.toJson(), {'level1': 'test', 'level2': 42});
-      expect(allOf.toForm(explode: true, allowEmpty: true), 'level2=42');
-      expect(allOf.toSimple(explode: true, allowEmpty: true), 'level2=42');
-      expect(allOf.toSimple(explode: false, allowEmpty: true), 'level2,42');
+      expect(allOf.toForm(explode: true, allowEmpty: true), 'level1=test&level2=42');
+      expect(allOf.toSimple(explode: true, allowEmpty: true), 'level1=test,level2=42');
+      expect(allOf.toSimple(explode: false, allowEmpty: true), 'level1,test,level2,42');
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
@@ -501,7 +501,7 @@ void main() {
         'level2': 42,
       });
       expect(
-        () => allOf.toForm(explode: true, allowEmpty: true),
+       () => allOf.toForm(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
       expect(

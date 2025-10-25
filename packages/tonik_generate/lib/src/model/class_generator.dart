@@ -579,46 +579,45 @@ if ($name != null) {
           );
         }
       } else {
-        // Composite property - runtime check
+        // Composite property - runtime check for encoding shape
         final isFieldNullable = isNullable || !isRequired;
+        final encodingShapeRef = refer(
+          'EncodingShape',
+          'package:tonik_util/tonik_util.dart',
+        );
+        
         if (isFieldNullable) {
           propertyAssignments.addAll([
-            Code('if ($name != null && '),
-            Code('$name!.currentEncodingShape != '),
-            refer(
-              'EncodingShape',
-              'package:tonik_util/tonik_util.dart',
-            ).property('simple').code,
+            Code('if ($name != null) {'),
+            Code('  if ($name!.currentEncodingShape == '),
+            encodingShapeRef.property('simple').code,
             const Code(') {'),
+            Code(
+              "    result['$propertyName'] = "
+              '$name!.toSimple(explode: false, allowEmpty: allowEmpty);',
+            ),
+            const Code('} else {'),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'contains complex types',
             ).statement,
-            const Code('}'),
-            Code('if ($name != null) {'),
-            Code(
-              '  result.addAll('
-              '$name!.parameterProperties(allowEmpty: allowEmpty));',
-            ),
-            const Code('}'),
+            const Code('}}'),
           ]);
         } else {
           propertyAssignments.addAll([
-            Code('if ($name.currentEncodingShape != '),
-            refer(
-              'EncodingShape',
-              'package:tonik_util/tonik_util.dart',
-            ).property('simple').code,
+            Code('if ($name.currentEncodingShape == '),
+            encodingShapeRef.property('simple').code,
             const Code(') {'),
+            Code(
+              "  result['$propertyName'] = "
+              '$name.toSimple(explode: false, allowEmpty: allowEmpty);',
+            ),
+            const Code('} else {'),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'contains complex types',
             ).statement,
             const Code('}'),
-            Code(
-              'result.addAll('
-              '$name.parameterProperties(allowEmpty: allowEmpty));',
-            ),
           ]);
         }
       }

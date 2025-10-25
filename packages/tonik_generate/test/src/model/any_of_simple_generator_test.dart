@@ -367,7 +367,7 @@ void main() {
           if (user != null) {
             final userSimple = user!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(userSimple);
-              discriminatorValue ??= r'user';
+            discriminatorValue ??= r'user';
           }
           if (string != null) {
             final stringSimple = string!.toSimple( 

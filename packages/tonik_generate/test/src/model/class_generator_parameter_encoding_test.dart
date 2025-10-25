@@ -238,187 +238,202 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) =>
   });
 
   group('composite model runtime checking for parameterProperties', () {
-    test('generates runtime check for class with oneOf property', () {
-      final oneOfModel = OneOfModel(
-        name: 'StringOrClass',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (
-            discriminatorValue: null,
-            model: ClassModel(
-              name: 'NestedClass',
-              properties: [
-                Property(
-                  name: 'value',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
+    test(
+      'encodes oneOf property based on runtime encoding shape',
+      () {
+        final oneOfModel = OneOfModel(
+          name: 'StringOrClass',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'NestedClass',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
             ),
-          ),
-        },
-        discriminator: null,
-        context: context,
-      );
+          },
+          discriminator: null,
+          context: context,
+        );
 
-      final model = ClassModel(
-        name: 'Container',
-        properties: [
-          Property(
-            name: 'value',
-            model: oneOfModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
+        final model = ClassModel(
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'value',
+              model: oneOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+        const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  if (value.currentEncodingShape != EncodingShape.simple) {
+  if (value.currentEncodingShape == EncodingShape.simple) {
+    result['value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
+  } else {
     throw EncodingException(
       'parameterProperties not supported for Container: contains complex types',
     );
   }
-  result.addAll(value.parameterProperties(allowEmpty: allowEmpty));
   return result;
 }
 ''';
 
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
 
-    test('generates runtime check for class with anyOf property', () {
-      final anyOfModel = AnyOfModel(
-        name: 'StringOrInt',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (
-            discriminatorValue: null,
-            model: ClassModel(
-              name: 'ComplexData',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
+    test(
+      'encodes anyOf property based on runtime encoding shape',
+      () {
+        final anyOfModel = AnyOfModel(
+          name: 'StringOrInt',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'ComplexData',
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
             ),
-          ),
-        },
-        discriminator: null,
-        context: context,
-      );
+          },
+          discriminator: null,
+          context: context,
+        );
 
-      final model = ClassModel(
-        name: 'FlexibleContainer',
-        properties: [
-          Property(
-            name: 'data',
-            model: anyOfModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
+        final model = ClassModel(
+          name: 'FlexibleContainer',
+          properties: [
+            Property(
+              name: 'data',
+              model: anyOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+        const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  if (data.currentEncodingShape != EncodingShape.simple) {
+  if (data.currentEncodingShape == EncodingShape.simple) {
+    result['data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
+  } else {
     throw EncodingException(
       'parameterProperties not supported for FlexibleContainer: contains complex types',
     );
   }
-  result.addAll(data.parameterProperties(allowEmpty: allowEmpty));
   return result;
 }
 ''';
 
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
 
-    test('generates runtime check for class with allOf property', () {
-      final stringModel = StringModel(context: context);
-      final complexModel = ClassModel(
-        name: 'ComplexData',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
+    test(
+      'encodes allOf property based on runtime encoding shape',
+      () {
+        final stringModel = StringModel(context: context);
+        final complexModel = ClassModel(
+          name: 'ComplexData',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
-      final allOfModel = AllOfModel(
-        name: 'StringAndInt',
-        models: {stringModel, complexModel},
-        context: context,
-      );
+        final allOfModel = AllOfModel(
+          name: 'StringAndInt',
+          models: {stringModel, complexModel},
+          context: context,
+        );
 
-      final model = ClassModel(
-        name: 'CombinedContainer',
-        properties: [
-          Property(
-            name: 'combined',
-            model: allOfModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
+        final model = ClassModel(
+          name: 'CombinedContainer',
+          properties: [
+            Property(
+              name: 'combined',
+              model: allOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
 
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+        const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  if (combined.currentEncodingShape != EncodingShape.simple) {
+  if (combined.currentEncodingShape == EncodingShape.simple) {
+    result['combined'] = combined.toSimple(
+      explode: false,
+      allowEmpty: allowEmpty,
+    );
+  } else {
     throw EncodingException(
       'parameterProperties not supported for CombinedContainer: contains complex types',
     );
   }
-  result.addAll(combined.parameterProperties(allowEmpty: allowEmpty));
   return result;
 }
 ''';
 
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
 
     test(
       'preserves optimized path for class with only static simple properties',
@@ -513,8 +528,7 @@ Map<String, String> parameterProperties({
     });
 
     test(
-      'generates runtime check with null checks for optional (not required) '
-      'oneOf property',
+      'encodes optional oneOf property based on runtime encoding shape',
       () {
         final oneOfModel = OneOfModel(
           name: 'StringOrClass',
@@ -561,13 +575,17 @@ Map<String, String> parameterProperties({
         const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  if (value != null && value!.currentEncodingShape != EncodingShape.simple) {
-    throw EncodingException(
-      'parameterProperties not supported for Container: contains complex types',
-    );
-  }
   if (value != null) {
-    result.addAll(value!.parameterProperties(allowEmpty: allowEmpty));
+    if (value!.currentEncodingShape == EncodingShape.simple) {
+      result['value'] = value!.toSimple(
+        explode: false,
+        allowEmpty: allowEmpty,
+      );
+    } else {
+      throw EncodingException(
+        'parameterProperties not supported for Container: contains complex types',
+      );
+    }
   }
   return result;
 }
@@ -722,26 +740,35 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
     result['count'] = '';
   }
   result['active'] = active.uriEncode(allowEmpty: allowEmpty);
-  if (data1.currentEncodingShape != EncodingShape.simple) {
-    throw EncodingException(
-      'parameterProperties not supported for MixedContainer: contains complex types',
-    );
-  }
-  result.addAll(data1.parameterProperties(allowEmpty: allowEmpty));
-  if (data2 != null && data2!.currentEncodingShape != EncodingShape.simple) {
+  if (data1.currentEncodingShape == EncodingShape.simple) {
+    result['data1'] = data1.toSimple(explode: false, allowEmpty: allowEmpty);
+  } else {
     throw EncodingException(
       'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
   if (data2 != null) {
-    result.addAll(data2!.parameterProperties(allowEmpty: allowEmpty));
+    if (data2!.currentEncodingShape == EncodingShape.simple) {
+      result['data2'] = data2!.toSimple(
+        explode: false,
+        allowEmpty: allowEmpty,
+      );
+    } else {
+      throw EncodingException(
+        'parameterProperties not supported for MixedContainer: contains complex types',
+      );
+    }
   }
-  if (flexible.currentEncodingShape != EncodingShape.simple) {
+  if (flexible.currentEncodingShape == EncodingShape.simple) {
+    result['flexible'] = flexible.toSimple(
+      explode: false,
+      allowEmpty: allowEmpty,
+    );
+  } else {
     throw EncodingException(
       'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
-  result.addAll(flexible.parameterProperties(allowEmpty: allowEmpty));
   return result;
 }
 ''';
