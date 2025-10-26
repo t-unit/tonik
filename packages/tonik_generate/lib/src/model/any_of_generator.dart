@@ -14,8 +14,11 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -199,20 +202,55 @@ class AnyOfGenerator {
         codes.add(Code('values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      codes.add(
-        Code(
-          'final $tmpVarName = '
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
-        ),
-      );
-      if (needsMapValues) {
-        codes.add(Code('mapValues.add($tmpVarName);'));
-      }
-
-      if (discriminatorValue != null) {
+      // Lists with simple content can be encoded directly
+      if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
+        final buildExpr =
+            isForm
+                ? buildFormParameterExpression
+                : buildSimpleParameterExpression;
         codes.add(
-          Code("discriminatorValue ??= r'$discriminatorValue';"),
+          Block.of([
+            Code('final $tmpVarName = '),
+            buildExpr(
+              refer(fieldName).nullChecked,
+              fieldModel,
+              explode: refer('explode'),
+              allowEmpty: refer('allowEmpty'),
+            ).statement,
+          ]),
         );
+        if (needsValues) {
+          codes.add(Code('values.add($tmpVarName);'));
+        }
+      } else if (fieldModel is ListModel) {
+        // Lists with complex content cannot be encoded
+        codes.add(
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .statement,
+        );
+      } else {
+        // For complex types (classes, composites), use parameterProperties
+        codes.add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+        if (needsMapValues) {
+          codes.add(Code('mapValues.add($tmpVarName);'));
+        }
+
+        if (discriminatorValue != null) {
+          codes.add(
+            Code("discriminatorValue ??= r'$discriminatorValue';"),
+          );
+        }
       }
     } else {
       final encodingShapeRef = refer(
@@ -289,20 +327,51 @@ class AnyOfGenerator {
         codes.add(Code('values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      codes.add(
-        Code(
-          'final $tmpVarName = '
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
-        ),
-      );
-      if (needsMapValues) {
-        codes.add(Code('mapValues.add($tmpVarName);'));
-      }
-
-      if (discriminatorValue != null) {
+      // Lists with simple content can be encoded directly
+      if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
-          Code("discriminatorValue ??= r'$discriminatorValue';"),
+          Block.of([
+            Code('final $tmpVarName = '),
+            buildLabelParameterExpression(
+              refer(fieldName).nullChecked,
+              fieldModel,
+              explode: refer('explode'),
+              allowEmpty: refer('allowEmpty'),
+            ).statement,
+          ]),
         );
+        if (needsValues) {
+          codes.add(Code('values.add($tmpVarName);'));
+        }
+      } else if (fieldModel is ListModel) {
+        // Lists with complex content cannot be encoded
+        codes.add(
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .statement,
+        );
+      } else {
+        // For complex types (classes, composites), use parameterProperties
+        codes.add(
+          Code(
+            'final $tmpVarName = '
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
+          ),
+        );
+        if (needsMapValues) {
+          codes.add(Code('mapValues.add($tmpVarName);'));
+        }
+
+        if (discriminatorValue != null) {
+          codes.add(
+            Code("discriminatorValue ??= r'$discriminatorValue';"),
+          );
+        }
       }
     } else {
       final encodingShapeRef = refer(
@@ -591,13 +660,18 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape == EncodingShape.simple &&
-              model.encodingShape != EncodingShape.mixed;
+          if (model is ListModel) {
+            return model.hasSimpleContent;
+          }
+          return model.encodingShape == EncodingShape.simple;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
+          if (model is ListModel) {
+            return !model.hasSimpleContent;
+          }
           return model.encodingShape != EncodingShape.simple;
         });
 
@@ -745,6 +819,37 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    // Check if any property is a list with complex content
+    final hasListWithComplexContent = normalizedProperties.any((n) {
+      final model = n.property.model;
+      return model is ListModel && !model.hasSimpleContent;
+    });
+
+    if (hasListWithComplexContent) {
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromSimple'
+              ..requiredParameters.add(
+                Parameter(
+                  (p) =>
+                      p
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                buildBoolParameter('explode', required: true),
+              )
+              ..body =
+                  generateSimpleDecodingExceptionExpression(
+                    'Simple encoding not supported for $className: '
+                    'contains lists with complex types',
+                  ).statement,
+      );
+    }
+
     final localDecls = <Code>[];
 
     for (final n in normalizedProperties) {
@@ -820,6 +925,37 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    // Check if any property is a list with complex content
+    final hasListWithComplexContent = normalizedProperties.any((n) {
+      final model = n.property.model;
+      return model is ListModel && !model.hasSimpleContent;
+    });
+
+    if (hasListWithComplexContent) {
+      return Constructor(
+        (b) =>
+            b
+              ..factory = true
+              ..name = 'fromForm'
+              ..requiredParameters.add(
+                Parameter(
+                  (p) =>
+                      p
+                        ..name = 'value'
+                        ..type = refer('String?', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.add(
+                buildBoolParameter('explode', required: true),
+              )
+              ..body =
+                  generateSimpleDecodingExceptionExpression(
+                    'Form encoding not supported for $className: '
+                    'contains lists with complex types',
+                  ).statement,
+      );
+    }
+
     final localDecls = <Code>[];
 
     for (final n in normalizedProperties) {
@@ -908,13 +1044,21 @@ class AnyOfGenerator {
 
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
-      final isSimple = n.property.model.encodingShape == EncodingShape.simple;
+      final fieldModel = n.property.model;
+      final isSimple = fieldModel.encodingShape == EncodingShape.simple;
+      final isList = fieldModel is ListModel;
 
       body.add(Code('if ($name != null) {'));
       if (isSimple) {
         body.addAll([
           const Code('  shapes.add('),
           encodingShapeType.property('simple').code,
+          const Code(');'),
+        ]);
+      } else if (isList) {
+        body.addAll([
+          const Code('  shapes.add('),
+          encodingShapeType.property('complex').code,
           const Code(');'),
         ]);
       } else {
@@ -959,13 +1103,18 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape == EncodingShape.simple &&
-              model.encodingShape != EncodingShape.mixed;
+          if (model is ListModel) {
+            return model.hasSimpleContent;
+          }
+          return model.encodingShape == EncodingShape.simple;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
+          if (model is ListModel) {
+            return !model.hasSimpleContent;
+          }
           return model.encodingShape != EncodingShape.simple;
         });
 
@@ -1262,17 +1411,31 @@ class AnyOfGenerator {
     final codes = <Code>[];
 
     if (fieldModel.encodingShape == EncodingShape.complex) {
-      codes.add(
-        Code(
-          r'_$mapValues.add('
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
-        ),
-      );
-
-      if (discriminatorValue != null) {
+      // Lists cannot use parameterProperties
+      if (fieldModel is ListModel) {
         codes.add(
-          Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists are not supported in parameterProperties',
+                ),
+              ])
+              .thrown
+              .statement,
         );
+      } else {
+        codes.add(
+          Code(
+            r'_$mapValues.add('
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
+          ),
+        );
+
+        if (discriminatorValue != null) {
+          codes.add(
+            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+          );
+        }
       }
     } else if (fieldModel.encodingShape == EncodingShape.mixed) {
       final encodingShapeRef = refer(
@@ -1334,13 +1497,18 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          return model.encodingShape == EncodingShape.simple &&
-              model.encodingShape != EncodingShape.mixed;
+          if (model is ListModel) {
+            return model.hasSimpleContent;
+          }
+          return model.encodingShape == EncodingShape.simple;
         });
     final needsMapValues =
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
+          if (model is ListModel) {
+            return !model.hasSimpleContent;
+          }
           return model.encodingShape != EncodingShape.simple;
         });
 
@@ -1689,9 +1857,20 @@ class AnyOfGenerator {
         if (needsValues) {
           codes.add(Code('values.add($tmpVarName);'));
         }
+      } else if (fieldModel is ListModel) {
+        // Lists with complex content cannot be encoded
+        codes.add(
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .statement,
+        );
       } else {
-        // For complex types (including lists with complex content), 
-        // use parameterProperties
+        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '

@@ -583,14 +583,14 @@ void main() {
   group('ThreeLevelMixedOneOfAllOfAnyOf', () {
     group('allOf', () {
       test('oneOf -> allOf -> anyOf (string) + object with flag', () {
-        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(
+        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
           threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
               ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
                 string: 'string',
                 int: 123,
               ),
-          threeLevelMixedOneOfAllOfAnyOfAllOfModel:
-              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(flag: true),
+          threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: true),
         );
         final oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
 
@@ -612,14 +612,14 @@ void main() {
       });
 
       test('oneOf -> allOf -> anyOf (integer) + object with flag', () {
-        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(
+        final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
           threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
               ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
                 string: null,
                 int: 456,
               ),
-          threeLevelMixedOneOfAllOfAnyOfAllOfModel:
-              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(flag: false),
+          threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
+              ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: false),
         );
         final oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
 
@@ -765,4 +765,6 @@ void main() {
       expect(oneOf.currentEncodingShape, EncodingShape.simple);
     });
   });
+
+  group('ListOfComposites', () {});
 }

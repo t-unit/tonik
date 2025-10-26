@@ -43,11 +43,11 @@ rm -rf fastify_type_provider_zod/fastify_type_provider_zod_api
 rm -rf composition/composition_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
-dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore 
+dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore --log-level verbose
 add_dependency_overrides "petstore/petstore_api/pubspec.yaml"
 cd petstore/petstore_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming
+dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
 add_dependency_overrides "music_streaming/music_streaming_api/pubspec.yaml"
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
@@ -55,15 +55,15 @@ dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov
 add_dependency_overrides "gov/gov_api/pubspec.yaml"
 cd gov/gov_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding
+dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding --log-level verbose
 add_dependency_overrides "simple_encoding/simple_encoding_api/pubspec.yaml"
 cd simple_encoding/simple_encoding_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod
+dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod --log-level verbose
 add_dependency_overrides "fastify_type_provider_zod/fastify_type_provider_zod_api/pubspec.yaml"
 cd fastify_type_provider_zod/fastify_type_provider_zod_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition
+dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition --log-level verbose
 add_dependency_overrides "composition/composition_api/pubspec.yaml"
 cd composition/composition_api && dart pub get && cd ../..
 

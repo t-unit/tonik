@@ -779,5 +779,339 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         );
       },
     );
+
+    test(
+      'generates parameterProperties for class with list of simple types',
+      () {
+        final model = ClassModel(
+          name: 'ListContainer',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        final parameterPropertiesMethod = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        expect(parameterPropertiesMethod, isNotNull);
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final result = <String, String>{};
+  if (tags != null) {
+    result['tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result['tags'] = '';
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties for class with multiple lists of '
+      'simple types',
+      () {
+        final model = ClassModel(
+          name: 'MultiListContainer',
+          properties: [
+            Property(
+              name: 'ids',
+              model: ListModel(
+                content: IntegerModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        final parameterPropertiesMethod = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        expect(parameterPropertiesMethod, isNotNull);
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final result = <String, String>{};
+  if (ids != null) {
+    result['ids'] = ids!
+        .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+        .toList()
+        .uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result['ids'] = '';
+  }
+  if (tags != null) {
+    result['tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result['tags'] = '';
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties for class with required list of '
+      'simple types',
+      () {
+        final model = ClassModel(
+          name: 'RequiredListContainer',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        final parameterPropertiesMethod = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        expect(parameterPropertiesMethod, isNotNull);
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final result = <String, String>{};
+  result['tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties for class with mixed simple properties '
+      'and lists',
+      () {
+        final model = ClassModel(
+          name: 'MixedContainer',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        final parameterPropertiesMethod = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        expect(parameterPropertiesMethod, isNotNull);
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final result = <String, String>{};
+  result['id'] = id.uriEncode(allowEmpty: allowEmpty);
+  if (tags != null) {
+    result['tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result['tags'] = '';
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'throws exception for class with list of complex types',
+      () {
+        final complexModel = ClassModel(
+          name: 'ComplexItem',
+          properties: [
+            Property(
+              name: 'value',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'ComplexListContainer',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: complexModel,
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        final parameterPropertiesMethod = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        expect(parameterPropertiesMethod, isNotNull);
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+}) =>
+    throw EncodingException(
+      'parameterProperties not supported for ComplexListContainer: contains complex types',
+    );
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties for class with list of enums',
+      () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: false,
+          context: context,
+        );
+
+        final model = ClassModel(
+          name: 'EnumListContainer',
+          properties: [
+            Property(
+              name: 'statuses',
+              model: ListModel(
+                content: enumModel,
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        final parameterPropertiesMethod = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+
+        expect(parameterPropertiesMethod, isNotNull);
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+  final result = <String, String>{};
+  if (statuses != null) {
+    result['statuses'] = statuses!
+        .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+        .toList()
+        .uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result['statuses'] = '';
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 }

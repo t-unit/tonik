@@ -650,7 +650,7 @@ void main() {
       );
       final generated = format(baseClass.accept(emitter).toString());
 
-      // For List<DateTime>, should map each element to string then 
+      // For List<DateTime>, should map each element to string then
       // call toMatrix
       const expectedMethod = '''
         String toMatrix(

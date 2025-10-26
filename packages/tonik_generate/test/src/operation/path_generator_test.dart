@@ -1119,70 +1119,72 @@ void main() {
     );
   });
 
-  test('handles matrix encoding with list of class models throws at runtime',
-      () {
-    final classModel = ClassModel(context: context, properties: const []);
-    final listModel = ListModel(context: context, content: classModel);
+  test(
+    'handles matrix encoding with list of class models throws at runtime',
+    () {
+      final classModel = ClassModel(context: context, properties: const []);
+      final listModel = ListModel(context: context, content: classModel);
 
-    final pathParam = PathParameterObject(
-      name: 'filters',
-      rawName: 'filters',
-      description: 'List of filters',
-      isRequired: true,
-      isDeprecated: false,
-      allowEmptyValue: false,
-      explode: false,
-      encoding: PathParameterEncoding.matrix,
-      model: listModel,
-      context: context,
-    );
+      final pathParam = PathParameterObject(
+        name: 'filters',
+        rawName: 'filters',
+        description: 'List of filters',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: PathParameterEncoding.matrix,
+        model: listModel,
+        context: context,
+      );
 
-    final operation = Operation(
-      operationId: 'getByFilters',
-      context: context,
-      summary: 'Get by filters',
-      description: 'Gets data by filters',
-      tags: const {},
-      isDeprecated: false,
-      path: '/data{filters}',
-      method: HttpMethod.get,
-      headers: const {},
-      queryParameters: const {},
-      pathParameters: {pathParam},
-      responses: const {},
-      requestBody: null,
-      securitySchemes: const {},
-    );
+      final operation = Operation(
+        operationId: 'getByFilters',
+        context: context,
+        summary: 'Get by filters',
+        description: 'Gets data by filters',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data{filters}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
 
-    const expectedMethod = '''
+      const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> filters}) {
           return [r'data', filters.toMatrix('filters', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
-    final pathParameters =
-        <({String normalizedName, PathParameterObject parameter})>[
-          (normalizedName: 'filters', parameter: pathParam),
-        ];
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'filters', parameter: pathParam),
+          ];
 
-    final method = generator.generatePathMethod(operation, pathParameters);
+      final method = generator.generatePathMethod(operation, pathParameters);
 
-    expect(method, isA<Method>());
-    expect(
-      method.returns,
-      TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
-      ),
-    );
-    expect(
-      collapseWhitespace(method.accept(emitter).toString()),
-      collapseWhitespace(expectedMethod),
-    );
-  });
+      expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    },
+  );
 
   test('handles matrix encoding with nested list throws at runtime', () {
     final innerListModel = ListModel(

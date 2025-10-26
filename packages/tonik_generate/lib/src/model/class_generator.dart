@@ -16,6 +16,7 @@ import 'package:tonik_generate/src/util/from_simple_value_expression_generator.d
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating Dart class files from model definitions.
@@ -409,6 +410,18 @@ class ClassGenerator {
     );
 
     if (hasComplexProperties) {
+      final allComplexAreSimpleLists = properties
+          .where((p) => p.property.model.encodingShape == EncodingShape.complex)
+          .every(
+            (p) =>
+                p.property.model is ListModel &&
+                (p.property.model as ListModel).hasSimpleContent,
+          );
+
+      if (allComplexAreSimpleLists) {
+        return _buildListParameterPropertiesMethod(className, properties);
+      }
+
       return _buildComplexParameterPropertiesMethod(className, properties);
     }
 
@@ -476,6 +489,93 @@ if ($name != null) {
   result['$propertyName'] = '';
 }'''),
         );
+      }
+    }
+
+    final methodBody = [
+      const Code('final result = '),
+      buildEmptyMapStringString().statement,
+      ...propertyAssignments,
+      const Code('return result;'),
+    ];
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'parameterProperties'
+            ..returns = buildMapStringStringType()
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = false
+                      ..defaultTo = literalTrue.code,
+              ),
+            )
+            ..body = Block.of(methodBody),
+    );
+  }
+
+  Method _buildListParameterPropertiesMethod(
+    String className,
+    List<({String normalizedName, Property property})> properties,
+  ) {
+    final propertyAssignments = <Code>[];
+
+    for (final prop in properties) {
+      final name = prop.normalizedName;
+      final propertyName = prop.property.name;
+      final fieldModel = prop.property.model;
+      final isRequired = prop.property.isRequired;
+      final isNullable = prop.property.isNullable;
+
+      if (fieldModel.encodingShape == EncodingShape.simple) {
+        if (isRequired && !isNullable) {
+          propertyAssignments.add(
+            Code(
+              "result['$propertyName'] = "
+              '$name.uriEncode(allowEmpty: allowEmpty);',
+            ),
+          );
+        } else {
+          propertyAssignments.add(
+            Code('''
+if ($name != null) {
+  result['$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+} else if (allowEmpty) {
+  result['$propertyName'] = '';
+}'''),
+          );
+        }
+      } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
+        final valueRef = (isRequired && !isNullable)
+            ? refer(name)
+            : refer(name).nullChecked;
+        final encodeExpr = buildUriEncodeExpression(
+          valueRef,
+          fieldModel,
+          allowEmpty: refer('allowEmpty'),
+        );
+        final emitter = DartEmitter(useNullSafetySyntax: true);
+        final encodeStr = encodeExpr.accept(emitter).toString();
+
+        if (isRequired && !isNullable) {
+          propertyAssignments.add(
+            Code("result['$propertyName'] = $encodeStr;"),
+          );
+        } else {
+          propertyAssignments.add(
+            Code('''
+if ($name != null) {
+  result['$propertyName'] = $encodeStr;
+} else if (allowEmpty) {
+  result['$propertyName'] = '';
+}'''),
+          );
+        }
       }
     }
 

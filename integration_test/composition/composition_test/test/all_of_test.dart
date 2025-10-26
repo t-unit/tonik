@@ -194,8 +194,8 @@ void main() {
     test('TwoLevelAllOf', () {
       final allOf = TwoLevelAllOf(
         twoLevelAllOfAllOfModel: TwoLevelAllOfAllOfModel(
-          twoLevelAllOfAllOfModel3: TwoLevelAllOfAllOfModel3(id: '123'),
-          twoLevelAllOfAllOfModel2: TwoLevelAllOfAllOfModel2(name: 'Albert'),
+          twoLevelAllOfAllOfModel3: TwoLevelAllOfAllOfModel3(name: 'Albert'),
+          twoLevelAllOfAllOfModel2: TwoLevelAllOfAllOfModel2(id: '123'),
         ),
         twoLevelAllOfModel: TwoLevelAllOfModel(active: true),
       );
@@ -230,11 +230,11 @@ void main() {
     test('ThreeLevelAllOf', () {
       final allOf = ThreeLevelAllOf(
         threeLevelAllOfAllOfModel: ThreeLevelAllOfAllOfModel(
-          threeLevelAllOfAllOfAllOfModel: ThreeLevelAllOfAllOfAllOfModel(
+          threeLevelAllOfAllOfAllOfModel2: ThreeLevelAllOfAllOfAllOfModel2(
             threeLevelAllOfAllOfAllOfModel3: ThreeLevelAllOfAllOfAllOfModel3(
               id: '123',
             ),
-            threeLevelAllOfAllOfAllOfModel2: ThreeLevelAllOfAllOfAllOfModel2(
+            threeLevelAllOfAllOfAllOfModel: ThreeLevelAllOfAllOfAllOfModel(
               name: 'Albert',
             ),
           ),
@@ -582,10 +582,10 @@ void main() {
   group('MultiLevelNesting', () {
     test('with string level1', () {
       final allOf = MultiLevelNesting(
-        multiLevelNestingModel: MultiLevelNestingModel(
+        multiLevelNestingModel: MultiLevelNestingModel(level2: 42),
+        multiLevelNestingModel2: MultiLevelNestingModel2(
           level1: MultiLevelNestingLevel1OneOfModelString('test'),
         ),
-        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
       );
 
       expect(allOf.toJson(), {'level1': 'test', 'level2': 42});
@@ -615,14 +615,14 @@ void main() {
 
     test('with Class1 level1', () {
       final allOf = MultiLevelNesting(
-        multiLevelNestingModel: MultiLevelNestingModel(
+        multiLevelNestingModel: MultiLevelNestingModel(level2: 42),
+        multiLevelNestingModel2: MultiLevelNestingModel2(
           level1: MultiLevelNestingLevel1OneOfModelAnyOf(
             MultiLevelNestingLevel1OneOfAnyOfModel(
               class1: Class1(name: 'Albert'),
             ),
           ),
         ),
-        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
       );
 
       expect(allOf.toJson(), {
@@ -647,12 +647,12 @@ void main() {
 
     test('with Class2 level1', () {
       final allOf = MultiLevelNesting(
-        multiLevelNestingModel: MultiLevelNestingModel(
+        multiLevelNestingModel: MultiLevelNestingModel(level2: 42),
+        multiLevelNestingModel2: MultiLevelNestingModel2(
           level1: MultiLevelNestingLevel1OneOfModelAnyOf(
             MultiLevelNestingLevel1OneOfAnyOfModel(class2: Class2(number: 123)),
           ),
         ),
-        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
       );
 
       expect(allOf.toJson(), {
@@ -675,4 +675,52 @@ void main() {
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
   });
+
+  group('AllOfWithSimpleList', () {
+    test('AllOfWithSimpleList', () {
+      final allOf = AllOfWithSimpleList(
+        allOfWithSimpleListModel: AllOfWithSimpleListModel(ids: [1, 2, 3]),
+        allOfWithSimpleListModel2: AllOfWithSimpleListModel2(
+          tags: ['tag1', 'tag2', 'tag3'],
+        ),
+      );
+
+      expect(allOf.toJson(), {
+        'ids': [1, 2, 3],
+        'tags': ['tag1', 'tag2', 'tag3'],
+      });
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'tags=tag1,tag2,tag3&ids=1,2,3',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'tags=tag1,tag2,tag3,ids=1,2,3',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'tags,tag1,tag2,tag3,ids,1,2,3',
+      );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=tags,tag1,tag2,tag3,ids,1,2,3',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';tags=tag1,tag2,tag3;ids=1,2,3',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('AllOfWithMixedLists', () {});
+
+  group('AllOfWithEnumList', () {});
+
+  group('NestedListInAllOf', () {});
+
+  group('ComplexListComposition', () {});
+
+  group('AllOfWithListOfComposites', () {});
 }

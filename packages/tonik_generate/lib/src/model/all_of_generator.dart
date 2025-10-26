@@ -14,8 +14,11 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -817,6 +820,63 @@ class AllOfGenerator {
     }
 
     if (model.hasComplexTypes) {
+      // Check if all complex types are lists with simple content
+      final allComplexAreSimpleLists = normalizedProperties
+          .where((p) => p.property.model.encodingShape == EncodingShape.complex)
+          .every(
+            (p) =>
+                p.property.model is ListModel &&
+                (p.property.model as ListModel).hasSimpleContent,
+          );
+
+      if (allComplexAreSimpleLists) {
+        // Lists with simple content can be encoded directly with toSimple
+        final valueCollectionCode = <Code>[
+          declareFinal(
+            'values',
+          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        ];
+
+        for (final prop in normalizedProperties) {
+          valueCollectionCode.addAll([
+            declareFinal('${prop.normalizedName}Simple')
+                .assign(
+                  buildSimpleParameterExpression(
+                    refer(prop.normalizedName),
+                    prop.property.model,
+                    explode: refer('explode'),
+                    allowEmpty: refer('allowEmpty'),
+                  ),
+                )
+                .statement,
+            refer('values').property('add').call([
+              refer('${prop.normalizedName}Simple'),
+            ]).statement,
+          ]);
+        }
+
+        valueCollectionCode.addAll([
+          const Code('if (values.length > 1) {'),
+          generateEncodingExceptionExpression(
+            'Inconsistent allOf simple encoding: '
+            'all values must encode to the same result',
+          ).statement,
+          const Code('}'),
+          const Code('return values.first;'),
+        ]);
+
+        return Method(
+          (b) =>
+              b
+                ..name = 'toSimple'
+                ..returns = refer('String', 'dart:core')
+                ..optionalParameters.addAll(buildEncodingParameters())
+                ..lambda = false
+                ..body = Block.of(valueCollectionCode),
+        );
+      }
+
+      // For non-list complex types, use parameterProperties
       return Method(
         (b) =>
             b
@@ -1180,6 +1240,65 @@ class AllOfGenerator {
       }
 
       if (allDynamicModels.isEmpty) {
+        // Check if all complex types are lists with simple content
+        final allComplexAreSimpleLists = normalizedProperties
+            .where(
+              (p) => p.property.model.encodingShape == EncodingShape.complex,
+            )
+            .every(
+              (p) =>
+                  p.property.model is ListModel &&
+                  (p.property.model as ListModel).hasSimpleContent,
+            );
+
+        if (allComplexAreSimpleLists) {
+          // Lists with simple content can be encoded directly with toForm
+          final valueCollectionCode = <Code>[
+            declareFinal(
+              'values',
+            ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+          ];
+
+          for (final prop in normalizedProperties) {
+            valueCollectionCode.addAll([
+              declareFinal('${prop.normalizedName}Form')
+                  .assign(
+                    buildFormParameterExpression(
+                      refer(prop.normalizedName),
+                      prop.property.model,
+                      explode: refer('explode'),
+                      allowEmpty: refer('allowEmpty'),
+                    ),
+                  )
+                  .statement,
+              refer('values').property('add').call([
+                refer('${prop.normalizedName}Form'),
+              ]).statement,
+            ]);
+          }
+
+          valueCollectionCode.addAll([
+            const Code('if (values.length > 1) {'),
+            generateEncodingExceptionExpression(
+              'Inconsistent allOf form encoding: '
+              'all values must encode to the same result',
+            ).statement,
+            const Code('}'),
+            const Code('return values.first;'),
+          ]);
+
+          return Method(
+            (b) =>
+                b
+                  ..name = 'toForm'
+                  ..returns = refer('String', 'dart:core')
+                  ..optionalParameters.addAll(buildEncodingParameters())
+                  ..lambda = false
+                  ..body = Block.of(valueCollectionCode),
+          );
+        }
+
+        // For non-list complex types, use parameterProperties
         return Method(
           (b) =>
               b
@@ -1409,6 +1528,63 @@ class AllOfGenerator {
     }
 
     if (model.hasComplexTypes) {
+      // Check if all complex types are lists with simple content
+      final allComplexAreSimpleLists = normalizedProperties
+          .where((p) => p.property.model.encodingShape == EncodingShape.complex)
+          .every(
+            (p) =>
+                p.property.model is ListModel &&
+                (p.property.model as ListModel).hasSimpleContent,
+          );
+
+      if (allComplexAreSimpleLists) {
+        // Lists with simple content can be encoded directly with toLabel
+        final valueCollectionCode = <Code>[
+          declareFinal(
+            'values',
+          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        ];
+
+        for (final prop in normalizedProperties) {
+          valueCollectionCode.addAll([
+            declareFinal('${prop.normalizedName}Label')
+                .assign(
+                  buildLabelParameterExpression(
+                    refer(prop.normalizedName),
+                    prop.property.model,
+                    explode: refer('explode'),
+                    allowEmpty: refer('allowEmpty'),
+                  ),
+                )
+                .statement,
+            refer('values').property('add').call([
+              refer('${prop.normalizedName}Label'),
+            ]).statement,
+          ]);
+        }
+
+        valueCollectionCode.addAll([
+          const Code('if (values.length > 1) {'),
+          generateEncodingExceptionExpression(
+            'Inconsistent allOf label encoding: '
+            'all values must encode to the same result',
+          ).statement,
+          const Code('}'),
+          const Code('return values.first;'),
+        ]);
+
+        return Method(
+          (b) =>
+              b
+                ..name = 'toLabel'
+                ..returns = refer('String', 'dart:core')
+                ..optionalParameters.addAll(buildEncodingParameters())
+                ..lambda = false
+                ..body = Block.of(valueCollectionCode),
+        );
+      }
+
+      // For non-list complex types, use parameterProperties
       return Method(
         (b) =>
             b
