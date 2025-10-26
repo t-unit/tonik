@@ -78,11 +78,11 @@ void main() {
 
         const expectedMethod = '''
           factory Flexible.fromSimple(String? value, {required bool explode}) {
-            String? string;
+            User? user;
             try {
-              string = value.decodeSimpleString(context: r'Flexible');
+              user = User.fromSimple(value, explode: explode);
             } on Object catch (_) {
-              string = null;
+              user = null;
             }
 
             int? int;
@@ -92,14 +92,14 @@ void main() {
               int = null;
             }
 
-            User? user;
+            String? string;
             try {
-              user = User.fromSimple(value, explode: explode);
+              string = value.decodeSimpleString(context: r'Flexible');
             } on Object catch (_) {
-              user = null;
+              string = null;
             }
 
-            return Flexible(string: string, int: int, user: user);
+            return Flexible(user: user, int: int, string: string);
           }
         ''';
 
@@ -294,17 +294,17 @@ void main() {
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
           final values = <String>{};
-          if (string != null) {
-            final stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, );
-            values.add(stringSimple);
+          if (bool != null) {
+            final boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, );
+            values.add(boolSimple);
           }
           if (int != null) {
             final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
             values.add(intSimple);
           }
-          if (bool != null) {
-            final boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, );
-            values.add(boolSimple);
+          if (string != null) {
+            final stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, );
+            values.add(stringSimple);
           }
 
           if (values.isEmpty) return '';
@@ -364,17 +364,17 @@ void main() {
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
 
-          if (user != null) {
-            final userSimple = user!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(userSimple);
-            discriminatorValue ??= r'user';
-          }
           if (string != null) {
             final stringSimple = string!.toSimple( 
               explode: explode, 
               allowEmpty: allowEmpty, 
             );
             values.add(stringSimple);
+          }
+          if (user != null) {
+            final userSimple = user!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(userSimple);
+            discriminatorValue ??= r'user';
           }
 
           if (values.isEmpty && mapValues.isEmpty) return '';

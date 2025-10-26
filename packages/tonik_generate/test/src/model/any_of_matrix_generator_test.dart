@@ -83,13 +83,13 @@ void main() {
           required bool allowEmpty,
         }) {
           final values = <String>{};
-          if (string != null) {
-            final stringMatrix = string!.toMatrix(
+          if (bool != null) {
+            final boolMatrix = bool!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(stringMatrix);
+            values.add(boolMatrix);
           }
           if (int != null) {
             final intMatrix = int!.toMatrix(
@@ -99,13 +99,13 @@ void main() {
             );
             values.add(intMatrix);
           }
-          if (bool != null) {
-            final boolMatrix = bool!.toMatrix(
+          if (string != null) {
+            final stringMatrix = string!.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(boolMatrix);
+            values.add(stringMatrix);
           }
           if (values.isEmpty) return '';
           if (values.length > 1) {
@@ -248,6 +248,11 @@ void main() {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
+          if (data != null) {
+            final dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(dataMatrix);
+            discriminatorValue ??= r'data';
+          }
           if (string != null) {
             final stringMatrix = string!.toMatrix(
               paramName,
@@ -255,11 +260,6 @@ void main() {
               allowEmpty: allowEmpty,
             );
             values.add(stringMatrix);
-          }
-          if (data != null) {
-            final dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(dataMatrix);
-            discriminatorValue ??= r'data';
           }
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -417,14 +417,6 @@ void main() {
           required bool allowEmpty,
         }) {
           final values = <String>{};
-          if (oneOfType != null) {
-            final oneOfTypeMatrix = oneOfType!.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            values.add(oneOfTypeMatrix);
-          }
           if (bool != null) {
             final boolMatrix = bool!.toMatrix(
               paramName,
@@ -432,6 +424,14 @@ void main() {
               allowEmpty: allowEmpty,
             );
             values.add(boolMatrix);
+          }
+          if (oneOfType != null) {
+            final oneOfTypeMatrix = oneOfType!.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(oneOfTypeMatrix);
           }
           if (values.isEmpty) return '';
           if (values.length > 1) {
@@ -496,14 +496,6 @@ void main() {
         }) {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
-          if (string != null) {
-            final stringMatrix = string!.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            values.add(stringMatrix);
-          }
           if (innerChoice != null) {
             switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
@@ -526,6 +518,14 @@ void main() {
                   'Cannot encode field with mixed encoding shape',
                 );
             }
+          }
+          if (string != null) {
+            final stringMatrix = string!.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(stringMatrix);
           }
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -588,14 +588,6 @@ void main() {
             required bool allowEmpty,
           }) {
             final values = <String>{};
-            if (string != null) {
-              final stringMatrix = string!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              values.add(stringMatrix);
-            }
             if (list != null) {
               final listMatrix = list!.toMatrix(
                 paramName,
@@ -603,6 +595,14 @@ void main() {
                 allowEmpty: allowEmpty,
               );
               values.add(listMatrix);
+            }
+            if (string != null) {
+              final stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(stringMatrix);
             }
             if (values.isEmpty) return '';
             if (values.length > 1) {
@@ -645,14 +645,6 @@ void main() {
             required bool allowEmpty,
           }) {
             final values = <String>{};
-            if (string != null) {
-              final stringMatrix = string!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              values.add(stringMatrix);
-            }
             if (list != null) {
               final listMatrix = list!
                   .map((e) => e.uriEncode(allowEmpty: allowEmpty))
@@ -664,6 +656,14 @@ void main() {
                     alreadyEncoded: true,
                   );
               values.add(listMatrix);
+            }
+            if (string != null) {
+              final stringMatrix = string!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(stringMatrix);
             }
             if (values.isEmpty) return '';
             if (values.length > 1) {
@@ -711,15 +711,7 @@ void main() {
           }) {
             final values = <String>{};
             if (list != null) {
-              final listMatrix = list!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              values.add(listMatrix);
-            }
-            if (list2 != null) {
-              final list2Matrix = list2!
+              final listMatrix = list!
                   .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                   .toList()
                   .toMatrix(
@@ -728,6 +720,14 @@ void main() {
                     allowEmpty: allowEmpty,
                     alreadyEncoded: true,
                   );
+              values.add(listMatrix);
+            }
+            if (list2 != null) {
+              final list2Matrix = list2!.toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
               values.add(list2Matrix);
             }
             if (values.isEmpty) return '';

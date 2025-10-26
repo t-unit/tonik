@@ -142,18 +142,18 @@ void main() {
           required bool allowEmpty,
         }) {
           final values = <String>{};
-          final stringMatrix = string.toMatrix(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-          );
-          values.add(stringMatrix);
           final intMatrix = int.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
           values.add(intMatrix);
+          final stringMatrix = string.toMatrix(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+          values.add(stringMatrix);
           if (values.length > 1) {
             throw EncodingException(
               'Inconsistent allOf matrix encoding for AllOfPrimitive: all values must encode to the same result',
@@ -559,13 +559,7 @@ void main() {
             required bool allowEmpty,
           }) {
             final values = <String>{};
-            final listMatrix = list.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            values.add(listMatrix);
-            final list2Matrix = list2
+            final listMatrix = list
                 .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
@@ -574,6 +568,12 @@ void main() {
                   allowEmpty: allowEmpty,
                   alreadyEncoded: true,
                 );
+            values.add(listMatrix);
+            final list2Matrix = list2.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
             values.add(list2Matrix);
             if (values.length > 1) {
               throw EncodingException(

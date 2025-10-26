@@ -47,8 +47,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueString() => EncodingShape.simple,
           ValueInt() => EncodingShape.simple,
+          ValueString() => EncodingShape.simple,
         };
       }
     ''';
@@ -124,8 +124,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueString() => EncodingShape.simple,
           ValueA(:final value) => value.currentEncodingShape,
+          ValueString() => EncodingShape.simple,
         };
       }
     ''';
@@ -687,13 +687,13 @@ void main() {
       const expectedMethod = '''
         Map<String, String> parameterProperties({bool allowEmpty = true}) {
           return switch (this) {
-            EntityUser(:final value) => {
-              ...value.parameterProperties(allowEmpty: allowEmpty),
-              'type': 'person',
-            },
             EntityCompany(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'company',
+            },
+            EntityUser(:final value) => {
+              ...value.parameterProperties(allowEmpty: allowEmpty),
+              'type': 'person',
             },
           };
         }
@@ -791,13 +791,13 @@ void main() {
         const expectedMethod = '''
         Map<String, String> parameterProperties({bool allowEmpty = true}) {
           return switch (this) {
+            ResponseMessage() => throw EncodingException(
+              'parameterProperties not supported for Response: cannot determine properties at runtime',
+            ),
             ResponseUser(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'user',
             },
-            ResponseMessage() => throw EncodingException(
-              'parameterProperties not supported for Response: cannot determine properties at runtime',
-            ),
           };
         }
       ''';
@@ -931,5 +931,49 @@ void main() {
         );
       },
     );
+  });
+
+  test('uses stable sorting for discriminated models', () {
+    final sharedContext = context.push('TestOneOf').push('oneOf');
+
+    final model = OneOfModel(
+      name: 'TestOneOf',
+      models: {
+        (
+          discriminatorValue: 'zebra',
+          model: StringModel(context: sharedContext),
+        ),
+        (
+          discriminatorValue: 'apple',
+          model: IntegerModel(context: sharedContext),
+        ),
+        (
+          discriminatorValue: 'banana',
+          model: BooleanModel(context: sharedContext),
+        ),
+      },
+      discriminator: 'type',
+      context: context.push('TestOneOf'),
+    );
+
+    nameManager.prime(
+      models: {model},
+      requestBodies: const [],
+      responses: const [],
+      operations: const [],
+      tags: const [],
+      servers: const [],
+    );
+
+    final classes = generator.generateClasses(model);
+    final variantNames =
+        classes.where((c) => c.name != 'TestOneOf').map((c) => c.name).toList();
+
+    // Verify variants are in stable sorted order by discriminator value.
+    expect(variantNames, [
+      'TestOneOfApple',
+      'TestOneOfBanana',
+      'TestOneOfZebra',
+    ]);
   });
 }

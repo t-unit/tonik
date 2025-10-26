@@ -722,9 +722,9 @@ void main() {
   group('ComplexNestedMix2', () {
     test('allOf', () {
       final oneOf = ComplexNestedMix2AllOf(
-        ComplexNestedMix2AllOfModel2(
+        ComplexNestedMix2AllOfModel(
           class1: Class1(name: 'Mark'),
-          complexNestedMix2AllOfModel: ComplexNestedMix2AllOfModel(extra: 123),
+          complexNestedMix2AllOfModel2: ComplexNestedMix2AllOfModel2(extra: 123),
         ),
       );
 

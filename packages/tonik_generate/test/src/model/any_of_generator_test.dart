@@ -258,15 +258,15 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is ValueChoice &&
-            other.string == string &&
-            other.int == int;
+            other.int == int &&
+            other.string == string;
         }
       ''';
 
       const expectedHash = '''
         @override
         int get hashCode {
-          return Object.hashAll([string, int]);
+          return Object.hashAll([int, string]);
         }
       ''';
 
@@ -325,8 +325,8 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expectedCopyWithBody = '''
-        ValueChoice copyWith({String? string, int? int}) {
-          return ValueChoice(string: string ?? this.string, int: int ?? this.int);
+        ValueChoice copyWith({int? int, String? string}) {
+          return ValueChoice(int: int ?? this.int, string: string ?? this.string);
         }
       ''';
 
@@ -361,10 +361,10 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (string != null) {
+          if (int != null) {
             shapes.add(EncodingShape.simple);
           }
-          if (int != null) {
+          if (string != null) {
             shapes.add(EncodingShape.simple);
           }
           if (shapes.isEmpty) {
@@ -409,11 +409,11 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (userProfile != null) {
-            shapes.add(userProfile!.currentEncodingShape);
-          }
           if (adminProfile != null) {
             shapes.add(adminProfile!.currentEncodingShape);
+          }
+          if (userProfile != null) {
+            shapes.add(userProfile!.currentEncodingShape);
           }
           if (shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -460,11 +460,11 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (string != null) {
-            shapes.add(EncodingShape.simple);
-          }
           if (data != null) {
             shapes.add(data!.currentEncodingShape);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
           }
           if (shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -555,15 +555,15 @@ void main() {
 String toSimple({required bool explode, required bool allowEmpty}) {
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
-  if (person != null) {
-    final personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(personSimple);
-    discriminatorValue ??= r'person';
-  }
   if (company != null) {
     final companySimple = company!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(companySimple);
     discriminatorValue ??= r'company';
+  }
+  if (person != null) {
+    final personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
+    mapValues.add(personSimple);
+    discriminatorValue ??= r'person';
   }
   final map = <String, String>{};
   for (final m in mapValues) {
@@ -659,15 +659,15 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 String toForm({required bool explode, required bool allowEmpty}) {
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
-  if (person != null) {
-    final personForm = person!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(personForm);
-    discriminatorValue ??= r'person';
-  }
   if (company != null) {
     final companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
     mapValues.add(companyForm);
     discriminatorValue ??= r'company';
+  }
+  if (person != null) {
+    final personForm = person!.parameterProperties(allowEmpty: allowEmpty);
+    mapValues.add(personForm);
+    discriminatorValue ??= r'person';
   }
   final map = <String, String>{};
   for (final m in mapValues) {
@@ -721,16 +721,16 @@ String toForm({required bool explode, required bool allowEmpty}) {
         const expectedMethod = '''
 String toSimple({required bool explode, required bool allowEmpty}) {
   final values = <String>{};
+  if (int != null) {
+    final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
+    values.add(intSimple);
+  }
   if (string != null) {
     final stringSimple = string!.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
     );
     values.add(stringSimple);
-  }
-  if (int != null) {
-    final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
-    values.add(intSimple);
   }
   if (values.isEmpty) return '';
   if (values.length > 1) {
@@ -794,17 +794,17 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   final values = <String>{};
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
+  if (data != null) {
+    final dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
+    mapValues.add(dataSimple);
+    discriminatorValue ??= r'data';
+  }
   if (string != null) {
     final stringSimple = string!.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
     );
     values.add(stringSimple);
-  }
-  if (data != null) {
-    final dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(dataSimple);
-    discriminatorValue ??= r'data';
   }
   if (values.isEmpty && mapValues.isEmpty) return '';
   if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -972,11 +972,11 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       const expectedMethod = r'''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final _$mapValues = <Map<String, String>>[];
-  if (user != null) {
-    _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty));
-  }
   if (admin != null) {
     _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty));
+  }
+  if (user != null) {
+    _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty));
   }
   final _$map = <String, String>{};
   for (final m in _$mapValues) {

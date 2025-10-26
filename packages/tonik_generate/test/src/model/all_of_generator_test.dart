@@ -255,8 +255,8 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          shapes.add(value.currentEncodingShape);
           shapes.add(int.currentEncodingShape);
+          shapes.add(value.currentEncodingShape);
           if (shapes.length > 1) return EncodingShape.mixed;
           return shapes.first;
         }
@@ -706,7 +706,7 @@ void main() {
       expect(decimalField.type?.accept(emitter).toString(), 'BigDecimal');
 
       const expectedToJson = '''
-          Object? toJson() => string;
+          Object? toJson() => bigDecimal;
         ''';
 
       expect(
@@ -717,8 +717,8 @@ void main() {
       const expectedFromJson = '''
           factory StringDecimalModel.fromJson(Object? json) {
             return StringDecimalModel(
-              string: json.decodeJsonString(context: r'StringDecimalModel'),
               bigDecimal: json.decodeJsonBigDecimal(context: r'StringDecimalModel'),
+              string: json.decodeJsonString(context: r'StringDecimalModel'),
             );
           }
         ''';
@@ -732,7 +732,7 @@ void main() {
     test('generates toSimple returning primary primitive value', () {
       final model = AllOfModel(
         name: 'StringDecimalModel',
-        models: <Model>{
+        models: {
           StringModel(context: context),
           DecimalModel(context: context),
         },
@@ -743,7 +743,7 @@ void main() {
 
       const expectedToSimpleMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return string.toSimple(explode: explode, allowEmpty: allowEmpty);
+          return bigDecimal.toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -774,10 +774,10 @@ void main() {
           required bool explode,
         }) {
           return StringDecimalModel(
-            string: value.decodeSimpleString(context: r'StringDecimalModel.string'),
             bigDecimal: value.decodeSimpleBigDecimal(
               context: r'StringDecimalModel.bigDecimal',
             ),
+            string: value.decodeSimpleString(context: r'StringDecimalModel.string'),
           );
         }
       ''';
@@ -1027,7 +1027,7 @@ void main() {
         expect(integerField.type?.accept(emitter).toString(), 'int');
 
         const expectedToJson = '''
-          Object? toJson() => num;
+          Object? toJson() => double;
         ''';
 
         expect(
@@ -1038,9 +1038,9 @@ void main() {
         const expectedFromJson = '''
           factory NumberModel.fromJson(Object? json) {
             return NumberModel(
-              num: json.decodeJsonNum(context: r'NumberModel'),
               double: json.decodeJsonDouble(context: r'NumberModel'),
               int: json.decodeJsonInt(context: r'NumberModel'),
+              num: json.decodeJsonNum(context: r'NumberModel'),
             );
           }
         ''';
@@ -1205,7 +1205,7 @@ void main() {
 
         const expectedToSimpleMethod = '''
           String toSimple({required bool explode, required bool allowEmpty}) {
-            return string.toSimple(explode: explode, allowEmpty: allowEmpty);
+            return status.toSimple(explode: explode, allowEmpty: allowEmpty);
           }
         ''';
 
@@ -1231,7 +1231,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToJson = '''
-          Object? toJson() => string;
+          Object? toJson() => date;
         ''';
 
         expect(
@@ -1356,7 +1356,7 @@ void main() {
       expect(combinedClass.fields, hasLength(3));
       final fieldNames = combinedClass.fields.map((f) => f.name).toList();
 
-      expect(fieldNames, equals(['string', 'int', 'bigDecimal']));
+      expect(fieldNames, equals(['bigDecimal', 'int', 'string']));
     });
   });
 
@@ -1478,7 +1478,7 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
-          return string.toForm(explode: explode, allowEmpty: allowEmpty);
+          return bigDecimal.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1505,10 +1505,10 @@ void main() {
         const expectedFromFormMethod = '''
         factory StringDecimalModel.fromForm(String? value, {required bool explode}) {
           return StringDecimalModel(
-            string: value.decodeFormString(context: r'StringDecimalModel.string'),
             bigDecimal: value.decodeFormBigDecimal(
               context: r'StringDecimalModel.bigDecimal',
             ),
+            string: value.decodeFormString(context: r'StringDecimalModel.string'),
           );
         }
       ''';
@@ -1711,8 +1711,8 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(int.parameterProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleValue.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(int.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
@@ -1879,9 +1879,9 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleA.parameterProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleB.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
@@ -1970,10 +1970,10 @@ void main() {
             );
           }
           final map = <String, String>{};
-          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
           map.addAll(flexibleValue.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
           map.addAll(bigDecimal.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
           return map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
@@ -1985,6 +1985,775 @@ void main() {
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(expectedToFormMethod)),
+      );
+    });
+  });
+
+  group('allOf with list models', () {
+    test('generates fromSimple for allOf with list of int', () {
+      final model = AllOfModel(
+        name: 'AllOfIntList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromSimple = '''
+        factory AllOfIntList.fromSimple(String? value, {required bool explode}) {
+          return AllOfIntList(
+            list: value
+              .decodeSimpleStringList(context: r'AllOfIntList.list')
+              .map((e) => e.decodeSimpleInt(context: r'AllOfIntList.list'))
+              .toList(),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+    });
+
+    test('generates fromSimple for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromSimple = '''
+        factory AllOfDateTimeList.fromSimple(String? value, {required bool explode}) {
+          return AllOfDateTimeList(
+            list: value
+              .decodeSimpleStringList(context: r'AllOfDateTimeList.list')
+              .map(
+                (e) => e.decodeSimpleDateTime(context: r'AllOfDateTimeList.list'),
+              )
+              .toList(),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+    });
+
+    test('generates fromSimple for allOf with list of Date', () {
+      final model = AllOfModel(
+        name: 'AllOfDateList',
+        models: {
+          ListModel(
+            content: DateModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromSimple = '''
+        factory AllOfDateList.fromSimple(String? value, {required bool explode}) {
+          return AllOfDateList(
+            list: value
+              .decodeSimpleStringList(context: r'AllOfDateList.list')
+              .map((e) => e.decodeSimpleDate(context: r'AllOfDateList.list'))
+              .toList(),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+    });
+
+    test('generates fromForm for allOf with list of double', () {
+      final model = AllOfModel(
+        name: 'AllOfDoubleList',
+        models: {
+          ListModel(
+            content: DoubleModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromForm = '''
+        factory AllOfDoubleList.fromForm(String? value, {required bool explode}) {
+          return AllOfDoubleList(
+            list: value
+              .decodeFormStringList(context: r'AllOfDoubleList.list')
+              .map((e) => e.decodeFormDouble(context: r'AllOfDoubleList.list'))
+              .toList(),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromForm)),
+      );
+    });
+
+    test('generates fromForm for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromForm = '''
+        factory AllOfDateTimeList.fromForm(String? value, {required bool explode}) {
+          return AllOfDateTimeList(
+            list: value
+              .decodeFormStringList(context: r'AllOfDateTimeList.list')
+              .map((e) => e.decodeFormDateTime(context: r'AllOfDateTimeList.list'))
+              .toList(),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromForm)),
+      );
+    });
+
+    test('generates toSimple for allOf with list of Date', () {
+      final model = AllOfModel(
+        name: 'AllOfDateList',
+        models: {
+          ListModel(
+            content: DateModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToSimple = '''
+        String toSimple({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final listSimple = list
+            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
+          values.add(listSimple);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf simple encoding: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToSimple)),
+      );
+    });
+
+    test('generates toSimple for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToSimple = '''
+        String toSimple({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final listSimple = list
+            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
+          values.add(listSimple);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf simple encoding: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToSimple)),
+      );
+    });
+
+    test('generates toForm for allOf with list of int', () {
+      final model = AllOfModel(
+        name: 'AllOfIntList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToForm = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final listForm = list
+            .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toForm(explode: explode, allowEmpty: allowEmpty);
+          values.add(listForm);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf form encoding: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToForm)),
+      );
+    });
+
+    test('generates toForm for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToForm = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final listForm = list
+            .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toForm(explode: explode, allowEmpty: allowEmpty);
+          values.add(listForm);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf form encoding: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToForm)),
+      );
+    });
+
+    test('generates toLabel for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToLabel = '''
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final listLabel = list
+            .map((e) => e.toLabel(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
+          values.add(listLabel);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf label encoding: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToLabel)),
+      );
+    });
+
+    test('generates toMatrix for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToMatrix = '''
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final values = <String>{};
+          final listMatrix = list
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .toList()
+            .toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              alreadyEncoded: true,
+            );
+          values.add(listMatrix);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToMatrix)),
+      );
+    });
+
+    test('generates fromSimple for allOf with two lists', () {
+      final oneOfModel = OneOfModel(
+        name: 'ArrayOneOfModel',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'AllOfDoubleList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+          ListModel(
+            content: oneOfModel,
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedFromSimple = '''
+        factory AllOfDoubleList.fromSimple(String? value, {required bool explode}) {
+          return AllOfDoubleList(
+            list: value
+              .decodeSimpleStringList(context: r'AllOfDoubleList.list')
+              .map((e) => e.decodeSimpleDateTime(context: r'AllOfDoubleList.list'))
+              .toList(),
+            list2: value
+              .decodeSimpleStringList(context: r'AllOfDoubleList.list2')
+              .map((e) => ArrayOneOfModel.fromSimple(e, explode: true))
+              .toList(),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+    });
+
+    test('generates toSimple for allOf with two lists', () {
+      final oneOfModel = OneOfModel(
+        name: 'ArrayOneOfModel',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'AllOfDoubleList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+          ListModel(
+            content: oneOfModel,
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToSimple = '''
+        String toSimple({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final listSimple = list
+            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
+          values.add(listSimple);
+          final list2Simple = list2
+            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
+            .toList()
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
+          values.add(list2Simple);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf simple encoding: all values must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToSimple)),
+      );
+    });
+
+    test('generates toJson for allOf with list of DateTime', () {
+      final model = AllOfModel(
+        name: 'AllOfDateTimeList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToJson = '''
+        Object? toJson() {
+          final values = <Object?>{};
+          final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
+          values.add(listJson);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+    });
+
+    test('generates toJson for allOf with two lists', () {
+      final oneOfModel = OneOfModel(
+        name: 'ArrayOneOfModel',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'AllOfDoubleList',
+        models: {
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+          ListModel(
+            content: oneOfModel,
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToJson = '''
+        Object? toJson() {
+          final values = <Object?>{};
+          final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
+          values.add(listJson);
+          final list2Json = list2.map((e) => e.toJson()).toList();
+          values.add(list2Json);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
+            );
+          }
+          return values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+    });
+
+    test('generates parameterProperties exception for allOf with list', () {
+      final model = AllOfModel(
+        name: 'AllOfIntList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedParameterProperties = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+        }) =>
+          throw EncodingException(
+            'parameterProperties not supported for AllOfIntList: contains array types',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
+
+    test('generates exception for allOf with mixed list and class', () {
+      final classModel = ClassModel(
+        name: 'TestClass',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'AllOfMixedListClass',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+          ),
+          classModel,
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToJson = '''
+        Object? toJson() =>
+          throw EncodingException(
+            'Cannot encode AllOfMixedListClass to JSON: allOf mixing arrays with other types is not supported',
+          );
+      ''';
+
+      const expectedParameterProperties = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+        }) =>
+          throw EncodingException(
+            'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
+
+    test('generates exception for allOf with mixed list and primitive', () {
+      final model = AllOfModel(
+        name: 'AllOfMixedListPrimitive',
+        models: {
+          ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToJson = '''
+        Object? toJson() =>
+          throw EncodingException(
+            'Cannot encode AllOfMixedListPrimitive to JSON: allOf mixing arrays with other types is not supported',
+          );
+      ''';
+
+      const expectedParameterProperties = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+        }) =>
+          throw EncodingException(
+            'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
+      );
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedParameterProperties)),
+      );
+    });
+
+    test('generates exception for allOf with multiple lists and class', () {
+      final classModel = ClassModel(
+        name: 'TestClass',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = AllOfModel(
+        name: 'AllOfMultiListClass',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+          ),
+          ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+          classModel,
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToJson = '''
+        Object? toJson() =>
+          throw EncodingException(
+            'Cannot encode AllOfMultiListClass to JSON: allOf mixing arrays with other types is not supported',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToJson)),
       );
     });
   });

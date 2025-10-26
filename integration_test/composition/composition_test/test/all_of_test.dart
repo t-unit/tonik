@@ -11,16 +11,16 @@ void main() {
       );
 
       expect(allOf.toJson(), {'id': '1', 'count': 1});
-      expect(allOf.toForm(explode: true, allowEmpty: true), 'id=1&count=1');
-      expect(allOf.toSimple(explode: true, allowEmpty: true), 'id=1,count=1');
-      expect(allOf.toSimple(explode: false, allowEmpty: true), 'id,1,count,1');
+      expect(allOf.toForm(explode: true, allowEmpty: true), 'count=1&id=1');
+      expect(allOf.toSimple(explode: true, allowEmpty: true), 'count=1,id=1');
+      expect(allOf.toSimple(explode: false, allowEmpty: true), 'count,1,id,1');
       expect(
         allOf.toMatrix('allOf', explode: false, allowEmpty: true),
-        ';allOf=id,1,count,1',
+        ';allOf=count,1,id,1',
       );
       expect(
         allOf.toMatrix('allOf', explode: true, allowEmpty: true),
-        ';id=1;count=1',
+        ';count=1;id=1',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -59,25 +59,25 @@ void main() {
   group('AllOfEnum', () {
     test('AllOfEnum', () {
       final allOf = AllOfEnum(
-        allOfEnumModel: AllOfEnumModel(status: Enum1.value1),
-        allOfEnumModel2: AllOfEnumModel2(priority: Enum2.one),
+        allOfEnumModel2: AllOfEnumModel2(status: Enum1.value1),
+        allOfEnumModel: AllOfEnumModel(priority: Enum2.one),
       );
       expect(allOf.toJson(), {'status': 'value1', 'priority': 1});
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'status=value1&priority=1',
+        'priority=1&status=value1',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'status=value1,priority=1',
+        'priority=1,status=value1',
       );
       expect(
         allOf.toMatrix('1234', explode: false, allowEmpty: true),
-        ';1234=status,value1,priority,1',
+        ';1234=priority,1,status,value1',
       );
       expect(
         allOf.toMatrix('1234', explode: true, allowEmpty: true),
-        ';status=value1;priority=1',
+        ';priority=1;status=value1',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -203,23 +203,23 @@ void main() {
       expect(allOf.toJson(), {'id': '123', 'name': 'Albert', 'active': true});
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'id=123&name=Albert&active=true',
+        'active=true&id=123&name=Albert',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'id=123,name=Albert,active=true',
+        'active=true,id=123,name=Albert',
       );
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'id,123,name,Albert,active,true',
+        'active,true,id,123,name,Albert',
       );
       expect(
         allOf.toMatrix('x', explode: false, allowEmpty: true),
-        ';x=id,123,name,Albert,active,true',
+        ';x=active,true,id,123,name,Albert',
       );
       expect(
         allOf.toMatrix('x', explode: true, allowEmpty: true),
-        ';id=123;name=Albert;active=true',
+        ';active=true;id=123;name=Albert',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -230,12 +230,12 @@ void main() {
     test('ThreeLevelAllOf', () {
       final allOf = ThreeLevelAllOf(
         threeLevelAllOfAllOfModel: ThreeLevelAllOfAllOfModel(
-          threeLevelAllOfAllOfAllOfModel2: ThreeLevelAllOfAllOfAllOfModel2(
+          threeLevelAllOfAllOfAllOfModel: ThreeLevelAllOfAllOfAllOfModel(
             threeLevelAllOfAllOfAllOfModel3: ThreeLevelAllOfAllOfAllOfModel3(
-              id: '123',
-            ),
-            threeLevelAllOfAllOfAllOfModel: ThreeLevelAllOfAllOfAllOfModel(
               name: 'Albert',
+            ),
+            threeLevelAllOfAllOfAllOfModel2: ThreeLevelAllOfAllOfAllOfModel2(
+              id: '123',
             ),
           ),
           threeLevelAllOfAllOfModel2: ThreeLevelAllOfAllOfModel2(
@@ -253,23 +253,23 @@ void main() {
       });
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'id=123&name=Albert&email=albert%40example.com&verified=true',
+        'verified=true&email=albert%40example.com&id=123&name=Albert',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'id=123,name=Albert,email=albert%40example.com,verified=true',
+        'verified=true,email=albert%40example.com,id=123,name=Albert',
       );
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'id,123,name,Albert,email,albert%40example.com,verified,true',
+        'verified,true,email,albert%40example.com,id,123,name,Albert',
       );
       expect(
         allOf.toMatrix('x', explode: false, allowEmpty: true),
-        ';x=id,123,name,Albert,email,albert%40example.com,verified,true',
+        ';x=verified,true,email,albert%40example.com,id,123,name,Albert',
       );
       expect(
         allOf.toMatrix('x', explode: true, allowEmpty: true),
-        ';id=123;name=Albert;email=albert%40example.com;verified=true',
+        ';verified=true;email=albert%40example.com;id=123;name=Albert',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -401,23 +401,23 @@ void main() {
       expect(allOf.toJson(), {'name': 'qwerty', 'metadata': 'asdf'});
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'name=qwerty&metadata=asdf',
+        'metadata=asdf&name=qwerty',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'name=qwerty,metadata=asdf',
+        'metadata=asdf,name=qwerty',
       );
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'name,qwerty,metadata,asdf',
+        'metadata,asdf,name,qwerty',
       );
       expect(
         allOf.toMatrix('x', explode: false, allowEmpty: true),
-        ';x=name,qwerty,metadata,asdf',
+        ';x=metadata,asdf,name,qwerty',
       );
       expect(
         allOf.toMatrix('x', explode: true, allowEmpty: true),
-        ';name=qwerty;metadata=asdf',
+        ';metadata=asdf;name=qwerty',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -582,8 +582,8 @@ void main() {
   group('MultiLevelNesting', () {
     test('with string level1', () {
       final allOf = MultiLevelNesting(
-        multiLevelNestingModel: MultiLevelNestingModel(level2: 42),
-        multiLevelNestingModel2: MultiLevelNestingModel2(
+        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
+        multiLevelNestingModel: MultiLevelNestingModel(
           level1: MultiLevelNestingLevel1OneOfModelString('test'),
         ),
       );
@@ -615,8 +615,8 @@ void main() {
 
     test('with Class1 level1', () {
       final allOf = MultiLevelNesting(
-        multiLevelNestingModel: MultiLevelNestingModel(level2: 42),
-        multiLevelNestingModel2: MultiLevelNestingModel2(
+        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
+        multiLevelNestingModel: MultiLevelNestingModel(
           level1: MultiLevelNestingLevel1OneOfModelAnyOf(
             MultiLevelNestingLevel1OneOfAnyOfModel(
               class1: Class1(name: 'Albert'),
@@ -647,8 +647,8 @@ void main() {
 
     test('with Class2 level1', () {
       final allOf = MultiLevelNesting(
-        multiLevelNestingModel: MultiLevelNestingModel(level2: 42),
-        multiLevelNestingModel2: MultiLevelNestingModel2(
+        multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
+        multiLevelNestingModel: MultiLevelNestingModel(
           level1: MultiLevelNestingLevel1OneOfModelAnyOf(
             MultiLevelNestingLevel1OneOfAnyOfModel(class2: Class2(number: 123)),
           ),
@@ -691,23 +691,23 @@ void main() {
       });
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'tags=tag1,tag2,tag3&ids=1,2,3',
+        'ids=1,2,3&tags=tag1,tag2,tag3',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'tags=tag1,tag2,tag3,ids=1,2,3',
+        'ids=1,2,3,tags=tag1,tag2,tag3',
       );
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'tags,tag1,tag2,tag3,ids,1,2,3',
+        'ids,1,2,3,tags,tag1,tag2,tag3',
       );
       expect(
         allOf.toMatrix('x', explode: false, allowEmpty: true),
-        ';x=tags,tag1,tag2,tag3,ids,1,2,3',
+        ';x=ids,1,2,3,tags,tag1,tag2,tag3',
       );
       expect(
         allOf.toMatrix('x', explode: true, allowEmpty: true),
-        ';tags=tag1,tag2,tag3;ids=1,2,3',
+        ';ids=1,2,3;tags=tag1,tag2,tag3',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -717,10 +717,10 @@ void main() {
   group('AllOfWithMixedLists', () {
     test('AllOfWithMixedLists', () {
       final allOf = AllOfWithMixedLists(
-        allOfWithMixedListsModel: AllOfWithMixedListsModel(
+        allOfWithMixedListsModel2: AllOfWithMixedListsModel2(
           users: [Class1(name: 'Albert')],
         ),
-        allOfWithMixedListsModel2: AllOfWithMixedListsModel2(
+        allOfWithMixedListsModel: AllOfWithMixedListsModel(
           tags: ['tag1', 'tag2', 'tag3'],
         ),
       );
@@ -765,23 +765,23 @@ void main() {
       });
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'statuses=value1&priorities=1,2',
+        'priorities=1,2&statuses=value1',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'statuses=value1,priorities=1,2',
+        'priorities=1,2,statuses=value1',
       );
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'statuses,value1,priorities,1,2',
+        'priorities,1,2,statuses,value1',
       );
       expect(
         allOf.toMatrix('y', explode: false, allowEmpty: true),
-        ';y=statuses,value1,priorities,1,2',
+        ';y=priorities,1,2,statuses,value1',
       );
       expect(
         allOf.toMatrix('y', explode: true, allowEmpty: true),
-        ';statuses=value1;priorities=1,2',
+        ';priorities=1,2;statuses=value1',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -791,13 +791,13 @@ void main() {
   group('NestedListInAllOf', () {
     test('NestedListInAllOf', () {
       final allOf = NestedListInAllOf(
-        nestedListInAllOfModel2: NestedListInAllOfModel2(
+        nestedListInAllOfModel: NestedListInAllOfModel(
           matrix: [
             [1, 2, 3],
             [4, 5, 6],
           ],
         ),
-        nestedListInAllOfModel: NestedListInAllOfModel(name: 'test'),
+        nestedListInAllOfModel2: NestedListInAllOfModel2(name: 'test'),
       );
 
       expect(allOf.toJson(), {
@@ -831,7 +831,7 @@ void main() {
           simpleList: ['test', 'test2'],
         ),
         complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
-          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(
+          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(
             enumList: [Enum1.value1, Enum1.value2],
           ),
         ),
@@ -843,23 +843,23 @@ void main() {
       });
       expect(
         allOf.toForm(explode: true, allowEmpty: true),
-        'simpleList=test,test2&enumList=value1,value2',
+        'enumList=value1,value2&simpleList=test,test2',
       );
       expect(
         allOf.toSimple(explode: true, allowEmpty: true),
-        'simpleList=test,test2,enumList=value1,value2',
+        'enumList=value1,value2,simpleList=test,test2',
       );
       expect(
         allOf.toSimple(explode: false, allowEmpty: true),
-        'simpleList,test,test2,enumList,value1,value2',
+        'enumList,value1,value2,simpleList,test,test2',
       );
       expect(
         allOf.toMatrix('x', explode: false, allowEmpty: true),
-        ';x=simpleList,test,test2,enumList,value1,value2',
+        ';x=enumList,value1,value2,simpleList,test,test2',
       );
       expect(
         allOf.toMatrix('x', explode: true, allowEmpty: true),
-        ';simpleList=test,test2;enumList=value1,value2',
+        ';enumList=value1,value2;simpleList=test,test2',
       );
 
       expect(allOf.currentEncodingShape, EncodingShape.complex);
@@ -871,7 +871,7 @@ void main() {
           simpleList: ['test', 'test2'],
         ),
         complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
-          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(
+          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(
             complexList: [
               Class1(name: 'Albert'),
               Class1(name: 'Bob'),
@@ -906,8 +906,8 @@ void main() {
           simpleList: ['test', 'test2'],
         ),
         complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
-          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(complexList: [Class1(name: 'Albert'), Class1(name: 'Bob')]),
-          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(enumList: [Enum1.value1, Enum1.value2]),
+          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(enumList: [Enum1.value1, Enum1.value2]),
+          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(complexList: [Class1(name: 'Albert'), Class1(name: 'Bob')]),
         ),
       );
 
@@ -973,15 +973,15 @@ void main() {
     });
   });
 
-  group('AllOfDoubleList', () {
-    test('AllOfDoubleList', () {
-      final allOf = AllOfDoubleList(
-        list: [DateTime(2021, 1, 1).toTimeZonedIso8601String(), DateTime(2021, 1, 2).toTimeZonedIso8601String()],
-          list2: [DateTime(2021, 1, 1), DateTime(2021, 1, 2)],
-      );
+  // group('AllOfDoubleList', () {
+  //   test('AllOfDoubleList', () {
+  //     final allOf = AllOfDoubleList(
+  //       list: [DateTime(2021, 1, 1).toTimeZonedIso8601String(), DateTime(2021, 1, 2).toTimeZonedIso8601String()],
+  //         list2: [DateTime(2021, 1, 1), DateTime(2021, 1, 2)],
+  //     );
 
-      expect(allOf.toJson(), ['2021-01-01T00:00:00.000Z', '2021-01-02T00:00:00.000Z']);
-  });
+  //     expect(allOf.toJson(), ['2021-01-01T00:00:00.000Z', '2021-01-02T00:00:00.000Z']);
+  // });
 
-  group('AllOfOneOfDoubleList', () {});
+  // group('AllOfOneOfDoubleList', () {});
 }

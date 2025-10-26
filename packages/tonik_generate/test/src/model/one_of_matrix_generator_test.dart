@@ -299,8 +299,8 @@ void main() {
       const expectedMethod = '''
         String toMatrix(String paramName, {required bool explode, required bool allowEmpty}) {
           return switch (this) {
-            StatusChoiceStatus(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
             StatusChoiceS(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+            StatusChoiceStatus(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
           };
         }
       ''';
@@ -446,8 +446,8 @@ void main() {
       const expectedMethod = '''
         String toMatrix(String paramName, {required bool explode, required bool allowEmpty}) {
           return switch (this) {
-            OuterInner(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
             OuterB(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+            OuterInner(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
           };
         }
       ''';
@@ -557,12 +557,12 @@ void main() {
           required bool allowEmpty,
         }) {
           return switch (this) {
-            StringOrListString(:final value) => value.toMatrix(
+            StringOrListList(:final value) => value.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             ),
-            StringOrListList(:final value) => value.toMatrix(
+            StringOrListString(:final value) => value.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
@@ -604,20 +604,20 @@ void main() {
           required bool allowEmpty,
         }) {
           return switch (this) {
+            StringOrIntListList(:final value) => value
+              .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+              .toList()
+              .toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              ),
             StringOrIntListString(:final value) => value.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             ),
-            StringOrIntListList(:final value) => value
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                ),
           };
         }
       ''';
@@ -658,11 +658,6 @@ void main() {
           required bool allowEmpty,
         }) {
           return switch (this) {
-            StringOrDateTimeListString(:final value) => value.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            ),
             StringOrDateTimeListList(:final value) => value
                 .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
@@ -672,6 +667,11 @@ void main() {
                   allowEmpty: allowEmpty,
                   alreadyEncoded: true,
                 ),
+            StringOrDateTimeListString(:final value) => value.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            ),
           };
         }
       ''';
@@ -715,11 +715,6 @@ void main() {
           required bool allowEmpty,
         }) {
           return switch (this) {
-            StringOrEnumListString(:final value) => value.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            ),
             StringOrEnumListList(:final value) => value
                 .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
@@ -729,6 +724,11 @@ void main() {
                   allowEmpty: allowEmpty,
                   alreadyEncoded: true,
                 ),
+            StringOrEnumListString(:final value) => value.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            ),
           };
         }
       ''';
@@ -771,20 +771,20 @@ void main() {
           required bool allowEmpty,
         }) {
           return switch (this) {
-            StringListOrIntListList(:final value) => value.toMatrix(
+            StringListOrIntListList(:final value) => value
+              .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+              .toList()
+              .toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+            ),
+            StringListOrIntListListModel(:final value) => value.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             ),
-            StringListOrIntListListModel(:final value) => value
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                ),
           };
         }
       ''';

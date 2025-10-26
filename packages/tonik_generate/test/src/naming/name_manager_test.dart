@@ -156,10 +156,8 @@ void main() {
         servers: const [],
       );
 
-      // First model gets Anonymous
-      expect(manager.modelName(models[0]), 'AnonymousModel');
-      // Second model gets Model suffix
-      expect(manager.modelName(models[1]), 'AnonymousModel2');
+      expect(manager.modelName(models[1]), 'AnonymousModel');
+      expect(manager.modelName(models[0]), 'AnonymousModel2');
 
       // Both responses have headers, so both should be cached
       expect(manager.responseNames(responses[0]).baseName, 'User');
@@ -663,6 +661,43 @@ void main() {
           expect(manager.modelName(models[1]), 'User');
         },
       );
+    });
+
+    test('uses stable model key for sorting unnamed models', () {
+      final sharedContext = context.push('Test').push('allOf');
+
+      final model1 = AllOfModel(
+        name: null,
+        models: {
+          StringModel(context: sharedContext),
+        },
+        context: sharedContext,
+      );
+
+      final model2 = AllOfModel(
+        name: null,
+        models: {
+          IntegerModel(context: sharedContext),
+        },
+        context: sharedContext,
+      );
+
+      manager.prime(
+        models: {model1, model2},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final name1 = manager.modelName(model1);
+      final name2 = manager.modelName(model2);
+
+      // Different models should get different names.
+      expect(name1, isNot(name2));
+      expect(name1, startsWith('TestAllOf'));
+      expect(name2, startsWith('TestAllOf'));
     });
   });
 

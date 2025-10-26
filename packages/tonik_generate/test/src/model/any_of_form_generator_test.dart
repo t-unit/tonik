@@ -133,10 +133,10 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (string != null) {
+          if (int != null) {
             shapes.add(EncodingShape.simple);
           }
-          if (int != null) {
+          if (string != null) {
             shapes.add(EncodingShape.simple);
           }
           if (shapes.isEmpty) {
@@ -232,11 +232,11 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (string != null) {
-            shapes.add(EncodingShape.simple);
-          }
           if (data != null) {
             shapes.add(data!.currentEncodingShape);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
           }
           if (shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -270,13 +270,6 @@ void main() {
 
       const expectedMethod = '''
         factory Flexible.fromForm(String? value, {required bool explode}) {
-          String? string;
-          try {
-            string = value.decodeFormString(context: r'Flexible');
-          } on Object catch (_) {
-            string = null;
-          }
-
           int? int;
           try {
             int = value.decodeFormInt(context: r'Flexible');
@@ -284,7 +277,14 @@ void main() {
             int = null;
           }
 
-          return Flexible(string: string, int: int);
+          String? string;
+          try {
+            string = value.decodeFormString(context: r'Flexible');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          return Flexible(int: int, string: string);
         }
       ''';
 
@@ -392,13 +392,6 @@ void main() {
 
       const expectedMethod = '''
         factory SearchKey.fromForm(String? value, {required bool explode}) {
-          String? string;
-          try {
-            string = value.decodeFormString(context: r'SearchKey');
-          } on Object catch (_) {
-            string = null;
-          }
-
           User? user;
           try {
             user = User.fromForm(value, explode: explode);
@@ -406,7 +399,14 @@ void main() {
             user = null;
           }
 
-          return SearchKey(string: string, user: user);
+          String? string;
+          try {
+            string = value.decodeFormString(context: r'SearchKey');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          return SearchKey(user: user, string: string);
         }
       ''';
 
@@ -435,16 +435,16 @@ void main() {
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
           final values = <String>{};
+          if (int != null) {
+            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+            values.add(intForm);
+          }
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
             );
             values.add(stringForm);
-          }
-          if (int != null) {
-            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
-            values.add(intForm);
           }
           if (values.isEmpty) return '';
           if (values.length > 1) {
@@ -622,17 +622,17 @@ void main() {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
           
+          if (data != null) {
+            final dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(dataForm);
+          }
+
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
             );
             values.add(stringForm);
-          }
-
-          if (data != null) {
-            final dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(dataForm);
           }
           
           if (values.isEmpty && mapValues.isEmpty) return '';
@@ -697,13 +697,6 @@ void main() {
 
       const expectedMethod = '''
         factory Outer.fromForm(String? value, {required bool explode}) {
-          String? string;
-          try {
-            string = value.decodeFormString(context: r'Outer');
-          } on Object catch (_) {
-            string = null;
-          }
-
           Inner? inner;
           try {
             inner = Inner.fromForm(value, explode: explode);
@@ -711,7 +704,14 @@ void main() {
             inner = null;
           }
 
-          return Outer(string: string, inner: inner);
+          String? string;
+          try {
+            string = value.decodeFormString(context: r'Outer');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          return Outer(inner: inner, string: string);
         }
       ''';
 
@@ -770,13 +770,6 @@ void main() {
           String toForm({required bool explode, required bool allowEmpty}) {
             final values = <String>{};
             final mapValues = <Map<String, String>>[];
-            if (string != null) {
-              final stringForm = string!.toForm(
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              values.add(stringForm);
-            }
             if (innerChoice != null) {
               switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
@@ -795,6 +788,13 @@ void main() {
                     'Cannot encode field with mixed encoding shape',
                   );
               }
+            }
+            if (string != null) {
+              final stringForm = string!.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(stringForm);
             }
             if (values.isEmpty && mapValues.isEmpty) return '';
             if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -929,21 +929,21 @@ void main() {
         const expected = '''
           String toForm({required bool explode, required bool allowEmpty}) {
             final values = <String>{};
-            final mapValues = <Map<String, String>>[];
+            final mapValues = <Map<String, String>>[]; 
+            if (myClass != null) {
+              final myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
+              mapValues.add(myClassForm);
+            }
+            if (int != null) {
+              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+              values.add(intForm);
+            }
             if (string != null) {
               final stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
               );
               values.add(stringForm);
-            }
-            if (int != null) {
-              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
-              values.add(intForm);
-            }
-            if (myClass != null) {
-              final myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
-              mapValues.add(myClassForm);
             }
             if (values.isEmpty && mapValues.isEmpty) return '';
             if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -1115,6 +1115,10 @@ void main() {
         const expected = '''
           String toSimple({required bool explode, required bool allowEmpty}) {
             final values = <String>{};
+            if (int != null) {
+              final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
+              values.add(intSimple);
+            }
             if (string != null) {
               final stringSimple = string!.toSimple(
                 explode: explode,
@@ -1122,10 +1126,6 @@ void main() {
               );
               values.add(stringSimple);
             }
-          if (int != null) {
-            final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
-            values.add(intSimple);
-          }
         ''';
 
         expect(

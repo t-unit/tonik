@@ -104,7 +104,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return string.toLabel(explode: explode, allowEmpty: allowEmpty);
+          return int.toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(

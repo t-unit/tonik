@@ -53,8 +53,8 @@ void main() {
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
           return switch (this) {
-            ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
             ResultError(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
+            ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
           };
         }
       ''';
@@ -102,11 +102,11 @@ void main() {
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
           return switch (this) {
+            ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
             ResponseUser(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'user',
             }.toForm(explode: explode, allowEmpty: allowEmpty),
-            ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
           };
         }
       ''';
@@ -252,10 +252,10 @@ void main() {
       const expectedMethod = '''
         factory Response.fromForm(String? value, {required bool explode}) {
           try {
-            return ResponseUser(User.fromForm(value, explode: explode));
+            return ResponseMsg(value.decodeFormString(context: r'Response'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
           try {
-            return ResponseMsg(value.decodeFormString(context: r'Response'));
+            return ResponseUser(User.fromForm(value, explode: explode));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
           throw SimpleDecodingException('Invalid form value for Response');
         }

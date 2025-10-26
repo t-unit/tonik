@@ -67,7 +67,7 @@ class OneOfGenerator {
   ) {
     final variantNames = <DiscriminatedModel, String>{};
 
-    for (final discriminatedModel in model.models) {
+    for (final discriminatedModel in model.models.toSortedList()) {
       final uniqueVariantName = nameManager.generateVariantName(
         parentClassName: parentClassName,
         model: discriminatedModel.model,
@@ -153,7 +153,7 @@ class OneOfGenerator {
   ) {
     final classes = <Class>[];
 
-    for (final discriminatedModel in model.models) {
+    for (final discriminatedModel in model.models.toSortedList()) {
       final variantName = variantNames[discriminatedModel]!;
 
       final typeRef = typeReference(
@@ -215,6 +215,7 @@ class OneOfGenerator {
     Map<DiscriminatedModel, String> variantNames,
   ) {
     final cases = model.models
+        .toSortedList()
         .map((discriminatedModel) {
           final variantName = variantNames[discriminatedModel]!;
 
@@ -283,7 +284,7 @@ class OneOfGenerator {
 
       final resultCases = <Code>[];
 
-      for (final m in model.models.where(
+      for (final m in model.models.toSortedList().where(
         (m) =>
             m.discriminatorValue != null &&
             m.model is! PrimitiveModel &&
@@ -324,7 +325,9 @@ class OneOfGenerator {
     if (hasPrimitives && hasOnlyPrimitives) {
       final cases = <Code>[];
 
-      for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
+      for (final m in model.models.toSortedList().where(
+        (m) => m.model is PrimitiveModel,
+      )) {
         final variantName = variantNames[m]!;
 
         cases.addAll([
@@ -348,7 +351,9 @@ class OneOfGenerator {
       ]);
     }
 
-    for (final m in model.models.where((m) => m.model is PrimitiveModel)) {
+    for (final m in model.models.toSortedList().where(
+      (m) => m.model is PrimitiveModel,
+    )) {
       final typeRef = typeReference(m.model, nameManager, package);
       final variantName = variantNames[m]!;
 
@@ -361,7 +366,7 @@ class OneOfGenerator {
       ]);
     }
 
-    for (final m in model.models.where(
+    for (final m in model.models.toSortedList().where(
       (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
     )) {
       final modelName = nameManager.modelName(m.model);
@@ -426,7 +431,7 @@ class OneOfGenerator {
           const Code('}'),
         ]);
 
-        for (final m in model.models.where(
+        for (final m in model.models.toSortedList().where(
           (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
         )) {
           final variantName = variantNames[m]!;
@@ -454,7 +459,7 @@ class OneOfGenerator {
       }
     }
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 
@@ -558,7 +563,7 @@ class OneOfGenerator {
           const Code('}'),
         ]);
 
-        for (final m in model.models.where(
+        for (final m in model.models.toSortedList().where(
           (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
         )) {
           final variantName = variantNames[m]!;
@@ -586,7 +591,7 @@ class OneOfGenerator {
       }
     }
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 
@@ -659,7 +664,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
 
       final encodingShape = m.model.encodingShape;
@@ -752,7 +757,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
 
       final encodingShape = m.model.encodingShape;
@@ -849,7 +854,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
 
@@ -925,7 +930,7 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
@@ -1038,7 +1043,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
 
       final encodingShape = m.model.encodingShape;
@@ -1130,7 +1135,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
 
       caseCodes.addAll([
@@ -1180,7 +1185,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models) {
+    for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 
@@ -1202,9 +1207,9 @@ class OneOfGenerator {
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
-          refer('value')
-              .property('uriEncode')
-              .call([], {'allowEmpty': refer('allowEmpty')}).code,
+          refer('value').property('uriEncode').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
           const Code(','),
         ]);
       }

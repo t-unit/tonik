@@ -47,20 +47,20 @@ void main() {
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
           final values = <String>{};
+          if (bool != null) {
+            final boolLabel = bool!.toLabel(explode: explode, allowEmpty: allowEmpty);
+            values.add(boolLabel);
+          }
+          if (int != null) {
+            final intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty);
+            values.add(intLabel);
+          }
           if (string != null) {
             final stringLabel = string!.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
             );
             values.add(stringLabel);
-          }
-          if (int != null) {
-            final intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty);
-            values.add(intLabel);
-          }
-          if (bool != null) {
-            final boolLabel = bool!.toLabel(explode: explode, allowEmpty: allowEmpty);
-            values.add(boolLabel);
           }
           if (values.isEmpty) return '';
           if (values.length > 1) {
@@ -189,17 +189,17 @@ void main() {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
+          if (data != null) {
+            final dataLabel = data!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(dataLabel);
+            discriminatorValue ??= r'data';
+          }
           if (string != null) {
             final stringLabel = string!.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
             );
             values.add(stringLabel);
-          }
-          if (data != null) {
-            final dataLabel = data!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(dataLabel);
-            discriminatorValue ??= r'data';
           }
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -303,13 +303,6 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
-          if (string != null) {
-            final stringLabel = string!.toLabel(
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            values.add(stringLabel);
-          }
           if (innerChoice != null) {
             switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
@@ -328,6 +321,13 @@ void main() {
                   'Cannot encode field with mixed encoding shape',
                 );
             }
+          }
+          if (string != null) {
+            final stringLabel = string!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(stringLabel);
           }
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {

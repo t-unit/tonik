@@ -682,7 +682,7 @@ void main() {
 
   group('AnyOfWithSimpleList', () {
     test('string list', () {
-      final anyOf = AnyOfWithSimpleList(list: ['test', 'test2']);
+      final anyOf = AnyOfWithSimpleList(list2: ['test', 'test2']);
 
       expect(anyOf.toJson(), ['test', 'test2']);
       expect(anyOf.toForm(explode: true, allowEmpty: true), 'test,test2');
@@ -701,7 +701,7 @@ void main() {
     });
 
     test('integer list', () {
-      final anyOf = AnyOfWithSimpleList(list2: [1, 2, 3]);
+      final anyOf = AnyOfWithSimpleList(list: [1, 2, 3]);
 
       expect(anyOf.toJson(), [1, 2, 3]);
       expect(anyOf.toForm(explode: true, allowEmpty: true), '1,2,3');

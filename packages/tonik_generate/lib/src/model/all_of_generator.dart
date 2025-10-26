@@ -57,7 +57,7 @@ class AllOfGenerator {
   @visibleForTesting
   Class generateClass(AllOfModel model) {
     final className = nameManager.modelName(model);
-    final models = model.models.toList();
+    final models = model.models.toSortedList();
 
     final pseudoProperties =
         models.map((m) {
@@ -332,6 +332,88 @@ class AllOfGenerator {
     AllOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    // Check for list properties first (before any other logic)
+    final hasListProperties = normalizedProperties.any(
+      (prop) => prop.property.model is ListModel,
+    );
+    final allListProperties =
+        hasListProperties &&
+        normalizedProperties.every(
+          (prop) => prop.property.model is ListModel,
+        );
+
+    // If we have lists mixed with other types, throw exception
+    if (hasListProperties && !allListProperties) {
+      return Method(
+        (b) =>
+            b
+              ..returns = refer('Object?', 'dart:core')
+              ..name = 'toJson'
+              ..lambda = true
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'Cannot encode $className to JSON: allOf mixing arrays '
+                    'with other types is not supported',
+                  ).code,
+      );
+    }
+
+    // If all properties are lists, handle like simple encoding
+    if (allListProperties) {
+      final jsonParts = <Code>[
+        declareFinal('values')
+            .assign(
+              literalSet(
+                {},
+                refer('Object?', 'dart:core'),
+              ),
+            )
+            .statement,
+      ];
+
+      for (final normalized in normalizedProperties) {
+        final fieldName = normalized.normalizedName;
+        final fieldNameJson = '${fieldName}Json';
+
+        jsonParts.addAll([
+          Code('final $fieldNameJson = '),
+          Code(
+            buildToJsonPropertyExpression(
+              fieldName,
+              normalized.property,
+            ),
+          ),
+          const Code(';'),
+          refer(
+            'values',
+          ).property('add').call([refer(fieldNameJson)]).statement,
+        ]);
+      }
+
+      jsonParts.addAll([
+        const Code('if ('),
+        refer('values').property('length').code,
+        const Code(' > 1) {'),
+        generateEncodingExceptionExpression(
+          'Inconsistent allOf JSON encoding: all arrays must encode to '
+          'the same result',
+        ).statement,
+        const Code('}'),
+        const Code('return '),
+        refer('values').property('first').code,
+        const Code(';'),
+      ]);
+
+      return Method(
+        (b) =>
+            b
+              ..returns = refer('Object?', 'dart:core')
+              ..name = 'toJson'
+              ..lambda = false
+              ..body = Block.of(jsonParts),
+      );
+    }
+
     // Check if any of the models have dynamic encoding shapes
     final hasDynamicModels = normalizedProperties.any((prop) {
       return prop.property.model.encodingShape == EncodingShape.mixed;
@@ -432,6 +514,7 @@ class AllOfGenerator {
         );
 
       case EncodingShape.complex:
+        // Lists are handled earlier, so this is only for non-list complex types
         final mapType = buildMapStringObjectType();
         final mapParts = <Code>[
           const Code('final map = '),
@@ -536,27 +619,16 @@ class AllOfGenerator {
         final name = normalized.normalizedName;
         final modelType = normalized.property.model;
 
-        // Each model attempts to decode from the single value
-        final expression = switch (modelType) {
-          EnumModel() => typeReference(modelType, nameManager, package)
-              .property('fromSimple')
-              .call([refer('value')], {'explode': refer('explode')}),
-          _ =>
-            modelType.encodingShape == EncodingShape.simple
-                ? buildSimpleValueExpression(
-                  refer('value'),
-                  model: modelType,
-                  isRequired: !normalized.property.isNullable,
-                  nameManager: nameManager,
-                  package: package,
-                  contextClass: className,
-                  contextProperty: name,
-                  explode: refer('explode'),
-                )
-                : typeReference(modelType, nameManager, package)
-                    .property('fromSimple')
-                    .call([refer('value')], {'explode': refer('explode')}),
-        };
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: !normalized.property.isNullable,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          contextProperty: name,
+          explode: refer('explode'),
+        );
 
         propertyAssignments.add(MapEntry(name, expression));
       }
@@ -655,6 +727,38 @@ class AllOfGenerator {
                 buildBoolParameter('allowEmpty', defaultValue: true),
               )
               ..body = buildEmptyMapStringString().returned.statement,
+      );
+    }
+
+    // Check if we have any list properties FIRST (before simple types check)
+    final hasListProperties = normalizedProperties.any(
+      (prop) => prop.property.model is ListModel,
+    );
+    final allListProperties =
+        hasListProperties &&
+        normalizedProperties.every(
+          (prop) => prop.property.model is ListModel,
+        );
+
+    // If we have lists (either all or mixed), throw exception
+    if (hasListProperties) {
+      final message =
+          allListProperties
+              ? 'parameterProperties not supported for $className: contains '
+                  'array types'
+              : 'parameterProperties not supported for $className: allOf '
+                  'mixing arrays with other types is not supported';
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'parameterProperties'
+              ..returns = buildMapStringStringType()
+              ..optionalParameters.add(
+                buildBoolParameter('allowEmpty', defaultValue: true),
+              )
+              ..lambda = true
+              ..body = generateEncodingExceptionExpression(message).code,
       );
     }
 
@@ -996,26 +1100,16 @@ class AllOfGenerator {
         final name = normalized.normalizedName;
         final modelType = normalized.property.model;
 
-        final expression = switch (modelType) {
-          EnumModel() => typeReference(modelType, nameManager, package)
-              .property('fromForm')
-              .call([refer('value')], {'explode': refer('explode')}),
-          _ =>
-            modelType.encodingShape == EncodingShape.simple
-                ? buildFromFormValueExpression(
-                  refer('value'),
-                  model: modelType,
-                  isRequired: !normalized.property.isNullable,
-                  nameManager: nameManager,
-                  package: package,
-                  contextClass: className,
-                  contextProperty: name,
-                  explode: refer('explode'),
-                )
-                : typeReference(modelType, nameManager, package)
-                    .property('fromForm')
-                    .call([refer('value')], {'explode': refer('explode')}),
-        };
+        final expression = buildFromFormValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: !normalized.property.isNullable,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          contextProperty: name,
+          explode: refer('explode'),
+        );
 
         propertyAssignments.add(MapEntry(name, expression));
       }
@@ -1956,9 +2050,14 @@ class AllOfGenerator {
       ];
 
       if (normalizedProperties.isNotEmpty) {
-        final firstProp = normalizedProperties.first;
+        final simpleProp = normalizedProperties.firstWhere(
+          (prop) =>
+              prop.property.model.encodingShape == EncodingShape.simple ||
+              prop.property.model.encodingShape == EncodingShape.mixed,
+          orElse: () => normalizedProperties.first,
+        );
         bodyCode.add(
-          refer(firstProp.normalizedName)
+          refer(simpleProp.normalizedName)
               .property('uriEncode')
               .call([], {'allowEmpty': refer('allowEmpty')})
               .returned
@@ -2049,9 +2148,9 @@ class AllOfGenerator {
       valueCollectionCode.addAll([
         declareFinal('${prop.normalizedName}Encoded')
             .assign(
-              refer(prop.normalizedName)
-                  .property('uriEncode')
-                  .call([], {'allowEmpty': refer('allowEmpty')}),
+              refer(prop.normalizedName).property('uriEncode').call([], {
+                'allowEmpty': refer('allowEmpty'),
+              }),
             )
             .statement,
         refer('values').property('add').call([

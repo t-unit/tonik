@@ -72,11 +72,11 @@ void main() {
 
         const expectedMethod = '''
         factory Flexible.fromJson(Object? json) {
-          String? string;
+          User? user;
           try {
-            string = json.decodeJsonString(context: r'Flexible');
+            user = User.fromJson(json);
           } on Object catch (_) {
-            string = null;
+            user = null;
           }
 
           int? int;
@@ -86,14 +86,14 @@ void main() {
             int = null;
           }
 
-          User? user;
+          String? string;
           try {
-            user = User.fromJson(json);
+            string = json.decodeJsonString(context: r'Flexible');
           } on Object catch (_) {
-            user = null;
+            string = null;
           }
 
-          return Flexible(string: string, int: int, user: user);
+          return Flexible(user: user, int: int, string: string);
         }
       ''';
 
@@ -351,12 +351,12 @@ void main() {
         final mapValues = <Map<String, Object?>>[];
         String? discriminatorValue;
 
-        if (string != null) {
-          final Object? stringJson = string;
-          if (stringJson is Map<String, Object?>) {
-            mapValues.add(stringJson);
+        if (bool != null) {
+          final Object? boolJson = bool;
+          if (boolJson is Map<String, Object?>) {
+            mapValues.add(boolJson);
           } else {
-            values.add(stringJson);
+            values.add(boolJson);
           }
         }
         if (int != null) {
@@ -367,12 +367,12 @@ void main() {
             values.add(intJson);
           }
         }
-        if (bool != null) {
-          final Object? boolJson = bool;
-          if (boolJson is Map<String, Object?>) {
-            mapValues.add(boolJson);
+        if (string != null) {
+          final Object? stringJson = string;
+          if (stringJson is Map<String, Object?>) {
+            mapValues.add(stringJson);
           } else {
-            values.add(boolJson);
+            values.add(stringJson);
           }
         }
 
@@ -455,15 +455,6 @@ void main() {
         final mapValues = <Map<String, Object?>>[];
         String? discriminatorValue;
 
-        if (user != null) {
-          final Object? userJson = user!.toJson();
-          if (userJson is Map<String, Object?>) {
-            mapValues.add(userJson);
-              discriminatorValue ??= r'user';
-          } else {
-            values.add(userJson);
-          }
-        }
         if (string != null) {
           final Object? stringJson = string;
           if (stringJson is Map<String, Object?>) {
@@ -471,6 +462,15 @@ void main() {
               discriminatorValue ??= r'str';
           } else {
             values.add(stringJson);
+          }
+        }
+        if (user != null) {
+          final Object? userJson = user!.toJson();
+          if (userJson is Map<String, Object?>) {
+            mapValues.add(userJson);
+              discriminatorValue ??= r'user';
+          } else {
+            values.add(userJson);
           }
         }
 

@@ -59,7 +59,7 @@ class AnyOfGenerator {
     final className = nameManager.modelName(model);
 
     final pseudoProperties =
-        model.models.map((discriminated) {
+        model.models.toSortedList().map((discriminated) {
           final typeRef = typeReference(
             discriminated.model,
             nameManager,
@@ -448,7 +448,8 @@ class AnyOfGenerator {
   }
 
   Map<Model, String?> _discriminatorMap(AnyOfModel model) => {
-    for (final dm in model.models) dm.model: dm.discriminatorValue,
+    for (final dm in model.models.toSortedList())
+      dm.model: dm.discriminatorValue,
   };
 
   Constructor _buildFromJsonConstructor(
