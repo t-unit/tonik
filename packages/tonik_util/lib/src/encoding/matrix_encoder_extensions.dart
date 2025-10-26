@@ -100,10 +100,15 @@ extension MatrixStringListEncoder on List<String> {
   /// The [allowEmpty] parameter controls whether empty lists are allowed:
   /// - When `true`, empty lists are encoded as `;paramName`
   /// - When `false`, empty lists throw an exception
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the list items are 
+  /// already URL-encoded. When `true`, items are not re-encoded to prevent 
+  /// double encoding.
   String toMatrix(
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    bool alreadyEncoded = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -113,9 +118,16 @@ extension MatrixStringListEncoder on List<String> {
     }
 
     if (explode) {
-      return map((item) => ';$paramName=${Uri.encodeComponent(item)}').join();
+      return map(
+        (item) =>
+            ';$paramName='
+            '${alreadyEncoded ? item : Uri.encodeComponent(item)}',
+      ).join();
     } else {
-      return ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+      return ';$paramName=${uriEncode(
+        allowEmpty: allowEmpty,
+        alreadyEncoded: alreadyEncoded,
+      )}';
     }
   }
 }

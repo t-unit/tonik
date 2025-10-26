@@ -162,6 +162,7 @@ class AnyOfGenerator {
               _buildToFormMethod(className, model, normalized),
               _buildToLabelMethod(className, model, normalized),
               _buildToMatrixMethod(className, model, normalized),
+              _buildUriEncodeMethod(className, model, normalized),
               generateEqualsMethod(
                 className: className,
                 properties: propsForEquality,
@@ -1808,6 +1809,67 @@ class AnyOfGenerator {
               ),
             )
             ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = Block.of(body),
+    );
+  }
+
+  Method _buildUriEncodeMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final body = <Code>[];
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final propertyModel = n.property.model;
+
+      // Check if this property can be URI encoded
+      if (propertyModel.encodingShape == EncodingShape.complex) {
+        // Complex types cannot be URI encoded
+        body
+          ..add(Code('if ($name != null) {'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Cannot uriEncode $className: contains complex type',
+            ).statement,
+          )
+          ..add(const Code('}'));
+      } else {
+        // Simple or mixed types can call uriEncode
+        body
+          ..add(Code('if ($name != null) {'))
+          ..add(
+            Code(
+              'return $name!.uriEncode(allowEmpty: allowEmpty);',
+            ),
+          )
+          ..add(const Code('}'));
+      }
+    }
+
+    body.add(
+      generateEncodingExceptionExpression(
+        'Cannot uriEncode $className: no value set',
+      ).statement,
+    );
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'uriEncode'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
             ..lambda = false
             ..body = Block.of(body),
     );

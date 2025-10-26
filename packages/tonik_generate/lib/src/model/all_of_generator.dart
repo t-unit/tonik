@@ -120,6 +120,11 @@ class AllOfGenerator {
                 normalizedProperties,
                 model,
               ),
+              _buildUriEncodeMethod(
+                className,
+                normalizedProperties,
+                model,
+              ),
               generateEqualsMethod(
                 className: className,
                 properties: properties,
@@ -1920,6 +1925,166 @@ class AllOfGenerator {
               ),
             )
             ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = Block.of(valueCollectionCode),
+    );
+  }
+
+  Method _buildUriEncodeMethod(
+    String className,
+    List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
+  ) {
+    final hasDynamicModels = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.mixed;
+    });
+
+    if (hasDynamicModels) {
+      final encodingShapeType = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      final bodyCode = <Code>[
+        const Code('if (currentEncodingShape != '),
+        encodingShapeType.property('simple').code,
+        const Code(') {'),
+        generateEncodingExceptionExpression(
+          'Cannot uriEncode $className: contains complex types',
+        ).statement,
+        const Code('}'),
+      ];
+
+      if (normalizedProperties.isNotEmpty) {
+        final firstProp = normalizedProperties.first;
+        bodyCode.add(
+          refer(firstProp.normalizedName)
+              .property('uriEncode')
+              .call([], {'allowEmpty': refer('allowEmpty')})
+              .returned
+              .statement,
+        );
+      } else {
+        bodyCode.add(literalString('').returned.statement);
+      }
+
+      return Method(
+        (b) =>
+            b
+              ..name = 'uriEncode'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..lambda = false
+              ..body = Block.of(bodyCode),
+      );
+    }
+
+    // Check if any property is complex (cannot be URI encoded)
+    final hasComplexProperties = normalizedProperties.any((prop) {
+      return prop.property.model.encodingShape == EncodingShape.complex;
+    });
+
+    if (model.cannotBeSimplyEncoded || hasComplexProperties) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'uriEncode'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..lambda = false
+              ..body =
+                  generateEncodingExceptionExpression(
+                    'Cannot uriEncode $className: contains complex types',
+                  ).statement,
+      );
+    }
+
+    if (normalizedProperties.isEmpty) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'uriEncode'
+              ..returns = refer('String', 'dart:core')
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..lambda = true
+              ..body = literalString('').code,
+      );
+    }
+
+    // For AllOf, all properties must encode to the same value
+    final valueCollectionCode = <Code>[
+      declareFinal(
+        'values',
+      ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+    ];
+
+    for (final prop in normalizedProperties) {
+      valueCollectionCode.addAll([
+        declareFinal('${prop.normalizedName}Encoded')
+            .assign(
+              refer(prop.normalizedName)
+                  .property('uriEncode')
+                  .call([], {'allowEmpty': refer('allowEmpty')}),
+            )
+            .statement,
+        refer('values').property('add').call([
+          refer('${prop.normalizedName}Encoded'),
+        ]).statement,
+      ]);
+    }
+
+    valueCollectionCode.addAll([
+      const Code('if (values.length > 1) {'),
+      generateEncodingExceptionExpression(
+        'Inconsistent allOf encoding for $className: '
+        'all values must encode to the same result',
+      ).statement,
+      const Code('}'),
+      const Code('return values.first;'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'uriEncode'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
             ..lambda = false
             ..body = Block.of(valueCollectionCode),
     );

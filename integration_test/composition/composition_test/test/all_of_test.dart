@@ -714,13 +714,274 @@ void main() {
     });
   });
 
-  group('AllOfWithMixedLists', () {});
+  group('AllOfWithMixedLists', () {
+    test('AllOfWithMixedLists', () {
+      final allOf = AllOfWithMixedLists(
+        allOfWithMixedListsModel: AllOfWithMixedListsModel(
+          users: [Class1(name: 'Albert')],
+        ),
+        allOfWithMixedListsModel2: AllOfWithMixedListsModel2(
+          tags: ['tag1', 'tag2', 'tag3'],
+        ),
+      );
 
-  group('AllOfWithEnumList', () {});
+      expect(allOf.toJson(), {
+        'tags': ['tag1', 'tag2', 'tag3'],
+        'users': [
+          {'name': 'Albert'},
+        ],
+      });
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('x', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
-  group('NestedListInAllOf', () {});
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
 
-  group('ComplexListComposition', () {});
+  group('AllOfWithEnumList', () {
+    test('AllOfWithEnumList', () {
+      final allOf = AllOfWithEnumList(
+        allOfWithEnumListModel: AllOfWithEnumListModel(
+          priorities: [Enum2.one, Enum2.two],
+        ),
+        allOfWithEnumListModel2: AllOfWithEnumListModel2(
+          statuses: [Enum1.value1],
+        ),
+      );
 
-  group('AllOfWithListOfComposites', () {});
+      expect(allOf.toJson(), {
+        'statuses': ['value1'],
+        'priorities': [1, 2],
+      });
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'statuses=value1&priorities=1,2',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'statuses=value1,priorities=1,2',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'statuses,value1,priorities,1,2',
+      );
+      expect(
+        allOf.toMatrix('y', explode: false, allowEmpty: true),
+        ';y=statuses,value1,priorities,1,2',
+      );
+      expect(
+        allOf.toMatrix('y', explode: true, allowEmpty: true),
+        ';statuses=value1;priorities=1,2',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('NestedListInAllOf', () {
+    test('NestedListInAllOf', () {
+      final allOf = NestedListInAllOf(
+        nestedListInAllOfModel2: NestedListInAllOfModel2(
+          matrix: [
+            [1, 2, 3],
+            [4, 5, 6],
+          ],
+        ),
+        nestedListInAllOfModel: NestedListInAllOfModel(name: 'test'),
+      );
+
+      expect(allOf.toJson(), {
+        'matrix': [
+          [1, 2, 3],
+          [4, 5, 6],
+        ],
+        'name': 'test',
+      });
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('x', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('ComplexListComposition', () {
+    test('enum list', () {
+      final allOf = ComplexListComposition(
+        complexListCompositionModel: ComplexListCompositionModel(
+          simpleList: ['test', 'test2'],
+        ),
+        complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
+          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(
+            enumList: [Enum1.value1, Enum1.value2],
+          ),
+        ),
+      );
+
+      expect(allOf.toJson(), {
+        'simpleList': ['test', 'test2'],
+        'enumList': ['value1', 'value2'],
+      });
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'simpleList=test,test2&enumList=value1,value2',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'simpleList=test,test2,enumList=value1,value2',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'simpleList,test,test2,enumList,value1,value2',
+      );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=simpleList,test,test2,enumList,value1,value2',
+      );
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';simpleList=test,test2;enumList=value1,value2',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('complex list', () {
+      final allOf = ComplexListComposition(
+        complexListCompositionModel: ComplexListCompositionModel(
+          simpleList: ['test', 'test2'],
+        ),
+        complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
+          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(
+            complexList: [
+              Class1(name: 'Albert'),
+              Class1(name: 'Bob'),
+            ],
+          ),
+        ),
+      );
+
+      expect(allOf.toJson(), {
+        'simpleList': ['test', 'test2'],
+        'complexList': [{'name': 'Albert'}, {'name': 'Bob'}],
+      });
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('x', explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('both lists', () {
+      final allOf = ComplexListComposition(
+        complexListCompositionModel: ComplexListCompositionModel(
+          simpleList: ['test', 'test2'],
+        ),
+        complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
+          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(complexList: [Class1(name: 'Albert'), Class1(name: 'Bob')]),
+          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(enumList: [Enum1.value1, Enum1.value2]),
+        ),
+      );
+
+      expect(allOf.toJson(), {
+        'simpleList': ['test', 'test2'],
+        'complexList': [{'name': 'Albert'}, {'name': 'Bob'}],
+        'enumList': ['value1', 'value2'],
+      });
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('x', explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('AllOfWithListOfComposites', () {
+    test('AllOfWithListOfComposites', () {
+      final allOf = AllOfWithListOfComposites(
+        allOfWithListOfCompositesModel2: AllOfWithListOfCompositesModel2(
+          items: [AllOfWithListOfCompositesItemsArrayOneOfModelClass1(Class1(name: 'Albert')), AllOfWithListOfCompositesItemsArrayOneOfModelClass2(Class2(number: 123))],
+        ), 
+        allOfWithListOfCompositesModel: AllOfWithListOfCompositesModel(
+          count: 948894984
+        ),
+      );
+
+      expect(allOf.toJson(), {
+        'items': [{'name': 'Albert'}, {'number': 123}],
+        'count': 948894984,
+      });
+      expect(
+        () =>allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () =>allOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () =>allOf.toSimple(explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () =>allOf.toMatrix('x', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () =>allOf.toMatrix('x', explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('AllOfDoubleList', () {
+    test('AllOfDoubleList', () {
+      final allOf = AllOfDoubleList(
+        list: [DateTime(2021, 1, 1).toTimeZonedIso8601String(), DateTime(2021, 1, 2).toTimeZonedIso8601String()],
+          list2: [DateTime(2021, 1, 1), DateTime(2021, 1, 2)],
+      );
+
+      expect(allOf.toJson(), ['2021-01-01T00:00:00.000Z', '2021-01-02T00:00:00.000Z']);
+  });
+
+  group('AllOfOneOfDoubleList', () {});
 }

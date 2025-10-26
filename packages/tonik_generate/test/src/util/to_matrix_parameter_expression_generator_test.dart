@@ -201,7 +201,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -231,7 +231,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -383,7 +383,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(

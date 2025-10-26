@@ -655,11 +655,14 @@ void main() {
             }
             if (list != null) {
               final listMatrix = list!
-                  .map(
-                    (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
-                  )
+                  .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                   .toList()
-                  .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+                  .toMatrix(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    alreadyEncoded: true,
+                  );
               values.add(listMatrix);
             }
             if (values.isEmpty) return '';
@@ -717,11 +720,14 @@ void main() {
             }
             if (list2 != null) {
               final list2Matrix = list2!
-                  .map(
-                    (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
-                  )
+                  .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                   .toList()
-                  .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+                  .toMatrix(
+                    paramName,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    alreadyEncoded: true,
+                  );
               values.add(list2Matrix);
             }
             if (values.isEmpty) return '';

@@ -80,35 +80,37 @@ Expression _buildListMatrixExpression(
     EnumModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression
-        .property('map')
-        .call([
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body =
-                      buildMatrixParameterExpression(
-                        refer('e'),
-                        contentModel,
-                        paramName: paramName,
-                        explode: explode,
-                        allowEmpty: allowEmpty,
-                      ).code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
+    AnyOfModel() =>
+        valueExpression
+            .property('map')
+            .call([
+              Method(
+                (b) =>
+                    b
+                      ..requiredParameters.add(
+                        Parameter((b) => b..name = 'e'),
+                      )
+                      ..body =
+                          refer('e')
+                              .property('uriEncode')
+                              .call(
+                                [],
+                                {'allowEmpty': allowEmpty},
+                              )
+                              .code,
+              ).closure,
+            ])
+            .property('toList')
+            .call([])
+            .property('toMatrix')
+            .call(
+              [paramName],
+              {
+                'explode': explode,
+                'allowEmpty': allowEmpty,
+                'alreadyEncoded': literalTrue,
+              },
+            ),
     AliasModel() => _buildListMatrixExpression(
       valueExpression,
       contentModel.model,

@@ -108,6 +108,7 @@ class OneOfGenerator {
               _generateToFormMethod(className, model, variantNames),
               _generateToLabelMethod(className, model, variantNames),
               _generateToMatrixMethod(className, model, variantNames),
+              _generateUriEncodeMethod(className, model, variantNames),
               Method(
                 (b) =>
                     b
@@ -1167,6 +1168,69 @@ class OneOfGenerator {
               ),
             )
             ..optionalParameters.addAll(buildEncodingParameters())
+            ..lambda = false
+            ..body = body,
+    );
+  }
+
+  Method _generateUriEncodeMethod(
+    String className,
+    OneOfModel model,
+    Map<DiscriminatedModel, String> variantNames,
+  ) {
+    final caseCodes = <Code>[];
+
+    for (final m in model.models) {
+      final variantName = variantNames[m]!;
+      final modelType = m.model;
+
+      // Check if this variant can be URI encoded
+      if (modelType.encodingShape == EncodingShape.complex) {
+        // Complex types cannot be URI encoded - don't destructure value
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Cannot uriEncode $className: variant contains complex type',
+          ).code,
+          const Code(','),
+        ]);
+      } else {
+        // Simple or mixed types can call uriEncode
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          refer('value')
+              .property('uriEncode')
+              .call([], {'allowEmpty': refer('allowEmpty')}).code,
+          const Code(','),
+        ]);
+      }
+    }
+
+    final body = Block.of([
+      const Code('return switch (this) {'),
+      ...caseCodes,
+      const Code('};'),
+    ]);
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'uriEncode'
+            ..returns = refer('String', 'dart:core')
+            ..optionalParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'allowEmpty'
+                      ..type = refer('bool', 'dart:core')
+                      ..named = true
+                      ..required = true,
+              ),
+            )
             ..lambda = false
             ..body = body,
     );

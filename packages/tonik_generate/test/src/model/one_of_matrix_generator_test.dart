@@ -610,15 +610,14 @@ void main() {
               allowEmpty: allowEmpty,
             ),
             StringOrIntListList(:final value) => value
-                .map(
-                  (e) => e.toMatrix(
-                    paramName,
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                  ),
-                )
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
-                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                ),
           };
         }
       ''';
@@ -665,15 +664,14 @@ void main() {
               allowEmpty: allowEmpty,
             ),
             StringOrDateTimeListList(:final value) => value
-                .map(
-                  (e) => e.toMatrix(
-                    paramName,
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                  ),
-                )
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
-                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                ),
           };
         }
       ''';
@@ -723,15 +721,14 @@ void main() {
               allowEmpty: allowEmpty,
             ),
             StringOrEnumListList(:final value) => value
-                .map(
-                  (e) => e.toMatrix(
-                    paramName,
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                  ),
-                )
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
-                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                ),
           };
         }
       ''';
@@ -780,15 +777,14 @@ void main() {
               allowEmpty: allowEmpty,
             ),
             StringListOrIntListListModel(:final value) => value
-                .map(
-                  (e) => e.toMatrix(
-                    paramName,
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                  ),
-                )
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
-                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                ),
           };
         }
       ''';

@@ -510,11 +510,14 @@ void main() {
           }) {
             final values = <String>{};
             final listMatrix = list
-                .map(
-                  (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
-                )
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
-                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
             values.add(listMatrix);
             if (values.length > 1) {
               throw EncodingException(
@@ -563,11 +566,14 @@ void main() {
             );
             values.add(listMatrix);
             final list2Matrix = list2
-                .map(
-                  (e) => e.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
-                )
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
-                .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
             values.add(list2Matrix);
             if (values.length > 1) {
               throw EncodingException(

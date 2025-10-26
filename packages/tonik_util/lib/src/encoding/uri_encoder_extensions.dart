@@ -72,13 +72,25 @@ extension BigDecimalUriEncoder on BigDecimal {
 /// Extension for URI encoding List values.
 extension StringListUriEncoder on List<String> {
   /// URI encodes this List value.
-  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the list items are 
+  /// already URL-encoded. When `true`, items are not re-encoded to prevent 
+  /// double encoding.
+  String uriEncode({
+    required bool allowEmpty,
+    bool alreadyEncoded = false,
+    bool useQueryComponent = false,
+  }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
 
     if (isEmpty) {
       return '';
+    }
+
+    if (alreadyEncoded) {
+      return join(',');
     }
 
     return map(

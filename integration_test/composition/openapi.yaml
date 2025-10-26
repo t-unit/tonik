@@ -573,3 +573,26 @@ components:
                   extra:
                     type: string
         - type: string
+
+    AllOfDoubleList:
+      allOf:
+        - type: array
+          items:
+            type: string
+        - type: array
+          items:
+            type: string
+            format: date-time
+
+    AllOfOneOfDoubleList:
+      allOf:
+      - type: array
+        items:
+          oneOf:
+            - type: string
+            - type: integer
+      - type: array
+        items:
+          type: string
+          format: date-time
+             
