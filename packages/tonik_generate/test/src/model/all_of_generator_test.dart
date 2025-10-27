@@ -2513,13 +2513,16 @@ void main() {
 
       const expectedToJson = '''
         Object? toJson() {
-          final values = <Object?>{};
+          final values = <Object?>[];
           final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
           values.add(listJson);
-          if (values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
-            );
+          const deepEquals = const DeepCollectionEquality();
+          for (var i = 1; i < values.length; i++) {
+            if (!deepEquals.equals(values[0], values[i])) {
+              throw EncodingException(
+                'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
+              );
+            }
           }
           return values.first;
         }
@@ -2562,15 +2565,18 @@ void main() {
 
       const expectedToJson = '''
         Object? toJson() {
-          final values = <Object?>{};
+          final values = <Object?>[];
           final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
           values.add(listJson);
           final list2Json = list2.map((e) => e.toJson()).toList();
           values.add(list2Json);
-          if (values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
-            );
+          const deepEquals = const DeepCollectionEquality();
+          for (var i = 1; i < values.length; i++) {
+            if (!deepEquals.equals(values[0], values[i])) {
+              throw EncodingException(
+                'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
+              );
+            }
           }
           return values.first;
         }

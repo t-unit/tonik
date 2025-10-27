@@ -98,6 +98,7 @@ Expression _buildListLabelExpression(
           {
             'explode': explode,
             'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalBool(true),
           },
         ),
     AliasModel() => _buildListLabelExpression(

@@ -68,7 +68,14 @@ extension LabelBigDecimalEncoder on BigDecimal {
 /// Extension for encoding List values.
 extension LabelStringListEncoder on List<String> {
   /// Encodes this List value using label style encoding.
-  String toLabel({required bool explode, required bool allowEmpty}) {
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the list items are
+  /// already URI-encoded and should not be encoded again.
+  String toLabel({
+    required bool explode,
+    required bool allowEmpty,
+    bool alreadyEncoded = false,
+  }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
@@ -77,9 +84,14 @@ extension LabelStringListEncoder on List<String> {
     }
 
     if (explode) {
-      return map((item) => '.${item.uriEncode(allowEmpty: allowEmpty)}').join();
+      return map(
+        (item) =>
+            '.'
+            '${alreadyEncoded ? item : item.uriEncode(allowEmpty: allowEmpty)}',
+      ).join();
     } else {
-      final encodedValues = uriEncode(allowEmpty: allowEmpty);
+      final encodedValues =
+          uriEncode(allowEmpty: allowEmpty, alreadyEncoded: alreadyEncoded);
       return '.$encodedValues';
     }
   }

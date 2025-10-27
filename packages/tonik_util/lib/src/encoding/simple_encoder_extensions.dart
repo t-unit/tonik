@@ -73,8 +73,15 @@ extension SimpleStringListEncoder on List<String> {
   /// The [allowEmpty] parameter controls whether empty lists are allowed:
   /// - When `true`, empty lists are encoded as empty strings
   /// - When `false`, empty lists throw an exception
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  ///
+  /// The [alreadyEncoded] parameter indicates whether the list items are
+  /// already URI-encoded and should not be encoded again.
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool alreadyEncoded = false,
+  }) =>
+      uriEncode(allowEmpty: allowEmpty, alreadyEncoded: alreadyEncoded);
 }
 
 /// Extension for encoding Map values.

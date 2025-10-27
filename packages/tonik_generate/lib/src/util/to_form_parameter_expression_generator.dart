@@ -98,6 +98,7 @@ Expression _buildListFormExpression(
           {
             'explode': explode,
             'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalBool(true),
           },
         ),
     AliasModel() => _buildListFormExpression(

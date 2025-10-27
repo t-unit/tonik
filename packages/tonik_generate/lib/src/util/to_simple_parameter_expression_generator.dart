@@ -98,6 +98,7 @@ Expression _buildListSimpleExpression(
           {
             'explode': explode,
             'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalBool(true),
           },
         ),
     AliasModel() => _buildListSimpleExpression(

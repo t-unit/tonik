@@ -882,7 +882,10 @@ void main() {
 
       expect(allOf.toJson(), {
         'simpleList': ['test', 'test2'],
-        'complexList': [{'name': 'Albert'}, {'name': 'Bob'}],
+        'complexList': [
+          {'name': 'Albert'},
+          {'name': 'Bob'},
+        ],
       });
       expect(
         () => allOf.toForm(explode: true, allowEmpty: true),
@@ -906,14 +909,24 @@ void main() {
           simpleList: ['test', 'test2'],
         ),
         complexListCompositionAnyOfModel: ComplexListCompositionAnyOfModel(
-          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(enumList: [Enum1.value1, Enum1.value2]),
-          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(complexList: [Class1(name: 'Albert'), Class1(name: 'Bob')]),
+          complexListCompositionAnyOfModel3: ComplexListCompositionAnyOfModel3(
+            enumList: [Enum1.value1, Enum1.value2],
+          ),
+          complexListCompositionAnyOfModel2: ComplexListCompositionAnyOfModel2(
+            complexList: [
+              Class1(name: 'Albert'),
+              Class1(name: 'Bob'),
+            ],
+          ),
         ),
       );
 
       expect(allOf.toJson(), {
         'simpleList': ['test', 'test2'],
-        'complexList': [{'name': 'Albert'}, {'name': 'Bob'}],
+        'complexList': [
+          {'name': 'Albert'},
+          {'name': 'Bob'},
+        ],
         'enumList': ['value1', 'value2'],
       });
       expect(
@@ -937,35 +950,45 @@ void main() {
     test('AllOfWithListOfComposites', () {
       final allOf = AllOfWithListOfComposites(
         allOfWithListOfCompositesModel2: AllOfWithListOfCompositesModel2(
-          items: [AllOfWithListOfCompositesItemsArrayOneOfModelClass1(Class1(name: 'Albert')), AllOfWithListOfCompositesItemsArrayOneOfModelClass2(Class2(number: 123))],
-        ), 
+          items: [
+            AllOfWithListOfCompositesItemsArrayOneOfModelClass1(
+              Class1(name: 'Albert'),
+            ),
+            AllOfWithListOfCompositesItemsArrayOneOfModelClass2(
+              Class2(number: 123),
+            ),
+          ],
+        ),
         allOfWithListOfCompositesModel: AllOfWithListOfCompositesModel(
-          count: 948894984
+          count: 948894984,
         ),
       );
 
       expect(allOf.toJson(), {
-        'items': [{'name': 'Albert'}, {'number': 123}],
+        'items': [
+          {'name': 'Albert'},
+          {'number': 123},
+        ],
         'count': 948894984,
       });
       expect(
-        () =>allOf.toForm(explode: true, allowEmpty: true),
+        () => allOf.toForm(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
       expect(
-        () =>allOf.toSimple(explode: true, allowEmpty: true),
+        () => allOf.toSimple(explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
       expect(
-        () =>allOf.toSimple(explode: false, allowEmpty: true),
+        () => allOf.toSimple(explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
       expect(
-        () =>allOf.toMatrix('x', explode: false, allowEmpty: true),
+        () => allOf.toMatrix('x', explode: false, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
       expect(
-        () =>allOf.toMatrix('x', explode: true, allowEmpty: true),
+        () => allOf.toMatrix('x', explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
 
@@ -973,15 +996,112 @@ void main() {
     });
   });
 
-  // group('AllOfDoubleList', () {
-  //   test('AllOfDoubleList', () {
-  //     final allOf = AllOfDoubleList(
-  //       list: [DateTime(2021, 1, 1).toTimeZonedIso8601String(), DateTime(2021, 1, 2).toTimeZonedIso8601String()],
-  //         list2: [DateTime(2021, 1, 1), DateTime(2021, 1, 2)],
-  //     );
+  group('AllOfDoubleList', () {
+    test('AllOfDoubleList', () {
+      final allOf = AllOfDoubleList(
+        list2: [
+          DateTime.utc(2021, 1, 1).toTimeZonedIso8601String(),
+          DateTime.utc(2021, 1, 2).toTimeZonedIso8601String(),
+        ],
+        list: [DateTime.utc(2021, 1, 1), DateTime.utc(2021, 1, 2)],
+      );
 
-  //     expect(allOf.toJson(), ['2021-01-01T00:00:00.000Z', '2021-01-02T00:00:00.000Z']);
-  // });
+      expect(allOf.toJson(), [
+        '2021-01-01T00:00:00.000Z',
+        '2021-01-02T00:00:00.000Z',
+      ]);
 
-  // group('AllOfOneOfDoubleList', () {});
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toMatrix('list', explode: true, allowEmpty: true),
+        ';list=2021-01-01T00%3A00%3A00.000Z;list=2021-01-02T00%3A00%3A00.000Z',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('AllOfOneOfDoubleList', () {
+    test('string', () {
+      final allOf = AllOfOneOfDoubleList(
+        list: [DateTime.utc(2021, 1, 1), DateTime.utc(2021, 1, 2)],
+        list2: [
+          AllOfOneOfDoubleListArrayOneOfModelString(
+            DateTime.utc(2021, 1, 1).toTimeZonedIso8601String(),
+          ),
+          AllOfOneOfDoubleListArrayOneOfModelString(
+            DateTime.utc(2021, 1, 2).toTimeZonedIso8601String(),
+          ),
+        ],
+      );
+
+      expect(allOf.toJson(), [
+        '2021-01-01T00:00:00.000Z',
+        '2021-01-02T00:00:00.000Z',
+      ]);
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        '2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=2021-01-01T00%3A00%3A00.000Z,2021-01-02T00%3A00%3A00.000Z',
+      );
+      expect(
+        allOf.toMatrix('list', explode: true, allowEmpty: true),
+        ';list=2021-01-01T00%3A00%3A00.000Z;list=2021-01-02T00%3A00%3A00.000Z',
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('integer', () {
+      final allOf = AllOfOneOfDoubleList(
+        list: [DateTime.utc(2021, 1, 1), DateTime.utc(2021, 1, 2)],
+        list2: [
+          AllOfOneOfDoubleListArrayOneOfModelInt(1),
+          AllOfOneOfDoubleListArrayOneOfModelInt(2),
+        ],
+      );
+
+      expect(allOf.toJson, throwsA(isA<EncodingException>()));
+      expect(
+        () => allOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toSimple(explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => allOf.toMatrix('y', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
 }
