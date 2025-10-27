@@ -13,6 +13,16 @@ sealed class ReferenceWrapper<T> {
   factory ReferenceWrapper.fromJson(Object? json) {
     const referenceKey = r'$ref';
 
+    if (json is String) {
+      if (T == Schema) {
+        final schemaMap = {'type': json};
+        return InlinedObject(Schema.fromJson(schemaMap) as T);
+      }
+      throw FormatException(
+        'Bare type strings are only supported for Schema types, found: $json',
+      );
+    }
+
     final map = json! as Map<String, dynamic>;
 
     if (map.containsKey(referenceKey)) {

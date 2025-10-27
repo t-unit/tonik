@@ -4,9 +4,8 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// Extensions for encoding values using form style parameter encoding.
 ///
-/// Form style is the default for query parameters and produces the same
-/// format
-/// as application/x-www-form-urlencoded encoding:
+/// Form style is the default for query parameters and follows RFC 6570 URI
+/// encoding rules:
 /// - Primitives: value
 /// - Arrays (explode=false): value1,value2,value3
 /// - Arrays (explode=true): value1&value2&value3 (handled at parameter level)
@@ -28,11 +27,10 @@ extension FormUriEncoder on Uri {
 extension FormStringEncoder on String {
   /// Encodes this string value using form style encoding.
   ///
-  /// String values are URL-encoded. Empty strings are handled based on
-  /// allowEmpty.
-  /// Uses query component encoding for consistency with form style.
+  /// String values are URL-encoded per RFC 6570. Empty strings are handled
+  /// based on allowEmpty.
   String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty, useQueryComponent: true);
+      uriEncode(allowEmpty: allowEmpty);
 }
 
 /// Extension for encoding int values.
@@ -75,10 +73,10 @@ extension FormBoolEncoder on bool {
 extension FormDateTimeEncoder on DateTime {
   /// Encodes this DateTime value using form style encoding.
   ///
-  /// DateTime values are converted to URL-encoded ISO 8601 strings.
-  /// Uses query component encoding for consistency with form style.
+  /// DateTime values are converted to URL-encoded ISO 8601 strings
+  /// per RFC 6570.
   String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty, useQueryComponent: true);
+      uriEncode(allowEmpty: allowEmpty);
 }
 
 /// Extension for encoding BigDecimal values.
@@ -111,12 +109,10 @@ extension FormStringListEncoder on List<String> {
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
-  }) =>
-      uriEncode(
-        allowEmpty: allowEmpty,
-        useQueryComponent: true,
-        alreadyEncoded: alreadyEncoded,
-      );
+  }) => uriEncode(
+    allowEmpty: allowEmpty,
+    alreadyEncoded: alreadyEncoded,
+  );
 }
 
 /// Extension for encoding Map values.
@@ -157,8 +153,16 @@ extension FormStringMapEncoder on Map<String, String> {
           .map(
             (e) {
               final value =
-                  alreadyEncoded ? e.value : Uri.encodeQueryComponent(e.value);
-              return '${Uri.encodeQueryComponent(e.key)}=$value';
+                  alreadyEncoded
+                      ? e.value
+                      : e.value.toForm(
+                        explode: explode,
+                        allowEmpty: allowEmpty,
+                      );
+              return '${e.key.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              )}=$value';
             },
           )
           .join('&');
@@ -167,7 +171,6 @@ extension FormStringMapEncoder on Map<String, String> {
       return uriEncode(
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
-        useQueryComponent: true,
         encodeKeys: false,
       );
     }

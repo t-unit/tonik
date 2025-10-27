@@ -595,4 +595,9 @@ components:
         items:
           type: string
           format: date-time
+
+    AllOfDirectPrimitive:
+      allOf:
+        - integer
+        - number
              

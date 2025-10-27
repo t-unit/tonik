@@ -392,20 +392,19 @@ class AllOfGenerator {
 
       jsonParts.addAll([
         const Code('const deepEquals = '),
-        refer('DeepCollectionEquality', 'package:collection/collection.dart')
-            .constInstance([]).code,
+        refer(
+          'DeepCollectionEquality',
+          'package:collection/collection.dart',
+        ).newInstance([]).code,
         const Code(';'),
         const Code('for (var i = 1; i < '),
         refer('values').property('length').code,
         const Code('; i++) {'),
         const Code('if (!'),
-        refer('deepEquals')
-            .property('equals')
-            .call([
-              refer('values').index(literalNum(0)),
-              refer('values').index(refer('i')),
-            ])
-            .code,
+        refer('deepEquals').property('equals').call([
+          refer('values').index(literalNum(0)),
+          refer('values').index(refer('i')),
+        ]).code,
         const Code(') {'),
         generateEncodingExceptionExpression(
           'Inconsistent allOf JSON encoding: all arrays must encode to '

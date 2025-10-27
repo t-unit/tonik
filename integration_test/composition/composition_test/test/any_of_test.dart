@@ -719,14 +719,131 @@ void main() {
       expect(anyOf.currentEncodingShape, EncodingShape.complex);
     });
 
-    test('both lists', () {});
+    test('both lists', () {
+      final anyOf = AnyOfWithSimpleList(
+        list: [1, 2, 3],
+        list2: ['test', 'test2'],
+      );
 
-    test('string', () {});
+      expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      expect(
+        () => anyOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
 
-    test('string list and integer list', () {});
+      expect(anyOf.currentEncodingShape, EncodingShape.complex);
+    });
   });
 
-  group('AnyOfWithComplexList', () {});
+  group('AnyOfWithComplexList', () {
+    test('class1 list', () {
+      final anyOf = AnyOfWithComplexList(
+        list: [
+          Class1(name: 'test'),
+          Class1(name: 'test2'),
+        ],
+      );
+
+      expect(anyOf.toJson(), [
+        {'name': 'test'},
+        {'name': 'test2'},
+      ]);
+      expect(
+        () => anyOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(anyOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('class2 list', () {
+      final anyOf = AnyOfWithComplexList(
+        list2: [Class2(number: 1), Class2(number: 2)],
+      );
+
+      expect(anyOf.toJson(), [
+        {'number': 1},
+        {'number': 2},
+      ]);
+      expect(
+        () => anyOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(anyOf.currentEncodingShape, EncodingShape.complex);
+    });
+
+    test('string', () {
+      final anyOf = AnyOfWithComplexList(string: 'asdf asdf');
+
+      expect(anyOf.toJson(), 'asdf asdf');
+      expect(anyOf.toForm(explode: true, allowEmpty: true), 'asdf%20asdf');
+      expect(anyOf.toSimple(explode: true, allowEmpty: true), 'asdf%20asdf');
+      expect(anyOf.toSimple(explode: false, allowEmpty: true), 'asdf%20asdf');
+      expect(
+        anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        ';asdf=asdf%20asdf',
+      );
+      expect(
+        anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+        ';asdf=asdf%20asdf',
+      );
+
+      expect(anyOf.currentEncodingShape, EncodingShape.simple);
+    });
+
+    test('all together', () {
+      final anyOf = AnyOfWithComplexList(
+        list: [Class1(name: 'test')],
+        list2: [Class2(number: 1)],
+        string: 'asdf',
+      );
+
+      expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      expect(
+        () => anyOf.toForm(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toSimple(explode: true, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+      expect(
+        () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+
+      expect(anyOf.currentEncodingShape, EncodingShape.mixed);
+    });
+  });
 
   group('AnyOfWithMixedLists', () {});
 

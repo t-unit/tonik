@@ -1104,4 +1104,22 @@ void main() {
       expect(allOf.currentEncodingShape, EncodingShape.complex);
     });
   });
+
+  group('AllOfDirectPrimitive', () {
+    test('AllOfDirectPrimitive', () {
+      final allOf = AllOfDirectPrimitive(
+        num: 1,
+        int: 1,
+      );
+
+      expect(allOf.toJson(), 1);
+      expect(allOf.toForm(explode: true, allowEmpty: true), '1');
+      expect(allOf.toSimple(explode: true, allowEmpty: true), '1');
+      expect(allOf.toSimple(explode: false, allowEmpty: true), '1');
+      expect(allOf.toMatrix('x', explode: false, allowEmpty: true), ';x=1');
+      expect(allOf.toMatrix('x', explode: true, allowEmpty: true), ';x=1');
+
+      expect(allOf.currentEncodingShape, EncodingShape.simple);
+    });
+  });
 }

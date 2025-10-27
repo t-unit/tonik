@@ -84,7 +84,7 @@ void main() {
     test('string', () {
       final oneOf = OneOfMixedString('my value');
       expect(oneOf.toJson(), 'my value');
-      expect(oneOf.toForm(explode: true, allowEmpty: true), 'my+value');
+      expect(oneOf.toForm(explode: true, allowEmpty: true), 'my%20value');
       expect(oneOf.toSimple(explode: true, allowEmpty: true), 'my%20value');
       expect(oneOf.toSimple(explode: false, allowEmpty: true), 'my%20value');
       expect(oneOf.toMatrix('asdf', explode: false, allowEmpty: true), ';asdf=my%20value');

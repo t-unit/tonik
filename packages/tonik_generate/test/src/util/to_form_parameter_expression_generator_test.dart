@@ -193,7 +193,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty)).toList().toForm(explode: explode, allowEmpty: allowEmpty);
+        final result = value.map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty)).toList().toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -222,7 +222,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty)).toList().toForm(explode: explode, allowEmpty: allowEmpty);
+        final result = value.map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty)).toList().toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -369,7 +369,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty)).toList().toForm(explode: explode, allowEmpty: allowEmpty);
+        final result = value.map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty)).toList().toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(

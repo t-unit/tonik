@@ -2173,7 +2173,7 @@ void main() {
           final listSimple = list
             .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(listSimple);
           if (values.length > 1) {
             throw EncodingException(
@@ -2211,7 +2211,7 @@ void main() {
           final listSimple = list
             .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(listSimple);
           if (values.length > 1) {
             throw EncodingException(
@@ -2249,7 +2249,7 @@ void main() {
           final listForm = list
             .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toForm(explode: explode, allowEmpty: allowEmpty);
+            .toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
           values.add(listForm);
           if (values.length > 1) {
             throw EncodingException(
@@ -2287,7 +2287,7 @@ void main() {
           final listForm = list
             .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toForm(explode: explode, allowEmpty: allowEmpty);
+            .toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
           values.add(listForm);
           if (values.length > 1) {
             throw EncodingException(
@@ -2325,7 +2325,7 @@ void main() {
           final listLabel = list
             .map((e) => e.toLabel(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toLabel(explode: explode, allowEmpty: allowEmpty);
+            .toLabel( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(listLabel);
           if (values.length > 1) {
             throw EncodingException(
@@ -2474,12 +2474,12 @@ void main() {
           final listSimple = list
             .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(listSimple);
           final list2Simple = list2
             .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
             .toList()
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(list2Simple);
           if (values.length > 1) {
             throw EncodingException(
