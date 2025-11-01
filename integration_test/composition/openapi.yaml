@@ -540,13 +540,6 @@ components:
                   items:
                     $ref: '#/components/schemas/Class1'
 
-    ListOfComposites:
-      type: array
-      items:
-        oneOf:
-          - $ref: '#/components/schemas/Class1'
-          - $ref: '#/components/schemas/Class2'
-
     AllOfWithListOfComposites:
       allOf:
         - type: object
@@ -598,6 +591,6 @@ components:
 
     AllOfDirectPrimitive:
       allOf:
-        - integer
-        - number
+        - type: integer
+        - type: number
              

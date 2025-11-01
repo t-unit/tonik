@@ -2320,20 +2320,14 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToLabel = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
-          final listLabel = list
-            .map((e) => e.toLabel(explode: explode, allowEmpty: allowEmpty))
-            .toList()
-            .toLabel( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          values.add(listLabel);
-          if (values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf label encoding: all values must encode to the same result',
-            );
-          }
-          return values.first;
-        }
+        final listLabel = list
+          .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+          .toList()
+          .toLabel(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
       ''';
 
       expect(
@@ -2516,7 +2510,7 @@ void main() {
           final values = <Object?>[];
           final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
           values.add(listJson);
-          const deepEquals = const DeepCollectionEquality();
+          const deepEquals = DeepCollectionEquality();
           for (var i = 1; i < values.length; i++) {
             if (!deepEquals.equals(values[0], values[i])) {
               throw EncodingException(
@@ -2570,7 +2564,7 @@ void main() {
           values.add(listJson);
           final list2Json = list2.map((e) => e.toJson()).toList();
           values.add(list2Json);
-          const deepEquals = const DeepCollectionEquality();
+          const deepEquals = DeepCollectionEquality();
           for (var i = 1; i < values.length; i++) {
             if (!deepEquals.equals(values[0], values[i])) {
               throw EncodingException(

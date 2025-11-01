@@ -90,8 +90,10 @@ extension LabelStringListEncoder on List<String> {
             '${alreadyEncoded ? item : item.uriEncode(allowEmpty: allowEmpty)}',
       ).join();
     } else {
-      final encodedValues =
-          uriEncode(allowEmpty: allowEmpty, alreadyEncoded: alreadyEncoded);
+      final encodedValues = uriEncode(
+        allowEmpty: allowEmpty,
+        alreadyEncoded: alreadyEncoded,
+      );
       return '.$encodedValues';
     }
   }

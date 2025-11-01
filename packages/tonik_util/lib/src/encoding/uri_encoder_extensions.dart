@@ -73,8 +73,8 @@ extension BigDecimalUriEncoder on BigDecimal {
 extension StringListUriEncoder on List<String> {
   /// URI encodes this List value.
   ///
-  /// The [alreadyEncoded] parameter indicates whether the list items are 
-  /// already URL-encoded. When `true`, items are not re-encoded to prevent 
+  /// The [alreadyEncoded] parameter indicates whether the list items are
+  /// already URL-encoded. When `true`, items are not re-encoded to prevent
   /// double encoding.
   String uriEncode({
     required bool allowEmpty,

@@ -82,12 +82,9 @@ Expression _buildListLabelExpression(
                     Parameter((b) => b..name = 'e'),
                   )
                   ..body =
-                      buildLabelParameterExpression(
-                        refer('e'),
-                        contentModel,
-                        explode: explode,
-                        allowEmpty: allowEmpty,
-                      ).code,
+                      refer('e').property('uriEncode').call([], {
+                        'allowEmpty': allowEmpty,
+                      }).code,
           ).closure,
         ])
         .property('toList')
@@ -98,7 +95,7 @@ Expression _buildListLabelExpression(
           {
             'explode': explode,
             'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalBool(true),
+            'alreadyEncoded': literalTrue,
           },
         ),
     AliasModel() => _buildListLabelExpression(
