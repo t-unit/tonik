@@ -484,6 +484,12 @@ class AnyOfGenerator {
         n.normalizedName: refer(n.normalizedName),
     };
 
+    final validationCheck = _buildAllNullValidation(
+      normalizedProperties,
+      'Invalid JSON for $className: all variants failed to decode',
+      generateJsonDecodingExceptionExpression,
+    );
+
     return Constructor(
       (b) =>
           b
@@ -499,6 +505,7 @@ class AnyOfGenerator {
             )
             ..body = Block.of([
               ...localDecls,
+              validationCheck,
               refer(className, package).call([], ctorArgs).returned.statement,
             ]),
     );
@@ -821,84 +828,72 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    // Check if any property is a list with complex content
-    final hasListWithComplexContent = normalizedProperties.any((n) {
-      final model = n.property.model;
-      return model is ListModel && !model.hasSimpleContent;
-    });
-
-    if (hasListWithComplexContent) {
-      return Constructor(
-        (b) =>
-            b
-              ..factory = true
-              ..name = 'fromSimple'
-              ..requiredParameters.add(
-                Parameter(
-                  (p) =>
-                      p
-                        ..name = 'value'
-                        ..type = refer('String?', 'dart:core'),
-                ),
-              )
-              ..optionalParameters.add(
-                buildBoolParameter('explode', required: true),
-              )
-              ..body =
-                  generateSimpleDecodingExceptionExpression(
-                    'Simple encoding not supported for $className: '
-                    'contains lists with complex types',
-                  ).statement,
-      );
-    }
-
     final localDecls = <Code>[];
+    final decodableProperties =
+        <({String normalizedName, Property property})>[];
+    final nonDecodableProperties =
+        <({String normalizedName, Property property})>[];
 
     for (final n in normalizedProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
-      final decodeExpr = switch (modelType) {
-        EnumModel() ||
-        ClassModel() ||
-        AllOfModel() ||
-        OneOfModel() ||
-        AnyOfModel() => refer(
-              nameManager.modelName(modelType),
-              package,
-            )
-            .property('fromSimple')
-            .call(
-              [
-                refer('value'),
-              ],
-              {
-                'explode': refer('explode'),
-              },
-            ),
-        _ => buildSimpleValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-        ),
-      };
+      if (modelType is ListModel && !modelType.hasSimpleContent) {
+        nonDecodableProperties.add(n);
+      } else {
+        decodableProperties.add(n);
 
-      localDecls.add(
-        _tryAssignLocal(
-          variableName: varName,
-          nullableType: _nullableTypeReference(modelType),
-          decodeExpression: decodeExpr,
-        ),
-      );
+        final decodeExpr = switch (modelType) {
+          EnumModel() ||
+          ClassModel() ||
+          AllOfModel() ||
+          OneOfModel() ||
+          AnyOfModel() => refer(
+                nameManager.modelName(modelType),
+                package,
+              )
+              .property('fromSimple')
+              .call(
+                [
+                  refer('value'),
+                ],
+                {
+                  'explode': refer('explode'),
+                },
+              ),
+          _ => buildSimpleValueExpression(
+            refer('value'),
+            model: modelType,
+            isRequired: true,
+            nameManager: nameManager,
+            package: package,
+            contextClass: className,
+          ),
+        };
+
+        localDecls.add(
+          _tryAssignLocal(
+            variableName: varName,
+            nullableType: _nullableTypeReference(modelType),
+            decodeExpression: decodeExpr,
+          ),
+        );
+      }
     }
 
     final ctorArgs = {
       for (final n in normalizedProperties)
-        n.normalizedName: refer(n.normalizedName),
+        n.normalizedName:
+            nonDecodableProperties.contains(n)
+                ? literalNull
+                : refer(n.normalizedName),
     };
+
+    final validationCheck = _buildAllNullValidation(
+      decodableProperties,
+      'Invalid simple value for $className: all variants failed to decode',
+      generateSimpleDecodingExceptionExpression,
+    );
 
     return Constructor(
       (b) =>
@@ -918,6 +913,7 @@ class AnyOfGenerator {
             )
             ..body = Block.of([
               ...localDecls,
+              validationCheck,
               refer(className, package).call([], ctorArgs).returned.statement,
             ]),
     );
@@ -927,84 +923,72 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    // Check if any property is a list with complex content
-    final hasListWithComplexContent = normalizedProperties.any((n) {
-      final model = n.property.model;
-      return model is ListModel && !model.hasSimpleContent;
-    });
-
-    if (hasListWithComplexContent) {
-      return Constructor(
-        (b) =>
-            b
-              ..factory = true
-              ..name = 'fromForm'
-              ..requiredParameters.add(
-                Parameter(
-                  (p) =>
-                      p
-                        ..name = 'value'
-                        ..type = refer('String?', 'dart:core'),
-                ),
-              )
-              ..optionalParameters.add(
-                buildBoolParameter('explode', required: true),
-              )
-              ..body =
-                  generateSimpleDecodingExceptionExpression(
-                    'Form encoding not supported for $className: '
-                    'contains lists with complex types',
-                  ).statement,
-      );
-    }
-
     final localDecls = <Code>[];
+    final decodableProperties =
+        <({String normalizedName, Property property})>[];
+    final nonDecodableProperties =
+        <({String normalizedName, Property property})>[];
 
     for (final n in normalizedProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
-      final decodeExpr = switch (modelType) {
-        EnumModel() ||
-        ClassModel() ||
-        AllOfModel() ||
-        OneOfModel() ||
-        AnyOfModel() => refer(
-              nameManager.modelName(modelType),
-              package,
-            )
-            .property('fromForm')
-            .call(
-              [
-                refer('value'),
-              ],
-              {
-                'explode': refer('explode'),
-              },
-            ),
-        _ => buildFromFormValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-        ),
-      };
+      if (modelType is ListModel && !modelType.hasSimpleContent) {
+        nonDecodableProperties.add(n);
+      } else {
+        decodableProperties.add(n);
 
-      localDecls.add(
-        _tryAssignLocal(
-          variableName: varName,
-          nullableType: _nullableTypeReference(modelType),
-          decodeExpression: decodeExpr,
-        ),
-      );
+        final decodeExpr = switch (modelType) {
+          EnumModel() ||
+          ClassModel() ||
+          AllOfModel() ||
+          OneOfModel() ||
+          AnyOfModel() => refer(
+                nameManager.modelName(modelType),
+                package,
+              )
+              .property('fromForm')
+              .call(
+                [
+                  refer('value'),
+                ],
+                {
+                  'explode': refer('explode'),
+                },
+              ),
+          _ => buildFromFormValueExpression(
+            refer('value'),
+            model: modelType,
+            isRequired: true,
+            nameManager: nameManager,
+            package: package,
+            contextClass: className,
+          ),
+        };
+
+        localDecls.add(
+          _tryAssignLocal(
+            variableName: varName,
+            nullableType: _nullableTypeReference(modelType),
+            decodeExpression: decodeExpr,
+          ),
+        );
+      }
     }
 
     final ctorArgs = {
       for (final n in normalizedProperties)
-        n.normalizedName: refer(n.normalizedName),
+        n.normalizedName:
+            nonDecodableProperties.contains(n)
+                ? literalNull
+                : refer(n.normalizedName),
     };
+
+    final validationCheck = _buildAllNullValidation(
+      decodableProperties,
+      'Invalid form value for $className: all variants failed to decode',
+      generateFormatDecodingExceptionExpression,
+    );
 
     return Constructor(
       (b) =>
@@ -1024,6 +1008,7 @@ class AnyOfGenerator {
             )
             ..body = Block.of([
               ...localDecls,
+              validationCheck,
               refer(className, package).call([], ctorArgs).returned.statement,
             ]),
     );
@@ -2028,5 +2013,25 @@ class AnyOfGenerator {
     }
 
     return codes;
+  }
+
+  Code _buildAllNullValidation(
+    List<({String normalizedName, Property property})> normalizedProperties,
+    String errorMessage,
+    Expression Function(String) exceptionGenerator,
+  ) {
+    if (normalizedProperties.isEmpty) {
+      return const Code('');
+    }
+
+    final nullChecks = normalizedProperties
+        .map((n) => '${n.normalizedName} == null')
+        .join(' && ');
+
+    return Block.of([
+      Code('if ($nullChecks) {'),
+      exceptionGenerator(errorMessage).statement,
+      const Code('}'),
+    ]);
   }
 }

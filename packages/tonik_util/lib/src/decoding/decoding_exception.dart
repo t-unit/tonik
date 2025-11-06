@@ -1,10 +1,13 @@
 /// Base class for all decoding related exceptions.
-class DecodingException implements Exception {
+abstract class DecodingException implements Exception {
   /// Creates a new [DecodingException] with the specified [message].
   const DecodingException(this.message);
 
   /// The error message.
   final String message;
+
+  @override
+  String toString() => 'DecodingException: $message';
 }
 
 /// Exception thrown when a value has invalid format for the expected type.
@@ -60,4 +63,10 @@ class SimpleDecodingException extends DecodingException {
 class JsonDecodingException extends DecodingException {
   /// Creates a new [JsonDecodingException] with the specified [message].
   const JsonDecodingException(super.message);
+}
+
+/// Exception thrown when a value cannot be decoded using fromFormat.
+class FormatDecodingException extends DecodingException {
+  /// Creates a new [FormatDecodingException] with the specified [message].
+  const FormatDecodingException(super.message);
 }

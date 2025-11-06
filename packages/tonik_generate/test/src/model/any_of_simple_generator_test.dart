@@ -99,9 +99,99 @@ void main() {
               string = null;
             }
 
+            if (user == null && int == null && string == null) {
+              throw SimpleDecodingException(
+                'Invalid simple value for Flexible: all variants failed to decode',
+              );
+            }
             return Flexible(user: user, int: int, string: string);
           }
         ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'anyOf with complex lists and simple type tries decodable variants',
+      () {
+        final classA = ClassModel(
+          name: 'ClassA',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final classB = ClassModel(
+          name: 'ClassB',
+          properties: [
+            Property(
+              name: 'value',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final listA = ListModel(
+          content: classA,
+          context: context,
+        );
+
+        final listB = ListModel(
+          content: classB,
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'MixedAnyOf',
+          models: {
+            (discriminatorValue: null, model: listA),
+            (discriminatorValue: null, model: listB),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        final format =
+            DartFormatter(
+              languageVersion: DartFormatter.latestLanguageVersion,
+            ).format;
+        final generated = format(klass.accept(emitter).toString());
+
+        const expectedMethod = '''
+      factory MixedAnyOf.fromSimple(String? value, {required bool explode}) {
+        String? string;
+        try {
+          string = value.decodeSimpleString(context: r'MixedAnyOf');
+        } on Object catch (_) {
+          string = null;
+        }
+
+        if (string == null) {
+          throw SimpleDecodingException(
+            'Invalid simple value for MixedAnyOf: all variants failed to decode',
+          );
+        }
+        return MixedAnyOf(list: null, list2: null, string: string);
+      }
+    ''';
 
         expect(
           collapseWhitespace(generated),

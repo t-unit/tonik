@@ -106,11 +106,11 @@ void main() {
         const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  result['id'] = id.uriEncode(allowEmpty: allowEmpty);
+  result[r'id'] = id.uriEncode(allowEmpty: allowEmpty);
   if (name != null) {
-    result['name'] = name!.uriEncode(allowEmpty: allowEmpty);
+    result[r'name'] = name!.uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['name'] = '';
+    result[r'name'] = '';
   }
   return result;
 }
@@ -174,16 +174,18 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (nullableName != null) {
-    result['nullable_name'] = nullableName!.uriEncode(allowEmpty: allowEmpty);
-  } else if (allowEmpty) {
-    result['nullable_name'] = '';
-  }
-  if (nullableCount != null) {
-    result['nullable_count'] = nullableCount!.uriEncode(
+    result[r'nullable_name'] = nullableName!.uriEncode(
       allowEmpty: allowEmpty,
     );
   } else if (allowEmpty) {
-    result['nullable_count'] = '';
+    result[r'nullable_name'] = '';
+  }
+  if (nullableCount != null) {
+    result[r'nullable_count'] = nullableCount!.uriEncode(
+      allowEmpty: allowEmpty,
+    );
+  } else if (allowEmpty) {
+    result[r'nullable_count'] = '';
   }
   return result;
 }
@@ -287,7 +289,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) =>
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
-    result['value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
+    result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
       'parameterProperties not supported for Container: contains complex types',
@@ -353,7 +355,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
-    result['data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
+    result[r'data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
       'parameterProperties not supported for FlexibleContainer: contains complex types',
@@ -415,7 +417,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
-    result['combined'] = combined.toSimple(
+    result[r'combined'] = combined.toSimple(
       explode: false,
       allowEmpty: allowEmpty,
     );
@@ -465,11 +467,11 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  result['name'] = name.uriEncode(allowEmpty: allowEmpty);
+  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
   if (count != null) {
-    result['count'] = count!.uriEncode(allowEmpty: allowEmpty);
+    result[r'count'] = count!.uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['count'] = '';
+    result[r'count'] = '';
   }
   return result;
 }
@@ -577,7 +579,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (value != null) {
     if (value!.currentEncodingShape == EncodingShape.simple) {
-      result['value'] = value!.toSimple(
+      result[r'value'] = value!.toSimple(
         explode: false,
         allowEmpty: allowEmpty,
       );
@@ -733,15 +735,15 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  result['name'] = name.uriEncode(allowEmpty: allowEmpty);
+  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
   if (count != null) {
-    result['count'] = count.uriEncode(allowEmpty: allowEmpty);
+    result[r'count'] = count.uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['count'] = '';
+    result[r'count'] = '';
   }
-  result['active'] = active.uriEncode(allowEmpty: allowEmpty);
+  result[r'active'] = active.uriEncode(allowEmpty: allowEmpty);
   if (data1.currentEncodingShape == EncodingShape.simple) {
-    result['data1'] = data1.toSimple(explode: false, allowEmpty: allowEmpty);
+    result[r'data1'] = data1.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
       'parameterProperties not supported for MixedContainer: contains complex types',
@@ -749,7 +751,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
   }
   if (data2 != null) {
     if (data2!.currentEncodingShape == EncodingShape.simple) {
-      result['data2'] = data2!.toSimple(
+      result[r'data2'] = data2!.toSimple(
         explode: false,
         allowEmpty: allowEmpty,
       );
@@ -760,7 +762,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
     }
   }
   if (flexible.currentEncodingShape == EncodingShape.simple) {
-    result['flexible'] = flexible.toSimple(
+    result[r'flexible'] = flexible.toSimple(
       explode: false,
       allowEmpty: allowEmpty,
     );
@@ -813,9 +815,9 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (tags != null) {
-    result['tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['tags'] = '';
+    result[r'tags'] = '';
   }
   return result;
 }
@@ -872,17 +874,17 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (ids != null) {
-    result['ids'] = ids!
+    result[r'ids'] = ids!
         .map((e) => e.uriEncode(allowEmpty: allowEmpty))
         .toList()
         .uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['ids'] = '';
+    result[r'ids'] = '';
   }
   if (tags != null) {
-    result['tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['tags'] = '';
+    result[r'tags'] = '';
   }
   return result;
 }
@@ -928,7 +930,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  result['tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
   return result;
 }
 ''';
@@ -980,11 +982,11 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         const expectedMethod = '''
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
-  result['id'] = id.uriEncode(allowEmpty: allowEmpty);
+  result[r'id'] = id.uriEncode(allowEmpty: allowEmpty);
   if (tags != null) {
-    result['tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['tags'] = '';
+    result[r'tags'] = '';
   }
   return result;
 }
@@ -1096,12 +1098,12 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({bool allowEmpty = true}) {
   final result = <String, String>{};
   if (statuses != null) {
-    result['statuses'] = statuses!
+    result[r'statuses'] = statuses!
         .map((e) => e.uriEncode(allowEmpty: allowEmpty))
         .toList()
         .uriEncode(allowEmpty: allowEmpty);
   } else if (allowEmpty) {
-    result['statuses'] = '';
+    result[r'statuses'] = '';
   }
   return result;
 }

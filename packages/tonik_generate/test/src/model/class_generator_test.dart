@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
@@ -12,6 +13,10 @@ void main() {
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
+    final format =
+        DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
 
     setUp(() {
       nameGenerator = NameGenerator();
@@ -602,14 +607,108 @@ void main() {
         expect(fromFormConstructor.optionalParameters.first.named, isTrue);
       });
 
+    test(
+      'generates working fromForm constructor for list properties with '
+      'simple content',
+      () {
+        final model = ClassModel(
+          name: 'ModelWithSimpleList',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final generatedCode = format(result.accept(emitter).toString());
+
+        const expectedFromFormConstructor = '''
+factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
+  final values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: '&',
+    expectedKeys: {r'items'},
+    listKeys: {r'items'},
+    isFormStyle: true,
+    context: r'ModelWithSimpleList',
+  );
+  return ModelWithSimpleList(
+    items: values[r'items'].decodeFormStringList(
+      context: r'ModelWithSimpleList.items',
+    ),
+  );
+}
+        ''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedFromFormConstructor)),
+        );
+      },
+    );
+
       test(
-        'generates fromForm constructor that throws for complex properties',
+        'generates fromForm constructor that throws for list properties with '
+        'complex content',
         () {
           final model = ClassModel(
-            name: 'ComplexModel',
+            name: 'ModelWithComplexList',
             properties: [
               Property(
                 name: 'items',
+                model: ListModel(
+                  content: ClassModel(
+                    properties: const [],
+                    context: context,
+                  ),
+                  context: context,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedFromFormConstructor = '''
+            factory ModelWithComplexList.fromForm(
+              String? value, {
+              required bool explode,
+            }) {
+              throw FormatDecodingException(
+                'Form encoding not supported for ModelWithComplexList: contains complex types',
+              );
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedFromFormConstructor)),
+          );
+        },
+      );
+
+      test(
+        'form encoding roundtrip works for list with simple content',
+        () {
+          final model = ClassModel(
+            name: 'ModelWithSimpleListRoundtrip',
+            properties: [
+              Property(
+                name: 'tags',
                 model: ListModel(
                   content: StringModel(context: context),
                   context: context,
@@ -623,14 +722,58 @@ void main() {
           );
 
           final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
 
-          const expectedFromFormBody = '''
-          throw SimpleDecodingException('Form encoding not supported for ComplexModel: contains complex types');
-        ''';
+          const expectedFromFormConstructor = '''
+factory ModelWithSimpleListRoundtrip.fromForm(
+  String? value, {
+  required bool explode,
+}) {
+  final values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: '&',
+    expectedKeys: {r'tags'},
+    listKeys: {r'tags'},
+    isFormStyle: true,
+    context: r'ModelWithSimpleListRoundtrip',
+  );
+  return ModelWithSimpleListRoundtrip(
+    tags: values[r'tags'].decodeFormStringList(
+      context: r'ModelWithSimpleListRoundtrip.tags',
+      ),
+    );
+  }
+          ''';
+
+          const expectedToFormMethod = '''
+String toForm({required bool explode, required bool allowEmpty}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+}
+          ''';
+
+          const expectedParameterPropertiesMethod = '''
+Map<String, String> parameterProperties({bool allowEmpty = true}) {
+final result = <String, String>{};
+result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+return result;
+}
+          ''';
 
           expect(
-            collapseWhitespace(result.accept(emitter).toString()),
-            contains(collapseWhitespace(expectedFromFormBody)),
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedFromFormConstructor)),
+          );
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedParameterPropertiesMethod)),
           );
         },
       );
@@ -803,7 +946,7 @@ void main() {
           );
           final generatedCode = result.accept(emitter).toString();
           const expectedReturnStatement = '''
-            return UserForm(name: values['name'].decodeFormString(context: r'UserForm.name'), age: values['age'].decodeFormInt(context: r'UserForm.age'), email: values['email'].decodeFormNullableString(context: r'UserForm.email'), );
+            return UserForm(name: values[r'name'].decodeFormString(context: r'UserForm.name'), age: values[r'age'].decodeFormInt(context: r'UserForm.age'), email: values[r'email'].decodeFormNullableString(context: r'UserForm.email'), );
           ''';
 
           expect(
@@ -933,7 +1076,7 @@ void main() {
         expect(fromFormConstructor.optionalParameters.length, 1);
 
         const expectedReturnStatement = '''
-          return AllTypesForm(text: values['text'].decodeFormString(context: r'AllTypesForm.text'), number: values['number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: values['decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: values['flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: values['timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: values['date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: values['precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: values['website'].decodeFormUri(context: r'AllTypesForm.website'), );
+          return AllTypesForm(text: values[r'text'].decodeFormString(context: r'AllTypesForm.text'), number: values[r'number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: values[r'decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: values[r'flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: values[r'timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: values[r'date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: values[r'precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: values[r'website'].decodeFormUri(context: r'AllTypesForm.website'), );
         ''';
 
         expect(
@@ -976,7 +1119,7 @@ void main() {
           expect(fromFormConstructor.optionalParameters.length, 1);
 
           const expectedReturnStatement = '''
-            return NullableForm(requiredNullableName: values['required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: values['required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
+            return NullableForm(requiredNullableName: values[r'required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: values[r'required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
           ''';
 
           expect(

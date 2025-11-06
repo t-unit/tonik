@@ -1,7 +1,6 @@
 # Roadmap
 
 ## Short term goals
-- `allowReserved` support for query parameters
 - More E2E tests
 - Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
 - Annotate deprecated fields, methods and classes.
@@ -21,8 +20,10 @@
 - Remove build_runner dependency from all packages
 - Default values
 - Supporting `byte` and `binary` formatted strings
+- Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 
 ## Non-goals
+- `allowReserved` support for query parameters - Dart's `Uri` class always percent-encodes reserved characters per RFC 3986 (see [URI Encoding Limitations](uri_encoding_limitations.md))
 - Parameter encoding via content, see [schema vs content](https://swagger.io/docs/specification/v3_0/describing-parameters/#schema-vs-content)
 - XML de- and encoding
 - Min, Max and multiple validation

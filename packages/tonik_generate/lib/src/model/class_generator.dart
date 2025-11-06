@@ -169,8 +169,19 @@ class ClassGenerator {
   Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final hasOnlySimpleProperties = model.properties.every((property) {
-      return property.model.encodingShape == EncodingShape.simple;
+    final canBeSimplyEncoded = model.properties.every((property) {
+      final propertyModel = property.model;
+      final shape = propertyModel.encodingShape;
+      
+      if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
+        return true;
+      }
+      
+      if (propertyModel is ListModel && propertyModel.hasSimpleContent) {
+        return true;
+      }
+      
+      return false;
     });
 
     return Constructor(
@@ -192,7 +203,7 @@ class ClassGenerator {
             ..body = _buildFromSimpleBody(
               className,
               normalizedProperties,
-              hasOnlySimpleProperties,
+              canBeSimplyEncoded,
             ),
     );
   }
@@ -200,15 +211,15 @@ class ClassGenerator {
   Block _buildFromSimpleBody(
     String className,
     List<({String normalizedName, Property property})> properties,
-    bool hasOnlySimpleProperties,
+    bool canBeSimplyEncoded,
   ) {
     if (properties.isEmpty) {
       return Block.of([Code('return $className();')]);
     }
 
-    if (!hasOnlySimpleProperties) {
+    if (!canBeSimplyEncoded) {
       return Block.of([
-        generateEncodingExceptionExpression(
+        generateSimpleDecodingExceptionExpression(
           'Simple encoding not supported for $className: '
           'contains complex types',
         ).statement,
@@ -223,7 +234,7 @@ class ClassGenerator {
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
-        refer("values['$propertyName']"),
+        refer("values[r'$propertyName']"),
         model: modelType,
         isRequired: !isNullable,
         nameManager: nameManager,
@@ -234,21 +245,33 @@ class ClassGenerator {
       );
     }
 
-    return Block.of([
-      // Null/empty check
-      const Code('if (value == null || value.isEmpty) {'),
-      generateSimpleDecodingExceptionExpression(
-        'Invalid empty value for $className',
-      ).statement,
-      const Code('}'),
+    // Build expectedKeys and listKeys sets
+    final expectedKeys = properties.map((p) => p.property.name).toSet();
+    final listKeys =
+        properties
+            .where((p) => p.property.model is ListModel)
+            .map((p) => p.property.name)
+            .toSet();
 
-      // Parse into key-value pairs (only part that differs by explode mode)
+    return Block.of([
       declareFinal('values')
           .assign(
-            buildEmptyMapStringString(),
+            refer('value')
+                .property('decodeObject')
+                .call([], {
+                  'explode': refer('explode'),
+                  'explodeSeparator': literalString(','),
+                  'expectedKeys': literalSet(
+                    expectedKeys.map((k) => literalString(k, raw: true)),
+                  ),
+                  'listKeys': literalSet(
+                    listKeys.map((k) => literalString(k, raw: true)),
+                  ),
+                  'isFormStyle': literalFalse,
+                  'context': literalString(className, raw: true),
+                }),
           )
           .statement,
-      _buildExplodeParsingLogic(),
 
       // Constructor call
       refer(className, package).call([], constructorArgs).returned.statement,
@@ -281,7 +304,7 @@ class ClassGenerator {
     }
 
     final codes = <Code>[
-      Code("final map = json.decodeMap(context: '$className');"),
+      Code("final map = json.decodeMap(context: r'$className');"),
     ];
 
     final propertyAssignments = <Code>[];
@@ -465,7 +488,7 @@ class ClassGenerator {
         // Required non-nullable property
         propertyAssignments.add(
           Code(
-            "result['$propertyName'] = "
+            "result[r'$propertyName'] = "
             '$name.uriEncode(allowEmpty: allowEmpty);',
           ),
         );
@@ -474,9 +497,9 @@ class ClassGenerator {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  result['$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
 } else if (allowEmpty) {
-  result['$propertyName'] = '';
+  result[r'$propertyName'] = '';
 }'''),
         );
       } else {
@@ -484,9 +507,9 @@ if ($name != null) {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  result['$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
 } else if (allowEmpty) {
-  result['$propertyName'] = '';
+  result[r'$propertyName'] = '';
 }'''),
         );
       }
@@ -536,7 +559,7 @@ if ($name != null) {
         if (isRequired && !isNullable) {
           propertyAssignments.add(
             Code(
-              "result['$propertyName'] = "
+              "result[r'$propertyName'] = "
               '$name.uriEncode(allowEmpty: allowEmpty);',
             ),
           );
@@ -544,16 +567,15 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result['$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
 } else if (allowEmpty) {
-  result['$propertyName'] = '';
+  result[r'$propertyName'] = '';
 }'''),
           );
         }
       } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
-        final valueRef = (isRequired && !isNullable)
-            ? refer(name)
-            : refer(name).nullChecked;
+        final valueRef =
+            (isRequired && !isNullable) ? refer(name) : refer(name).nullChecked;
         final encodeExpr = buildUriEncodeExpression(
           valueRef,
           fieldModel,
@@ -564,15 +586,15 @@ if ($name != null) {
 
         if (isRequired && !isNullable) {
           propertyAssignments.add(
-            Code("result['$propertyName'] = $encodeStr;"),
+            Code("result[r'$propertyName'] = $encodeStr;"),
           );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result['$propertyName'] = $encodeStr;
+  result[r'$propertyName'] = $encodeStr;
 } else if (allowEmpty) {
-  result['$propertyName'] = '';
+  result[r'$propertyName'] = '';
 }'''),
           );
         }
@@ -652,7 +674,7 @@ if ($name != null) {
         if (isRequired && !isNullable) {
           propertyAssignments.add(
             Code(
-              "result['$propertyName'] = "
+              "result[r'$propertyName'] = "
               '$name.uriEncode(allowEmpty: allowEmpty);',
             ),
           );
@@ -660,18 +682,18 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result['$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
 } else if (allowEmpty) {
-  result['$propertyName'] = '';
+  result[r'$propertyName'] = '';
 }'''),
           );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result['$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
 } else if (allowEmpty) {
-  result['$propertyName'] = '';
+  result[r'$propertyName'] = '';
 }'''),
           );
         }
@@ -690,7 +712,7 @@ if ($name != null) {
             encodingShapeRef.property('simple').code,
             const Code(') {'),
             Code(
-              "    result['$propertyName'] = "
+              "    result[r'$propertyName'] = "
               '$name!.toSimple(explode: false, allowEmpty: allowEmpty);',
             ),
             const Code('} else {'),
@@ -706,7 +728,7 @@ if ($name != null) {
             encodingShapeRef.property('simple').code,
             const Code(') {'),
             Code(
-              "  result['$propertyName'] = "
+              "  result[r'$propertyName'] = "
               '$name.toSimple(explode: false, allowEmpty: allowEmpty);',
             ),
             const Code('} else {'),
@@ -766,67 +788,22 @@ if ($name != null) {
           ]),
   );
 
-  Code _buildExplodeParsingLogic() {
-    return Block.of([
-      const Code('if (explode) {'),
-      // explode=true: prop1=val1,prop2=val2
-      declareFinal('pairs')
-          .assign(
-            refer('value').property('split').call([literalString(',')]),
-          )
-          .statement,
-      const Code('for (final pair in pairs) {'),
-      declareFinal('parts')
-          .assign(
-            refer('pair').property('split').call([literalString('=')]),
-          )
-          .statement,
-      const Code('if (parts.length != 2) {'),
-      generateSimpleDecodingExceptionExpression(
-        r'Invalid key=value pair format: $pair',
-      ).statement,
-      const Code('}'),
-      refer('values')
-          .index(
-            refer('Uri', 'dart:core').property('decodeComponent').call([
-              refer('parts').index(literalNum(0)),
-            ]),
-          )
-          .assign(refer('parts').index(literalNum(1)))
-          .statement,
-      const Code('}'),
-      const Code('} else {'),
-      // explode=false: prop1,val1,prop2,val2
-      declareFinal('parts')
-          .assign(
-            refer('value').property('split').call([literalString(',')]),
-          )
-          .statement,
-      const Code('if (parts.length % 2 != 0) {'),
-      generateSimpleDecodingExceptionExpression(
-        'Invalid alternating key-value format: expected even number of '
-        r'parts, got ${parts.length}',
-      ).statement,
-      const Code('}'),
-      const Code('for (var i = 0; i < parts.length; i += 2) {'),
-      refer('values')
-          .index(
-            refer('Uri', 'dart:core').property('decodeComponent').call([
-              refer('parts').index(refer('i')),
-            ]),
-          )
-          .assign(refer('parts').index(refer('i').operatorAdd(literalNum(1))))
-          .statement,
-      const Code('}'),
-      const Code('}'),
-    ]);
-  }
-
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final hasOnlySimpleProperties = model.properties.every((property) {
-      return property.model.encodingShape == EncodingShape.simple;
+    final canBeFormEncoded = model.properties.every((property) {
+      final propertyModel = property.model;
+      final shape = propertyModel.encodingShape;
+      
+      if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
+        return true;
+      }
+      
+      if (propertyModel is ListModel && propertyModel.hasSimpleContent) {
+        return true;
+      }
+      
+      return false;
     });
 
     return Constructor(
@@ -848,7 +825,7 @@ if ($name != null) {
             ..body = _buildFromFormBody(
               className,
               normalizedProperties,
-              hasOnlySimpleProperties,
+              canBeFormEncoded,
             ),
     );
   }
@@ -856,17 +833,16 @@ if ($name != null) {
   Block _buildFromFormBody(
     String className,
     List<({String normalizedName, Property property})> properties,
-    bool hasOnlySimpleProperties,
+    bool canBeFormEncoded,
   ) {
     if (properties.isEmpty) {
       return Block.of([Code('return $className();')]);
     }
 
-    if (!hasOnlySimpleProperties) {
+    if (!canBeFormEncoded) {
       return Block.of([
-        generateSimpleDecodingExceptionExpression(
-          'Form encoding not supported for $className: '
-          'contains complex types',
+        generateFormatDecodingExceptionExpression(
+          'Form encoding not supported for $className: contains complex types',
         ).statement,
       ]);
     }
@@ -879,7 +855,7 @@ if ($name != null) {
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(
-        refer("values['$propertyName']"),
+        refer("values[r'$propertyName']"),
         model: modelType,
         isRequired: !isNullable,
         nameManager: nameManager,
@@ -890,20 +866,34 @@ if ($name != null) {
       );
     }
 
-    return Block.of([
-      const Code('if (value == null || value.isEmpty) {'),
-      generateSimpleDecodingExceptionExpression(
-        'Invalid empty value for $className',
-      ).statement,
-      const Code('}'),
+    // Build expectedKeys and listKeys sets
+    final expectedKeys = properties.map((p) => p.property.name).toSet();
+    final listKeys =
+        properties
+            .where((p) => p.property.model is ListModel)
+            .map((p) => p.property.name)
+            .toSet();
 
+    return Block.of([
       declareFinal('values')
           .assign(
-            buildEmptyMapStringString(),
+            refer('value')
+                .property('decodeObject')
+                .call([], {
+                  'explode': refer('explode'),
+                  'explodeSeparator': literalString('&'),
+                  'expectedKeys': literalSet(
+                    expectedKeys.map((k) => literalString(k, raw: true)),
+                  ),
+                  'listKeys': literalSet(
+                    listKeys.map((k) => literalString(k, raw: true)),
+                  ),
+                  'isFormStyle': literalTrue,
+                  'context': literalString(className, raw: true),
+                }),
           )
           .statement,
 
-      _buildExplodeParsingLogic(),
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
   }

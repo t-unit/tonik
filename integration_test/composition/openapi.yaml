@@ -528,12 +528,16 @@ components:
                 type: string
         - anyOf:
             - type: object
+              required:
+                - enumList
               properties:
                 enumList:
                   type: array
                   items:
                     $ref: '#/components/schemas/Enum1'
             - type: object
+              required:
+                - complexList
               properties:
                 complexList:
                   type: array

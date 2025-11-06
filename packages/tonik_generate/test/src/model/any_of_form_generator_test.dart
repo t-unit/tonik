@@ -284,6 +284,11 @@ void main() {
             string = null;
           }
 
+          if (int == null && string == null) {
+            throw FormatDecodingException(
+              'Invalid form value for Flexible: all variants failed to decode',
+            );
+          }
           return Flexible(int: int, string: string);
         }
       ''';
@@ -352,6 +357,11 @@ void main() {
             b = null;
           }
 
+          if (a == null && b == null) {
+            throw FormatDecodingException(
+              'Invalid form value for Choice: all variants failed to decode',
+            );
+          }
           return Choice(a: a, b: b);
         }
       ''';
@@ -406,6 +416,11 @@ void main() {
             string = null;
           }
 
+          if (user == null && string == null) {
+            throw FormatDecodingException(
+              'Invalid form value for SearchKey: all variants failed to decode',
+            );
+          }
           return SearchKey(user: user, string: string);
         }
       ''';
@@ -415,6 +430,86 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test(
+      'anyOf with complex lists and simple type tries decodable variants',
+      () {
+        final classA = ClassModel(
+          name: 'ClassA',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final classB = ClassModel(
+          name: 'ClassB',
+          properties: [
+            Property(
+              name: 'value',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final listA = ListModel(
+          content: classA,
+          context: context,
+        );
+
+        final listB = ListModel(
+          content: classB,
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'MixedAnyOf',
+          models: {
+            (discriminatorValue: null, model: listA),
+            (discriminatorValue: null, model: listB),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final generated = format(klass.accept(emitter).toString());
+
+        const expectedMethod = '''
+      factory MixedAnyOf.fromForm(String? value, {required bool explode}) {
+        String? string;
+        try {
+          string = value.decodeFormString(context: r'MixedAnyOf');
+        } on Object catch (_) {
+          string = null;
+        }
+
+        if (string == null) {
+          throw FormatDecodingException(
+            'Invalid form value for MixedAnyOf: all variants failed to decode',
+          );
+        }
+        return MixedAnyOf(list: null, list2: null, string: string);
+      }
+    ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 
   group('toForm method generation', () {
@@ -711,6 +806,11 @@ void main() {
             string = null;
           }
 
+          if (inner == null && string == null) {
+            throw FormatDecodingException(
+              'Invalid form value for Outer: all variants failed to decode',
+            );
+          }
           return Outer(inner: inner, string: string);
         }
       ''';

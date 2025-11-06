@@ -17,6 +17,7 @@ fi
 # Function to add dependency overrides to generated packages
 add_dependency_overrides() {
     local pubspec_file="$1"
+    local relative_path="$2"
     
     if [ -f "$pubspec_file" ]; then
         echo "Adding dependency overrides to $pubspec_file"
@@ -26,11 +27,29 @@ add_dependency_overrides() {
             echo "" >> "$pubspec_file"
             echo "dependency_overrides:" >> "$pubspec_file"
             echo "  tonik_util:" >> "$pubspec_file"
-            echo "    path: ../../../packages/tonik_util" >> "$pubspec_file"
+            echo "    path: $relative_path" >> "$pubspec_file"
         fi
     else
         echo "Warning: $pubspec_file not found"
     fi
+}
+
+# Function to add dependency overrides to all pubspec files in a directory
+add_dependency_overrides_recursive() {
+    local base_dir="$1"
+    
+    # Find all pubspec.yaml files in the directory
+    find "$base_dir" -name "pubspec.yaml" -type f | while read -r pubspec_file; do
+        # Calculate relative path depth from pubspec location to packages/tonik_util
+        local depth=$(echo "$pubspec_file" | sed "s|$base_dir||" | grep -o "/" | wc -l)
+        local relative_path=""
+        for ((i=0; i<depth+2; i++)); do
+            relative_path="../$relative_path"
+        done
+        relative_path="${relative_path}packages/tonik_util"
+        
+        add_dependency_overrides "$pubspec_file" "$relative_path"
+    done
 }
 
 # Remove existing generated API projects before regenerating
@@ -41,31 +60,36 @@ rm -rf gov/gov_api
 rm -rf simple_encoding/simple_encoding_api
 rm -rf fastify_type_provider_zod/fastify_type_provider_zod_api
 rm -rf composition/composition_api
+rm -rf query_parameters/query_parameters_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore --log-level verbose
-add_dependency_overrides "petstore/petstore_api/pubspec.yaml"
+add_dependency_overrides_recursive "petstore/petstore_api"
 cd petstore/petstore_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
-add_dependency_overrides "music_streaming/music_streaming_api/pubspec.yaml"
+add_dependency_overrides_recursive "music_streaming/music_streaming_api"
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov
-add_dependency_overrides "gov/gov_api/pubspec.yaml"
+add_dependency_overrides_recursive "gov/gov_api"
 cd gov/gov_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding --log-level verbose
-add_dependency_overrides "simple_encoding/simple_encoding_api/pubspec.yaml"
+add_dependency_overrides_recursive "simple_encoding/simple_encoding_api"
 cd simple_encoding/simple_encoding_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod --log-level verbose
-add_dependency_overrides "fastify_type_provider_zod/fastify_type_provider_zod_api/pubspec.yaml"
+add_dependency_overrides_recursive "fastify_type_provider_zod/fastify_type_provider_zod_api"
 cd fastify_type_provider_zod/fastify_type_provider_zod_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition --log-level verbose
-add_dependency_overrides "composition/composition_api/pubspec.yaml"
+add_dependency_overrides_recursive "composition/composition_api"
 cd composition/composition_api && dart pub get && cd ../..
+
+dart run ../packages/tonik/bin/tonik.dart -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters --log-level verbose
+add_dependency_overrides_recursive "query_parameters/query_parameters_api"
+cd query_parameters/query_parameters_api && dart pub get && cd ../..
 
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then

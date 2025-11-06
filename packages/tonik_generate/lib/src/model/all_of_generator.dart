@@ -466,8 +466,8 @@ class AllOfGenerator {
           mapType.code,
           const Code(') {'),
           generateEncodingExceptionExpression(
-            'Expected $fieldName.toJson() to return Map<String, Object?>, '
-            'got \${$fieldNameJson.runtimeType}',
+            'Expected ${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
+            'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
           ).statement,
           const Code('}'),
           const Code('map.addAll('),
@@ -548,8 +548,8 @@ class AllOfGenerator {
             mapType.code,
             const Code(') {'),
             generateEncodingExceptionExpression(
-              'Expected $fieldName.toJson() to return Map<String, Object?>, '
-              'got \${$fieldNameJson.runtimeType}',
+              'Expected ${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
+              'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
             ).statement,
             const Code('}'),
             const Code('map.addAll('),
@@ -597,34 +597,6 @@ class AllOfGenerator {
       );
     }
 
-    // If the model cannot be simply encoded, throw an exception
-    if (model.cannotBeSimplyEncoded) {
-      return Constructor(
-        (b) =>
-            b
-              ..factory = true
-              ..name = 'fromSimple'
-              ..requiredParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'value'
-                        ..type = refer('String?', 'dart:core'),
-                ),
-              )
-              ..optionalParameters.add(
-                buildBoolParameter('explode', required: true),
-              )
-              ..body =
-                  generateSimpleDecodingExceptionExpression(
-                    'Simple encoding not supported for $className: '
-                    'contains complex types',
-                  ).statement,
-      );
-    }
-
-    // If all types are complex, each model should decode from the same single
-    // value
     if (model.hasComplexTypes) {
       final propertyAssignments = <MapEntry<String, Expression>>[];
 
@@ -1081,31 +1053,6 @@ class AllOfGenerator {
       );
     }
 
-    if (model.cannotBeSimplyEncoded) {
-      return Constructor(
-        (b) =>
-            b
-              ..factory = true
-              ..name = 'fromForm'
-              ..requiredParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'value'
-                        ..type = refer('String?', 'dart:core'),
-                ),
-              )
-              ..optionalParameters.add(
-                buildBoolParameter('explode', required: true),
-              )
-              ..body =
-                  generateSimpleDecodingExceptionExpression(
-                    'Simple encoding not supported for $className: '
-                    'contains complex types',
-                  ).statement,
-      );
-    }
-
     if (model.hasComplexTypes) {
       final propertyAssignments = <MapEntry<String, Expression>>[];
 
@@ -1346,7 +1293,7 @@ class AllOfGenerator {
                 ..lambda = false
                 ..body =
                     generateEncodingExceptionExpression(
-                      'Simple encoding not supported: contains complex types',
+                      'Form encoding not supported: contains complex types',
                     ).statement,
         );
       }

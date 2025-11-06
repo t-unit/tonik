@@ -93,6 +93,11 @@ void main() {
             string = null;
           }
 
+          if (user == null && int == null && string == null) {
+            throw JsonDecodingException(
+              'Invalid JSON for Flexible: all variants failed to decode',
+            );
+          }
           return Flexible(user: user, int: int, string: string);
         }
       ''';

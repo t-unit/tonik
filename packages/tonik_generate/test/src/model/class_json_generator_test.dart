@@ -609,7 +609,7 @@ void main() {
 
         const expectedMethod = '''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: 'User');
+    final map = json.decodeMap(context: r'User');
     return User(
       name: map[r'name'].decodeJsonString(context: r'User.name'),
       age: map[r'age'].decodeJsonInt(context: r'User.age'),
@@ -648,7 +648,7 @@ void main() {
 
       const expectedMethod = '''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: 'User');
+    final map = json.decodeMap(context: r'User');
     return User(
       name: map[r'name'].decodeJsonString(context: r'User.name'),
       bio: map[r'bio'].decodeJsonNullableString(context: r'User.bio'),
@@ -679,7 +679,7 @@ void main() {
 
       const expectedMethod = '''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: 'User');
+    final map = json.decodeMap(context: r'User');
     return User(
       name: map[r'name'].decodeJsonNullableString(context: r'User.name'),
     );
@@ -716,7 +716,7 @@ void main() {
 
       const expectedMethod = '''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: 'User');
+    final map = json.decodeMap(context: r'User');
     return User(
       firstName: map[r'first-name'].decodeJsonString(
         context: r'User.first-name',
@@ -756,7 +756,7 @@ void main() {
 
       const expectedMethod = '''
   factory Test.fromJson(Object? json) {
-    final map = json.decodeMap(context: 'Test');
+    final map = json.decodeMap(context: r'Test');
     return Test(
       json: map[r'json'].decodeJsonString(context: r'Test.json'),
       map: map[r'map'].decodeJsonString(context: r'Test.map'),

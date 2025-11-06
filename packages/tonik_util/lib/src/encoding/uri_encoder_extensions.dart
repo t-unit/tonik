@@ -7,8 +7,10 @@ import 'package:tonik_util/src/encoding/encoding_exception.dart';
 /// Extension for URI encoding Uri values.
 extension UriEncoder on Uri {
   /// URI encodes this Uri value.
-  String uriEncode({required bool allowEmpty}) {
-    return Uri.encodeComponent(toString());
+  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(toString())
+        : Uri.encodeComponent(toString());
   }
 }
 
@@ -28,7 +30,11 @@ extension StringUriEncoder on String {
 /// Extension for URI encoding int values.
 extension IntUriEncoder on int {
   /// URI encodes this int value.
-  String uriEncode({required bool allowEmpty}) => toString();
+  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(toString())
+        : toString();
+  }
 }
 
 /// Extension for URI encoding double values.
@@ -44,13 +50,21 @@ extension DoubleUriEncoder on double {
 /// Extension for URI encoding num values.
 extension NumUriEncoder on num {
   /// URI encodes this num value.
-  String uriEncode({required bool allowEmpty}) => toString();
+  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(toString())
+        : toString();
+  }
 }
 
 /// Extension for URI encoding bool values.
 extension BoolUriEncoder on bool {
   /// URI encodes this bool value.
-  String uriEncode({required bool allowEmpty}) => toString();
+  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(toString())
+        : toString();
+  }
 }
 
 /// Extension for URI encoding DateTime values.
@@ -66,7 +80,11 @@ extension DateTimeUriEncoder on DateTime {
 /// Extension for URI encoding BigDecimal values.
 extension BigDecimalUriEncoder on BigDecimal {
   /// URI encodes this BigDecimal value.
-  String uriEncode({required bool allowEmpty}) => toString();
+  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(toString())
+        : toString();
+  }
 }
 
 /// Extension for URI encoding List values.

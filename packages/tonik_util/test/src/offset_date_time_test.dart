@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -454,6 +455,72 @@ void main() {
       expect(offsetDateTime == offsetDateTime, isTrue);
       expect(identical(offsetDateTime, offsetDateTime), isTrue);
     });
+
+    test(
+      'should be equal to regular DateTime at same moment '
+      '(OffsetDateTime == DateTime)',
+      () {
+        final offsetDateTime = OffsetDateTime.from(
+          DateTime.utc(2021),
+          offset: Duration.zero,
+        );
+        final regularDateTime = DateTime.utc(2021);
+
+        expect(offsetDateTime == regularDateTime, isTrue);
+      },
+    );
+
+    test(
+      'should be equal to regular DateTime at same moment '
+      '(DateTime == OffsetDateTime)',
+      () {
+        final offsetDateTime = OffsetDateTime.from(
+          DateTime.utc(2021),
+          offset: Duration.zero,
+        );
+        final regularDateTime = DateTime.utc(2021);
+
+        expect(regularDateTime == offsetDateTime, isTrue);
+      },
+    );
+
+    test('should have symmetric equality with regular DateTime', () {
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2021),
+        offset: Duration.zero,
+      );
+      final regularDateTime = DateTime.utc(2021);
+
+      expect(
+        offsetDateTime == regularDateTime,
+        regularDateTime == offsetDateTime,
+      );
+    });
+
+    test(
+      'should work correctly in DeepCollectionEquality '
+      'for lists with DateTime',
+      () {
+        final offsetDateTimeList = [
+          OffsetDateTime.parse('2021-01-01T00:00:00.000Z'),
+          OffsetDateTime.parse('2021-01-02T00:00:00.000Z'),
+        ];
+        final regularDateTimeList = [
+          DateTime.utc(2021),
+          DateTime.utc(2021, 1, 2),
+        ];
+
+        const deepEquals = DeepCollectionEquality();
+        expect(
+          deepEquals.equals(offsetDateTimeList, regularDateTimeList),
+          isTrue,
+        );
+        expect(
+          deepEquals.equals(regularDateTimeList, offsetDateTimeList),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('timeZoneOffset property', () {
