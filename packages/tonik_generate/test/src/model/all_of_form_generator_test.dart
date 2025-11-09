@@ -32,7 +32,7 @@ void main() {
     test('generates fromForm constructor for complex allOf model', () {
       final model = AllOfModel(
         name: 'CombinedModel',
-        models: <Model>{
+        models: {
           ClassModel(
             name: 'Base',
             properties: [
@@ -129,6 +129,82 @@ void main() {
         contains(collapseWhitespace(expectedToFormMethod)),
       );
     });
+  });
+
+  test('allOf with class and mixed oneOf validates at runtime', () {
+    final oneOfModel = OneOfModel(
+      name: 'Choice',
+      models: {
+        (discriminatorValue: null, model: IntegerModel(context: context)),
+        (
+          discriminatorValue: null,
+          model: ClassModel(
+            name: 'Option',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          ),
+        ),
+      },
+      discriminator: null,
+      context: context,
+    );
+
+    final classModel = ClassModel(
+      name: 'Base',
+      properties: [
+        Property(
+          name: 'id',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ],
+      context: context,
+    );
+
+    final model = AllOfModel(
+      name: 'Combined',
+      models: {
+        classModel,
+        oneOfModel,
+      },
+      context: context,
+    );
+
+    final combinedClass = generator.generateClass(model);
+    final generated = format(combinedClass.accept(emitter).toString());
+
+    const expectedToFormMethod = r'''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          if (currentEncodingShape == EncodingShape.mixed) {
+            throw EncodingException(
+              'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
+            );
+          }
+          final map = <String, String>{};
+          map.addAll($base.parameterProperties(allowEmpty: allowEmpty));
+          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
+          return map.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
+        }
+      ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedToFormMethod)),
+    );
   });
 
   group('form encoding - primitive types', () {
@@ -378,14 +454,23 @@ void main() {
               'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final map = <String, String>{};
-          map.addAll(int.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
-          return map.toForm(
+          final values = <String>{};
+          final intForm = int.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
-            alreadyEncoded: true,
           );
+          values.add(intForm);
+          final choiceForm = choice.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+          values.add(choiceForm);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
+            );
+          }
+          return values.first;
         }
       ''';
 
@@ -519,15 +604,25 @@ void main() {
               'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final map = <String, String>{};
-          map.addAll(flexibleA.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(flexibleB.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
-          return map.toForm(
+          final values = <String>{};
+          final flexibleAForm = flexibleA.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
-            alreadyEncoded: true,
           );
+          values.add(flexibleAForm);
+          final flexibleBForm = flexibleB.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+          values.add(flexibleBForm);
+          final stringForm = string.toForm(explode: explode, allowEmpty: allowEmpty);
+          values.add(stringForm);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf form encoding for MultiDynamic: all values must encode to the same result',
+            );
+          }
+          return values.first;
         }
       ''';
 
@@ -610,16 +705,30 @@ void main() {
               'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final map = <String, String>{};
-          map.addAll(flexibleValue.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(bigDecimal.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(string.parameterProperties(allowEmpty: allowEmpty));
-          return map.toForm(
+          final values = <String>{};
+          final flexibleValueForm = flexibleValue.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
-            alreadyEncoded: true,
           );
+          values.add(flexibleValueForm);
+          final bigDecimalForm = bigDecimal.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+          values.add(bigDecimalForm);
+          final choiceForm = choice.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+          values.add(choiceForm);
+          final stringForm = string.toForm(explode: explode, allowEmpty: allowEmpty);
+          values.add(stringForm);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf form encoding for ComplexMixed: all values must encode to the same result',
+            );
+          }
+          return values.first;
         }
       ''';
 
@@ -750,14 +859,20 @@ void main() {
               'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final map = <String, String>{};
-          map.addAll(flexibleValue.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(int.parameterProperties(allowEmpty: allowEmpty));
-          return map.toForm(
+          final values = <String>{};
+          final flexibleValueForm = flexibleValue.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
-            alreadyEncoded: true,
           );
+          values.add(flexibleValueForm);
+          final intForm = int.toForm(explode: explode, allowEmpty: allowEmpty);
+          values.add(intForm);
+          if (values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
+            );
+          }
+          return values.first;
         }
       ''';
 

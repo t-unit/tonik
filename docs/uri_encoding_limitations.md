@@ -50,6 +50,17 @@ Expected:  ?colors=red green blue
 Actual:    ?colors=red%20green%20blue
 ```
 
+### `deepObject` Style
+
+For `style: deepObject`, square brackets are used as structural syntax to denote nested object properties:
+
+```
+Expected:  ?filter[color]=red&filter[size]=large
+Actual:    ?filter%5Bcolor%5D=red&filter%5Bsize%5D=large
+```
+
+The square brackets `[` and `]` are encoded as `%5B` and `%5D` respectively. While these brackets are part of the parameter name syntax in deepObject encoding, Dart's `Uri` class treats them as reserved characters that must be encoded.
+
 ## Why This Works in Practice
 
 Despite these encoding differences, **the generated clients work correctly** with most servers because:
@@ -101,9 +112,9 @@ This limitation has been discussed in the OpenAPI community:
 
 ## Summary
 
-- Tonik correctly implements `pipeDelimited` and `spaceDelimited` parameter serialization
+- Tonik correctly implements `pipeDelimited`, `spaceDelimited`, and `deepObject` parameter serialization
 - Generated clients work with standard HTTP servers
-- Reserved characters are percent-encoded (cannot be disabled)
+- Reserved characters (including `|`, spaces, and `[]`) are percent-encoded (cannot be disabled)
 - `allowReserved: true` is not supported
 - This is a Dart ecosystem limitation, not a Tonik limitation
 

@@ -754,10 +754,16 @@ allowEmpty: allowEmpty,
           ''';
 
           const expectedParameterPropertiesMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
-final result = <String, String>{};
-result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
-return result;
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final result = <String, String>{};
+  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  return result;
 }
           ''';
 

@@ -1264,10 +1264,18 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expected = r'''
-          Map<String, String> parameterProperties({bool allowEmpty = true}) {
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) {
             final _$mapValues = <Map<String, String>>[];
             if (myClass != null) {
-              _$mapValues.add(myClass!.parameterProperties(allowEmpty: allowEmpty));
+              _$mapValues.add(
+                myClass!.parameterProperties(
+                  allowEmpty: allowEmpty,
+                  allowLists: allowLists,
+                ),
+              );
             }
             final _$map = <String, String>{};
             for (final m in _$mapValues) {

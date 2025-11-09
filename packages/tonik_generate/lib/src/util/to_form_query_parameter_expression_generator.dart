@@ -23,7 +23,7 @@ List<Code> buildToFormQueryParameterCode(
           'Form encoding only supports lists of simple types',
         ).statement,
         const Code('}'),
-        Code("result.add((name: r'${parameter.rawName}', value: <"),
+        Code("entries.add((name: r'${parameter.rawName}', value: <"),
         refer('String', 'dart:core').code,
         Code(
           '>[].toForm(explode: $explode, allowEmpty: $allowEmpty),),);',
@@ -51,7 +51,7 @@ List<Code> buildToFormQueryParameterCode(
         const Code('}'),
         const Code('}'),
         Code(
-          'result.add(('
+          'entries.add(('
           "name: r'${parameter.rawName}', "
           'value: $valueExpression, '
           '),);',
@@ -71,7 +71,7 @@ List<Code> buildToFormQueryParameterCode(
 
   return [
     Code(
-      'result.add(('
+      'entries.add(('
       "name: r'${parameter.rawName}', "
       'value: $valueExpression, '
       '),);',

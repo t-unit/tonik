@@ -50,13 +50,10 @@ void main() {
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
         'Map<String,String>',
       );
-      expect(method.optionalParameters.length, 1);
-      expect(method.optionalParameters.first.name, 'allowEmpty');
-      expect(method.optionalParameters.first.named, isTrue);
-      expect(method.optionalParameters.first.required, isFalse);
+      expect(method.optionalParameters.length, 2);
       expect(
-        method.optionalParameters.first.defaultTo?.accept(emitter).toString(),
-        'true',
+        method.optionalParameters.map((p) => p.name),
+        containsAll(['allowEmpty', 'allowLists']),
       );
     });
 
@@ -73,7 +70,10 @@ void main() {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   throw EncodingException(
     'parameterProperties not supported for Combined: contains primitive types',
   );
@@ -103,9 +103,14 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final mergedProperties = <String, String>{};
-  mergedProperties.addAll($base.parameterProperties(allowEmpty: allowEmpty));
+  mergedProperties.addAll(
+    $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+  );
   return mergedProperties;
 }
 ''';
@@ -134,7 +139,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   throw EncodingException(
     'parameterProperties not supported for Mixed: contains primitive types',
   );
@@ -169,13 +177,22 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final mergedProperties = <String, String>{};
   mergedProperties.addAll(
-    firstModel.parameterProperties(allowEmpty: allowEmpty),
+    firstModel.parameterProperties(
+      allowEmpty: allowEmpty,
+      allowLists: allowLists,
+    ),
   );
   mergedProperties.addAll(
-    secondModel.parameterProperties(allowEmpty: allowEmpty),
+    secondModel.parameterProperties(
+      allowEmpty: allowEmpty,
+      allowLists: allowLists,
+    ),
   );
   return mergedProperties;
 }
@@ -240,13 +257,22 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(combinedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final mergedProperties = <String, String>{};
   mergedProperties.addAll(
-    stringOrComplex.parameterProperties(allowEmpty: allowEmpty),
+    stringOrComplex.parameterProperties(
+      allowEmpty: allowEmpty,
+      allowLists: allowLists,
+    ),
   );
   mergedProperties.addAll(
-    simpleModel.parameterProperties(allowEmpty: allowEmpty),
+    simpleModel.parameterProperties(
+      allowEmpty: allowEmpty,
+      allowLists: allowLists,
+    ),
   );
   return mergedProperties;
 }
@@ -270,7 +296,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   return <String, String>{};
 }
 ''';

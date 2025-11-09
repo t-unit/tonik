@@ -55,24 +55,32 @@ void main() {
         parameterPropertiesMethod.returns?.accept(emitter).toString(),
         'Map<String,String>',
       );
-      expect(parameterPropertiesMethod.optionalParameters.length, 1);
+      expect(parameterPropertiesMethod.optionalParameters.length, 2);
+
+      final allowEmptyParam = parameterPropertiesMethod.optionalParameters
+          .firstWhere((p) => p.name == 'allowEmpty');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isFalse);
       expect(
-        parameterPropertiesMethod.optionalParameters.first.name,
-        'allowEmpty',
-      );
-      expect(
-        parameterPropertiesMethod.optionalParameters.first.named,
-        isTrue,
-      );
-      expect(
-        parameterPropertiesMethod.optionalParameters.first.required,
-        isFalse,
-      );
-      expect(
-        parameterPropertiesMethod.optionalParameters.first.defaultTo
-            ?.accept(emitter)
-            .toString(),
+        allowEmptyParam.defaultTo?.accept(emitter).toString(),
         'true',
+      );
+      expect(
+        allowEmptyParam.type?.accept(emitter).toString(),
+        'bool',
+      );
+
+      final allowListsParam = parameterPropertiesMethod.optionalParameters
+          .firstWhere((p) => p.name == 'allowLists');
+      expect(allowListsParam.named, isTrue);
+      expect(allowListsParam.required, isFalse);
+      expect(
+        allowListsParam.defaultTo?.accept(emitter).toString(),
+        'true',
+      );
+      expect(
+        allowListsParam.type?.accept(emitter).toString(),
+        'bool',
       );
     });
 
@@ -104,7 +112,10 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   result[r'id'] = id.uriEncode(allowEmpty: allowEmpty);
   if (name != null) {
@@ -134,7 +145,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   return <String, String>{};
 }
 ''';
@@ -171,7 +185,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   if (nullableName != null) {
     result[r'nullable_name'] = nullableName!.uriEncode(
@@ -225,7 +242,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) =>
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) =>
   throw EncodingException(
     'parameterProperties not supported for User: contains complex types',
   );
@@ -286,7 +306,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) =>
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
     result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
@@ -352,7 +375,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
     result[r'data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
@@ -414,7 +440,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
     result[r'combined'] = combined.toSimple(
@@ -465,7 +494,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
   if (count != null) {
@@ -517,6 +549,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       const expectedMethod = '''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
+  bool allowLists = true,
 }) =>
   throw EncodingException(
     'parameterProperties not supported for ComplexContainer: contains complex types',
@@ -575,7 +608,10 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   if (value != null) {
     if (value!.currentEncodingShape == EncodingShape.simple) {
@@ -733,7 +769,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
   final result = <String, String>{};
   result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
   if (count != null) {
@@ -812,7 +851,13 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists && tags != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
   final result = <String, String>{};
   if (tags != null) {
     result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
@@ -871,7 +916,16 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists && ids != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  if (!allowLists && tags != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
   final result = <String, String>{};
   if (ids != null) {
     result[r'ids'] = ids!
@@ -928,7 +982,13 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
   final result = <String, String>{};
   result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
   return result;
@@ -980,7 +1040,13 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists && tags != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
   final result = <String, String>{};
   result[r'id'] = id.uriEncode(allowEmpty: allowEmpty);
   if (tags != null) {
@@ -1045,6 +1111,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         const expectedMethod = '''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
+  bool allowLists = true,
 }) =>
     throw EncodingException(
       'parameterProperties not supported for ComplexListContainer: contains complex types',
@@ -1095,7 +1162,13 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists && statuses != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
   final result = <String, String>{};
   if (statuses != null) {
     result[r'statuses'] = statuses!
@@ -1105,6 +1178,202 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
   } else if (allowEmpty) {
     result[r'statuses'] = '';
   }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties that throws when allowLists=true '
+      'and list present',
+      () {
+        final model = ClassModel(
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final result = <String, String>{};
+  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties that throws when allowLists=true '
+      'and nullable list present',
+      () {
+        final model = ClassModel(
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists && tags != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final result = <String, String>{};
+  if (tags != null) {
+    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result[r'tags'] = '';
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with allowLists for mixed properties',
+      () {
+        final model = ClassModel(
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists && tags != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final result = <String, String>{};
+  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
+  if (tags != null) {
+    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+  } else if (allowEmpty) {
+    result[r'tags'] = '';
+  }
+  return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties without list check when no lists present',
+      () {
+        final model = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'age',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  final result = <String, String>{};
+  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
+  result[r'age'] = age.uriEncode(allowEmpty: allowEmpty);
   return result;
 }
 ''';

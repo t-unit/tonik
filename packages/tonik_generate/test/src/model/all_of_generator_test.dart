@@ -1201,6 +1201,7 @@ void main() {
       const expectedParameterProperties = '''
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
+          bool allowLists = true,
         }) =>
           throw EncodingException(
             'parameterProperties not supported for AllOfIntList: contains array types',
@@ -1253,6 +1254,7 @@ void main() {
       const expectedParameterProperties = '''
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
+          bool allowLists = true,
         }) =>
           throw EncodingException(
             'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
@@ -1295,6 +1297,7 @@ void main() {
       const expectedParameterProperties = '''
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
+          bool allowLists = true,
         }) =>
           throw EncodingException(
             'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
@@ -1357,5 +1360,112 @@ void main() {
         contains(collapseWhitespace(expectedToJson)),
       );
     });
+
+    test(
+      'generates parameterProperties with allowLists parameter for '
+      'complex allOf',
+      () {
+        final classModel1 = ClassModel(
+          name: 'TestClass1',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final classModel2 = ClassModel(
+          name: 'TestClass2',
+          properties: [
+            Property(
+              name: 'age',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AllOfModel(
+          name: 'AllOfComplex',
+          models: {
+            classModel1,
+            classModel2,
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedParameterProperties = '''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) {
+            final mergedProperties = <String, String>{};
+            mergedProperties.addAll(
+              testClass1.parameterProperties(
+                allowEmpty: allowEmpty,
+                allowLists: allowLists,
+              ),
+            );
+            mergedProperties.addAll(
+              testClass2.parameterProperties(
+                allowEmpty: allowEmpty,
+                allowLists: allowLists,
+              ),
+            );
+            return mergedProperties;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedParameterProperties)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties that throws when contains lists',
+      () {
+        final model = AllOfModel(
+          name: 'AllOfWithList',
+          models: {
+            ListModel(
+              content: IntegerModel(context: context),
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedParameterProperties = '''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) =>
+            throw EncodingException(
+              'parameterProperties not supported for AllOfWithList: contains array types',
+            );
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedParameterProperties)),
+        );
+      },
+    );
   });
 }

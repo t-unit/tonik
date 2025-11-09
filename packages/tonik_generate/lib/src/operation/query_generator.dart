@@ -1,9 +1,9 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/to_deep_object_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_delimited_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
-import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating query parameters method for operations.
@@ -21,7 +21,7 @@ class QueryGenerator {
   ) {
     final parameters = <Parameter>[];
     final body = <Code>[
-      declareFinal('result')
+      declareFinal('entries')
           .assign(
             literalList(
               [],
@@ -30,22 +30,6 @@ class QueryGenerator {
           )
           .statement,
     ];
-
-    final needsDeepObjectEncoder = queryParameters
-        .any((q) => q.parameter.encoding == QueryParameterEncoding.deepObject);
-
-    if (needsDeepObjectEncoder) {
-      body.add(
-        declareConst('deepObjectEncoder')
-            .assign(
-              refer(
-                'DeepObjectEncoder',
-                'package:tonik_util/tonik_util.dart',
-              ).newInstance([]),
-            )
-            .statement,
-      );
-    }
 
     for (final queryParam in queryParameters) {
       final paramName = queryParam.normalizedName;
@@ -121,26 +105,16 @@ class QueryGenerator {
     String paramName,
     QueryParameterObject resolvedParam,
   ) {
-    final valueExpression = buildToJsonQueryParameterExpression(
+    final deepObjectExpression = buildToDeepObjectQueryParameterCode(
       paramName,
       resolvedParam,
     );
-    final value = refer(valueExpression);
 
-    final encodeCall = refer('deepObjectEncoder')
-        .property('encode')
-        .call(
-          [
-            literalString(resolvedParam.rawName, raw: true),
-            value,
-          ],
-          {
-            'explode': literalBool(resolvedParam.explode),
-            'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-          },
-        );
-
-    return refer('result').property('addAll').call([encodeCall]).statement;
+    return Block.of([
+      const Code('entries.addAll('),
+      deepObjectExpression,
+      const Code(');'),
+    ]);
   }
 
   void _addCodeWithNullCheck(
@@ -163,7 +137,7 @@ class QueryGenerator {
   }
 
   Code _generateReturnStatement() {
-    return refer('result')
+    return refer('entries')
         .property('map')
         .call([
           Method(
