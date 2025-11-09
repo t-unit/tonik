@@ -455,15 +455,9 @@ void main() {
             );
           }
           final values = <String>{};
-          final intForm = int.toForm(
-            explode: explode,
-            allowEmpty: allowEmpty,
-          );
+          final intForm = int.toForm(explode: explode, allowEmpty: allowEmpty);
           values.add(intForm);
-          final choiceForm = choice.toForm(
-            explode: explode,
-            allowEmpty: allowEmpty,
-          );
+          final choiceForm = choice.toForm(explode: explode, allowEmpty: allowEmpty);
           values.add(choiceForm);
           if (values.length > 1) {
             throw EncodingException(
@@ -716,10 +710,7 @@ void main() {
             allowEmpty: allowEmpty,
           );
           values.add(bigDecimalForm);
-          final choiceForm = choice.toForm(
-            explode: explode,
-            allowEmpty: allowEmpty,
-          );
+          final choiceForm = choice.toForm(explode: explode, allowEmpty: allowEmpty);
           values.add(choiceForm);
           final stringForm = string.toForm(explode: explode, allowEmpty: allowEmpty);
           values.add(stringForm);
