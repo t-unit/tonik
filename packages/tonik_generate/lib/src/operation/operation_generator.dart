@@ -313,13 +313,14 @@ class OperationGenerator {
           r'_$pathResult',
         ).assign(refer('_path').call([], pathArgs)).statement,
         const Code(
-          r'final _$pathSegments = [..._$baseUri.pathSegments, '
-          r'..._$pathResult];',
+          r"final _$newPath = _$baseUri.path.endsWith('/') "
+          r"? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' "
+          r": '${_$baseUri.path}/${_$pathResult.join('/')}';",
         ),
         refer(r'_$uri')
             .assign(
               refer(r'_$baseUri').property('replace').call([], {
-                'pathSegments': refer(r'_$pathSegments'),
+                'path': refer(r'_$newPath'),
                 if (queryArgs.isNotEmpty)
                   'query': refer('_queryParameters').call([], queryArgs),
               }),

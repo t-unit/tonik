@@ -39,6 +39,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof/string',
+    );
   });
 
   test('testAnyOfInPath integer', () async {
@@ -50,6 +54,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof/1',
+    );
   });
 
   test('testAnyOfInPath object', () async {
@@ -63,6 +71,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof/name,John%20Doe,value,-1',
+    );
   });
 
   test('testAnyOfCompositeInPath with EntityType', () async {
@@ -84,6 +96,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof-composite/type,person,first_name,John,last_name,Doe,age,30,birth_date,1970-01-01',
+    );
   });
 
   test('testAnyOfCompositeInPath with FlexibleValue string', () async {
@@ -97,6 +113,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof-composite/test-value',
+    );
   });
 
   test('testAnyOfCompositeInPath with FlexibleValue object', () async {
@@ -112,6 +132,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof-composite/name,Test%20Object,value,42',
+    );
   });
 
   test('testAnyOfCompositeInPath with CompositeEntity', () async {
@@ -124,7 +148,7 @@ void main() {
             description: 'Testing composite entity',
           ),
           timestampMixin: TimestampMixin(
-            createdAt: DateTime(1970, 1, 1, 14, 30),
+            createdAt: DateTime.utc(1970, 1, 1, 14, 30),
           ),
           compositeEntityModel: const CompositeEntityModel(
             specificField: 'specific-value',
@@ -136,6 +160,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/anyof-composite/name,Composite%20Test,description,Testing%20composite%20entity,created_at,1970-01-01T14%3A30%3A00.000Z,specific_field,specific-value',
+    );
   });
 
   test('testPrimitiveInPath', () async {
@@ -146,7 +174,7 @@ void main() {
       number: 23,
       string: 'string',
       boolean: true,
-      datetime: DateTime(1970),
+      datetime: DateTime.utc(1970),
       date: Date(2000, 1, 1),
       decimal: BigDecimal.parse('23'),
       uri: Uri.parse('https://example.com'),
@@ -156,6 +184,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/primitive/1/1.0/23/string/true/1970-01-01T00%3A00%3A00.000Z/2000-01-01/23/https%3A%2F%2Fexample.com/active',
+    );
   });
 
   test('testHeaders', () async {
@@ -166,7 +198,7 @@ void main() {
       number: 23,
       string: 'string',
       boolean: true,
-      dateTime: DateTime(1970),
+      dateTime: DateTime.utc(1970),
       date: Date(2000, 1, 1),
       decimal: BigDecimal.parse('23'),
       uri: Uri.parse('https://example.com'),
@@ -177,6 +209,23 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(success.response.requestOptions.headers['x-integer'], '1');
+    expect(success.response.requestOptions.headers['x-double'], '1.0');
+    expect(success.response.requestOptions.headers['x-number'], '23');
+    expect(success.response.requestOptions.headers['x-string'], 'string');
+    expect(success.response.requestOptions.headers['x-boolean'], 'true');
+    expect(
+      success.response.requestOptions.headers['x-datetime'],
+      '1970-01-01T00%3A00%3A00.000Z',
+    );
+    expect(success.response.requestOptions.headers['x-date'], '2000-01-01');
+    expect(success.response.requestOptions.headers['x-decimal'], '23');
+    expect(
+      success.response.requestOptions.headers['x-uri'],
+      'https%3A%2F%2Fexample.com',
+    );
+    expect(success.response.requestOptions.headers['x-status'], 'active');
+    expect(success.response.requestOptions.headers['x-tags'], 'a,b,c');
   });
 
   test('testComplexInPath', () async {
@@ -188,7 +237,7 @@ void main() {
         rating: 123.45,
         username: 'john_doe',
         isVerified: true,
-        createdAt: DateTime(1970, 1, 1, 14, 30),
+        createdAt: DateTime.utc(1970, 1, 1, 14, 30),
         birthDate: Date(92000, 1, 1),
         balance: BigDecimal.parse('123.45'),
         website: Uri.parse('https://example.com'),
@@ -203,6 +252,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/complex/id,987,score,123.45,rating,123.45,username,john_doe,is_verified,true,created_at,1970-01-01T14%3A30%3A00.000Z,birth_date,92000-01-01,balance,123.45,website,https%3A%2F%2Fexample.com,email,john.doe%40example.com,full_name,John%20Doe,age,30,status,active,priority,1',
+    );
   });
 
   test('testAllOfInPath', () async {
@@ -214,7 +267,7 @@ void main() {
           description: 'lalala lululu',
         ),
         timestampMixin: TimestampMixin(
-          createdAt: DateTime(1970, 1, 1, 14, 30),
+          createdAt: DateTime.utc(1970, 1, 1, 14, 30),
         ),
         compositeEntityModel: const CompositeEntityModel(
           specificField: 'John Doe',
@@ -225,6 +278,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/allof/name,John%20Doe,description,lalala%20lululu,created_at,1970-01-01T14%3A30%3A00.000Z,specific_field,John%20Doe',
+    );
   });
 
   test('testOneOfInHeader Person', () async {
@@ -244,6 +301,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.headers['x-entity'],
+      'type,person,first_name,John,last_name,Doe,age,30,birth_date,1970-01-01',
+    );
   });
 
   test('testOneOfInHeader Company', () async {
@@ -260,6 +321,10 @@ void main() {
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.headers['x-entity'],
+      'type,company,company_name,Capyboi%20GmbH',
+    );
   });
 
   test('testOneOfInHeader System', () async {
@@ -298,8 +363,6 @@ void main() {
       ],
     );
 
-    // Simple encoding does not support objects in lists.
-    // We are expecting an error for this test.
     expect(response, isA<TonikError<void>>());
     final error = response as TonikError<void>;
     expect(error.error, isA<EncodingException>());
@@ -310,11 +373,19 @@ void main() {
     final response = await api.testAliasesInPath(
       userId: 11,
       userName: 'John Doe',
-      timestamp: DateTime(1970, 1, 1, 14, 30),
+      timestamp: DateTime.utc(1970, 1, 1, 14, 30),
     );
 
     expect(response, isA<TonikSuccess<void>>());
     final success = response as TonikSuccess<void>;
     expect(success.response.statusCode, 200);
+    expect(
+      success.response.requestOptions.uri.path,
+      '/v1/aliases/11/John%20Doe',
+    );
+    expect(
+      success.response.requestOptions.headers['x-timestamp'],
+      '1970-01-01T14%3A30%3A00.000Z',
+    );
   });
 }

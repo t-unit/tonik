@@ -59,8 +59,8 @@ Future<TonikResult<void>> call() async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options();
   } on Object catch (exception, stackTrace) {
@@ -160,8 +160,8 @@ Future<TonikResult<void>> call({required String myHeader}) async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options(myHeader: myHeader);
   } on Object catch (exception, stackTrace) {
@@ -265,8 +265,8 @@ Future<TonikResult<void>> call({required int petId}) async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path(petId: petId);
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options();
   } on Object catch (exception, stackTrace) {
@@ -373,8 +373,8 @@ Future<TonikResult<void>> call() async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options();
   } on Object catch (exception, stackTrace) {
@@ -489,9 +489,9 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(
-      pathSegments: _$pathSegments,
+      path: _$newPath,
       query: _queryParameters(filter: filter, sort: sort),
     );
     _$data = _data();
@@ -878,8 +878,8 @@ Future<TonikResult<String>> call() async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options();
   } on Object catch (exception, stackTrace) {
@@ -973,8 +973,8 @@ Future<TonikResult<void>> call() async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options();
   } on Object catch (exception, stackTrace) {
@@ -1063,8 +1063,8 @@ Future<TonikResult<void>> call() async {
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path();
-    final _$pathSegments = [..._$baseUri.pathSegments, ..._$pathResult];
-    _$uri = _$baseUri.replace(pathSegments: _$pathSegments);
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
     _$options = _options();
   } on Object catch (exception, stackTrace) {
