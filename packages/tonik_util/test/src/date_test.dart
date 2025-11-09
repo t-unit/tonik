@@ -359,4 +359,38 @@ void main() {
       }
     });
   });
+
+  group('DateUriEncoder', () {
+    test('encodes Date values', () {
+      final date = Date(2023, 12, 25);
+      expect(
+        date.uriEncode(allowEmpty: true),
+        '2023-12-25',
+      );
+    });
+
+    test('encodes Date values with special characters', () {
+      final date = Date(2023, 1, 1);
+      expect(
+        date.uriEncode(allowEmpty: true),
+        '2023-01-01',
+      );
+    });
+
+    test('handles Date with useQueryComponent true', () {
+      final date = Date(2023, 12, 25);
+      expect(
+        date.uriEncode(allowEmpty: true, useQueryComponent: true),
+        '2023-12-25',
+      );
+    });
+
+    test('handles Date with useQueryComponent false', () {
+      final date = Date(2023, 12, 25);
+      expect(
+        date.uriEncode(allowEmpty: true),
+        '2023-12-25',
+      );
+    });
+  });
 }

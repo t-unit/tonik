@@ -83,7 +83,6 @@ String? _handleListExpression(
   final suffix = _getSerializationSuffix(
     contentModel,
     false,
-    forceNonNullReceiver: forceNonNullReceiver,
   );
   if (suffix == null) {
     return null;

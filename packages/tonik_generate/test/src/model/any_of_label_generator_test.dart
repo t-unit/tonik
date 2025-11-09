@@ -28,192 +28,6 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  group('AnyOfGenerator labelProperties generation', () {
-    test('generates labelProperties for primitive-only AnyOf', () {
-      final model = AnyOfModel(
-        name: 'AnyOfPrimitive',
-        models: {
-          (discriminatorValue: 'string', model: StringModel(context: context)),
-          (discriminatorValue: 'int', model: IntegerModel(context: context)),
-          (discriminatorValue: 'bool', model: BooleanModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final generatedClass = generator.generateClass(model);
-      final labelPropsMethod = generatedClass.methods.firstWhere(
-        (m) => m.name == 'labelProperties',
-      );
-
-      expect(
-        labelPropsMethod.returns?.accept(emitter).toString(),
-        'Map<String,String>',
-      );
-      expect(labelPropsMethod.optionalParameters.length, 1);
-      expect(
-        labelPropsMethod.optionalParameters.map((p) => p.name),
-        containsAll(['allowEmpty']),
-      );
-
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        Map<String, String> labelProperties({required bool allowEmpty}) {
-          return <String, String>{};
-        }
-      ''';
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-
-    test('generates labelProperties for complex-only AnyOf', () {
-      final class1 = ClassModel(
-        name: 'Class1',
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final class2 = ClassModel(
-        name: 'Class2',
-        properties: [
-          Property(
-            name: 'number',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = AnyOfModel(
-        name: 'AnyOfComplex',
-        models: {
-          (discriminatorValue: 'class1', model: class1),
-          (discriminatorValue: 'class2', model: class2),
-        },
-        discriminator: 'type',
-        context: context,
-      );
-
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        Map<String, String> labelProperties({required bool allowEmpty}) {
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
-          if (class1 != null) {
-            final class1Label = class1!.labelProperties(allowEmpty: allowEmpty);
-            mapValues.add(class1Label);
-            discriminatorValue ??= r'class1';
-          }
-          if (class2 != null) {
-            final class2Label = class2!.labelProperties(allowEmpty: allowEmpty);
-            mapValues.add(class2Label);
-            discriminatorValue ??= r'class2';
-          }
-          final map = <String, String>{};
-          for (final m in mapValues) {
-            map.addAll(m);
-          }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('type', () => discriminatorValue);
-          }
-          return map;
-        }
-      ''';
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-
-    test('generates labelProperties with runtime shape checks', () {
-      final anyOfModel = AnyOfModel(
-        name: 'NestedAnyOf',
-        models: {
-          (discriminatorValue: 'string', model: StringModel(context: context)),
-          (
-            discriminatorValue: 'complex',
-            model: ClassModel(
-              name: 'ComplexData',
-              properties: [
-                Property(
-                  name: 'id',
-                  model: IntegerModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ],
-              context: context,
-            ),
-          ),
-        },
-        discriminator: 'type',
-        context: context,
-      );
-
-      final model = AnyOfModel(
-        name: 'AnyOfWithNested',
-        models: {
-          (discriminatorValue: 'nested', model: anyOfModel),
-        },
-        discriminator: 'kind',
-        context: context,
-      );
-
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        Map<String, String> labelProperties({required bool allowEmpty}) {
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
-          if (nestedAnyOf != null) {
-            switch (nestedAnyOf!.currentEncodingShape) {
-              case EncodingShape.simple:
-                break;
-              case EncodingShape.complex:
-                final nestedAnyOfLabel = nestedAnyOf!.labelProperties(
-                  allowEmpty: allowEmpty,
-                );
-                mapValues.add(nestedAnyOfLabel);
-                discriminatorValue ??= r'nested';
-                break;
-              case EncodingShape.mixed:
-                throw EncodingException(
-                  'Cannot encode field with mixed encoding shape',
-                );
-            }
-          }
-          final map = <String, String>{};
-          for (final m in mapValues) {
-            map.addAll(m);
-          }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('kind', () => discriminatorValue);
-          }
-          return map;
-        }
-      ''';
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-  });
-
   group('AnyOfGenerator toLabel generation', () {
     test('generates toLabel for primitive-only AnyOf', () {
       final model = AnyOfModel(
@@ -228,28 +42,39 @@ void main() {
       );
 
       final generatedClass = generator.generateClass(model);
-      final toLabelMethod = generatedClass.methods.firstWhere(
-        (m) => m.name == 'toLabel',
-      );
-
-      expect(toLabelMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toLabelMethod.optionalParameters.length, 2);
-      expect(
-        toLabelMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
-      );
-
       final classCode = format(generatedClass.accept(emitter).toString());
+
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return labelProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          final values = <String>{};
+          if (bool != null) {
+            final boolLabel = bool!.toLabel(explode: explode, allowEmpty: allowEmpty);
+            values.add(boolLabel);
+          }
+          if (int != null) {
+            final intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty);
+            values.add(intLabel);
+          }
+          if (string != null) {
+            final stringLabel = string!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(stringLabel);
+          }
+          if (values.isEmpty) return '';
+          if (values.length > 1) {
+            throw EncodingException(
+              'Ambiguous anyOf label encoding for AnyOfPrimitive: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return values.first;
         }
       ''';
+
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -294,16 +119,39 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
+
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return labelProperties(
+          final mapValues = <Map<String, String>>[];
+          String? discriminatorValue;
+          if (class1 != null) {
+            final class1Label = class1!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(class1Label);
+            discriminatorValue ??= r'class1';
+          }
+          if (class2 != null) {
+            final class2Label = class2!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(class2Label);
+            discriminatorValue ??= r'class2';
+          }
+          final map = <String, String>{};
+          for (final m in mapValues) {
+            map.addAll(m);
+          }
+          if (discriminatorValue != null) {
+            map.putIfAbsent('type', () => discriminatorValue);
+          }
+          return map.toLabel(
+            explode: explode,
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+            alreadyEncoded: true,
+          );
         }
       ''';
+
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -313,9 +161,9 @@ void main() {
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
-            discriminatorValue: 'class',
+            discriminatorValue: 'data',
             model: ClassModel(
-              name: 'Class',
+              name: 'Data',
               properties: [
                 Property(
                   name: 'value',
@@ -335,16 +183,57 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
+
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return labelProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          final values = <String>{};
+          final mapValues = <Map<String, String>>[];
+          String? discriminatorValue;
+          if (data != null) {
+            final dataLabel = data!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(dataLabel);
+            discriminatorValue ??= r'data';
+          }
+          if (string != null) {
+            final stringLabel = string!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(stringLabel);
+          }
+          if (values.isEmpty && mapValues.isEmpty) return '';
+          if (mapValues.isNotEmpty && values.isNotEmpty) {
+            throw EncodingException(
+              'Ambiguous anyOf label encoding for AnyOfMixed: mixing simple and complex values',
+            );
+          }
+          if (values.isNotEmpty) {
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf label encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          } else {
+            final map = <String, String>{};
+            for (final m in mapValues) {
+              map.addAll(m);
+            }
+            if (discriminatorValue != null) {
+              map.putIfAbsent('type', () => discriminatorValue);
+            }
+            return map.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              alreadyEncoded: true,
+            );
+          }
         }
       ''';
+
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -358,16 +247,118 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
+
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return labelProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return '';
         }
       ''';
+
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('toLabel uses runtime check for nested oneOf', () {
+      final innerOneOf = OneOfModel(
+        name: 'InnerChoice',
+        models: {
+          (discriminatorValue: 'str', model: StringModel(context: context)),
+          (
+            discriminatorValue: 'obj',
+            model: ClassModel(
+              name: 'Inner',
+              properties: [
+                Property(
+                  name: 'field',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: innerOneOf),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
+
+      const expected = '''
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          final values = <String>{};
+          final mapValues = <Map<String, String>>[];
+          if (innerChoice != null) {
+            switch (innerChoice!.currentEncodingShape) {
+              case EncodingShape.simple:
+                values.add(
+                  innerChoice!.toLabel(explode: explode, allowEmpty: allowEmpty),
+                );
+                break;
+              case EncodingShape.complex:
+                final innerChoiceLabel = innerChoice!.parameterProperties(
+                  allowEmpty: allowEmpty,
+                );
+                mapValues.add(innerChoiceLabel);
+                break;
+              case EncodingShape.mixed:
+                throw EncodingException(
+                  'Cannot encode field with mixed encoding shape',
+                );
+            }
+          }
+          if (string != null) {
+            final stringLabel = string!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            values.add(stringLabel);
+          }
+          if (values.isEmpty && mapValues.isEmpty) return '';
+          if (mapValues.isNotEmpty && values.isNotEmpty) {
+            throw EncodingException(
+              'Ambiguous anyOf label encoding for TestAnyOf: mixing simple and complex values',
+            );
+          }
+          if (values.isNotEmpty) {
+            if (values.length > 1) {
+              throw EncodingException(
+                'Ambiguous anyOf label encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return values.first;
+          } else {
+            final map = <String, String>{};
+            for (final m in mapValues) {
+              map.addAll(m);
+            }
+            return map.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              alreadyEncoded: true,
+            );
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expected)),
       );
     });
   });

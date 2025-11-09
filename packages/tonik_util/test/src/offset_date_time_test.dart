@@ -1,598 +1,663 @@
+import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  group('OffsetDateTime', () {
-    group('constructor', () {
-      test('should create OffsetDateTime with explicit timezone name', () {
-        // Arrange
-        final dateTime = DateTime(2023, 1, 15, 12, 30, 45);
-        const offset = Duration(hours: 5, minutes: 30);
-        const timeZoneName = 'Asia/Kolkata';
+  group('constructor', () {
+    test('should create OffsetDateTime with explicit timezone name', () {
+      // Arrange
+      final dateTime = DateTime(2023, 1, 15, 12, 30, 45);
+      const offset = Duration(hours: 5, minutes: 30);
+      const timeZoneName = 'Asia/Kolkata';
 
-        // Act
-        final offsetDateTime = OffsetDateTime.from(
-          dateTime,
-          offset: offset,
-          timeZoneName: timeZoneName,
-        );
+      // Act
+      final offsetDateTime = OffsetDateTime.from(
+        dateTime,
+        offset: offset,
+        timeZoneName: timeZoneName,
+      );
 
-        // Assert
-        expect(offsetDateTime.offset, offset);
-        expect(offsetDateTime.timeZoneName, timeZoneName);
-        expect(offsetDateTime.year, 2023);
-        expect(offsetDateTime.month, 1);
-        expect(offsetDateTime.day, 15);
-        expect(offsetDateTime.hour, 12);
-        expect(offsetDateTime.minute, 30);
-        expect(offsetDateTime.second, 45);
-      });
-
-      test('should auto-generate timezone name when not provided', () {
-        // Arrange
-        final dateTime = DateTime(2023, 1, 15, 12);
-        const offset = Duration(hours: 5, minutes: 30);
-
-        // Act
-        final offsetDateTime = OffsetDateTime.from(
-          dateTime,
-          offset: offset,
-        );
-
-        // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC+05:30');
-      });
-
-      test('should use UTC for zero offset', () {
-        // Arrange
-        final dateTime = DateTime.utc(2023, 1, 15, 12);
-
-        // Act
-        final offsetDateTime = OffsetDateTime.from(
-          dateTime,
-          offset: Duration.zero,
-        );
-
-        // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC');
-        expect(offsetDateTime.isUtc, isTrue);
-      });
+      // Assert
+      expect(offsetDateTime.offset, offset);
+      expect(offsetDateTime.timeZoneName, timeZoneName);
+      expect(offsetDateTime.year, 2023);
+      expect(offsetDateTime.month, 1);
+      expect(offsetDateTime.day, 15);
+      expect(offsetDateTime.hour, 12);
+      expect(offsetDateTime.minute, 30);
+      expect(offsetDateTime.second, 45);
     });
 
-    group('timezone name generation', () {
-      test('should generate UTC for zero offset', () {
-        // Arrange & Act
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12),
-          offset: Duration.zero,
-        );
+    test('should auto-generate timezone name when not provided', () {
+      // Arrange
+      final dateTime = DateTime(2023, 1, 15, 12);
+      const offset = Duration(hours: 5, minutes: 30);
 
-        // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC');
-      });
+      // Act
+      final offsetDateTime = OffsetDateTime.from(
+        dateTime,
+        offset: offset,
+      );
 
-      test('should generate positive offset names', () {
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC+05:30');
+    });
+
+    test('should use UTC for zero offset', () {
+      // Arrange
+      final dateTime = DateTime.utc(2023, 1, 15, 12);
+
+      // Act
+      final offsetDateTime = OffsetDateTime.from(
+        dateTime,
+        offset: Duration.zero,
+      );
+
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC');
+      expect(offsetDateTime.isUtc, isTrue);
+    });
+  });
+
+  group('timezone name generation', () {
+    test('should generate UTC for zero offset', () {
+      // Arrange & Act
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12),
+        offset: Duration.zero,
+      );
+
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC');
+    });
+
+    test('should generate positive offset names', () {
+      // Arrange & Act
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 17),
+        offset: const Duration(hours: 5, minutes: 30),
+      );
+
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC+05:30');
+    });
+
+    test('should generate negative offset names', () {
+      // Arrange & Act
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 4),
+        offset: const Duration(hours: -8),
+      );
+
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC-08:00');
+    });
+
+    test('should generate names for unusual offsets', () {
+      // Arrange & Act
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 4),
+        offset: const Duration(hours: 9, minutes: 45),
+      );
+
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC+09:45');
+    });
+
+    test('should generate names for negative offsets with minutes', () {
+      // Arrange & Act
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 4),
+        offset: const Duration(hours: -3, minutes: -30),
+      );
+
+      // Assert
+      expect(offsetDateTime.timeZoneName, 'UTC-03:30');
+    });
+
+    test(
+      'should override auto-generated name when explicit name provided',
+      () {
         // Arrange & Act
         final offsetDateTime = OffsetDateTime.from(
           DateTime(2023, 1, 15, 17),
           offset: const Duration(hours: 5, minutes: 30),
+          timeZoneName: 'Asia/Kolkata',
         );
 
         // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC+05:30');
-      });
+        expect(offsetDateTime.timeZoneName, 'Asia/Kolkata');
+      },
+    );
+  });
 
-      test('should generate negative offset names', () {
-        // Arrange & Act
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 4),
-          offset: const Duration(hours: -8),
-        );
+  group('toLocal()', () {
+    test('should convert to local system time', () {
+      // Arrange
+      final utcTime = DateTime.utc(2023, 1, 15, 12);
+      final offsetDateTime = OffsetDateTime.from(
+        utcTime,
+        offset: Duration.zero,
+        timeZoneName: 'UTC',
+      );
 
-        // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC-08:00');
-      });
+      // Act
+      final localDateTime = offsetDateTime.toLocal();
 
-      test('should generate names for unusual offsets', () {
-        // Arrange & Act
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 4),
-          offset: const Duration(hours: 9, minutes: 45),
-        );
-
-        // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC+09:45');
-      });
-
-      test('should generate names for negative offsets with minutes', () {
-        // Arrange & Act
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 4),
-          offset: const Duration(hours: -3, minutes: -30),
-        );
-
-        // Assert
-        expect(offsetDateTime.timeZoneName, 'UTC-03:30');
-      });
-
-      test(
-        'should override auto-generated name when explicit name provided',
-        () {
-          // Arrange & Act
-          final offsetDateTime = OffsetDateTime.from(
-            DateTime(2023, 1, 15, 17),
-            offset: const Duration(hours: 5, minutes: 30),
-            timeZoneName: 'Asia/Kolkata',
-          );
-
-          // Assert
-          expect(offsetDateTime.timeZoneName, 'Asia/Kolkata');
-        },
+      // Assert
+      expect(localDateTime.isUtc, isFalse);
+      expect(
+        localDateTime.microsecondsSinceEpoch,
+        offsetDateTime.microsecondsSinceEpoch,
       );
     });
 
-    group('toLocal()', () {
-      test('should convert to local system time', () {
-        // Arrange
-        final utcTime = DateTime.utc(2023, 1, 15, 12);
+    test('should preserve exact moment in time when converting to local', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 17, 30, 45),
+        offset: const Duration(hours: 2),
+      );
+
+      // Act
+      final localDateTime = offsetDateTime.toLocal();
+
+      // Assert
+      expect(localDateTime.isUtc, isFalse);
+      expect(
+        localDateTime.microsecondsSinceEpoch,
+        offsetDateTime.microsecondsSinceEpoch,
+      );
+    });
+  });
+
+  group('toUtc()', () {
+    test('should convert to UTC when offset is not zero', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 17, 30),
+        offset: const Duration(hours: 5, minutes: 30),
+      );
+
+      // Act
+      final utcDateTime = offsetDateTime.toUtc();
+
+      // Assert
+      expect(utcDateTime.isUtc, isTrue);
+      expect(utcDateTime.timeZoneName, 'UTC');
+      expect(utcDateTime.offset, Duration.zero);
+      expect(
+        utcDateTime.microsecondsSinceEpoch,
+        offsetDateTime.microsecondsSinceEpoch,
+      );
+    });
+
+    test('should return same instance for UTC offset', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12),
+        offset: Duration.zero,
+      );
+
+      // Act
+      final utcDateTime = offsetDateTime.toUtc();
+
+      // Assert
+      expect(identical(utcDateTime, offsetDateTime), isTrue);
+    });
+  });
+
+  group('date and time components', () {
+    test('should return correct local date components', () {
+      // Arrange: UTC midnight + 5:30 offset = 5:30 AM local
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 6, 15),
+        offset: const Duration(hours: 5, minutes: 30),
+      );
+
+      // Act & Assert
+      expect(offsetDateTime.year, 2023);
+      expect(offsetDateTime.month, 6);
+      expect(offsetDateTime.day, 15);
+      expect(offsetDateTime.hour, 5);
+      expect(offsetDateTime.minute, 30);
+      expect(offsetDateTime.second, 0);
+      expect(offsetDateTime.millisecond, 0);
+      expect(offsetDateTime.microsecond, 0);
+    });
+
+    test('should handle day boundary crossing', () {
+      // Arrange: UTC 23:00 + 2 hours = 01:00 next day local
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 6, 15, 23),
+        offset: const Duration(hours: 2),
+      );
+
+      // Act & Assert
+      expect(offsetDateTime.year, 2023);
+      expect(offsetDateTime.month, 6);
+      expect(offsetDateTime.day, 16); // Next day
+      expect(offsetDateTime.hour, 1);
+    });
+
+    test('should return correct weekday', () {
+      // Arrange: June 15, 2023 is a Thursday (weekday 4)
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 6, 15, 12),
+        offset: const Duration(hours: 2),
+      );
+
+      // Act & Assert
+      expect(offsetDateTime.weekday, 4); // Thursday
+    });
+  });
+
+  group('epoch time methods', () {
+    test('should return correct milliseconds since epoch', () {
+      // Arrange
+      final baseDateTime = DateTime.utc(2023, 1, 1, 12);
+      final offsetDateTime = OffsetDateTime.from(
+        baseDateTime,
+        offset: const Duration(hours: 5),
+      );
+
+      // Act & Assert
+      // The epoch time should match the input UTC time
+      expect(
+        offsetDateTime.millisecondsSinceEpoch,
+        baseDateTime.millisecondsSinceEpoch,
+      );
+    });
+
+    test('should return correct microseconds since epoch', () {
+      // Arrange
+      final baseDateTime = DateTime.utc(2023, 1, 1, 12);
+      final offsetDateTime = OffsetDateTime.from(
+        baseDateTime,
+        offset: const Duration(hours: 5),
+      );
+
+      // Act & Assert
+      // The epoch time should match the input UTC time
+      expect(
+        offsetDateTime.microsecondsSinceEpoch,
+        baseDateTime.microsecondsSinceEpoch,
+      );
+    });
+  });
+
+  group('arithmetic operations', () {
+    test('should add duration correctly', () {
+      // Arrange: Create from UTC to avoid system timezone issues
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(
+          2023,
+          1,
+          15,
+          7,
+        ), // UTC 07:00 + 5 hour offset = 12:00 local
+        offset: const Duration(hours: 5),
+      );
+
+      // Act
+      final result = offsetDateTime.add(const Duration(hours: 2));
+
+      // Assert: Local time should be 12:00 + 2 = 14:00
+      expect(result.hour, 14);
+      expect(result.offset, offsetDateTime.offset);
+      expect(result.timeZoneName, offsetDateTime.timeZoneName);
+    });
+
+    test('should subtract duration correctly', () {
+      // Arrange: Create from UTC to avoid system timezone issues
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(
+          2023,
+          1,
+          15,
+          7,
+        ), // UTC 07:00 + 5 hour offset = 12:00 local
+        offset: const Duration(hours: 5),
+      );
+
+      // Act
+      final result = offsetDateTime.subtract(const Duration(hours: 2));
+
+      // Assert: Local time should be 12:00 - 2 = 10:00
+      expect(result.hour, 10);
+      expect(result.offset, offsetDateTime.offset);
+      expect(result.timeZoneName, offsetDateTime.timeZoneName);
+    });
+
+    test('should calculate difference between OffsetDateTime instances', () {
+      // Arrange: Both should represent the same UTC moment
+      final offsetDateTime1 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12), // UTC 12:00
+        offset: Duration.zero,
+      );
+      final offsetDateTime2 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12), // Same UTC 12:00
+        offset: const Duration(hours: 5),
+      );
+
+      // Act
+      final difference = offsetDateTime2.difference(offsetDateTime1);
+
+      // Assert
+      expect(difference, Duration.zero); // Same UTC time
+    });
+
+    test('should calculate difference with regular DateTime', () {
+      // Arrange: Both should represent the same UTC moment
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12), // UTC 12:00
+        offset: const Duration(hours: 5),
+      );
+      final regularDateTime = DateTime.utc(2023, 1, 15, 12);
+
+      // Act
+      final difference = offsetDateTime.difference(regularDateTime);
+
+      // Assert
+      expect(difference, Duration.zero); // Same UTC time
+    });
+  });
+
+  group('comparison methods', () {
+    late OffsetDateTime offsetDateTime1;
+    late OffsetDateTime offsetDateTime2;
+    late OffsetDateTime offsetDateTime3;
+
+    setUp(() {
+      // All represent the same UTC moment: 2023-01-15 12:00 UTC
+      offsetDateTime1 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12),
+        offset: Duration.zero,
+      );
+      // Create from a local time: if offset is +5,
+      // then local 17:00 should equal UTC 12:00
+      // But to avoid system timezone issues, we'll create directly from UTC
+      offsetDateTime2 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12), // Same UTC base
+        offset: const Duration(hours: 5),
+      );
+      // Different UTC moment: one hour later
+      offsetDateTime3 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 13),
+        offset: Duration.zero,
+      );
+    });
+
+    test('should correctly identify same moments', () {
+      expect(offsetDateTime1.isAtSameMomentAs(offsetDateTime2), isTrue);
+      expect(offsetDateTime1.isAtSameMomentAs(offsetDateTime3), isFalse);
+    });
+
+    test('should correctly compare before', () {
+      expect(offsetDateTime1.isBefore(offsetDateTime3), isTrue);
+      expect(offsetDateTime3.isBefore(offsetDateTime1), isFalse);
+      expect(offsetDateTime1.isBefore(offsetDateTime2), isFalse);
+    });
+
+    test('should correctly compare after', () {
+      expect(offsetDateTime3.isAfter(offsetDateTime1), isTrue);
+      expect(offsetDateTime1.isAfter(offsetDateTime3), isFalse);
+      expect(offsetDateTime1.isAfter(offsetDateTime2), isFalse);
+    });
+
+    test('should correctly compare with compareTo', () {
+      expect(offsetDateTime1.compareTo(offsetDateTime2), 0);
+      expect(offsetDateTime1.compareTo(offsetDateTime3), lessThan(0));
+      expect(offsetDateTime3.compareTo(offsetDateTime1), greaterThan(0));
+    });
+  });
+
+  group('equality and hashCode', () {
+    test('should be equal when representing same UTC moment', () {
+      // Arrange: Both should represent the same UTC moment
+      final offsetDateTime1 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12),
+        offset: Duration.zero,
+      );
+      final offsetDateTime2 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12), // Same UTC moment
+        offset: const Duration(hours: 5),
+      );
+
+      // Act & Assert
+      expect(offsetDateTime1 == offsetDateTime2, isTrue);
+      expect(offsetDateTime1.hashCode, offsetDateTime2.hashCode);
+    });
+
+    test('should not be equal when representing different UTC moments', () {
+      // Arrange
+      final offsetDateTime1 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12),
+        offset: Duration.zero,
+      );
+      final offsetDateTime2 = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 13),
+        offset: Duration.zero,
+      );
+
+      // Act & Assert
+      expect(offsetDateTime1 == offsetDateTime2, isFalse);
+    });
+
+    test('should be identical to itself', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12),
+        offset: Duration.zero,
+      );
+
+      // Act & Assert
+      expect(offsetDateTime == offsetDateTime, isTrue);
+      expect(identical(offsetDateTime, offsetDateTime), isTrue);
+    });
+
+    test(
+      'should be equal to regular DateTime at same moment '
+      '(OffsetDateTime == DateTime)',
+      () {
         final offsetDateTime = OffsetDateTime.from(
-          utcTime,
+          DateTime.utc(2021),
           offset: Duration.zero,
-          timeZoneName: 'UTC',
         );
+        final regularDateTime = DateTime.utc(2021);
 
-        // Act
-        final localDateTime = offsetDateTime.toLocal();
+        expect(offsetDateTime == regularDateTime, isTrue);
+      },
+    );
 
-        // Assert
-        expect(localDateTime.isUtc, isFalse);
+    test(
+      'should be equal to regular DateTime at same moment '
+      '(DateTime == OffsetDateTime)',
+      () {
+        final offsetDateTime = OffsetDateTime.from(
+          DateTime.utc(2021),
+          offset: Duration.zero,
+        );
+        final regularDateTime = DateTime.utc(2021);
+
+        expect(regularDateTime == offsetDateTime, isTrue);
+      },
+    );
+
+    test('should have symmetric equality with regular DateTime', () {
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2021),
+        offset: Duration.zero,
+      );
+      final regularDateTime = DateTime.utc(2021);
+
+      expect(
+        offsetDateTime == regularDateTime,
+        regularDateTime == offsetDateTime,
+      );
+    });
+
+    test(
+      'should work correctly in DeepCollectionEquality '
+      'for lists with DateTime',
+      () {
+        final offsetDateTimeList = [
+          OffsetDateTime.parse('2021-01-01T00:00:00.000Z'),
+          OffsetDateTime.parse('2021-01-02T00:00:00.000Z'),
+        ];
+        final regularDateTimeList = [
+          DateTime.utc(2021),
+          DateTime.utc(2021, 1, 2),
+        ];
+
+        const deepEquals = DeepCollectionEquality();
         expect(
-          localDateTime.microsecondsSinceEpoch,
-          offsetDateTime.microsecondsSinceEpoch,
+          deepEquals.equals(offsetDateTimeList, regularDateTimeList),
+          isTrue,
         );
-      });
-
-      test('should preserve exact moment in time when converting to local', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 17, 30, 45),
-          offset: const Duration(hours: 2),
-        );
-
-        // Act
-        final localDateTime = offsetDateTime.toLocal();
-
-        // Assert
-        expect(localDateTime.isUtc, isFalse);
         expect(
-          localDateTime.microsecondsSinceEpoch,
-          offsetDateTime.microsecondsSinceEpoch,
+          deepEquals.equals(regularDateTimeList, offsetDateTimeList),
+          isTrue,
         );
-      });
+      },
+    );
+  });
+
+  group('timeZoneOffset property', () {
+    test('should return the offset', () {
+      // Arrange
+      const offset = Duration(hours: 5, minutes: 30);
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12),
+        offset: offset,
+      );
+
+      // Act & Assert
+      expect(offsetDateTime.timeZoneOffset, offset);
+    });
+  });
+
+  group('string representation', () {
+    test('should format UTC time with Z suffix', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 1, 15, 12, 30, 45, 123),
+        offset: Duration.zero,
+      );
+
+      // Act
+      final isoString = offsetDateTime.toIso8601String();
+      final toString = offsetDateTime.toString();
+
+      // Assert
+      expect(isoString, '2023-01-15T12:30:45.123Z');
+      expect(toString, '2023-01-15 12:30:45.123Z');
     });
 
-    group('toUtc()', () {
-      test('should convert to UTC when offset is not zero', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 17, 30),
-          offset: const Duration(hours: 5, minutes: 30),
-        );
+    test('should format offset time with offset suffix', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12, 30, 45, 123),
+        offset: const Duration(hours: 5, minutes: 30),
+      );
 
-        // Act
-        final utcDateTime = offsetDateTime.toUtc();
+      // Act
+      final isoString = offsetDateTime.toIso8601String();
+      final toString = offsetDateTime.toString();
 
-        // Assert
-        expect(utcDateTime.isUtc, isTrue);
-        expect(utcDateTime.timeZoneName, 'UTC');
-        expect(utcDateTime.offset, Duration.zero);
-        expect(
-          utcDateTime.microsecondsSinceEpoch,
-          offsetDateTime.microsecondsSinceEpoch,
-        );
-      });
-
-      test('should return same instance for UTC offset', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12),
-          offset: Duration.zero,
-        );
-
-        // Act
-        final utcDateTime = offsetDateTime.toUtc();
-
-        // Assert
-        expect(identical(utcDateTime, offsetDateTime), isTrue);
-      });
+      // Assert
+      expect(isoString, '2023-01-15T12:30:45.123+0530');
+      expect(toString, '2023-01-15 12:30:45.123+0530');
     });
 
-    group('date and time components', () {
-      test('should return correct local date components', () {
-        // Arrange: UTC midnight + 5:30 offset = 5:30 AM local
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 6, 15),
-          offset: const Duration(hours: 5, minutes: 30),
-        );
+    test('should format negative offset correctly', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12, 30, 45, 123),
+        offset: const Duration(hours: -8),
+      );
 
-        // Act & Assert
-        expect(offsetDateTime.year, 2023);
-        expect(offsetDateTime.month, 6);
-        expect(offsetDateTime.day, 15);
-        expect(offsetDateTime.hour, 5);
-        expect(offsetDateTime.minute, 30);
-        expect(offsetDateTime.second, 0);
-        expect(offsetDateTime.millisecond, 0);
-        expect(offsetDateTime.microsecond, 0);
-      });
+      // Act
+      final isoString = offsetDateTime.toIso8601String();
 
-      test('should handle day boundary crossing', () {
-        // Arrange: UTC 23:00 + 2 hours = 01:00 next day local
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 6, 15, 23),
-          offset: const Duration(hours: 2),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.year, 2023);
-        expect(offsetDateTime.month, 6);
-        expect(offsetDateTime.day, 16); // Next day
-        expect(offsetDateTime.hour, 1);
-      });
-
-      test('should return correct weekday', () {
-        // Arrange: June 15, 2023 is a Thursday (weekday 4)
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 6, 15, 12),
-          offset: const Duration(hours: 2),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.weekday, 4); // Thursday
-      });
+      // Assert
+      expect(isoString, '2023-01-15T12:30:45.123-0800');
     });
 
-    group('epoch time methods', () {
-      test('should return correct milliseconds since epoch', () {
-        // Arrange
-        final baseDateTime = DateTime.utc(2023, 1, 1, 12);
-        final offsetDateTime = OffsetDateTime.from(
-          baseDateTime,
-          offset: const Duration(hours: 5),
-        );
+    test('should handle microseconds in string representation', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12, 30, 45, 123, 456),
+        offset: const Duration(hours: 2),
+      );
 
-        // Act & Assert
-        // The epoch time should match the input UTC time
-        expect(
-          offsetDateTime.millisecondsSinceEpoch,
-          baseDateTime.millisecondsSinceEpoch,
-        );
-      });
+      // Act
+      final isoString = offsetDateTime.toIso8601String();
 
-      test('should return correct microseconds since epoch', () {
-        // Arrange
-        final baseDateTime = DateTime.utc(2023, 1, 1, 12);
-        final offsetDateTime = OffsetDateTime.from(
-          baseDateTime,
-          offset: const Duration(hours: 5),
-        );
+      // Assert
+      expect(isoString, '2023-01-15T12:30:45.123456+0200');
+    });
+  });
 
-        // Act & Assert
-        // The epoch time should match the input UTC time
-        expect(
-          offsetDateTime.microsecondsSinceEpoch,
-          baseDateTime.microsecondsSinceEpoch,
-        );
-      });
+  group('edge cases', () {
+    test('should handle maximum positive offset', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12),
+        offset: const Duration(hours: 14),
+      );
+
+      // Act & Assert
+      expect(offsetDateTime.timeZoneName, 'UTC+14:00');
     });
 
-    group('arithmetic operations', () {
-      test('should add duration correctly', () {
-        // Arrange: Create from UTC to avoid system timezone issues
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(
-            2023,
-            1,
-            15,
-            7,
-          ), // UTC 07:00 + 5 hour offset = 12:00 local
-          offset: const Duration(hours: 5),
-        );
+    test('should handle maximum negative offset', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12),
+        offset: const Duration(hours: -12),
+      );
 
-        // Act
-        final result = offsetDateTime.add(const Duration(hours: 2));
-
-        // Assert: Local time should be 12:00 + 2 = 14:00
-        expect(result.hour, 14);
-        expect(result.offset, offsetDateTime.offset);
-        expect(result.timeZoneName, offsetDateTime.timeZoneName);
-      });
-
-      test('should subtract duration correctly', () {
-        // Arrange: Create from UTC to avoid system timezone issues
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(
-            2023,
-            1,
-            15,
-            7,
-          ), // UTC 07:00 + 5 hour offset = 12:00 local
-          offset: const Duration(hours: 5),
-        );
-
-        // Act
-        final result = offsetDateTime.subtract(const Duration(hours: 2));
-
-        // Assert: Local time should be 12:00 - 2 = 10:00
-        expect(result.hour, 10);
-        expect(result.offset, offsetDateTime.offset);
-        expect(result.timeZoneName, offsetDateTime.timeZoneName);
-      });
-
-      test('should calculate difference between OffsetDateTime instances', () {
-        // Arrange: Both should represent the same UTC moment
-        final offsetDateTime1 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12), // UTC 12:00
-          offset: Duration.zero,
-        );
-        final offsetDateTime2 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12), // Same UTC 12:00
-          offset: const Duration(hours: 5),
-        );
-
-        // Act
-        final difference = offsetDateTime2.difference(offsetDateTime1);
-
-        // Assert
-        expect(difference, Duration.zero); // Same UTC time
-      });
-
-      test('should calculate difference with regular DateTime', () {
-        // Arrange: Both should represent the same UTC moment
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12), // UTC 12:00
-          offset: const Duration(hours: 5),
-        );
-        final regularDateTime = DateTime.utc(2023, 1, 15, 12);
-
-        // Act
-        final difference = offsetDateTime.difference(regularDateTime);
-
-        // Assert
-        expect(difference, Duration.zero); // Same UTC time
-      });
+      // Act & Assert
+      expect(offsetDateTime.timeZoneName, 'UTC-12:00');
     });
 
-    group('comparison methods', () {
-      late OffsetDateTime offsetDateTime1;
-      late OffsetDateTime offsetDateTime2;
-      late OffsetDateTime offsetDateTime3;
+    test('should handle leap year dates', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2024, 2, 29, 12), // Leap year
+        offset: const Duration(hours: 3),
+      );
 
-      setUp(() {
-        // All represent the same UTC moment: 2023-01-15 12:00 UTC
-        offsetDateTime1 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12),
-          offset: Duration.zero,
-        );
-        // Create from a local time: if offset is +5,
-        // then local 17:00 should equal UTC 12:00
-        // But to avoid system timezone issues, we'll create directly from UTC
-        offsetDateTime2 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12), // Same UTC base
-          offset: const Duration(hours: 5),
-        );
-        // Different UTC moment: one hour later
-        offsetDateTime3 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 13),
-          offset: Duration.zero,
-        );
-      });
-
-      test('should correctly identify same moments', () {
-        expect(offsetDateTime1.isAtSameMomentAs(offsetDateTime2), isTrue);
-        expect(offsetDateTime1.isAtSameMomentAs(offsetDateTime3), isFalse);
-      });
-
-      test('should correctly compare before', () {
-        expect(offsetDateTime1.isBefore(offsetDateTime3), isTrue);
-        expect(offsetDateTime3.isBefore(offsetDateTime1), isFalse);
-        expect(offsetDateTime1.isBefore(offsetDateTime2), isFalse);
-      });
-
-      test('should correctly compare after', () {
-        expect(offsetDateTime3.isAfter(offsetDateTime1), isTrue);
-        expect(offsetDateTime1.isAfter(offsetDateTime3), isFalse);
-        expect(offsetDateTime1.isAfter(offsetDateTime2), isFalse);
-      });
-
-      test('should correctly compare with compareTo', () {
-        expect(offsetDateTime1.compareTo(offsetDateTime2), 0);
-        expect(offsetDateTime1.compareTo(offsetDateTime3), lessThan(0));
-        expect(offsetDateTime3.compareTo(offsetDateTime1), greaterThan(0));
-      });
+      // Act & Assert
+      expect(offsetDateTime.year, 2024);
+      expect(offsetDateTime.month, 2);
+      expect(offsetDateTime.day, 29);
     });
 
-    group('equality and hashCode', () {
-      test('should be equal when representing same UTC moment', () {
-        // Arrange: Both should represent the same UTC moment
-        final offsetDateTime1 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12),
-          offset: Duration.zero,
-        );
-        final offsetDateTime2 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12), // Same UTC moment
-          offset: const Duration(hours: 5),
-        );
+    test('should handle year boundary crossing', () {
+      // Arrange: New Year's Eve UTC + positive offset = New Year's Day local
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime.utc(2023, 12, 31, 23),
+        offset: const Duration(hours: 2),
+      );
 
-        // Act & Assert
-        expect(offsetDateTime1 == offsetDateTime2, isTrue);
-        expect(offsetDateTime1.hashCode, offsetDateTime2.hashCode);
-      });
-
-      test('should not be equal when representing different UTC moments', () {
-        // Arrange
-        final offsetDateTime1 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12),
-          offset: Duration.zero,
-        );
-        final offsetDateTime2 = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 13),
-          offset: Duration.zero,
-        );
-
-        // Act & Assert
-        expect(offsetDateTime1 == offsetDateTime2, isFalse);
-      });
-
-      test('should be identical to itself', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12),
-          offset: Duration.zero,
-        );
-
-        // Act & Assert
-        expect(offsetDateTime == offsetDateTime, isTrue);
-        expect(identical(offsetDateTime, offsetDateTime), isTrue);
-      });
+      // Act & Assert
+      expect(offsetDateTime.year, 2024);
+      expect(offsetDateTime.month, 1);
+      expect(offsetDateTime.day, 1);
+      expect(offsetDateTime.hour, 1);
     });
 
-    group('timeZoneOffset property', () {
-      test('should return the offset', () {
-        // Arrange
-        const offset = Duration(hours: 5, minutes: 30);
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12),
-          offset: offset,
-        );
+    test('should handle minute-level offsets', () {
+      // Arrange
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2023, 1, 15, 12),
+        offset: const Duration(minutes: 30),
+      );
 
-        // Act & Assert
-        expect(offsetDateTime.timeZoneOffset, offset);
-      });
-    });
-
-    group('string representation', () {
-      test('should format UTC time with Z suffix', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 1, 15, 12, 30, 45, 123),
-          offset: Duration.zero,
-        );
-
-        // Act
-        final isoString = offsetDateTime.toIso8601String();
-        final toString = offsetDateTime.toString();
-
-        // Assert
-        expect(isoString, '2023-01-15T12:30:45.123Z');
-        expect(toString, '2023-01-15 12:30:45.123Z');
-      });
-
-      test('should format offset time with offset suffix', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12, 30, 45, 123),
-          offset: const Duration(hours: 5, minutes: 30),
-        );
-
-        // Act
-        final isoString = offsetDateTime.toIso8601String();
-        final toString = offsetDateTime.toString();
-
-        // Assert
-        expect(isoString, '2023-01-15T12:30:45.123+0530');
-        expect(toString, '2023-01-15 12:30:45.123+0530');
-      });
-
-      test('should format negative offset correctly', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12, 30, 45, 123),
-          offset: const Duration(hours: -8),
-        );
-
-        // Act
-        final isoString = offsetDateTime.toIso8601String();
-
-        // Assert
-        expect(isoString, '2023-01-15T12:30:45.123-0800');
-      });
-
-      test('should handle microseconds in string representation', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12, 30, 45, 123, 456),
-          offset: const Duration(hours: 2),
-        );
-
-        // Act
-        final isoString = offsetDateTime.toIso8601String();
-
-        // Assert
-        expect(isoString, '2023-01-15T12:30:45.123456+0200');
-      });
-    });
-
-    group('edge cases', () {
-      test('should handle maximum positive offset', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12),
-          offset: const Duration(hours: 14),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.timeZoneName, 'UTC+14:00');
-      });
-
-      test('should handle maximum negative offset', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12),
-          offset: const Duration(hours: -12),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.timeZoneName, 'UTC-12:00');
-      });
-
-      test('should handle leap year dates', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2024, 2, 29, 12), // Leap year
-          offset: const Duration(hours: 3),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.year, 2024);
-        expect(offsetDateTime.month, 2);
-        expect(offsetDateTime.day, 29);
-      });
-
-      test('should handle year boundary crossing', () {
-        // Arrange: New Year's Eve UTC + positive offset = New Year's Day local
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime.utc(2023, 12, 31, 23),
-          offset: const Duration(hours: 2),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.year, 2024);
-        expect(offsetDateTime.month, 1);
-        expect(offsetDateTime.day, 1);
-        expect(offsetDateTime.hour, 1);
-      });
-
-      test('should handle minute-level offsets', () {
-        // Arrange
-        final offsetDateTime = OffsetDateTime.from(
-          DateTime(2023, 1, 15, 12),
-          offset: const Duration(minutes: 30),
-        );
-
-        // Act & Assert
-        expect(offsetDateTime.timeZoneName, 'UTC+00:30');
-      });
+      // Act & Assert
+      expect(offsetDateTime.timeZoneName, 'UTC+00:30');
     });
   });
 

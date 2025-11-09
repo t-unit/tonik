@@ -19,9 +19,8 @@ class Date {
   /// Creates a [Date] from a [DateTime] instance.
   ///
   /// The time components are ignored.
-  factory Date.fromDateTime(DateTime dateTime) {
-    return Date(dateTime.year, dateTime.month, dateTime.day);
-  }
+  factory Date.fromDateTime(DateTime dateTime) =>
+      Date(dateTime.year, dateTime.month, dateTime.day);
 
   /// Creates a [Date] from an ISO 8601 formatted string (YYYY-MM-DD).
   ///
@@ -47,23 +46,20 @@ class Date {
   /// Creates a [Date] from a JSON string.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
-  factory Date.fromJson(Object? json) {
-    return Date.fromString(json.decodeJsonString());
-  }
+  factory Date.fromJson(Object? json) =>
+      Date.fromString(json.decodeJsonString());
 
   /// Creates a [Date] from a simple string format.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD).
-  factory Date.fromSimple(String? simple) {
-    return Date.fromString(simple.decodeSimpleString());
-  }
+  factory Date.fromSimple(String? simple) =>
+      Date.fromString(simple.decodeSimpleString());
 
   /// Creates a [Date] from a form-encoded string.
   ///
   /// The string must be in ISO 8601 format (YYYY-MM-DD) and may be URL-encoded.
-  factory Date.fromForm(String? form) {
-    return Date.fromString(form.decodeFormString());
-  }
+  factory Date.fromForm(String? form) =>
+      Date.fromString(form.decodeFormString());
 
   /// The year component of the date.
   final int year;
@@ -77,36 +73,41 @@ class Date {
   /// Converts this [Date] to a [DateTime] instance.
   ///
   /// The time components are set to midnight (00:00:00.000).
-  DateTime toDateTime() {
-    return DateTime(year, month, day);
-  }
+  DateTime toDateTime() => DateTime(year, month, day);
 
   /// Converts this [Date] to a JSON string.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD).
-  String toJson() {
-    return toString();
-  }
+  String toJson() => toString();
 
   /// Converts this [Date] to a simple string format.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD).
-  String toSimple({required bool explode, required bool allowEmpty}) {
-    return toString();
-  }
+  String toSimple({required bool explode, required bool allowEmpty}) =>
+      uriEncode(allowEmpty: allowEmpty);
 
   /// Converts this [Date] to a form-encoded string.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD) with proper URL encoding.
-  String toForm({required bool explode, required bool allowEmpty}) {
-    return Uri.encodeQueryComponent(toString());
-  }
+  String toForm({required bool explode, required bool allowEmpty}) =>
+      uriEncode(allowEmpty: allowEmpty, useQueryComponent: true);
 
   /// Converts this [Date] to a label-encoded string.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD) with label prefix.
   String toLabel({required bool explode, required bool allowEmpty}) {
-    return '.${Uri.encodeComponent(toString())}';
+    return '.${uriEncode(allowEmpty: allowEmpty)}';
+  }
+
+  /// URI encodes this Date value.
+  String uriEncode({
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) {
+    final dateString = toString();
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(dateString)
+        : Uri.encodeComponent(dateString);
   }
 
   /// Creates a copy of this [Date] with the given fields replaced

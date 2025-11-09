@@ -191,7 +191,36 @@ void main() {
     expect(anonymousClass.properties.first.name, 'foo');
     expect(anonymousClass.properties.first.model, isA<StringModel>());
 
-    // Verify the anonymous class model is added to the models set
     expect(api.models, contains(anonymousClass));
+  });
+
+  test('Imports anyOf with bare type strings as type references', () {
+    const fileContent = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'AnyOfDirectPrimitive': {
+            'anyOf': ['string', 'boolean'],
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(fileContent);
+
+    final anyOfDirectPrimitive = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'AnyOfDirectPrimitive',
+    );
+
+    expect(anyOfDirectPrimitive, isA<AnyOfModel>());
+    expect((anyOfDirectPrimitive as AnyOfModel).models, hasLength(2));
+
+    final stringModel = anyOfDirectPrimitive.models.first;
+    expect(stringModel.model, isA<StringModel>());
+
+    final booleanModel = anyOfDirectPrimitive.models.last;
+    expect(booleanModel.model, isA<BooleanModel>());
   });
 }

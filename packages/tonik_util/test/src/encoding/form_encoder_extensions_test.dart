@@ -30,7 +30,7 @@ void main() {
     test('encodes string values with URL encoding', () {
       expect(
         'hello world'.toForm(explode: false, allowEmpty: true),
-        'hello+world',
+        'hello%20world',
       );
       expect(
         'test@example.com'.toForm(explode: true, allowEmpty: true),
@@ -157,7 +157,7 @@ void main() {
           'hello world',
           'test@example.com',
         ].toForm(explode: false, allowEmpty: true),
-        'hello+world,test%40example.com',
+        'hello%20world,test%40example.com',
       );
     });
 
@@ -177,7 +177,7 @@ void main() {
             'hello world',
             'test@example.com',
           ].toForm(explode: true, allowEmpty: true),
-          'hello+world,test%40example.com',
+          'hello%20world,test%40example.com',
         );
       },
     );
@@ -240,7 +240,7 @@ void main() {
             'key': 'hello world',
             'other': 'test@example.com',
           }.toForm(explode: false, allowEmpty: true),
-          'key,hello+world,other,test%40example.com',
+          'key,hello%20world,other,test%40example.com',
         );
       },
     );
@@ -257,7 +257,7 @@ void main() {
             'key': 'hello world',
             'other': 'test@example.com',
           }.toForm(explode: true, allowEmpty: true),
-          'key=hello+world&other=test%40example.com',
+          'key=hello%20world&other=test%40example.com',
         );
       },
     );
@@ -298,14 +298,14 @@ void main() {
           'key=name': 'value&data',
           'other+key': 'more data',
         }.toForm(explode: false, allowEmpty: true),
-        'key=name,value%26data,other+key,more+data',
+        'key=name,value%26data,other+key,more%20data',
       );
       expect(
         {
           'key=name': 'value&data',
           'other+key': 'more data',
         }.toForm(explode: true, allowEmpty: true),
-        'key%3Dname=value%26data&other%2Bkey=more+data',
+        'key%3Dname=value%26data&other%2Bkey=more%20data',
       );
     });
 
@@ -348,11 +348,11 @@ void main() {
     test('handles unicode characters', () {
       expect(
         'héllo wörld'.toForm(explode: false, allowEmpty: true),
-        'h%C3%A9llo+w%C3%B6rld',
+        'h%C3%A9llo%20w%C3%B6rld',
       );
       expect(
         ['emoji 😀', 'unicode ñ'].toForm(explode: false, allowEmpty: true),
-        'emoji+%F0%9F%98%80,unicode+%C3%B1',
+        'emoji%20%F0%9F%98%80,unicode%20%C3%B1',
       );
     });
 

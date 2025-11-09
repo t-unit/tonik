@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/to_delimited_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -30,60 +31,20 @@ class QueryGenerator {
           .statement,
     ];
 
-    final encoders = <QueryParameterEncoding, String>{};
+    final needsDeepObjectEncoder = queryParameters
+        .any((q) => q.parameter.encoding == QueryParameterEncoding.deepObject);
 
-    for (final encoding
-        in queryParameters.map((q) => q.parameter.encoding).toSet()) {
-      if (encoding == QueryParameterEncoding.form) {
-        continue;
-      }
-
-      final encoderName = switch (encoding) {
-        QueryParameterEncoding.form => 'unreachable',
-        QueryParameterEncoding.spaceDelimited => 'spacedEncoder',
-        QueryParameterEncoding.pipeDelimited => 'pipedEncoder',
-        QueryParameterEncoding.deepObject => 'deepObjectEncoder',
-      };
-
-      final encoderClass = switch (encoding) {
-        QueryParameterEncoding.form => 'Unreachable',
-        QueryParameterEncoding.spaceDelimited => 'DelimitedEncoder',
-        QueryParameterEncoding.pipeDelimited => 'DelimitedEncoder',
-        QueryParameterEncoding.deepObject => 'DeepObjectEncoder',
-      };
-
-      encoders[encoding] = encoderName;
-
-      if (encoding == QueryParameterEncoding.spaceDelimited ||
-          encoding == QueryParameterEncoding.pipeDelimited) {
-        final factoryName = switch (encoding) {
-          QueryParameterEncoding.spaceDelimited => 'spaced',
-          QueryParameterEncoding.pipeDelimited => 'piped',
-          _ => throw StateError('Unexpected encoding type'),
-        };
-
-        body.add(
-          declareFinal(encoderName)
-              .assign(
-                refer(
-                  encoderClass,
-                  'package:tonik_util/tonik_util.dart',
-                ).property(factoryName).call([]),
-              )
-              .statement,
-        );
-      } else {
-        body.add(
-          declareConst(encoderName)
-              .assign(
-                refer(
-                  encoderClass,
-                  'package:tonik_util/tonik_util.dart',
-                ).newInstance([]),
-              )
-              .statement,
-        );
-      }
+    if (needsDeepObjectEncoder) {
+      body.add(
+        declareConst('deepObjectEncoder')
+            .assign(
+              refer(
+                'DeepObjectEncoder',
+                'package:tonik_util/tonik_util.dart',
+              ).newInstance([]),
+            )
+            .statement,
+      );
     }
 
     for (final queryParam in queryParameters) {
@@ -108,123 +69,11 @@ class QueryGenerator {
         ),
       );
 
-      final encoding = resolvedParam.encoding;
-
-      if (encoding == QueryParameterEncoding.form) {
-        final valueExpression = buildToFormQueryParameterExpression(
-          paramName,
-          resolvedParam,
-          explode: resolvedParam.explode,
-          allowEmpty: resolvedParam.allowEmptyValue,
-        );
-
-        if (!resolvedParam.isRequired) {
-          body.add(
-            Block.of([
-              Code('if ($paramName != null) {'),
-              Code(
-                "result.add((name: r'${resolvedParam.rawName}', "
-                'value: $valueExpression,),);',
-              ),
-              const Code('}'),
-            ]),
-          );
-        } else {
-          body.add(
-            Code(
-              "result.add((name: r'${resolvedParam.rawName}', "
-              'value: $valueExpression,),);',
-            ),
-          );
-        }
-      } else {
-        final encoderName = encoders[encoding]!;
-        final valueExpression = buildToJsonQueryParameterExpression(
-          paramName,
-          resolvedParam,
-        );
-        final value = refer(valueExpression);
-
-        final encodeCall = refer(encoderName)
-            .property('encode')
-            .call(
-              [
-                if (encoding == QueryParameterEncoding.deepObject)
-                  literalString(resolvedParam.rawName, raw: true),
-                value,
-              ],
-              {
-                'explode': literalBool(resolvedParam.explode),
-                'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
-              },
-            );
-
-        if (!resolvedParam.isRequired) {
-          body.add(
-            Block.of([
-              Code('if ($paramName != null) {'),
-              if (encoding == QueryParameterEncoding.spaceDelimited ||
-                  encoding == QueryParameterEncoding.pipeDelimited)
-                Block.of([
-                  Code('for (final value in $encoderName.encode('),
-                  value.code,
-                  Code(', explode: ${resolvedParam.explode}, '),
-                  Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
-                  const Code(')) {'),
-                  Code(
-                    "result.add((name: '${resolvedParam.rawName}', "
-                    'value: value));',
-                  ),
-                  const Code('}'),
-                ])
-              else
-                refer('result').property('addAll').call([encodeCall]).statement,
-              const Code('}'),
-            ]),
-          );
-        } else {
-          if (encoding == QueryParameterEncoding.spaceDelimited ||
-              encoding == QueryParameterEncoding.pipeDelimited) {
-            body.add(
-              Block.of([
-                Code('for (final value in $encoderName.encode('),
-                value.code,
-                Code(', explode: ${resolvedParam.explode}, '),
-                Code('allowEmpty: ${resolvedParam.allowEmptyValue},'),
-                const Code(')) {'),
-                Code(
-                  "result.add((name: '${resolvedParam.rawName}', "
-                  'value: value));',
-                ),
-                const Code('}'),
-              ]),
-            );
-          } else {
-            body.add(
-              refer('result').property('addAll').call([encodeCall]).statement,
-            );
-          }
-        }
-      }
+      final encodingCode = _generateEncodingCode(paramName, resolvedParam);
+      _addCodeWithNullCheck(body, encodingCode, paramName, resolvedParam);
     }
 
-    body.add(
-      refer('result')
-          .property('map')
-          .call([
-            Method(
-              (b) =>
-                  b
-                    ..lambda = true
-                    ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                    ..body = const Code(r"'${e.name}=${e.value}'"),
-            ).closure,
-          ])
-          .property('join')
-          .call([literalString('&')])
-          .returned
-          .statement,
-    );
+    body.add(_generateReturnStatement());
 
     return Method(
       (b) =>
@@ -235,5 +84,99 @@ class QueryGenerator {
             ..lambda = false
             ..body = Block.of(body),
     );
+  }
+
+  List<Code> _generateEncodingCode(
+    String paramName,
+    QueryParameterObject resolvedParam,
+  ) {
+    final encoding = resolvedParam.encoding;
+
+    if (encoding == QueryParameterEncoding.form) {
+      return buildToFormQueryParameterCode(
+        paramName,
+        resolvedParam,
+        explode: resolvedParam.explode,
+        allowEmpty: resolvedParam.allowEmptyValue,
+      );
+    }
+
+    if (encoding == QueryParameterEncoding.spaceDelimited ||
+        encoding == QueryParameterEncoding.pipeDelimited) {
+      return buildToDelimitedQueryParameterCode(
+        paramName,
+        resolvedParam,
+        encoding: encoding,
+        explode: resolvedParam.explode,
+        allowEmpty: resolvedParam.allowEmptyValue,
+      );
+    }
+
+    return [
+      _generateDeepObjectEncodingStatement(paramName, resolvedParam),
+    ];
+  }
+
+  Code _generateDeepObjectEncodingStatement(
+    String paramName,
+    QueryParameterObject resolvedParam,
+  ) {
+    final valueExpression = buildToJsonQueryParameterExpression(
+      paramName,
+      resolvedParam,
+    );
+    final value = refer(valueExpression);
+
+    final encodeCall = refer('deepObjectEncoder')
+        .property('encode')
+        .call(
+          [
+            literalString(resolvedParam.rawName, raw: true),
+            value,
+          ],
+          {
+            'explode': literalBool(resolvedParam.explode),
+            'allowEmpty': literalBool(resolvedParam.allowEmptyValue),
+          },
+        );
+
+    return refer('result').property('addAll').call([encodeCall]).statement;
+  }
+
+  void _addCodeWithNullCheck(
+    List<Code> body,
+    List<Code> code,
+    String paramName,
+    QueryParameterObject resolvedParam,
+  ) {
+    if (!resolvedParam.isRequired) {
+      body.add(
+        Block.of([
+          Code('if ($paramName != null) {'),
+          ...code,
+          const Code('}'),
+        ]),
+      );
+    } else {
+      body.addAll(code);
+    }
+  }
+
+  Code _generateReturnStatement() {
+    return refer('result')
+        .property('map')
+        .call([
+          Method(
+            (b) =>
+                b
+                  ..lambda = true
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                  ..body = const Code(r"'${e.name}=${e.value}'"),
+          ).closure,
+        ])
+        .property('join')
+        .call([literalString('&')])
+        .returned
+        .statement;
   }
 }

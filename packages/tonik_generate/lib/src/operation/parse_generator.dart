@@ -69,7 +69,7 @@ class ParseGenerator {
             "?? 'not specified';",
           ),
           const Code('final status = response.statusCode;'),
-          generateDecodingExceptionExpression(
+          generateJsonDecodingExceptionExpression(
             r'Unexpected content type: $content for status code: $status',
           ).statement,
         ]),

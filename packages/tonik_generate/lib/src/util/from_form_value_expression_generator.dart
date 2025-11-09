@@ -97,8 +97,16 @@ Expression buildFromFormValueExpression(
       explode: explode,
     ),
 
-    ListModel() =>
-      throw UnsupportedError('Form decoding not supported for complex types'),
+    final ListModel listModel => _buildListFromFormExpression(
+      value,
+      listModel,
+      isRequired,
+      nameManager,
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      explode: explode,
+    ),
 
     _ => throw UnimplementedError('Unsupported model type: $model'),
   };
@@ -143,4 +151,162 @@ Map<String, Expression> _buildContextParam(
     return {'context': literalString(contextString, raw: true)};
   }
   return <String, Expression>{};
+}
+
+Expression _buildListFromFormExpression(
+  Expression value,
+  ListModel model,
+  bool isRequired,
+  NameManager nameManager, {
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  Expression? explode,
+}) {
+  final content = model.content;
+  final contextParam = _buildContextParam(contextClass, contextProperty);
+
+  final listDecode = value
+      .property(
+        isRequired ? 'decodeFormStringList' : 'decodeFormNullableStringList',
+      )
+      .call([], contextParam);
+
+  return switch (content) {
+    StringModel() => listDecode,
+    IntegerModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormInt',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    NumberModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormDouble',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    DoubleModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormDouble',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    DecimalModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormBigDecimal',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    BooleanModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormBool',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    DateTimeModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormDateTime',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    DateModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormDate',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    UriModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormUri',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    ClassModel() =>
+      throw UnimplementedError(
+        'ClassModel is not supported in lists for form encoding',
+      ),
+    EnumModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() => _buildClassList(
+      listDecode,
+      content,
+      isRequired,
+      nameManager,
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      explode: explode,
+    ),
+    ListModel() =>
+      throw UnimplementedError(
+        'Nested lists are not supported in form encoding',
+      ),
+    AliasModel() => _buildListFromFormExpression(
+      value,
+      ListModel(content: content.model, context: model.context),
+      isRequired,
+      nameManager,
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      explode: explode,
+    ),
+    NamedModel() ||
+    CompositeModel() => throw UnimplementedError('$content is not supported'),
+  };
+}
+
+Expression _buildPrimitiveList(
+  Expression listDecode,
+  String decodeFunctionName,
+  bool isRequired, {
+  Map<String, Expression> contextParam = const {},
+}) {
+  return listDecode
+      .property('map')
+      .call([
+        Method(
+          (b) =>
+              b
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                ..body =
+                    refer(
+                      'e',
+                    ).property(decodeFunctionName).call([], contextParam).code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([]);
+}
+
+Expression _buildClassList(
+  Expression listDecode,
+  Model content,
+  bool isRequired,
+  NameManager nameManager, {
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  Expression? explode,
+}) {
+  final name = nameManager.modelName(content);
+  final explodeParam = {'explode': explode ?? literalBool(true)};
+
+  return listDecode
+      .property('map')
+      .call([
+        Method(
+          (b) =>
+              b
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                ..body =
+                    refer(name, package).property('fromForm').call([
+                      refer('e'),
+                    ], explodeParam).code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([]);
 }

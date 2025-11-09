@@ -284,7 +284,7 @@ void main() {
         expect(encoded, contains('key=name'));
         expect(encoded, contains('value%26data'));
         expect(encoded, contains('other+key'));
-        expect(encoded, contains('more+data'));
+        expect(encoded, contains('more%20data'));
       });
     });
 
@@ -304,7 +304,7 @@ void main() {
         final encoded = original.toForm(explode: true, allowEmpty: true);
 
         // Verify proper encoding in exploded format
-        expect(encoded, contains('key+name=value%40data'));
+        expect(encoded, contains('key%20name=value%40data'));
         expect(encoded, contains('other%2Bkey=more%26data'));
         expect(encoded, contains('&'));
       });

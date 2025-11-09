@@ -395,3 +395,206 @@ components:
           properties:
             level2:
               type: integer
+
+    AllOfWithSimpleList:
+      allOf:
+        - type: object
+          properties:
+            tags:
+              type: array
+              items:
+                type: string
+        - type: object
+          properties:
+            ids:
+              type: array
+              items:
+                type: integer
+
+    AllOfWithComplexList:
+      allOf:
+        - type: object
+          properties:
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/Class1'
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    AllOfWithMixedLists:
+      allOf:
+        - type: object
+          properties:
+            tags:
+              type: array
+              items:
+                type: string
+        - type: object
+          properties:
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/Class1'
+
+    AnyOfWithSimpleList:
+      anyOf:
+        - type: array
+          items:
+            type: string
+        - type: array
+          items:
+            type: integer
+        - type: string
+
+    AnyOfWithComplexList:
+      anyOf:
+        - type: array
+          items:
+            $ref: '#/components/schemas/Class1'
+        - type: array
+          items:
+            $ref: '#/components/schemas/Class2'
+        - type: string
+
+    AnyOfWithMixedLists:
+      anyOf:
+        - type: array
+          items:
+            type: integer
+        - type: array
+          items:
+            $ref: '#/components/schemas/Class1'
+        - type: boolean
+
+    AllOfWithEnumList:
+      allOf:
+        - type: object
+          properties:
+            statuses:
+              type: array
+              items:
+                $ref: '#/components/schemas/Enum1'
+        - type: object
+          properties:
+            priorities:
+              type: array
+              items:
+                $ref: '#/components/schemas/Enum2'
+
+    AnyOfWithEnumList:
+      anyOf:
+        - type: array
+          items:
+            $ref: '#/components/schemas/Enum1'
+        - type: array
+          items:
+            $ref: '#/components/schemas/Enum2'
+        - type: string
+
+    NestedListInAllOf:
+      allOf:
+        - type: object
+          properties:
+            matrix:
+              type: array
+              items:
+                type: array
+                items:
+                  type: integer
+        - type: object
+          properties:
+            name:
+              type: string
+
+    NestedListInAnyOf:
+      anyOf:
+        - type: array
+          items:
+            type: array
+            items:
+              type: string
+        - type: string
+
+    ComplexListComposition:
+      allOf:
+        - type: object
+          properties:
+            simpleList:
+              type: array
+              items:
+                type: string
+        - anyOf:
+            - type: object
+              required:
+                - enumList
+              properties:
+                enumList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Enum1'
+            - type: object
+              required:
+                - complexList
+              properties:
+                complexList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Class1'
+
+    AllOfWithListOfComposites:
+      allOf:
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/Class1'
+                  - $ref: '#/components/schemas/Class2'
+        - type: object
+          properties:
+            count:
+              type: integer
+
+    AnyOfWithListOfComposites:
+      anyOf:
+        - type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Class1'
+              - type: object
+                properties:
+                  extra:
+                    type: string
+        - type: string
+
+    AllOfDoubleList:
+      allOf:
+        - type: array
+          items:
+            type: string
+        - type: array
+          items:
+            type: string
+            format: date-time
+
+    AllOfOneOfDoubleList:
+      allOf:
+      - type: array
+        items:
+          oneOf:
+            - type: string
+            - type: integer
+      - type: array
+        items:
+          type: string
+          format: date-time
+
+    AllOfDirectPrimitive:
+      allOf:
+        - type: integer
+        - type: number
+             

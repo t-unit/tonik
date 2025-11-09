@@ -3,8 +3,8 @@ import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -46,7 +46,6 @@ class PathGenerator {
     }
 
     final parameters = <Parameter>[];
-    final encoders = <PathParameterEncoding, String>{};
     final body = <Code>[];
 
     for (final pathParam in pathParameters) {
@@ -69,40 +68,6 @@ class PathGenerator {
                 ..named = true
                 ..required = resolvedParam.isRequired,
         ),
-      );
-    }
-
-    for (final encoding
-        in pathParameters.map((p) => p.parameter.encoding).toSet()) {
-      if (encoding == PathParameterEncoding.simple ||
-          encoding == PathParameterEncoding.label) {
-        // Simple and label encoding use direct method calls.
-        continue;
-      }
-
-      final encoderName = switch (encoding) {
-        PathParameterEncoding.label => 'labelEncoder',
-        PathParameterEncoding.matrix => 'matrixEncoder',
-        PathParameterEncoding.simple => 'unreachable',
-      };
-
-      final encoderClass = switch (encoding) {
-        PathParameterEncoding.label => 'LabelEncoder',
-        PathParameterEncoding.matrix => 'MatrixEncoder',
-        PathParameterEncoding.simple => 'Unreachable',
-      };
-
-      encoders[encoding] = encoderName;
-
-      body.add(
-        declareConst(encoderName)
-            .assign(
-              refer(
-                encoderClass,
-                'package:tonik_util/tonik_util.dart',
-              ).newInstance([]),
-            )
-            .statement,
       );
     }
 
@@ -161,23 +126,27 @@ class PathGenerator {
           param.parameter,
         );
         pathPartExpressions.add(CodeExpression(Code(valueExpression)));
-      } else {
-        final encoderName = encoders[param.parameter.encoding]!;
-        final valueExpression = buildToJsonPathParameterExpression(
-          param.normalizedName,
-          param.parameter,
+      } else if (param.parameter.encoding == PathParameterEncoding.matrix) {
+        final model = param.parameter.model;
+        if (model is ListModel && model.content is ListModel) {
+          body.add(
+            generateEncodingExceptionExpression(
+              'Matrix encoding does not support arrays of objects or '
+              'nested arrays',
+            ).statement,
+          );
+
+          continue;
+        }
+
+        final matrixExpression = buildMatrixParameterExpression(
+          refer(param.normalizedName),
+          param.parameter.model,
+          paramName: literalString(param.parameter.rawName),
+          explode: literalBool(param.parameter.explode),
+          allowEmpty: literalBool(param.parameter.allowEmptyValue),
         );
-        pathPartExpressions.add(
-          refer(encoderName)
-              .property('encode')
-              .call(
-                [CodeExpression(Code(valueExpression))],
-                {
-                  'explode': literalBool(param.parameter.explode),
-                  'allowEmpty': literalBool(param.parameter.allowEmptyValue),
-                },
-              ),
-        );
+        pathPartExpressions.add(matrixExpression);
       }
     }
 

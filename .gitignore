@@ -12,6 +12,7 @@
 /integration_test/simple_encoding/simple_encoding_api
 /integration_test/fastify_type_provider_zod/fastify_type_provider_zod_api
 /integration_test/composition/composition_api
+/integration_test/query_parameters/query_parameters_api
 
 # Dependencies
 /pubspec.lock
