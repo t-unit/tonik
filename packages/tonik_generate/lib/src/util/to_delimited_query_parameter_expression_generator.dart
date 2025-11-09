@@ -131,7 +131,7 @@ List<Code> _buildForLoop(
 
   return [
     Code('for (final value in $baseExpression) {'),
-    Code("result.add((name: r'$rawName', value: value));"),
+    Code("entries.add((name: r'$rawName', value: value));"),
     const Code('}'),
   ];
 }
@@ -160,7 +160,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       ).statement,
       const Code('}'),
       Code(
-        "result.add((name: r'$rawName', value: "
+        "entries.add((name: r'$rawName', value: "
         'item.uriEncode(allowEmpty: $allowEmpty)));',
       ),
       const Code('}'),
@@ -187,7 +187,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
         ' .$methodName(explode: $explode, allowEmpty: $allowEmpty, '
         ' alreadyEncoded: true)) {',
       ),
-      Code("result.add((name: r'$rawName', value: value));"),
+      Code("entries.add((name: r'$rawName', value: value));"),
       const Code('}'),
     ];
   }

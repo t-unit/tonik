@@ -889,6 +889,297 @@ paths:
         '204':
           description: OK
 
+  /deepObject-primitive:
+    get:
+      operationId: testDeepObjectPrimitive
+      tags:
+        - query
+      summary: Test deepObject query parameter
+      description: Demonstrates deepObject query parameter
+      parameters:
+        - name: integer
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: integer
+        - name: double
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: number
+            format: double
+        - name: number
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: number
+            format: number
+        - name: string
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+        - name: boolean
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: boolean
+        - name: datetime
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: date-time
+        - name: date
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: date
+        - name: decimal
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: decimal
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-complex:
+    get:
+      operationId: testDeepObjectComplex
+      tags:
+        - query
+      summary: Test deepObject complex query parameter
+      description: Demonstrates deepObject complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+  
+  /deepObject-complex-explode:
+    get:
+      operationId: testDeepObjectComplexExplode
+      tags:
+        - query
+      summary: Test deepObject complex query parameter
+      description: Demonstrates deepObject complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-list:
+    get:
+      operationId: testDeepObjectList
+      tags:
+        - query
+      summary: Test deepObject list query parameter
+      description: Demonstrates deepObject list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+        - name: listOneOfComplexMixed
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: '#/components/schemas/Class'
+                - type: integer
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-list-explode:
+    get:
+      operationId: testDeepObjectListExplode
+      tags:
+        - query
+      summary: Test deepObject list query parameter
+      description: Demonstrates deepObject list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '204':
+          description: OK
+
 components:
   schemas:
     Class:

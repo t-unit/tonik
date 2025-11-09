@@ -162,6 +162,7 @@ class AnyOfGenerator {
               _buildToFormMethod(className, model, normalized),
               _buildToLabelMethod(className, model, normalized),
               _buildToMatrixMethod(className, model, normalized),
+              _buildToDeepObjectMethod(className, model, normalized),
               _buildUriEncodeMethod(className, model, normalized),
               generateEqualsMethod(
                 className: className,
@@ -1252,9 +1253,10 @@ class AnyOfGenerator {
             b
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
+              ..optionalParameters.addAll([
                 buildBoolParameter('allowEmpty', defaultValue: true),
-              )
+                buildBoolParameter('allowLists', defaultValue: true),
+              ])
               ..body =
                   generateEncodingExceptionExpression(
                     'parameterProperties not supported for $className: '
@@ -1326,6 +1328,22 @@ class AnyOfGenerator {
             ),
           )
           ..add(const Code('}'));
+      } else if (fieldModel is ListModel) {
+        body
+          ..add(Code('if ($name != null) {'))
+          ..add(const Code('if (!allowLists) {'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Lists are not supported in this encoding style',
+            ).statement,
+          )
+          ..add(const Code('}'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Lists are not supported in parameterProperties',
+            ).statement,
+          )
+          ..add(const Code('}'));
       }
     }
 
@@ -1381,9 +1399,10 @@ class AnyOfGenerator {
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
+            ..optionalParameters.addAll([
               buildBoolParameter('allowEmpty', defaultValue: true),
-            )
+              buildBoolParameter('allowLists', defaultValue: true),
+            ])
             ..lambda = false
             ..body = Block.of(body),
     );
@@ -1400,21 +1419,30 @@ class AnyOfGenerator {
     if (fieldModel.encodingShape == EncodingShape.complex) {
       // Lists cannot use parameterProperties
       if (fieldModel is ListModel) {
-        codes.add(
-          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-              .call([
-                literalString(
-                  'Lists are not supported in parameterProperties',
-                ),
-              ])
-              .thrown
-              .statement,
-        );
+        codes
+          ..add(const Code('if (!allowLists) {'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Lists are not supported in this encoding style',
+            ).statement,
+          )
+          ..add(const Code('}'))
+          ..add(
+            refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+                .call([
+                  literalString(
+                    'Lists are not supported in parameterProperties',
+                  ),
+                ])
+                .thrown
+                .statement,
+          );
       } else {
         codes.add(
           Code(
             r'_$mapValues.add('
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
+            'allowLists: allowLists));',
           ),
         );
 
@@ -1442,7 +1470,8 @@ class AnyOfGenerator {
         const Code(':'),
         Code(
           r'_$mapValues.add('
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
+          'allowLists: allowLists));',
         ),
       ];
 
@@ -1797,6 +1826,54 @@ class AnyOfGenerator {
             ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of(body),
+    );
+  }
+
+  Method _buildToDeepObjectMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toDeepObject'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'List'
+                    ..url = 'dart:core'
+                    ..types.add(
+                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                    ),
+            )
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..body = Block.of([
+              refer('parameterProperties')
+                  .call([], {
+                    'allowEmpty': refer('allowEmpty'),
+                    'allowLists': literalBool(false),
+                  })
+                  .property('toDeepObject')
+                  .call(
+                    [refer('paramName')],
+                    {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                      'alreadyEncoded': literalBool(true),
+                    },
+                  )
+                  .returned
+                  .statement,
+            ]),
     );
   }
 

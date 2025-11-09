@@ -120,6 +120,7 @@ class AllOfGenerator {
                 normalizedProperties,
                 model,
               ),
+              _buildToDeepObjectMethod(),
               _buildUriEncodeMethod(
                 className,
                 normalizedProperties,
@@ -708,9 +709,10 @@ class AllOfGenerator {
             b
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
+              ..optionalParameters.addAll([
                 buildBoolParameter('allowEmpty', defaultValue: true),
-              )
+                buildBoolParameter('allowLists', defaultValue: true),
+              ])
               ..body = buildEmptyMapStringString().returned.statement,
       );
     }
@@ -739,9 +741,10 @@ class AllOfGenerator {
             b
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
+              ..optionalParameters.addAll([
                 buildBoolParameter('allowEmpty', defaultValue: true),
-              )
+                buildBoolParameter('allowLists', defaultValue: true),
+              ])
               ..lambda = true
               ..body = generateEncodingExceptionExpression(message).code,
       );
@@ -753,9 +756,10 @@ class AllOfGenerator {
             b
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
+              ..optionalParameters.addAll([
                 buildBoolParameter('allowEmpty', defaultValue: true),
-              )
+                buildBoolParameter('allowLists', defaultValue: true),
+              ])
               ..body =
                   generateEncodingExceptionExpression(
                     'parameterProperties not supported for $className: '
@@ -775,7 +779,10 @@ class AllOfGenerator {
         refer('mergedProperties').property('addAll').call([
           refer(normalized.normalizedName).property('parameterProperties').call(
             [],
-            {'allowEmpty': refer('allowEmpty')},
+            {
+              'allowEmpty': refer('allowEmpty'),
+              'allowLists': refer('allowLists'),
+            },
           ),
         ]).statement,
       );
@@ -790,9 +797,10 @@ class AllOfGenerator {
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
+            ..optionalParameters.addAll([
               buildBoolParameter('allowEmpty', defaultValue: true),
-            )
+              buildBoolParameter('allowLists', defaultValue: true),
+            ])
             ..body = Block.of(propertyMergingLines),
     );
   }
@@ -1163,7 +1171,77 @@ class AllOfGenerator {
     });
 
     if (hasDynamicModels) {
-      // Generate dynamic logic that checks encoding shape at runtime
+      // Check if we have DIRECT primitives 
+      // (not dynamic models that might be simple).
+      final hasDirectPrimitives = normalizedProperties.any((prop) {
+        final model = prop.property.model;
+        return model.encodingShape == EncodingShape.simple &&
+            model.encodingShape != EncodingShape.mixed;
+      });
+
+      // If we have direct primitives mixed with dynamic models, 
+      // we need runtime validation.
+      // The dynamic models might be in simple state, making the entire 
+      // allOf simple and encodable.
+      if (hasDirectPrimitives) {
+        final encodingShapeType = refer(
+          'EncodingShape',
+          'package:tonik_util/tonik_util.dart',
+        );
+
+        final bodyCode = <Code>[
+          const Code('if (currentEncodingShape == '),
+          encodingShapeType.property('mixed').code,
+          const Code(') {'),
+          generateEncodingExceptionExpression(
+            'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
+          ).statement,
+          const Code('}'),
+          declareFinal('values')
+              .assign(literalSet([], refer('String', 'dart:core')))
+              .statement,
+        ];
+
+        // Call toForm on each property and collect results.
+        for (final prop in normalizedProperties) {
+          bodyCode.addAll([
+            declareFinal('${prop.normalizedName}Form')
+                .assign(
+                  refer(prop.normalizedName).property('toForm').call([], {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                  }),
+                )
+                .statement,
+            refer('values').property('add').call([
+              refer('${prop.normalizedName}Form'),
+            ]).statement,
+          ]);
+        }
+
+        bodyCode.addAll([
+          const Code('if (values.length > 1) {'),
+          generateEncodingExceptionExpression(
+            'Inconsistent allOf form encoding for $className: '
+            'all values must encode to the same result',
+          ).statement,
+          const Code('}'),
+          const Code('return values.first;'),
+        ]);
+
+        return Method(
+          (b) =>
+              b
+                ..name = 'toForm'
+                ..returns = refer('String', 'dart:core')
+                ..optionalParameters.addAll(buildEncodingParameters())
+                ..lambda = false
+                ..body = Block.of(bodyCode),
+        );
+      }
+
+      // No direct primitives, only dynamic models that could be mixed at 
+      // runtime. Generate runtime check.
       final encodingShapeType = refer(
         'EncodingShape',
         'package:tonik_util/tonik_util.dart',
@@ -1730,7 +1808,9 @@ class AllOfGenerator {
           refer('mergedProperties').property('addAll').call([
             refer(prop.normalizedName).property('parameterProperties').call(
               [],
-              {'allowEmpty': refer('allowEmpty')},
+              {
+                'allowEmpty': refer('allowEmpty'),
+              },
             ),
           ]).statement,
         );
@@ -1981,6 +2061,50 @@ class AllOfGenerator {
             ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = Block.of(valueCollectionCode),
+    );
+  }
+
+  Method _buildToDeepObjectMethod() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toDeepObject'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'List'
+                    ..url = 'dart:core'
+                    ..types.add(
+                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                    ),
+            )
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..body = Block.of([
+              refer('parameterProperties')
+                  .call([], {
+                    'allowEmpty': refer('allowEmpty'),
+                    'allowLists': literalBool(false),
+                  })
+                  .property('toDeepObject')
+                  .call(
+                    [refer('paramName')],
+                    {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                      'alreadyEncoded': literalBool(true),
+                    },
+                  )
+                  .returned
+                  .statement,
+            ]),
     );
   }
 

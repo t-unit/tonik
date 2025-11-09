@@ -230,12 +230,8 @@ void main() {
             );
           }
           final mergedProperties = <String, String>{};
-          mergedProperties.addAll(
-            anyOfModel.parameterProperties(allowEmpty: allowEmpty),
-          );
-          mergedProperties.addAll(
-            classModel.parameterProperties(allowEmpty: allowEmpty),
-          );
+          mergedProperties.addAll(anyOfModel.parameterProperties(allowEmpty: allowEmpty));
+          mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
           return mergedProperties.toMatrix(
             paramName,
             explode: explode,
@@ -426,9 +422,7 @@ void main() {
           required bool allowEmpty,
         }) {
           final mergedProperties = <String, String>{};
-          mergedProperties.addAll(
-            classModel.parameterProperties(allowEmpty: allowEmpty),
-          );
+          mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
           return mergedProperties.toMatrix(
             paramName,
             explode: explode,

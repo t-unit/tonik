@@ -94,18 +94,19 @@ class ClassGenerator {
               _buildFromJsonConstructor(className, model),
               _buildFromFormConstructor(className, model),
             ])
-            ..methods.addAll([
-              _buildToJsonMethod(model),
-              _buildCopyWithMethod(className, normalizedProperties),
-              _buildEqualsMethod(className, normalizedProperties),
-              _buildHashCodeMethod(normalizedProperties),
-              _buildCurrentEncodingShapeGetter(),
-              _buildParameterPropertiesMethod(model, normalizedProperties),
-              _buildToSimpleMethod(),
-              _buildToFormMethod(),
-              _buildToLabelMethod(),
-              _buildToMatrixMethod(),
-            ])
+        ..methods.addAll([
+          _buildToJsonMethod(model),
+          _buildCopyWithMethod(className, normalizedProperties),
+          _buildEqualsMethod(className, normalizedProperties),
+          _buildHashCodeMethod(normalizedProperties),
+          _buildCurrentEncodingShapeGetter(),
+          _buildParameterPropertiesMethod(model, normalizedProperties),
+          _buildToSimpleMethod(),
+          _buildToFormMethod(),
+          _buildToLabelMethod(),
+          _buildToMatrixMethod(),
+          _buildToDeepObjectMethod(),
+        ])
             ..fields.addAll(
               normalizedProperties.map(
                 (prop) => _generateField(prop.property, prop.normalizedName),
@@ -451,6 +452,29 @@ class ClassGenerator {
     return _buildMixedParameterPropertiesMethod(className, properties);
   }
 
+  List<Parameter> _buildParameterPropertiesParameters() {
+    return [
+      Parameter(
+        (b) =>
+            b
+              ..name = 'allowEmpty'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = false
+              ..defaultTo = literalTrue.code,
+      ),
+      Parameter(
+        (b) =>
+            b
+              ..name = 'allowLists'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = false
+              ..defaultTo = literalTrue.code,
+      ),
+    ];
+  }
+
   Method _buildSimpleParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
@@ -461,17 +485,7 @@ class ClassGenerator {
             b
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = false
-                        ..defaultTo = literalTrue.code,
-                ),
-              )
+              ..optionalParameters.addAll(_buildParameterPropertiesParameters())
               ..body = buildEmptyMapStringString().returned.statement,
       );
     }
@@ -485,7 +499,6 @@ class ClassGenerator {
       final isNullable = prop.property.isNullable;
 
       if (isRequired && !isNullable) {
-        // Required non-nullable property
         propertyAssignments.add(
           Code(
             "result[r'$propertyName'] = "
@@ -493,7 +506,6 @@ class ClassGenerator {
           ),
         );
       } else if (isRequired && isNullable) {
-        // Required nullable property
         propertyAssignments.add(
           Code('''
 if ($name != null) {
@@ -503,7 +515,6 @@ if ($name != null) {
 }'''),
         );
       } else {
-        // Optional property
         propertyAssignments.add(
           Code('''
 if ($name != null) {
@@ -527,17 +538,7 @@ if ($name != null) {
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = literalTrue.code,
-              ),
-            )
+            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
             ..body = Block.of(methodBody),
     );
   }
@@ -546,6 +547,30 @@ if ($name != null) {
     String className,
     List<({String normalizedName, Property property})> properties,
   ) {
+    final listProperties = properties
+        .where(
+          (p) =>
+              p.property.model is ListModel &&
+              (p.property.model as ListModel).hasSimpleContent,
+        )
+        .toList();
+
+    final hasRequiredNonNullableLists = listProperties.any(
+      (p) => p.property.isRequired && !p.property.isNullable,
+    );
+
+    final methodBody = <Code>[];
+
+    if (hasRequiredNonNullableLists) {
+      methodBody.addAll([
+        const Code('if (!allowLists) {'),
+        generateEncodingExceptionExpression(
+          'Lists are not supported in this encoding style',
+        ).statement,
+        const Code('}'),
+      ]);
+    }
+
     final propertyAssignments = <Code>[];
 
     for (final prop in properties) {
@@ -589,6 +614,17 @@ if ($name != null) {
             Code("result[r'$propertyName'] = $encodeStr;"),
           );
         } else {
+          methodBody
+            ..add(
+              Code('if (!allowLists && $name != null) {'),
+            )
+            ..add(
+              generateEncodingExceptionExpression(
+                'Lists are not supported in this encoding style',
+              ).statement,
+            )
+            ..add(const Code('}'));
+
           propertyAssignments.add(
             Code('''
 if ($name != null) {
@@ -601,29 +637,19 @@ if ($name != null) {
       }
     }
 
-    final methodBody = [
+    methodBody.addAll([
       const Code('final result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
       const Code('return result;'),
-    ];
+    ]);
 
     return Method(
       (b) =>
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = literalTrue.code,
-              ),
-            )
+            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
             ..body = Block.of(methodBody),
     );
   }
@@ -637,17 +663,7 @@ if ($name != null) {
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = literalTrue.code,
-              ),
-            )
+            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
             ..body =
                 generateEncodingExceptionExpression(
                   'parameterProperties not supported for $className: '
@@ -754,17 +770,7 @@ if ($name != null) {
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = literalTrue.code,
-              ),
-            )
+            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
             ..body = Block.of(methodBody),
     );
   }
@@ -960,6 +966,48 @@ if ($name != null) {
             refer('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')})
                 .property('toMatrix')
+                .call(
+                  [refer('paramName')],
+                  {
+                    'explode': refer('explode'),
+                    'allowEmpty': refer('allowEmpty'),
+                    'alreadyEncoded': literalBool(true),
+                  },
+                )
+                .returned
+                .statement,
+          ]),
+  );
+
+  Method _buildToDeepObjectMethod() => Method(
+    (b) =>
+        b
+          ..name = 'toDeepObject'
+          ..returns = TypeReference(
+            (b) =>
+                b
+                  ..symbol = 'List'
+                  ..url = 'dart:core'
+                  ..types.add(
+                    refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                  ),
+          )
+          ..requiredParameters.add(
+            Parameter(
+              (b) =>
+                  b
+                    ..name = 'paramName'
+                    ..type = refer('String', 'dart:core'),
+            ),
+          )
+          ..optionalParameters.addAll(buildEncodingParameters())
+          ..body = Block.of([
+            refer('parameterProperties')
+                .call([], {
+                  'allowEmpty': refer('allowEmpty'),
+                  'allowLists': literalBool(false),
+                })
+                .property('toDeepObject')
                 .call(
                   [refer('paramName')],
                   {

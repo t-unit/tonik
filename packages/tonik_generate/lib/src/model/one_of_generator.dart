@@ -108,6 +108,7 @@ class OneOfGenerator {
               _generateToFormMethod(className, model, variantNames),
               _generateToLabelMethod(className, model, variantNames),
               _generateToMatrixMethod(className, model, variantNames),
+              _generateToDeepObjectMethod(),
               _generateUriEncodeMethod(className, model, variantNames),
               Method(
                 (b) =>
@@ -909,17 +910,10 @@ class OneOfGenerator {
             b
               ..name = 'parameterProperties'
               ..returns = buildMapStringStringType()
-              ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'allowEmpty'
-                        ..type = refer('bool', 'dart:core')
-                        ..named = true
-                        ..required = false
-                        ..defaultTo = literalTrue.code,
-                ),
-              )
+              ..optionalParameters.addAll([
+                buildBoolParameter('allowEmpty', defaultValue: true),
+                buildBoolParameter('allowLists', defaultValue: true),
+              ])
               ..body =
                   generateEncodingExceptionExpression(
                     'parameterProperties not supported for $className: '
@@ -958,6 +952,7 @@ class OneOfGenerator {
             const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
+              'allowLists': refer('allowLists'),
             }).code,
             const Code(','),
             Code("'${model.discriminator}': '$discriminatorValue',"),
@@ -977,6 +972,7 @@ class OneOfGenerator {
             const Code('? '),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
+              'allowLists': refer('allowLists'),
             }).code,
             const Code(': '),
             generateEncodingExceptionExpression(
@@ -993,6 +989,7 @@ class OneOfGenerator {
             const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
+              'allowLists': refer('allowLists'),
             }).code,
             const Code(','),
             Code("'${model.discriminator}': '$discriminatorValue',"),
@@ -1002,6 +999,7 @@ class OneOfGenerator {
           caseCodes.add(
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
+              'allowLists': refer('allowLists'),
             }).code,
           );
         }
@@ -1020,17 +1018,10 @@ class OneOfGenerator {
           b
             ..name = 'parameterProperties'
             ..returns = buildMapStringStringType()
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = false
-                      ..defaultTo = literalTrue.code,
-              ),
-            )
+            ..optionalParameters.addAll([
+              buildBoolParameter('allowEmpty', defaultValue: true),
+              buildBoolParameter('allowLists', defaultValue: true),
+            ])
             ..lambda = false
             ..body = body,
     );
@@ -1175,6 +1166,50 @@ class OneOfGenerator {
             ..optionalParameters.addAll(buildEncodingParameters())
             ..lambda = false
             ..body = body,
+    );
+  }
+
+  Method _generateToDeepObjectMethod() {
+    return Method(
+      (b) =>
+          b
+            ..name = 'toDeepObject'
+            ..returns = TypeReference(
+              (b) =>
+                  b
+                    ..symbol = 'List'
+                    ..url = 'dart:core'
+                    ..types.add(
+                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                    ),
+            )
+            ..requiredParameters.add(
+              Parameter(
+                (b) =>
+                    b
+                      ..name = 'paramName'
+                      ..type = refer('String', 'dart:core'),
+              ),
+            )
+            ..optionalParameters.addAll(buildEncodingParameters())
+            ..body = Block.of([
+              refer('parameterProperties')
+                  .call([], {
+                    'allowEmpty': refer('allowEmpty'),
+                    'allowLists': literalBool(false),
+                  })
+                  .property('toDeepObject')
+                  .call(
+                    [refer('paramName')],
+                    {
+                      'explode': refer('explode'),
+                      'allowEmpty': refer('allowEmpty'),
+                      'alreadyEncoded': literalBool(true),
+                    },
+                  )
+                  .returned
+                  .statement,
+            ]),
     );
   }
 

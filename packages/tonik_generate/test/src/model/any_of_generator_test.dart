@@ -14,6 +14,11 @@ void main() {
   late Context context;
   late DartEmitter emitter;
 
+        final format =
+          DartFormatter(
+            languageVersion: DartFormatter.latestLanguageVersion,
+          ).format;
+
   setUp(() {
     nameGenerator = NameGenerator();
     nameManager = NameManager(generator: nameGenerator);
@@ -246,11 +251,6 @@ void main() {
       // hashCode getter
       final hashGetter = klass.methods.firstWhere((m) => m.name == 'hashCode');
       expect(hashGetter.returns?.accept(emitter).toString(), 'int');
-
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
       final generated = format(klass.accept(emitter).toString());
 
       const expectedEquals = '''
@@ -878,14 +878,21 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
         'Map<String,String>',
       );
-      expect(method.optionalParameters.length, 1);
-      expect(method.optionalParameters.first.name, 'allowEmpty');
-      expect(method.optionalParameters.first.named, isTrue);
-      expect(method.optionalParameters.first.required, isFalse);
+      expect(method.optionalParameters.length, 2);
+      
+      final allowEmptyParam = method.optionalParameters
+          .firstWhere((p) => p.name == 'allowEmpty');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isFalse);
       expect(
-        method.optionalParameters.first.defaultTo?.accept(emitter).toString(),
+        allowEmptyParam.defaultTo?.accept(emitter).toString(),
         'true',
       );
+
+      final allowListsParam = method.optionalParameters
+          .firstWhere((p) => p.name == 'allowLists');
+      expect(allowListsParam.named, isTrue);
+      expect(allowListsParam.required, isFalse);
     });
 
     test('generates complete method for single complex variant', () {
@@ -909,17 +916,13 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         (m) => m.name == 'parameterProperties',
       );
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   if (user != null) {
-    _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty));
+    _$mapValues.add( user!.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists), );
   }
   final _$map = <String, String>{};
   for (final m in _$mapValues) {
@@ -963,20 +966,16 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         (m) => m.name == 'parameterProperties',
       );
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   if (admin != null) {
-    _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty));
+    _$mapValues.add( admin!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, ), );
   }
   if (user != null) {
-    _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty));
+    _$mapValues.add( user!.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists), );
   }
   final _$map = <String, String>{};
   for (final m in _$mapValues) {
@@ -1024,18 +1023,14 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         (m) => m.name == 'parameterProperties',
       );
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   String? _$discriminatorValue;
   if (data != null) {
-    _$mapValues.add(data!.parameterProperties(allowEmpty: allowEmpty));
+    _$mapValues.add( data!.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists), );
     _$discriminatorValue ??= r'data';
   }
   final _$map = <String, String>{};
@@ -1087,14 +1082,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         (m) => m.name == 'parameterProperties',
       );
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   if (innerChoice != null) {
     switch (innerChoice!.currentEncodingShape) {
@@ -1104,7 +1095,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         );
       case EncodingShape.complex:
         _$mapValues.add(
-          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
+          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, ),
         );
         break;
       case EncodingShape.mixed:
@@ -1172,7 +1163,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   String? _$discriminatorValue;
   if (innerChoice != null) {
@@ -1183,7 +1174,7 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         );
       case EncodingShape.complex:
         _$mapValues.add(
-          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
+          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, ),
         );
         _$discriminatorValue ??= r'inner';
         break;
@@ -1259,10 +1250,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   if (complexData != null) {
-    _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty));
+    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, ), );
   }
   if (innerChoice != null) {
     throw EncodingException(
@@ -1319,10 +1310,10 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   final _$mapValues = <Map<String, String>>[];
   if (complexData != null) {
-    _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty));
+    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, ), );
   }
   if (string != null) {
     throw EncodingException(
@@ -1360,17 +1351,201 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
         (m) => m.name == 'parameterProperties',
       );
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({bool allowEmpty = true}) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   throw EncodingException(
     'parameterProperties not supported for SimpleChoice: contains only simple types',
   );
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('passes allowLists to nested complex types', () {
+      final user = ClassModel(
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+      final admin = ClassModel(
+        name: 'Admin',
+        properties: const [],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'FlexibleChoice',
+        models: {
+          (discriminatorValue: 'user', model: user),
+          (discriminatorValue: 'admin', model: admin),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (admin != null) {
+    _$mapValues.add(
+      admin!.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+      ),
+    );
+  }
+  if (user != null) {
+    _$mapValues.add(
+      user!.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    );
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('throws when anyOf contains list model', () {
+      final model = AnyOfModel(
+        name: 'ChoiceWithList',
+        models: {
+          (
+            discriminatorValue: 'list',
+            model: ListModel(
+              content: IntegerModel(context: context),
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (list != null) {
+    if (!allowLists) {
+      throw EncodingException('Lists are not supported in this encoding style');
+    }
+    throw EncodingException('Lists are not supported in parameterProperties');
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
+}
+''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('passes allowLists to nested anyOf with mixed encoding', () {
+      final innerAnyOf = AnyOfModel(
+        name: 'InnerChoice',
+        models: {
+          (
+            discriminatorValue: 'data',
+            model: ClassModel(
+              name: 'Data',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        name: 'OuterChoice',
+        models: {
+          (discriminatorValue: 'inner', model: innerAnyOf),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (innerChoice != null) {
+    switch (innerChoice!.currentEncodingShape) {
+      case EncodingShape.simple:
+        throw EncodingException(
+          'Cannot encode simple type to map in parameterProperties',
+        );
+      case EncodingShape.complex:
+        _$mapValues.add(
+          innerChoice!.parameterProperties(
+            allowEmpty: allowEmpty,
+            allowLists: allowLists,
+          ),
+        );
+        break;
+      case EncodingShape.mixed:
+        throw EncodingException(
+          'Cannot encode field with mixed encoding shape',
+        );
+    }
+  }
+  final _$map = <String, String>{};
+  for (final m in _$mapValues) {
+    _$map.addAll(m);
+  }
+  return _$map;
 }
 ''';
 
@@ -1407,12 +1582,30 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       );
 
       final klass = generator.generateClass(model);
-      final generatedCode = klass.accept(emitter).toString();
+      final generated = format(klass.accept(emitter).toString());
 
       expect(allOfModel.encodingShape, EncodingShape.simple);
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (simpleAllOf != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
       );
     });
 
@@ -1437,12 +1630,30 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       );
 
       final klass = generator.generateClass(model);
-      final generatedCode = klass.accept(emitter).toString();
+      final generated = format(klass.accept(emitter).toString());
 
       expect(allOfModel.encodingShape, EncodingShape.complex);
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (complexAllOf != null) {
+            shapes.add(complexAllOf!.currentEncodingShape);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
       );
     });
 
@@ -1467,12 +1678,30 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       );
 
       final klass = generator.generateClass(model);
-      final generatedCode = klass.accept(emitter).toString();
+      final generated = format(klass.accept(emitter).toString());
 
       expect(allOfModel.encodingShape, EncodingShape.mixed);
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (mixedAllOf != null) {
+            shapes.add(mixedAllOf!.currentEncodingShape);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
       );
     });
 
@@ -1498,12 +1727,30 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       );
 
       final klass = generator.generateClass(model);
-      final generatedCode = klass.accept(emitter).toString();
+      final generated = format(klass.accept(emitter).toString());
 
       expect(oneOfModel.encodingShape, EncodingShape.simple);
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (simpleOneOf != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
       );
     });
 
@@ -1542,12 +1789,30 @@ Map<String, String> parameterProperties({bool allowEmpty = true}) {
       );
 
       final klass = generator.generateClass(model);
-      final generatedCode = klass.accept(emitter).toString();
+      final generated = format(klass.accept(emitter).toString());
 
       expect(nestedAnyOfModel.encodingShape, EncodingShape.complex);
+
+      const expectedGetter = '''
+        EncodingShape get currentEncodingShape {
+          final shapes = <EncodingShape>{};
+          if (nestedAnyOf != null) {
+            shapes.add(nestedAnyOf!.currentEncodingShape);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
+          }
+          if (shapes.isEmpty) {
+            throw StateError('At least one field must be non-null in anyOf');
+          }
+          if (shapes.length > 1) return EncodingShape.mixed;
+          return shapes.first;
+        }
+      ''';
+
       expect(
-        collapseWhitespace(generatedCode),
-        contains(collapseWhitespace('EncodingShape get currentEncodingShape')),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
       );
     });
   });
