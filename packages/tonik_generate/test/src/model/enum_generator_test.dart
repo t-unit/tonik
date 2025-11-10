@@ -1106,5 +1106,357 @@ void main() {
         },
       );
     });
+
+    group('toMatrix method generation', () {
+      test('generates toMatrix method for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final toMatrix = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+
+        expect(toMatrix.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toMatrix.requiredParameters, hasLength(1));
+        expect(toMatrix.requiredParameters.first.name, 'paramName');
+        expect(
+          toMatrix.requiredParameters.first.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String',
+        );
+        expect(toMatrix.optionalParameters, hasLength(2));
+
+        final explodeParam = toMatrix.optionalParameters.firstWhere(
+          (p) => p.name == 'explode',
+        );
+        expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(explodeParam.named, isTrue);
+        expect(explodeParam.required, isTrue);
+
+        final allowEmptyParam = toMatrix.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
+        );
+        expect(toMatrix.lambda, isTrue);
+      });
+
+      test('generates toMatrix method for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toMatrix = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+
+        expect(toMatrix.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toMatrix.requiredParameters, hasLength(1));
+        expect(toMatrix.requiredParameters.first.name, 'paramName');
+        expect(
+          toMatrix.requiredParameters.first.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String',
+        );
+        expect(toMatrix.optionalParameters, hasLength(2));
+
+        final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
+        );
+        expect(toMatrix.lambda, isTrue);
+      });
+
+      test('generates toMatrix method for nullable string enum', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toMatrix = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+
+        expect(toMatrix.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toMatrix.requiredParameters, hasLength(1));
+        expect(toMatrix.requiredParameters.first.name, 'paramName');
+        expect(
+          toMatrix.requiredParameters.first.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String',
+        );
+        expect(toMatrix.optionalParameters, hasLength(2));
+
+        final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
+        );
+        expect(toMatrix.lambda, isTrue);
+      });
+
+      test('generates toMatrix method for nullable int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {100, 200, 300},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toMatrix = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+
+        expect(toMatrix.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toMatrix.requiredParameters, hasLength(1));
+        expect(toMatrix.requiredParameters.first.name, 'paramName');
+        expect(
+          toMatrix.requiredParameters.first.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'String',
+        );
+        expect(toMatrix.optionalParameters, hasLength(2));
+
+        final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.toMatrix(paramName, explode: explode, '
+          'allowEmpty: allowEmpty)',
+        );
+        expect(toMatrix.lambda, isTrue);
+      });
+
+      test('toMatrix method is included in generated code for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToMatrixMethod = '''
+          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
+        );
+      });
+
+      test('toMatrix method is included in generated code for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedToMatrixMethod = '''
+          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
+        );
+      });
+
+      test(
+        'toMatrix method is included in generated code for nullable enum',
+        () {
+          final model = EnumModel<String>(
+            name: 'Priority',
+            values: const {'low', 'medium', 'high'},
+            isNullable: true,
+            context: Context.initial(),
+          );
+
+          final result = generator.generate(model);
+
+          const expectedToMatrixMethod = '''
+          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        ''';
+          expect(
+            collapseWhitespace(result.code),
+            contains(collapseWhitespace(expectedToMatrixMethod)),
+          );
+        },
+      );
+    });
+
+    group('uriEncode method generation', () {
+      test('generates uriEncode method for string enum', () {
+        final model = EnumModel<String>(
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+        final uriEncode = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+
+        expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(uriEncode.optionalParameters, hasLength(1));
+
+        final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.uriEncode(allowEmpty: allowEmpty)',
+        );
+        expect(uriEncode.lambda, isTrue);
+      });
+
+      test('generates uriEncode method for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final uriEncode = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+
+        expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(uriEncode.optionalParameters, hasLength(1));
+
+        final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.uriEncode(allowEmpty: allowEmpty)',
+        );
+        expect(uriEncode.lambda, isTrue);
+      });
+
+      test('generates uriEncode method for nullable string enum', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: const {'active', 'inactive'},
+          isNullable: true,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final uriEncode = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+
+        expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(uriEncode.optionalParameters, hasLength(1));
+
+        final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
+        expect(
+          body,
+          'rawValue.uriEncode(allowEmpty: allowEmpty)',
+        );
+        expect(uriEncode.lambda, isTrue);
+      });
+
+      test(
+        'uriEncode method is included in generated code for string enum',
+        () {
+          final model = EnumModel<String>(
+            name: 'Color',
+            values: const {'red', 'green', 'blue'},
+            isNullable: false,
+            context: Context.initial(),
+          );
+
+          final result = generator.generate(model);
+
+          const expectedUriEncodeMethod = '''
+          _i2.String uriEncode({required _i2.bool allowEmpty}) => rawValue.uriEncode(allowEmpty: allowEmpty);
+        ''';
+          expect(
+            collapseWhitespace(result.code),
+            contains(collapseWhitespace(expectedUriEncodeMethod)),
+          );
+        },
+      );
+
+      test('uriEncode method is included in generated code for int enum', () {
+        final model = EnumModel<int>(
+          name: 'Status',
+          values: const {1, 2, 3},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final result = generator.generate(model);
+
+        const expectedUriEncodeMethod = '''
+          _i2.String uriEncode({required _i2.bool allowEmpty}) => rawValue.uriEncode(allowEmpty: allowEmpty);
+        ''';
+        expect(
+          collapseWhitespace(result.code),
+          contains(collapseWhitespace(expectedUriEncodeMethod)),
+        );
+      });
+
+      test(
+        'uriEncode method is included in generated code for nullable enum',
+        () {
+          final model = EnumModel<String>(
+            name: 'Priority',
+            values: const {'low', 'medium', 'high'},
+            isNullable: true,
+            context: Context.initial(),
+          );
+
+          final result = generator.generate(model);
+
+          const expectedUriEncodeMethod = '''
+          _i2.String uriEncode({required _i2.bool allowEmpty}) => rawValue.uriEncode(allowEmpty: allowEmpty);
+        ''';
+          expect(
+            collapseWhitespace(result.code),
+            contains(collapseWhitespace(expectedUriEncodeMethod)),
+          );
+        },
+      );
+    });
   });
 }

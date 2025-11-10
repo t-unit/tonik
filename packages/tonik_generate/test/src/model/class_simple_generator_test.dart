@@ -96,40 +96,24 @@ void main() {
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory Sample.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for Sample');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'flag', r'count', r'label', r'created', r'amount'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'Sample',
+          );
           return Sample(
-            flag: values['flag'].decodeSimpleBool(context: r'Sample.flag'),
-            count: values['count'].decodeSimpleInt(context: r'Sample.count'),
-            label: values['label'].decodeSimpleString(context: r'Sample.label'),
-            created: values['created'].decodeSimpleDateTime(
+            flag: values[r'flag'].decodeSimpleBool(context: r'Sample.flag'),
+            count: values[r'count'].decodeSimpleInt(context: r'Sample.count'),
+            label: values[r'label'].decodeSimpleString(context: r'Sample.label'),
+            created: values[r'created'].decodeSimpleDateTime(
               context: r'Sample.created',
             ),
-            amount: values['amount'].decodeSimpleBigDecimal(
+            amount: values[r'amount'].decodeSimpleBigDecimal(
               context: r'Sample.amount',
             ),
           );
@@ -186,33 +170,19 @@ void main() {
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory Order.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for Order');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
-          return Order(status: Status.fromSimple(values['status'], explode: explode));
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'status'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'Order',
+          );
+          return Order(
+            status: Status.fromSimple(values[r'status'], explode: explode),
+          );
         }
       ''';
       expect(
@@ -288,46 +258,30 @@ void main() {
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory NullableSample.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for NullableSample');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'flag', r'count', r'label', r'created', r'amount'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'NullableSample',
+          );
           return NullableSample(
-            flag: values['flag'].decodeSimpleNullableBool(
+            flag: values[r'flag'].decodeSimpleNullableBool(
               context: r'NullableSample.flag',
             ),
-            count: values['count'].decodeSimpleNullableInt(
+            count: values[r'count'].decodeSimpleNullableInt(
               context: r'NullableSample.count',
             ),
-            label: values['label'].decodeSimpleNullableString(
+            label: values[r'label'].decodeSimpleNullableString(
               context: r'NullableSample.label',
             ),
-            created: values['created'].decodeSimpleNullableDateTime(
+            created: values[r'created'].decodeSimpleNullableDateTime(
               context: r'NullableSample.created',
             ),
-            amount: values['amount'].decodeSimpleNullableBigDecimal(
+            amount: values[r'amount'].decodeSimpleNullableBigDecimal(
               context: r'NullableSample.amount',
             ),
           );
@@ -391,34 +345,18 @@ void main() {
         expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
         final classCode = format(generatedClass.accept(emitter).toString());
-        const expectedMethod = r'''
+        const expectedMethod = '''
           factory Container.fromSimple(String? value, {required bool explode}) {
-            if (value == null || value.isEmpty) {
-              throw SimpleDecodingException('Invalid empty value for Container');
-            }
-            final values = <String, String>{};
-            if (explode) {
-              final pairs = value.split(',');
-              for (final pair in pairs) {
-                final parts = pair.split('=');
-                if (parts.length != 2) {
-                  throw SimpleDecodingException('Invalid key=value pair format: $pair');
-                }
-                values[Uri.decodeComponent(parts[0])] = parts[1];
-              }
-            } else {
-              final parts = value.split(',');
-              if (parts.length % 2 != 0) {
-                throw SimpleDecodingException(
-                  'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-                );
-              }
-              for (var i = 0; i < parts.length; i += 2) {
-                values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-              }
-            }
+            final values = value.decodeObject(
+              explode: explode,
+              explodeSeparator: ',',
+              expectedKeys: {r'value'},
+              listKeys: {},
+              isFormStyle: false,
+              context: r'Container',
+            );
             return Container(
-              value: PrimitiveOneOf.fromSimple(values['value'], explode: explode),
+              value: PrimitiveOneOf.fromSimple(values[r'value'], explode: explode),
             );
           }
         ''';
@@ -430,8 +368,7 @@ void main() {
     );
 
     test(
-      'generates fromSimple constructor that throws for OneOf model with '
-      'unsupported type',
+      'generates fromSimple for OneOf model with mixed types attempting decode',
       () {
         final oneOfModel = OneOfModel(
           name: 'MixedOneOf',
@@ -475,8 +412,16 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
           factory Container.fromSimple(String? value, {required bool explode}) {
-            throw EncodingException(
-              'Simple encoding not supported for Container: contains complex types',
+            final values = value.decodeObject(
+              explode: explode,
+              explodeSeparator: ',',
+              expectedKeys: {r'value'},
+              listKeys: {},
+              isFormStyle: false,
+              context: r'Container',
+            );
+            return Container(
+              value: MixedOneOf.fromSimple(values[r'value'], explode: explode),
             );
           }
         ''';
@@ -484,6 +429,74 @@ void main() {
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates fromSimple for mixed OneOf that attempts decoding',
+      () {
+        final oneOfModel = OneOfModel(
+          name: 'DynamicValue',
+          models: {
+            (discriminatorValue: 'str', model: StringModel(context: context)),
+            (
+              discriminatorValue: 'class',
+              model: ClassModel(
+                name: 'ComplexData',
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+        final model = ClassModel(
+          name: 'Wrapper',
+          properties: [
+            Property(
+              name: 'data',
+              model: oneOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+
+        const expectedFromSimpleMethod = '''
+          factory Wrapper.fromSimple(String? value, {required bool explode}) {
+            final values = value.decodeObject(
+              explode: explode,
+              explodeSeparator: ',',
+              expectedKeys: {r'data'},
+              listKeys: {},
+              isFormStyle: false,
+              context: r'Wrapper',
+            );
+            return Wrapper(
+              data: DynamicValue.fromSimple(values[r'data'], explode: explode),
+            );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedFromSimpleMethod)),
         );
       },
     );
@@ -531,25 +544,25 @@ void main() {
       );
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
-      // Verify the generated method uses the new DRY structure
       final classCode = format(generatedClass.accept(emitter).toString());
+      const expectedMethod = '''
+        factory UserIdHolder.fromSimple(String? value, {required bool explode}) {
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'id'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'UserIdHolder',
+          );
+          return UserIdHolder(
+            id: values[r'id'].decodeSimpleInt(context: r'UserIdHolder.id'),
+          );
+        }
+      ''';
       expect(
-        classCode,
-        contains(
-          '''factory UserIdHolder.fromSimple(String? value, {required bool explode})''',
-        ),
-      );
-      expect(classCode, contains('final values = <String, String>{};'));
-      expect(classCode, contains('if (explode)'));
-      expect(classCode, contains('Uri.decodeComponent(parts[0])'));
-      expect(
-        classCode,
-        contains(
-          '''
-return UserIdHolder(
-      id: values['id'].decodeSimpleInt(context: r'UserIdHolder.id'),
-    );''',
-        ),
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -606,34 +619,18 @@ return UserIdHolder(
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory AliasHolder.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for AliasHolder');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'value'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'AliasHolder',
+          );
           return AliasHolder(
-            value: PrimitiveOneOf.fromSimple(values['value'], explode: explode),
+            value: PrimitiveOneOf.fromSimple(values[r'value'], explode: explode),
           );
         }
       ''';
@@ -644,7 +641,7 @@ return UserIdHolder(
     });
 
     test(
-      'generates fromSimple constructor that throws for Alias targeting class',
+      'generates fromSimple that throws for Alias targeting class',
       () {
         final aliasModel = AliasModel(
           name: 'UserAlias',
@@ -688,12 +685,12 @@ return UserIdHolder(
 
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
-        factory AliasHolder.fromSimple(String? value, {required bool explode}) {
-          throw EncodingException(
-            'Simple encoding not supported for AliasHolder: contains complex types',
-          );
-        }
-      ''';
+          factory AliasHolder.fromSimple(String? value, {required bool explode}) {
+            throw SimpleDecodingException(
+              'Simple encoding not supported for AliasHolder: contains complex types',
+            );
+          }
+        ''';
 
         expect(
           collapseWhitespace(classCode),
@@ -703,7 +700,7 @@ return UserIdHolder(
     );
 
     test(
-      'generates fromSimple constructor that throws for Alias targeting list',
+      'generates fromSimple that throws for Alias targeting list',
       () {
         final aliasModel = AliasModel(
           name: 'StringListAlias',
@@ -738,12 +735,12 @@ return UserIdHolder(
 
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
-        factory AliasHolder.fromSimple(String? value, {required bool explode}) {
-          throw EncodingException(
-            'Simple encoding not supported for AliasHolder: contains complex types',
-          );
-        }
-      ''';
+          factory AliasHolder.fromSimple(String? value, {required bool explode}) {
+            throw SimpleDecodingException(
+              'Simple encoding not supported for AliasHolder: contains complex types',
+            );
+          }
+        ''';
 
         expect(
           collapseWhitespace(classCode),
@@ -752,7 +749,7 @@ return UserIdHolder(
       },
     );
 
-    test('fromSimple handles unsupported complex properties', () {
+    test('fromSimple throws for mixed simple and complex properties', () {
       final complexModel = ClassModel(
         name: 'Address',
         properties: const [],
@@ -792,7 +789,7 @@ return UserIdHolder(
 
       const expectedMethod = '''
         factory User.fromSimple(String? value, {required bool explode}) {
-          throw EncodingException(
+          throw SimpleDecodingException(
             'Simple encoding not supported for User: contains complex types',
           );
         }
@@ -844,34 +841,18 @@ return UserIdHolder(
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory Resource.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for Resource');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'endpoint'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'Resource',
+          );
           return Resource(
-            endpoint: values['endpoint'].decodeSimpleUri(
+            endpoint: values[r'endpoint'].decodeSimpleUri(
               context: r'Resource.endpoint',
             ),
           );
@@ -924,34 +905,18 @@ return UserIdHolder(
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory Resource.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for Resource');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'callback'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'Resource',
+          );
           return Resource(
-            callback: values['callback'].decodeSimpleNullableUri(
+            callback: values[r'callback'].decodeSimpleNullableUri(
               context: r'Resource.callback',
             ),
           );
@@ -1025,39 +990,23 @@ return UserIdHolder(
       expect(fromSimpleConstructor.optionalParameters[0].required, isTrue);
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = r'''
+      const expectedMethod = '''
         factory Resource.fromSimple(String? value, {required bool explode}) {
-          if (value == null || value.isEmpty) {
-            throw SimpleDecodingException('Invalid empty value for Resource');
-          }
-          final values = <String, String>{};
-          if (explode) {
-            final pairs = value.split(',');
-            for (final pair in pairs) {
-              final parts = pair.split('=');
-              if (parts.length != 2) {
-                throw SimpleDecodingException('Invalid key=value pair format: $pair');
-              }
-              values[Uri.decodeComponent(parts[0])] = parts[1];
-            }
-          } else {
-            final parts = value.split(',');
-            if (parts.length % 2 != 0) {
-              throw SimpleDecodingException(
-                'Invalid alternating key-value format: expected even number of parts, got ${parts.length}',
-              );
-            }
-            for (var i = 0; i < parts.length; i += 2) {
-              values[Uri.decodeComponent(parts[i])] = parts[i + 1];
-            }
-          }
+          final values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: ',',
+            expectedKeys: {r'name', r'endpoint', r'port', r'callback'},
+            listKeys: {},
+            isFormStyle: false,
+            context: r'Resource',
+          );
           return Resource(
-            name: values['name'].decodeSimpleString(context: r'Resource.name'),
-            endpoint: values['endpoint'].decodeSimpleUri(
+            name: values[r'name'].decodeSimpleString(context: r'Resource.name'),
+            endpoint: values[r'endpoint'].decodeSimpleUri(
               context: r'Resource.endpoint',
             ),
-            port: values['port'].decodeSimpleInt(context: r'Resource.port'),
-            callback: values['callback'].decodeSimpleNullableUri(
+            port: values[r'port'].decodeSimpleInt(context: r'Resource.port'),
+            callback: values[r'callback'].decodeSimpleNullableUri(
               context: r'Resource.callback',
             ),
           );
@@ -1113,9 +1062,9 @@ return UserIdHolder(
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return simpleProperties(
+          return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 
@@ -1126,7 +1075,7 @@ return UserIdHolder(
     });
 
     test(
-      'generates toSimple for class with complex properties (throws exception)',
+      'generates toSimple for class with complex properties',
       () {
         final model = ClassModel(
           name: 'ComplexClass',
@@ -1163,9 +1112,9 @@ return UserIdHolder(
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          throw EncodingException(
-            'toSimple not supported for ComplexClass: contains nested data',
-          );
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 
@@ -1193,7 +1142,9 @@ return UserIdHolder(
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return '';
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 

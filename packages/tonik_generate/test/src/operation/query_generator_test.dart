@@ -50,8 +50,8 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters() {
-          final result = <ParameterEntry>[];
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          final entries = <ParameterEntry>[];
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -152,14 +152,14 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({AnonymousModel? filter}) {
-          final result = <ParameterEntry>[];
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.add((
+            entries.add((
               name: r'filter',
               value: filter.toForm(explode: false, allowEmpty: true),
             ));
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -214,19 +214,13 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({AnonymousModel? filter}) {
-          final result = <ParameterEntry>[];
-          const deepObjectEncoder = DeepObjectEncoder();
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.addAll(
-              deepObjectEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: false,
-                allowEmpty: true,
-              ),
+            entries.addAll(
+              filter.toDeepObject(r'filter', explode: false, allowEmpty: true),
             );
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -284,18 +278,16 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({List<String>? tags}) {
-          final result = <ParameterEntry>[];
-          final spacedEncoder = DelimitedEncoder.spaced();
+          final entries = <ParameterEntry>[];
           if (tags != null) {
-            for (final value in spacedEncoder.encode(
-              tags,
+            for (final value in tags.toSpaceDelimited(
               explode: false,
               allowEmpty: true,
             )) {
-              result.add((name: 'tags', value: value));
+              entries.add((name: r'tags', value: value));
             }
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -350,19 +342,13 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({AnonymousModel? filter}) {
-          final result = <ParameterEntry>[];
-          const deepObjectEncoder = DeepObjectEncoder();
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.addAll(
-              deepObjectEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: false,
-                allowEmpty: true,
-              ),
+            entries.addAll(
+              filter.toDeepObject(r'filter', explode: false, allowEmpty: true),
             );
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -455,39 +441,29 @@ void main() {
           List<String>? tags,
           List<String>? sort,
         }) {
-          final result = <ParameterEntry>[];
-          const deepObjectEncoder = DeepObjectEncoder();
-          final spacedEncoder = DelimitedEncoder.spaced();
-          final pipedEncoder = DelimitedEncoder.piped();
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.addAll(
-              deepObjectEncoder.encode(
-                r'filter',
-                filter.toJson(),
-                explode: false,
-                allowEmpty: true,
-              ),
+            entries.addAll(
+              filter.toDeepObject(r'filter', explode: false, allowEmpty: true),
             );
           }
           if (tags != null) {
-            for (final value in spacedEncoder.encode(
-              tags,
+            for (final value in tags.toSpaceDelimited(
               explode: false,
               allowEmpty: true,
             )) {
-              result.add((name: 'tags', value: value));
+              entries.add((name: r'tags', value: value));
             }
           }
           if (sort != null) {
-            for (final value in pipedEncoder.encode(
-              sort,
+            for (final value in sort.toPipeDelimited(
               explode: false,
               allowEmpty: true,
             )) {
-              result.add((name: 'sort', value: value));
+              entries.add((name: r'sort', value: value));
             }
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -561,24 +537,22 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({AnonymousModel? filter, List<String>? tags}) {
-          final result = <ParameterEntry>[];
-          final spacedEncoder = DelimitedEncoder.spaced();
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.add((
+            entries.add((
               name: r'filter',
               value: filter.toForm(explode: true, allowEmpty: true),
             ));
           }
           if (tags != null) {
-            for (final value in spacedEncoder.encode(
-              tags,
+            for (final value in tags.toSpaceDelimited(
               explode: true,
               allowEmpty: true,
             )) {
-              result.add((name: 'tags', value: value));
+              entries.add((name: r'tags', value: value));
             }
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -634,12 +608,12 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({required AnonymousModel filter}) {
-          final result = <ParameterEntry>[];
-          result.add((
+          final entries = <ParameterEntry>[];
+          entries.add((
             name: r'filter',
             value: filter.toForm(explode: false, allowEmpty: false),
           ));
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -694,14 +668,14 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({AnonymousModel? filter}) {
-          final result = <ParameterEntry>[];
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.add((
+            entries.add((
               name: r'filter',
               value: filter.toForm(explode: false, allowEmpty: false),
             ));
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -806,32 +780,32 @@ void main() {
           int? age,
           bool? active,
         }) {
-          final result = <ParameterEntry>[];
+          final entries = <ParameterEntry>[];
           if (name != null) {
-            result.add((
+            entries.add((
               name: r'name',
               value: name.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (tags != null) {
-            result.add((
+            entries.add((
               name: r'tags',
               value: tags.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (age != null) {
-            result.add((
+            entries.add((
               name: r'age',
               value: age.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (active != null) {
-            result.add((
+            entries.add((
               name: r'active',
               value: active.toForm(explode: false, allowEmpty: false),
             ));
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -903,20 +877,20 @@ void main() {
 
       const expectedMethod = r'''
         String _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
-          final result = <ParameterEntry>[];
+          final entries = <ParameterEntry>[];
           if (filter != null) {
-            result.add((
+            entries.add((
               name: r'filter',
               value: filter.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (range != null) {
-            result.add((
+            entries.add((
               name: r'range',
               value: range.toForm(explode: false, allowEmpty: false),
             ));
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -947,8 +921,6 @@ void main() {
 
       final stringModel = StringModel(context: context);
       final integerModel = IntegerModel(context: context);
-      final booleanModel = BooleanModel(context: context);
-      final classModel = ClassModel(context: context, properties: const []);
 
       final oneOfModel = OneOfModel(
         context: context,
@@ -960,20 +932,18 @@ void main() {
         discriminator: 'type',
       );
 
-      final anyOfModel = AnyOfModel(
+      final intListModel = ListModel(
         context: context,
-        models: {
-          (discriminatorValue: 'string', model: stringModel),
-          (discriminatorValue: 'boolean', model: booleanModel),
-        },
-        name: 'AnyOfCondition',
-        discriminator: 'type',
+        content: IntegerModel(context: context),
       );
 
-      final allOfModel = AllOfModel(
+      final enumListModel = ListModel(
         context: context,
-        models: {classModel, classModel},
-        name: 'AllOfComposite',
+        content: EnumModel(
+          context: context,
+          values: const {'A', 'B', 'C'},
+          isNullable: false,
+        ),
       );
 
       final enumParam = QueryParameterObject(
@@ -1004,31 +974,31 @@ void main() {
         context: context,
       );
 
-      final anyOfParam = QueryParameterObject(
-        name: 'condition',
-        rawName: 'condition',
-        description: 'Condition filter',
+      final intListParam = QueryParameterObject(
+        name: 'ids',
+        rawName: 'ids',
+        description: 'ID list',
         isRequired: false,
         isDeprecated: false,
         allowEmptyValue: true,
         explode: false,
         encoding: QueryParameterEncoding.spaceDelimited,
         allowReserved: false,
-        model: anyOfModel,
+        model: intListModel,
         context: context,
       );
 
-      final allOfParam = QueryParameterObject(
-        name: 'composite',
-        rawName: 'composite',
-        description: 'Composite filter',
+      final enumListParam = QueryParameterObject(
+        name: 'categories',
+        rawName: 'categories',
+        description: 'Category list',
         isRequired: true,
         isDeprecated: false,
         allowEmptyValue: true,
         explode: false,
         encoding: QueryParameterEncoding.pipeDelimited,
         allowReserved: false,
-        model: allOfModel,
+        model: enumListModel,
         context: context,
       );
 
@@ -1042,7 +1012,7 @@ void main() {
         path: '/filter',
         method: HttpMethod.get,
         headers: const {},
-        queryParameters: {enumParam, oneOfParam, anyOfParam, allOfParam},
+        queryParameters: {enumParam, oneOfParam, intListParam, enumListParam},
         pathParameters: const {},
         responses: const {},
         requestBody: null,
@@ -1053,44 +1023,42 @@ void main() {
         String _queryParameters({
           AnonymousModel? color,
           required OneOfValue value,
-          AnyOfCondition? condition,
-          required AllOfComposite composite,
+          List<int>? ids,
+          required List<AnonymousModel2> categories,
         }) {
-          final result = <ParameterEntry>[];
-          const deepObjectEncoder = DeepObjectEncoder();
-          final spacedEncoder = DelimitedEncoder.spaced();
-          final pipedEncoder = DelimitedEncoder.piped();
+          final entries = <ParameterEntry>[];
           if (color != null) {
-            result.add((
+            entries.add((
               name: r'color',
               value: color.toForm(explode: false, allowEmpty: true),
             ));
           }
-          result.addAll(
-            deepObjectEncoder.encode(
-              r'value',
-              value.toJson(),
-              explode: false,
-              allowEmpty: true,
-            ),
+          entries.addAll(
+            value.toDeepObject(r'value', explode: false, allowEmpty: true),
           );
-          if (condition != null) {
-            for (final value in spacedEncoder.encode(
-              condition.toJson(),
+          if (ids != null) {
+            for (final value in ids
+                .map((e) => e.uriEncode(allowEmpty: true, useQueryComponent: true))
+                .toList()
+                .toSpaceDelimited(
               explode: false,
               allowEmpty: true,
-            )) {
-              result.add((name: 'condition', value: value));
+                  alreadyEncoded: true,
+                )) {
+              entries.add((name: r'ids', value: value));
             }
           }
-          for (final value in pipedEncoder.encode(
-            composite.toJson(),
+          for (final value in categories
+              .map((e) => e.uriEncode(allowEmpty: true, useQueryComponent: true))
+              .toList()
+              .toPipeDelimited(
             explode: false,
             allowEmpty: true,
+                alreadyEncoded: true,
           )) {
-            result.add((name: 'composite', value: value));
+            entries.add((name: r'categories', value: value));
           }
-          return result.map((e) => '${e.name}=${e.value}').join('&');
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1098,8 +1066,8 @@ void main() {
           <({String normalizedName, QueryParameterObject parameter})>[
             (normalizedName: 'color', parameter: enumParam),
             (normalizedName: 'value', parameter: oneOfParam),
-            (normalizedName: 'condition', parameter: anyOfParam),
-            (normalizedName: 'composite', parameter: allOfParam),
+            (normalizedName: 'ids', parameter: intListParam),
+            (normalizedName: 'categories', parameter: enumListParam),
           ];
 
       final method = generator.generateQueryParametersMethod(
@@ -1156,15 +1124,15 @@ void main() {
 
       const expectedMethod = r'''
          String _queryParameters({required List<AnonymousModel> colors}) {
-            final result = <ParameterEntry>[];
-            result.add((
+            final entries = <ParameterEntry>[];
+            entries.add((
               name: r'colors',
               value: colors
                   .map((e) => e.toForm(explode: true, allowEmpty: false))
                   .toList()
                   .toForm(explode: true, allowEmpty: false),
             ));
-            return result.map((e) => '${e.name}=${e.value}').join('&');
+            return entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1187,7 +1155,7 @@ void main() {
       );
     });
 
-    test('handles nested list of class models', () {
+    test('generates code that throws for nested list of class models', () {
       final innerModel = ClassModel(context: context, properties: const []);
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
@@ -1226,29 +1194,26 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = r'''
-          String _queryParameters({required List<List<AnonymousModel>> matrix}) {
-            final result = <ParameterEntry>[];
-            result.add((
-              name: r'matrix',
-              value: matrix
-                  .map(
-                    (e) => e
-                        .map((e) => e.toForm(explode: true, allowEmpty: false))
-                        .toList()
-                        .toForm(explode: true, allowEmpty: false),
-                  )
-                  .toList()
-                  .toForm(explode: true, allowEmpty: false),
-            ));
-            return result.map((e) => '${e.name}=${e.value}').join('&');
-          }
-        ''';
-
       final queryParameters =
           <({String normalizedName, QueryParameterObject parameter})>[
             (normalizedName: 'matrix', parameter: queryParam),
           ];
+
+      const expectedMethod = r'''
+          String _queryParameters({required List<List<AnonymousModel>> matrix}) {
+            final entries = <ParameterEntry>[];
+            if (matrix.isNotEmpty) {
+              throw EncodingException(
+                'Form encoding only supports lists of simple types',
+              );
+            }
+            entries.add((
+              name: r'matrix',
+              value: <String>[].toForm(explode: true, allowEmpty: false),
+            ));
+            return entries.map((e) => '${e.name}=${e.value}').join('&');
+          }
+        ''';
 
       final method = generator.generateQueryParametersMethod(
         operation,
@@ -1258,6 +1223,665 @@ void main() {
       expect(method, isA<Method>());
       expect(method.optionalParameters.first.named, isTrue);
       expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+     test(
+       'generates code that throws when non-list type used with '
+       'delimited encoding',
+      () {
+        final stringModel = StringModel(context: context);
+
+        final stringParam = QueryParameterObject(
+          name: 'name',
+          rawName: 'name',
+          description: 'Name parameter',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: false,
+          model: stringModel,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getData',
+          context: context,
+          summary: 'Get data',
+          description: 'Gets data',
+          tags: const {},
+          isDeprecated: false,
+          path: '/data',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {stringParam},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
+          String _queryParameters({required String name}) {
+            final entries = <ParameterEntry>[];
+            throw EncodingException(
+              r'Parameter name: spaceDelimited encoding only supports list types',
+            );
+            return entries.map((e) => '${e.name}=${e.value}').join('&');
+          }
+        ''';
+
+        final queryParameters =
+            <({String normalizedName, QueryParameterObject parameter})>[
+              (normalizedName: 'name', parameter: stringParam),
+            ];
+
+        final method = generator.generateQueryParametersMethod(
+          operation,
+          queryParameters,
+        );
+
+        expect(method, isA<Method>());
+        expect(method.optionalParameters.first.named, isTrue);
+        expect(method.optionalParameters.first.required, isTrue);
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+     test(
+       'generates code for list of oneOf with mixed types requiring '
+       'runtime check',
+      () {
+        final stringModel = StringModel(context: context);
+        final classModel = ClassModel(context: context, properties: const []);
+
+        final oneOfModel = OneOfModel(
+          context: context,
+          models: {
+            (discriminatorValue: 'string', model: stringModel),
+            (discriminatorValue: 'object', model: classModel),
+          },
+          name: 'MixedOneOf',
+          discriminator: 'type',
+        );
+
+        final oneOfListModel = ListModel(
+          context: context,
+          content: oneOfModel,
+        );
+
+        final oneOfListParam = QueryParameterObject(
+          name: 'values',
+          rawName: 'values',
+          description: 'Value list',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          allowReserved: false,
+          model: oneOfListModel,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getValues',
+          context: context,
+          summary: 'Get values',
+          description: 'Gets values',
+          tags: const {},
+          isDeprecated: false,
+          path: '/data',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {oneOfListParam},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+          securitySchemes: const {},
+        );
+
+         const expectedMethod = r'''
+           String _queryParameters({required List<MixedOneOf> values}) {
+             final entries = <ParameterEntry>[];
+             for (final item in values) {
+               if (item.currentEncodingShape != EncodingShape.simple) {
+                 throw EncodingException(
+                   r'Parameter values: pipeDelimited encoding requires simple encoding shape',
+                 );
+               }
+             }
+             for (final value in values
+                 .map((item) => item.uriEncode(allowEmpty: false))
+                 .toList()
+                 .toPipeDelimited(
+                   explode: false,
+                   allowEmpty: false,
+                   alreadyEncoded: true,
+                 )) {
+               entries.add((name: r'values', value: value));
+             }
+             return entries.map((e) => '${e.name}=${e.value}').join('&');
+           }
+         ''';
+
+        final queryParameters =
+            <({String normalizedName, QueryParameterObject parameter})>[
+              (normalizedName: 'values', parameter: oneOfListParam),
+            ];
+
+        final method = generator.generateQueryParametersMethod(
+          operation,
+          queryParameters,
+        );
+
+        expect(method, isA<Method>());
+        expect(method.optionalParameters.first.named, isTrue);
+        expect(method.optionalParameters.first.required, isTrue);
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+     test(
+       'generates code for list of oneOf with explode=true',
+      () {
+        final stringModel = StringModel(context: context);
+        final intModel = IntegerModel(context: context);
+
+        final oneOfModel = OneOfModel(
+          context: context,
+          models: {
+            (discriminatorValue: 'string', model: stringModel),
+            (discriminatorValue: 'int', model: intModel),
+          },
+          name: 'SimpleOneOf',
+          discriminator: 'type',
+        );
+
+        final oneOfListModel = ListModel(
+          context: context,
+          content: oneOfModel,
+        );
+
+        final oneOfListParam = QueryParameterObject(
+          name: 'items',
+          rawName: 'items',
+          description: 'Item list',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: true,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: false,
+          model: oneOfListModel,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getItems',
+          context: context,
+          summary: 'Get items',
+          description: 'Gets items',
+          tags: const {},
+          isDeprecated: false,
+          path: '/data',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {oneOfListParam},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+          securitySchemes: const {},
+        );
+
+         const expectedMethod = r'''
+           String _queryParameters({required List<SimpleOneOf> items}) {
+             final entries = <ParameterEntry>[];
+             for (final item in items) {
+               if (item.currentEncodingShape != EncodingShape.simple) {
+                 throw EncodingException(
+                   r'Parameter items: spaceDelimited encoding requires simple encoding shape',
+                 );
+               }
+               entries.add((name: r'items', value: item.uriEncode(allowEmpty: false)));
+             }
+             return entries.map((e) => '${e.name}=${e.value}').join('&');
+           }
+         ''';
+
+        final queryParameters =
+            <({String normalizedName, QueryParameterObject parameter})>[
+              (normalizedName: 'items', parameter: oneOfListParam),
+            ];
+
+        final method = generator.generateQueryParametersMethod(
+          operation,
+          queryParameters,
+        );
+
+        expect(method, isA<Method>());
+        expect(method.optionalParameters.first.named, isTrue);
+        expect(method.optionalParameters.first.required, isTrue);
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+     test(
+       'generates code that throws when list of class models used with '
+       'delimited encoding',
+      () {
+        final classModel = ClassModel(context: context, properties: const []);
+        final classListModel = ListModel(
+          context: context,
+          content: classModel,
+        );
+
+        final classListParam = QueryParameterObject(
+          name: 'filters',
+          rawName: 'filters',
+          description: 'Filter list',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: false,
+          model: classListModel,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getFiltered',
+          context: context,
+          summary: 'Get filtered',
+          description: 'Gets filtered data',
+          tags: const {},
+          isDeprecated: false,
+          path: '/data',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {classListParam},
+          pathParameters: const {},
+          responses: const {},
+          requestBody: null,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
+          String _queryParameters({required List<AnonymousModel> filters}) {
+            final entries = <ParameterEntry>[];
+            throw EncodingException(
+              r'Parameter filters: spaceDelimited encoding does not support list content type',
+            );
+            return entries.map((e) => '${e.name}=${e.value}').join('&');
+          }
+        ''';
+
+        final queryParameters =
+            <({String normalizedName, QueryParameterObject parameter})>[
+              (normalizedName: 'filters', parameter: classListParam),
+            ];
+
+        final method = generator.generateQueryParametersMethod(
+          operation,
+          queryParameters,
+        );
+
+        expect(method, isA<Method>());
+        expect(method.optionalParameters.first.named, isTrue);
+        expect(method.optionalParameters.first.required, isTrue);
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(expectedMethod),
+        );
+      },
+    );
+
+    test('handles parameter names that are Dart keywords', () {
+      final parameter = QueryParameterObject(
+        name: r'$class',
+        rawName: 'class',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isDeprecated: false,
+        description: null,
+        explode: false,
+        allowEmptyValue: false,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getData',
+        context: context,
+        summary: 'Get data',
+        description: 'Gets data by class',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {parameter},
+        pathParameters: const {},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String _queryParameters({required List<String> $class}) {
+          final entries = <ParameterEntry>[];
+          for (final value in $class.toSpaceDelimited(
+            explode: false,
+            allowEmpty: false,
+          )) {
+            entries.add((name: r'class', value: value));
+          }
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: r'$class', parameter: parameter),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.name, r'$class');
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('handles enum parameter names that are Dart keywords', () {
+      final parameter = QueryParameterObject(
+        name: r'$enum',
+        rawName: 'enum',
+        model: ListModel(
+          content: EnumModel(
+            values: const {'a', 'b'},
+            isNullable: false,
+            context: context,
+          ),
+          context: context,
+        ),
+        isRequired: true,
+        isDeprecated: false,
+        description: null,
+        explode: false,
+        allowEmptyValue: false,
+        encoding: QueryParameterEncoding.pipeDelimited,
+        allowReserved: false,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getData',
+        context: context,
+        summary: 'Get data',
+        description: 'Gets data by enum',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {parameter},
+        pathParameters: const {},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String _queryParameters({required List<AnonymousModel> $enum}) {
+          final entries = <ParameterEntry>[];
+          for (final value in $enum
+              .map((e) => e.uriEncode(allowEmpty: false, useQueryComponent: true))
+              .toList()
+              .toPipeDelimited(
+                explode: false,
+                allowEmpty: false,
+                alreadyEncoded: true,
+              )) {
+            entries.add((name: r'enum', value: value));
+          }
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: r'$enum', parameter: parameter),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.name, r'$enum');
+      expect(method.optionalParameters.first.named, isTrue);
+      expect(method.optionalParameters.first.required, isTrue);
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('uses raw name in error messages for keyword parameters', () {
+      final parameter = QueryParameterObject(
+        name: r'$class',
+        rawName: 'class',
+        model: StringModel(context: context),
+        isRequired: true,
+        isDeprecated: false,
+        description: null,
+        explode: false,
+        allowEmptyValue: false,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getData',
+        context: context,
+        summary: 'Get data',
+        description: 'Gets data',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {parameter},
+        pathParameters: const {},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String _queryParameters({required String $class}) {
+          final entries = <ParameterEntry>[];
+          throw EncodingException(
+            r'Parameter $class: spaceDelimited encoding only supports list types',
+          );
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: r'$class', parameter: parameter),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.name, r'$class');
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('uses raw name in error messages for unsupported list content', () {
+      final parameter = QueryParameterObject(
+        name: r'$void',
+        rawName: 'void',
+        model: ListModel(
+          content: ClassModel(
+            name: 'SomeClass',
+            properties: const [],
+            context: context,
+          ),
+          context: context,
+        ),
+        isRequired: true,
+        isDeprecated: false,
+        description: null,
+        explode: false,
+        allowEmptyValue: false,
+        encoding: QueryParameterEncoding.pipeDelimited,
+        allowReserved: false,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getData',
+        context: context,
+        summary: 'Get data',
+        description: 'Gets data',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {parameter},
+        pathParameters: const {},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String _queryParameters({required List<SomeClass> $void}) {
+          final entries = <ParameterEntry>[];
+          throw EncodingException(
+            r'Parameter $void: pipeDelimited encoding does not support list content type',
+          );
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: r'$void', parameter: parameter),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.name, r'$void');
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('handles raw names with special characters like dollar signs', () {
+      final parameter = QueryParameterObject(
+        name: r'$price',
+        rawName: r'$price',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isDeprecated: false,
+        description: null,
+        explode: false,
+        allowEmptyValue: false,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getData',
+        context: context,
+        summary: 'Get data',
+        description: 'Gets data with price',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {parameter},
+        pathParameters: const {},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String _queryParameters({required List<String> $price}) {
+          final entries = <ParameterEntry>[];
+          for (final value in $price.toSpaceDelimited(
+            explode: false,
+            allowEmpty: false,
+          )) {
+            entries.add((name: r'$price', value: value));
+          }
+          return entries.map((e) => '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: r'$price', parameter: parameter),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(method, isA<Method>());
+      expect(method.optionalParameters.first.name, r'$price');
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
         collapseWhitespace(expectedMethod),

@@ -227,7 +227,8 @@ class RequestParameterImporter {
               rawName: parameter.name,
               description: parameter.description,
               encoding: _queryEncoding(parameter.style),
-              explode: parameter.explode ?? false,
+              explode: parameter.explode ??
+                  _defaultExplodeForQueryParameter(parameter.style),
               model: model,
               isRequired: parameter.isRequired ?? false,
               isDeprecated: parameter.isDeprecated ?? false,
@@ -289,6 +290,10 @@ class RequestParameterImporter {
           'pipeDelimited, deepObject.',
         );
     }
+  }
+
+  bool _defaultExplodeForQueryParameter(SerializationStyle? style) {
+    return style == SerializationStyle.form || style == null;
   }
 
   core.PathParameterEncoding _pathEncoding(SerializationStyle? style) {

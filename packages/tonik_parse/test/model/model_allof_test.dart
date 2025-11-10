@@ -144,7 +144,36 @@ void main() {
     expect(anonymousClass.properties.first.name, 'foo');
     expect(anonymousClass.properties.first.model, isA<StringModel>());
 
-    // Verify the anonymous class model is added to the models set
     expect(api.models, contains(anonymousClass));
+  });
+
+  test('Imports allOf with bare type strings as type references', () {
+    const fileContent = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'AllOfDirectPrimitive': {
+            'allOf': ['integer', 'number'],
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(fileContent);
+
+    final allOfDirectPrimitive = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'AllOfDirectPrimitive',
+    );
+
+    expect(allOfDirectPrimitive, isA<AllOfModel>());
+    expect((allOfDirectPrimitive as AllOfModel).models, hasLength(2));
+
+    final integerModel = allOfDirectPrimitive.models.first;
+    expect(integerModel, isA<IntegerModel>());
+
+    final numberModel = allOfDirectPrimitive.models.last;
+    expect(numberModel, isA<NumberModel>());
   });
 }

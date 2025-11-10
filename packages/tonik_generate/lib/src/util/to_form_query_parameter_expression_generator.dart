@@ -1,20 +1,82 @@
+import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
 
-/// Creates a Dart expression string that correctly serializes a query parameter
-/// to its form-encoded representation.
-String buildToFormQueryParameterExpression(
+/// Creates code blocks that serialize a query parameter to its form-encoded
+/// representation.
+List<Code> buildToFormQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter, {
   bool explode = false,
   bool allowEmpty = true,
 }) {
   final model = parameter.model;
+
+  if (model is ListModel) {
+    final contentShape = model.content.encodingShape;
+
+    if (contentShape == EncodingShape.complex) {
+      return [
+        Code('if ($parameterName.isNotEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Form encoding only supports lists of simple types',
+        ).statement,
+        const Code('}'),
+        Code("entries.add((name: r'${parameter.rawName}', value: <"),
+        refer('String', 'dart:core').code,
+        Code(
+          '>[].toForm(explode: $explode, allowEmpty: $allowEmpty),),);',
+        ),
+      ];
+    }
+
+    if (contentShape == EncodingShape.mixed) {
+      final suffix = _getFormSerializationSuffix(
+        model,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+      final valueExpression =
+          suffix == null ? parameterName : '$parameterName$suffix';
+
+      return [
+        Code('for (final item in $parameterName) {'),
+        const Code('if (item.currentEncodingShape != '),
+        refer('EncodingShape', 'package:tonik_util/tonik_util.dart').code,
+        const Code('.simple) {'),
+        generateEncodingExceptionExpression(
+          'Form encoding only supports lists of simple types',
+        ).statement,
+        const Code('}'),
+        const Code('}'),
+        Code(
+          'entries.add(('
+          "name: r'${parameter.rawName}', "
+          'value: $valueExpression, '
+          '),);',
+        ),
+      ];
+    }
+  }
+
+  // For all other types, generate simple expression.
   final suffix = _getFormSerializationSuffix(
     model,
     explode: explode,
     allowEmpty: allowEmpty,
   );
-  return suffix == null ? parameterName : '$parameterName$suffix';
+  final valueExpression =
+      suffix == null ? parameterName : '$parameterName$suffix';
+
+  return [
+    Code(
+      'entries.add(('
+      "name: r'${parameter.rawName}', "
+      'value: $valueExpression, '
+      '),);',
+    ),
+  ];
 }
 
 String? _getFormSerializationSuffix(
@@ -25,32 +87,27 @@ String? _getFormSerializationSuffix(
   final paramString = 'explode: $explode, allowEmpty: $allowEmpty';
 
   return switch (model) {
-    // Primitive types that have toForm extensions:
     StringModel() ||
     BooleanModel() ||
     DateTimeModel() ||
     DecimalModel() ||
     UriModel() ||
-    DateModel() => '.toForm($paramString)',
-
-    // Numeric primitives that need toString() for lists:
-    IntegerModel() || DoubleModel() || NumberModel() => '.toForm($paramString)',
-
-    // Complex types that should have toForm methods:
+    DateModel() ||
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() ||
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
     AnyOfModel() => '.toForm($paramString)',
 
-    // Lists need special handling:
     ListModel() => _handleListExpression(
       model.content,
       explode: explode,
       allowEmpty: allowEmpty,
     ),
 
-    // Alias models delegate to their underlying type:
     AliasModel() => _getFormSerializationSuffix(
       model.model,
       explode: explode,
@@ -71,38 +128,18 @@ String? _handleListExpression(
 }) {
   final paramString = 'explode: $explode, allowEmpty: $allowEmpty';
 
-  // Handle different content models:
   return switch (contentModel) {
-    ListModel() => () {
-      // Nested list - recursively handle inner list:
-      final innerSuffix = _handleListExpression(
-        contentModel.content,
-        explode: explode,
-        allowEmpty: allowEmpty,
-      );
-      final elementMapBody = '(e) => e$innerSuffix';
-      return '.map($elementMapBody).toList().toForm($paramString)';
-    }(),
-
-    // For List<String>, use the extension directly:
     StringModel() => '.toForm($paramString)',
 
-    // For numeric primitives (int, double, num), convert to strings first:
     IntegerModel() ||
     DoubleModel() ||
-    NumberModel() => '.map((e) => e.toString()).toList().toForm($paramString)',
-
-    // For boolean, convert to string:
-    BooleanModel() => '.map((e) => e.toString()).toList().toForm($paramString)',
-
-    // For complex types (DateTime, BigDecimal, Uri, Date, Enum, Class, etc.),
-    // use toForm method:
+    NumberModel() ||
+    BooleanModel() ||
     DateTimeModel() ||
     DecimalModel() ||
     UriModel() ||
     DateModel() ||
     EnumModel() ||
-    ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
     AnyOfModel() => () {
@@ -115,7 +152,6 @@ String? _handleListExpression(
       return '.map($elementMapBody).toList().toForm($paramString)';
     }(),
 
-    // For alias models, delegate to the underlying type:
     AliasModel() => _handleListExpression(
       contentModel.model,
       explode: explode,

@@ -164,7 +164,7 @@ void main() {
     expect(parameter.isDeprecated, isFalse);
     expect(parameter.allowEmptyValue, isFalse);
     expect(parameter.allowReserved, isFalse);
-    expect(parameter.explode, isFalse);
+    expect(parameter.explode, isTrue);
     expect(parameter.model, isA<ClassModel>());
     expect(parameter.encoding, QueryParameterEncoding.form);
 
@@ -200,5 +200,163 @@ void main() {
         .firstWhereOrNull((p) => p.name == 'headerReference');
 
     expect(parameter, isNull);
+  });
+
+  group('default explode values', () {
+    test('form style defaults to explode true', () {
+      const fileContent = {
+        'openapi': '3.0.4',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'parameters': {
+            'formParam': {
+              'name': 'formParam',
+              'in': 'query',
+              'style': 'form',
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+      };
+      final api = Importer().import(fileContent);
+      final parameter = api.queryParameters
+          .whereType<QueryParameterObject>()
+          .firstWhere((p) => p.name == 'formParam');
+
+      expect(parameter.explode, isTrue);
+    });
+
+    test('form style with explicit explode false', () {
+      const fileContent = {
+        'openapi': '3.0.4',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'parameters': {
+            'formParam': {
+              'name': 'formParam',
+              'in': 'query',
+              'style': 'form',
+              'explode': false,
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+      };
+      final api = Importer().import(fileContent);
+      final parameter = api.queryParameters
+          .whereType<QueryParameterObject>()
+          .firstWhere((p) => p.name == 'formParam');
+
+      expect(parameter.explode, isFalse);
+    });
+
+    test('spaceDelimited style defaults to explode false', () {
+      const fileContent = {
+        'openapi': '3.0.4',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'parameters': {
+            'spaceParam': {
+              'name': 'spaceParam',
+              'in': 'query',
+              'style': 'spaceDelimited',
+              'schema': {
+                'type': 'array',
+                'items': {'type': 'string'},
+              },
+            },
+          },
+        },
+      };
+      final api = Importer().import(fileContent);
+      final parameter = api.queryParameters
+          .whereType<QueryParameterObject>()
+          .firstWhere((p) => p.name == 'spaceParam');
+
+      expect(parameter.explode, isFalse);
+    });
+
+    test('pipeDelimited style defaults to explode false', () {
+      const fileContent = {
+        'openapi': '3.0.4',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'parameters': {
+            'pipeParam': {
+              'name': 'pipeParam',
+              'in': 'query',
+              'style': 'pipeDelimited',
+              'schema': {
+                'type': 'array',
+                'items': {'type': 'string'},
+              },
+            },
+          },
+        },
+      };
+      final api = Importer().import(fileContent);
+      final parameter = api.queryParameters
+          .whereType<QueryParameterObject>()
+          .firstWhere((p) => p.name == 'pipeParam');
+
+      expect(parameter.explode, isFalse);
+    });
+
+    test('deepObject style defaults to explode false', () {
+      const fileContent = {
+        'openapi': '3.0.4',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'parameters': {
+            'deepParam': {
+              'name': 'deepParam',
+              'in': 'query',
+              'style': 'deepObject',
+              'schema': {
+                'type': 'object',
+                'properties': {
+                  'key': {'type': 'string'},
+                },
+              },
+            },
+          },
+        },
+      };
+      final api = Importer().import(fileContent);
+      final parameter = api.queryParameters
+          .whereType<QueryParameterObject>()
+          .firstWhere((p) => p.name == 'deepParam');
+
+      expect(parameter.explode, isFalse);
+    });
+
+    test('no style specified defaults to form with explode true', () {
+      const fileContent = {
+        'openapi': '3.0.4',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'parameters': {
+            'defaultParam': {
+              'name': 'defaultParam',
+              'in': 'query',
+              'schema': {'type': 'string'},
+            },
+          },
+        },
+      };
+      final api = Importer().import(fileContent);
+      final parameter = api.queryParameters
+          .whereType<QueryParameterObject>()
+          .firstWhere((p) => p.name == 'defaultParam');
+
+      expect(parameter.encoding, QueryParameterEncoding.form);
+      expect(parameter.explode, isTrue);
+    });
   });
 }

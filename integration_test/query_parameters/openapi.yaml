@@ -1,0 +1,1255 @@
+openapi: 3.0.4
+info:
+  title: Query Parameters API
+  description: OpenAPI specification showcasing query parameters
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: query
+    description: Operations demonstrating query parameters
+
+paths:
+  /form-primitive:
+    get:
+      operationId: testFormPrimitive
+      tags:
+        - query
+      summary: Test form query parameter
+      description: Demonstrates form query parameter
+      parameters:
+        - name: integer
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: integer
+        - name: double
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: number
+            format: double
+        - name: number
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: number
+            format: number
+        - name: string
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+        - name: boolean
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: boolean
+        - name: datetime
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+            format: date-time
+        - name: date
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+            format: date
+        - name: decimal
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+            format: decimal
+      responses:
+        '204':
+          description: OK
+
+  /form-complex:
+    get:
+      operationId: testFormComplex
+      tags:
+        - query
+      summary: Test form complex query parameter
+      description: Demonstrates form complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+  
+  /form-complex-explode:
+    get:
+      operationId: testFormComplexExplode
+      tags:
+        - query
+      summary: Test form complex query parameter
+      description: Demonstrates form complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /form-list:
+    get:
+      operationId: testFormList
+      tags:
+        - query
+      summary: Test form list query parameter
+      description: Demonstrates form list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+        - name: listOneOfComplexMixed
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: '#/components/schemas/Class'
+                - type: integer
+      responses:
+        '204':
+          description: OK
+
+  /form-list-explode:
+    get:
+      operationId: testFormListExplode
+      tags:
+        - query
+      summary: Test form list query parameter
+      description: Demonstrates form list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /spaceDelimited-primitive:
+    get:
+      operationId: testSpaceDelimitedPrimitive
+      tags:
+        - query
+      summary: Test spaceDelimited query parameter
+      description: Demonstrates spaceDelimited query parameter
+      parameters:
+        - name: integer
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: integer
+        - name: double
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: number
+            format: double
+        - name: number
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: number
+            format: number
+        - name: string
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: string
+        - name: boolean
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: boolean
+        - name: datetime
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: string
+            format: date-time
+        - name: date
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: string
+            format: date
+        - name: decimal
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: string
+            format: decimal
+      responses:
+        '204':
+          description: OK
+
+  /spaceDelimited-complex:
+    get:
+      operationId: testSpaceDelimitedComplex
+      tags:
+        - query
+      summary: Test spaceDelimited complex query parameter
+      description: Demonstrates spaceDelimited complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+  
+  /spaceDelimited-complex-explode:
+    get:
+      operationId: testSpaceDelimitedComplexExplode
+      tags:
+        - query
+      summary: Test spaceDelimited complex query parameter
+      description: Demonstrates spaceDelimited complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /spaceDelimited-list:
+    get:
+      operationId: testSpaceDelimitedList
+      tags:
+        - query
+      summary: Test spaceDelimited list query parameter
+      description: Demonstrates spaceDelimited list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+        - name: listOneOfComplexMixed
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: '#/components/schemas/Class'
+                - type: integer
+      responses:
+        '204':
+          description: OK
+
+  /spaceDelimited-list-explode:
+    get:
+      operationId: testSpaceDelimitedListExplode
+      tags:
+        - query
+      summary: Test spaceDelimited list query parameter
+      description: Demonstrates spaceDelimited list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /pipeDelimited-primitive:
+    get:
+      operationId: testPipeDelimitedPrimitive
+      tags:
+        - query
+      summary: Test pipeDelimited query parameter
+      description: Demonstrates pipeDelimited query parameter
+      parameters:
+        - name: integer
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: integer
+        - name: double
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: number
+            format: double
+        - name: number
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: number
+            format: number
+        - name: string
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: string
+        - name: boolean
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: boolean
+        - name: datetime
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: string
+            format: date-time
+        - name: date
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: string
+            format: date
+        - name: decimal
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: string
+            format: decimal
+      responses:
+        '204':
+          description: OK
+
+  /pipeDelimited-complex:
+    get:
+      operationId: testPipeDelimitedComplex
+      tags:
+        - query
+      summary: Test pipeDelimited complex query parameter
+      description: Demonstrates pipeDelimited complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+  
+  /pipeDelimited-complex-explode:
+    get:
+      operationId: testPipeDelimitedComplexExplode
+      tags:
+        - query
+      summary: Test pipeDelimited complex query parameter
+      description: Demonstrates pipeDelimited complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /pipeDelimited-list:
+    get:
+      operationId: testPipeDelimitedList
+      tags:
+        - query
+      summary: Test pipeDelimited list query parameter
+      description: Demonstrates pipeDelimited list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+        - name: listOneOfComplexMixed
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: '#/components/schemas/Class'
+                - type: integer
+      responses:
+        '204':
+          description: OK
+
+  /pipeDelimited-list-explode:
+    get:
+      operationId: testPipeDelimitedListExplode
+      tags:
+        - query
+      summary: Test pipeDelimited list query parameter
+      description: Demonstrates pipeDelimited list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-primitive:
+    get:
+      operationId: testDeepObjectPrimitive
+      tags:
+        - query
+      summary: Test deepObject query parameter
+      description: Demonstrates deepObject query parameter
+      parameters:
+        - name: integer
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: integer
+        - name: double
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: number
+            format: double
+        - name: number
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: number
+            format: number
+        - name: string
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+        - name: boolean
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: boolean
+        - name: datetime
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: date-time
+        - name: date
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: date
+        - name: decimal
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: decimal
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-complex:
+    get:
+      operationId: testDeepObjectComplex
+      tags:
+        - query
+      summary: Test deepObject complex query parameter
+      description: Demonstrates deepObject complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+  
+  /deepObject-complex-explode:
+    get:
+      operationId: testDeepObjectComplexExplode
+      tags:
+        - query
+      summary: Test deepObject complex query parameter
+      description: Demonstrates deepObject complex query parameter
+      parameters:
+        - name: class
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Class'
+        - name: classNested
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassNested'
+        - name: enum
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Enum'
+        - name: classAlias
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ClassAlias'
+        - name: anyOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+        - name: anyOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+        - name: oneOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+        - name: oneOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+        - name: allOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+        - name: allOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOfComplex'
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-list:
+    get:
+      operationId: testDeepObjectList
+      tags:
+        - query
+      summary: Test deepObject list query parameter
+      description: Demonstrates deepObject list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+        - name: listOneOfComplexMixed
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: array
+            items:
+              oneOf:
+                - $ref: '#/components/schemas/Class'
+                - type: integer
+      responses:
+        '204':
+          description: OK
+
+  /deepObject-list-explode:
+    get:
+      operationId: testDeepObjectListExplode
+      tags:
+        - query
+      summary: Test deepObject list query parameter
+      description: Demonstrates deepObject list query parameter
+      parameters:
+        - name: listString
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: listOneOfPrimitive
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfPrimitive'
+        - name: listOneOfComplex
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '204':
+          description: OK
+
+components:
+  schemas:
+    Class:
+      type: object
+      required:
+        - name
+        - age
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+    ClassNested:
+      type: object
+      required:
+        - name
+        - age
+        - nested
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        nested:
+          $ref: '#/components/schemas/Class'
+    Enum:
+      type: string
+      enum:
+        - value1
+        - value2
+    ClassAlias:
+      $ref: '#/components/schemas/Class'
+    AnyOfPrimitive:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: boolean
+    AnyOfComplex:
+      anyOf:
+        - $ref: '#/components/schemas/Class'
+        - type: object
+          properties:
+            value:
+              type: string
+            amount:
+              type: integer
+    OneOfPrimitive:
+      oneOf:
+        - type: string
+        - type: integer
+        - type: boolean
+    OneOfComplex:
+      oneOf:
+        - $ref: '#/components/schemas/Class'
+        - type: object
+          properties:
+            value:
+              type: string
+            amount:
+              type: integer
+    AllOfPrimitive:
+      allOf:
+        - type: string
+        - type: integer
+    AllOfComplex:
+      allOf:
+        - $ref: '#/components/schemas/Class'
+        - type: object
+          properties:
+            value:
+              type: string
+            amount:
+              type: integer

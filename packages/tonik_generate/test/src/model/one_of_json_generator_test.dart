@@ -63,8 +63,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              ResultSuccess(:final value) => (value, 'success'),
               ResultError(:final value) => (value, 'error'),
+              ResultSuccess(:final value) => (value, 'success'),
             };
 
             return json;
@@ -92,8 +92,8 @@ void main() {
         const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
             return switch (json) {
-              String s => ResultSuccess(s),
               int s => ResultError(s),
+              String s => ResultSuccess(s),
               _ => throw JsonDecodingException(
                 'Invalid JSON type for Result: ${json.runtimeType}',
               ),
@@ -163,8 +163,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              ResultSuccess(:final value) => (value.toJson(), 'success'),
               ResultError(:final value) => (value.toJson(), 'error'),
+              ResultSuccess(:final value) => (value.toJson(), 'success'),
             };
 
             if (discriminator != null && json is Map<String, Object?>) {
@@ -198,8 +198,8 @@ void main() {
             final discriminator = json is Map<String, Object?> ? json['type'] : null;
 
             final result = switch (discriminator) {
-              'success' => ResultSuccess(Success.fromJson(json)),
               'error' => ResultError(Error.fromJson(json)),
+              'success' => ResultSuccess(Success.fromJson(json)),
               _ => null,
             };
 
@@ -278,9 +278,9 @@ void main() {
           const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
+              ResultError(:final value) => (value.toJson(), 'error'),
               ResultSuccess(:final value) => (value.toJson(), null),
               ResultString(:final value) => (value, null),
-              ResultError(:final value) => (value.toJson(), 'error'),
             };
 
             if (discriminator != null && json is Map<String, Object?>) {
@@ -368,8 +368,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              TimestampValueTimestamp(:final value) => ( value.toTimeZonedIso8601String(), 'timestamp', ),
               TimestampValueString(:final value) => (value, 'string'),
+              TimestampValueTimestamp(:final value) => ( value.toTimeZonedIso8601String(), 'timestamp', ),
             };
 
             return json;
@@ -485,8 +485,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              UriValueUri(:final value) => (value.toString(), 'uri'),
               UriValueString(:final value) => (value, 'string'),
+              UriValueUri(:final value) => (value.toString(), 'uri'),
             };
 
             return json;
@@ -584,8 +584,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              UserValueUser(:final value) => (value.toJson(), 'user'),
               UserValueString(:final value) => (value, 'string'),
+              UserValueUser(:final value) => (value.toJson(), 'user'),
             };
 
             return json;
@@ -806,8 +806,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              FlexibleValueFlexible(:final value) => (value.toJson(), 'flexible'),
               FlexibleValueBoolean(:final value) => (value, 'boolean'),
+              FlexibleValueFlexible(:final value) => (value.toJson(), 'flexible'),
             };
 
             return json;
@@ -851,8 +851,8 @@ void main() {
         const expectedMethod = '''
           Object? toJson() {
             final (dynamic json, String? discriminator) = switch (this) {
-              IdentifierValueUserId(:final value) => (value, 'userId'),
               IdentifierValueNumber(:final value) => (value, 'number'),
+              IdentifierValueUserId(:final value) => (value, 'userId'),
             };
 
             return json;

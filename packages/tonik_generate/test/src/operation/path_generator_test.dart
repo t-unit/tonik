@@ -1,5 +1,4 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -12,11 +11,6 @@ void main() {
   late DartEmitter emitter;
   late NameManager nameManager;
   late NameGenerator nameGenerator;
-
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -69,7 +63,7 @@ void main() {
     expect(method.requiredParameters, isEmpty);
     expect(method.optionalParameters, isEmpty);
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -166,7 +160,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toSimple(explode: false, allowEmpty: false)];
+          return [r'users', ids.toSimple(explode: false, allowEmpty: false), ];
         }
       ''';
 
@@ -189,7 +183,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -230,7 +224,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toLabel(explode: false, allowEmpty: false)];
+          return [r'users', ids.toLabel(explode: false, allowEmpty: false), ];
         }
       ''';
 
@@ -253,7 +247,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -294,11 +288,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          const matrixEncoder = MatrixEncoder();
-          return [ 
-            r'users', 
-            matrixEncoder.encode(ids, explode: false, allowEmpty: false), 
-          ];
+          return [r'users', ids.toMatrix('ids', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -321,7 +311,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -359,7 +349,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required AnonymousModel filter}) {
-          return [r'users', filter.toSimple(explode: true, allowEmpty: false)];
+          return [r'users', filter.toSimple(explode: true, allowEmpty: false), ];
         }
       ''';
 
@@ -382,7 +372,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -420,7 +410,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required AnonymousModel filter}) {
-          return [r'users', filter.toSimple(explode: true, allowEmpty: true)];
+          return [r'users', filter.toSimple(explode: true, allowEmpty: true), ];
         }
       ''';
 
@@ -443,7 +433,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -509,18 +499,8 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({
-          required String userId,
-          required String type,
-          required List<String> roles,
-        }) {
-          const matrixEncoder = MatrixEncoder();
-          return [
-            r'users',
-            userId.toSimple(explode: false, allowEmpty: false),
-            type.toLabel(explode: false, allowEmpty: false),
-            matrixEncoder.encode(roles, explode: false, allowEmpty: false),
-          ];
+        List<String> _path({required String userId, required String type, required List<String> roles, }) {
+          return [r'users', userId.toSimple(explode: false, allowEmpty: false), type.toLabel(explode: false, allowEmpty: false), roles.toMatrix('roles', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -545,7 +525,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -629,20 +609,8 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({
-          required AnonymousModel role,
-          required AnonymousModel2 filter,
-          required OneOfValue id,
-        }) {
-          const matrixEncoder = MatrixEncoder();
-          return [
-            r'users',
-            role.toSimple(explode: false, allowEmpty: false),
-            r'filter',
-            matrixEncoder.encode(filter.toJson(), explode: true, allowEmpty: false),
-            r'id',
-            id.toLabel(explode: false, allowEmpty: false),
-          ];
+        List<String> _path({required AnonymousModel role, required AnonymousModel2 filter, required OneOfValue id, }) {
+          return [r'users', role.toSimple(explode: false, allowEmpty: false), r'filter', filter.toMatrix('filter', explode: true, allowEmpty: false, ), r'id', id.toLabel(explode: false, allowEmpty: false), ];
         }
       ''';
 
@@ -667,7 +635,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -717,14 +685,8 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({required String animalId, required String id}) {
-          return [ 
-            r'images', 
-            id.toSimple(explode: false, allowEmpty: false), 
-            r'animals', 
-            animalId.toSimple(explode: false, allowEmpty: false), 
-            r'thumbs', 
-          ];
+        List<String> _path({required String animalId, required String id, }) {
+          return [r'images', id.toSimple(explode: false, allowEmpty: false), r'animals', animalId.toSimple(explode: false, allowEmpty: false), r'thumbs', ];
         }
       ''';
 
@@ -748,7 +710,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -786,12 +748,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String user}) {
-          return [ 
-            r'users', 
-            user.toSimple(explode: false, allowEmpty: false), 
-            r'permissions', 
-            user.toSimple(explode: false, allowEmpty: false), 
-          ];
+          return [r'users', user.toSimple(explode: false, allowEmpty: false), r'permissions', user.toSimple(explode: false, allowEmpty: false), ];
         }
       ''';
 
@@ -814,7 +771,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -860,13 +817,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> colors}) {
-          return [ 
-            r'data', 
-            colors
-            .map((e) => e.toSimple(explode: true, allowEmpty: false))
-            .toList()
-            .toSimple(explode: true, allowEmpty: false), 
-          ];
+          return [r'data', colors.map((e) => e.toSimple(explode: true, allowEmpty: false)) .toList().toSimple(explode: true, allowEmpty: false), ];
         }
       ''';
 
@@ -891,7 +842,7 @@ void main() {
     expect(method.optionalParameters.first.named, isTrue);
     expect(method.optionalParameters.first.required, isTrue);
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -936,9 +887,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<List<AnonymousModel>> matrix}) {
-          throw EncodingException( 
-            'Simple encoding does not support list with complex elements for path parameter matrix',
-          );
+          throw EncodingException('Simple encoding does not support list with complex elements for path parameter matrix');
           return [r'data'];
         }
       ''';
@@ -964,7 +913,346 @@ void main() {
     expect(method.optionalParameters.first.named, isTrue);
     expect(method.optionalParameters.first.required, isTrue);
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('handles matrix encoding with list of strings', () {
+    final listModel = ListModel(
+      context: context,
+      content: StringModel(context: context),
+    );
+
+    final pathParam = PathParameterObject(
+      name: 'tags',
+      rawName: 'tags',
+      description: 'List of tags',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      encoding: PathParameterEncoding.matrix,
+      model: listModel,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getByTags',
+      context: context,
+      summary: 'Get by tags',
+      description: 'Gets data by tags',
+      tags: const {},
+      isDeprecated: false,
+      path: '/data{tags}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {pathParam},
+      responses: const {},
+      requestBody: null,
+      securitySchemes: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required List<String> tags}) {
+          return [r'data', tags.toMatrix('tags', explode: false, allowEmpty: false, ), ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'tags', parameter: pathParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      method.returns,
+      TypeReference(
+        (b) =>
+            b
+              ..symbol = 'List'
+              ..url = 'dart:core'
+              ..types.add(refer('String', 'dart:core')),
+      ),
+    );
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('handles matrix encoding with list of integers', () {
+    final listModel = ListModel(
+      context: context,
+      content: IntegerModel(context: context),
+    );
+
+    final pathParam = PathParameterObject(
+      name: 'ids',
+      rawName: 'ids',
+      description: 'List of IDs',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: true,
+      encoding: PathParameterEncoding.matrix,
+      model: listModel,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getByIds',
+      context: context,
+      summary: 'Get by IDs',
+      description: 'Gets data by IDs',
+      tags: const {},
+      isDeprecated: false,
+      path: '/data{ids}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {pathParam},
+      responses: const {},
+      requestBody: null,
+      securitySchemes: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required List<int> ids}) {
+          return [r'data', ids.map((e) => e.uriEncode(allowEmpty: false)).toList().toMatrix('ids', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'ids', parameter: pathParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      method.returns,
+      TypeReference(
+        (b) =>
+            b
+              ..symbol = 'List'
+              ..url = 'dart:core'
+              ..types.add(refer('String', 'dart:core')),
+      ),
+    );
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('handles matrix encoding with list of enums', () {
+    final enumModel = EnumModel(
+      context: context,
+      values: const {'ACTIVE', 'INACTIVE', 'PENDING'},
+      isNullable: false,
+    );
+
+    final listModel = ListModel(context: context, content: enumModel);
+
+    final pathParam = PathParameterObject(
+      name: 'statuses',
+      rawName: 'statuses',
+      description: 'List of statuses',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: true,
+      encoding: PathParameterEncoding.matrix,
+      model: listModel,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getByStatuses',
+      context: context,
+      summary: 'Get by statuses',
+      description: 'Gets data by statuses',
+      tags: const {},
+      isDeprecated: false,
+      path: '/data{statuses}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {pathParam},
+      responses: const {},
+      requestBody: null,
+      securitySchemes: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required List<AnonymousModel> statuses}) {
+          return [r'data', statuses.map((e) => e.uriEncode(allowEmpty: false)).toList().toMatrix('statuses', explode: true, allowEmpty: false, alreadyEncoded: true, ), ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'statuses', parameter: pathParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      method.returns,
+      TypeReference(
+        (b) =>
+            b
+              ..symbol = 'List'
+              ..url = 'dart:core'
+              ..types.add(refer('String', 'dart:core')),
+      ),
+    );
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test(
+    'handles matrix encoding with list of class models throws at runtime',
+    () {
+      final classModel = ClassModel(context: context, properties: const []);
+      final listModel = ListModel(context: context, content: classModel);
+
+      final pathParam = PathParameterObject(
+        name: 'filters',
+        rawName: 'filters',
+        description: 'List of filters',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: PathParameterEncoding.matrix,
+        model: listModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getByFilters',
+        context: context,
+        summary: 'Get by filters',
+        description: 'Gets data by filters',
+        tags: const {},
+        isDeprecated: false,
+        path: '/data{filters}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        requestBody: null,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required List<AnonymousModel> filters}) {
+          return [r'data', filters.toMatrix('filters', explode: false, allowEmpty: false, ), ];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'filters', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(
+        method.returns,
+        TypeReference(
+          (b) =>
+              b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+        ),
+      );
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    },
+  );
+
+  test('handles matrix encoding with nested list throws at runtime', () {
+    final innerListModel = ListModel(
+      context: context,
+      content: StringModel(context: context),
+    );
+    final outerListModel = ListModel(
+      context: context,
+      content: innerListModel,
+    );
+
+    final pathParam = PathParameterObject(
+      name: 'matrix',
+      rawName: 'matrix',
+      description: 'Nested list',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      encoding: PathParameterEncoding.matrix,
+      model: outerListModel,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getByMatrix',
+      context: context,
+      summary: 'Get by matrix',
+      description: 'Gets data by nested list',
+      tags: const {},
+      isDeprecated: false,
+      path: '/data{matrix}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {pathParam},
+      responses: const {},
+      requestBody: null,
+      securitySchemes: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required List<List<String>> matrix}) {
+          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays');
+          return [r'data'];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'matrix', parameter: pathParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      method.returns,
+      TypeReference(
+        (b) =>
+            b
+              ..symbol = 'List'
+              ..url = 'dart:core'
+              ..types.add(refer('String', 'dart:core')),
+      ),
+    );
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });
@@ -1027,17 +1315,8 @@ void main() {
     );
 
     const expectedMethod = '''
-        List<String> _path({
-          required int integer,
-          required String string,
-          required bool boolean,
-        }) {
-          return [ 
-            r'primitive', 
-            integer.toSimple(explode: false, allowEmpty: false), 
-            string.toSimple(explode: false, allowEmpty: false), 
-            boolean.toSimple(explode: false, allowEmpty: false), 
-          ];
+        List<String> _path({required int integer, required String string, required bool boolean, }) {
+          return [r'primitive', integer.toSimple(explode: false, allowEmpty: false), string.toSimple(explode: false, allowEmpty: false), boolean.toSimple(explode: false, allowEmpty: false), ];
         }
       ''';
 
@@ -1062,7 +1341,7 @@ void main() {
       ),
     );
     expect(
-      collapseWhitespace(format(method.accept(emitter).toString())),
+      collapseWhitespace(method.accept(emitter).toString()),
       collapseWhitespace(expectedMethod),
     );
   });

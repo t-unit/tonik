@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
@@ -12,6 +13,10 @@ void main() {
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
+    final format =
+        DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
 
     setUp(() {
       nameGenerator = NameGenerator();
@@ -558,247 +563,6 @@ void main() {
       expect(callbackParam.toThis, isTrue);
     });
 
-    group('simpleProperties method', () {
-      test('generates simpleProperties method with primitive properties', () {
-        final model = ClassModel(
-          name: 'User',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
-              r'id': id.toSimple(explode: false, allowEmpty: allowEmpty),
-              if (name != null) r'name': name!.toSimple(explode: false, allowEmpty: allowEmpty),
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('throws exception for model with complex nested class', () {
-        final nestedModel = ClassModel(
-          name: 'Address',
-          properties: [
-            Property(
-              name: 'street',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = ClassModel(
-          name: 'User',
-          properties: [
-            Property(
-              name: 'address',
-              model: nestedModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            throw EncodingException('simpleProperties not supported for User: contains nested data');
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('throws exception for model with list properties', () {
-        final model = ClassModel(
-          name: 'User',
-          properties: [
-            Property(
-              name: 'tags',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            throw EncodingException('simpleProperties not supported for User: contains nested data');
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('handles empty model correctly', () {
-        final model = ClassModel(
-          name: 'Empty',
-          properties: const [],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) => <String, String>{};
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('generates simpleProperties with complex simple types', () {
-        final model = ClassModel(
-          name: 'Product',
-          properties: [
-            Property(
-              name: 'status',
-              model: EnumModel<String>(
-                values: const {'active', 'inactive'},
-                isNullable: false,
-                context: context,
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'created_at',
-              model: DateTimeModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'price',
-              model: DoubleModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'precise_value',
-              model: DecimalModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'release_date',
-              model: DateModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
-              r'status': status.toSimple(explode: false, allowEmpty: allowEmpty),
-              r'created_at': createdAt.toSimple(explode: false, allowEmpty: allowEmpty),
-              if (price != null) r'price': price!.toSimple(explode: false, allowEmpty: allowEmpty),
-              r'precise_value': preciseValue.toSimple(explode: false, allowEmpty: allowEmpty),
-              if (releaseDate != null) r'release_date': releaseDate!.toSimple(explode: false, allowEmpty: allowEmpty),
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('handles required nullable properties with allowEmpty=true', () {
-        final model = ClassModel(
-          name: 'RequiredNullableModel',
-          properties: [
-            Property(
-              name: 'nullable_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'nullable_count',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
-              if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
-              if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toSimple(explode: false, allowEmpty: allowEmpty) ?? '',
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-    });
-
     group('form encoding', () {
       test('generates fromForm constructor for simple properties', () {
         final model = ClassModel(
@@ -843,14 +607,108 @@ void main() {
         expect(fromFormConstructor.optionalParameters.first.named, isTrue);
       });
 
+    test(
+      'generates working fromForm constructor for list properties with '
+      'simple content',
+      () {
+        final model = ClassModel(
+          name: 'ModelWithSimpleList',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final generatedCode = format(result.accept(emitter).toString());
+
+        const expectedFromFormConstructor = '''
+factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
+  final values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: '&',
+    expectedKeys: {r'items'},
+    listKeys: {r'items'},
+    isFormStyle: true,
+    context: r'ModelWithSimpleList',
+  );
+  return ModelWithSimpleList(
+    items: values[r'items'].decodeFormStringList(
+      context: r'ModelWithSimpleList.items',
+    ),
+  );
+}
+        ''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedFromFormConstructor)),
+        );
+      },
+    );
+
       test(
-        'generates fromForm constructor that throws for complex properties',
+        'generates fromForm constructor that throws for list properties with '
+        'complex content',
         () {
           final model = ClassModel(
-            name: 'ComplexModel',
+            name: 'ModelWithComplexList',
             properties: [
               Property(
                 name: 'items',
+                model: ListModel(
+                  content: ClassModel(
+                    properties: const [],
+                    context: context,
+                  ),
+                  context: context,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedFromFormConstructor = '''
+            factory ModelWithComplexList.fromForm(
+              String? value, {
+              required bool explode,
+            }) {
+              throw FormatDecodingException(
+                'Form encoding not supported for ModelWithComplexList: contains complex types',
+              );
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedFromFormConstructor)),
+          );
+        },
+      );
+
+      test(
+        'form encoding roundtrip works for list with simple content',
+        () {
+          final model = ClassModel(
+            name: 'ModelWithSimpleListRoundtrip',
+            properties: [
+              Property(
+                name: 'tags',
                 model: ListModel(
                   content: StringModel(context: context),
                   context: context,
@@ -864,14 +722,64 @@ void main() {
           );
 
           final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
 
-          const expectedFromFormBody = '''
-          throw SimpleDecodingException('Form encoding not supported for ComplexModel: contains complex types');
-        ''';
+          const expectedFromFormConstructor = '''
+factory ModelWithSimpleListRoundtrip.fromForm(
+  String? value, {
+  required bool explode,
+}) {
+  final values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: '&',
+    expectedKeys: {r'tags'},
+    listKeys: {r'tags'},
+    isFormStyle: true,
+    context: r'ModelWithSimpleListRoundtrip',
+  );
+  return ModelWithSimpleListRoundtrip(
+    tags: values[r'tags'].decodeFormStringList(
+      context: r'ModelWithSimpleListRoundtrip.tags',
+      ),
+    );
+  }
+          ''';
+
+          const expectedToFormMethod = '''
+String toForm({required bool explode, required bool allowEmpty}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+}
+          ''';
+
+          const expectedParameterPropertiesMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  if (!allowLists) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final result = <String, String>{};
+  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  return result;
+}
+          ''';
 
           expect(
-            collapseWhitespace(result.accept(emitter).toString()),
-            contains(collapseWhitespace(expectedFromFormBody)),
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedFromFormConstructor)),
+          );
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedParameterPropertiesMethod)),
           );
         },
       );
@@ -935,7 +843,7 @@ void main() {
         expect(toFormMethod.optionalParameters.last.named, isTrue);
       });
 
-      test('generates toForm method that throws for complex properties', () {
+      test('generates toForm method for complex properties', () {
         final model = ClassModel(
           name: 'ComplexModel',
           properties: [
@@ -957,7 +865,7 @@ void main() {
 
         const expectedToFormBody = '''
           String toForm({required bool explode, required bool allowEmpty, }) {
-            throw EncodingException('toForm not supported for ComplexModel: contains nested data');
+            return parameterProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
@@ -977,125 +885,14 @@ void main() {
         final result = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          String toForm({required bool explode, required bool allowEmpty, }) => '';
+          String toForm({required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
         ''';
 
         expect(
           collapseWhitespace(result.accept(emitter).toString()),
           contains(collapseWhitespace(expectedToFormMethod)),
-        );
-      });
-
-      test('generates formProperties method for simple properties', () {
-        final model = ClassModel(
-          name: 'SimpleModel',
-          properties: [
-            Property(
-              name: 'name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'count',
-              model: IntegerModel(context: context),
-              isRequired: false,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedFormPropertiesMethod = '''
-          Map<String,String> formProperties({bool allowEmpty = true}) {
-            return {
-              r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
-              if (count != null) r'count': count!.toForm(explode: false, allowEmpty: allowEmpty),
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedFormPropertiesMethod)),
-        );
-      });
-
-      test(
-        'generates formProperties method that throws for complex properties',
-        () {
-          final model = ClassModel(
-            name: 'ComplexModel',
-            properties: [
-              Property(
-                name: 'items',
-                model: ListModel(
-                  content: StringModel(context: context),
-                  context: context,
-                ),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          );
-
-          final result = generator.generateClass(model);
-
-          const expectedFormPropertiesMethod = '''
-          Map<String,String> formProperties({bool allowEmpty = true}) {
-            throw EncodingException('formProperties not supported for ComplexModel: contains nested data');
-          }
-        ''';
-
-          expect(
-            collapseWhitespace(result.accept(emitter).toString()),
-            contains(collapseWhitespace(expectedFormPropertiesMethod)),
-          );
-        },
-      );
-
-      test('handles required nullable properties in formProperties', () {
-        final model = ClassModel(
-          name: 'RequiredNullableModel',
-          properties: [
-            Property(
-              name: 'nullable_name',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-            Property(
-              name: 'nullable_count',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: true,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedFormPropertiesMethod = '''
-          Map<String,String> formProperties({bool allowEmpty = true}) {
-            return {
-              if (allowEmpty || nullableName != null) r'nullable_name': nullableName?.toForm(explode: false, allowEmpty: allowEmpty) ?? '',
-              if (allowEmpty || nullableCount != null) r'nullable_count': nullableCount?.toForm(explode: false, allowEmpty: allowEmpty) ?? '',
-            };
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(result.accept(emitter).toString()),
-          contains(collapseWhitespace(expectedFormPropertiesMethod)),
         );
       });
 
@@ -1155,7 +952,7 @@ void main() {
           );
           final generatedCode = result.accept(emitter).toString();
           const expectedReturnStatement = '''
-            return UserForm(name: values['name'].decodeFormString(context: r'UserForm.name'), age: values['age'].decodeFormInt(context: r'UserForm.age'), email: values['email'].decodeFormNullableString(context: r'UserForm.email'), );
+            return UserForm(name: values[r'name'].decodeFormString(context: r'UserForm.name'), age: values[r'age'].decodeFormInt(context: r'UserForm.age'), email: values[r'email'].decodeFormNullableString(context: r'UserForm.email'), );
           ''';
 
           expect(
@@ -1200,79 +997,13 @@ void main() {
 
           const expectedToFormMethod = '''
           String toForm({required bool explode, required bool allowEmpty, }) {
-            return formProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+            return parameterProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
           expect(
             collapseWhitespace(result.accept(emitter).toString()),
             contains(collapseWhitespace(expectedToFormMethod)),
-          );
-        },
-      );
-
-      test(
-        'generates formProperties method with mixed property types',
-        () {
-          final model = ClassModel(
-            name: 'ProductForm',
-            properties: [
-              Property(
-                name: 'id',
-                model: IntegerModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'price',
-                model: DoubleModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'active',
-                model: BooleanModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'created_at',
-                model: DateTimeModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          );
-
-          final result = generator.generateClass(model);
-
-          const expectedFormPropertiesMethod = '''
-          Map<String,String> formProperties({bool allowEmpty = true}) {
-            return {
-              r'id': id.toForm(explode: false, allowEmpty: allowEmpty),
-              r'name': name.toForm(explode: false, allowEmpty: allowEmpty),
-              if (price != null) r'price': price!.toForm(explode: false, allowEmpty: allowEmpty),
-              r'active': active.toForm(explode: false, allowEmpty: allowEmpty),
-              if (createdAt != null) r'created_at': createdAt!.toForm(explode: false, allowEmpty: allowEmpty),
-            };
-          }
-        ''';
-
-          expect(
-            collapseWhitespace(result.accept(emitter).toString()),
-            contains(collapseWhitespace(expectedFormPropertiesMethod)),
           );
         },
       );
@@ -1351,7 +1082,7 @@ void main() {
         expect(fromFormConstructor.optionalParameters.length, 1);
 
         const expectedReturnStatement = '''
-          return AllTypesForm(text: values['text'].decodeFormString(context: r'AllTypesForm.text'), number: values['number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: values['decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: values['flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: values['timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: values['date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: values['precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: values['website'].decodeFormUri(context: r'AllTypesForm.website'), );
+          return AllTypesForm(text: values[r'text'].decodeFormString(context: r'AllTypesForm.text'), number: values[r'number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: values[r'decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: values[r'flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: values[r'timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: values[r'date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: values[r'precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: values[r'website'].decodeFormUri(context: r'AllTypesForm.website'), );
         ''';
 
         expect(
@@ -1394,7 +1125,7 @@ void main() {
           expect(fromFormConstructor.optionalParameters.length, 1);
 
           const expectedReturnStatement = '''
-            return NullableForm(requiredNullableName: values['required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: values['required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
+            return NullableForm(requiredNullableName: values[r'required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: values[r'required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
           ''';
 
           expect(
@@ -1405,161 +1136,23 @@ void main() {
       );
     });
 
-    group('composite model runtime checking', () {
-      test('generates runtime check for class with oneOf property', () {
-        final oneOfModel = OneOfModel(
-          name: 'StringOrClass',
-          models: {
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                name: 'NestedClass',
-                properties: [
-                  Property(
-                    name: 'value',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ],
-                context: context,
-              ),
-            ),
-          },
-          discriminator: null,
-          context: context,
-        );
-
+    group('toMatrix method', () {
+      test('generates toMatrix method for simple properties', () {
         final model = ClassModel(
-          name: 'Container',
+          name: 'SimpleModel',
           properties: [
             Property(
-              name: 'value',
-              model: oneOfModel,
+              name: 'name',
+              model: StringModel(context: context),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
             ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            final mergedProperties = <String, String>{};
-            if ( value.currentEncodingShape != EncodingShape.simple ) {
-              throw EncodingException('simpleProperties not supported for Container: contains complex types');
-            }
-            mergedProperties.addAll(
-              value.simpleProperties(allowEmpty: allowEmpty),
-            );
-            return mergedProperties;
-          }
-        ''';
-
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('generates runtime check for class with anyOf property', () {
-        final anyOfModel = AnyOfModel(
-          name: 'StringOrInt',
-          models: {
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                name: 'ComplexData',
-                properties: [
-                  Property(
-                    name: 'id',
-                    model: IntegerModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ],
-                context: context,
-              ),
-            ),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final model = ClassModel(
-          name: 'FlexibleContainer',
-          properties: [
             Property(
-              name: 'data',
-              model: anyOfModel,
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final result = generator.generateClass(model);
-
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            final mergedProperties = <String, String>{};
-            if ( data.currentEncodingShape != EncodingShape.simple ) {
-              throw EncodingException('simpleProperties not supported for FlexibleContainer: contains complex types');
-            }
-            mergedProperties.addAll(
-              data.simpleProperties(allowEmpty: allowEmpty),
-            );
-            return mergedProperties;
-          }
-        ''';
-
-        final generatedCode = result.accept(emitter).toString();
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-        );
-      });
-
-      test('generates runtime check for class with allOf property', () {
-        final stringModel = StringModel(context: context);
-        final complexModel = ClassModel(
-          name: 'ComplexData',
-          properties: [
-            Property(
-              name: 'id',
+              name: 'count',
               model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final allOfModel = AllOfModel(
-          name: 'StringAndInt',
-          models: {stringModel, complexModel},
-          context: context,
-        );
-
-        final model = ClassModel(
-          name: 'CombinedContainer',
-          properties: [
-            Property(
-              name: 'combined',
-              model: allOfModel,
-              isRequired: true,
-              isNullable: false,
+              isRequired: false,
+              isNullable: true,
               isDeprecated: false,
             ),
           ],
@@ -1568,77 +1161,66 @@ void main() {
 
         final result = generator.generateClass(model);
 
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            final mergedProperties = <String, String>{};
-            if ( combined.currentEncodingShape != EncodingShape.simple ) {
-              throw EncodingException('simpleProperties not supported for CombinedContainer: contains complex types');
-            }
-            mergedProperties.addAll(
-              combined.simpleProperties(allowEmpty: allowEmpty),
-            );
-            return mergedProperties;
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.requiredParameters.length, 1);
+        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
+        expect(
+          toMatrixMethod.requiredParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'String',
+        );
+        expect(toMatrixMethod.optionalParameters.length, 2);
+        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
+        expect(toMatrixMethod.optionalParameters.first.required, isTrue);
+        expect(toMatrixMethod.optionalParameters.first.named, isTrue);
+        expect(
+          toMatrixMethod.optionalParameters.first.type
+              ?.accept(emitter)
+              .toString(),
+          'bool',
+        );
+        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
+        expect(toMatrixMethod.optionalParameters.last.required, isTrue);
+        expect(toMatrixMethod.optionalParameters.last.named, isTrue);
+        expect(
+          toMatrixMethod.optionalParameters.last.type
+              ?.accept(emitter)
+              .toString(),
+          'bool',
+        );
+
+        const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
         final generatedCode = result.accept(emitter).toString();
         expect(
           collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
         );
       });
 
-      test(
-        'preserves optimized path for class with only static simple properties',
-        () {
-          final model = ClassModel(
-            name: 'SimpleContainer',
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'count',
-                model: IntegerModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          );
-
-          final result = generator.generateClass(model);
-
-          const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            return {
-              r'name': name.toSimple(explode: false, allowEmpty: allowEmpty),
-              if (count != null) r'count': count!.toSimple(explode: false, allowEmpty: allowEmpty),
-            };
-          }
-        ''';
-
-          final generatedCode = result.accept(emitter).toString();
-          expect(
-            collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedSimplePropertiesMethod)),
-          );
-        },
-      );
-
-      test('rejects class with truly complex properties at compile time', () {
+      test('generates toMatrix method for complex properties', () {
         final model = ClassModel(
-          name: 'ComplexContainer',
+          name: 'ComplexModel',
           properties: [
             Property(
-              name: 'nested',
+              name: 'simpleProp',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'complexProp',
               model: ClassModel(
-                name: 'Nested',
+                name: 'NestedModel',
                 properties: [
                   Property(
                     name: 'value',
@@ -1660,140 +1242,71 @@ void main() {
 
         final result = generator.generateClass(model);
 
-        const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            throw EncodingException('simpleProperties not supported for ComplexContainer: contains nested data');
+        // Test method signature
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.requiredParameters.length, 1);
+        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
+        expect(toMatrixMethod.optionalParameters.length, 2);
+        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
+        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
+
+        const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
         final generatedCode = result.accept(emitter).toString();
         expect(
           collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
+        );
+      });
+
+      test('generates toMatrix method for empty model', () {
+        final model = ClassModel(
+          name: 'EmptyModel',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final toMatrixMethod = result.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+        expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+        expect(toMatrixMethod.requiredParameters.length, 1);
+        expect(toMatrixMethod.requiredParameters.first.name, 'paramName');
+        expect(toMatrixMethod.optionalParameters.length, 2);
+        expect(toMatrixMethod.optionalParameters.first.name, 'explode');
+        expect(toMatrixMethod.optionalParameters.last.name, 'allowEmpty');
+
+        const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          }
+        ''';
+
+        final generatedCode = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedToMatrixMethod)),
         );
       });
 
       test(
-        'handles class with multiple properties (mixed optimized/runtime checks)',
+        'toMatrix method generates proper method body for single '
+        'property model',
         () {
-          final oneOfModel1 = OneOfModel(
-            name: 'StringOrInt1',
-            models: {
-              (discriminatorValue: null, model: StringModel(context: context)),
-              (
-                discriminatorValue: null,
-                model: ClassModel(
-                  name: 'ComplexData1',
-                  properties: [
-                    Property(
-                      name: 'id',
-                      model: IntegerModel(context: context),
-                      isRequired: true,
-                      isNullable: false,
-                      isDeprecated: false,
-                    ),
-                  ],
-                  context: context,
-                ),
-              ),
-            },
-            discriminator: null,
-            context: context,
-          );
-
-          final oneOfModel2 = OneOfModel(
-            name: 'StringOrInt2',
-            models: {
-              (discriminatorValue: null, model: StringModel(context: context)),
-              (
-                discriminatorValue: null,
-                model: ClassModel(
-                  name: 'ComplexData2',
-                  properties: [
-                    Property(
-                      name: 'flag',
-                      model: BooleanModel(context: context),
-                      isRequired: true,
-                      isNullable: false,
-                      isDeprecated: false,
-                    ),
-                  ],
-                  context: context,
-                ),
-              ),
-            },
-            discriminator: null,
-            context: context,
-          );
-
-          final anyOfModel = AnyOfModel(
-            name: 'FlexibleData',
-            models: {
-              (discriminatorValue: null, model: StringModel(context: context)),
-              (
-                discriminatorValue: null,
-                model: ClassModel(
-                  name: 'FlexibleComplex',
-                  properties: [
-                    Property(
-                      name: 'value',
-                      model: IntegerModel(context: context),
-                      isRequired: true,
-                      isNullable: false,
-                      isDeprecated: false,
-                    ),
-                  ],
-                  context: context,
-                ),
-              ),
-            },
-            discriminator: null,
-            context: context,
-          );
-
           final model = ClassModel(
-            name: 'MixedContainer',
+            name: 'TestModel',
             properties: [
-              // Always simple properties (optimized path)
               Property(
                 name: 'name',
                 model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'count',
-                model: IntegerModel(context: context),
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'active',
-                model: BooleanModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              // Composite properties (runtime checks)
-              Property(
-                name: 'data1',
-                model: oneOfModel1,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'data2',
-                model: oneOfModel2,
-                isRequired: false,
-                isNullable: true,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'flexible',
-                model: anyOfModel,
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
@@ -1804,55 +1317,26 @@ void main() {
 
           final result = generator.generateClass(model);
 
-          final simplePropertiesMethod = result.methods.firstWhere(
-            (m) => m.name == 'simpleProperties',
+          final toMatrixMethod = result.methods.firstWhere(
+            (m) => m.name == 'toMatrix',
           );
-          expect(simplePropertiesMethod.type, isNot(MethodType.getter));
+          expect(toMatrixMethod.name, 'toMatrix');
+          expect(toMatrixMethod.returns?.accept(emitter).toString(), 'String');
+          expect(
+            toMatrixMethod.lambda,
+            isNot(isTrue),
+          );
 
-          final generatedCode = result.accept(emitter).toString();
-
-          const expectedSimplePropertiesMethod = '''
-          Map<String,String> simpleProperties({bool allowEmpty = true}) {
-            final mergedProperties = <String, String>{};
-            mergedProperties[r'name'] = name.toSimple(
-              explode: false, 
-              allowEmpty: allowEmpty,
-            );
-            if (count != null) { 
-              mergedProperties[r'count'] = count!.toSimple(
-                explode: false, 
-                allowEmpty: allowEmpty,
-              ); 
-            }
-            mergedProperties[r'active'] = active.toSimple(
-              explode: false, 
-              allowEmpty: allowEmpty,
-            );
-            if ( data1.currentEncodingShape != EncodingShape.simple ) {
-              throw EncodingException('simpleProperties not supported for MixedContainer: contains complex types');
-            }
-            mergedProperties.addAll(
-              data1.simpleProperties(allowEmpty: allowEmpty),
-            );
-            if ( data2 != null && data2?.currentEncodingShape != EncodingShape.simple ) {
-              throw EncodingException('simpleProperties not supported for MixedContainer: contains complex types');
-            }
-            if (data2 != null) { 
-              mergedProperties.addAll(data2!.simpleProperties(allowEmpty: allowEmpty)); 
-            }
-            if ( flexible.currentEncodingShape != EncodingShape.simple ) {
-              throw EncodingException('simpleProperties not supported for MixedContainer: contains complex types');
-            }
-            mergedProperties.addAll(
-              flexible.simpleProperties(allowEmpty: allowEmpty),
-            );
-            return mergedProperties;
+          const expectedToMatrixMethod = '''
+          String toMatrix(String paramName, {required bool explode, required bool allowEmpty, }) {
+            return parameterProperties(allowEmpty: allowEmpty).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           }
         ''';
 
+          final generatedCode = result.accept(emitter).toString();
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedSimplePropertiesMethod)),
+            contains(collapseWhitespace(expectedToMatrixMethod)),
           );
         },
       );

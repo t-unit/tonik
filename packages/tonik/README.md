@@ -36,6 +36,7 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
 - [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
 - [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md)
+- [Uri Encoding Limintations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md)
 
 more coming soon
 

@@ -23,21 +23,25 @@ Expression generateJsonDecodingExceptionExpression(String message) {
   );
 }
 
-/// Generates a throw expression for DecodingException.
-Expression generateDecodingExceptionExpression(String message) {
+/// Generates a throw expression for FormatDecodingException.
+Expression generateFormatDecodingExceptionExpression(String message) {
   return _generateExceptionExpression(
-    'DecodingException',
+    'FormatDecodingException',
     message,
     importUrl: 'package:tonik_util/tonik_util.dart',
   );
 }
 
 /// Generates a throw expression for EncodingException.
-Expression generateEncodingExceptionExpression(String message) {
+Expression generateEncodingExceptionExpression(
+  String message, {
+  bool raw = false,
+}) {
   return _generateExceptionExpression(
     'EncodingException',
     message,
     importUrl: 'package:tonik_util/tonik_util.dart',
+    raw: raw,
   );
 }
 
@@ -45,7 +49,8 @@ Expression _generateExceptionExpression(
   String type,
   String message, {
   String importUrl = 'dart:core',
+  bool raw = false,
 }) {
   final ref = refer(type, importUrl);
-  return ref.call([literalString(message)]).thrown;
+  return ref.call([literalString(message, raw: raw)]).thrown;
 }

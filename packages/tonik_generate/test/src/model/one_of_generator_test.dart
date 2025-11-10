@@ -47,8 +47,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueString() => EncodingShape.simple,
           ValueInt() => EncodingShape.simple,
+          ValueString() => EncodingShape.simple,
         };
       }
     ''';
@@ -124,8 +124,8 @@ void main() {
     const expectedGetter = '''
       EncodingShape get currentEncodingShape {
         return switch (this) {
-          ValueString() => EncodingShape.simple,
           ValueA(:final value) => value.currentEncodingShape,
+          ValueString() => EncodingShape.simple,
         };
       }
     ''';
@@ -133,31 +133,6 @@ void main() {
     expect(
       collapseWhitespace(generated),
       contains(collapseWhitespace(expectedGetter)),
-    );
-  });
-
-  test('generated code does not include freezed part directive', () {
-    final model = OneOfModel(
-      name: 'Result',
-      models: {
-        (discriminatorValue: 'success', model: StringModel(context: context)),
-      },
-      discriminator: null,
-      context: context,
-    );
-
-    final result = generator.generate(model);
-
-    expect(result.code, isNotEmpty);
-    expect(
-      result.code.contains('.freezed.dart'),
-      isFalse,
-      reason: 'Generated code should not include a part directive for freezed',
-    );
-    expect(
-      result.code.contains('part of'),
-      isFalse,
-      reason: 'Generated code should not include part directives',
     );
   });
 
@@ -179,18 +154,6 @@ void main() {
     // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
-
-    // No freezed annotations
-    expect(
-      baseClass.annotations.any(
-        (a) => a.code.accept(emitter).toString().contains('freezed'),
-      ),
-      isFalse,
-      reason: 'Should not have freezed annotations',
-    );
-
-    // No mixins
-    expect(baseClass.mixins, isEmpty, reason: 'Should not have freezed mixins');
 
     // Base class should have a default const constructor,
     // fromSimple, fromForm, and fromJson factories
@@ -415,170 +378,6 @@ void main() {
     );
   });
 
-  group('simpleProperties generation', () {
-    test('generates simpleProperties delegating for class-only variants', () {
-      final classA = ClassModel(
-        name: 'A',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-      final classB = ClassModel(
-        name: 'B',
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = OneOfModel(
-        name: 'Choice',
-        models: {
-          (discriminatorValue: 'a', model: classA),
-          (discriminatorValue: 'b', model: classB),
-        },
-        discriminator: 'type',
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Choice');
-
-      final simpleProps = baseClass.methods.firstWhere(
-        (m) => m.name == 'simpleProperties',
-      );
-      expect(
-        simpleProps.returns?.accept(emitter).toString(),
-        'Map<String,String>',
-      );
-      expect(simpleProps.optionalParameters, hasLength(1));
-      expect(simpleProps.optionalParameters.first.name, 'allowEmpty');
-      expect(simpleProps.optionalParameters.first.required, isTrue);
-
-      final generated = format(baseClass.accept(emitter).toString());
-      const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-          return switch (this) {
-            ChoiceA(:final value) => {
-              ...value.simpleProperties(allowEmpty: allowEmpty),
-              'type': 'a',
-            },
-            ChoiceB(:final value) => {
-              ...value.simpleProperties(allowEmpty: allowEmpty),
-              'type': 'b',
-            },
-          };
-        }
-      ''';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-
-    test(
-      'generates simpleProperties empty map for primitive-only variants',
-      () {
-        final model = OneOfModel(
-          name: 'PrimitiveChoice',
-          models: {
-            (discriminatorValue: 'i', model: IntegerModel(context: context)),
-            (discriminatorValue: 's', model: StringModel(context: context)),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere(
-          (c) => c.name == 'PrimitiveChoice',
-        );
-        final generated = format(baseClass.accept(emitter).toString());
-
-        final simpleProps = baseClass.methods.firstWhere(
-          (m) => m.name == 'simpleProperties',
-        );
-        expect(
-          simpleProps.returns?.accept(emitter).toString(),
-          'Map<String,String>',
-        );
-        expect(simpleProps.optionalParameters.first.required, isTrue);
-
-        const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-        return switch (this) {
-          PrimitiveChoiceI() => <String, String>{},
-          PrimitiveChoiceS() => <String, String>{},
-        };
-        }
-      ''';
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(format(expectedMethod))),
-        );
-      },
-    );
-
-    test('generates simpleProperties mixing class and primitive variants', () {
-      final classM = ClassModel(
-        name: 'M',
-        properties: [
-          Property(
-            name: 'flag',
-            model: BooleanModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = OneOfModel(
-        name: 'MixedChoice',
-        models: {
-          (discriminatorValue: 'm', model: classM),
-          (discriminatorValue: 's', model: StringModel(context: context)),
-        },
-        discriminator: 'kind',
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'MixedChoice');
-      final generated = format(baseClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> simpleProperties({required bool allowEmpty}) {
-        return switch (this) {
-          MixedChoiceM(:final value) => {
-            ...value.simpleProperties(allowEmpty: allowEmpty),
-            'kind': 'm',
-          },
-          MixedChoiceS() => <String, String>{},
-        };
-        }
-      ''';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(format(expectedMethod))),
-      );
-    });
-  });
-
   group('subclass equals', () {
     test('generates equals method for primitive type', () {
       final model = OneOfModel(
@@ -662,8 +461,10 @@ void main() {
         collapseWhitespace(format(expectedMethod)),
       );
     });
+  });
 
-    test('generates meaningful discriminator names for primitive models', () {
+  group('subclass names', () {
+    test('generates meaningful names for primitive models', () {
       final model = OneOfModel(
         name: 'Value',
         models: {
@@ -685,7 +486,7 @@ void main() {
       expect(classNames, contains('ValueDateTime'));
     });
 
-    test('generates meaningful discriminator names for complex models', () {
+    test('generates meaningful names for complex models', () {
       final classA = ClassModel(
         name: 'ClassA',
         properties: const [],
@@ -714,7 +515,7 @@ void main() {
       expect(classNames, contains('ValueAllOfExample'));
     });
 
-    test('generates meaningful discriminator names for alias models', () {
+    test('generates meaningful names for alias models', () {
       final aliasModel = AliasModel(
         name: 'user-profile',
         model: StringModel(context: context),
@@ -735,5 +536,501 @@ void main() {
 
       expect(classNames, contains('ValueUserProfile'));
     });
+  });
+
+  group('parameterProperties', () {
+    test('method exists with correct signature', () {
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final method = baseClass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+        orElse: () => throw StateError('parameterProperties method not found'),
+      );
+
+      expect(method.name, 'parameterProperties');
+      expect(
+        method.returns?.accept(emitter).toString().replaceAll(' ', ''),
+        'Map<String,String>',
+      );
+      expect(method.optionalParameters.length, 2);
+
+      final allowEmptyParam = method.optionalParameters
+          .firstWhere((p) => p.name == 'allowEmpty');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isFalse);
+      expect(
+        allowEmptyParam.defaultTo?.accept(emitter).toString(),
+        'true',
+      );
+      expect(
+        allowEmptyParam.type?.accept(emitter).toString(),
+        'bool',
+      );
+
+      final allowListsParam = method.optionalParameters
+          .firstWhere((p) => p.name == 'allowLists');
+      expect(allowListsParam.named, isTrue);
+      expect(allowListsParam.required, isFalse);
+      expect(
+        allowListsParam.defaultTo?.accept(emitter).toString(),
+        'true',
+      );
+      expect(
+        allowListsParam.type?.accept(emitter).toString(),
+        'bool',
+      );
+    });
+
+    test('throws for primitive-only oneOf', () {
+      final model = OneOfModel(
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) =>
+          throw EncodingException(
+            'parameterProperties not supported for Value: only contains primitive types',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('delegates to value for complex variant without discriminator', () {
+      final userModel = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Response',
+        models: {
+          (discriminatorValue: null, model: userModel),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Response');
+
+      const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) {
+          return switch (this) {
+            ResponseUser(:final value) => value.parameterProperties(
+              allowEmpty: allowEmpty,
+              allowLists: allowLists,
+            ),
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('injects discriminator for complex variant with discriminator', () {
+      final userModel = ClassModel(
+        name: 'User',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final companyModel = ClassModel(
+        name: 'Company',
+        properties: [
+          Property(
+            name: 'title',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Entity',
+        models: {
+          (discriminatorValue: 'person', model: userModel),
+          (discriminatorValue: 'company', model: companyModel),
+        },
+        discriminator: 'type',
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Entity');
+
+      const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) {
+          return switch (this) {
+            EntityCompany(:final value) => {
+              ...value.parameterProperties(
+                allowEmpty: allowEmpty,
+                allowLists: allowLists,
+              ),
+              'type': 'company',
+            },
+            EntityUser(:final value) => {
+              ...value.parameterProperties(
+                allowEmpty: allowEmpty,
+                allowLists: allowLists,
+              ),
+              'type': 'person',
+            },
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test(
+      'throws at runtime for mixed primitive/complex without discriminator',
+      () {
+        final userModel = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: userModel),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+        const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) {
+          return switch (this) {
+            ValueUser(:final value) => value.parameterProperties(
+              allowEmpty: allowEmpty,
+              allowLists: allowLists,
+            ),
+            ValueString() => throw EncodingException(
+              'parameterProperties not supported for Value: cannot determine properties at runtime',
+            ),
+          };
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'throws at runtime for mixed primitive/complex with discriminator',
+      () {
+        final userModel = ClassModel(
+          name: 'User',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Response',
+          models: {
+            (discriminatorValue: 'user', model: userModel),
+            (
+              discriminatorValue: 'message',
+              model: StringModel(context: context),
+            ),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Response');
+
+        const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) {
+          return switch (this) {
+            ResponseMessage() => throw EncodingException(
+              'parameterProperties not supported for Response: cannot determine properties at runtime',
+            ),
+            ResponseUser(:final value) => {
+              ...value.parameterProperties(
+                allowEmpty: allowEmpty,
+                allowLists: allowLists,
+              ),
+              'type': 'user',
+            },
+          };
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'checks runtime encoding shape for mixed-encoded variant without '
+      'discriminator',
+      () {
+        final innerOneOf = OneOfModel(
+          name: 'Inner',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'Data',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Outer',
+          models: {
+            (discriminatorValue: null, model: innerOneOf),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+
+        const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) {
+          return switch (this) {
+            OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? value.parameterProperties(
+                  allowEmpty: allowEmpty,
+                  allowLists: allowLists,
+                )
+              : throw EncodingException(
+                  'parameterProperties not supported for Outer: cannot determine properties at runtime',
+                ),
+          };
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'checks runtime encoding shape for mixed-encoded variant with '
+      'discriminator',
+      () {
+        final innerOneOf = OneOfModel(
+          name: 'Inner',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'Data',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final model = OneOfModel(
+          name: 'Outer',
+          models: {
+            (discriminatorValue: 'inner', model: innerOneOf),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+
+        const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) {
+          return switch (this) {
+            OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(
+                    allowEmpty: allowEmpty,
+                    allowLists: allowLists,
+                  ),
+                  'type': 'inner',
+                }
+              : throw EncodingException(
+                  'parameterProperties not supported for Outer: cannot determine properties at runtime',
+                ),
+          };
+        }
+      ''';
+
+        expect(
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+  });
+
+  test('uses stable sorting for discriminated models', () {
+    final sharedContext = context.push('TestOneOf').push('oneOf');
+
+    final model = OneOfModel(
+      name: 'TestOneOf',
+      models: {
+        (
+          discriminatorValue: 'zebra',
+          model: StringModel(context: sharedContext),
+        ),
+        (
+          discriminatorValue: 'apple',
+          model: IntegerModel(context: sharedContext),
+        ),
+        (
+          discriminatorValue: 'banana',
+          model: BooleanModel(context: sharedContext),
+        ),
+      },
+      discriminator: 'type',
+      context: context.push('TestOneOf'),
+    );
+
+    nameManager.prime(
+      models: {model},
+      requestBodies: const [],
+      responses: const [],
+      operations: const [],
+      tags: const [],
+      servers: const [],
+    );
+
+    final classes = generator.generateClasses(model);
+    final variantNames =
+        classes.where((c) => c.name != 'TestOneOf').map((c) => c.name).toList();
+
+    // Verify variants are in stable sorted order by discriminator value.
+    expect(variantNames, [
+      'TestOneOfApple',
+      'TestOneOfBanana',
+      'TestOneOfZebra',
+    ]);
   });
 }

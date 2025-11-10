@@ -29,7 +29,7 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  group('toForm method generation', () {
+  group('toForm', () {
     test('toForm delegates to active variant value', () {
       final model = OneOfModel(
         name: 'Result',
@@ -53,8 +53,8 @@ void main() {
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
           return switch (this) {
-            ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
             ResultError(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
+            ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
           };
         }
       ''';
@@ -102,11 +102,11 @@ void main() {
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
           return switch (this) {
+            ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
             ResponseUser(:final value) => {
-              ...value.formProperties(allowEmpty: allowEmpty),
+              ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'user',
             }.toForm(explode: explode, allowEmpty: allowEmpty),
-            ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
           };
         }
       ''';
@@ -116,9 +116,73 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test('toForm method has correct signature', () {
+      final model = OneOfModel(
+        name: 'Test',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Test');
+      final toFormMethod = baseClass.methods.firstWhere(
+        (m) => m.name == 'toForm',
+      );
+
+      expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
+      expect(toFormMethod.optionalParameters, hasLength(2));
+      expect(
+        toFormMethod.optionalParameters.map((p) => p.name),
+        containsAll(['explode', 'allowEmpty']),
+      );
+      expect(
+        toFormMethod.optionalParameters.every((p) => p.required),
+        isTrue,
+      );
+    });
   });
 
-  group('fromForm constructor generation', () {
+  group('fromForm', () {
+    test('fromForm constructor has correct signature', () {
+      final model = OneOfModel(
+        name: 'Test',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Test');
+      final fromFormConstructor = baseClass.constructors.firstWhere(
+        (c) => c.name == 'fromForm',
+      );
+
+      expect(fromFormConstructor.factory, isTrue);
+      expect(fromFormConstructor.requiredParameters.length, 1);
+      expect(fromFormConstructor.requiredParameters[0].name, 'value');
+      expect(
+        fromFormConstructor.requiredParameters[0].type
+            ?.accept(emitter)
+            .toString(),
+        'String?',
+      );
+      expect(fromFormConstructor.optionalParameters.length, 1);
+      expect(fromFormConstructor.optionalParameters[0].name, 'explode');
+      expect(
+        fromFormConstructor.optionalParameters[0].type
+            ?.accept(emitter)
+            .toString(),
+        'bool',
+      );
+      expect(fromFormConstructor.optionalParameters[0].required, isTrue);
+    });
+
     test('fromForm tries variants in declaration order (primitive-only)', () {
       final model = OneOfModel(
         name: 'Result',
@@ -188,10 +252,10 @@ void main() {
       const expectedMethod = '''
         factory Response.fromForm(String? value, {required bool explode}) {
           try {
-            return ResponseUser(User.fromForm(value, explode: explode));
+            return ResponseMsg(value.decodeFormString(context: r'Response'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
           try {
-            return ResponseMsg(value.decodeFormString(context: r'Response'));
+            return ResponseUser(User.fromForm(value, explode: explode));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
           throw SimpleDecodingException('Invalid form value for Response');
         }
@@ -285,266 +349,206 @@ void main() {
         );
       },
     );
-  });
 
-  group('formProperties method generation', () {
-    test('formProperties delegates for class-only variants', () {
-      final classA = ClassModel(
-        name: 'A',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
+    test('toForm handles mixed-encoded variant without discriminator', () {
+      final innerOneOf = OneOfModel(
+        name: 'Inner',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
           ),
-        ],
-        context: context,
-      );
-      final classB = ClassModel(
-        name: 'B',
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
+        },
+        discriminator: null,
         context: context,
       );
 
       final model = OneOfModel(
-        name: 'Choice',
+        name: 'Outer',
         models: {
-          (discriminatorValue: 'a', model: classA),
-          (discriminatorValue: 'b', model: classB),
+          (discriminatorValue: null, model: innerOneOf),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+
+      const expectedMethod = '''
+        String toForm({required bool explode, required bool allowEmpty}) {
+          return switch (this) {
+            OuterInner(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
+          };
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('toForm handles mixed-encoded variant with discriminator', () {
+      final innerOneOf = OneOfModel(
+        name: 'Inner',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Data',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final model = OneOfModel(
+        name: 'Outer',
+        models: {
+          (discriminatorValue: 'inner', model: innerOneOf),
         },
         discriminator: 'type',
         context: context,
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Choice');
+      final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
-      final formProps = baseClass.methods.firstWhere(
-        (m) => m.name == 'formProperties',
-      );
-      expect(
-        formProps.returns?.accept(emitter).toString(),
-        'Map<String,String>',
-      );
-      expect(formProps.optionalParameters, hasLength(1));
-      expect(formProps.optionalParameters.first.name, 'allowEmpty');
-      expect(formProps.optionalParameters.first.required, isTrue);
-
-      final generated = format(baseClass.accept(emitter).toString());
       const expectedMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
+        String toForm({required bool explode, required bool allowEmpty}) {
           return switch (this) {
-            ChoiceA(:final value) => value.formProperties(allowEmpty: allowEmpty),
-            ChoiceB(:final value) => value.formProperties(allowEmpty: allowEmpty),
+            OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(allowEmpty: allowEmpty),
+                  'type': 'inner',
+                }.toForm(explode: explode, allowEmpty: allowEmpty)
+              : value.toForm(explode: explode, allowEmpty: allowEmpty),
           };
         }
       ''';
+
       expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test('formProperties returns empty map for primitive-only variants', () {
-      final model = OneOfModel(
-        name: 'Simple',
-        models: {
-          (discriminatorValue: 'int', model: IntegerModel(context: context)),
-          (discriminatorValue: 'str', model: StringModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Simple');
-
-      final generated = format(baseClass.accept(emitter).toString());
-      const expectedMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-        return switch (this) {
-          SimpleInt() => <String, String>{},
-          SimpleStr() => <String, String>{},
-        };
-        }
-      ''';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test('formProperties mixing class and primitive variants', () {
-      final classM = ClassModel(
-        name: 'M',
-        properties: [
-          Property(
-            name: 'flag',
-            model: BooleanModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = OneOfModel(
-        name: 'MixedChoice',
-        models: {
-          (discriminatorValue: 'm', model: classM),
-          (discriminatorValue: 's', model: StringModel(context: context)),
-        },
-        discriminator: 'kind',
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'MixedChoice');
-      final generated = format(baseClass.accept(emitter).toString());
-
-      const expectedMethod = '''
-          Map<String, String> formProperties({required bool allowEmpty}) {
-        return switch (this) {
-          MixedChoiceM(:final value) => value.formProperties(
-            allowEmpty: allowEmpty,
-          ),
-          MixedChoiceS() => <String, String>{},
-        };
-          }
-        ''';
-      expect(
-        collapseWhitespace(generated),
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
         contains(collapseWhitespace(expectedMethod)),
       );
     });
 
     test(
-      'formProperties without discriminator does not inject discriminator',
+      'toForm handles multiple mixed-encoded variants with discriminator',
       () {
-        final classA = ClassModel(
-          name: 'A',
-          properties: [
-            Property(
-              name: 'id',
-              model: IntegerModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
-
-        final model = OneOfModel(
-          name: 'NoDiscriminator',
+        final innerOneOfA = OneOfModel(
+          name: 'InnerA',
           models: {
-            (discriminatorValue: null, model: classA),
             (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'DataA',
+                properties: [
+                  Property(
+                    name: 'a',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
           },
           discriminator: null,
           context: context,
         );
 
-        final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere(
-          (c) => c.name == 'NoDiscriminator',
+        final innerOneOfB = OneOfModel(
+          name: 'InnerB',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                name: 'DataB',
+                properties: [
+                  Property(
+                    name: 'b',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: null,
+          context: context,
         );
-        final generated = format(baseClass.accept(emitter).toString());
+
+        final model = OneOfModel(
+          name: 'Outer',
+          models: {
+            (discriminatorValue: 'a', model: innerOneOfA),
+            (discriminatorValue: 'b', model: innerOneOfB),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
-          Map<String, String> formProperties({required bool allowEmpty}) {
-        return switch (this) {
-          NoDiscriminatorA(:final value) => value.formProperties(
-            allowEmpty: allowEmpty,
-          ),
-          NoDiscriminatorString() => <String, String>{},
-        };
-          }
-        ''';
+        String toForm({required bool explode, required bool allowEmpty}) {
+          return switch (this) {
+            OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(allowEmpty: allowEmpty),
+                  'type': 'a',
+                }.toForm(explode: explode, allowEmpty: allowEmpty)
+              : value.toForm(explode: explode, allowEmpty: allowEmpty),
+            OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex
+              ? {
+                  ...value.parameterProperties(allowEmpty: allowEmpty),
+                  'type': 'b',
+                }.toForm(explode: explode, allowEmpty: allowEmpty)
+              : value.toForm(explode: explode, allowEmpty: allowEmpty),
+          };
+        }
+      ''';
+
         expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(format(expectedMethod))),
+          collapseWhitespace(format(baseClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
         );
       },
     );
-  });
-
-  group('fromForm constructor structure', () {
-    test('fromForm constructor has correct signature', () {
-      final model = OneOfModel(
-        name: 'Test',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Test');
-      final fromFormConstructor = baseClass.constructors.firstWhere(
-        (c) => c.name == 'fromForm',
-      );
-
-      expect(fromFormConstructor.factory, isTrue);
-      expect(fromFormConstructor.requiredParameters.length, 1);
-      expect(fromFormConstructor.requiredParameters[0].name, 'value');
-      expect(
-        fromFormConstructor.requiredParameters[0].type
-            ?.accept(emitter)
-            .toString(),
-        'String?',
-      );
-      expect(fromFormConstructor.optionalParameters.length, 1);
-      expect(fromFormConstructor.optionalParameters[0].name, 'explode');
-      expect(
-        fromFormConstructor.optionalParameters[0].type
-            ?.accept(emitter)
-            .toString(),
-        'bool',
-      );
-      expect(fromFormConstructor.optionalParameters[0].required, isTrue);
-    });
-  });
-
-  group('toForm method structure', () {
-    test('toForm method has correct signature', () {
-      final model = OneOfModel(
-        name: 'Test',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Test');
-      final toFormMethod = baseClass.methods.firstWhere(
-        (m) => m.name == 'toForm',
-      );
-
-      expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toFormMethod.optionalParameters, hasLength(2));
-      expect(
-        toFormMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
-      );
-      expect(
-        toFormMethod.optionalParameters.every((p) => p.required),
-        isTrue,
-      );
-    });
   });
 }

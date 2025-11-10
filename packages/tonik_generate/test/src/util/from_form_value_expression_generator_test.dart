@@ -417,19 +417,49 @@ void main() {
     });
 
     group('complex types', () {
-      test('throws for ListModel', () {
-        expect(
-          () => buildFromFormValueExpression(
-            refer("values['items']"),
-            model: ListModel(
-              content: StringModel(context: context),
-              context: context,
-            ),
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'test_package',
+      test('generates expression for ListModel with String content', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['items']"),
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
           ),
-          throwsA(isA<UnsupportedError>()),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'items',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          equals(
+            "values['items'].decodeFormStringList(context: r'TestClass.items')",
+          ),
+        );
+      });
+
+      test('generates expression for ListModel with int content', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['numbers']"),
+          model: ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'numbers',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          equals(
+            '''values['numbers'].decodeFormStringList(context: r'TestClass.numbers').map((e) => e.decodeFormInt(context: r'TestClass.numbers')).toList()''',
+          ),
         );
       });
 
@@ -503,7 +533,7 @@ void main() {
         );
       });
 
-      test('throws for AliasModel wrapping complex type', () {
+      test('unwraps AliasModel wrapping ListModel', () {
         final aliasModel = AliasModel(
           name: 'UserList',
           model: ListModel(
@@ -513,15 +543,22 @@ void main() {
           context: context,
         );
 
+        final expression = buildFromFormValueExpression(
+          refer("values['users']"),
+          model: aliasModel,
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'users',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
         expect(
-          () => buildFromFormValueExpression(
-            refer("values['users']"),
-            model: aliasModel,
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'test_package',
+          code,
+          equals(
+            "values['users'].decodeFormStringList(context: r'TestClass.users')",
           ),
-          throwsA(isA<UnsupportedError>()),
         );
       });
     });

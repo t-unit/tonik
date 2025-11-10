@@ -74,7 +74,17 @@ class NameManager {
           // For models with the same path length, sort by name
           final aName = a is NamedModel ? (a.name ?? '') : '';
           final bName = b is NamedModel ? (b.name ?? '') : '';
-          return aName.compareTo(bName);
+          final nameComp = aName.compareTo(bName);
+          if (nameComp != 0) return nameComp;
+
+          // For models with same path length and name, sort by context string
+          final contextComp = a.context.toString().compareTo(
+            b.context.toString(),
+          );
+          if (contextComp != 0) return contextComp;
+
+          // Finally, sort by stable model structure
+          return a.stableKey.compareTo(b.stableKey);
         });
 
     for (final model in sortedModels.where(

@@ -92,37 +92,6 @@ void main() {
       );
     });
 
-    test('formProperties method has correct signature', () {
-      final model = AnyOfModel(
-        name: 'Test',
-        models: {
-          (
-            discriminatorValue: null,
-            model: ClassModel(
-              name: 'TestClass',
-              properties: const [],
-              context: context,
-            ),
-          ),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final klass = generator.generateClass(model);
-      final formPropsMethod = klass.methods.firstWhere(
-        (m) => m.name == 'formProperties',
-      );
-
-      expect(
-        formPropsMethod.returns?.accept(emitter).toString(),
-        'Map<String,String>',
-      );
-      expect(formPropsMethod.optionalParameters, hasLength(1));
-      expect(formPropsMethod.optionalParameters.first.name, 'allowEmpty');
-      expect(formPropsMethod.optionalParameters.first.required, isTrue);
-    });
-
     test('currentEncodingShape getter has correct signature', () {
       final model = AnyOfModel(
         name: 'Test',
@@ -164,10 +133,10 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (string != null) {
+          if (int != null) {
             shapes.add(EncodingShape.simple);
           }
-          if (int != null) {
+          if (string != null) {
             shapes.add(EncodingShape.simple);
           }
           if (shapes.isEmpty) {
@@ -263,11 +232,11 @@ void main() {
       const expectedGetter = '''
         EncodingShape get currentEncodingShape {
           final shapes = <EncodingShape>{};
-          if (string != null) {
-            shapes.add(EncodingShape.simple);
-          }
           if (data != null) {
             shapes.add(data!.currentEncodingShape);
+          }
+          if (string != null) {
+            shapes.add(EncodingShape.simple);
           }
           if (shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
@@ -301,13 +270,6 @@ void main() {
 
       const expectedMethod = '''
         factory Flexible.fromForm(String? value, {required bool explode}) {
-          String? string;
-          try {
-            string = value.decodeFormString(context: r'Flexible');
-          } on Object catch (_) {
-            string = null;
-          }
-
           int? int;
           try {
             int = value.decodeFormInt(context: r'Flexible');
@@ -315,7 +277,19 @@ void main() {
             int = null;
           }
 
-          return Flexible(string: string, int: int);
+          String? string;
+          try {
+            string = value.decodeFormString(context: r'Flexible');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          if (int == null && string == null) {
+            throw FormatDecodingException(
+              'Invalid form value for Flexible: all variants failed to decode',
+            );
+          }
+          return Flexible(int: int, string: string);
         }
       ''';
 
@@ -383,6 +357,11 @@ void main() {
             b = null;
           }
 
+          if (a == null && b == null) {
+            throw FormatDecodingException(
+              'Invalid form value for Choice: all variants failed to decode',
+            );
+          }
           return Choice(a: a, b: b);
         }
       ''';
@@ -423,13 +402,6 @@ void main() {
 
       const expectedMethod = '''
         factory SearchKey.fromForm(String? value, {required bool explode}) {
-          String? string;
-          try {
-            string = value.decodeFormString(context: r'SearchKey');
-          } on Object catch (_) {
-            string = null;
-          }
-
           User? user;
           try {
             user = User.fromForm(value, explode: explode);
@@ -437,7 +409,19 @@ void main() {
             user = null;
           }
 
-          return SearchKey(string: string, user: user);
+          String? string;
+          try {
+            string = value.decodeFormString(context: r'SearchKey');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          if (user == null && string == null) {
+            throw FormatDecodingException(
+              'Invalid form value for SearchKey: all variants failed to decode',
+            );
+          }
+          return SearchKey(user: user, string: string);
         }
       ''';
 
@@ -446,6 +430,86 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test(
+      'anyOf with complex lists and simple type tries decodable variants',
+      () {
+        final classA = ClassModel(
+          name: 'ClassA',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final classB = ClassModel(
+          name: 'ClassB',
+          properties: [
+            Property(
+              name: 'value',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final listA = ListModel(
+          content: classA,
+          context: context,
+        );
+
+        final listB = ListModel(
+          content: classB,
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          name: 'MixedAnyOf',
+          models: {
+            (discriminatorValue: null, model: listA),
+            (discriminatorValue: null, model: listB),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final generated = format(klass.accept(emitter).toString());
+
+        const expectedMethod = '''
+      factory MixedAnyOf.fromForm(String? value, {required bool explode}) {
+        String? string;
+        try {
+          string = value.decodeFormString(context: r'MixedAnyOf');
+        } on Object catch (_) {
+          string = null;
+        }
+
+        if (string == null) {
+          throw FormatDecodingException(
+            'Invalid form value for MixedAnyOf: all variants failed to decode',
+          );
+        }
+        return MixedAnyOf(list: null, list2: null, string: string);
+      }
+    ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 
   group('toForm method generation', () {
@@ -466,16 +530,16 @@ void main() {
       const expectedMethod = '''
         String toForm({required bool explode, required bool allowEmpty}) {
           final values = <String>{};
+          if (int != null) {
+            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+            values.add(intForm);
+          }
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
             );
             values.add(stringForm);
-          }
-          if (int != null) {
-            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
-            values.add(intForm);
           }
           if (values.isEmpty) return '';
           if (values.length > 1) {
@@ -493,7 +557,7 @@ void main() {
       );
     });
 
-    test('complex-only anyOf merges formProperties', () {
+    test('complex-only anyOf merges parameterProperties', () {
       final classA = ClassModel(
         name: 'A',
         properties: [
@@ -524,7 +588,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           final mapValues = <Map<String, String>>[];
           if (a != null) {
-            final aForm = a!.formProperties(allowEmpty: allowEmpty);
+            final aForm = a!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(aForm);
           }
           final map = <String, String>{};
@@ -590,12 +654,12 @@ void main() {
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
           if (a != null) {
-            final aForm = a!.formProperties(allowEmpty: allowEmpty);
+            final aForm = a!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(aForm);
               discriminatorValue ??= r'a';
           }
           if (b != null) {
-            final bForm = b!.formProperties(allowEmpty: allowEmpty);
+            final bForm = b!.parameterProperties(allowEmpty: allowEmpty);
             mapValues.add(bForm);
               discriminatorValue ??= r'b';
           }
@@ -653,17 +717,17 @@ void main() {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
           
+          if (data != null) {
+            final dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+            mapValues.add(dataForm);
+          }
+
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
             );
             values.add(stringForm);
-          }
-
-          if (data != null) {
-            final dataForm = data!.formProperties(allowEmpty: allowEmpty);
-            mapValues.add(dataForm);
           }
           
           if (values.isEmpty && mapValues.isEmpty) return '';
@@ -701,226 +765,6 @@ void main() {
     });
   });
 
-  group('formProperties method generation', () {
-    test('complex-only anyOf merges formProperties from all fields', () {
-      final classA = ClassModel(
-        name: 'A',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final classB = ClassModel(
-        name: 'B',
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = AnyOfModel(
-        name: 'Combined',
-        models: {
-          (discriminatorValue: null, model: classA),
-          (discriminatorValue: null, model: classB),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final klass = generator.generateClass(model);
-      final generated = format(klass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-          final maps = <Map<String, String>>[];
-          if (a != null) {
-          final aForm = a!.formProperties(allowEmpty: allowEmpty);
-          maps.add(aForm);
-          }
-          if (b != null) {
-          final bForm = b!.formProperties(allowEmpty: allowEmpty);
-          maps.add(bForm);
-          }
-          if (maps.isEmpty) return <String, String>{};
-          final map = <String, String>{};
-          for (final m in maps) {
-            map.addAll(m);
-          }
-          return map;
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test('primitive-only anyOf returns empty map', () {
-      final model = AnyOfModel(
-        name: 'PrimitiveOnly',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final klass = generator.generateClass(model);
-      final generated = format(klass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-          return <String, String>{};
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test('mixed primitive and complex skips primitive fields', () {
-      final classA = ClassModel(
-        name: 'Data',
-        properties: [
-          Property(
-            name: 'value',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = AnyOfModel(
-        name: 'Mixed',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (discriminatorValue: null, model: classA),
-        },
-        discriminator: null,
-        context: context,
-      );
-
-      final klass = generator.generateClass(model);
-      final generated = format(klass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-          final maps = <Map<String, String>>[];
-          if (data != null) {
-          final dataForm = data!.formProperties(allowEmpty: allowEmpty);
-          maps.add(dataForm);
-          }
-          if (maps.isEmpty) return <String, String>{};
-          final map = <String, String>{};
-          for (final m in maps) {
-            map.addAll(m);
-          }
-          return map;
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-
-    test('complex anyOf with discriminator injects discriminator value', () {
-      final classA = ClassModel(
-        name: 'A',
-        properties: [
-          Property(
-            name: 'id',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final classB = ClassModel(
-        name: 'B',
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: context,
-      );
-
-      final model = AnyOfModel(
-        name: 'WithDisc',
-        models: {
-          (discriminatorValue: 'a', model: classA),
-          (discriminatorValue: 'b', model: classB),
-        },
-        discriminator: 'type',
-        context: context,
-      );
-
-      final klass = generator.generateClass(model);
-      final generated = format(klass.accept(emitter).toString());
-
-      const expectedMethod = '''
-        Map<String, String> formProperties({required bool allowEmpty}) {
-          final maps = <Map<String, String>>[];
-          String? discriminatorValue;
-          if (a != null) {
-          final aForm = a!.formProperties(allowEmpty: allowEmpty);
-          maps.add(aForm);
-              discriminatorValue ??= r'a';
-          }
-          if (b != null) {
-          final bForm = b!.formProperties(allowEmpty: allowEmpty);
-          maps.add(bForm);
-              discriminatorValue ??= r'b';
-          }
-          if (maps.isEmpty) return <String, String>{};
-          final map = <String, String>{};
-          for (final m in maps) {
-            map.addAll(m);
-          }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('type', () => discriminatorValue);
-          }
-          return map;
-        }
-      ''';
-
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
-  });
-
   group('Edge cases', () {
     test('nested anyOf properly delegates to inner fromForm', () {
       final innerAnyOf = AnyOfModel(
@@ -948,13 +792,6 @@ void main() {
 
       const expectedMethod = '''
         factory Outer.fromForm(String? value, {required bool explode}) {
-          String? string;
-          try {
-            string = value.decodeFormString(context: r'Outer');
-          } on Object catch (_) {
-            string = null;
-          }
-
           Inner? inner;
           try {
             inner = Inner.fromForm(value, explode: explode);
@@ -962,7 +799,19 @@ void main() {
             inner = null;
           }
 
-          return Outer(string: string, inner: inner);
+          String? string;
+          try {
+            string = value.decodeFormString(context: r'Outer');
+          } on Object catch (_) {
+            string = null;
+          }
+
+          if (inner == null && string == null) {
+            throw FormatDecodingException(
+              'Invalid form value for Outer: all variants failed to decode',
+            );
+          }
+          return Outer(inner: inner, string: string);
         }
       ''';
 
@@ -1021,13 +870,6 @@ void main() {
           String toForm({required bool explode, required bool allowEmpty}) {
             final values = <String>{};
             final mapValues = <Map<String, String>>[];
-            if (string != null) {
-              final stringForm = string!.toForm(
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              values.add(stringForm);
-            }
             if (innerChoice != null) {
               switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
@@ -1036,7 +878,7 @@ void main() {
                 );
                 break;
                 case EncodingShape.complex:
-                  final innerChoiceForm = innerChoice!.formProperties(
+                  final innerChoiceForm = innerChoice!.parameterProperties(
                     allowEmpty: allowEmpty,
                   );
                   mapValues.add(innerChoiceForm);
@@ -1046,6 +888,13 @@ void main() {
                     'Cannot encode field with mixed encoding shape',
                   );
               }
+            }
+            if (string != null) {
+              final stringForm = string!.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              values.add(stringForm);
             }
             if (values.isEmpty && mapValues.isEmpty) return '';
             if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -1128,7 +977,7 @@ void main() {
                 );
                 break;
               case EncodingShape.complex:
-                final innerAnyOfForm = innerAnyOf!.formProperties(
+                final innerAnyOfForm = innerAnyOf!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
                 mapValues.add(innerAnyOfForm);
@@ -1180,21 +1029,21 @@ void main() {
         const expected = '''
           String toForm({required bool explode, required bool allowEmpty}) {
             final values = <String>{};
-            final mapValues = <Map<String, String>>[];
+            final mapValues = <Map<String, String>>[]; 
+            if (myClass != null) {
+              final myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
+              mapValues.add(myClassForm);
+            }
+            if (int != null) {
+              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+              values.add(intForm);
+            }
             if (string != null) {
               final stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
               );
               values.add(stringForm);
-            }
-            if (int != null) {
-              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
-              values.add(intForm);
-            }
-            if (myClass != null) {
-              final myClassForm = myClass!.formProperties(allowEmpty: allowEmpty);
-              mapValues.add(myClassForm);
             }
             if (values.isEmpty && mapValues.isEmpty) return '';
             if (mapValues.isNotEmpty && values.isNotEmpty) {
@@ -1330,7 +1179,7 @@ void main() {
                 );
                 break;
               case EncodingShape.complex:
-                final innerChoiceSimple = innerChoice!.simpleProperties(
+                final innerChoiceSimple = innerChoice!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
                 mapValues.add(innerChoiceSimple);
@@ -1366,6 +1215,10 @@ void main() {
         const expected = '''
           String toSimple({required bool explode, required bool allowEmpty}) {
             final values = <String>{};
+            if (int != null) {
+              final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
+              values.add(intSimple);
+            }
             if (string != null) {
               final stringSimple = string!.toSimple(
                 explode: explode,
@@ -1373,10 +1226,6 @@ void main() {
               );
               values.add(stringSimple);
             }
-          if (int != null) {
-            final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
-            values.add(intSimple);
-          }
         ''';
 
         expect(
@@ -1386,184 +1235,60 @@ void main() {
       });
     });
 
-    group('formProperties method', () {
-      test('checks complex at runtime for nested oneOf', () {
-        final innerOneOf = OneOfModel(
-          name: 'InnerChoice',
-          models: {
-            (discriminatorValue: 'str', model: StringModel(context: context)),
-            (
-              discriminatorValue: 'obj',
-              model: ClassModel(
-                name: 'Inner',
-                properties: [
-                  Property(
-                    name: 'field',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ],
-                context: context,
-              ),
+    test('skips runtime check for static complex types', () {
+      final model = AnyOfModel(
+        name: 'TestAnyOf',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'MyClass',
+              properties: [
+                Property(
+                  name: 'field',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
             ),
-          },
-          discriminator: 'type',
-          context: context,
-        );
+          ),
+        },
+        discriminator: null,
+        context: context,
+      );
 
-        final model = AnyOfModel(
-          name: 'TestAnyOf',
-          models: {
-            (discriminatorValue: null, model: innerOneOf),
-          },
-          discriminator: null,
-          context: context,
-        );
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
 
-        final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
-
-        const expected = '''
-          Map<String, String> formProperties({required bool allowEmpty}) {
-            final maps = <Map<String, String>>[];
-            if (innerChoice != null &&
-                innerChoice!.currentEncodingShape == EncodingShape.complex) {
-              final innerChoiceForm = innerChoice!.formProperties(
-                allowEmpty: allowEmpty,
-              );
-              maps.add(innerChoiceForm);
-            }
-            if (maps.isEmpty) return <String, String>{};
-            final map = <String, String>{};
-            for (final m in maps) {
-              map.addAll(m);
-            }
-            return map;
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expected)),
-        );
-      });
-
-      test('skips runtime check for static complex types', () {
-        final model = AnyOfModel(
-          name: 'TestAnyOf',
-          models: {
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                name: 'MyClass',
-                properties: [
-                  Property(
-                    name: 'field',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ],
-                context: context,
-              ),
-            ),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
-
-        const expected = '''
-          Map<String, String> formProperties({required bool allowEmpty}) {
-            final maps = <Map<String, String>>[];
+      const expected = r'''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) {
+            final _$mapValues = <Map<String, String>>[];
             if (myClass != null) {
-            final myClassForm = myClass!.formProperties(allowEmpty: allowEmpty);
-            maps.add(myClassForm);
-            }
-            if (maps.isEmpty) return <String, String>{};
-            final map = <String, String>{};
-            for (final m in maps) {
-              map.addAll(m);
-            }
-            return map;
-          }
-        ''';
-
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expected)),
-        );
-      });
-    });
-
-    group('simpleProperties method', () {
-      test('checks complex at runtime for nested anyOf', () {
-        final innerAnyOf = AnyOfModel(
-          name: 'InnerAnyOf',
-          models: {
-            (discriminatorValue: null, model: StringModel(context: context)),
-            (
-              discriminatorValue: null,
-              model: ClassModel(
-                name: 'Inner',
-                properties: [
-                  Property(
-                    name: 'field',
-                    model: StringModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ],
-                context: context,
-              ),
-            ),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final model = AnyOfModel(
-          name: 'TestAnyOf',
-          models: {
-            (discriminatorValue: null, model: innerAnyOf),
-          },
-          discriminator: null,
-          context: context,
-        );
-
-        final klass = generator.generateClass(model);
-        final generated = format(klass.accept(emitter).toString());
-
-        const expected = '''
-          Map<String, String> simpleProperties({required bool allowEmpty}) {
-            final maps = <Map<String, String>>[];
-            if (innerAnyOf != null &&
-                innerAnyOf!.currentEncodingShape == EncodingShape.complex) {
-              final Map<String, String> innerAnyOfSimple = innerAnyOf!.simpleProperties(
-                allowEmpty: allowEmpty,
+              _$mapValues.add(
+                myClass!.parameterProperties(
+                  allowEmpty: allowEmpty,
+                  allowLists: allowLists,
+                ),
               );
-              maps.add(innerAnyOfSimple);
             }
-            if (maps.isEmpty) return <String, String>{};
-            final map = <String, String>{};
-            for (final m in maps) {
-              map.addAll(m);
+            final _$map = <String, String>{};
+            for (final m in _$mapValues) {
+              _$map.addAll(m);
             }
-            return map;
+            return _$map;
           }
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expected)),
-        );
-      });
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expected)),
+      );
     });
   });
 }
