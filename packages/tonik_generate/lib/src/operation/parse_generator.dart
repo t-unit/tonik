@@ -112,7 +112,8 @@ class ParseGenerator {
       case RangeResponseStatus():
         return Code(
           'case (var status, $contentTypePattern) '
-          'when status >= ${status.min} && status <= ${status.max}:',
+          'when status != null '
+          '&& status >= ${status.min} && status <= ${status.max}:',
         );
       case DefaultResponseStatus():
         return Code('case (_, $contentTypePattern):');
