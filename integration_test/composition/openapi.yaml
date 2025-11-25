@@ -24,7 +24,7 @@ paths:
       summary: Health check
       description: Health check endpoint
       responses:
-        '200':
+        '2XX':
           description: Successful response
 
 components:

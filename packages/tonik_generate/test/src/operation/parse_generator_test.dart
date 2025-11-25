@@ -433,7 +433,7 @@ String _parseResponse(Response<Object?> response) {
       const expectedMethod = r'''
         String _parseResponse(Response<Object?> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (var status, 'application/json') when status >= 200 && status <= 299:
+            case (var status, 'application/json') when status != null && status >= 200 && status <= 299:
               return response.data.decodeJsonString();
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
@@ -758,7 +758,7 @@ String _parseResponse(Response<Object?> response) {
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
                 ),
               );
-            case (var status, 'application/json') when status >= 400 && status <= 499:
+            case (var status, 'application/json') when status != null && status >= 400 && status <= 499:
               return CombinedOpResponse4XX(
                 body: AnonymousModel.fromJson(response.data),
               );
