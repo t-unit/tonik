@@ -2,6 +2,52 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
+/// Returns the reason why simple decoding is not supported for the given model,
+/// or `null` if simple decoding is supported.
+String? getSimpleDecodingUnsupportedReason(Model model) {
+  return switch (model) {
+    StringModel() ||
+    IntegerModel() ||
+    NumberModel() ||
+    DoubleModel() ||
+    DecimalModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    UriModel() ||
+    EnumModel() ||
+    ClassModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() => null,
+    ListModel(:final content) => _getListContentUnsupportedReason(content),
+    AliasModel(:final model) => getSimpleDecodingUnsupportedReason(model),
+    NamedModel() || CompositeModel() => 'Unsupported model type: $model',
+  };
+}
+
+String? _getListContentUnsupportedReason(Model content) {
+  return switch (content) {
+    StringModel() ||
+    IntegerModel() ||
+    NumberModel() ||
+    DoubleModel() ||
+    DecimalModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    UriModel() ||
+    EnumModel() ||
+    OneOfModel() ||
+    AllOfModel() ||
+    AnyOfModel() => null,
+    ClassModel() => 'Lists of objects are not supported in simple encoding',
+    ListModel() => 'Nested lists are not supported in simple encoding',
+    AliasModel(:final model) => _getListContentUnsupportedReason(model),
+    NamedModel() || CompositeModel() => 'Unsupported model type: $content',
+  };
+}
+
 /// Creates a Dart expression that correctly deserializes a simple value
 /// to its Dart representation.
 Expression buildSimpleValueExpression(

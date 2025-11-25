@@ -129,6 +129,719 @@ paths:
         '200':
           description: OK
 
+  /headers/roundtrip/primitives:
+    get:
+      operationId: testHeaderRoundtripPrimitives
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for primitive types in headers
+      description: |
+        Tests encoding and decoding of primitive types.
+        Imposter echoes request headers back as response headers.
+      parameters:
+        - name: X-Integer
+          in: header
+          style: simple
+          schema:
+            type: integer
+        - name: X-Double
+          in: header
+          style: simple
+          schema:
+            type: number
+            format: double
+        - name: X-Number
+          in: header
+          style: simple
+          schema:
+            type: number
+        - name: X-String
+          in: header
+          style: simple
+          schema:
+            type: string
+        - name: X-Boolean
+          in: header
+          style: simple
+          schema:
+            type: boolean
+        - name: X-DateTime
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: date-time
+        - name: X-Date
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: date
+        - name: X-Decimal
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: decimal
+        - name: X-Uri
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: uri
+      responses:
+        '200':
+          description: Echoed primitive headers
+          headers:
+            X-Integer:
+              schema:
+                type: integer
+            X-Double:
+              schema:
+                type: number
+                format: double
+            X-Number:
+              schema:
+                type: number
+            X-String:
+              schema:
+                type: string
+            X-Boolean:
+              schema:
+                type: boolean
+            X-DateTime:
+              schema:
+                type: string
+                format: date-time
+            X-Date:
+              schema:
+                type: string
+                format: date
+            X-Decimal:
+              schema:
+                type: string
+                format: decimal
+            X-Uri:
+              schema:
+                type: string
+                format: uri
+
+  /headers/roundtrip/enums:
+    get:
+      operationId: testHeaderRoundtripEnums
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for enum types in headers
+      description: Tests encoding and decoding of string and integer enums
+      parameters:
+        - name: X-Status
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/StatusEnum'
+        - name: X-Priority
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+      responses:
+        '200':
+          description: Echoed enum headers
+          headers:
+            X-Status:
+              schema:
+                $ref: '#/components/schemas/StatusEnum'
+            X-Priority:
+              schema:
+                $ref: '#/components/schemas/PriorityEnum'
+
+  /headers/roundtrip/lists/simple:
+    get:
+      operationId: testHeaderRoundtripSimpleLists
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for simple list types in headers
+      description: Tests encoding and decoding of arrays with primitive items
+      parameters:
+        - name: X-String-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+        - name: X-Integer-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: integer
+        - name: X-Number-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: number
+        - name: X-Boolean-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: boolean
+      responses:
+        '200':
+          description: Echoed list headers
+          headers:
+            X-String-List:
+              schema:
+                type: array
+                items:
+                  type: string
+            X-Integer-List:
+              schema:
+                type: array
+                items:
+                  type: integer
+            X-Number-List:
+              schema:
+                type: array
+                items:
+                  type: number
+            X-Boolean-List:
+              schema:
+                type: array
+                items:
+                  type: boolean
+
+  /headers/roundtrip/lists/enums:
+    get:
+      operationId: testHeaderRoundtripEnumLists
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for enum list types in headers
+      description: Tests encoding and decoding of arrays with enum items
+      parameters:
+        - name: X-Status-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/StatusEnum'
+        - name: X-Priority-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/PriorityEnum'
+      responses:
+        '200':
+          description: Echoed enum list headers
+          headers:
+            X-Status-List:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusEnum'
+            X-Priority-List:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriorityEnum'
+
+  /headers/roundtrip/objects:
+    get:
+      operationId: testHeaderRoundtripObjects
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for object types in headers
+      description: Tests encoding and decoding of object schemas
+      parameters:
+        - name: X-Simple-Object
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/SimpleObject'
+        - name: X-User-Profile
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/UserProfile'
+      responses:
+        '200':
+          description: Echoed object headers
+          headers:
+            X-Simple-Object:
+              schema:
+                $ref: '#/components/schemas/SimpleObject'
+            X-User-Profile:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /headers/roundtrip/oneof/discriminated:
+    get:
+      operationId: testHeaderRoundtripOneOfDiscriminated
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for discriminated oneOf in headers
+      description: Tests encoding and decoding of oneOf with discriminator
+      parameters:
+        - name: X-Entity
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/EntityType'
+      responses:
+        '200':
+          description: Echoed oneOf header
+          headers:
+            X-Entity:
+              schema:
+                $ref: '#/components/schemas/EntityType'
+
+  /headers/roundtrip/oneof/primitive:
+    get:
+      operationId: testHeaderRoundtripOneOfPrimitive
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for primitive oneOf in headers
+      description: Tests encoding and decoding of oneOf with primitive types
+      parameters:
+        - name: X-Primitive-Union
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+      responses:
+        '200':
+          description: Echoed primitive oneOf header
+          headers:
+            X-Primitive-Union:
+              schema:
+                $ref: '#/components/schemas/OneOfPrimitive'
+
+  /headers/roundtrip/oneof/complex:
+    get:
+      operationId: testHeaderRoundtripOneOfComplex
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for complex oneOf in headers
+      description: Tests encoding and decoding of oneOf with object types
+      parameters:
+        - name: X-Complex-Union
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '200':
+          description: Echoed complex oneOf header
+          headers:
+            X-Complex-Union:
+              schema:
+                $ref: '#/components/schemas/OneOfComplex'
+
+  /headers/roundtrip/oneof/enum:
+    get:
+      operationId: testHeaderRoundtripOneOfEnum
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for enum oneOf in headers
+      description: Tests encoding and decoding of oneOf with enum types
+      parameters:
+        - name: X-Enum-Union
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/OneOfEnum'
+      responses:
+        '200':
+          description: Echoed enum oneOf header
+          headers:
+            X-Enum-Union:
+              schema:
+                $ref: '#/components/schemas/OneOfEnum'
+
+  /headers/roundtrip/anyof/primitive:
+    get:
+      operationId: testHeaderRoundtripAnyOfPrimitive
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for primitive anyOf in headers
+      description: Tests encoding and decoding of anyOf with primitive types
+      parameters:
+        - name: X-Flexible-Value
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+      responses:
+        '200':
+          description: Echoed primitive anyOf header
+          headers:
+            X-Flexible-Value:
+              schema:
+                $ref: '#/components/schemas/AnyOfPrimitive'
+
+  /headers/roundtrip/anyof/complex:
+    get:
+      operationId: testHeaderRoundtripAnyOfComplex
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for complex anyOf in headers
+      description: Tests encoding and decoding of anyOf with object types
+      parameters:
+        - name: X-Flexible-Object
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AnyOfComplex'
+      responses:
+        '200':
+          description: Echoed complex anyOf header
+          headers:
+            X-Flexible-Object:
+              schema:
+                $ref: '#/components/schemas/AnyOfComplex'
+
+  /headers/roundtrip/anyof/mixed:
+    get:
+      operationId: testHeaderRoundtripAnyOfMixed
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for mixed anyOf in headers
+      description: Tests encoding and decoding of anyOf with mixed types (primitive + object + enum)
+      parameters:
+        - name: X-Mixed-Value
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/FlexibleValue'
+      responses:
+        '200':
+          description: Echoed mixed anyOf header
+          headers:
+            X-Mixed-Value:
+              schema:
+                $ref: '#/components/schemas/FlexibleValue'
+
+  /headers/roundtrip/allof/simple:
+    get:
+      operationId: testHeaderRoundtripAllOfSimple
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for simple allOf in headers
+      description: Tests encoding and decoding of allOf with object composition
+      parameters:
+        - name: X-Composite-Entity
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/CompositeEntity'
+      responses:
+        '200':
+          description: Echoed allOf header
+          headers:
+            X-Composite-Entity:
+              schema:
+                $ref: '#/components/schemas/CompositeEntity'
+
+  /headers/roundtrip/allof/primitives:
+    get:
+      operationId: testHeaderRoundtripAllOfPrimitives
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for allOf combining primitive properties
+      description: Tests encoding and decoding of allOf that merges object properties
+      parameters:
+        - name: X-Merged-Object
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AllOfPrimitive'
+      responses:
+        '200':
+          description: Echoed merged allOf header
+          headers:
+            X-Merged-Object:
+              schema:
+                $ref: '#/components/schemas/AllOfPrimitive'
+
+  /headers/roundtrip/allof/enums:
+    get:
+      operationId: testHeaderRoundtripAllOfEnums
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for allOf containing enum properties
+      description: Tests encoding and decoding of allOf with enum fields
+      parameters:
+        - name: X-Enum-Composite
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AllOfEnum'
+      responses:
+        '200':
+          description: Echoed enum allOf header
+          headers:
+            X-Enum-Composite:
+              schema:
+                $ref: '#/components/schemas/AllOfEnum'
+
+  /headers/roundtrip/allof/lists:
+    get:
+      operationId: testHeaderRoundtripAllOfLists
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for allOf containing list properties
+      description: Tests encoding and decoding of allOf with array fields
+      parameters:
+        - name: X-List-Composite
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AllOfWithSimpleList'
+      responses:
+        '200':
+          description: Echoed list allOf header
+          headers:
+            X-List-Composite:
+              schema:
+                $ref: '#/components/schemas/AllOfWithSimpleList'
+
+  /headers/roundtrip/nested/oneof-in-allof:
+    get:
+      operationId: testHeaderRoundtripNestedOneOfInAllOf
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for oneOf nested in allOf
+      description: Tests encoding and decoding of complex nested composition
+      parameters:
+        - name: X-Nested-Value
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NestedOneOfInAllOf'
+      responses:
+        '200':
+          description: Echoed nested composition header
+          headers:
+            X-Nested-Value:
+              schema:
+                $ref: '#/components/schemas/NestedOneOfInAllOf'
+
+  /headers/roundtrip/nested/allof-in-oneof:
+    get:
+      operationId: testHeaderRoundtripNestedAllOfInOneOf
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for allOf nested in oneOf
+      description: Tests encoding and decoding of allOf inside oneOf
+      parameters:
+        - name: X-Nested-Value
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NestedAllOfInOneOf'
+      responses:
+        '200':
+          description: Echoed nested composition header
+          headers:
+            X-Nested-Value:
+              schema:
+                $ref: '#/components/schemas/NestedAllOfInOneOf'
+
+  /headers/roundtrip/nested/anyof-in-oneof:
+    get:
+      operationId: testHeaderRoundtripNestedAnyOfInOneOf
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for anyOf nested in oneOf
+      description: Tests encoding and decoding of anyOf inside oneOf
+      parameters:
+        - name: X-Nested-Value
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NestedAnyOfInOneOf'
+      responses:
+        '200':
+          description: Echoed nested composition header
+          headers:
+            X-Nested-Value:
+              schema:
+                $ref: '#/components/schemas/NestedAnyOfInOneOf'
+
+  /headers/roundtrip/deep/two-level:
+    get:
+      operationId: testHeaderRoundtripTwoLevelNesting
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for two-level nested compositions
+      description: Tests encoding and decoding of deeply nested oneOf/allOf
+      parameters:
+        - name: X-Two-Level-OneOf
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/TwoLevelOneOf'
+        - name: X-Two-Level-AllOf
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/TwoLevelAllOf'
+      responses:
+        '200':
+          description: Echoed two-level nested headers
+          headers:
+            X-Two-Level-OneOf:
+              schema:
+                $ref: '#/components/schemas/TwoLevelOneOf'
+            X-Two-Level-AllOf:
+              schema:
+                $ref: '#/components/schemas/TwoLevelAllOf'
+
+  /headers/roundtrip/deep/three-level:
+    get:
+      operationId: testHeaderRoundtripThreeLevelNesting
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for three-level nested compositions
+      description: Tests encoding and decoding of very deeply nested compositions
+      parameters:
+        - name: X-Three-Level-OneOf
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/ThreeLevelOneOf'
+        - name: X-Three-Level-Mixed
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/ThreeLevelMixedOneOfAllOfAnyOf'
+      responses:
+        '200':
+          description: Echoed three-level nested headers
+          headers:
+            X-Three-Level-OneOf:
+              schema:
+                $ref: '#/components/schemas/ThreeLevelOneOf'
+            X-Three-Level-Mixed:
+              schema:
+                $ref: '#/components/schemas/ThreeLevelMixedOneOfAllOfAnyOf'
+
+  /headers/roundtrip/complex/dynamic-composite:
+    get:
+      operationId: testHeaderRoundtripDynamicComposite
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for dynamic composite value
+      description: Tests encoding and decoding of anyOf containing oneOf, anyOf, and allOf
+      parameters:
+        - name: X-Dynamic-Value
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/DynamicCompositeValue'
+      responses:
+        '200':
+          description: Echoed dynamic composite header
+          headers:
+            X-Dynamic-Value:
+              schema:
+                $ref: '#/components/schemas/DynamicCompositeValue'
+
+  /headers/roundtrip/complex/multi-level:
+    get:
+      operationId: testHeaderRoundtripMultiLevel
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for multi-level nesting with property compositions
+      description: Tests encoding and decoding of object with nested oneOf/anyOf in properties
+      parameters:
+        - name: X-Multi-Level
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/MultiLevelNesting'
+      responses:
+        '200':
+          description: Echoed multi-level header
+          headers:
+            X-Multi-Level:
+              schema:
+                $ref: '#/components/schemas/MultiLevelNesting'
+
+  /headers/roundtrip/lists/with-compositions:
+    get:
+      operationId: testHeaderRoundtripListsWithCompositions
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for lists containing composite types
+      description: Tests encoding and decoding of arrays with oneOf/allOf items
+      parameters:
+        - name: X-Object-List
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/ObjectList'
+        - name: X-AnyOf-List
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AnyOfWithComplexList'
+      responses:
+        '200':
+          description: Echoed lists with compositions
+          headers:
+            X-Object-List:
+              schema:
+                $ref: '#/components/schemas/ObjectList'
+            X-AnyOf-List:
+              schema:
+                $ref: '#/components/schemas/AnyOfWithComplexList'
+
+  /headers/roundtrip/aliases:
+    get:
+      operationId: testHeaderRoundtripAliases
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for type aliases in headers
+      description: Tests encoding and decoding of aliased types
+      parameters:
+        - name: X-User-Id
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/UserId'
+        - name: X-User-Name
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/UserName'
+        - name: X-Timestamp
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/Timestamp'
+      responses:
+        '200':
+          description: Echoed alias headers
+          headers:
+            X-User-Id:
+              schema:
+                $ref: '#/components/schemas/UserId'
+            X-User-Name:
+              schema:
+                $ref: '#/components/schemas/UserName'
+            X-Timestamp:
+              schema:
+                $ref: '#/components/schemas/Timestamp'
+
   /headers:
     get:
       operationId: testHeaders
@@ -527,3 +1240,537 @@ components:
     Timestamp:
       type: string
       format: date-time
+
+    
+    Class1:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    Class2:
+      type: object
+      required:
+        - number
+      properties:
+        number:
+          type: integer
+
+
+    OneOfPrimitive:
+      oneOf:
+        - type: string
+        - type: integer
+
+    OneOfComplex:
+      oneOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Class2'
+
+    OneOfEnum:
+      oneOf:
+        - $ref: '#/components/schemas/StatusEnum'
+        - $ref: '#/components/schemas/PriorityEnum'
+
+    OneOfMixed:
+      oneOf:
+        - type: string
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/StatusEnum'
+
+
+    AnyOfPrimitive:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: boolean
+
+    AnyOfComplex:
+      anyOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Class2'
+
+    AnyOfEnum:
+      anyOf:
+        - $ref: '#/components/schemas/StatusEnum'
+        - $ref: '#/components/schemas/PriorityEnum'
+
+    AnyOfMixed:
+      anyOf:
+        - type: integer
+        - $ref: '#/components/schemas/Class2'
+        - $ref: '#/components/schemas/PriorityEnum'
+
+
+    AllOfPrimitive:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+        - type: object
+          properties:
+            count:
+              type: integer
+
+    AllOfComplex:
+      allOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/Class2'
+
+    AllOfEnum:
+      allOf:
+        - type: object
+          properties:
+            status:
+              $ref: '#/components/schemas/StatusEnum'
+        - type: object
+          properties:
+            priority:
+              $ref: '#/components/schemas/PriorityEnum'
+
+    AllOfMixed:
+      allOf:
+        - type: string
+        - $ref: '#/components/schemas/Class1'
+
+
+    AllOfWithSimpleList:
+      allOf:
+        - type: object
+          properties:
+            tags:
+              type: array
+              items:
+                type: string
+        - type: object
+          properties:
+            ids:
+              type: array
+              items:
+                type: integer
+
+    AllOfWithComplexList:
+      allOf:
+        - type: object
+          properties:
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/Class1'
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    AnyOfWithSimpleList:
+      anyOf:
+        - type: array
+          items:
+            type: string
+        - type: array
+          items:
+            type: integer
+        - type: string
+
+    AnyOfWithComplexList:
+      anyOf:
+        - type: array
+          items:
+            $ref: '#/components/schemas/Class1'
+        - type: array
+          items:
+            $ref: '#/components/schemas/Class2'
+        - type: string
+
+    AllOfWithEnumList:
+      allOf:
+        - type: object
+          properties:
+            statuses:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatusEnum'
+        - type: object
+          properties:
+            priorities:
+              type: array
+              items:
+                $ref: '#/components/schemas/PriorityEnum'
+
+
+    NestedOneOfInOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/OneOfPrimitive'
+        - $ref: '#/components/schemas/OneOfComplex'
+
+    NestedAllOfInAllOf:
+      allOf:
+        - $ref: '#/components/schemas/AllOfComplex'
+        - type: object
+          properties:
+            extra:
+              type: string
+
+    NestedAnyOfInAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/AnyOfPrimitive'
+        - $ref: '#/components/schemas/AnyOfComplex'
+
+    NestedOneOfInAllOf:
+      allOf:
+        - $ref: '#/components/schemas/OneOfPrimitive'
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    NestedAllOfInOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/AllOfComplex'
+        - type: string
+
+    NestedAnyOfInOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/AnyOfMixed'
+        - type: boolean
+
+    NestedOneOfInAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/OneOfEnum'
+        - type: number
+
+    NestedAllOfInAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/AllOfMixed'
+        - $ref: '#/components/schemas/Class1'
+
+    NestedAnyOfInAllOf:
+      allOf:
+        - $ref: '#/components/schemas/AnyOfComplex'
+        - type: object
+          properties:
+            timestamp:
+              type: integer
+
+
+    TwoLevelOneOf:
+      oneOf:
+        - oneOf:
+            - type: string
+            - type: integer
+        - type: boolean
+
+    TwoLevelAllOf:
+      allOf:
+        - allOf:
+            - type: object
+              properties:
+                id:
+                  type: string
+            - type: object
+              properties:
+                name:
+                  type: string
+        - type: object
+          properties:
+            active:
+              type: boolean
+
+    TwoLevelAnyOf:
+      anyOf:
+        - anyOf:
+            - $ref: '#/components/schemas/Class1'
+            - $ref: '#/components/schemas/Class2'
+        - type: string
+
+    TwoLevelMixedOneOfAllOf:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/Class1'
+            - type: object
+              properties:
+                timestamp:
+                  type: integer
+        - type: string
+
+    TwoLevelMixedAllOfAnyOf:
+      allOf:
+        - anyOf:
+            - type: string
+            - type: integer
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    TwoLevelMixedAnyOfOneOf:
+      anyOf:
+        - oneOf:
+            - $ref: '#/components/schemas/StatusEnum'
+            - $ref: '#/components/schemas/PriorityEnum'
+        - $ref: '#/components/schemas/Class1'
+
+
+    ThreeLevelOneOf:
+      oneOf:
+        - oneOf:
+            - oneOf:
+                - type: string
+                - type: integer
+            - type: boolean
+        - type: number
+
+    ThreeLevelAllOf:
+      allOf:
+        - allOf:
+            - allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                - type: object
+                  properties:
+                    name:
+                      type: string
+            - type: object
+              properties:
+                email:
+                  type: string
+        - type: object
+          properties:
+            verified:
+              type: boolean
+
+    ThreeLevelAnyOf:
+      anyOf:
+        - anyOf:
+            - anyOf:
+                - $ref: '#/components/schemas/Class1'
+                - $ref: '#/components/schemas/Class2'
+            - $ref: '#/components/schemas/StatusEnum'
+        - type: string
+
+    ThreeLevelMixedOneOfAllOfAnyOf:
+      oneOf:
+        - allOf:
+            - anyOf:
+                - type: string
+                - type: integer
+            - type: object
+              properties:
+                flag:
+                  type: boolean
+        - $ref: '#/components/schemas/Class1'
+
+    ThreeLevelMixedAllOfOneOfAnyOf:
+      allOf:
+        - oneOf:
+            - anyOf:
+                - $ref: '#/components/schemas/StatusEnum'
+                - $ref: '#/components/schemas/Class1'
+            - type: string
+        - type: object
+          properties:
+            metadata:
+              type: string
+
+    ThreeLevelMixedAnyOfAllOfOneOf:
+      anyOf:
+        - allOf:
+            - oneOf:
+                - $ref: '#/components/schemas/Class1'
+                - $ref: '#/components/schemas/Class2'
+            - type: object
+              properties:
+                extra:
+                  type: integer
+        - type: boolean
+
+
+    DeepNestedOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/NestedOneOfInOneOf'
+        - $ref: '#/components/schemas/Class1'
+
+    DeepNestedAllOf:
+      allOf:
+        - $ref: '#/components/schemas/NestedAllOfInAllOf'
+        - type: object
+          properties:
+            deep:
+              type: boolean
+
+    DeepNestedAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/NestedAnyOfInAnyOf'
+        - $ref: '#/components/schemas/StatusEnum'
+
+    ThreeLevelWithRefs:
+      oneOf:
+        - $ref: '#/components/schemas/TwoLevelOneOf'
+        - $ref: '#/components/schemas/TwoLevelAllOf'
+        - type: string
+
+    ThreeLevelMixedRefs:
+      allOf:
+        - $ref: '#/components/schemas/TwoLevelMixedAllOfAnyOf'
+        - anyOf:
+            - $ref: '#/components/schemas/Class1'
+            - type: integer
+
+
+    ComplexNestedMix:
+      allOf:
+        - type: object
+          properties:
+            base:
+              type: string
+        - oneOf:
+            - $ref: '#/components/schemas/Class1'
+            - $ref: '#/components/schemas/Class2'
+
+    ComplexNestedMix2:
+      oneOf:
+        - allOf:
+            - $ref: '#/components/schemas/Class1'
+            - type: object
+              properties:
+                extra:
+                  type: integer
+        - $ref: '#/components/schemas/StatusEnum'
+
+    ComplexNestedMix3:
+      anyOf:
+        - oneOf:
+            - type: string
+            - type: integer
+        - allOf:
+            - $ref: '#/components/schemas/Class2'
+            - type: object
+              properties:
+                flag:
+                  type: boolean
+
+    MultiLevelNesting:
+      allOf:
+        - type: object
+          properties:
+            level1:
+              oneOf:
+                - type: string
+                - anyOf:
+                    - $ref: '#/components/schemas/Class1'
+                    - $ref: '#/components/schemas/Class2'
+        - type: object
+          properties:
+            level2:
+              type: integer
+
+
+    NestedListInAllOf:
+      allOf:
+        - type: object
+          properties:
+            matrix:
+              type: array
+              items:
+                type: array
+                items:
+                  type: integer
+        - type: object
+          properties:
+            name:
+              type: string
+
+    NestedListInAnyOf:
+      anyOf:
+        - type: array
+          items:
+            type: array
+            items:
+              type: string
+        - type: string
+
+    ComplexListComposition:
+      allOf:
+        - type: object
+          properties:
+            simpleList:
+              type: array
+              items:
+                type: string
+        - anyOf:
+            - type: object
+              required:
+                - enumList
+              properties:
+                enumList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/StatusEnum'
+            - type: object
+              required:
+                - complexList
+              properties:
+                complexList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Class1'
+
+    AllOfWithListOfComposites:
+      allOf:
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/Class1'
+                  - $ref: '#/components/schemas/Class2'
+        - type: object
+          properties:
+            count:
+              type: integer
+
+    AnyOfWithListOfComposites:
+      anyOf:
+        - type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Class1'
+              - type: object
+                properties:
+                  extra:
+                    type: string
+        - type: string
+
+
+    AllOfDoubleList:
+      allOf:
+        - type: array
+          items:
+            type: string
+        - type: array
+          items:
+            type: string
+            format: date-time
+
+    AllOfOneOfDoubleList:
+      allOf:
+        - type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+        - type: array
+          items:
+            type: string
+            format: date-time
+
+    AllOfDirectPrimitive:
+      allOf:
+        - type: integer
+        - type: number

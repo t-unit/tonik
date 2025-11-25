@@ -204,11 +204,22 @@ class ParseGenerator {
     String? contentType,
     Expression? bodyDecode,
   ) {
+    final headerResult = _decodeHeaders(response);
+
+    // If there are unsupported headers, generate a throw statement
+    // (only the first one - they all need to be fixed anyway)
+    if (headerResult.unsupported.isNotEmpty) {
+      final unsupported = headerResult.unsupported.first;
+      return generateSimpleDecodingExceptionExpression(
+        '${unsupported.reason} at ${unsupported.headerName}',
+      ).statement;
+    }
+
     final responseArgs = <String, Expression>{};
     if (bodyDecode != null) {
       responseArgs['body'] = bodyDecode;
     }
-    responseArgs.addAll(_decodeHeaders(response));
+    responseArgs.addAll(headerResult.supported);
 
     final wrapperArgs = <String, Expression>{
       'body': refer(
@@ -239,11 +250,20 @@ class ParseGenerator {
     String? contentType,
     Expression? bodyDecode,
   ) {
+    final headerResult = _decodeHeaders(response);
+
+    if (headerResult.unsupported.isNotEmpty) {
+      final unsupported = headerResult.unsupported.first;
+      return generateSimpleDecodingExceptionExpression(
+        '${unsupported.reason} at ${unsupported.headerName}',
+      ).statement;
+    }
+
     final args = <String, Expression>{};
     if (bodyDecode != null) {
       args['body'] = bodyDecode;
     }
-    args.addAll(_decodeHeaders(response));
+    args.addAll(headerResult.supported);
 
     return Block.of([
       const Code('return '),
@@ -267,8 +287,13 @@ class ParseGenerator {
     );
   }
 
-  Map<String, Expression> _decodeHeaders(ResponseObject response) {
-    final assignments = <String, Expression>{};
+  ({
+    Map<String, Expression> supported,
+    List<({String headerName, String reason})> unsupported,
+  })
+  _decodeHeaders(ResponseObject response) {
+    final supported = <String, Expression>{};
+    final unsupported = <({String headerName, String reason})>[];
     final normalizedProperties = normalizeResponseProperties(response);
     final normalizedHeaders = normalizedProperties.where(
       (norm) => norm.property.name != 'body',
@@ -281,6 +306,15 @@ class ParseGenerator {
               .key;
 
       final normalizedName = norm.normalizedName;
+      final unsupportedReason = getSimpleDecodingUnsupportedReason(
+        norm.property.model,
+      );
+
+      if (unsupportedReason != null) {
+        unsupported.add((headerName: rawHeaderName, reason: unsupportedReason));
+        continue;
+      }
+
       final headerValue = refer('response')
           .property('headers')
           .property('value')
@@ -293,9 +327,9 @@ class ParseGenerator {
         package: package,
         contextProperty: rawHeaderName,
       );
-      assignments[normalizedName] = decode;
+      supported[normalizedName] = decode;
     }
-    return assignments;
+    return (supported: supported, unsupported: unsupported);
   }
 
   Set<String?> _getContentTypes(Response response) {

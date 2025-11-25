@@ -1,6 +1,3 @@
-// Generated code won't have whitespcae in long lines, so we ignore this.
-// ignore_for_file: missing_whitespace_between_adjacent_strings
-
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -337,8 +334,7 @@ void main() {
           contextClass: 'Order',
           contextProperty: 'quantities',
         ).accept(emitter).toString(),
-        "value.decodeSimpleStringList(context: r'Order.quantities')"
-        ".map((e) => e.decodeSimpleInt(context: r'Order.quantities')).toList()",
+        '''value.decodeSimpleStringList(context: r'Order.quantities').map((e) => e.decodeSimpleInt(context: r'Order.quantities')).toList()''',
       );
     });
 
