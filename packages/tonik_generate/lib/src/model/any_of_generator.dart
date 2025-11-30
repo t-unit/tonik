@@ -869,6 +869,7 @@ class AnyOfGenerator {
             nameManager: nameManager,
             package: package,
             contextClass: className,
+            explode: refer('explode'),
           ),
         };
 

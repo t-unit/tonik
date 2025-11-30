@@ -34,6 +34,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleString()',
       );
@@ -45,6 +46,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableString()',
       );
@@ -56,6 +58,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleInt()',
       );
@@ -67,6 +70,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableInt()',
       );
@@ -78,6 +82,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleBool()',
       );
@@ -89,6 +94,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableBool()',
       );
@@ -100,6 +106,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleDateTime()',
       );
@@ -111,6 +118,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableDateTime()',
       );
@@ -122,6 +130,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleBigDecimal()',
       );
@@ -133,12 +142,13 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableBigDecimal()',
       );
     });
 
-    test('generates for enum types', () {
+    test('generates for enum types with explode false', () {
       final value = refer('value');
       final enumModel = EnumModel(
         context: context,
@@ -154,6 +164,41 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
+        ).accept(emitter).toString(),
+        'UserRole.fromSimple(value, explode: false, )',
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: enumModel,
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          explode: literalBool(false),
+        ).accept(emitter).toString(),
+        'value == null ? null : UserRole.fromSimple(value!, explode: false, )',
+      );
+    });
+
+    test('generates for enum types with explode true', () {
+      final value = refer('value');
+      final enumModel = EnumModel(
+        context: context,
+        name: 'UserRole',
+        values: const {'admin', 'user'},
+        isNullable: false,
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: enumModel,
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          explode: literalBool(true),
         ).accept(emitter).toString(),
         'UserRole.fromSimple(value, explode: true, )',
       );
@@ -165,12 +210,13 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(true),
         ).accept(emitter).toString(),
         'value == null ? null : UserRole.fromSimple(value!, explode: true, )',
       );
     });
 
-    test('generates for class types', () {
+    test('generates for class types with explode false', () {
       final value = refer('value');
       final classModel = ClassModel(
         context: context,
@@ -185,6 +231,40 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
+        ).accept(emitter).toString(),
+        'User.fromSimple(value, explode: false, )',
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: classModel,
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          explode: literalBool(false),
+        ).accept(emitter).toString(),
+        'value == null ? null : User.fromSimple(value!, explode: false, )',
+      );
+    });
+
+    test('generates for class types with explode true', () {
+      final value = refer('value');
+      final classModel = ClassModel(
+        context: context,
+        name: 'User',
+        properties: const [],
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: classModel,
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          explode: literalBool(true),
         ).accept(emitter).toString(),
         'User.fromSimple(value, explode: true, )',
       );
@@ -196,6 +276,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(true),
         ).accept(emitter).toString(),
         'value == null ? null : User.fromSimple(value!, explode: true, )',
       );
@@ -215,6 +296,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleStringList()',
       );
@@ -226,6 +308,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableStringList()',
       );
@@ -242,6 +325,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleStringList()'
         '.map((e) => e.decodeSimpleInt()).toList()',
@@ -254,6 +338,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableStringList()'
         '?.map((e) => e.decodeSimpleInt()).toList()',
@@ -275,6 +360,7 @@ void main() {
           isRequired: true,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleString()',
       );
@@ -286,6 +372,7 @@ void main() {
           isRequired: false,
           nameManager: nameManager,
           package: 'tonik_core',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         'value.decodeSimpleNullableString()',
       );
@@ -302,6 +389,7 @@ void main() {
           nameManager: nameManager,
           package: 'tonik_core',
           contextProperty: 'name',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         "value.decodeSimpleString(context: r'name')",
       );
@@ -314,6 +402,7 @@ void main() {
           nameManager: nameManager,
           package: 'tonik_core',
           contextClass: 'Product',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         "value.decodeSimpleNullableInt(context: r'Product')",
       );
@@ -333,13 +422,14 @@ void main() {
           package: 'tonik_core',
           contextClass: 'Order',
           contextProperty: 'quantities',
+          explode: literalBool(false),
         ).accept(emitter).toString(),
         '''value.decodeSimpleStringList(context: r'Order.quantities').map((e) => e.decodeSimpleInt(context: r'Order.quantities')).toList()''',
       );
     });
 
     group('with scoped emitter', () {
-      test('generates for scoped enum types', () {
+      test('generates for scoped enum types with explode false', () {
         final value = refer('value');
         final enumModel = EnumModel(
           context: context,
@@ -355,12 +445,13 @@ void main() {
             isRequired: true,
             nameManager: nameManager,
             package: 'package:my_package/models.dart',
+            explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          equals('_i1.UserRole.fromSimple(value, explode: true, )'),
+          equals('_i1.UserRole.fromSimple(value, explode: false, )'),
         );
       });
 
-      test('generates for scoped class types', () {
+      test('generates for scoped class types with explode false', () {
         final value = refer('value');
         final classModel = ClassModel(
           context: context,
@@ -375,12 +466,13 @@ void main() {
             isRequired: true,
             nameManager: nameManager,
             package: 'package:my_package/models.dart',
+            explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          equals('_i1.User.fromSimple(value, explode: true, )'),
+          equals('_i1.User.fromSimple(value, explode: false, )'),
         );
       });
 
-      test('generates for scoped list of classes', () {
+      test('generates for scoped list of enums with explode false', () {
         final value = refer('value');
         final enumModel = EnumModel(
           context: context,
@@ -397,6 +489,34 @@ void main() {
             isRequired: true,
             nameManager: nameManager,
             package: 'package:my_package/models.dart',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          equals(
+            'value.decodeSimpleStringList()'
+            '.map((e) => _i1.UserRole.fromSimple(e, explode: false, '
+            ')).toList()',
+          ),
+        );
+      });
+
+      test('generates for scoped list of enums with explode true', () {
+        final value = refer('value');
+        final enumModel = EnumModel(
+          context: context,
+          name: 'UserRole',
+          values: const {'admin', 'user'},
+          isNullable: false,
+        );
+        final listModel = ListModel(content: enumModel, context: context);
+
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: listModel,
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'package:my_package/models.dart',
+            explode: literalBool(true),
           ).accept(scopedEmitter).toString(),
           equals(
             'value.decodeSimpleStringList()'

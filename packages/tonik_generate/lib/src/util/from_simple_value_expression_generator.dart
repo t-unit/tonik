@@ -55,10 +55,10 @@ Expression buildSimpleValueExpression(
   required Model model,
   required bool isRequired,
   required NameManager nameManager,
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
-  Expression? explode,
 }) {
   final contextParam =
       (contextClass != null || contextProperty != null)
@@ -135,6 +135,7 @@ Expression buildSimpleValueExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: explode,
     ),
     final AliasModel aliasModel => buildSimpleValueExpression(
       value,
@@ -156,13 +157,13 @@ Expression _buildFromSimpleExpression(
   Model model,
   bool isRequired,
   NameManager nameManager, {
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
-  Expression? explode,
 }) {
   final name = nameManager.modelName(model);
-  final explodeParam = {'explode': explode ?? literalBool(true)};
+  final explodeParam = {'explode': explode};
 
   return isRequired
       ? refer(name, package).property('fromSimple').call([value], explodeParam)
@@ -196,6 +197,7 @@ Expression _buildListFromSimpleExpression(
   ListModel model,
   bool isRequired,
   NameManager nameManager, {
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
@@ -284,7 +286,7 @@ Expression _buildListFromSimpleExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
-      explode: literalBool(true),
+      explode: explode,
     ),
     ListModel() =>
       throw UnimplementedError(
@@ -298,6 +300,7 @@ Expression _buildListFromSimpleExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: explode,
     ),
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
@@ -340,13 +343,13 @@ Expression _buildClassList(
   Model content,
   bool isRequired,
   NameManager nameManager, {
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
-  Expression? explode,
 }) {
   final className = nameManager.modelName(content);
-  final explodeParam = {'explode': explode ?? literalBool(true)};
+  final explodeParam = {'explode': explode};
 
   final mapFunction =
       Method(

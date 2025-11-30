@@ -550,7 +550,7 @@ void main() {
               .toList(),
             list2: value
               .decodeSimpleStringList(context: r'AllOfDoubleList.list2')
-              .map((e) => ArrayOneOfModel.fromSimple(e, explode: true))
+              .map((e) => ArrayOneOfModel.fromSimple(e, explode: explode))
               .toList(),
           );
         }

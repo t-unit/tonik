@@ -842,80 +842,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Timestamp'
 
-  /headers:
-    get:
-      operationId: testHeaders
-      tags:
-        - simple-encoding
-      summary: Test primitive types in header parameters
-      description: Demonstrates simple encoding for primitive types and arrays using header parameters
-      parameters:
-        - name: X-Integer
-          in: header
-          style: simple
-          schema:
-            type: integer
-        - name: X-Double
-          in: header
-          style: simple
-          schema:
-            type: number
-            format: double
-        - name: X-Number
-          in: header
-          style: simple
-          schema:
-            type: number
-        - name: X-String
-          in: header
-          style: simple
-          schema:
-            type: string
-        - name: X-Boolean
-          in: header
-          style: simple
-          schema:
-            type: boolean
-        - name: X-DateTime
-          in: header
-          style: simple
-          schema:
-            type: string
-            format: date-time
-        - name: X-Date
-          in: header
-          style: simple
-          schema:
-            type: string
-            format: date
-        - name: X-Decimal
-          in: header
-          style: simple
-          schema:
-            type: string
-            format: decimal
-        - name: X-Uri
-          in: header
-          style: simple
-          schema:
-            type: string
-            format: uri
-        - name: X-Status
-          in: header
-          style: simple
-          schema:
-            $ref: '#/components/schemas/StatusEnum'
-        - name: X-Tags
-          in: header
-          style: simple
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-
   /complex/{userProfile}:
     get:
       operationId: testComplexInPath
@@ -948,23 +874,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/CompositeEntity'
-      responses:
-        '200':
-          description: OK
-
-  /oneof:
-    get:
-      operationId: testOneOfInHeader
-      tags:
-        - simple-encoding
-      summary: Test OneOf discriminated union in header parameter
-      description: Demonstrates simple encoding for OneOfModel using header parameter
-      parameters:
-        - name: X-Entity
-          in: header
-          style: simple
-          schema:
-            $ref: '#/components/schemas/EntityType'
       responses:
         '200':
           description: OK
@@ -1088,6 +997,7 @@ components:
           $ref: '#/components/schemas/StatusEnum'
         priority:
           $ref: '#/components/schemas/PriorityEnum'
+  
     StringList:
       type: array
       items:

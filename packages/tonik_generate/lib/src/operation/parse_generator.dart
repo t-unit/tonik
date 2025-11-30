@@ -320,6 +320,7 @@ class ParseGenerator {
           .property('headers')
           .property('value')
           .call([literalString(rawHeaderName, raw: true)]);
+      final resolvedHeader = norm.header!.resolve();
       final decode = buildSimpleValueExpression(
         headerValue,
         model: norm.property.model,
@@ -327,6 +328,7 @@ class ParseGenerator {
         nameManager: nameManager,
         package: package,
         contextProperty: rawHeaderName,
+        explode: literalBool(resolvedHeader.explode),
       );
       supported[normalizedName] = decode;
     }

@@ -232,12 +232,13 @@ class ClassGenerator {
       final normalizedName = prop.normalizedName;
       final propertyName = prop.property.name;
       final modelType = prop.property.model;
+      final isRequired = prop.property.isRequired;
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
         refer("values[r'$propertyName']"),
         model: modelType,
-        isRequired: !isNullable,
+        isRequired: isRequired && !isNullable,
         nameManager: nameManager,
         package: package,
         contextClass: className,
