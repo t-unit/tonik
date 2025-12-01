@@ -55,7 +55,7 @@ void main() {
       test('simple object with only name roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripObjects(
-          simpleObject: const SimpleObject(name: 'onlyname'),
+          simpleObject: const SimpleObject(name: 'onlyName'),
         );
 
         expect(
@@ -65,7 +65,7 @@ void main() {
         final success =
             response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
 
-        expect(success.value.xSimpleObject?.name, 'onlyname');
+        expect(success.value.xSimpleObject?.name, 'onlyName');
         expect(success.value.xSimpleObject?.value, isNull);
       });
 
@@ -113,7 +113,7 @@ void main() {
         final response = await api.testHeaderRoundtripObjects(
           userProfile: UserProfile(
             id: 1,
-            username: 'johndoe',
+            username: 'johnDoe',
             isVerified: true,
             createdAt: createdAt,
             email: 'john@example.com',
@@ -130,7 +130,7 @@ void main() {
 
         final profile = success.value.xUserProfile;
         expect(profile?.id, 1);
-        expect(profile?.username, 'johndoe');
+        expect(profile?.username, 'johnDoe');
         expect(profile?.isVerified, true);
         expect(profile?.createdAt, createdAt);
         expect(profile?.email, 'john@example.com');
@@ -143,7 +143,7 @@ void main() {
         final response = await api.testHeaderRoundtripObjects(
           userProfile: UserProfile(
             id: 42,
-            username: 'janedoe',
+            username: 'janeDoe',
             isVerified: false,
             createdAt: createdAt,
             email: 'jane@example.com',
@@ -168,7 +168,7 @@ void main() {
 
         final profile = success.value.xUserProfile;
         expect(profile?.id, 42);
-        expect(profile?.username, 'janedoe');
+        expect(profile?.username, 'janeDoe');
         expect(profile?.isVerified, false);
         expect(profile?.createdAt, createdAt);
         expect(profile?.email, 'jane@example.com');
