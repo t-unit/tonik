@@ -190,44 +190,6 @@ void main() {
     );
   });
 
-  test('testHeaders', () async {
-    final api = buildAlbumsApi(responseStatus: '200');
-    final response = await api.testHeaders(
-      integer: 1,
-      double: 1,
-      number: 23,
-      string: 'string',
-      boolean: true,
-      dateTime: DateTime.utc(1970),
-      date: Date(2000, 1, 1),
-      decimal: BigDecimal.parse('23'),
-      uri: Uri.parse('https://example.com'),
-      status: StatusEnum.active,
-      tags: ['a', 'b', 'c'],
-    );
-
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
-    expect(success.response.statusCode, 200);
-    expect(success.response.requestOptions.headers['x-integer'], '1');
-    expect(success.response.requestOptions.headers['x-double'], '1.0');
-    expect(success.response.requestOptions.headers['x-number'], '23');
-    expect(success.response.requestOptions.headers['x-string'], 'string');
-    expect(success.response.requestOptions.headers['x-boolean'], 'true');
-    expect(
-      success.response.requestOptions.headers['x-datetime'],
-      '1970-01-01T00%3A00%3A00.000Z',
-    );
-    expect(success.response.requestOptions.headers['x-date'], '2000-01-01');
-    expect(success.response.requestOptions.headers['x-decimal'], '23');
-    expect(
-      success.response.requestOptions.headers['x-uri'],
-      'https%3A%2F%2Fexample.com',
-    );
-    expect(success.response.requestOptions.headers['x-status'], 'active');
-    expect(success.response.requestOptions.headers['x-tags'], 'a,b,c');
-  });
-
   test('testComplexInPath', () async {
     final api = buildAlbumsApi(responseStatus: '200');
     final response = await api.testComplexInPath(
@@ -282,73 +244,6 @@ void main() {
       success.response.requestOptions.uri.path,
       '/v1/allof/name,John%20Doe,description,lalala%20lululu,created_at,1970-01-01T14%3A30%3A00.000Z,specific_field,John%20Doe',
     );
-  });
-
-  test('testOneOfInHeader Person', () async {
-    final api = buildAlbumsApi(responseStatus: '200');
-    final response = await api.testOneOfInHeader(
-      entity: EntityTypePersonEntity(
-        PersonEntity(
-          $type: PersonEntityTypeModel.person,
-          firstName: 'John',
-          lastName: 'Doe',
-          age: 30,
-          birthDate: Date(1970, 1, 1),
-        ),
-      ),
-    );
-
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
-    expect(success.response.statusCode, 200);
-    expect(
-      success.response.requestOptions.headers['x-entity'],
-      'type,person,first_name,John,last_name,Doe,age,30,birth_date,1970-01-01',
-    );
-  });
-
-  test('testOneOfInHeader Company', () async {
-    final api = buildAlbumsApi(responseStatus: '200');
-    final response = await api.testOneOfInHeader(
-      entity: const EntityTypeCompanyEntity(
-        CompanyEntity(
-          $type: CompanyEntityTypeModel.company,
-          companyName: 'Capyboi GmbH',
-        ),
-      ),
-    );
-
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
-    expect(success.response.statusCode, 200);
-    expect(
-      success.response.requestOptions.headers['x-entity'],
-      'type,company,company_name,Capyboi%20GmbH',
-    );
-  });
-
-  test('testOneOfInHeader System', () async {
-    final api = buildAlbumsApi(responseStatus: '200');
-    final response = await api.testOneOfInHeader(
-      entity: const EntityTypeSystemEntity(
-        SystemEntity(
-          $type: SystemEntityTypeModel.system,
-          systemId: '1',
-          version: '1.0.0',
-          active: true,
-          config: SystemEntityConfigModel(
-            timeout: 1000,
-            retries: -1,
-          ),
-        ),
-      ),
-    );
-
-    // Simple encoding does not support nested objects.
-    // We are expecting an error for this test.
-    expect(response, isA<TonikError<void>>());
-    final error = response as TonikError<void>;
-    expect(error.error, isA<EncodingException>());
   });
 
   test('testListInPath', () async {

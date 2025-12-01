@@ -2,6 +2,52 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
+/// Returns the reason why simple decoding is not supported for the given model,
+/// or `null` if simple decoding is supported.
+String? getSimpleDecodingUnsupportedReason(Model model) {
+  return switch (model) {
+    StringModel() ||
+    IntegerModel() ||
+    NumberModel() ||
+    DoubleModel() ||
+    DecimalModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    UriModel() ||
+    EnumModel() ||
+    ClassModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() => null,
+    ListModel(:final content) => _getListContentUnsupportedReason(content),
+    AliasModel(:final model) => getSimpleDecodingUnsupportedReason(model),
+    NamedModel() || CompositeModel() => 'Unsupported model type: $model',
+  };
+}
+
+String? _getListContentUnsupportedReason(Model content) {
+  return switch (content) {
+    StringModel() ||
+    IntegerModel() ||
+    NumberModel() ||
+    DoubleModel() ||
+    DecimalModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    UriModel() ||
+    EnumModel() ||
+    OneOfModel() ||
+    AllOfModel() ||
+    AnyOfModel() => null,
+    ClassModel() => 'Lists of objects are not supported in simple encoding',
+    ListModel() => 'Nested lists are not supported in simple encoding',
+    AliasModel(:final model) => _getListContentUnsupportedReason(model),
+    NamedModel() || CompositeModel() => 'Unsupported model type: $content',
+  };
+}
+
 /// Creates a Dart expression that correctly deserializes a simple value
 /// to its Dart representation.
 Expression buildSimpleValueExpression(
@@ -9,10 +55,10 @@ Expression buildSimpleValueExpression(
   required Model model,
   required bool isRequired,
   required NameManager nameManager,
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
-  Expression? explode,
 }) {
   final contextParam =
       (contextClass != null || contextProperty != null)
@@ -89,6 +135,7 @@ Expression buildSimpleValueExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: explode,
     ),
     final AliasModel aliasModel => buildSimpleValueExpression(
       value,
@@ -110,13 +157,13 @@ Expression _buildFromSimpleExpression(
   Model model,
   bool isRequired,
   NameManager nameManager, {
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
-  Expression? explode,
 }) {
   final name = nameManager.modelName(model);
-  final explodeParam = {'explode': explode ?? literalBool(true)};
+  final explodeParam = {'explode': explode};
 
   return isRequired
       ? refer(name, package).property('fromSimple').call([value], explodeParam)
@@ -150,6 +197,7 @@ Expression _buildListFromSimpleExpression(
   ListModel model,
   bool isRequired,
   NameManager nameManager, {
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
@@ -238,7 +286,7 @@ Expression _buildListFromSimpleExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
-      explode: literalBool(true),
+      explode: explode,
     ),
     ListModel() =>
       throw UnimplementedError(
@@ -252,6 +300,7 @@ Expression _buildListFromSimpleExpression(
       package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
+      explode: explode,
     ),
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
@@ -294,13 +343,13 @@ Expression _buildClassList(
   Model content,
   bool isRequired,
   NameManager nameManager, {
+  required Expression explode,
   String? package,
   String? contextClass,
   String? contextProperty,
-  Expression? explode,
 }) {
   final className = nameManager.modelName(content);
-  final explodeParam = {'explode': explode ?? literalBool(true)};
+  final explodeParam = {'explode': explode};
 
   final mapFunction =
       Method(

@@ -34,7 +34,7 @@ class ResponseGenerator {
       switch (response) {
         case ResponseAlias():
           b.body.add(generateTypedef(response, name));
-        case ResponseObject() when response.bodies.length == 1:
+        case ResponseObject() when response.bodies.length <= 1:
           b.body.add(generateResponseClass(response));
         case ResponseObject():
           b.body.addAll(generateMultiBodyResponseClasses(response));

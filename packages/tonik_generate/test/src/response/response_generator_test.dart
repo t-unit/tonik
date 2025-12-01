@@ -116,8 +116,41 @@ void main() {
 
         final result = generator.generate(response);
         expect(result.filename, 'single_body_response.dart');
-        expect(result.code, contains('class SingleBodyResponse'));
+
+        final singleBodyClass = generator.generateResponseClass(response);
+        expect(singleBodyClass.name, 'SingleBodyResponse');
       });
+
+      test(
+        'generates non-sealed class for ResponseObject with headers only',
+        () {
+          final response = ResponseObject(
+            name: 'HeadersOnlyResponse',
+            context: testContext,
+            description: 'Response with headers but no body',
+            headers: {
+              'X-User-Id': ResponseHeaderObject(
+                name: 'X-User-Id',
+                context: testContext,
+                description: 'User ID header',
+                model: IntegerModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                explode: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+            bodies: const {},
+          );
+
+          final result = generator.generate(response);
+          expect(result.filename, 'headers_only_response.dart');
+
+          final generatedClass = generator.generateResponseClass(response);
+          expect(generatedClass.name, 'HeadersOnlyResponse');
+          expect(generatedClass.sealed, isFalse);
+        },
+      );
 
       test(
         'generates multiple classes for ResponseObject with multiple bodies',
@@ -201,6 +234,104 @@ void main() {
           'OriginalResponse',
         );
       });
+    });
+
+    group('generateResponseClass for headers-only responses', () {
+      test('generates non-sealed class with constructor and fields', () {
+        final response = ResponseObject(
+          name: 'HeadersOnlyResponse',
+          context: testContext,
+          description: 'Response with headers but no body',
+          headers: {
+            'X-User-Id': ResponseHeaderObject(
+              name: 'X-User-Id',
+              context: testContext,
+              description: 'User ID header',
+              model: IntegerModel(context: testContext),
+              isRequired: false,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+            ),
+            'X-User-Name': ResponseHeaderObject(
+              name: 'X-User-Name',
+              context: testContext,
+              description: 'User name header',
+              model: StringModel(context: testContext),
+              isRequired: false,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+            ),
+          },
+          bodies: const {},
+        );
+
+        final generatedClass = generator.generateResponseClass(response);
+
+        expect(generatedClass.name, 'HeadersOnlyResponse');
+        expect(generatedClass.sealed, isFalse);
+
+        expect(generatedClass.constructors, hasLength(1));
+        final constructor = generatedClass.constructors.first;
+        expect(constructor.constant, isTrue);
+
+        final fieldNames = generatedClass.fields.map((f) => f.name).toList();
+        expect(fieldNames, containsAll(['xUserId', 'xUserName']));
+
+        final methodNames = generatedClass.methods.map((m) => m.name).toList();
+        expect(
+          methodNames,
+          containsAll(['operator ==', 'hashCode', 'copyWith']),
+        );
+      });
+
+      test(
+        'generates class with required headers marked as required params',
+        () {
+          final response = ResponseObject(
+            name: 'RequiredHeaderResponse',
+            context: testContext,
+            description: 'Response with required headers',
+            headers: {
+              'X-Required': ResponseHeaderObject(
+                name: 'X-Required',
+                context: testContext,
+                description: 'Required header',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                explode: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+              'X-Optional': ResponseHeaderObject(
+                name: 'X-Optional',
+                context: testContext,
+                description: 'Optional header',
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                explode: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+            bodies: const {},
+          );
+
+          final generatedClass = generator.generateResponseClass(response);
+          final constructor = generatedClass.constructors.first;
+
+          final requiredParam = constructor.optionalParameters.firstWhere(
+            (p) => p.name == 'xRequired',
+          );
+          final optionalParam = constructor.optionalParameters.firstWhere(
+            (p) => p.name == 'xOptional',
+          );
+
+          expect(requiredParam.required, isTrue);
+          expect(optionalParam.required, isFalse);
+        },
+      );
     });
   });
 }
