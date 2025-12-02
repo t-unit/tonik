@@ -3764,8 +3764,6 @@ void main() {
       });
     });
 
-
-
     group('string', () {
       group('string', () {
         late ThreeLevelWithRefs oneOf;

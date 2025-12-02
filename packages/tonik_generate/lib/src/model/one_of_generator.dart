@@ -226,6 +226,7 @@ class OneOfGenerator {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           );
           final jsonValue = buildToJsonPropertyExpression('value', property);
           final discriminatorValue =
@@ -1180,7 +1181,10 @@ class OneOfGenerator {
                     ..symbol = 'List'
                     ..url = 'dart:core'
                     ..types.add(
-                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                      refer(
+                        'ParameterEntry',
+                        'package:tonik_util/tonik_util.dart',
+                      ),
                     ),
             )
             ..requiredParameters.add(

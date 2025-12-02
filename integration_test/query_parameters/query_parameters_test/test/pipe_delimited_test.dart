@@ -479,7 +479,10 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
-        listOneOfPrimitive: [OneOfPrimitiveString('test'), OneOfPrimitiveString('test2')],
+        listOneOfPrimitive: [
+          OneOfPrimitiveString('test'),
+          OneOfPrimitiveString('test2'),
+        ],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;

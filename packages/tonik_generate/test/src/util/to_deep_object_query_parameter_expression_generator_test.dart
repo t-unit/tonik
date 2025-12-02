@@ -47,6 +47,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: false,
@@ -74,6 +75,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          description: null,
         ),
         explode: false,
         allowEmpty: false,
@@ -101,6 +103,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: true,
@@ -128,6 +131,7 @@ void main() {
           name: 'Combined',
           models: const {},
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: false,
@@ -157,6 +161,7 @@ void main() {
           models: const {},
           discriminator: null,
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: false,
@@ -186,6 +191,7 @@ void main() {
           models: const {},
           discriminator: null,
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: false,
@@ -216,6 +222,7 @@ void main() {
             name: 'User',
             properties: const [],
             context: context,
+            description: null,
           ),
           context: context,
         ),
@@ -249,7 +256,7 @@ void main() {
 
       final result = buildToDeepObjectQueryParameterCode('count', parameter);
       final code = result.accept(emitter).toString();
-      
+
       expect(
         collapseWhitespace(code),
         contains('throw EncodingException('),
@@ -278,7 +285,7 @@ void main() {
 
       final result = buildToDeepObjectQueryParameterCode('items', parameter);
       final code = result.accept(emitter).toString();
-      
+
       expect(
         collapseWhitespace(code),
         contains('throw EncodingException('),
@@ -302,6 +309,7 @@ void main() {
           values: const {'active', 'inactive'},
           isNullable: false,
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: false,
@@ -309,7 +317,7 @@ void main() {
 
       final result = buildToDeepObjectQueryParameterCode('status', parameter);
       final code = result.accept(emitter).toString();
-      
+
       expect(
         collapseWhitespace(code),
         contains('throw EncodingException('),
@@ -332,6 +340,7 @@ void main() {
           name: 'UserData',
           properties: const [],
           context: context,
+          description: null,
         ),
         explode: true,
         allowEmpty: false,

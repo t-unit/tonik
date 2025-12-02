@@ -94,19 +94,19 @@ class ClassGenerator {
               _buildFromJsonConstructor(className, model),
               _buildFromFormConstructor(className, model),
             ])
-        ..methods.addAll([
-          _buildToJsonMethod(model),
-          _buildCopyWithMethod(className, normalizedProperties),
-          _buildEqualsMethod(className, normalizedProperties),
-          _buildHashCodeMethod(normalizedProperties),
-          _buildCurrentEncodingShapeGetter(),
-          _buildParameterPropertiesMethod(model, normalizedProperties),
-          _buildToSimpleMethod(),
-          _buildToFormMethod(),
-          _buildToLabelMethod(),
-          _buildToMatrixMethod(),
-          _buildToDeepObjectMethod(),
-        ])
+            ..methods.addAll([
+              _buildToJsonMethod(model),
+              _buildCopyWithMethod(className, normalizedProperties),
+              _buildEqualsMethod(className, normalizedProperties),
+              _buildHashCodeMethod(normalizedProperties),
+              _buildCurrentEncodingShapeGetter(),
+              _buildParameterPropertiesMethod(model, normalizedProperties),
+              _buildToSimpleMethod(),
+              _buildToFormMethod(),
+              _buildToLabelMethod(),
+              _buildToMatrixMethod(),
+              _buildToDeepObjectMethod(),
+            ])
             ..fields.addAll(
               normalizedProperties.map(
                 (prop) => _generateField(prop.property, prop.normalizedName),
@@ -173,15 +173,15 @@ class ClassGenerator {
     final canBeSimplyEncoded = model.properties.every((property) {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
-      
+
       if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
         return true;
       }
-      
+
       if (propertyModel is ListModel && propertyModel.hasSimpleContent) {
         return true;
       }
-      
+
       return false;
     });
 
@@ -258,20 +258,18 @@ class ClassGenerator {
     return Block.of([
       declareFinal('values')
           .assign(
-            refer('value')
-                .property('decodeObject')
-                .call([], {
-                  'explode': refer('explode'),
-                  'explodeSeparator': literalString(','),
-                  'expectedKeys': literalSet(
-                    expectedKeys.map((k) => literalString(k, raw: true)),
-                  ),
-                  'listKeys': literalSet(
-                    listKeys.map((k) => literalString(k, raw: true)),
-                  ),
-                  'isFormStyle': literalFalse,
-                  'context': literalString(className, raw: true),
-                }),
+            refer('value').property('decodeObject').call([], {
+              'explode': refer('explode'),
+              'explodeSeparator': literalString(','),
+              'expectedKeys': literalSet(
+                expectedKeys.map((k) => literalString(k, raw: true)),
+              ),
+              'listKeys': literalSet(
+                listKeys.map((k) => literalString(k, raw: true)),
+              ),
+              'isFormStyle': literalFalse,
+              'context': literalString(className, raw: true),
+            }),
           )
           .statement,
 
@@ -548,13 +546,14 @@ if ($name != null) {
     String className,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final listProperties = properties
-        .where(
-          (p) =>
-              p.property.model is ListModel &&
-              (p.property.model as ListModel).hasSimpleContent,
-        )
-        .toList();
+    final listProperties =
+        properties
+            .where(
+              (p) =>
+                  p.property.model is ListModel &&
+                  (p.property.model as ListModel).hasSimpleContent,
+            )
+            .toList();
 
     final hasRequiredNonNullableLists = listProperties.any(
       (p) => p.property.isRequired && !p.property.isNullable,
@@ -802,15 +801,15 @@ if ($name != null) {
     final canBeFormEncoded = model.properties.every((property) {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
-      
+
       if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
         return true;
       }
-      
+
       if (propertyModel is ListModel && propertyModel.hasSimpleContent) {
         return true;
       }
-      
+
       return false;
     });
 
@@ -885,20 +884,18 @@ if ($name != null) {
     return Block.of([
       declareFinal('values')
           .assign(
-            refer('value')
-                .property('decodeObject')
-                .call([], {
-                  'explode': refer('explode'),
-                  'explodeSeparator': literalString('&'),
-                  'expectedKeys': literalSet(
-                    expectedKeys.map((k) => literalString(k, raw: true)),
-                  ),
-                  'listKeys': literalSet(
-                    listKeys.map((k) => literalString(k, raw: true)),
-                  ),
-                  'isFormStyle': literalTrue,
-                  'context': literalString(className, raw: true),
-                }),
+            refer('value').property('decodeObject').call([], {
+              'explode': refer('explode'),
+              'explodeSeparator': literalString('&'),
+              'expectedKeys': literalSet(
+                expectedKeys.map((k) => literalString(k, raw: true)),
+              ),
+              'listKeys': literalSet(
+                listKeys.map((k) => literalString(k, raw: true)),
+              ),
+              'isFormStyle': literalTrue,
+              'context': literalString(className, raw: true),
+            }),
           )
           .statement,
 
@@ -991,7 +988,10 @@ if ($name != null) {
                   ..symbol = 'List'
                   ..url = 'dart:core'
                   ..types.add(
-                    refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                    refer(
+                      'ParameterEntry',
+                      'package:tonik_util/tonik_util.dart',
+                    ),
                   ),
           )
           ..requiredParameters.add(

@@ -40,8 +40,7 @@ extension SpaceDelimitedStringListEncoder on List<String> {
         return this;
       }
       return map(
-        (item) =>
-            item.uriEncode(allowEmpty: allowEmpty),
+        (item) => item.uriEncode(allowEmpty: allowEmpty),
       ).toList();
     } else {
       if (alreadyEncoded) {
@@ -49,8 +48,7 @@ extension SpaceDelimitedStringListEncoder on List<String> {
       }
       return [
         map(
-          (item) =>
-              item.uriEncode(allowEmpty: allowEmpty),
+          (item) => item.uriEncode(allowEmpty: allowEmpty),
         ).join('%20'),
       ];
     }

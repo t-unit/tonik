@@ -23,9 +23,11 @@ void main() {
 
     test('generates code with prefixed dart:core types', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -33,6 +35,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -40,6 +43,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'isActive',
             model: BooleanModel(context: context),
             isRequired: false,

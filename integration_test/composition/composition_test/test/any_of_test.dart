@@ -158,7 +158,10 @@ void main() {
         // "42" can be decoded as both an integer and a string.
         expect(reconstructed.int, 42);
         expect(reconstructed.string, '42');
-        expect(reconstructed.toSimple(explode: false, allowEmpty: true), simple);
+        expect(
+          reconstructed.toSimple(explode: false, allowEmpty: true),
+          simple,
+        );
       });
 
       test('toMatrix - explode false', () {
@@ -258,7 +261,10 @@ void main() {
         // "true" can be decoded as both a boolean and a string.
         expect(reconstructed.bool, true);
         expect(reconstructed.string, 'true');
-        expect(reconstructed.toSimple(explode: false, allowEmpty: true), simple);
+        expect(
+          reconstructed.toSimple(explode: false, allowEmpty: true),
+          simple,
+        );
       });
 
       test('toMatrix - explode false', () {
@@ -1199,7 +1205,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = NestedAnyOfInAllOf.fromSimple(simple, explode: true);
+        final reconstructed = NestedAnyOfInAllOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1212,7 +1221,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = NestedAnyOfInAllOf.fromSimple(simple, explode: false);
+        final reconstructed = NestedAnyOfInAllOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1304,7 +1316,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = NestedAnyOfInAllOf.fromSimple(simple, explode: true);
+        final reconstructed = NestedAnyOfInAllOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1317,7 +1332,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = NestedAnyOfInAllOf.fromSimple(simple, explode: false);
+        final reconstructed = NestedAnyOfInAllOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1417,9 +1435,7 @@ void main() {
       late NestedAllOfInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedAllOfInAnyOf(
-          class1: Class1(name: 'Charlie'),
-        );
+        anyOf = NestedAllOfInAnyOf(class1: Class1(name: 'Charlie'));
       });
 
       test('toJson', () {
@@ -1480,7 +1496,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = NestedAllOfInAnyOf.fromSimple(simple, explode: true);
+        final reconstructed = NestedAllOfInAnyOf.fromSimple(
+          simple,
+          explode: true,
+        );
         // Both class1 and allOfMixed are set because AllOfMixed contains a String field.
         // Any string value can be decoded to String, so allOfMixed.string='name=Charlie'.
         expect(
@@ -1496,12 +1515,18 @@ void main() {
       });
 
       test('toSimple - explode false', () {
-        expect(anyOf.toSimple(explode: false, allowEmpty: true), 'name,Charlie');
+        expect(
+          anyOf.toSimple(explode: false, allowEmpty: true),
+          'name,Charlie',
+        );
       });
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = NestedAllOfInAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = NestedAllOfInAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both class1 and allOfMixed are set because AllOfMixed contains a String field.
         // Any string value can be decoded to String, so allOfMixed.string='name,Charlie'.
         expect(
@@ -1535,7 +1560,10 @@ void main() {
       });
 
       test('toLabel - explode false', () {
-        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.name,Charlie');
+        expect(
+          anyOf.toLabel(explode: false, allowEmpty: true),
+          '.name,Charlie',
+        );
       });
 
       test('currentEncodingShape', () {
@@ -1591,7 +1619,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = NestedOneOfInAnyOf.fromSimple(simple, explode: true);
+        final reconstructed = NestedOneOfInAnyOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1601,7 +1632,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = NestedOneOfInAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = NestedOneOfInAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1675,7 +1709,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = NestedOneOfInAnyOf.fromSimple(simple, explode: true);
+        final reconstructed = NestedOneOfInAnyOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1685,7 +1722,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = NestedOneOfInAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = NestedOneOfInAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -1886,7 +1926,9 @@ void main() {
         expect(
           reconstructed,
           TwoLevelAnyOf(
-            twoLevelAnyOfModel: TwoLevelAnyOfModel(class1: Class1(name: 'test')),
+            twoLevelAnyOfModel: TwoLevelAnyOfModel(
+              class1: Class1(name: 'test'),
+            ),
             string: 'name=test',
           ),
         );
@@ -1903,7 +1945,9 @@ void main() {
         expect(
           reconstructed,
           TwoLevelAnyOf(
-            twoLevelAnyOfModel: TwoLevelAnyOfModel(class1: Class1(name: 'test')),
+            twoLevelAnyOfModel: TwoLevelAnyOfModel(
+              class1: Class1(name: 'test'),
+            ),
             string: 'name,test',
           ),
         );
@@ -1920,7 +1964,9 @@ void main() {
         expect(
           reconstructed,
           TwoLevelAnyOf(
-            twoLevelAnyOfModel: TwoLevelAnyOfModel(class1: Class1(name: 'test')),
+            twoLevelAnyOfModel: TwoLevelAnyOfModel(
+              class1: Class1(name: 'test'),
+            ),
             string: 'name=test',
           ),
         );
@@ -1937,7 +1983,9 @@ void main() {
         expect(
           reconstructed,
           TwoLevelAnyOf(
-            twoLevelAnyOfModel: TwoLevelAnyOfModel(class1: Class1(name: 'test')),
+            twoLevelAnyOfModel: TwoLevelAnyOfModel(
+              class1: Class1(name: 'test'),
+            ),
             string: 'name,test',
           ),
         );
@@ -2139,7 +2187,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = ThreeLevelAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = ThreeLevelAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2253,7 +2304,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = ThreeLevelAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = ThreeLevelAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -2383,7 +2437,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = ThreeLevelAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = ThreeLevelAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -2520,7 +2577,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = DeepNestedAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = DeepNestedAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both nestedAnyOfInAnyOf and enum1 are set because NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
         // Any string value can be decoded to String, so nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
         expect(
@@ -2619,7 +2679,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = DeepNestedAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = DeepNestedAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2679,7 +2742,10 @@ void main() {
 
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(form, explode: true);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(
+          form,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2689,7 +2755,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(form, explode: false);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2699,7 +2768,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(simple, explode: true);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2709,7 +2781,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(simple, explode: false);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2767,7 +2842,10 @@ void main() {
 
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(form, explode: true);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(
+          form,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2777,7 +2855,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(form, explode: false);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2787,7 +2868,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(simple, explode: true);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2797,7 +2881,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(simple, explode: false);
+        final reconstructed = TwoLevelMixedAnyOfOneOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -2867,7 +2954,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithSimpleList.fromForm(form, explode: false);
+        final reconstructed = AnyOfWithSimpleList.fromForm(
+          form,
+          explode: false,
+        );
         // Both list2 and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -2881,7 +2971,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithSimpleList.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithSimpleList.fromSimple(
+          simple,
+          explode: true,
+        );
         // Both list2 and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -2895,7 +2988,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithSimpleList.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithSimpleList.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both list2 and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -2958,7 +3054,11 @@ void main() {
         // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list: [1, 2, 3], list2: ['1', '2', '3'], string: '1,2,3'),
+          AnyOfWithSimpleList(
+            list: [1, 2, 3],
+            list2: ['1', '2', '3'],
+            string: '1,2,3',
+          ),
         );
       });
 
@@ -2968,12 +3068,19 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithSimpleList.fromForm(form, explode: false);
+        final reconstructed = AnyOfWithSimpleList.fromForm(
+          form,
+          explode: false,
+        );
         // All three fields are set: list, list2, and string.
         // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list: [1, 2, 3], list2: ['1', '2', '3'], string: '1,2,3'),
+          AnyOfWithSimpleList(
+            list: [1, 2, 3],
+            list2: ['1', '2', '3'],
+            string: '1,2,3',
+          ),
         );
       });
 
@@ -2983,12 +3090,19 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithSimpleList.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithSimpleList.fromSimple(
+          simple,
+          explode: true,
+        );
         // All three fields are set: list, list2, and string.
         // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list: [1, 2, 3], list2: ['1', '2', '3'], string: '1,2,3'),
+          AnyOfWithSimpleList(
+            list: [1, 2, 3],
+            list2: ['1', '2', '3'],
+            string: '1,2,3',
+          ),
         );
       });
 
@@ -2998,12 +3112,19 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithSimpleList.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithSimpleList.fromSimple(
+          simple,
+          explode: false,
+        );
         // All three fields are set: list, list2, and string.
         // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list: [1, 2, 3], list2: ['1', '2', '3'], string: '1,2,3'),
+          AnyOfWithSimpleList(
+            list: [1, 2, 3],
+            list2: ['1', '2', '3'],
+            string: '1,2,3',
+          ),
         );
       });
 
@@ -3038,10 +3159,7 @@ void main() {
       late AnyOfWithSimpleList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithSimpleList(
-          list: [1, 2, 3],
-          list2: ['test', 'test2'],
-        );
+        anyOf = AnyOfWithSimpleList(list: [1, 2, 3], list2: ['test', 'test2']);
       });
 
       test('toJson throws EncodingException', () {
@@ -3254,7 +3372,10 @@ void main() {
 
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithComplexList.fromForm(form, explode: true);
+        final reconstructed = AnyOfWithComplexList.fromForm(
+          form,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3264,7 +3385,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithComplexList.fromForm(form, explode: false);
+        final reconstructed = AnyOfWithComplexList.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3274,7 +3398,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithComplexList.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithComplexList.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3284,7 +3411,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithComplexList.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithComplexList.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3405,7 +3535,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithMixedLists.fromForm(form, explode: false);
+        final reconstructed = AnyOfWithMixedLists.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3415,7 +3548,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithMixedLists.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithMixedLists.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3425,7 +3561,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithMixedLists.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithMixedLists.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3561,7 +3700,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithMixedLists.fromForm(form, explode: false);
+        final reconstructed = AnyOfWithMixedLists.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3571,7 +3713,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithMixedLists.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithMixedLists.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3581,7 +3726,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithMixedLists.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithMixedLists.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -3696,7 +3844,10 @@ void main() {
         // Both list and string are set because any string can be decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list: [Enum1.value1, Enum1.value2], string: 'value1,value2'),
+          AnyOfWithEnumList(
+            list: [Enum1.value1, Enum1.value2],
+            string: 'value1,value2',
+          ),
         );
       });
 
@@ -3710,35 +3861,56 @@ void main() {
         // Both list and string are set because any string can be decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list: [Enum1.value1, Enum1.value2], string: 'value1,value2'),
+          AnyOfWithEnumList(
+            list: [Enum1.value1, Enum1.value2],
+            string: 'value1,value2',
+          ),
         );
       });
 
       test('toSimple - explode true', () {
-        expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value1,value2');
+        expect(
+          anyOf.toSimple(explode: true, allowEmpty: true),
+          'value1,value2',
+        );
       });
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithEnumList.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithEnumList.fromSimple(
+          simple,
+          explode: true,
+        );
         // Both list and string are set because any string can be decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list: [Enum1.value1, Enum1.value2], string: 'value1,value2'),
+          AnyOfWithEnumList(
+            list: [Enum1.value1, Enum1.value2],
+            string: 'value1,value2',
+          ),
         );
       });
 
       test('toSimple - explode false', () {
-        expect(anyOf.toSimple(explode: false, allowEmpty: true), 'value1,value2');
+        expect(
+          anyOf.toSimple(explode: false, allowEmpty: true),
+          'value1,value2',
+        );
       });
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithEnumList.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithEnumList.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both list and string are set because any string can be decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list: [Enum1.value1, Enum1.value2], string: 'value1,value2'),
+          AnyOfWithEnumList(
+            list: [Enum1.value1, Enum1.value2],
+            string: 'value1,value2',
+          ),
         );
       });
 
@@ -3757,11 +3929,17 @@ void main() {
       });
 
       test('toLabel - explode true', () {
-        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.value1.value2');
+        expect(
+          anyOf.toLabel(explode: true, allowEmpty: true),
+          '.value1.value2',
+        );
       });
 
       test('toLabel - explode false', () {
-        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.value1,value2');
+        expect(
+          anyOf.toLabel(explode: false, allowEmpty: true),
+          '.value1,value2',
+        );
       });
 
       test('currentEncodingShape', () {
@@ -3820,7 +3998,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithEnumList.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithEnumList.fromSimple(
+          simple,
+          explode: true,
+        );
         // Both list2 and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -3834,7 +4015,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithEnumList.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithEnumList.fromSimple(
+          simple,
+          explode: false,
+        );
         // Both list2 and string are set because any string can be decoded to String.
         expect(
           reconstructed,
@@ -4108,7 +4292,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = NestedListInAnyOf.fromSimple(simple, explode: true);
+        final reconstructed = NestedListInAnyOf.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -4121,7 +4308,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = NestedListInAnyOf.fromSimple(simple, explode: false);
+        final reconstructed = NestedListInAnyOf.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -4313,7 +4503,10 @@ void main() {
 
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithListOfComposites.fromForm(form, explode: true);
+        final reconstructed = AnyOfWithListOfComposites.fromForm(
+          form,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -4323,27 +4516,42 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithListOfComposites.fromForm(form, explode: false);
+        final reconstructed = AnyOfWithListOfComposites.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
       test('toSimple - explode true', () {
-        expect(anyOf.toSimple(explode: true, allowEmpty: true), 'test%20string');
+        expect(
+          anyOf.toSimple(explode: true, allowEmpty: true),
+          'test%20string',
+        );
       });
 
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AnyOfWithListOfComposites.fromSimple(simple, explode: true);
+        final reconstructed = AnyOfWithListOfComposites.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, anyOf);
       });
 
       test('toSimple - explode false', () {
-        expect(anyOf.toSimple(explode: false, allowEmpty: true), 'test%20string');
+        expect(
+          anyOf.toSimple(explode: false, allowEmpty: true),
+          'test%20string',
+        );
       });
 
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AnyOfWithListOfComposites.fromSimple(simple, explode: false);
+        final reconstructed = AnyOfWithListOfComposites.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, anyOf);
       });
 
@@ -4362,11 +4570,17 @@ void main() {
       });
 
       test('toLabel - explode true', () {
-        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.test%20string');
+        expect(
+          anyOf.toLabel(explode: true, allowEmpty: true),
+          '.test%20string',
+        );
       });
 
       test('toLabel - explode false', () {
-        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.test%20string');
+        expect(
+          anyOf.toLabel(explode: false, allowEmpty: true),
+          '.test%20string',
+        );
       });
 
       test('currentEncodingShape', () {

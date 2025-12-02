@@ -100,18 +100,22 @@ class ClassModel extends Model with NamedModel {
   const ClassModel({
     required this.properties,
     required super.context,
+    required this.description,
     this.name,
   });
 
   @override
   final String? name;
   final List<Property> properties;
+  final String? description;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
 
   @override
-  String toString() => 'ClassModel{name: $name, properties: $properties}';
+  String toString() =>
+      'ClassModel{name: $name, properties: $properties, '
+      'description: $description}';
 }
 
 class EnumModel<T> extends Model with NamedModel {
@@ -119,6 +123,7 @@ class EnumModel<T> extends Model with NamedModel {
     required this.values,
     required this.isNullable,
     required super.context,
+    required this.description,
     this.name,
   });
 
@@ -126,13 +131,15 @@ class EnumModel<T> extends Model with NamedModel {
   final String? name;
   final Set<T> values;
   final bool isNullable;
+  final String? description;
 
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
 
   @override
   String toString() =>
-      'EnumModel<$T>{name: $name, values: $values isNullable: $isNullable}';
+      'EnumModel<$T>{name: $name, values: $values, isNullable: $isNullable, '
+      'description: $description}';
 }
 
 class AllOfModel extends Model with NamedModel, CompositeModel {
@@ -140,17 +147,20 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     required this.models,
     required this.name,
     required super.context,
+    required this.description,
   });
 
   @override
   final String? name;
   final Set<Model> models;
+  final String? description;
 
   @override
   Set<Model> get containedModels => models;
 
   @override
-  String toString() => 'AllOfModel{models: $models}';
+  String toString() =>
+      'AllOfModel{name: $name, models: $models, description: $description}';
 }
 
 typedef DiscriminatedModel = ({String? discriminatorValue, Model model});
@@ -161,19 +171,22 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
     required this.name,
     required this.discriminator,
     required super.context,
+    required this.description,
   });
 
   @override
   final String? name;
   final Set<DiscriminatedModel> models;
   final String? discriminator;
+  final String? description;
 
   @override
   Set<Model> get containedModels => models.map((m) => m.model).toSet();
 
   @override
   String toString() =>
-      'OneOfModel{models: $models, discriminator: $discriminator}';
+      'OneOfModel{name: $name, models: $models, discriminator: $discriminator, '
+      'description: $description}';
 }
 
 class AnyOfModel extends Model with NamedModel, CompositeModel {
@@ -182,19 +195,22 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
     required this.name,
     required this.discriminator,
     required super.context,
+    required this.description,
   });
 
   @override
   final String? name;
   final Set<DiscriminatedModel> models;
   final String? discriminator;
+  final String? description;
 
   @override
   Set<Model> get containedModels => models.map((m) => m.model).toSet();
 
   @override
   String toString() =>
-      'AnyOfModel{models: $models, discriminator: $discriminator}';
+      'AnyOfModel{name: $name, models: $models, discriminator: $discriminator, '
+      'description: $description}';
 }
 
 sealed class PrimitiveModel extends Model {
@@ -275,6 +291,7 @@ class Property {
     required this.isRequired,
     required this.isNullable,
     required this.isDeprecated,
+    required this.description,
   });
 
   final String name;
@@ -282,9 +299,11 @@ class Property {
   final bool isRequired;
   final bool isNullable;
   final bool isDeprecated;
+  final String? description;
 
   @override
   String toString() =>
       'Property{name: $name, model: $model, isRequired: $isRequired, '
-      'isNullable: $isNullable, isDeprecated: $isDeprecated}';
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'description: $description}';
 }

@@ -68,6 +68,7 @@ class AllOfGenerator {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           );
         }).toList();
 
@@ -522,6 +523,7 @@ class AllOfGenerator {
                       isRequired: true,
                       isNullable: false,
                       isDeprecated: false,
+                      description: null,
                     ),
                   ),
                 ),
@@ -1171,7 +1173,7 @@ class AllOfGenerator {
     });
 
     if (hasDynamicModels) {
-      // Check if we have DIRECT primitives 
+      // Check if we have DIRECT primitives
       // (not dynamic models that might be simple).
       final hasDirectPrimitives = normalizedProperties.any((prop) {
         final model = prop.property.model;
@@ -1179,9 +1181,9 @@ class AllOfGenerator {
             model.encodingShape != EncodingShape.mixed;
       });
 
-      // If we have direct primitives mixed with dynamic models, 
+      // If we have direct primitives mixed with dynamic models,
       // we need runtime validation.
-      // The dynamic models might be in simple state, making the entire 
+      // The dynamic models might be in simple state, making the entire
       // allOf simple and encodable.
       if (hasDirectPrimitives) {
         final encodingShapeType = refer(
@@ -1197,9 +1199,9 @@ class AllOfGenerator {
             'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
           ).statement,
           const Code('}'),
-          declareFinal('values')
-              .assign(literalSet([], refer('String', 'dart:core')))
-              .statement,
+          declareFinal(
+            'values',
+          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
         // Call toForm on each property and collect results.
@@ -1240,7 +1242,7 @@ class AllOfGenerator {
         );
       }
 
-      // No direct primitives, only dynamic models that could be mixed at 
+      // No direct primitives, only dynamic models that could be mixed at
       // runtime. Generate runtime check.
       final encodingShapeType = refer(
         'EncodingShape',
@@ -2075,7 +2077,10 @@ class AllOfGenerator {
                     ..symbol = 'List'
                     ..url = 'dart:core'
                     ..types.add(
-                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                      refer(
+                        'ParameterEntry',
+                        'package:tonik_util/tonik_util.dart',
+                      ),
                     ),
             )
             ..requiredParameters.add(

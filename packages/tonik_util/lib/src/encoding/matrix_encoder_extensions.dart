@@ -101,8 +101,8 @@ extension MatrixStringListEncoder on List<String> {
   /// - When `true`, empty lists are encoded as `;paramName`
   /// - When `false`, empty lists throw an exception
   ///
-  /// The [alreadyEncoded] parameter indicates whether the list items are 
-  /// already URL-encoded. When `true`, items are not re-encoded to prevent 
+  /// The [alreadyEncoded] parameter indicates whether the list items are
+  /// already URL-encoded. When `true`, items are not re-encoded to prevent
   /// double encoding.
   String toMatrix(
     String paramName, {

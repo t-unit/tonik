@@ -31,9 +31,11 @@ void main() {
   group('ClassGenerator fromSimple generation', () {
     test('generates fromSimple for all supported primitive types', () {
       final model = ClassModel(
+        description: null,
         name: 'Sample',
         properties: [
           Property(
+            description: null,
             name: 'flag',
             model: BooleanModel(context: context),
             isRequired: true,
@@ -41,6 +43,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -48,6 +51,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'label',
             model: StringModel(context: context),
             isRequired: true,
@@ -55,6 +59,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'created',
             model: DateTimeModel(context: context),
             isRequired: true,
@@ -62,6 +67,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'amount',
             model: DecimalModel(context: context),
             isRequired: true,
@@ -127,15 +133,18 @@ void main() {
 
     test('generates fromSimple for enum property', () {
       final enumModel = EnumModel<String>(
+        description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
         context: context,
       );
       final model = ClassModel(
+        description: null,
         name: 'Order',
         properties: [
           Property(
+            description: null,
             name: 'status',
             model: enumModel,
             isRequired: true,
@@ -193,9 +202,11 @@ void main() {
 
     test('generates fromSimple for all nullable primitive types', () {
       final model = ClassModel(
+        description: null,
         name: 'NullableSample',
         properties: [
           Property(
+            description: null,
             name: 'flag',
             model: BooleanModel(context: context),
             isRequired: false,
@@ -203,6 +214,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -210,6 +222,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'label',
             model: StringModel(context: context),
             isRequired: false,
@@ -217,6 +230,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'created',
             model: DateTimeModel(context: context),
             isRequired: false,
@@ -224,6 +238,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'amount',
             model: DecimalModel(context: context),
             isRequired: false,
@@ -298,6 +313,7 @@ void main() {
       'generates fromSimple for OneOf model with all supported primitive types',
       () {
         final oneOfModel = OneOfModel(
+          description: null,
           name: 'PrimitiveOneOf',
           models: {
             (discriminatorValue: 'int', model: IntegerModel(context: context)),
@@ -308,9 +324,11 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          description: null,
           name: 'Container',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: oneOfModel,
               isRequired: true,
@@ -371,6 +389,7 @@ void main() {
       'generates fromSimple for OneOf model with mixed types attempting decode',
       () {
         final oneOfModel = OneOfModel(
+          description: null,
           name: 'MixedOneOf',
           models: {
             (discriminatorValue: 'int', model: IntegerModel(context: context)),
@@ -380,6 +399,7 @@ void main() {
                 name: 'Address',
                 properties: const [],
                 context: context,
+                description: null,
               ),
             ),
           },
@@ -395,9 +415,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
         final generatedClass = generator.generateClass(model);
         final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -437,15 +459,18 @@ void main() {
       'generates fromSimple for mixed OneOf that attempts decoding',
       () {
         final oneOfModel = OneOfModel(
+          description: null,
           name: 'DynamicValue',
           models: {
             (discriminatorValue: 'str', model: StringModel(context: context)),
             (
               discriminatorValue: 'class',
               model: ClassModel(
+                description: null,
                 name: 'ComplexData',
                 properties: [
                   Property(
+                    description: null,
                     name: 'id',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -461,9 +486,11 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          description: null,
           name: 'Wrapper',
           properties: [
             Property(
+              description: null,
               name: 'data',
               model: oneOfModel,
               isRequired: true,
@@ -516,9 +543,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final generatedClass = generator.generateClass(model);
       final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -568,6 +597,7 @@ void main() {
 
     test('generates fromSimple for Alias targeting OneOf with primitives', () {
       final oneOfModel = OneOfModel(
+        description: null,
         name: 'PrimitiveOneOf',
         models: {
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
@@ -582,9 +612,11 @@ void main() {
         context: context,
       );
       final model = ClassModel(
+        description: null,
         name: 'AliasHolder',
         properties: [
           Property(
+            description: null,
             name: 'value',
             model: aliasModel,
             isRequired: true,
@@ -646,9 +678,11 @@ void main() {
         final aliasModel = AliasModel(
           name: 'UserAlias',
           model: ClassModel(
+            description: null,
             name: 'User',
             properties: [
               Property(
+                description: null,
                 name: 'id',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -661,9 +695,11 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          description: null,
           name: 'AliasHolder',
           properties: [
             Property(
+              description: null,
               name: 'user',
               model: aliasModel,
               isRequired: true,
@@ -711,9 +747,11 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          description: null,
           name: 'AliasHolder',
           properties: [
             Property(
+              description: null,
               name: 'list',
               model: aliasModel,
               isRequired: true,
@@ -751,14 +789,17 @@ void main() {
 
     test('fromSimple throws for mixed simple and complex properties', () {
       final complexModel = ClassModel(
+        description: null,
         name: 'Address',
         properties: const [],
         context: context,
       );
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -766,6 +807,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'address',
             model: complexModel,
             isRequired: true,
@@ -803,9 +845,11 @@ void main() {
 
     test('generates fromSimple for Uri property', () {
       final model = ClassModel(
+        description: null,
         name: 'Resource',
         properties: [
           Property(
+            description: null,
             name: 'endpoint',
             model: UriModel(context: context),
             isRequired: true,
@@ -867,9 +911,11 @@ void main() {
 
     test('generates fromSimple for nullable Uri property', () {
       final model = ClassModel(
+        description: null,
         name: 'Resource',
         properties: [
           Property(
+            description: null,
             name: 'callback',
             model: UriModel(context: context),
             isRequired: false,
@@ -931,9 +977,11 @@ void main() {
 
     test('generates fromSimple for mixed Uri and primitive properties', () {
       final model = ClassModel(
+        description: null,
         name: 'Resource',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -941,6 +989,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'endpoint',
             model: UriModel(context: context),
             isRequired: true,
@@ -948,6 +997,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'port',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -955,6 +1005,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'callback',
             model: UriModel(context: context),
             isRequired: false,
@@ -1023,9 +1074,11 @@ void main() {
   group('ClassGenerator toSimple generation', () {
     test('generates toSimple for class with only simple properties', () {
       final model = ClassModel(
+        description: null,
         name: 'SimpleClass',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -1033,6 +1086,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -1078,9 +1132,11 @@ void main() {
       'generates toSimple for class with complex properties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'ComplexClass',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -1088,8 +1144,10 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'address',
               model: ClassModel(
+                description: null,
                 name: 'Address',
                 properties: const [],
                 context: context,
@@ -1127,6 +1185,7 @@ void main() {
 
     test('generates toSimple for empty class', () {
       final model = ClassModel(
+        description: null,
         name: 'EmptyClass',
         properties: const [],
         context: context,

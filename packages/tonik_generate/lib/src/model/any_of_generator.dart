@@ -71,6 +71,7 @@ class AnyOfGenerator {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
         }).toList();
 
@@ -1845,7 +1846,10 @@ class AnyOfGenerator {
                     ..symbol = 'List'
                     ..url = 'dart:core'
                     ..types.add(
-                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                      refer(
+                        'ParameterEntry',
+                        'package:tonik_util/tonik_util.dart',
+                      ),
                     ),
             )
             ..requiredParameters.add(

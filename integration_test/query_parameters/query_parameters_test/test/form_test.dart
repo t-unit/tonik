@@ -194,10 +194,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'anyOfPrimitive=test',
-      );
+      expect(success.response.requestOptions.uri.query, 'anyOfPrimitive=test');
     });
 
     test('anyOfComplex', () async {
@@ -222,10 +219,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'oneOfPrimitive=test',
-      );
+      expect(success.response.requestOptions.uri.query, 'oneOfPrimitive=test');
     });
 
     test('oneOfComplex', () async {
@@ -252,10 +246,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'allOfPrimitive=1',
-      );
+      expect(success.response.requestOptions.uri.query, 'allOfPrimitive=1');
     });
 
     test('allOfComplex', () async {
@@ -341,10 +332,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'anyOfPrimitive=test',
-      );
+      expect(success.response.requestOptions.uri.query, 'anyOfPrimitive=test');
     });
 
     test('anyOfComplex', () async {
@@ -369,10 +357,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'oneOfPrimitive=test',
-      );
+      expect(success.response.requestOptions.uri.query, 'oneOfPrimitive=test');
     });
 
     test('oneOfComplex', () async {
@@ -399,10 +384,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'allOfPrimitive=1',
-      );
+      expect(success.response.requestOptions.uri.query, 'allOfPrimitive=1');
     });
 
     test('allOfComplex', () async {
@@ -426,23 +408,37 @@ void main() {
   group('list', () {
     test('string', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormList(listString: ['test', 'test2', 'white space', 'special&&chars']);
+      final response = await api.testFormList(
+        listString: ['test', 'test2', 'white space', 'special&&chars'],
+      );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'listString=test,test2,white%20space,special%26%26chars');
+      expect(
+        success.response.requestOptions.uri.query,
+        'listString=test,test2,white%20space,special%26%26chars',
+      );
     });
 
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormList(listOneOfPrimitive: [OneOfPrimitiveString('test')]);
+      final response = await api.testFormList(
+        listOneOfPrimitive: [OneOfPrimitiveString('test')],
+      );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'listOneOfPrimitive=test');
+      expect(
+        success.response.requestOptions.uri.query,
+        'listOneOfPrimitive=test',
+      );
     });
 
     test('listOneOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormList(listOneOfComplex: [OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1))]);
+      final response = await api.testFormList(
+        listOneOfComplex: [
+          OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1)),
+        ],
+      );
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -450,7 +446,11 @@ void main() {
 
     test('listOneOfComplexMixed - complex', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormList(listOneOfComplexMixed: [FormListParametersArrayOneOfModelClass(Class(name: 'test', age: 1))]);
+      final response = await api.testFormList(
+        listOneOfComplexMixed: [
+          FormListParametersArrayOneOfModelClass(Class(name: 'test', age: 1)),
+        ],
+      );
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -458,33 +458,52 @@ void main() {
 
     test('listOneOfComplexMixed - simple', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormList(listOneOfComplexMixed: [FormListParametersArrayOneOfModelInt(1)]);
+      final response = await api.testFormList(
+        listOneOfComplexMixed: [FormListParametersArrayOneOfModelInt(1)],
+      );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'listOneOfComplexMixed=1');
+      expect(
+        success.response.requestOptions.uri.query,
+        'listOneOfComplexMixed=1',
+      );
     });
   });
 
   group('list - explode true', () {
     test('string', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormListExplode(listString: ['test', 'test2']);
+      final response = await api.testFormListExplode(
+        listString: ['test', 'test2'],
+      );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'listString=test,test2');
+      expect(
+        success.response.requestOptions.uri.query,
+        'listString=test,test2',
+      );
     });
 
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormListExplode(listOneOfPrimitive: [OneOfPrimitiveString('test')]);
+      final response = await api.testFormListExplode(
+        listOneOfPrimitive: [OneOfPrimitiveString('test')],
+      );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'listOneOfPrimitive=test');
+      expect(
+        success.response.requestOptions.uri.query,
+        'listOneOfPrimitive=test',
+      );
     });
 
     test('listOneOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormListExplode(listOneOfComplex: [OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1))]);
+      final response = await api.testFormListExplode(
+        listOneOfComplex: [
+          OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1)),
+        ],
+      );
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);

@@ -325,7 +325,11 @@ void main() {
       isDeprecated: false,
       allowEmptyValue: false,
       explode: true,
-      model: ClassModel(context: context, properties: const []),
+      model: ClassModel(
+        context: context,
+        properties: const [],
+        description: null,
+      ),
       encoding: PathParameterEncoding.simple,
       context: context,
     );
@@ -386,7 +390,11 @@ void main() {
       isDeprecated: false,
       allowEmptyValue: true,
       explode: true,
-      model: ClassModel(context: context, properties: const []),
+      model: ClassModel(
+        context: context,
+        properties: const [],
+        description: null,
+      ),
       encoding: PathParameterEncoding.simple,
       context: context,
     );
@@ -535,9 +543,14 @@ void main() {
       context: context,
       values: const {'admin', 'user', 'guest'},
       isNullable: false,
+      description: null,
     );
 
-    final classModel = ClassModel(context: context, properties: const []);
+    final classModel = ClassModel(
+      context: context,
+      properties: const [],
+      description: null,
+    );
 
     final oneOfModel = OneOfModel(
       context: context,
@@ -550,6 +563,7 @@ void main() {
       },
       name: 'OneOfValue',
       discriminator: 'type',
+      description: null,
     );
 
     final enumParam = PathParameterObject(
@@ -781,6 +795,7 @@ void main() {
       context: context,
       values: const {'RED', 'GREEN', 'BLUE'},
       isNullable: false,
+      description: null,
     );
 
     final listModel = ListModel(context: context, content: enumModel);
@@ -848,7 +863,11 @@ void main() {
   });
 
   test('handles nested list of class models', () {
-    final innerModel = ClassModel(context: context, properties: const []);
+    final innerModel = ClassModel(
+      context: context,
+      properties: const [],
+      description: null,
+    );
     final innerListModel = ListModel(context: context, content: innerModel);
     final outerListModel = ListModel(
       context: context,
@@ -1055,6 +1074,7 @@ void main() {
       context: context,
       values: const {'ACTIVE', 'INACTIVE', 'PENDING'},
       isNullable: false,
+      description: null,
     );
 
     final listModel = ListModel(context: context, content: enumModel);
@@ -1122,7 +1142,11 @@ void main() {
   test(
     'handles matrix encoding with list of class models throws at runtime',
     () {
-      final classModel = ClassModel(context: context, properties: const []);
+      final classModel = ClassModel(
+        context: context,
+        properties: const [],
+        description: null,
+      );
       final listModel = ListModel(context: context, content: classModel);
 
       final pathParam = PathParameterObject(

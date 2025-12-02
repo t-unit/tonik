@@ -38,6 +38,7 @@ void main() {
           BooleanModel(context: sharedContext),
         },
         context: sharedContext,
+        description: null,
       );
 
       final model2 = AllOfModel(
@@ -48,6 +49,7 @@ void main() {
           IntegerModel(context: sharedContext),
         },
         context: sharedContext,
+        description: null,
       );
 
       final key1 = model1.stableKey;
@@ -70,6 +72,7 @@ void main() {
             StringModel(context: sharedContext),
           },
           context: sharedContext,
+          description: null,
         );
 
         final model2 = AllOfModel(
@@ -78,6 +81,7 @@ void main() {
             IntegerModel(context: sharedContext),
           },
           context: sharedContext,
+          description: null,
         );
 
         expect(model1.stableKey, isNot(model2.stableKey));
@@ -101,6 +105,7 @@ void main() {
         },
         discriminator: 'type',
         context: sharedContext,
+        description: null,
       );
 
       final model2 = OneOfModel(
@@ -117,6 +122,7 @@ void main() {
         },
         discriminator: 'type',
         context: sharedContext,
+        description: null,
       );
 
       expect(model1.stableKey, model2.stableKey);
@@ -139,6 +145,7 @@ void main() {
         },
         discriminator: null,
         context: sharedContext,
+        description: null,
       );
 
       final model2 = AnyOfModel(
@@ -155,6 +162,7 @@ void main() {
         },
         discriminator: null,
         context: sharedContext,
+        description: null,
       );
 
       expect(model1.stableKey, model2.stableKey);
@@ -187,6 +195,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
           Property(
             name: 'count',
@@ -194,9 +203,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
 
       final key = model1.stableKey;
@@ -211,6 +222,7 @@ void main() {
         values: const {'zebra', 'apple', 'banana'},
         isNullable: false,
         context: context,
+        description: null,
       );
 
       final model2 = EnumModel(
@@ -218,6 +230,7 @@ void main() {
         values: const {'banana', 'zebra', 'apple'},
         isNullable: false,
         context: context,
+        description: null,
       );
 
       expect(model1.stableKey, model2.stableKey);
@@ -231,6 +244,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context.push('inner'),
+        description: null,
       );
 
       final outerAllOf = AllOfModel(
@@ -240,6 +254,7 @@ void main() {
           BooleanModel(context: context),
         },
         context: context.push('outer'),
+        description: null,
       );
 
       final key = outerAllOf.stableKey;

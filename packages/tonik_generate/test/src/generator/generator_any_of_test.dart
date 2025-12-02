@@ -28,6 +28,7 @@ void main() {
         },
         discriminator: null,
         context: testContext,
+        description: null,
       );
 
       final apiDoc = ApiDocument(

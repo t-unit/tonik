@@ -39,6 +39,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -82,9 +83,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
 
       final model = OneOfModel(
@@ -94,6 +97,7 @@ void main() {
         },
         discriminator: 'type',
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -126,9 +130,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
 
       final model = OneOfModel(
@@ -139,6 +145,7 @@ void main() {
         },
         discriminator: 'kind',
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -178,14 +185,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  description: null,
                 ),
               ],
               context: context,
+              description: null,
             ),
           ),
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final model = OneOfModel(
@@ -195,6 +205,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -230,14 +241,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  description: null,
                 ),
               ],
               context: context,
+              description: null,
             ),
           ),
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final model = OneOfModel(
@@ -247,6 +261,7 @@ void main() {
         },
         discriminator: 'type',
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -293,14 +308,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final innerOneOfB = OneOfModel(
@@ -318,14 +336,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final model = OneOfModel(
@@ -336,6 +357,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          description: null,
         );
 
         final classes = generator.generateClasses(model);

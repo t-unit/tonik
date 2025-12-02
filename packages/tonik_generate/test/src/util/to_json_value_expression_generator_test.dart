@@ -17,6 +17,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(buildToJsonPropertyExpression('testName', property), 'testName');
     });
@@ -28,6 +29,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(buildToJsonPropertyExpression('testName', property), 'testName');
     });
@@ -39,6 +41,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(buildToJsonPropertyExpression('testAge', property), 'testAge');
     });
@@ -50,6 +53,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('startTime', property),
@@ -64,6 +68,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('dueDate', property),
@@ -78,6 +83,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('price', property),
@@ -92,6 +98,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('discountPrice', property),
@@ -105,6 +112,7 @@ void main() {
         values: const {'active', 'inactive'},
         isNullable: false,
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'status',
@@ -112,6 +120,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('status', property),
@@ -125,6 +134,7 @@ void main() {
         values: const {'high', 'low'},
         isNullable: true,
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'priority',
@@ -132,6 +142,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('priority', property),
@@ -145,6 +156,7 @@ void main() {
         values: const {'high', 'low'},
         isNullable: true,
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'priority',
@@ -152,6 +164,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
 
       expect(
@@ -170,6 +183,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       // List<primitive> is handled directly
       expect(buildToJsonPropertyExpression('tags', property), 'tags');
@@ -185,6 +199,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
@@ -197,6 +212,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'addresses',
@@ -204,6 +220,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('addresses', property),
@@ -221,6 +238,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('lineItems', property),
@@ -240,6 +258,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(buildToJsonPropertyExpression('id', property), 'id');
     });
@@ -256,6 +275,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('createdAt', property),
@@ -275,6 +295,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('updatedAt', property),
@@ -287,6 +308,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        description: null,
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
@@ -299,6 +321,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('address', property),
@@ -311,6 +334,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        description: null,
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
@@ -323,6 +347,7 @@ void main() {
         isRequired: false, // optional
         isNullable: true, // nullable
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('address', property),
@@ -335,6 +360,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'homeAddress',
@@ -342,6 +368,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('homeAddress', property),
@@ -354,6 +381,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'workAddress',
@@ -361,6 +389,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('workAddress', property),
@@ -373,6 +402,7 @@ void main() {
         name: 'Combined',
         models: const {},
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'combinedData',
@@ -380,6 +410,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('combinedData', property),
@@ -392,6 +423,7 @@ void main() {
         name: 'Combined',
         models: const {},
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'combinedData',
@@ -399,6 +431,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('combinedData', property),
@@ -412,6 +445,7 @@ void main() {
         models: const {},
         discriminator: 'petType',
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'pet',
@@ -419,6 +453,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(buildToJsonPropertyExpression('pet', property), 'pet.toJson()');
     });
@@ -429,6 +464,7 @@ void main() {
         models: const {},
         discriminator: 'petType',
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'pet',
@@ -436,6 +472,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(buildToJsonPropertyExpression('pet', property), 'pet?.toJson()');
     });
@@ -446,6 +483,7 @@ void main() {
         models: const {},
         discriminator: 'contentType',
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'content',
@@ -453,6 +491,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('content', property),
@@ -465,6 +504,7 @@ void main() {
         models: const {},
         discriminator: 'contentType',
         context: context,
+        description: null,
       );
       final property = Property(
         name: 'content',
@@ -472,6 +512,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('content', property),
@@ -494,6 +535,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
@@ -516,6 +558,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
@@ -525,6 +568,7 @@ void main() {
 
     test('for Alias to List<ClassModel>', () {
       final addressModel = ClassModel(
+        description: null,
         name: 'Address',
         properties: const [],
         context: context,
@@ -540,6 +584,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('addresses', property),
@@ -552,6 +597,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        description: null,
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
@@ -564,6 +610,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        description: null,
       );
       expect(
         buildToJsonPropertyExpression('addresses', property),
@@ -636,6 +683,7 @@ void main() {
         values: const {'active', 'inactive'},
         isNullable: false,
         context: context,
+        description: null,
       );
       final parameter = PathParameterObject(
         name: 'status',
@@ -719,6 +767,7 @@ void main() {
 
     test('for Enum parameter', () {
       final enumModel = EnumModel<String>(
+        description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,

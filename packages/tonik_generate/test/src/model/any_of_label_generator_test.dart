@@ -31,6 +31,7 @@ void main() {
   group('AnyOfGenerator toLabel generation', () {
     test('generates toLabel for primitive-only AnyOf', () {
       final model = AnyOfModel(
+        description: null,
         name: 'AnyOfPrimitive',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -80,9 +81,11 @@ void main() {
 
     test('generates toLabel for complex-only AnyOf', () {
       final class1 = ClassModel(
+        description: null,
         name: 'Class1',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -94,9 +97,11 @@ void main() {
       );
 
       final class2 = ClassModel(
+        description: null,
         name: 'Class2',
         properties: [
           Property(
+            description: null,
             name: 'number',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -108,6 +113,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'AnyOfComplex',
         models: {
           (discriminatorValue: 'class1', model: class1),
@@ -157,15 +163,18 @@ void main() {
 
     test('generates toLabel that detects mixed encoding ambiguity', () {
       final model = AnyOfModel(
+        description: null,
         name: 'AnyOfMixed',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
             discriminatorValue: 'data',
             model: ClassModel(
+              description: null,
               name: 'Data',
               properties: [
                 Property(
+                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -239,6 +248,7 @@ void main() {
 
     test('generates toLabel for empty AnyOf', () {
       final model = AnyOfModel(
+        description: null,
         name: 'AnyOfEmpty',
         models: const {},
         discriminator: null,
@@ -262,15 +272,18 @@ void main() {
 
     test('toLabel uses runtime check for nested oneOf', () {
       final innerOneOf = OneOfModel(
+        description: null,
         name: 'InnerChoice',
         models: {
           (discriminatorValue: 'str', model: StringModel(context: context)),
           (
             discriminatorValue: 'obj',
             model: ClassModel(
+              description: null,
               name: 'Inner',
               properties: [
                 Property(
+                  description: null,
                   name: 'field',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -287,6 +300,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),

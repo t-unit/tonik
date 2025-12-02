@@ -129,7 +129,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -191,7 +195,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -319,7 +327,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -380,7 +392,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -497,7 +513,11 @@ void main() {
         explode: true,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -585,7 +605,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -645,7 +669,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -840,7 +868,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -854,7 +886,11 @@ void main() {
         explode: false,
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
-        model: ClassModel(context: context, properties: const []),
+        model: ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        ),
         context: context,
       );
 
@@ -917,6 +953,7 @@ void main() {
         context: context,
         values: const {'red', 'green', 'blue'},
         isNullable: false,
+        description: null,
       );
 
       final stringModel = StringModel(context: context);
@@ -930,6 +967,7 @@ void main() {
         },
         name: 'OneOfValue',
         discriminator: 'type',
+        description: null,
       );
 
       final intListModel = ListModel(
@@ -943,6 +981,7 @@ void main() {
           context: context,
           values: const {'A', 'B', 'C'},
           isNullable: false,
+          description: null,
         ),
       );
 
@@ -1087,6 +1126,7 @@ void main() {
         context: context,
         values: const {'RED', 'GREEN', 'BLUE'},
         isNullable: false,
+        description: null,
       );
 
       final listModel = ListModel(context: context, content: enumModel);
@@ -1156,7 +1196,11 @@ void main() {
     });
 
     test('generates code that throws for nested list of class models', () {
-      final innerModel = ClassModel(context: context, properties: const []);
+      final innerModel = ClassModel(
+        context: context,
+        properties: const [],
+        description: null,
+      );
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
         context: context,
@@ -1229,9 +1273,9 @@ void main() {
       );
     });
 
-     test(
-       'generates code that throws when non-list type used with '
-       'delimited encoding',
+    test(
+      'generates code that throws when non-list type used with '
+      'delimited encoding',
       () {
         final stringModel = StringModel(context: context);
 
@@ -1296,12 +1340,16 @@ void main() {
       },
     );
 
-     test(
-       'generates code for list of oneOf with mixed types requiring '
-       'runtime check',
+    test(
+      'generates code for list of oneOf with mixed types requiring '
+      'runtime check',
       () {
         final stringModel = StringModel(context: context);
-        final classModel = ClassModel(context: context, properties: const []);
+        final classModel = ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        );
 
         final oneOfModel = OneOfModel(
           context: context,
@@ -1311,6 +1359,7 @@ void main() {
           },
           name: 'MixedOneOf',
           discriminator: 'type',
+          description: null,
         );
 
         final oneOfListModel = ListModel(
@@ -1349,7 +1398,7 @@ void main() {
           securitySchemes: const {},
         );
 
-         const expectedMethod = r'''
+        const expectedMethod = r'''
            String _queryParameters({required List<MixedOneOf> values}) {
              final entries = <ParameterEntry>[];
              for (final item in values) {
@@ -1393,8 +1442,8 @@ void main() {
       },
     );
 
-     test(
-       'generates code for list of oneOf with explode=true',
+    test(
+      'generates code for list of oneOf with explode=true',
       () {
         final stringModel = StringModel(context: context);
         final intModel = IntegerModel(context: context);
@@ -1407,6 +1456,7 @@ void main() {
           },
           name: 'SimpleOneOf',
           discriminator: 'type',
+          description: null,
         );
 
         final oneOfListModel = ListModel(
@@ -1445,7 +1495,7 @@ void main() {
           securitySchemes: const {},
         );
 
-         const expectedMethod = r'''
+        const expectedMethod = r'''
            String _queryParameters({required List<SimpleOneOf> items}) {
              final entries = <ParameterEntry>[];
              for (final item in items) {
@@ -1480,11 +1530,15 @@ void main() {
       },
     );
 
-     test(
-       'generates code that throws when list of class models used with '
-       'delimited encoding',
+    test(
+      'generates code that throws when list of class models used with '
+      'delimited encoding',
       () {
-        final classModel = ClassModel(context: context, properties: const []);
+        final classModel = ClassModel(
+          context: context,
+          properties: const [],
+          description: null,
+        );
         final classListModel = ListModel(
           context: context,
           content: classModel,
@@ -1628,6 +1682,7 @@ void main() {
             values: const {'a', 'b'},
             isNullable: false,
             context: context,
+            description: null,
           ),
           context: context,
         ),
@@ -1764,6 +1819,7 @@ void main() {
             name: 'SomeClass',
             properties: const [],
             context: context,
+            description: null,
           ),
           context: context,
         ),

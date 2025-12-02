@@ -1265,7 +1265,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = allOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = ComplexNestedMix.fromSimple(simple, explode: true);
+        final reconstructed = ComplexNestedMix.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -1278,7 +1281,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = allOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = ComplexNestedMix.fromSimple(simple, explode: false);
+        final reconstructed = ComplexNestedMix.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -1430,7 +1436,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = allOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = MultiLevelNesting.fromSimple(simple, explode: true);
+        final reconstructed = MultiLevelNesting.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -1443,7 +1452,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = allOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = MultiLevelNesting.fromSimple(simple, explode: false);
+        final reconstructed = MultiLevelNesting.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -1629,7 +1641,8 @@ void main() {
       expect(
         () => AllOfWithSimpleList.fromForm(form, explode: false),
         throwsA(isA<DecodingException>()),
-        reason: 'allOf with list properties and explode=false creates '
+        reason:
+            'allOf with list properties and explode=false creates '
             'ambiguous boundaries: cannot determine where one list ends and '
             'the next property begins without knowing all keys from all '
             'composed schemas',
@@ -1645,7 +1658,10 @@ void main() {
 
     test('simple roundtrip - explode true', () {
       final simple = allOf.toSimple(explode: true, allowEmpty: true);
-      final reconstructed = AllOfWithSimpleList.fromSimple(simple, explode: true);
+      final reconstructed = AllOfWithSimpleList.fromSimple(
+        simple,
+        explode: true,
+      );
       expect(reconstructed, allOf);
     });
 
@@ -1660,10 +1676,9 @@ void main() {
       final simple = allOf.toSimple(explode: false, allowEmpty: true);
       expect(
         () => AllOfWithSimpleList.fromSimple(simple, explode: false),
-        throwsA(
-          isA<InvalidTypeException>(),
-        ),
-        reason: 'allOf with list properties and explode=false creates '
+        throwsA(isA<InvalidTypeException>()),
+        reason:
+            'allOf with list properties and explode=false creates '
             'ambiguous boundaries: cannot determine where one list ends and '
             'the next property begins without knowing all keys from all '
             'composed schemas',
@@ -1824,7 +1839,8 @@ void main() {
       expect(
         () => AllOfWithEnumList.fromForm(form, explode: false),
         throwsA(isA<DecodingException>()),
-        reason: 'allOf with list properties and explode=false creates '
+        reason:
+            'allOf with list properties and explode=false creates '
             'ambiguous boundaries: cannot determine where one list ends and '
             'the next property begins without knowing all keys from all '
             'composed schemas',
@@ -1856,7 +1872,8 @@ void main() {
       expect(
         () => AllOfWithEnumList.fromSimple(simple, explode: false),
         throwsA(isA<InvalidTypeException>()),
-        reason: 'allOf with list properties and explode=false creates '
+        reason:
+            'allOf with list properties and explode=false creates '
             'ambiguous boundaries: cannot determine where one list ends and '
             'the next property begins without knowing all keys from all '
             'composed schemas',
@@ -2007,7 +2024,10 @@ void main() {
 
       test('form roundtrip - explode true', () {
         final form = allOf.toForm(explode: true, allowEmpty: true);
-        final reconstructed = ComplexListComposition.fromForm(form, explode: true);
+        final reconstructed = ComplexListComposition.fromForm(
+          form,
+          explode: true,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -2023,7 +2043,8 @@ void main() {
         expect(
           () => ComplexListComposition.fromForm(form, explode: false),
           throwsA(isA<DecodingException>()),
-          reason: 'allOf with list properties and explode=false creates '
+          reason:
+              'allOf with list properties and explode=false creates '
               'ambiguous boundaries: cannot determine where one list ends and '
               'the next property begins without knowing all keys from all '
               'composed schemas',
@@ -2039,10 +2060,11 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = allOf.toSimple(explode: true, allowEmpty: true);
-         expect(
+        expect(
           () => ComplexListComposition.fromSimple(simple, explode: false),
           throwsA(isA<DecodingException>()),
-          reason: 'allOf with list properties and explode=false creates '
+          reason:
+              'allOf with list properties and explode=false creates '
               'ambiguous boundaries: cannot determine where one list ends and '
               'the next property begins',
         );
@@ -2060,7 +2082,8 @@ void main() {
         expect(
           () => ComplexListComposition.fromSimple(simple, explode: false),
           throwsA(isA<DecodingException>()),
-          reason: 'allOf with list properties and explode=false creates '
+          reason:
+              'allOf with list properties and explode=false creates '
               'ambiguous boundaries: cannot determine where one list ends and '
               'the next property begins',
         );
@@ -2471,7 +2494,10 @@ void main() {
 
       test('form roundtrip - explode true', () {
         final form = allOf.toForm(explode: true, allowEmpty: true);
-        final reconstructed = AllOfOneOfDoubleList.fromForm(form, explode: true);
+        final reconstructed = AllOfOneOfDoubleList.fromForm(
+          form,
+          explode: true,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -2484,7 +2510,10 @@ void main() {
 
       test('form roundtrip - explode false', () {
         final form = allOf.toForm(explode: false, allowEmpty: true);
-        final reconstructed = AllOfOneOfDoubleList.fromForm(form, explode: false);
+        final reconstructed = AllOfOneOfDoubleList.fromForm(
+          form,
+          explode: false,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -2497,7 +2526,10 @@ void main() {
 
       test('simple roundtrip - explode true', () {
         final simple = allOf.toSimple(explode: true, allowEmpty: true);
-        final reconstructed = AllOfOneOfDoubleList.fromSimple(simple, explode: true);
+        final reconstructed = AllOfOneOfDoubleList.fromSimple(
+          simple,
+          explode: true,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -2510,7 +2542,10 @@ void main() {
 
       test('simple roundtrip - explode false', () {
         final simple = allOf.toSimple(explode: false, allowEmpty: true);
-        final reconstructed = AllOfOneOfDoubleList.fromSimple(simple, explode: false);
+        final reconstructed = AllOfOneOfDoubleList.fromSimple(
+          simple,
+          explode: false,
+        );
         expect(reconstructed, allOf);
       });
 
@@ -2641,7 +2676,10 @@ void main() {
 
     test('simple roundtrip - explode true', () {
       final simple = allOf.toSimple(explode: true, allowEmpty: true);
-      final reconstructed = AllOfDirectPrimitive.fromSimple(simple, explode: true);
+      final reconstructed = AllOfDirectPrimitive.fromSimple(
+        simple,
+        explode: true,
+      );
       expect(reconstructed, allOf);
     });
 
@@ -2651,7 +2689,10 @@ void main() {
 
     test('simple roundtrip - explode false', () {
       final simple = allOf.toSimple(explode: false, allowEmpty: true);
-      final reconstructed = AllOfDirectPrimitive.fromSimple(simple, explode: false);
+      final reconstructed = AllOfDirectPrimitive.fromSimple(
+        simple,
+        explode: false,
+      );
       expect(reconstructed, allOf);
     });
 

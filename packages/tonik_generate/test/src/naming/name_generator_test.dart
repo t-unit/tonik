@@ -23,6 +23,7 @@ void main() {
               '200',
               'content',
             ]),
+            description: null,
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -41,6 +42,7 @@ void main() {
               '404',
               'content',
             ]),
+            description: null,
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -57,6 +59,7 @@ void main() {
               'schemas',
               'Blub',
             ]),
+            description: null,
           );
 
           final oneOfModel = OneOfModel(
@@ -64,6 +67,7 @@ void main() {
             models: {(discriminatorValue: null, model: inlineClassModel)},
             discriminator: null,
             context: Context.initial().pushAll(['components', 'schemas']),
+            description: null,
           );
 
           // First name the oneOf model
@@ -84,6 +88,7 @@ void main() {
               'pet-findByTags',
               'parameter',
             ]),
+            description: null,
           );
 
           expect(
@@ -98,6 +103,7 @@ void main() {
           name: 'UserProfile',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
       });
@@ -107,6 +113,7 @@ void main() {
           name: 'user_profile',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
       });
@@ -116,16 +123,19 @@ void main() {
           name: 'User',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         final model2 = ClassModel(
           name: 'User',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         final model3 = ClassModel(
           name: 'User',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
 
         final name1 = nameGenerator.generateModelName(model1);
@@ -142,6 +152,7 @@ void main() {
           name: 'User-Profile!123',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile123');
       });
@@ -150,6 +161,7 @@ void main() {
         final model = ClassModel(
           properties: const [],
           context: Context.initial().pushAll(['api', 'models', 'user']),
+          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'ApiModelsUserModel');
@@ -176,6 +188,7 @@ void main() {
           name: 'my_class_name',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'MyClassName');
@@ -186,6 +199,7 @@ void main() {
           name: '_my_class_name',
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'MyClassName');
@@ -195,6 +209,7 @@ void main() {
         final model = ClassModel(
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'AnonymousModel');
@@ -204,14 +219,17 @@ void main() {
         final model1 = ClassModel(
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         final model2 = ClassModel(
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
         final model3 = ClassModel(
           properties: const [],
           context: Context.initial(),
+          description: null,
         );
 
         final name1 = nameGenerator.generateModelName(model1);
@@ -229,6 +247,7 @@ void main() {
             name: 'Model23',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Model23');
         });
@@ -238,6 +257,7 @@ void main() {
             name: '2Model',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Model');
         });
@@ -247,6 +267,7 @@ void main() {
             name: '2_Model12String33',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Model12String33');
         });
@@ -256,6 +277,7 @@ void main() {
             name: 'user2_profile3_data4',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'User2Profile3Data4');
         });
@@ -265,6 +287,7 @@ void main() {
             name: '123',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Anonymous');
         });
@@ -277,6 +300,7 @@ void main() {
                 name: 'hello_world_test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'HelloWorldTest',
@@ -290,6 +314,7 @@ void main() {
                 name: '_hello_world',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'HelloWorld',
@@ -303,6 +328,7 @@ void main() {
                 name: 'Hello-World_Test!123',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'HelloWorldTest123',
@@ -316,6 +342,7 @@ void main() {
                 name: '___hello_world_test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'HelloWorldTest',
@@ -329,6 +356,7 @@ void main() {
                 name: 'My_Class_NAME',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'MyClassName',
@@ -344,6 +372,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'Test',
@@ -356,6 +385,7 @@ void main() {
               name: 'Test',
               properties: const [],
               context: Context.initial(),
+              description: null,
             ),
           );
 
@@ -365,6 +395,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'TestModel',
@@ -378,6 +409,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             )
             ..generateModelName(
@@ -385,6 +417,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             );
 
@@ -394,6 +427,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                description: null,
               ),
             ),
             'TestModel2',
@@ -405,11 +439,13 @@ void main() {
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           final model2 = ClassModel(
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
 
           final name1 = nameGenerator.generateModelName(model1);
@@ -542,6 +578,7 @@ void main() {
             name: 'User',
             properties: const [],
             context: Context.initial(),
+            description: null,
           );
           final response = ResponseObject(
             name: 'User',

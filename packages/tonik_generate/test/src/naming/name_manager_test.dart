@@ -618,8 +618,13 @@ void main() {
               name: 'User',
               properties: const [],
               context: userContext,
+              description: null,
             ),
-            ClassModel(properties: const [], context: userContext),
+            ClassModel(
+              properties: const [],
+              context: userContext,
+              description: null,
+            ),
           ];
 
           manager.prime(
@@ -640,11 +645,16 @@ void main() {
         'named model takes precedence over anonymous model with same context',
         () {
           final models = [
-            ClassModel(properties: const [], context: userContext),
+            ClassModel(
+              properties: const [],
+              context: userContext,
+              description: null,
+            ),
             ClassModel(
               name: 'User',
               properties: const [],
               context: userContext,
+              description: null,
             ),
           ];
 
@@ -672,6 +682,7 @@ void main() {
           StringModel(context: sharedContext),
         },
         context: sharedContext,
+        description: null,
       );
 
       final model2 = AllOfModel(
@@ -680,6 +691,7 @@ void main() {
           IntegerModel(context: sharedContext),
         },
         context: sharedContext,
+        description: null,
       );
 
       manager.prime(

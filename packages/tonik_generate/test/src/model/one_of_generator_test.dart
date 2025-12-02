@@ -31,6 +31,7 @@ void main() {
 
   test('generates simple encoding shape getter for primitive oneOf', () {
     final model = OneOfModel(
+      description: null,
       name: 'Value',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
@@ -61,17 +62,20 @@ void main() {
 
   test('generates complex encoding shape getter for class oneOf', () {
     final classA = ClassModel(
+      description: null,
       name: 'A',
       properties: const [],
       context: context,
     );
     final classB = ClassModel(
+      description: null,
       name: 'B',
       properties: const [],
       context: context,
     );
 
     final model = OneOfModel(
+      description: null,
       name: 'Value',
       models: {
         (discriminatorValue: null, model: classA),
@@ -102,12 +106,14 @@ void main() {
 
   test('generates mixed encoding shape getter for mixed oneOf', () {
     final classA = ClassModel(
+      description: null,
       name: 'A',
       properties: const [],
       context: context,
     );
 
     final model = OneOfModel(
+      description: null,
       name: 'Value',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
@@ -138,6 +144,7 @@ void main() {
 
   test('generates sealed class with standard constructor', () {
     final model = OneOfModel(
+      description: null,
       name: 'Result',
       models: {
         (discriminatorValue: 'success', model: StringModel(context: context)),
@@ -198,6 +205,7 @@ void main() {
 
   test('generates subclasses for each model in oneOf', () {
     final model = OneOfModel(
+      description: null,
       name: 'Result',
       models: {
         (discriminatorValue: 'success', model: StringModel(context: context)),
@@ -249,11 +257,13 @@ void main() {
 
   test('uses model name when discriminator value is not available', () {
     final model = OneOfModel(
+      description: null,
       name: 'Result',
       models: {
         (
           discriminatorValue: null,
           model: ClassModel(
+            description: null,
             name: 'Success',
             properties: const [],
             context: context,
@@ -262,6 +272,7 @@ void main() {
         (
           discriminatorValue: null,
           model: ClassModel(
+            description: null,
             name: 'Error',
             properties: const [],
             context: context,
@@ -303,6 +314,7 @@ void main() {
 
   test('handles nested models correctly', () {
     final model = OneOfModel(
+      description: null,
       name: 'Result',
       models: {
         (
@@ -350,11 +362,13 @@ void main() {
 
   test('fromJson factory includes proper catch clause with on Object', () {
     final model = OneOfModel(
+      description: null,
       name: 'TestOneOf',
       models: {
         (
           discriminatorValue: null,
           model: ClassModel(
+            description: null,
             name: 'TestClass',
             properties: const [],
             context: context,
@@ -381,6 +395,7 @@ void main() {
   group('subclass equals', () {
     test('generates equals method for primitive type', () {
       final model = OneOfModel(
+        description: null,
         name: 'Result',
         models: {
           (discriminatorValue: 'success', model: StringModel(context: context)),
@@ -418,6 +433,7 @@ void main() {
 
     test('generates equals method for collection type', () {
       final model = OneOfModel(
+        description: null,
         name: 'Result',
         models: {
           (
@@ -466,6 +482,7 @@ void main() {
   group('subclass names', () {
     test('generates meaningful names for primitive models', () {
       final model = OneOfModel(
+        description: null,
         name: 'Value',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -488,17 +505,20 @@ void main() {
 
     test('generates meaningful names for complex models', () {
       final classA = ClassModel(
+        description: null,
         name: 'ClassA',
         properties: const [],
         context: context,
       );
       final allOfModel = AllOfModel(
+        description: null,
         name: 'AllOfExample',
         models: {classA},
         context: context,
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Value',
         models: {
           (discriminatorValue: null, model: classA),
@@ -523,6 +543,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Value',
         models: {
           (discriminatorValue: null, model: aliasModel),
@@ -541,6 +562,7 @@ void main() {
   group('parameterProperties', () {
     test('method exists with correct signature', () {
       final model = OneOfModel(
+        description: null,
         name: 'Value',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -564,8 +586,9 @@ void main() {
       );
       expect(method.optionalParameters.length, 2);
 
-      final allowEmptyParam = method.optionalParameters
-          .firstWhere((p) => p.name == 'allowEmpty');
+      final allowEmptyParam = method.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
       expect(allowEmptyParam.named, isTrue);
       expect(allowEmptyParam.required, isFalse);
       expect(
@@ -577,8 +600,9 @@ void main() {
         'bool',
       );
 
-      final allowListsParam = method.optionalParameters
-          .firstWhere((p) => p.name == 'allowLists');
+      final allowListsParam = method.optionalParameters.firstWhere(
+        (p) => p.name == 'allowLists',
+      );
       expect(allowListsParam.named, isTrue);
       expect(allowListsParam.required, isFalse);
       expect(
@@ -593,6 +617,7 @@ void main() {
 
     test('throws for primitive-only oneOf', () {
       final model = OneOfModel(
+        description: null,
         name: 'Value',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -623,9 +648,11 @@ void main() {
 
     test('delegates to value for complex variant without discriminator', () {
       final userModel = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -637,6 +664,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Response',
         models: {
           (discriminatorValue: null, model: userModel),
@@ -670,9 +698,11 @@ void main() {
 
     test('injects discriminator for complex variant with discriminator', () {
       final userModel = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -684,9 +714,11 @@ void main() {
       );
 
       final companyModel = ClassModel(
+        description: null,
         name: 'Company',
         properties: [
           Property(
+            description: null,
             name: 'title',
             model: StringModel(context: context),
             isRequired: true,
@@ -698,6 +730,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Entity',
         models: {
           (discriminatorValue: 'person', model: userModel),
@@ -744,9 +777,11 @@ void main() {
       'throws at runtime for mixed primitive/complex without discriminator',
       () {
         final userModel = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -758,6 +793,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          description: null,
           name: 'Value',
           models: {
             (discriminatorValue: null, model: userModel),
@@ -798,9 +834,11 @@ void main() {
       'throws at runtime for mixed primitive/complex with discriminator',
       () {
         final userModel = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -812,6 +850,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          description: null,
           name: 'Response',
           models: {
             (discriminatorValue: 'user', model: userModel),
@@ -873,14 +912,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final model = OneOfModel(
@@ -890,6 +932,7 @@ void main() {
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -925,15 +968,18 @@ void main() {
       'discriminator',
       () {
         final innerOneOf = OneOfModel(
+          description: null,
           name: 'Inner',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'Data',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -956,6 +1002,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          description: null,
         );
 
         final classes = generator.generateClasses(model);
@@ -1011,6 +1058,7 @@ void main() {
       },
       discriminator: 'type',
       context: context.push('TestOneOf'),
+      description: null,
     );
 
     nameManager.prime(

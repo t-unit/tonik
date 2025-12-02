@@ -31,9 +31,11 @@ void main() {
 
     test('fromForm constructor exists with correct signature', () {
       final model = ClassModel(
+        description: null,
         name: 'TestModel',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -41,6 +43,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -72,9 +75,11 @@ void main() {
 
     test('generates complete fromForm method with parsing logic', () {
       final model = ClassModel(
+        description: null,
         name: 'TestModel',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -82,6 +87,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -122,9 +128,11 @@ void main() {
 
     test('generates fromForm method with all property types', () {
       final model = ClassModel(
+        description: null,
         name: 'ComplexForm',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -132,6 +140,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -139,6 +148,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'email',
             model: StringModel(context: context),
             isRequired: false,
@@ -182,15 +192,18 @@ void main() {
       'generates fromForm for mixed OneOf that attempts decoding',
       () {
         final oneOfModel = OneOfModel(
+          description: null,
           name: 'DynamicValue',
           models: {
             (discriminatorValue: 'str', model: StringModel(context: context)),
             (
               discriminatorValue: 'class',
               model: ClassModel(
+                description: null,
                 name: 'ComplexData',
                 properties: [
                   Property(
+                    description: null,
                     name: 'id',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -206,9 +219,11 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          description: null,
           name: 'Wrapper',
           properties: [
             Property(
+              description: null,
               name: 'data',
               model: oneOfModel,
               isRequired: true,

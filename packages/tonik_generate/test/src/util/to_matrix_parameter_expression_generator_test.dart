@@ -109,6 +109,7 @@ void main() {
         values: const {'active', 'inactive'},
         isNullable: false,
         context: context,
+        description: null,
       );
       final expression = buildMatrixParameterExpression(
         refer('value'),
@@ -139,9 +140,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final expression = buildMatrixParameterExpression(
         refer('value'),
@@ -216,6 +219,7 @@ void main() {
         values: const {'active', 'inactive'},
         isNullable: false,
         context: context,
+        description: null,
       );
       final model = ListModel(
         content: enumModel,
@@ -250,9 +254,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final model = ListModel(
         content: classModel,
@@ -314,6 +320,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
       final expression = buildMatrixParameterExpression(
         refer('value'),
@@ -368,6 +375,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
       final model = ListModel(
         content: oneOfModel,

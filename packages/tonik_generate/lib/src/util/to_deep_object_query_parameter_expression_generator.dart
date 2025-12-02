@@ -5,7 +5,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// using deepObject encoding.
 ///
 /// According to OpenAPI spec, deepObject style is ONLY for query parameters
-/// with object values. It produces: 
+/// with object values. It produces:
 ///   `paramName[key1]=value1&paramName[key2]=value2`
 ///
 /// For invalid types (primitives, lists, enums), generates code that throws
@@ -28,7 +28,8 @@ Code buildToDeepObjectQueryParameterCode(
             'explode': literalBool(explode),
             'allowEmpty': literalBool(allowEmpty),
           },
-        ).code;
+        )
+        .code;
   }
 
   return refer('EncodingException', 'package:tonik_util/tonik_util.dart')
