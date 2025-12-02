@@ -95,4 +95,57 @@ void main() {
     expect(required, isA<EnumModel<String>>());
     expect((required as EnumModel).isNullable, isFalse);
   });
+
+  group('description', () {
+    const enumWithDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Status': {
+            'type': 'string',
+            'description': 'The status of the order',
+            'enum': ['pending', 'shipped', 'delivered'],
+          },
+        },
+      },
+    };
+
+    const enumWithoutDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Priority': {
+            'type': 'integer',
+            'enum': [1, 2, 3],
+          },
+        },
+      },
+    };
+
+    test('import enum with description', () {
+      final api = Importer().import(enumWithDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'Status',
+              )
+              as EnumModel<String>;
+
+      expect(model.description, 'The status of the order');
+    });
+
+    test('import enum without description', () {
+      final api = Importer().import(enumWithoutDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'Priority',
+              )
+              as EnumModel<int>;
+
+      expect(model.description, isNull);
+    });
+  });
 }

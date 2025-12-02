@@ -223,4 +223,71 @@ void main() {
     final numberModel = oneOfDirectPrimitive.models.last;
     expect(numberModel.model, isA<NumberModel>());
   });
+
+  group('description', () {
+    const oneOfWithDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Pet': {
+            'description': 'A pet can be either a cat or a dog',
+            'oneOf': [
+              {
+                'type': 'object',
+                'properties': {
+                  'bark': {'type': 'boolean'},
+                },
+              },
+              {
+                'type': 'object',
+                'properties': {
+                  'meow': {'type': 'boolean'},
+                },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    const oneOfWithoutDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Animal': {
+            'oneOf': [
+              {'type': 'string'},
+              {'type': 'integer'},
+            ],
+          },
+        },
+      },
+    };
+
+    test('import oneOf with description', () {
+      final api = Importer().import(oneOfWithDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'Pet',
+              )
+              as OneOfModel;
+
+      expect(model.description, 'A pet can be either a cat or a dog');
+    });
+
+    test('import oneOf without description', () {
+      final api = Importer().import(oneOfWithoutDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'Animal',
+              )
+              as OneOfModel;
+
+      expect(model.description, isNull);
+    });
+  });
 }

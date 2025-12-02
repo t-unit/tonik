@@ -31,6 +31,7 @@ void main() {
 
     test('generates class with correct name', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: const [],
         context: context,
@@ -42,6 +43,7 @@ void main() {
 
     test('generates class with immutable annotation', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: const [],
         context: context,
@@ -55,12 +57,170 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
+    group('doc comments', () {
+      test('generates class with doc comment from description', () {
+        final model = ClassModel(
+          description: 'A user in the system',
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, ['/// A user in the system']);
+      });
+
+      test('generates class with multiline doc comment', () {
+        final model = ClassModel(
+          description: 'A user in the system.\nContains user details.',
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, [
+          '/// A user in the system.',
+          '/// Contains user details.',
+        ]);
+      });
+
+      test('generates class without doc comment when description is null', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, isEmpty);
+      });
+
+      test('generates class without doc comment when description is empty', () {
+        final model = ClassModel(
+          description: '',
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, isEmpty);
+      });
+
+      test('generates field with doc comment from property description', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: [
+            Property(
+              description: 'The unique identifier',
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, ['/// The unique identifier']);
+      });
+
+      test('generates field with multiline doc comment', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: [
+            Property(
+              description: 'The user status.\nCan be active or inactive.',
+              name: 'status',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, [
+          '/// The user status.',
+          '/// Can be active or inactive.',
+        ]);
+      });
+
+      test('generates field without doc comment when description is null', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: [
+            Property(
+              description: null,
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, isEmpty);
+      });
+
+      test(
+        'generates field with both doc comment and deprecated annotation',
+        () {
+          final model = ClassModel(
+            description: null,
+            name: 'User',
+            properties: [
+              Property(
+                description: 'Use userId instead',
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: true,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final field = result.fields.first;
+
+          expect(field.docs, ['/// Use userId instead']);
+          expect(field.annotations, hasLength(1));
+        },
+      );
+    });
+
     test('generates currentEncodingShape getter for class with properties', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
             name: 'id',
+            description: null,
             model: IntegerModel(context: context),
             isRequired: true,
             isNullable: false,
@@ -89,6 +249,7 @@ void main() {
 
     test('generates currentEncodingShape getter for empty class', () {
       final model = ClassModel(
+        description: null,
         name: 'Empty',
         properties: const [],
         context: context,
@@ -113,15 +274,18 @@ void main() {
 
     test('generates currentEncodingShape getter for complex class', () {
       final nestedClass = ClassModel(
+        description: null,
         name: 'Address',
         properties: const [],
         context: context,
       );
 
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'address',
             model: nestedClass,
             isRequired: true,
@@ -151,9 +315,11 @@ void main() {
 
     test('generates constructor with required and optional parameters', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -161,6 +327,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: false,
@@ -194,9 +361,11 @@ void main() {
       'generates constructor with required fields before non-required fields',
       () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'nickname',
               model: StringModel(context: context),
               isRequired: false,
@@ -204,6 +373,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -211,6 +381,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -218,6 +389,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'bio',
               model: StringModel(context: context),
               isRequired: false,
@@ -266,6 +438,7 @@ void main() {
 
     test('generates filename in snake_case', () {
       final model = ClassModel(
+        description: null,
         name: 'UserProfile',
         properties: const [],
         context: Context.initial(),
@@ -286,9 +459,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
 
         final result = generator.generateClass(model);
@@ -309,9 +484,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
 
         final result = generator.generateClass(model);
@@ -332,9 +509,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
 
         final result = generator.generateClass(model);
@@ -347,9 +526,11 @@ void main() {
 
       test('generates list of strings property', () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -373,11 +554,14 @@ void main() {
 
       test('generates nested class property', () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'address',
               model: ClassModel(
+                description: null,
                 name: 'Address',
                 properties: const [],
                 context: context,
@@ -400,9 +584,11 @@ void main() {
 
       test('generates deprecated property', () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'username',
               model: StringModel(context: context),
               isRequired: true,
@@ -427,9 +613,11 @@ void main() {
 
       test('generates optional non-nullable property', () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'photoUrl',
               model: StringModel(context: context),
               isRequired: false,
@@ -450,9 +638,11 @@ void main() {
 
       test('generates required nullable property', () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'photoUrl',
               model: StringModel(context: context),
               isRequired: true,
@@ -474,9 +664,11 @@ void main() {
 
     test('generates field with Uri type for UriModel property', () {
       final model = ClassModel(
+        description: null,
         name: 'Resource',
         properties: [
           Property(
+            description: null,
             name: 'endpoint',
             model: UriModel(context: context),
             isRequired: true,
@@ -501,9 +693,11 @@ void main() {
 
     test('generates nullable Uri field for nullable UriModel property', () {
       final model = ClassModel(
+        description: null,
         name: 'Resource',
         properties: [
           Property(
+            description: null,
             name: 'optionalEndpoint',
             model: UriModel(context: context),
             isRequired: false,
@@ -527,9 +721,11 @@ void main() {
 
     test('generates constructor parameter for Uri property', () {
       final model = ClassModel(
+        description: null,
         name: 'Resource',
         properties: [
           Property(
+            description: null,
             name: 'endpoint',
             model: UriModel(context: context),
             isRequired: true,
@@ -537,6 +733,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'callback',
             model: UriModel(context: context),
             isRequired: false,
@@ -566,9 +763,11 @@ void main() {
     group('form encoding', () {
       test('generates fromForm constructor for simple properties', () {
         final model = ClassModel(
+          description: null,
           name: 'SimpleModel',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -576,6 +775,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'count',
               model: IntegerModel(context: context),
               isRequired: false,
@@ -607,31 +807,33 @@ void main() {
         expect(fromFormConstructor.optionalParameters.first.named, isTrue);
       });
 
-    test(
-      'generates working fromForm constructor for list properties with '
-      'simple content',
-      () {
-        final model = ClassModel(
-          name: 'ModelWithSimpleList',
-          properties: [
-            Property(
-              name: 'items',
-              model: ListModel(
-                content: StringModel(context: context),
-                context: context,
+      test(
+        'generates working fromForm constructor for list properties with '
+        'simple content',
+        () {
+          final model = ClassModel(
+            description: null,
+            name: 'ModelWithSimpleList',
+            properties: [
+              Property(
+                description: null,
+                name: 'items',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
               ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-            ),
-          ],
-          context: context,
-        );
+            ],
+            context: context,
+          );
 
-        final result = generator.generateClass(model);
-        final generatedCode = format(result.accept(emitter).toString());
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
 
-        const expectedFromFormConstructor = '''
+          const expectedFromFormConstructor = '''
 factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
   final values = value.decodeObject(
     explode: explode,
@@ -649,12 +851,12 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
 }
         ''';
 
-        expect(
-          collapseWhitespace(generatedCode),
-          contains(collapseWhitespace(expectedFromFormConstructor)),
-        );
-      },
-    );
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedFromFormConstructor)),
+          );
+        },
+      );
 
       test(
         'generates fromForm constructor that throws for list properties with '
@@ -664,11 +866,13 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
             name: 'ModelWithComplexList',
             properties: [
               Property(
+                description: null,
                 name: 'items',
                 model: ListModel(
                   content: ClassModel(
                     properties: const [],
                     context: context,
+                    description: null,
                   ),
                   context: context,
                 ),
@@ -678,6 +882,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
               ),
             ],
             context: context,
+            description: null,
           );
 
           final result = generator.generateClass(model);
@@ -705,9 +910,11 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
         'form encoding roundtrip works for list with simple content',
         () {
           final model = ClassModel(
+            description: null,
             name: 'ModelWithSimpleListRoundtrip',
             properties: [
               Property(
+                description: null,
                 name: 'tags',
                 model: ListModel(
                   content: StringModel(context: context),
@@ -786,6 +993,7 @@ Map<String, String> parameterProperties({
 
       test('generates fromForm constructor for empty model', () {
         final model = ClassModel(
+          description: null,
           name: 'EmptyModel',
           properties: const [],
           context: context,
@@ -807,9 +1015,11 @@ Map<String, String> parameterProperties({
 
       test('generates toForm method for simple properties', () {
         final model = ClassModel(
+          description: null,
           name: 'SimpleModel',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -817,6 +1027,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'count',
               model: IntegerModel(context: context),
               isRequired: false,
@@ -845,9 +1056,11 @@ Map<String, String> parameterProperties({
 
       test('generates toForm method for complex properties', () {
         final model = ClassModel(
+          description: null,
           name: 'ComplexModel',
           properties: [
             Property(
+              description: null,
               name: 'items',
               model: ListModel(
                 content: StringModel(context: context),
@@ -877,6 +1090,7 @@ Map<String, String> parameterProperties({
 
       test('generates toForm method for empty model', () {
         final model = ClassModel(
+          description: null,
           name: 'EmptyModel',
           properties: const [],
           context: context,
@@ -900,9 +1114,11 @@ Map<String, String> parameterProperties({
         'generates fromForm constructor with mixed property types',
         () {
           final model = ClassModel(
+            description: null,
             name: 'UserForm',
             properties: [
               Property(
+                description: null,
                 name: 'name',
                 model: StringModel(context: context),
                 isRequired: true,
@@ -910,6 +1126,7 @@ Map<String, String> parameterProperties({
                 isDeprecated: false,
               ),
               Property(
+                description: null,
                 name: 'age',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -917,6 +1134,7 @@ Map<String, String> parameterProperties({
                 isDeprecated: false,
               ),
               Property(
+                description: null,
                 name: 'email',
                 model: StringModel(context: context),
                 isRequired: false,
@@ -966,9 +1184,11 @@ Map<String, String> parameterProperties({
         'generates toForm method with mixed property types',
         () {
           final model = ClassModel(
+            description: null,
             name: 'UserForm',
             properties: [
               Property(
+                description: null,
                 name: 'name',
                 model: StringModel(context: context),
                 isRequired: true,
@@ -976,6 +1196,7 @@ Map<String, String> parameterProperties({
                 isDeprecated: false,
               ),
               Property(
+                description: null,
                 name: 'age',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -983,6 +1204,7 @@ Map<String, String> parameterProperties({
                 isDeprecated: false,
               ),
               Property(
+                description: null,
                 name: 'email',
                 model: StringModel(context: context),
                 isRequired: false,
@@ -1010,9 +1232,11 @@ Map<String, String> parameterProperties({
 
       test('generates fromForm constructor with all primitive types', () {
         final model = ClassModel(
+          description: null,
           name: 'AllTypesForm',
           properties: [
             Property(
+              description: null,
               name: 'text',
               model: StringModel(context: context),
               isRequired: true,
@@ -1020,6 +1244,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'number',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -1027,6 +1252,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'decimal',
               model: DoubleModel(context: context),
               isRequired: true,
@@ -1034,6 +1260,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'flag',
               model: BooleanModel(context: context),
               isRequired: true,
@@ -1041,6 +1268,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'timestamp',
               model: DateTimeModel(context: context),
               isRequired: true,
@@ -1048,6 +1276,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'date_only',
               model: DateModel(context: context),
               isRequired: true,
@@ -1055,6 +1284,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'precise_amount',
               model: DecimalModel(context: context),
               isRequired: true,
@@ -1062,6 +1292,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'website',
               model: UriModel(context: context),
               isRequired: true,
@@ -1095,9 +1326,11 @@ Map<String, String> parameterProperties({
         'generates fromForm constructor with required nullable properties',
         () {
           final model = ClassModel(
+            description: null,
             name: 'NullableForm',
             properties: [
               Property(
+                description: null,
                 name: 'required_nullable_name',
                 model: StringModel(context: context),
                 isRequired: true,
@@ -1105,6 +1338,7 @@ Map<String, String> parameterProperties({
                 isDeprecated: false,
               ),
               Property(
+                description: null,
                 name: 'required_nullable_count',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -1139,9 +1373,11 @@ Map<String, String> parameterProperties({
     group('toMatrix method', () {
       test('generates toMatrix method for simple properties', () {
         final model = ClassModel(
+          description: null,
           name: 'SimpleModel',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -1149,6 +1385,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'count',
               model: IntegerModel(context: context),
               isRequired: false,
@@ -1208,9 +1445,11 @@ Map<String, String> parameterProperties({
 
       test('generates toMatrix method for complex properties', () {
         final model = ClassModel(
+          description: null,
           name: 'ComplexModel',
           properties: [
             Property(
+              description: null,
               name: 'simpleProp',
               model: StringModel(context: context),
               isRequired: true,
@@ -1218,11 +1457,14 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'complexProp',
               model: ClassModel(
+                description: null,
                 name: 'NestedModel',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -1268,6 +1510,7 @@ Map<String, String> parameterProperties({
 
       test('generates toMatrix method for empty model', () {
         final model = ClassModel(
+          description: null,
           name: 'EmptyModel',
           properties: const [],
           context: context,
@@ -1302,9 +1545,11 @@ Map<String, String> parameterProperties({
         'property model',
         () {
           final model = ClassModel(
+            description: null,
             name: 'TestModel',
             properties: [
               Property(
+                description: null,
                 name: 'name',
                 model: StringModel(context: context),
                 isRequired: true,

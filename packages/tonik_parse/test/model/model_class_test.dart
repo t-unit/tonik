@@ -249,4 +249,110 @@ void main() {
     expect((nested as EnumModel<String>).values, {'value1', 'value2'});
     expect(api.models, contains(nested));
   });
+
+  group('description', () {
+    const classWithDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'User': {
+            'type': 'object',
+            'description': 'A user in the system',
+            'properties': {
+              'name': {'type': 'string'},
+            },
+          },
+        },
+      },
+    };
+
+    const classWithPropertyDescriptions = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'User': {
+            'type': 'object',
+            'properties': {
+              'name': {
+                'type': 'string',
+                'description': 'The name of the user',
+              },
+              'age': {
+                'type': 'integer',
+                'description': 'Age in years',
+              },
+              'email': {'type': 'string'},
+            },
+          },
+        },
+      },
+    };
+
+    const classWithBothDescriptions = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'User': {
+            'type': 'object',
+            'description': 'Represents a user account',
+            'properties': {
+              'id': {
+                'type': 'integer',
+                'description': 'Unique identifier',
+              },
+            },
+          },
+        },
+      },
+    };
+
+    test('import class with description', () {
+      final api = Importer().import(classWithDescription);
+      final model = api.models.first as ClassModel;
+
+      expect(model.description, 'A user in the system');
+    });
+
+    test('import class without description', () {
+      final api = Importer().import(simple);
+      final model = api.models.first as ClassModel;
+
+      expect(model.description, isNull);
+    });
+
+    test('import property with description', () {
+      final api = Importer().import(classWithPropertyDescriptions);
+      final model = api.models.first as ClassModel;
+
+      final name = model.properties.firstWhere((p) => p.name == 'name');
+      expect(name.description, 'The name of the user');
+
+      final age = model.properties.firstWhere((p) => p.name == 'age');
+      expect(age.description, 'Age in years');
+    });
+
+    test('import property without description', () {
+      final api = Importer().import(classWithPropertyDescriptions);
+      final model = api.models.first as ClassModel;
+
+      final email = model.properties.firstWhere((p) => p.name == 'email');
+      expect(email.description, isNull);
+    });
+
+    test('import class and property with descriptions', () {
+      final api = Importer().import(classWithBothDescriptions);
+      final model = api.models.first as ClassModel;
+
+      expect(model.description, 'Represents a user account');
+
+      final id = model.properties.firstWhere((p) => p.name == 'id');
+      expect(id.description, 'Unique identifier');
+    });
+  });
 }

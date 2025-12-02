@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
@@ -89,6 +90,7 @@ class OneOfGenerator {
           b
             ..name = className
             ..sealed = true
+            ..docs.addAll(formatDocComment(model.description))
             ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.add(Constructor((b) => b..constant = true))
             ..constructors.add(
@@ -226,6 +228,7 @@ class OneOfGenerator {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           );
           final jsonValue = buildToJsonPropertyExpression('value', property);
           final discriminatorValue =
@@ -1180,7 +1183,10 @@ class OneOfGenerator {
                     ..symbol = 'List'
                     ..url = 'dart:core'
                     ..types.add(
-                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                      refer(
+                        'ParameterEntry',
+                        'package:tonik_util/tonik_util.dart',
+                      ),
                     ),
             )
             ..requiredParameters.add(

@@ -80,8 +80,7 @@ extension SimpleStringListEncoder on List<String> {
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
-  }) =>
-      uriEncode(allowEmpty: allowEmpty, alreadyEncoded: alreadyEncoded);
+  }) => uriEncode(allowEmpty: allowEmpty, alreadyEncoded: alreadyEncoded);
 }
 
 /// Extension for encoding Map values.

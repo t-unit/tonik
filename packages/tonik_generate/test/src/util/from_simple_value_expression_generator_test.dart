@@ -155,6 +155,7 @@ void main() {
         name: 'UserRole',
         values: const {'admin', 'user'},
         isNullable: false,
+        description: null,
       );
 
       expect(
@@ -189,6 +190,7 @@ void main() {
         name: 'UserRole',
         values: const {'admin', 'user'},
         isNullable: false,
+        description: null,
       );
 
       expect(
@@ -222,6 +224,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        description: null,
       );
 
       expect(
@@ -255,6 +258,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        description: null,
       );
 
       expect(
@@ -436,6 +440,7 @@ void main() {
           name: 'UserRole',
           values: const {'admin', 'user'},
           isNullable: false,
+          description: null,
         );
 
         expect(
@@ -457,6 +462,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          description: null,
         );
 
         expect(
@@ -479,6 +485,7 @@ void main() {
           name: 'UserRole',
           values: const {'admin', 'user'},
           isNullable: false,
+          description: null,
         );
         final listModel = ListModel(content: enumModel, context: context);
 
@@ -506,6 +513,7 @@ void main() {
           name: 'UserRole',
           values: const {'admin', 'user'},
           isNullable: false,
+          description: null,
         );
         final listModel = ListModel(content: enumModel, context: context);
 

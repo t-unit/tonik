@@ -64,6 +64,7 @@ void main() {
         name: 'User',
         properties: const [],
         context: context,
+        description: null,
       );
 
       final model = AliasModel(
@@ -253,6 +254,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          description: null,
         );
 
         final model = ListModel(

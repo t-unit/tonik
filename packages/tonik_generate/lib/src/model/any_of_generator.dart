@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
@@ -71,6 +72,7 @@ class AnyOfGenerator {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
         }).toList();
 
@@ -149,6 +151,7 @@ class AnyOfGenerator {
       (b) =>
           b
             ..name = className
+            ..docs.addAll(formatDocComment(model.description))
             ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.add(defaultCtor)
             ..constructors.add(fromJsonCtor)
@@ -1845,7 +1848,10 @@ class AnyOfGenerator {
                     ..symbol = 'List'
                     ..url = 'dart:core'
                     ..types.add(
-                      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+                      refer(
+                        'ParameterEntry',
+                        'package:tonik_util/tonik_util.dart',
+                      ),
                     ),
             )
             ..requiredParameters.add(

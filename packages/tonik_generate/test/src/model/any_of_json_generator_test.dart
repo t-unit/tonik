@@ -29,9 +29,11 @@ void main() {
       'generates fromJson factory that wraps each property decode in try/catch and assigns null on failure',
       () {
         final complex = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -43,6 +45,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'Flexible',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -114,9 +117,11 @@ void main() {
     'generates toJson method with merge-or-equal algorithm for complex models',
     () {
       final modelA = ClassModel(
+        description: null,
         name: 'A',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: StringModel(context: context),
             isRequired: true,
@@ -128,9 +133,11 @@ void main() {
       );
 
       final modelB = ClassModel(
+        description: null,
         name: 'B',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -142,6 +149,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Payload',
         models: {
           (discriminatorValue: 'a', model: modelA),
@@ -227,9 +235,11 @@ void main() {
     'generates toJson method without discriminator when none configured',
     () {
       final modelA = ClassModel(
+        description: null,
         name: 'A',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: StringModel(context: context),
             isRequired: true,
@@ -241,9 +251,11 @@ void main() {
       );
 
       final modelB = ClassModel(
+        description: null,
         name: 'B',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -255,6 +267,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'PayloadNoDisc',
         models: {
           (discriminatorValue: null, model: modelA),
@@ -332,6 +345,7 @@ void main() {
 
   test('generates toJson method for primitive-only anyOf models', () {
     final model = AnyOfModel(
+      description: null,
       name: 'OnlyPrimitives',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
@@ -423,9 +437,11 @@ void main() {
     'generates toJson method for mixed class and primitive anyOf models',
     () {
       final user = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -437,6 +453,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Mixed',
         models: {
           (discriminatorValue: 'user', model: user),

@@ -21,7 +21,12 @@ void main() {
 
     test('includes security schemes information in library documentation', () {
       final models = <Model>{
-        ClassModel(name: 'User', properties: const [], context: ctx),
+        ClassModel(
+          name: 'User',
+          properties: const [],
+          context: ctx,
+          description: null,
+        ),
       };
 
       final apiDoc = ApiDocument(
@@ -100,7 +105,12 @@ void main() {
 
     test('includes OAuth2 security scheme information', () {
       final models = <Model>{
-        ClassModel(name: 'User', properties: const [], context: ctx),
+        ClassModel(
+          name: 'User',
+          properties: const [],
+          context: ctx,
+          description: null,
+        ),
       };
 
       final apiDoc = ApiDocument(
@@ -179,7 +189,12 @@ void main() {
 
     test('handles empty security schemes', () {
       final models = <Model>{
-        ClassModel(name: 'User', properties: const [], context: ctx),
+        ClassModel(
+          name: 'User',
+          properties: const [],
+          context: ctx,
+          description: null,
+        ),
       };
 
       final apiDoc = ApiDocument(
@@ -236,7 +251,12 @@ void main() {
 
     test('omits description when none provided', () {
       final models = <Model>{
-        ClassModel(name: 'User', properties: const [], context: ctx),
+        ClassModel(
+          name: 'User',
+          properties: const [],
+          context: ctx,
+          description: null,
+        ),
       };
 
       final apiDoc = ApiDocument(

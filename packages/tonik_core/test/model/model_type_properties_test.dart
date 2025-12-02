@@ -49,6 +49,7 @@ void main() {
           values: const {'a', 'b'},
           isNullable: false,
           context: Context.initial(),
+          description: null,
         ).encodingShape,
         EncodingShape.simple,
       );
@@ -59,6 +60,7 @@ void main() {
         ClassModel(
           properties: const [],
           context: Context.initial(),
+          description: null,
         ).encodingShape,
         EncodingShape.complex,
       );
@@ -83,7 +85,11 @@ void main() {
       expect(
         AliasModel(
           name: 'Alias',
-          model: ClassModel(properties: const [], context: Context.initial()),
+          model: ClassModel(
+            properties: const [],
+            context: Context.initial(),
+            description: null,
+          ),
           context: Context.initial(),
         ).encodingShape,
         EncodingShape.complex,
@@ -98,19 +104,25 @@ void main() {
           IntegerModel(context: Context.initial()),
         },
         context: Context.initial(),
+        description: null,
       );
       expect(simpleAllOf.encodingShape, EncodingShape.simple);
 
       final complexAllOf = AllOfModel(
         name: 'ComplexAllOf',
         models: {
-          ClassModel(properties: const [], context: Context.initial()),
+          ClassModel(
+            properties: const [],
+            context: Context.initial(),
+            description: null,
+          ),
           ListModel(
             content: StringModel(context: Context.initial()),
             context: Context.initial(),
           ),
         },
         context: Context.initial(),
+        description: null,
       );
       expect(complexAllOf.encodingShape, EncodingShape.complex);
 
@@ -118,9 +130,14 @@ void main() {
         name: 'MixedAllOf',
         models: {
           StringModel(context: Context.initial()),
-          ClassModel(properties: const [], context: Context.initial()),
+          ClassModel(
+            properties: const [],
+            context: Context.initial(),
+            description: null,
+          ),
         },
         context: Context.initial(),
+        description: null,
       );
       expect(mixedAllOf.encodingShape, EncodingShape.mixed);
     });

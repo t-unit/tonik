@@ -109,6 +109,7 @@ void main() {
           name: 'Status',
           values: const {'active', 'inactive', 'pending'},
           isNullable: false,
+          description: null,
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -207,6 +208,7 @@ void main() {
         model: ClassModel(
           context: context,
           name: 'Filter',
+          description: null,
           properties: [
             Property(
               name: 'name',
@@ -214,6 +216,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
             Property(
               name: 'value',
@@ -221,6 +224,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
           ],
         ),

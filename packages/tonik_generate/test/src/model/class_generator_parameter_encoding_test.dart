@@ -32,9 +32,11 @@ void main() {
   group('parameterProperties method', () {
     test('generates parameterProperties method signature', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -88,9 +90,11 @@ void main() {
       'generates parameterProperties method body for simple properties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -98,6 +102,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: false,
@@ -136,6 +141,7 @@ Map<String, String> parameterProperties({
 
     test('generates parameterProperties method body for empty model', () {
       final model = ClassModel(
+        description: null,
         name: 'Empty',
         properties: const [],
         context: context,
@@ -161,9 +167,11 @@ Map<String, String> parameterProperties({
 
     test('handles allowEmpty parameter for nullable properties', () {
       final model = ClassModel(
+        description: null,
         name: 'Container',
         properties: [
           Property(
+            description: null,
             name: 'nullable_name',
             model: StringModel(context: context),
             isRequired: true,
@@ -171,6 +179,7 @@ Map<String, String> parameterProperties({
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'nullable_count',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -219,15 +228,18 @@ Map<String, String> parameterProperties({
       'complex properties',
       () {
         final nestedClass = ClassModel(
+          description: null,
           name: 'Address',
           properties: const [],
           context: context,
         );
 
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'address',
               model: nestedClass,
               isRequired: true,
@@ -264,15 +276,18 @@ Map<String, String> parameterProperties({
       'encodes oneOf property based on runtime encoding shape',
       () {
         final oneOfModel = OneOfModel(
+          description: null,
           name: 'StringOrClass',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'NestedClass',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -289,9 +304,11 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          description: null,
           name: 'Container',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: oneOfModel,
               isRequired: true,
@@ -333,15 +350,18 @@ Map<String, String> parameterProperties({
       'encodes anyOf property based on runtime encoding shape',
       () {
         final anyOfModel = AnyOfModel(
+          description: null,
           name: 'StringOrInt',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'ComplexData',
                 properties: [
                   Property(
+                    description: null,
                     name: 'id',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -358,9 +378,11 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          description: null,
           name: 'FlexibleContainer',
           properties: [
             Property(
+              description: null,
               name: 'data',
               model: anyOfModel,
               isRequired: true,
@@ -403,9 +425,11 @@ Map<String, String> parameterProperties({
       () {
         final stringModel = StringModel(context: context);
         final complexModel = ClassModel(
+          description: null,
           name: 'ComplexData',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -417,15 +441,18 @@ Map<String, String> parameterProperties({
         );
 
         final allOfModel = AllOfModel(
+          description: null,
           name: 'StringAndInt',
           models: {stringModel, complexModel},
           context: context,
         );
 
         final model = ClassModel(
+          description: null,
           name: 'CombinedContainer',
           properties: [
             Property(
+              description: null,
               name: 'combined',
               model: allOfModel,
               isRequired: true,
@@ -470,9 +497,11 @@ Map<String, String> parameterProperties({
       'preserves optimized path for class with only static simple properties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'SimpleContainer',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -480,6 +509,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'count',
               model: IntegerModel(context: context),
               isRequired: false,
@@ -518,14 +548,18 @@ Map<String, String> parameterProperties({
 
     test('rejects class with truly complex properties at compile time', () {
       final model = ClassModel(
+        description: null,
         name: 'ComplexContainer',
         properties: [
           Property(
+            description: null,
             name: 'nested',
             model: ClassModel(
+              description: null,
               name: 'Nested',
               properties: [
                 Property(
+                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -566,15 +600,18 @@ Map<String, String> parameterProperties({
       'encodes optional oneOf property based on runtime encoding shape',
       () {
         final oneOfModel = OneOfModel(
+          description: null,
           name: 'StringOrClass',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'NestedClass',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -591,9 +628,11 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          description: null,
           name: 'Container',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: oneOfModel,
               isRequired: false,
@@ -640,6 +679,7 @@ Map<String, String> parameterProperties({
       'handles class with multiple properties (mixed optimized/runtime checks)',
       () {
         final oneOfModel1 = OneOfModel(
+          description: null,
           name: 'StringOrInt1',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -654,9 +694,11 @@ Map<String, String> parameterProperties({
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
@@ -679,14 +721,17 @@ Map<String, String> parameterProperties({
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final anyOfModel = AnyOfModel(
@@ -704,14 +749,17 @@ Map<String, String> parameterProperties({
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final model = ClassModel(
@@ -724,6 +772,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
             Property(
               name: 'count',
@@ -731,6 +780,7 @@ Map<String, String> parameterProperties({
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              description: null,
             ),
             Property(
               name: 'active',
@@ -738,6 +788,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
             // Composite properties (runtime checks)
             Property(
@@ -746,6 +797,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
             Property(
               name: 'data2',
@@ -753,6 +805,7 @@ Map<String, String> parameterProperties({
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              description: null,
             ),
             Property(
               name: 'flexible',
@@ -760,9 +813,11 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
 
         final generatedClass = generator.generateClass(model);
@@ -825,9 +880,11 @@ Map<String, String> parameterProperties({
       'generates parameterProperties for class with list of simple types',
       () {
         final model = ClassModel(
+          description: null,
           name: 'ListContainer',
           properties: [
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -880,9 +937,11 @@ Map<String, String> parameterProperties({
       'simple types',
       () {
         final model = ClassModel(
+          description: null,
           name: 'MultiListContainer',
           properties: [
             Property(
+              description: null,
               name: 'ids',
               model: ListModel(
                 content: IntegerModel(context: context),
@@ -893,6 +952,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -956,9 +1016,11 @@ Map<String, String> parameterProperties({
       'simple types',
       () {
         final model = ClassModel(
+          description: null,
           name: 'RequiredListContainer',
           properties: [
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -1015,6 +1077,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
             Property(
               name: 'tags',
@@ -1025,9 +1088,11 @@ Map<String, String> parameterProperties({
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
 
         final result = generator.generateClass(model);
@@ -1069,9 +1134,11 @@ Map<String, String> parameterProperties({
       'throws exception for class with list of complex types',
       () {
         final complexModel = ClassModel(
+          description: null,
           name: 'ComplexItem',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: StringModel(context: context),
               isRequired: true,
@@ -1083,9 +1150,11 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          description: null,
           name: 'ComplexListContainer',
           properties: [
             Property(
+              description: null,
               name: 'items',
               model: ListModel(
                 content: complexModel,
@@ -1129,6 +1198,7 @@ Map<String, String> parameterProperties({
       'generates parameterProperties for class with list of enums',
       () {
         final enumModel = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: false,
@@ -1136,9 +1206,11 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          description: null,
           name: 'EnumListContainer',
           properties: [
             Property(
+              description: null,
               name: 'statuses',
               model: ListModel(
                 content: enumModel,
@@ -1194,9 +1266,11 @@ Map<String, String> parameterProperties({
       'and list present',
       () {
         final model = ClassModel(
+          description: null,
           name: 'Filter',
           properties: [
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -1239,9 +1313,11 @@ Map<String, String> parameterProperties({
       'and nullable list present',
       () {
         final model = ClassModel(
+          description: null,
           name: 'Filter',
           properties: [
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -1287,9 +1363,11 @@ Map<String, String> parameterProperties({
       'generates parameterProperties with allowLists for mixed properties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'Filter',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -1297,6 +1375,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -1343,9 +1422,11 @@ Map<String, String> parameterProperties({
       'generates parameterProperties without list check when no lists present',
       () {
         final model = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -1353,6 +1434,7 @@ Map<String, String> parameterProperties({
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'age',
               model: IntegerModel(context: context),
               isRequired: true,

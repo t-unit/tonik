@@ -31,6 +31,7 @@ void main() {
 
   test('generates toSimple for allOf with list of DateTime', () {
     final model = AllOfModel(
+      description: null,
       name: 'AllOfDateTimeList',
       models: {
         ListModel(
@@ -69,6 +70,7 @@ void main() {
 
   test('generates toSimple for allOf with two lists', () {
     final oneOfModel = OneOfModel(
+      description: null,
       name: 'ArrayOneOfModel',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
@@ -79,6 +81,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      description: null,
       name: 'AllOfDoubleList',
       models: {
         ListModel(
@@ -126,12 +129,15 @@ void main() {
 
   test('generates toSimple merging all class properties', () {
     final model = AllOfModel(
+      description: null,
       name: 'CombinedModel',
       models: <Model>{
         ClassModel(
+          description: null,
           name: 'Base',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: StringModel(context: context),
               isRequired: true,
@@ -142,9 +148,11 @@ void main() {
           context: context,
         ),
         ClassModel(
+          description: null,
           name: 'Mixin',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -176,6 +184,7 @@ void main() {
 
   test('generates toSimple returning primary primitive value', () {
     final model = AllOfModel(
+      description: null,
       name: 'StringDecimalModel',
       models: {
         StringModel(context: context),
@@ -202,9 +211,11 @@ void main() {
     'generates toSimple returning enum value for enum and string models',
     () {
       final model = AllOfModel(
+        description: null,
         name: 'EnumStringModel',
         models: {
           EnumModel(
+            description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
             isNullable: false,
@@ -234,13 +245,16 @@ void main() {
     'throws exception for mixed types in toSimple',
     () {
       final model = AllOfModel(
+        description: null,
         name: 'MixedModel',
         models: <Model>{
           StringModel(context: context),
           ClassModel(
+            description: null,
             name: 'UserData',
             properties: [
               Property(
+                description: null,
                 name: 'id',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -276,10 +290,12 @@ void main() {
     'mixed types',
     () {
       final model = AllOfModel(
+        description: null,
         name: 'MixedModel',
         models: {
           StringModel(context: context),
           EnumModel(
+            description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
             isNullable: false,
@@ -306,15 +322,18 @@ void main() {
 
   test('allOf with mixed anyOf and primitive validates at runtime', () {
     final anyOfModel = AnyOfModel(
+      description: null,
       name: 'FlexibleValue',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            description: null,
             name: 'Data',
             properties: [
               Property(
+                description: null,
                 name: 'id',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -331,6 +350,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      description: null,
       name: 'Combined',
       models: {
         IntegerModel(context: context),
@@ -363,15 +383,18 @@ void main() {
 
   test('allOf with mixed anyOf and primitive allows fromSimple decoding', () {
     final anyOfModel = AnyOfModel(
+      description: null,
       name: 'FlexibleValue',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            description: null,
             name: 'Data',
             properties: [
               Property(
+                description: null,
                 name: 'id',
                 model: IntegerModel(context: context),
                 isRequired: true,
@@ -388,6 +411,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      description: null,
       name: 'Combined',
       models: {
         IntegerModel(context: context),
@@ -416,6 +440,7 @@ void main() {
 
   test('generates fromSimple for allOf with list of int', () {
     final model = AllOfModel(
+      description: null,
       name: 'AllOfIntList',
       models: {
         ListModel(
@@ -448,6 +473,7 @@ void main() {
 
   test('generates fromSimple for allOf with list of DateTime', () {
     final model = AllOfModel(
+      description: null,
       name: 'AllOfDateTimeList',
       models: {
         ListModel(
@@ -482,6 +508,7 @@ void main() {
 
   test('generates fromSimple for allOf with list of Date', () {
     final model = AllOfModel(
+      description: null,
       name: 'AllOfDateList',
       models: {
         ListModel(
@@ -514,6 +541,7 @@ void main() {
 
   test('generates fromSimple for allOf with two lists', () {
     final oneOfModel = OneOfModel(
+      description: null,
       name: 'ArrayOneOfModel',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
@@ -524,6 +552,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      description: null,
       name: 'AllOfDoubleList',
       models: {
         ListModel(
@@ -564,12 +593,15 @@ void main() {
 
   test('generates fromSimple merging properties from single value', () {
     final model = AllOfModel(
+      description: null,
       name: 'CombinedModel',
       models: <Model>{
         ClassModel(
+          description: null,
           name: 'Base',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: StringModel(context: context),
               isRequired: true,
@@ -580,9 +612,11 @@ void main() {
           context: context,
         ),
         ClassModel(
+          description: null,
           name: 'Mixin',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -618,6 +652,7 @@ void main() {
     'types',
     () {
       final model = AllOfModel(
+        description: null,
         name: 'StringDecimalModel',
         models: <Model>{
           StringModel(context: context),
@@ -653,9 +688,11 @@ void main() {
     'generates fromSimple validating single value against enum and string',
     () {
       final model = AllOfModel(
+        description: null,
         name: 'EnumStringModel',
         models: {
           EnumModel(
+            description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
             isNullable: false,
@@ -688,19 +725,23 @@ void main() {
     'generates fromSimple for mixed types attempting decode',
     () {
       final model = AllOfModel(
+        description: null,
         name: 'MixedModel',
         models: {
           StringModel(context: context),
           EnumModel(
+            description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
             isNullable: false,
             context: context,
           ),
           ClassModel(
+            description: null,
             name: 'UserData',
             properties: [
               Property(
+                description: null,
                 name: 'id',
                 model: IntegerModel(context: context),
                 isRequired: true,

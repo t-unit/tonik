@@ -36,10 +36,7 @@ class ImposterServer {
         '--plugin',
         'rest',
       ],
-      environment: {
-        ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'DEBUG',
-      },
+      environment: {...Platform.environment, 'IMPOSTER_LOG_LEVEL': 'DEBUG'},
     );
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {

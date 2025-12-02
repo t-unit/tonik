@@ -32,6 +32,7 @@ void main() {
   group('parameterProperties', () {
     test('method exists with correct signature for allOf', () {
       final model = AllOfModel(
+        description: null,
         name: 'Combined',
         models: {
           StringModel(context: context),
@@ -59,6 +60,7 @@ void main() {
 
     test('throws error for allOf containing only primitive types', () {
       final model = AllOfModel(
+        description: null,
         name: 'Combined',
         models: {
           StringModel(context: context),
@@ -88,9 +90,11 @@ Map<String, String> parameterProperties({
 
     test('encodes allOf with only complex types by merging properties', () {
       final model = AllOfModel(
+        description: null,
         name: 'ComplexOnly',
         models: {
           ClassModel(
+            description: null,
             name: 'Base',
             properties: const [],
             context: context,
@@ -123,10 +127,12 @@ Map<String, String> parameterProperties({
 
     test('throws error for allOf with simple and complex types mixed', () {
       final model = AllOfModel(
+        description: null,
         name: 'Mixed',
         models: {
           StringModel(context: context),
           ClassModel(
+            description: null,
             name: 'Base',
             properties: const [],
             context: context,
@@ -157,14 +163,17 @@ Map<String, String> parameterProperties({
 
     test('merges properties for allOf with multiple complex models', () {
       final model = AllOfModel(
+        description: null,
         name: 'CombinedModels',
         models: {
           ClassModel(
+            description: null,
             name: 'FirstModel',
             properties: const [],
             context: context,
           ),
           ClassModel(
+            description: null,
             name: 'SecondModel',
             properties: const [],
             context: context,
@@ -208,15 +217,18 @@ Map<String, String> parameterProperties({
       'runtime check for allOf with complex class and mixed encoding anyOf',
       () {
         final anyOfModel = AnyOfModel(
+          description: null,
           name: 'StringOrComplex',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'ComplexData',
                 properties: [
                   Property(
+                    description: null,
                     name: 'id',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -233,12 +245,15 @@ Map<String, String> parameterProperties({
         );
 
         final model = AllOfModel(
+          description: null,
           name: 'MixedEncodingAllOf',
           models: {
             ClassModel(
+              description: null,
               name: 'SimpleModel',
               properties: [
                 Property(
+                  description: null,
                   name: 'name',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -287,6 +302,7 @@ Map<String, String> parameterProperties({
 
     test('returns empty map for empty allOf', () {
       final model = AllOfModel(
+        description: null,
         name: 'Empty',
         models: const {},
         context: context,

@@ -93,6 +93,7 @@ String _parseResponse(Response<Object?> response) {
         context: context,
         values: const {'A', 'B', 'C'},
         isNullable: false,
+        description: null,
       );
       final operation = Operation(
         operationId: 'enumOp',
@@ -153,9 +154,11 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final operation = Operation(
         operationId: 'classOp',
@@ -269,9 +272,11 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final operation = Operation(
         operationId: 'listClassOp',
@@ -335,6 +340,7 @@ String _parseResponse(Response<Object?> response) {
               name: 'Cat',
               properties: const [],
               context: context,
+              description: null,
             ),
           ),
           (
@@ -343,11 +349,13 @@ String _parseResponse(Response<Object?> response) {
               name: 'Dog',
               properties: const [],
               context: context,
+              description: null,
             ),
           ),
         },
         discriminator: 'type',
         context: context,
+        description: null,
       );
       final operation = Operation(
         operationId: 'oneOfOp',
@@ -508,9 +516,11 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final operation = Operation(
         operationId: 'multiStatusOp',
@@ -580,9 +590,11 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final responseHeaders = {
         'x-rate-limit': ResponseHeaderObject(
@@ -675,14 +687,17 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
       final enumModel = EnumModel(
         context: context,
         values: const {'A', 'B', 'C'},
         isNullable: false,
+        description: null,
       );
       final operation = Operation(
         operationId: 'combinedOp',
@@ -783,9 +798,11 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
 
       // Create the base response object
@@ -873,6 +890,7 @@ String _parseResponse(Response<Object?> response) {
         name: 'User',
         properties: const [],
         context: context,
+        description: null,
       );
 
       // The actual header object
@@ -958,6 +976,7 @@ String _parseResponse(Response<Object?> response) {
         name: 'User',
         properties: const [],
         context: context,
+        description: null,
       );
 
       final response = ResponseObject(

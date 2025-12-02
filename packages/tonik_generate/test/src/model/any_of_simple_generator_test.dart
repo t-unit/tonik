@@ -29,9 +29,11 @@ void main() {
       'generates fromSimple factory that wraps each property decode in try/catch and assigns null on failure',
       () {
         final complex = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -43,6 +45,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'Flexible',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -119,9 +122,11 @@ void main() {
       'anyOf with complex lists and simple type tries decodable variants',
       () {
         final classA = ClassModel(
+          description: null,
           name: 'ClassA',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -133,9 +138,11 @@ void main() {
         );
 
         final classB = ClassModel(
+          description: null,
           name: 'ClassB',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -157,6 +164,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedAnyOf',
           models: {
             (discriminatorValue: null, model: listA),
@@ -204,9 +212,11 @@ void main() {
   group('toSimple', () {
     test('generates toSimple method with merge-or-equal algorithm', () {
       final modelA = ClassModel(
+        description: null,
         name: 'A',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: StringModel(context: context),
             isRequired: true,
@@ -218,9 +228,11 @@ void main() {
       );
 
       final modelB = ClassModel(
+        description: null,
         name: 'B',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -232,6 +244,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'PayloadSimple',
         models: {
           (discriminatorValue: 'a', model: modelA),
@@ -288,9 +301,11 @@ void main() {
       'generates toSimple method without discriminator when none configured',
       () {
         final modelA = ClassModel(
+          description: null,
           name: 'A',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: StringModel(context: context),
               isRequired: true,
@@ -302,9 +317,11 @@ void main() {
         );
 
         final modelB = ClassModel(
+          description: null,
           name: 'B',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -316,6 +333,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'PayloadSimpleNoDisc',
           models: {
             (discriminatorValue: null, model: modelA),
@@ -364,6 +382,7 @@ void main() {
 
     test('generates toSimple method for primitive-only anyOf models', () {
       final model = AnyOfModel(
+        description: null,
         name: 'OnlyPrimitivesSimple',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -418,9 +437,11 @@ void main() {
       'throws exception when mixed class and primitive anyOf are both set',
       () {
         final user = ClassModel(
+          description: null,
           name: 'User',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -432,6 +453,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedSimple',
           models: {
             (discriminatorValue: 'user', model: user),

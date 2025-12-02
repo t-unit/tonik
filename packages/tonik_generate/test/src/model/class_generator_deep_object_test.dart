@@ -26,9 +26,11 @@ void main() {
 
     test('generates toDeepObject method with correct signature', () {
       final model = ClassModel(
+        description: null,
         name: 'SimpleModel',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -36,6 +38,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -86,6 +89,7 @@ void main() {
 
     test('generates toDeepObject method for empty model', () {
       final model = ClassModel(
+        description: null,
         name: 'EmptyModel',
         properties: const [],
         context: context,
@@ -123,9 +127,11 @@ void main() {
       'property model',
       () {
         final model = ClassModel(
+          description: null,
           name: 'TestModel',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -170,9 +176,11 @@ void main() {
       'properties model',
       () {
         final model = ClassModel(
+          description: null,
           name: 'ComplexModel',
           properties: [
             Property(
+              description: null,
               name: 'firstName',
               model: StringModel(context: context),
               isRequired: true,
@@ -180,6 +188,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'age',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -187,6 +196,7 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'email',
               model: StringModel(context: context),
               isRequired: false,
@@ -217,9 +227,11 @@ void main() {
       'toDeepObject method passes allowLists=false to parameterProperties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'ModelWithList',
           properties: [
             Property(
+              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -253,9 +265,11 @@ void main() {
       'toDeepObject method works with nullable required properties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'NullableModel',
           properties: [
             Property(
+              description: null,
               name: 'optionalName',
               model: StringModel(context: context),
               isRequired: true,
@@ -286,9 +300,11 @@ void main() {
       'toDeepObject method works with optional properties',
       () {
         final model = ClassModel(
+          description: null,
           name: 'OptionalModel',
           properties: [
             Property(
+              description: null,
               name: 'optionalField',
               model: IntegerModel(context: context),
               isRequired: false,
@@ -319,9 +335,11 @@ void main() {
       'toDeepObject method works with mixed simple and complex types',
       () {
         final model = ClassModel(
+          description: null,
           name: 'MixedModel',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -329,11 +347,14 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'nested',
               model: ClassModel(
+                description: null,
                 name: 'NestedClass',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -371,9 +392,11 @@ void main() {
       'toDeepObject method passes alreadyEncoded=true',
       () {
         final model = ClassModel(
+          description: null,
           name: 'EncodedModel',
           properties: [
             Property(
+              description: null,
               name: 'data',
               model: StringModel(context: context),
               isRequired: true,

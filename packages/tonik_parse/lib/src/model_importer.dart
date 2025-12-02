@@ -134,6 +134,7 @@ class ModelImporter {
         schema.enumerated!,
         schema.isNullable ?? hasNullType,
         context,
+        description: schema.description,
       ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -144,6 +145,7 @@ class ModelImporter {
         schema.enumerated!,
         schema.isNullable ?? hasNullType,
         context,
+        description: schema.description,
       ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
@@ -196,6 +198,7 @@ class ModelImporter {
       name: name,
       discriminator: null,
       context: context,
+      description: schema.description,
     );
   }
 
@@ -224,6 +227,7 @@ class ModelImporter {
       models: models.toSet(),
       context: modelContext,
       name: name,
+      description: schema.description,
     );
 
     _addModelToSet(allOfModel);
@@ -260,6 +264,7 @@ class ModelImporter {
       context: context,
       name: name,
       discriminator: schema.discriminator?.propertyName,
+      description: schema.description,
     );
 
     _addModelToSet(oneOfModel);
@@ -282,6 +287,7 @@ class ModelImporter {
       context: context,
       name: name,
       discriminator: schema.discriminator?.propertyName,
+      description: schema.description,
     );
 
     _addModelToSet(anyOfModel);
@@ -310,6 +316,7 @@ class ModelImporter {
       name: name,
       properties: properties,
       context: context,
+      description: schema.description,
     );
 
     if (schema.not != null) {
@@ -330,13 +337,16 @@ class ModelImporter {
         in schemaProperties.entries) {
       bool isNullable;
       bool isDeprecated;
+      String? description;
       if (propertySchema is InlinedObject<Schema>) {
         final schema = propertySchema.object;
         isNullable = schema.isNullable ?? schema.type.contains('null');
         isDeprecated = schema.isDeprecated ?? false;
+        description = schema.description;
       } else {
         isNullable = false;
         isDeprecated = false;
+        description = null;
       }
 
       properties.add(
@@ -350,6 +360,7 @@ class ModelImporter {
           isRequired: schema.required?.contains(propertyName) ?? false,
           isNullable: isNullable,
           isDeprecated: isDeprecated,
+          description: description,
         ),
       );
     }
@@ -361,8 +372,9 @@ class ModelImporter {
     String? name,
     List<dynamic> values,
     bool isNullable,
-    Context context,
-  ) {
+    Context context, {
+    required String? description,
+  }) {
     log.fine('Parsing enum $name<$T> for $context with values $values');
 
     final typedValues = values.whereType<T>().toSet();
@@ -383,6 +395,7 @@ class ModelImporter {
       isNullable: isNullable || hasNull,
       context: context,
       name: name,
+      description: description,
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {

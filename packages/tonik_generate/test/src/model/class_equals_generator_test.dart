@@ -32,9 +32,11 @@ void main() {
   group('ClassGenerator equals method generation', () {
     test('generates equals method with simple properties', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -42,6 +44,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -70,9 +73,11 @@ void main() {
 
     test('generates equals method with complex types', () {
       final addressModel = ClassModel(
+        description: null,
         name: 'Address',
         properties: [
           Property(
+            description: null,
             name: 'street',
             model: StringModel(context: context),
             isRequired: true,
@@ -84,9 +89,11 @@ void main() {
       );
 
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -94,6 +101,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'address',
             model: addressModel,
             isRequired: false,
@@ -122,9 +130,11 @@ void main() {
 
     test('generates equals method with list types', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -132,6 +142,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'tags',
             model: ListModel(
               content: StringModel(context: context),
@@ -165,9 +176,11 @@ void main() {
 
     test('generates equals method with normalized property names', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'first-name',
             model: StringModel(context: context),
             isRequired: true,
@@ -175,6 +188,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'last_name',
             model: StringModel(context: context),
             isRequired: true,
@@ -203,9 +217,11 @@ void main() {
 
     test('generates equals method with deeply nested list types', () {
       final nestedListModel = ClassModel(
+        description: null,
         name: 'NestedData',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -213,6 +229,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'nestedList',
             model: ListModel(
               content: ListModel(
@@ -249,6 +266,7 @@ void main() {
 
     test('generates equals method for class with no properties', () {
       final emptyModel = ClassModel(
+        description: null,
         name: 'Empty',
         properties: const [],
         context: context,

@@ -176,4 +176,75 @@ void main() {
     final numberModel = allOfDirectPrimitive.models.last;
     expect(numberModel, isA<NumberModel>());
   });
+
+  group('description', () {
+    const allOfWithDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'ExtendedUser': {
+            'description': 'A user with extended attributes',
+            'allOf': [
+              {
+                'type': 'object',
+                'properties': {
+                  'id': {'type': 'integer'},
+                },
+              },
+              {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    const allOfWithoutDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'CombinedModel': {
+            'allOf': [
+              {
+                'type': 'object',
+                'properties': {
+                  'foo': {'type': 'string'},
+                },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    test('import allOf with description', () {
+      final api = Importer().import(allOfWithDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'ExtendedUser',
+              )
+              as AllOfModel;
+
+      expect(model.description, 'A user with extended attributes');
+    });
+
+    test('import allOf without description', () {
+      final api = Importer().import(allOfWithoutDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'CombinedModel',
+              )
+              as AllOfModel;
+
+      expect(model.description, isNull);
+    });
+  });
 }

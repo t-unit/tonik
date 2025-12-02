@@ -31,9 +31,11 @@ void main() {
   group('ClassGenerator toLabel generation', () {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
+        description: null,
         name: 'SimpleClass',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -41,6 +43,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -81,15 +84,19 @@ void main() {
       'generates toLabel that throws for class with nested class property',
       () {
         final model = ClassModel(
+          description: null,
           name: 'NestedClass',
           properties: [
             Property(
+              description: null,
               name: 'nested',
               model: ClassModel(
+                description: null,
                 context: context,
                 name: 'Nested',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -126,9 +133,11 @@ void main() {
   group('ClassGenerator toLabel method for label encoding', () {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
+        description: null,
         name: 'SimpleClass',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -136,6 +145,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -166,9 +176,11 @@ void main() {
       'runtime checks',
       () {
         final model = ClassModel(
+          description: null,
           name: 'CompositeClass',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -176,8 +188,10 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'value',
               model: OneOfModel(
+                description: null,
                 context: context,
                 name: 'Value',
                 discriminator: 'type',
@@ -221,9 +235,11 @@ void main() {
       'nullable composites',
       () {
         final model = ClassModel(
+          description: null,
           name: 'MixedClass',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -231,8 +247,10 @@ void main() {
               isDeprecated: false,
             ),
             Property(
+              description: null,
               name: 'optionalValue',
               model: AnyOfModel(
+                description: null,
                 context: context,
                 name: 'OptionalValue',
                 discriminator: 'type',
@@ -273,6 +291,7 @@ void main() {
 
     test('generates toLabel for empty class', () {
       final model = ClassModel(
+        description: null,
         name: 'EmptyClass',
         properties: const [],
         context: context,

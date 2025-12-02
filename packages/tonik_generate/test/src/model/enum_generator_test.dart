@@ -19,6 +19,7 @@ void main() {
   group('EnumGenerator', () {
     test('generates currentEncodingShape getter', () {
       final model = EnumModel<String>(
+        description: null,
         name: 'Color',
         values: const {'red', 'green', 'blue'},
         isNullable: false,
@@ -46,6 +47,7 @@ void main() {
 
     test('generates enum with string values', () {
       final model = EnumModel<String>(
+        description: null,
         name: 'Color',
         values: const {'red', 'green', 'blue'},
         isNullable: false,
@@ -76,6 +78,7 @@ void main() {
 
     test('generates nullable enum code', () {
       final model = EnumModel<String>(
+        description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: true,
@@ -91,6 +94,7 @@ void main() {
 
     test('generates nullable enum value', () {
       final model = EnumModel<String>(
+        description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: true,
@@ -113,6 +117,7 @@ void main() {
 
     test('generates non-nullable enum', () {
       final model = EnumModel<String>(
+        description: null,
         name: 'Color',
         values: const {'red', 'green', 'blue'},
         isNullable: false,
@@ -134,6 +139,7 @@ void main() {
 
     test('generates enum with integer values', () {
       final model = EnumModel<int>(
+        description: null,
         name: 'Status',
         values: const {1, 2, 3},
         isNullable: false,
@@ -166,6 +172,7 @@ void main() {
       'generates enum with underscore-only values using normalized names',
       () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Placeholder',
           values: const {'_', '__', '___'},
           isNullable: false,
@@ -194,6 +201,7 @@ void main() {
       'generates enum file with correct name and content for integer values',
       () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {100, 200, 404},
           isNullable: false,
@@ -210,6 +218,7 @@ void main() {
 
     test('throws error for unsupported enum value types like double', () {
       final model = EnumModel<double>(
+        description: null,
         name: 'Rate',
         values: {0.5, 1.5, 2.5},
         isNullable: false,
@@ -223,6 +232,7 @@ void main() {
       'throws ArgumentError for unsupported enum value type in generateEnum',
       () {
         final model = EnumModel<double>(
+          description: null,
           name: 'Status',
           values: {1.0, 2.0},
           isNullable: false,
@@ -236,9 +246,71 @@ void main() {
       },
     );
 
+    group('doc comments', () {
+      test('generates enum with doc comment from description', () {
+        final model = EnumModel<String>(
+          description: 'The color options available',
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, ['/// The color options available']);
+      });
+
+      test('generates enum with multiline doc comment', () {
+        final model = EnumModel<String>(
+          description: 'The status of an order.\nCan change over time.',
+          name: 'Status',
+          values: const {'pending', 'complete'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.docs, [
+          '/// The status of an order.',
+          '/// Can change over time.',
+        ]);
+      });
+
+      test('generates enum without doc comment when description is null', () {
+        final model = EnumModel<String>(
+          description: null,
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, isEmpty);
+      });
+
+      test('generates enum without doc comment when description is empty', () {
+        final model = EnumModel<String>(
+          description: '',
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, isEmpty);
+      });
+    });
+
     group('enum value name normalization', () {
       test('handles string values', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: false,
@@ -252,6 +324,7 @@ void main() {
 
       test('handles integer values', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -268,6 +341,7 @@ void main() {
     group('JSON serialization', () {
       test('generates toJson method', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -286,6 +360,7 @@ void main() {
 
       test('generates fromJson factory for string enums', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -319,6 +394,7 @@ void main() {
 
       test('generates fromJson factory for integer enums', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {200, 404, 500},
           isNullable: false,
@@ -352,6 +428,7 @@ void main() {
 
       test('generates fromJson factory for nullable enums', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -387,6 +464,7 @@ void main() {
     group('fromSimple factory constructor', () {
       test('generates fromSimple constructor for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -431,6 +509,7 @@ void main() {
 
       test('generates fromSimple constructor for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -475,6 +554,7 @@ void main() {
 
       test('generates fromSimple constructor for nullable string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -495,6 +575,7 @@ void main() {
 
       test('generates fromSimple constructor for nullable int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: true,
@@ -526,6 +607,7 @@ void main() {
     group('toSimple method generation', () {
       test('generates toSimple method for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -564,6 +646,7 @@ void main() {
 
       test('generates toSimple method for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -588,6 +671,7 @@ void main() {
 
       test('generates toSimple method for nullable string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -612,6 +696,7 @@ void main() {
 
       test('generates toSimple method for nullable int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {100, 200, 300},
           isNullable: true,
@@ -636,6 +721,7 @@ void main() {
 
       test('generates toSimple in complete enum code for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -655,6 +741,7 @@ void main() {
 
       test('generates toSimple in complete enum code for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -676,6 +763,7 @@ void main() {
     group('fromForm factory constructor', () {
       test('generates fromForm constructor for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -720,6 +808,7 @@ void main() {
 
       test('generates fromForm constructor for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -764,6 +853,7 @@ void main() {
 
       test('generates fromForm constructor for nullable string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -784,6 +874,7 @@ void main() {
 
       test('generates fromForm constructor for nullable int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: true,
@@ -815,6 +906,7 @@ void main() {
     group('toForm method generation', () {
       test('generates toForm method for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -853,6 +945,7 @@ void main() {
 
       test('generates toForm method for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -877,6 +970,7 @@ void main() {
 
       test('generates toForm method for nullable string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -901,6 +995,7 @@ void main() {
 
       test('generates toForm method for nullable int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {100, 200, 300},
           isNullable: true,
@@ -925,6 +1020,7 @@ void main() {
 
       test('generates toForm in complete enum code for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -944,6 +1040,7 @@ void main() {
 
       test('generates toForm in complete enum code for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -965,6 +1062,7 @@ void main() {
     group('toLabel method generation', () {
       test('generates toLabel method for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -1002,6 +1100,7 @@ void main() {
 
       test('generates toLabel method for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -1025,6 +1124,7 @@ void main() {
 
       test('generates toLabel method for nullable enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Priority',
           values: const {'low', 'medium', 'high'},
           isNullable: true,
@@ -1048,6 +1148,7 @@ void main() {
 
       test('toLabel method is included in generated code for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -1067,6 +1168,7 @@ void main() {
 
       test('toLabel method is included in generated code for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -1088,6 +1190,7 @@ void main() {
         'toLabel method is included in generated code for nullable enum',
         () {
           final model = EnumModel<String>(
+            description: null,
             name: 'Priority',
             values: const {'low', 'medium', 'high'},
             isNullable: true,
@@ -1110,6 +1213,7 @@ void main() {
     group('toMatrix method generation', () {
       test('generates toMatrix method for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -1157,6 +1261,7 @@ void main() {
 
       test('generates toMatrix method for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -1190,6 +1295,7 @@ void main() {
 
       test('generates toMatrix method for nullable string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -1223,6 +1329,7 @@ void main() {
 
       test('generates toMatrix method for nullable int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {100, 200, 300},
           isNullable: true,
@@ -1256,6 +1363,7 @@ void main() {
 
       test('toMatrix method is included in generated code for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -1275,6 +1383,7 @@ void main() {
 
       test('toMatrix method is included in generated code for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -1296,6 +1405,7 @@ void main() {
         'toMatrix method is included in generated code for nullable enum',
         () {
           final model = EnumModel<String>(
+            description: null,
             name: 'Priority',
             values: const {'low', 'medium', 'high'},
             isNullable: true,
@@ -1318,6 +1428,7 @@ void main() {
     group('uriEncode method generation', () {
       test('generates uriEncode method for string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Color',
           values: const {'red', 'green', 'blue'},
           isNullable: false,
@@ -1349,6 +1460,7 @@ void main() {
 
       test('generates uriEncode method for int enum', () {
         final model = EnumModel<int>(
+          description: null,
           name: 'Status',
           values: const {1, 2, 3},
           isNullable: false,
@@ -1373,6 +1485,7 @@ void main() {
 
       test('generates uriEncode method for nullable string enum', () {
         final model = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: true,
@@ -1399,6 +1512,7 @@ void main() {
         'uriEncode method is included in generated code for string enum',
         () {
           final model = EnumModel<String>(
+            description: null,
             name: 'Color',
             values: const {'red', 'green', 'blue'},
             isNullable: false,
@@ -1423,6 +1537,7 @@ void main() {
           values: const {1, 2, 3},
           isNullable: false,
           context: Context.initial(),
+          description: null,
         );
 
         final result = generator.generate(model);
@@ -1444,6 +1559,7 @@ void main() {
             values: const {'low', 'medium', 'high'},
             isNullable: true,
             context: Context.initial(),
+            description: null,
           );
 
           final result = generator.generate(model);

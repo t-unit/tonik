@@ -1,4 +1,4 @@
-// Generated code won't have whitespcae in long lines, so we ignore this.
+// Generated code won't have whitespace in long lines, so we ignore this.
 // ignore_for_file: missing_whitespace_between_adjacent_strings
 
 import 'package:code_builder/code_builder.dart';
@@ -117,6 +117,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -160,6 +161,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -187,6 +189,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          description: null,
         );
         final userListModel = ListModel(content: userModel, context: context);
         final userListAlias = AliasModel(
@@ -213,6 +216,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -244,6 +248,7 @@ void main() {
         name: 'UserRole',
         values: const {'admin', 'user'},
         isNullable: false,
+        description: null,
       );
       expect(
         buildFromJsonValueExpression(
@@ -261,6 +266,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        description: null,
       );
       expect(
         buildFromJsonValueExpression(
@@ -363,6 +369,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        description: null,
       );
       final listModel = ListModel(content: classModel, context: context);
       expect(
@@ -384,6 +391,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        description: null,
       );
       final innerListModel = ListModel(content: classModel, context: context);
       final outerListModel = ListModel(
@@ -410,6 +418,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        description: null,
       );
       final innerListModel = ListModel(content: classModel, context: context);
       final middleListModel = ListModel(
@@ -443,6 +452,7 @@ void main() {
         name: 'UserRole',
         values: const {'admin', 'user'},
         isNullable: false,
+        description: null,
       );
       final enumListModel = ListModel(content: enumModel, context: context);
       expect(
@@ -514,7 +524,7 @@ void main() {
           context: context,
         );
 
-        final expresion =
+        final expression =
             buildFromJsonValueExpression(
               'value',
               model: nestedListModel,
@@ -525,7 +535,7 @@ void main() {
             ).accept(emitter).toString();
 
         expect(
-          expresion,
+          expression,
           "value.decodeJsonList<Object?>(context: r'Order.items')"
           ".map((e) => e.decodeJsonList<int>(context: r'Order.items'))"
           '.toList()',
@@ -540,6 +550,7 @@ void main() {
           name: 'UserRole',
           values: const {'admin', 'user'},
           isNullable: false,
+          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -558,6 +569,7 @@ void main() {
           name: 'UserRole',
           values: const {'admin', 'user'},
           isNullable: false,
+          description: null,
         );
         final enumListModel = ListModel(content: enumModel, context: context);
         expect(
@@ -664,6 +676,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -683,6 +696,7 @@ void main() {
           name: 'UserRole',
           values: const {'admin', 'user'},
           isNullable: false,
+          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -719,6 +733,7 @@ void main() {
             context: context,
             name: 'User',
             properties: const [],
+            description: null,
           );
           final classListModel = ListModel(
             content: classModel,
@@ -745,6 +760,7 @@ void main() {
             name: 'UserRole',
             values: const {'admin', 'user'},
             isNullable: false,
+            description: null,
           );
           final enumListModel = ListModel(
             content: enumModel,

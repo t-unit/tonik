@@ -37,6 +37,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        description: null,
       );
 
       final generatedClass = generator.generateClass(model);
@@ -62,9 +63,11 @@ void main() {
 
     test('generates toMatrix for complex-only AllOf', () {
       final class1 = ClassModel(
+        description: null,
         name: 'Class1',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -76,9 +79,11 @@ void main() {
       );
 
       final class2 = ClassModel(
+        description: null,
         name: 'Class2',
         properties: [
           Property(
+            description: null,
             name: 'number',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -90,6 +95,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        description: null,
         name: 'AllOfComplex',
         models: {class1, class2},
         context: context,
@@ -124,6 +130,7 @@ void main() {
 
     test('generates toMatrix for primitive-only AllOf', () {
       final model = AllOfModel(
+        description: null,
         name: 'AllOfPrimitive',
         models: {
           StringModel(context: context),
@@ -171,15 +178,18 @@ void main() {
 
     test('generates toMatrix with runtime validation for dynamic models', () {
       final anyOfModel = AnyOfModel(
+        description: null,
         name: 'AnyOfModel',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
             discriminatorValue: 'complex',
             model: ClassModel(
+              description: null,
               name: 'ComplexData',
               properties: [
                 Property(
+                  description: null,
                   name: 'id',
                   model: IntegerModel(context: context),
                   isRequired: true,
@@ -196,9 +206,11 @@ void main() {
       );
 
       final classModel = ClassModel(
+        description: null,
         name: 'ClassModel',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -210,6 +222,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        description: null,
         name: 'AllOfWithDynamic',
         models: {anyOfModel, classModel},
         context: context,
@@ -249,6 +262,7 @@ void main() {
 
     test('generates toMatrix for empty AllOf', () {
       final model = AllOfModel(
+        description: null,
         name: 'AllOfEmpty',
         models: const {},
         context: context,
@@ -275,6 +289,7 @@ void main() {
 
     test('generates toMatrix for AllOf with enum', () {
       final enumModel = EnumModel(
+        description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -282,6 +297,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        description: null,
         name: 'AllOfEnum',
         models: {
           enumModel,
@@ -329,6 +345,7 @@ void main() {
 
     test('generates toMatrix for AllOf with nested composition types', () {
       final oneOfModel = OneOfModel(
+        description: null,
         name: 'OneOfType',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -339,9 +356,11 @@ void main() {
       );
 
       final classModel = ClassModel(
+        description: null,
         name: 'ClassModel',
         properties: [
           Property(
+            description: null,
             name: 'value',
             model: StringModel(context: context),
             isRequired: true,
@@ -353,6 +372,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        description: null,
         name: 'AllOfNested',
         models: {oneOfModel, classModel},
         context: context,
@@ -381,14 +401,18 @@ void main() {
 
     test('generates toMatrix that throws for cannotBeSimplyEncoded', () {
       final classModel = ClassModel(
+        description: null,
         name: 'ClassModel',
         properties: [
           Property(
+            description: null,
             name: 'nested',
             model: ClassModel(
+              description: null,
               name: 'NestedClass',
               properties: [
                 Property(
+                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -407,6 +431,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        description: null,
         name: 'AllOfComplex',
         models: {classModel},
         context: context,
@@ -446,6 +471,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          description: null,
           name: 'AllOfList',
           models: {listModel},
           context: context,
@@ -488,6 +514,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          description: null,
           name: 'AllOfIntList',
           models: {listModel},
           context: context,
@@ -538,6 +565,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          description: null,
           name: 'AllOfMultipleLists',
           models: {listStringModel, listIntModel},
           context: context,

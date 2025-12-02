@@ -267,8 +267,7 @@ class OffsetDateTime implements DateTime {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        other is DateTime &&
-            _utcDateTime.isAtSameMomentAs(_toNative(other));
+        other is DateTime && _utcDateTime.isAtSameMomentAs(_toNative(other));
   }
 
   @override

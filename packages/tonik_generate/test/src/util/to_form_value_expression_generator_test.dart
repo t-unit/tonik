@@ -18,6 +18,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -34,6 +35,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -50,6 +52,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('count', property);
@@ -66,6 +69,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('count', property);
@@ -82,6 +86,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('price', property);
@@ -98,6 +103,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('price', property);
@@ -114,6 +120,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('value', property);
@@ -130,6 +137,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('active', property);
@@ -146,6 +154,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('active', property);
@@ -162,6 +171,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
@@ -178,6 +188,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
@@ -194,6 +205,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -210,6 +222,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -226,6 +239,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('amount', property);
@@ -242,6 +256,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('amount', property);
@@ -258,6 +273,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -274,6 +290,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -294,6 +311,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
 
           final result = buildToFormPropertyExpression('name', property);
@@ -315,6 +333,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
 
           final result = buildToFormPropertyExpression('count', property);
@@ -336,6 +355,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
 
           final result = buildToFormPropertyExpression('price', property);
@@ -357,6 +377,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
 
           final result = buildToFormPropertyExpression('active', property);
@@ -378,6 +399,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
 
           final result = buildToFormPropertyExpression('timestamp', property);
@@ -398,6 +420,7 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -418,6 +441,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            description: null,
           );
 
           final result = buildToFormPropertyExpression('amount', property);
@@ -437,6 +461,7 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -460,6 +485,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         expect(
@@ -475,10 +501,12 @@ void main() {
             name: 'NestedClass',
             properties: const [],
             context: context,
+            description: null,
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         expect(
@@ -495,10 +523,12 @@ void main() {
             values: const {'active', 'inactive'},
             isNullable: false,
             context: context,
+            description: null,
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         expect(
@@ -520,6 +550,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('userId', property);
@@ -540,6 +571,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          description: null,
         );
 
         final result = buildToFormPropertyExpression('userId', property);
@@ -563,6 +595,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          description: null,
         );
 
         expect(

@@ -32,6 +32,7 @@ void main() {
   group('Method signatures', () {
     test('fromForm constructor has correct signature', () {
       final model = AnyOfModel(
+        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -67,6 +68,7 @@ void main() {
 
     test('toForm method has correct signature', () {
       final model = AnyOfModel(
+        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -94,6 +96,7 @@ void main() {
 
     test('currentEncodingShape getter has correct signature', () {
       final model = AnyOfModel(
+        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -118,6 +121,7 @@ void main() {
   group('currentEncodingShape getter generation', () {
     test('primitive-only anyOf returns dynamic shape', () {
       final model = AnyOfModel(
+        description: null,
         name: 'Flexible',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -155,17 +159,20 @@ void main() {
 
     test('complex-only anyOf returns dynamic shape', () {
       final classA = ClassModel(
+        description: null,
         name: 'A',
         properties: const [],
         context: context,
       );
       final classB = ClassModel(
+        description: null,
         name: 'B',
         properties: const [],
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Combined',
         models: {
           (discriminatorValue: null, model: classA),
@@ -203,9 +210,11 @@ void main() {
 
     test('mixed primitive and complex anyOf returns dynamic shape', () {
       final classA = ClassModel(
+        description: null,
         name: 'Data',
         properties: [
           Property(
+            description: null,
             name: 'value',
             model: StringModel(context: context),
             isRequired: true,
@@ -217,6 +226,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Flexible',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -256,6 +266,7 @@ void main() {
   group('fromForm constructor generation', () {
     test('primitive-only anyOf tries all variants independently', () {
       final model = AnyOfModel(
+        description: null,
         name: 'Flexible',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -301,9 +312,11 @@ void main() {
 
     test('complex-only anyOf tries all variants', () {
       final classA = ClassModel(
+        description: null,
         name: 'A',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -315,9 +328,11 @@ void main() {
       );
 
       final classB = ClassModel(
+        description: null,
         name: 'B',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -329,6 +344,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Choice',
         models: {
           (discriminatorValue: null, model: classA),
@@ -374,9 +390,11 @@ void main() {
 
     test('mixed primitive and complex tries all', () {
       final classA = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -388,6 +406,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'SearchKey',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -435,9 +454,11 @@ void main() {
       'anyOf with complex lists and simple type tries decodable variants',
       () {
         final classA = ClassModel(
+          description: null,
           name: 'ClassA',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -449,9 +470,11 @@ void main() {
         );
 
         final classB = ClassModel(
+          description: null,
           name: 'ClassB',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -473,6 +496,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedAnyOf',
           models: {
             (discriminatorValue: null, model: listA),
@@ -515,6 +539,7 @@ void main() {
   group('toForm method generation', () {
     test('primitive-only anyOf encodes each field to form', () {
       final model = AnyOfModel(
+        description: null,
         name: 'Simple',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -559,9 +584,11 @@ void main() {
 
     test('complex-only anyOf merges parameterProperties', () {
       final classA = ClassModel(
+        description: null,
         name: 'A',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -573,6 +600,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Wrapper',
         models: {
           (discriminatorValue: null, model: classA),
@@ -609,9 +637,11 @@ void main() {
 
     test('multiple complex fields merge with discriminator', () {
       final classA = ClassModel(
+        description: null,
         name: 'A',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -623,9 +653,11 @@ void main() {
       );
 
       final classB = ClassModel(
+        description: null,
         name: 'B',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -637,6 +669,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Combined',
         models: {
           (discriminatorValue: 'a', model: classA),
@@ -686,9 +719,11 @@ void main() {
 
     test('mixed primitive and complex checks for ambiguity', () {
       final classA = ClassModel(
+        description: null,
         name: 'Data',
         properties: [
           Property(
+            description: null,
             name: 'value',
             model: StringModel(context: context),
             isRequired: true,
@@ -700,6 +735,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Mixed',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -768,6 +804,7 @@ void main() {
   group('Edge cases', () {
     test('nested anyOf properly delegates to inner fromForm', () {
       final innerAnyOf = AnyOfModel(
+        description: null,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -778,6 +815,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Outer',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -826,6 +864,7 @@ void main() {
     group('toForm method', () {
       test('uses runtime check for nested oneOf with dynamic shape', () {
         final innerOneOf = OneOfModel(
+          description: null,
           name: 'InnerChoice',
           models: {
             (
@@ -835,9 +874,11 @@ void main() {
             (
               discriminatorValue: 'obj',
               model: ClassModel(
+                description: null,
                 name: 'Inner',
                 properties: [
                   Property(
+                    description: null,
                     name: 'field',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -854,6 +895,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'TestAnyOf',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -931,15 +973,18 @@ void main() {
 
       test('uses runtime check for nested anyOf', () {
         final innerAnyOf = AnyOfModel(
+          description: null,
           name: 'InnerAnyOf',
           models: {
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'Inner',
                 properties: [
                   Property(
+                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -956,6 +1001,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'TestAnyOf',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -998,6 +1044,7 @@ void main() {
 
       test('uses direct calls for static types without runtime checks', () {
         final model = AnyOfModel(
+          description: null,
           name: 'TestAnyOf',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -1005,9 +1052,11 @@ void main() {
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'MyClass',
                 properties: [
                   Property(
+                    description: null,
                     name: 'field',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -1080,15 +1129,18 @@ void main() {
 
       test('handles mixed shape with exception in switch', () {
         final innerOneOf = OneOfModel(
+          description: null,
           name: 'InnerChoice',
           models: {
             (discriminatorValue: 'a', model: StringModel(context: context)),
             (
               discriminatorValue: 'b',
               model: ClassModel(
+                description: null,
                 name: 'ComplexData',
                 properties: [
                   Property(
+                    description: null,
                     name: 'id',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -1111,6 +1163,7 @@ void main() {
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final klass = generator.generateClass(model);
@@ -1147,14 +1200,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    description: null,
                   ),
                 ],
                 context: context,
+                description: null,
               ),
             ),
           },
           discriminator: 'type',
           context: context,
+          description: null,
         );
 
         final model = AnyOfModel(
@@ -1165,6 +1221,7 @@ void main() {
           },
           discriminator: null,
           context: context,
+          description: null,
         );
 
         final klass = generator.generateClass(model);
@@ -1200,6 +1257,7 @@ void main() {
 
       test('uses direct calls for static types', () {
         final model = AnyOfModel(
+          description: null,
           name: 'TestAnyOf',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -1237,14 +1295,17 @@ void main() {
 
     test('skips runtime check for static complex types', () {
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (
             discriminatorValue: null,
             model: ClassModel(
+              description: null,
               name: 'MyClass',
               properties: [
                 Property(
+                  description: null,
                   name: 'field',
                   model: StringModel(context: context),
                   isRequired: true,

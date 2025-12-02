@@ -463,6 +463,7 @@ void main() {
         context: context,
         values: const {'RED', 'GREEN', 'BLUE'},
         isNullable: false,
+        description: null,
       );
 
       final listModel = ListModel(context: context, content: enumModel);
@@ -530,7 +531,11 @@ void main() {
     });
 
     test('handles nested list of class models', () {
-      final innerModel = ClassModel(context: context, properties: const []);
+      final innerModel = ClassModel(
+        context: context,
+        properties: const [],
+        description: null,
+      );
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
         context: context,

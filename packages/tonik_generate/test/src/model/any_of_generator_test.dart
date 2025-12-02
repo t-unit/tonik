@@ -14,10 +14,10 @@ void main() {
   late Context context;
   late DartEmitter emitter;
 
-        final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
+  final format =
+      DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -33,6 +33,7 @@ void main() {
   group('AnyOfGenerator basic structure', () {
     test('generates AnyOf class with nullable fields for each model', () {
       final model = AnyOfModel(
+        description: null,
         name: 'FlexibleModel',
         models: {
           (discriminatorValue: 'id', model: IntegerModel(context: context)),
@@ -40,6 +41,7 @@ void main() {
           (
             discriminatorValue: 'details',
             model: ClassModel(
+              description: null,
               name: 'Details',
               properties: const [],
               context: context,
@@ -83,15 +85,93 @@ void main() {
       expect(ctorParams.every((p) => p.toThis), isTrue);
     });
 
+    group('doc comments', () {
+      test('generates class with doc comment from description', () {
+        final model = AnyOfModel(
+          description: 'A flexible model that can have multiple values',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(
+          klass.docs,
+          ['/// A flexible model that can have multiple values'],
+        );
+      });
+
+      test('generates class with multiline doc comment', () {
+        final model = AnyOfModel(
+          description: 'A flexible model.\nSupports multiple types.',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, [
+          '/// A flexible model.',
+          '/// Supports multiple types.',
+        ]);
+      });
+
+      test('generates class without doc comment when description is null', () {
+        final model = AnyOfModel(
+          description: null,
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, isEmpty);
+      });
+
+      test('generates class without doc comment when description is empty', () {
+        final model = AnyOfModel(
+          description: '',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, isEmpty);
+      });
+    });
+
     test(
       'generates AnyOf class when discriminatorValue is absent for all entries',
       () {
         final model = AnyOfModel(
+          description: null,
           name: 'AnonymousChoices',
           models: {
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'User',
                 properties: const [],
                 context: context,
@@ -137,6 +217,7 @@ void main() {
       'generates AnyOf class with enum, date, dateTime, bool, decimal fields',
       () {
         final enumModel = EnumModel<String>(
+          description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: false,
@@ -144,6 +225,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'VariousTypes',
           models: {
             (discriminatorValue: null, model: enumModel),
@@ -231,6 +313,7 @@ void main() {
   group('equals, hashCode, copyWith', () {
     test('generates equals and hashCode methods that compare all fields', () {
       final model = AnyOfModel(
+        description: null,
         name: 'ValueChoice',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -284,6 +367,7 @@ void main() {
       'generates copyWith method with nullable parameters and field defaults',
       () {
         final model = AnyOfModel(
+          description: null,
           name: 'ValueChoice',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -346,6 +430,7 @@ void main() {
 
     test('anyOf with multiple primitives returns simple shape', () {
       final model = AnyOfModel(
+        description: null,
         name: 'StringOrInt',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -383,17 +468,20 @@ void main() {
 
     test('anyOf with multiple complex types returns complex shape', () {
       final classA = ClassModel(
+        description: null,
         name: 'UserProfile',
         properties: const [],
         context: context,
       );
       final classB = ClassModel(
+        description: null,
         name: 'AdminProfile',
         properties: const [],
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'Profile',
         models: {
           (discriminatorValue: null, model: classA),
@@ -431,9 +519,11 @@ void main() {
 
     test('anyOf with primitive and complex type returns mixed shape', () {
       final classModel = ClassModel(
+        description: null,
         name: 'Data',
         properties: [
           Property(
+            description: null,
             name: 'value',
             model: StringModel(context: context),
             isRequired: true,
@@ -445,6 +535,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'FlexibleData',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -486,9 +577,11 @@ void main() {
       'anyOf with discriminator includes discriminator in toSimple for complex',
       () {
         final personModel = ClassModel(
+          description: null,
           name: 'Person',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -508,9 +601,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              description: null,
             ),
           ],
           context: context,
+          description: null,
         );
 
         final model = AnyOfModel(
@@ -527,6 +622,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          description: null,
         );
 
         final klass = generator.generateClass(model);
@@ -588,9 +684,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       'anyOf with discriminator includes discriminator in toForm for complex',
       () {
         final personModel = ClassModel(
+          description: null,
           name: 'Person',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -602,9 +700,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
 
         final companyModel = ClassModel(
+          description: null,
           name: 'Company',
           properties: [
             Property(
+              description: null,
               name: 'companyName',
               model: StringModel(context: context),
               isRequired: true,
@@ -616,6 +716,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'EntityChoice',
           models: {
             (
@@ -692,6 +793,7 @@ String toForm({required bool explode, required bool allowEmpty}) {
       'anyOf with discriminator does NOT include discriminator for simple only',
       () {
         final model = AnyOfModel(
+          description: null,
           name: 'SimpleChoice',
           models: {
             (
@@ -750,9 +852,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       'anyOf with discriminator handles mixed simple and complex correctly',
       () {
         final classModel = ClassModel(
+          description: null,
           name: 'Data',
           properties: [
             Property(
+              description: null,
               name: 'value',
               model: StringModel(context: context),
               isRequired: true,
@@ -764,6 +868,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedChoice',
           models: {
             (
@@ -844,11 +949,13 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   group('parameterProperties', () {
     test('method exists with correct signature for anyOf', () {
       final model = AnyOfModel(
+        description: null,
         name: 'FlexibleChoice',
         models: {
           (
             discriminatorValue: 'user',
             model: ClassModel(
+              description: null,
               name: 'User',
               properties: const [],
               context: context,
@@ -857,6 +964,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           (
             discriminatorValue: 'admin',
             model: ClassModel(
+              description: null,
               name: 'Admin',
               properties: const [],
               context: context,
@@ -879,9 +987,10 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         'Map<String,String>',
       );
       expect(method.optionalParameters.length, 2);
-      
-      final allowEmptyParam = method.optionalParameters
-          .firstWhere((p) => p.name == 'allowEmpty');
+
+      final allowEmptyParam = method.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
       expect(allowEmptyParam.named, isTrue);
       expect(allowEmptyParam.required, isFalse);
       expect(
@@ -889,20 +998,23 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         'true',
       );
 
-      final allowListsParam = method.optionalParameters
-          .firstWhere((p) => p.name == 'allowLists');
+      final allowListsParam = method.optionalParameters.firstWhere(
+        (p) => p.name == 'allowLists',
+      );
       expect(allowListsParam.named, isTrue);
       expect(allowListsParam.required, isFalse);
     });
 
     test('generates complete method for single complex variant', () {
       final userModel = ClassModel(
+        description: null,
         name: 'User',
         properties: const [],
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'FlexibleChoice',
         models: {
           (discriminatorValue: 'user', model: userModel),
@@ -940,18 +1052,21 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method for multiple complex variants', () {
       final user = ClassModel(
+        description: null,
         name: 'User',
         properties: const [],
         context: context,
       );
 
       final admin = ClassModel(
+        description: null,
         name: 'Admin',
         properties: const [],
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'MultiChoice',
         models: {
           (discriminatorValue: 'user', model: user),
@@ -993,9 +1108,11 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method with discriminator', () {
       final classModel = ClassModel(
+        description: null,
         name: 'Data',
         properties: [
           Property(
+            description: null,
             name: 'value',
             model: StringModel(context: context),
             isRequired: true,
@@ -1007,6 +1124,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'DiscriminatedChoice',
         models: {
           (
@@ -1052,12 +1170,14 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method for anyOf with dynamic encoding shape', () {
       final anyOfModel = AnyOfModel(
+        description: null,
         name: 'InnerChoice',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
             discriminatorValue: 'data',
             model: ClassModel(
+              description: null,
               name: 'Data',
               properties: const [],
               context: context,
@@ -1069,6 +1189,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'MixedChoice',
         models: {
           (discriminatorValue: 'inner', model: anyOfModel),
@@ -1123,6 +1244,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       'and discriminator',
       () {
         final anyOfModel = AnyOfModel(
+          description: null,
           name: 'InnerChoice',
           models: {
             (
@@ -1132,6 +1254,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
             (
               discriminatorValue: 'data',
               model: ClassModel(
+                description: null,
                 name: 'Data',
                 properties: const [],
                 context: context,
@@ -1143,6 +1266,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedChoice',
           models: {
             (discriminatorValue: 'inner', model: anyOfModel),
@@ -1207,6 +1331,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       'complex class',
       () {
         final anyOfModel = AnyOfModel(
+          description: null,
           name: 'InnerChoice',
           models: {
             (
@@ -1223,12 +1348,14 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
 
         final classModel = ClassModel(
+          description: null,
           name: 'ComplexData',
           properties: const [],
           context: context,
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedChoice',
           models: {
             (discriminatorValue: 'inner', model: anyOfModel),
@@ -1280,12 +1407,14 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       'at top level',
       () {
         final classModel = ClassModel(
+          description: null,
           name: 'ComplexData',
           properties: const [],
           context: context,
         );
 
         final model = AnyOfModel(
+          description: null,
           name: 'MixedTopLevel',
           models: {
             (
@@ -1337,6 +1466,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method for anyOf with only simple types', () {
       final model = AnyOfModel(
+        description: null,
         name: 'SimpleChoice',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -1369,17 +1499,20 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('passes allowLists to nested complex types', () {
       final user = ClassModel(
+        description: null,
         name: 'User',
         properties: const [],
         context: context,
       );
       final admin = ClassModel(
+        description: null,
         name: 'Admin',
         properties: const [],
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'FlexibleChoice',
         models: {
           (discriminatorValue: 'user', model: user),
@@ -1431,6 +1564,7 @@ Map<String, String> parameterProperties({
 
     test('throws when anyOf contains list model', () {
       final model = AnyOfModel(
+        description: null,
         name: 'ChoiceWithList',
         models: {
           (
@@ -1480,11 +1614,13 @@ Map<String, String> parameterProperties({
 
     test('passes allowLists to nested anyOf with mixed encoding', () {
       final innerAnyOf = AnyOfModel(
+        description: null,
         name: 'InnerChoice',
         models: {
           (
             discriminatorValue: 'data',
             model: ClassModel(
+              description: null,
               name: 'Data',
               properties: const [],
               context: context,
@@ -1500,6 +1636,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'OuterChoice',
         models: {
           (discriminatorValue: 'inner', model: innerAnyOf),
@@ -1559,10 +1696,12 @@ Map<String, String> parameterProperties({
   group('AnyOfGenerator with nested composite models', () {
     test('handles AllOfModel with simple encoding shape correctly', () {
       final allOfModel = AllOfModel(
+        description: null,
         name: 'SimpleAllOf',
         models: {
           StringModel(context: context),
           EnumModel<String>(
+            description: null,
             values: const {'value1', 'value2'},
             isNullable: false,
             context: context,
@@ -1572,6 +1711,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: 'simple', model: allOfModel),
@@ -1611,15 +1751,27 @@ Map<String, String> parameterProperties({
 
     test('handles AllOfModel with complex encoding shape correctly', () {
       final allOfModel = AllOfModel(
+        description: null,
         name: 'ComplexAllOf',
         models: {
-          ClassModel(name: 'Model1', properties: const [], context: context),
-          ClassModel(name: 'Model2', properties: const [], context: context),
+          ClassModel(
+            description: null,
+            name: 'Model1',
+            properties: const [],
+            context: context,
+          ),
+          ClassModel(
+            description: null,
+            name: 'Model2',
+            properties: const [],
+            context: context,
+          ),
         },
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: 'complex', model: allOfModel),
@@ -1659,15 +1811,22 @@ Map<String, String> parameterProperties({
 
     test('handles AllOfModel with mixed encoding shape correctly', () {
       final allOfModel = AllOfModel(
+        description: null,
         name: 'MixedAllOf',
         models: {
           StringModel(context: context),
-          ClassModel(name: 'Model1', properties: const [], context: context),
+          ClassModel(
+            description: null,
+            name: 'Model1',
+            properties: const [],
+            context: context,
+          ),
         },
         context: context,
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: 'mixed', model: allOfModel),
@@ -1707,6 +1866,7 @@ Map<String, String> parameterProperties({
 
     test('handles OneOfModel with simple encoding shape correctly', () {
       final oneOfModel = OneOfModel(
+        description: null,
         name: 'SimpleOneOf',
         models: {
           (discriminatorValue: 'str', model: StringModel(context: context)),
@@ -1717,6 +1877,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: 'oneof', model: oneOfModel),
@@ -1756,11 +1917,13 @@ Map<String, String> parameterProperties({
 
     test('handles nested AnyOfModel with complex encoding shape correctly', () {
       final nestedAnyOfModel = AnyOfModel(
+        description: null,
         name: 'NestedAnyOf',
         models: {
           (
             discriminatorValue: 'class',
             model: ClassModel(
+              description: null,
               name: 'Model1',
               properties: const [],
               context: context,
@@ -1779,6 +1942,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: 'nested', model: nestedAnyOfModel),

@@ -227,7 +227,8 @@ class RequestParameterImporter {
               rawName: parameter.name,
               description: parameter.description,
               encoding: _queryEncoding(parameter.style),
-              explode: parameter.explode ??
+              explode:
+                  parameter.explode ??
                   _defaultExplodeForQueryParameter(parameter.style),
               model: model,
               isRequired: parameter.isRequired ?? false,

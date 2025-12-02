@@ -21,7 +21,12 @@ void main() {
 
     test('generates library with comprehensive API metadata', () {
       final models = <Model>{
-        ClassModel(name: 'User', properties: const [], context: ctx),
+        ClassModel(
+          name: 'User',
+          properties: const [],
+          context: ctx,
+          description: null,
+        ),
       };
 
       final apiDoc = ApiDocument(
@@ -109,7 +114,12 @@ void main() {
 
     test('handles missing optional metadata gracefully', () {
       final models = <Model>{
-        ClassModel(name: 'User', properties: const [], context: ctx),
+        ClassModel(
+          name: 'User',
+          properties: const [],
+          context: ctx,
+          description: null,
+        ),
       };
 
       final apiDoc = ApiDocument(

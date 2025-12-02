@@ -223,4 +223,66 @@ void main() {
     final booleanModel = anyOfDirectPrimitive.models.last;
     expect(booleanModel.model, isA<BooleanModel>());
   });
+
+  group('description', () {
+    const anyOfWithDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Payload': {
+            'description': 'The request payload can be text or binary',
+            'anyOf': [
+              {'type': 'string'},
+              {
+                'type': 'object',
+                'properties': {
+                  'data': {'type': 'string'},
+                },
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    const anyOfWithoutDescription = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Mixed': {
+            'anyOf': [
+              {'type': 'string'},
+              {'type': 'integer'},
+            ],
+          },
+        },
+      },
+    };
+
+    test('import anyOf with description', () {
+      final api = Importer().import(anyOfWithDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'Payload',
+              )
+              as AnyOfModel;
+
+      expect(model.description, 'The request payload can be text or binary');
+    });
+
+    test('import anyOf without description', () {
+      final api = Importer().import(anyOfWithoutDescription);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'Mixed',
+              )
+              as AnyOfModel;
+
+      expect(model.description, isNull);
+    });
+  });
 }

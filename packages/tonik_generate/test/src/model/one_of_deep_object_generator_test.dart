@@ -39,6 +39,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -78,6 +79,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -123,10 +125,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  description: null,
                 ),
               ],
               context: context,
-            )
+              description: null,
+            ),
           ),
           (
             discriminatorValue: 'model2',
@@ -139,14 +143,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  description: null,
                 ),
               ],
               context: context,
-            )
+              description: null,
+            ),
           ),
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -186,6 +193,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -224,6 +232,7 @@ void main() {
         },
         discriminator: null,
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);
@@ -269,10 +278,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  description: null,
                 ),
               ],
               context: context,
-            )
+              description: null,
+            ),
           ),
           (
             discriminatorValue: 'model2',
@@ -285,14 +296,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  description: null,
                 ),
               ],
               context: context,
-            )
+              description: null,
+            ),
           ),
         },
         discriminator: 'type',
         context: context,
+        description: null,
       );
 
       final classes = generator.generateClasses(model);

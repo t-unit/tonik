@@ -23,12 +23,18 @@ void main() {
       'generates files for class, enum, oneOf, anyOf, allOf, alias, list',
       () {
         final models = <Model>{
-          ClassModel(name: 'User', properties: const [], context: ctx),
+          ClassModel(
+            name: 'User',
+            properties: const [],
+            context: ctx,
+            description: null,
+          ),
           EnumModel<String>(
             name: 'Status',
             values: const {'active'},
             isNullable: false,
             context: ctx,
+            description: null,
           ),
           OneOfModel(
             name: 'Choice',
@@ -38,6 +44,7 @@ void main() {
             },
             discriminator: null,
             context: ctx,
+            description: null,
           ),
           AnyOfModel(
             name: 'FlexibleModel',
@@ -47,11 +54,13 @@ void main() {
             },
             discriminator: null,
             context: ctx,
+            description: null,
           ),
           AllOfModel(
             name: 'Many',
             models: {StringModel(context: ctx), IntegerModel(context: ctx)},
             context: ctx,
+            description: null,
           ),
           AliasModel(
             name: 'UserId',
@@ -64,6 +73,7 @@ void main() {
               name: 'User',
               properties: const [],
               context: ctx,
+              description: null,
             ),
             context: ctx,
           ),

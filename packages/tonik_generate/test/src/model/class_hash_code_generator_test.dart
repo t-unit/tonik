@@ -32,9 +32,11 @@ void main() {
   group('ClassGenerator hashCode method generation', () {
     test('generates hashCode method', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -42,6 +44,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -66,9 +69,11 @@ void main() {
 
     test('generates hashCode method with multiple properties', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'id',
             model: StringModel(context: context),
             isRequired: true,
@@ -76,6 +81,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -83,6 +89,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'email',
             model: StringModel(context: context),
             isRequired: true,
@@ -90,6 +97,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -114,9 +122,11 @@ void main() {
 
     test('generates hashCode method with nullable properties', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -124,6 +134,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'bio',
             model: StringModel(context: context),
             isRequired: false,
@@ -148,9 +159,11 @@ void main() {
 
     test('generates hashCode method with normalized property names', () {
       final model = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'first-name',
             model: StringModel(context: context),
             isRequired: true,
@@ -158,6 +171,7 @@ void main() {
             isDeprecated: false,
           ),
           Property(
+            description: null,
             name: 'last_name',
             model: StringModel(context: context),
             isRequired: true,
@@ -190,6 +204,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
           Property(
             name: 'tags',
@@ -200,9 +215,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
 
       const expectedMethod = '''
@@ -230,6 +247,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
           Property(
             name: 'nestedList',
@@ -243,9 +261,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            description: null,
           ),
         ],
         context: context,
+        description: null,
       );
 
       const expectedMethod = '''

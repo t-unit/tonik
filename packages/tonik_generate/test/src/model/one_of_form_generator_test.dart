@@ -32,6 +32,7 @@ void main() {
   group('toForm', () {
     test('toForm delegates to active variant value', () {
       final model = OneOfModel(
+        description: null,
         name: 'Result',
         models: {
           (
@@ -67,9 +68,11 @@ void main() {
 
     test('toForm injects discriminator for complex variants', () {
       final userModel = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -81,6 +84,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Response',
         models: {
           (
@@ -119,6 +123,7 @@ void main() {
 
     test('toForm method has correct signature', () {
       final model = OneOfModel(
+        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -149,6 +154,7 @@ void main() {
   group('fromForm', () {
     test('fromForm constructor has correct signature', () {
       final model = OneOfModel(
+        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -185,6 +191,7 @@ void main() {
 
     test('fromForm tries variants in declaration order (primitive-only)', () {
       final model = OneOfModel(
+        description: null,
         name: 'Result',
         models: {
           (
@@ -223,9 +230,11 @@ void main() {
 
     test('fromForm tries complex variants using fromForm with explode', () {
       final userModel = ClassModel(
+        description: null,
         name: 'User',
         properties: [
           Property(
+            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -237,6 +246,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Response',
         models: {
           (discriminatorValue: 'user', model: userModel),
@@ -271,9 +281,11 @@ void main() {
       'fromForm uses discriminator for fast-path routing with explode=true',
       () {
         final classA = ClassModel(
+          description: null,
           name: 'A',
           properties: [
             Property(
+              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -285,9 +297,11 @@ void main() {
         );
 
         final classB = ClassModel(
+          description: null,
           name: 'B',
           properties: [
             Property(
+              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -299,6 +313,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          description: null,
           name: 'Choice',
           models: {
             (discriminatorValue: 'a', model: classA),
@@ -352,15 +367,18 @@ void main() {
 
     test('toForm handles mixed-encoded variant without discriminator', () {
       final innerOneOf = OneOfModel(
+        description: null,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
             model: ClassModel(
+              description: null,
               name: 'Data',
               properties: [
                 Property(
+                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -377,6 +395,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Outer',
         models: {
           (discriminatorValue: null, model: innerOneOf),
@@ -404,15 +423,18 @@ void main() {
 
     test('toForm handles mixed-encoded variant with discriminator', () {
       final innerOneOf = OneOfModel(
+        description: null,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
             model: ClassModel(
+              description: null,
               name: 'Data',
               properties: [
                 Property(
+                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -429,6 +451,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        description: null,
         name: 'Outer',
         models: {
           (discriminatorValue: 'inner', model: innerOneOf),
@@ -463,15 +486,18 @@ void main() {
       'toForm handles multiple mixed-encoded variants with discriminator',
       () {
         final innerOneOfA = OneOfModel(
+          description: null,
           name: 'InnerA',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'DataA',
                 properties: [
                   Property(
+                    description: null,
                     name: 'a',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -488,15 +514,18 @@ void main() {
         );
 
         final innerOneOfB = OneOfModel(
+          description: null,
           name: 'InnerB',
           models: {
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                description: null,
                 name: 'DataB',
                 properties: [
                   Property(
+                    description: null,
                     name: 'b',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -513,6 +542,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          description: null,
           name: 'Outer',
           models: {
             (discriminatorValue: 'a', model: innerOneOfA),
