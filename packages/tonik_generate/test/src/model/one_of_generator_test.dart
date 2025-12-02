@@ -104,6 +104,92 @@ void main() {
     );
   });
 
+  group('doc comments', () {
+    test('generates sealed class with doc comment from description', () {
+      final model = OneOfModel(
+        description: 'Represents either a string or an integer value',
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      expect(
+        baseClass.docs,
+        ['/// Represents either a string or an integer value'],
+      );
+    });
+
+    test('generates sealed class with multiline doc comment', () {
+      final model = OneOfModel(
+        description: 'A flexible value type.\nCan be string or integer.',
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        discriminator: null,
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      expect(baseClass.docs, [
+        '/// A flexible value type.',
+        '/// Can be string or integer.',
+      ]);
+    });
+
+    test(
+      'generates sealed class without doc comment when description is null',
+      () {
+        final model = OneOfModel(
+          description: null,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+        expect(baseClass.docs, isEmpty);
+      },
+    );
+
+    test(
+      'generates sealed class without doc comment when description is empty',
+      () {
+        final model = OneOfModel(
+          description: '',
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+        expect(baseClass.docs, isEmpty);
+      },
+    );
+  });
+
   test('generates mixed encoding shape getter for mixed oneOf', () {
     final classA = ClassModel(
       description: null,

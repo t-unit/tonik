@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
@@ -79,6 +80,7 @@ class AllOfGenerator {
       (b) =>
           b
             ..name = className
+            ..docs.addAll(formatDocComment(model.description))
             ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
             ..constructors.add(_buildDefaultConstructor(normalizedProperties))
             ..constructors.addAll([

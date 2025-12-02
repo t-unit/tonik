@@ -89,6 +89,74 @@ void main() {
       );
     });
 
+    group('doc comments', () {
+      test('generates class with doc comment from description', () {
+        final model = AllOfModel(
+          description: 'Combines multiple schemas into one',
+          name: 'Combined',
+          models: {
+            StringModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        expect(
+          combinedClass.docs,
+          ['/// Combines multiple schemas into one'],
+        );
+      });
+
+      test('generates class with multiline doc comment', () {
+        final model = AllOfModel(
+          description: 'A combined model.\nInherits from multiple schemas.',
+          name: 'Combined',
+          models: {
+            StringModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        expect(combinedClass.docs, [
+          '/// A combined model.',
+          '/// Inherits from multiple schemas.',
+        ]);
+      });
+
+      test('generates class without doc comment when description is null', () {
+        final model = AllOfModel(
+          description: null,
+          name: 'Combined',
+          models: {
+            StringModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        expect(combinedClass.docs, isEmpty);
+      });
+
+      test('generates class without doc comment when description is empty', () {
+        final model = AllOfModel(
+          description: '',
+          name: 'Combined',
+          models: {
+            StringModel(context: context),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        expect(combinedClass.docs, isEmpty);
+      });
+    });
+
     test('generates getter for mixed allOf', () {
       final model = AllOfModel(
         name: 'Combined',

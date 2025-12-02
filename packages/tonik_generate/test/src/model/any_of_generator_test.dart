@@ -85,6 +85,82 @@ void main() {
       expect(ctorParams.every((p) => p.toThis), isTrue);
     });
 
+    group('doc comments', () {
+      test('generates class with doc comment from description', () {
+        final model = AnyOfModel(
+          description: 'A flexible model that can have multiple values',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(
+          klass.docs,
+          ['/// A flexible model that can have multiple values'],
+        );
+      });
+
+      test('generates class with multiline doc comment', () {
+        final model = AnyOfModel(
+          description: 'A flexible model.\nSupports multiple types.',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, [
+          '/// A flexible model.',
+          '/// Supports multiple types.',
+        ]);
+      });
+
+      test('generates class without doc comment when description is null', () {
+        final model = AnyOfModel(
+          description: null,
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, isEmpty);
+      });
+
+      test('generates class without doc comment when description is empty', () {
+        final model = AnyOfModel(
+          description: '',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          discriminator: null,
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, isEmpty);
+      });
+    });
+
     test(
       'generates AnyOf class when discriminatorValue is absent for all entries',
       () {

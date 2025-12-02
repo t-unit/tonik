@@ -57,6 +57,162 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
+    group('doc comments', () {
+      test('generates class with doc comment from description', () {
+        final model = ClassModel(
+          description: 'A user in the system',
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, ['/// A user in the system']);
+      });
+
+      test('generates class with multiline doc comment', () {
+        final model = ClassModel(
+          description: 'A user in the system.\nContains user details.',
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, [
+          '/// A user in the system.',
+          '/// Contains user details.',
+        ]);
+      });
+
+      test('generates class without doc comment when description is null', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, isEmpty);
+      });
+
+      test('generates class without doc comment when description is empty', () {
+        final model = ClassModel(
+          description: '',
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, isEmpty);
+      });
+
+      test('generates field with doc comment from property description', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: [
+            Property(
+              description: 'The unique identifier',
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, ['/// The unique identifier']);
+      });
+
+      test('generates field with multiline doc comment', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: [
+            Property(
+              description: 'The user status.\nCan be active or inactive.',
+              name: 'status',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, [
+          '/// The user status.',
+          '/// Can be active or inactive.',
+        ]);
+      });
+
+      test('generates field without doc comment when description is null', () {
+        final model = ClassModel(
+          description: null,
+          name: 'User',
+          properties: [
+            Property(
+              description: null,
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, isEmpty);
+      });
+
+      test(
+        'generates field with both doc comment and deprecated annotation',
+        () {
+          final model = ClassModel(
+            description: null,
+            name: 'User',
+            properties: [
+              Property(
+                description: 'Use userId instead',
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: true,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final field = result.fields.first;
+
+          expect(field.docs, ['/// Use userId instead']);
+          expect(field.annotations, hasLength(1));
+        },
+      );
+    });
+
     test('generates currentEncodingShape getter for class with properties', () {
       final model = ClassModel(
         description: null,

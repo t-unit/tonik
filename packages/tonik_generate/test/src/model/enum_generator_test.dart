@@ -246,6 +246,67 @@ void main() {
       },
     );
 
+    group('doc comments', () {
+      test('generates enum with doc comment from description', () {
+        final model = EnumModel<String>(
+          description: 'The color options available',
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, ['/// The color options available']);
+      });
+
+      test('generates enum with multiline doc comment', () {
+        final model = EnumModel<String>(
+          description: 'The status of an order.\nCan change over time.',
+          name: 'Status',
+          values: const {'pending', 'complete'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.docs, [
+          '/// The status of an order.',
+          '/// Can change over time.',
+        ]);
+      });
+
+      test('generates enum without doc comment when description is null', () {
+        final model = EnumModel<String>(
+          description: null,
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, isEmpty);
+      });
+
+      test('generates enum without doc comment when description is empty', () {
+        final model = EnumModel<String>(
+          description: '',
+          name: 'Color',
+          values: const {'red', 'green', 'blue'},
+          isNullable: false,
+          context: Context.initial(),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, isEmpty);
+      });
+    });
+
     group('enum value name normalization', () {
       test('handles string values', () {
         final model = EnumModel<String>(
