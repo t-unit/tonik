@@ -10,6 +10,7 @@ void main() {
       final nameManager = NameManager(generator: nameGenerator);
 
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: const [],
         context: Context.initial()
@@ -53,6 +54,7 @@ void main() {
       final nameManager = NameManager(generator: nameGenerator);
 
       final anonymousModel = ClassModel(
+        isDeprecated: false,
         properties: const [],
         context: Context.initial()
             .push('components')
@@ -75,6 +77,7 @@ void main() {
       final nameManager = NameManager(generator: nameGenerator);
 
       final anonymousModel = ClassModel(
+        isDeprecated: false,
         properties: const [],
         context: Context.initial()
             .push('components')
@@ -97,6 +100,7 @@ void main() {
       final nameManager = NameManager(generator: nameGenerator);
 
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: const [],
         context: Context.initial()
@@ -129,6 +133,7 @@ void main() {
       final nameManager = NameManager(generator: nameGenerator);
 
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: const [],
         context: Context.initial()

@@ -101,6 +101,7 @@ class ClassModel extends Model with NamedModel {
     required this.properties,
     required super.context,
     required this.description,
+    required this.isDeprecated,
     this.name,
   });
 
@@ -108,6 +109,7 @@ class ClassModel extends Model with NamedModel {
   final String? name;
   final List<Property> properties;
   final String? description;
+  final bool isDeprecated;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -115,7 +117,7 @@ class ClassModel extends Model with NamedModel {
   @override
   String toString() =>
       'ClassModel{name: $name, properties: $properties, '
-      'description: $description}';
+      'description: $description, isDeprecated: $isDeprecated}';
 }
 
 class EnumModel<T> extends Model with NamedModel {
@@ -124,6 +126,7 @@ class EnumModel<T> extends Model with NamedModel {
     required this.isNullable,
     required super.context,
     required this.description,
+    required this.isDeprecated,
     this.name,
   });
 
@@ -132,6 +135,7 @@ class EnumModel<T> extends Model with NamedModel {
   final Set<T> values;
   final bool isNullable;
   final String? description;
+  final bool isDeprecated;
 
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
@@ -139,7 +143,7 @@ class EnumModel<T> extends Model with NamedModel {
   @override
   String toString() =>
       'EnumModel<$T>{name: $name, values: $values, isNullable: $isNullable, '
-      'description: $description}';
+      'description: $description, isDeprecated: $isDeprecated}';
 }
 
 class AllOfModel extends Model with NamedModel, CompositeModel {
@@ -148,19 +152,22 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     required this.name,
     required super.context,
     required this.description,
+    required this.isDeprecated,
   });
 
   @override
   final String? name;
   final Set<Model> models;
   final String? description;
+  final bool isDeprecated;
 
   @override
   Set<Model> get containedModels => models;
 
   @override
   String toString() =>
-      'AllOfModel{name: $name, models: $models, description: $description}';
+      'AllOfModel{name: $name, models: $models, description: $description, '
+      'isDeprecated: $isDeprecated}';
 }
 
 typedef DiscriminatedModel = ({String? discriminatorValue, Model model});
@@ -172,6 +179,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
     required this.discriminator,
     required super.context,
     required this.description,
+    required this.isDeprecated,
   });
 
   @override
@@ -179,6 +187,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
   final Set<DiscriminatedModel> models;
   final String? discriminator;
   final String? description;
+  final bool isDeprecated;
 
   @override
   Set<Model> get containedModels => models.map((m) => m.model).toSet();
@@ -186,7 +195,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
   @override
   String toString() =>
       'OneOfModel{name: $name, models: $models, discriminator: $discriminator, '
-      'description: $description}';
+      'description: $description, isDeprecated: $isDeprecated}';
 }
 
 class AnyOfModel extends Model with NamedModel, CompositeModel {
@@ -196,6 +205,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
     required this.discriminator,
     required super.context,
     required this.description,
+    required this.isDeprecated,
   });
 
   @override
@@ -203,6 +213,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
   final Set<DiscriminatedModel> models;
   final String? discriminator;
   final String? description;
+  final bool isDeprecated;
 
   @override
   Set<Model> get containedModels => models.map((m) => m.model).toSet();
@@ -210,7 +221,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
   @override
   String toString() =>
       'AnyOfModel{name: $name, models: $models, discriminator: $discriminator, '
-      'description: $description}';
+      'description: $description, isDeprecated: $isDeprecated}';
 }
 
 sealed class PrimitiveModel extends Model {

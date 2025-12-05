@@ -326,6 +326,7 @@ void main() {
       allowEmptyValue: false,
       explode: true,
       model: ClassModel(
+        isDeprecated: false,
         context: context,
         properties: const [],
         description: null,
@@ -391,6 +392,7 @@ void main() {
       allowEmptyValue: true,
       explode: true,
       model: ClassModel(
+        isDeprecated: false,
         context: context,
         properties: const [],
         description: null,
@@ -540,6 +542,7 @@ void main() {
 
   test('encodes different model types with appropriate encoders', () {
     final enumModel = EnumModel(
+      isDeprecated: false,
       context: context,
       values: const {'admin', 'user', 'guest'},
       isNullable: false,
@@ -547,12 +550,14 @@ void main() {
     );
 
     final classModel = ClassModel(
+      isDeprecated: false,
       context: context,
       properties: const [],
       description: null,
     );
 
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       context: context,
       models: {
         (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -792,6 +797,7 @@ void main() {
 
   test('handles simple list of enums', () {
     final enumModel = EnumModel(
+      isDeprecated: false,
       context: context,
       values: const {'RED', 'GREEN', 'BLUE'},
       isNullable: false,
@@ -864,6 +870,7 @@ void main() {
 
   test('handles nested list of class models', () {
     final innerModel = ClassModel(
+      isDeprecated: false,
       context: context,
       properties: const [],
       description: null,
@@ -1071,6 +1078,7 @@ void main() {
 
   test('handles matrix encoding with list of enums', () {
     final enumModel = EnumModel(
+      isDeprecated: false,
       context: context,
       values: const {'ACTIVE', 'INACTIVE', 'PENDING'},
       isNullable: false,
@@ -1143,6 +1151,7 @@ void main() {
     'handles matrix encoding with list of class models throws at runtime',
     () {
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         properties: const [],
         description: null,

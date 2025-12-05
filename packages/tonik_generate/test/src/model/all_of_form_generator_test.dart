@@ -31,9 +31,11 @@ void main() {
   group('form encoding - complex types', () {
     test('generates fromForm constructor for complex allOf model', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -49,6 +51,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -87,9 +90,11 @@ void main() {
 
     test('generates toForm method merging all class properties', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -105,6 +110,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -143,12 +149,14 @@ void main() {
 
   test('allOf with class and mixed oneOf validates at runtime', () {
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       name: 'Choice',
       models: {
         (discriminatorValue: null, model: IntegerModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'Option',
             properties: [
               Property(
@@ -171,6 +179,7 @@ void main() {
     );
 
     final classModel = ClassModel(
+      isDeprecated: false,
       name: 'Base',
       properties: [
         Property(
@@ -187,6 +196,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'Combined',
       models: {
         classModel,
@@ -226,6 +236,7 @@ void main() {
   group('form encoding - primitive types', () {
     test('generates toForm returning primary primitive value', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'StringDecimalModel',
         models: <Model>{
           StringModel(context: context),
@@ -253,6 +264,7 @@ void main() {
       'generates fromForm validating single value against all primitive types',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'StringDecimalModel',
           models: <Model>{
             StringModel(context: context),
@@ -286,9 +298,11 @@ void main() {
       'generates toForm returning enum value for enum and string models',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'EnumStringModel',
           models: {
             EnumModel(
+              isDeprecated: false,
               name: 'Status',
               values: const {'active', 'inactive'},
               isNullable: false,
@@ -320,9 +334,11 @@ void main() {
       'generates fromForm validating single value against enum and string',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'EnumStringModel',
           models: {
             EnumModel(
+              isDeprecated: false,
               name: 'Status',
               values: const {'active', 'inactive'},
               isNullable: false,
@@ -359,10 +375,12 @@ void main() {
       'generates fromForm for mixed types attempting decode',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'MixedModel',
           models: {
             StringModel(context: context),
             ClassModel(
+              isDeprecated: false,
               name: 'Complex',
               properties: [
                 Property(
@@ -404,10 +422,12 @@ void main() {
       'throws exception for mixed types in toForm',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'MixedModel',
           models: {
             IntegerModel(context: context),
             ClassModel(
+              isDeprecated: false,
               name: 'Complex',
               properties: const [],
               context: context,
@@ -438,12 +458,14 @@ void main() {
 
   test('allOf with mixed oneOf and primitive validates at runtime', () {
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       name: 'Choice',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'Data',
             properties: [
               Property(
@@ -466,6 +488,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'Combined',
       models: {
         IntegerModel(context: context),
@@ -507,12 +530,14 @@ void main() {
 
   test('allOf with mixed oneOf and primitive allows fromForm decoding', () {
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       name: 'Choice',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'Data',
             properties: [
               Property(
@@ -535,6 +560,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'Combined',
       models: {
         IntegerModel(context: context),
@@ -564,12 +590,14 @@ void main() {
 
   test('allOf with multiple mixed anyOf models validates all at runtime', () {
     final anyOfModel1 = AnyOfModel(
+      isDeprecated: false,
       name: 'FlexibleA',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'DataA',
             properties: [
               Property(
@@ -592,12 +620,14 @@ void main() {
     );
 
     final anyOfModel2 = AnyOfModel(
+      isDeprecated: false,
       name: 'FlexibleB',
       models: {
         (discriminatorValue: null, model: IntegerModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'DataB',
             properties: [
               Property(
@@ -620,6 +650,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'MultiDynamic',
       models: {
         StringModel(context: context),
@@ -671,12 +702,14 @@ void main() {
   test('allOf with mixed anyOf, oneOf, and primitives validates all '
       'dynamic types', () {
     final anyOfModel = AnyOfModel(
+      isDeprecated: false,
       name: 'FlexibleValue',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'Data',
             properties: [
               Property(
@@ -699,12 +732,14 @@ void main() {
     );
 
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       name: 'Choice',
       models: {
         (discriminatorValue: null, model: IntegerModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'Option',
             properties: [
               Property(
@@ -727,6 +762,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'ComplexMixed',
       models: {
         StringModel(context: context),
@@ -780,6 +816,7 @@ void main() {
 
   test('generates toForm for allOf with list of int', () {
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'AllOfIntList',
       models: {
         ListModel(
@@ -819,6 +856,7 @@ void main() {
 
   test('generates toForm for allOf with list of DateTime', () {
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'AllOfDateTimeList',
       models: {
         ListModel(
@@ -858,12 +896,14 @@ void main() {
 
   test('allOf with mixed anyOf and primitive validates at runtime', () {
     final anyOfModel = AnyOfModel(
+      isDeprecated: false,
       name: 'FlexibleValue',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             name: 'Data',
             properties: [
               Property(
@@ -886,6 +926,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'Combined',
       models: {
         IntegerModel(context: context),
@@ -930,6 +971,7 @@ void main() {
 
   test('generates fromForm for allOf with list of double', () {
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'AllOfDoubleList',
       models: {
         ListModel(
@@ -963,6 +1005,7 @@ void main() {
 
   test('generates fromForm for allOf with list of DateTime', () {
     final model = AllOfModel(
+      isDeprecated: false,
       name: 'AllOfDateTimeList',
       models: {
         ListModel(

@@ -26,6 +26,7 @@ void main() {
 
     test('generates toDeepObject method with correct signature', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfPrimitive',
         models: {
@@ -62,6 +63,7 @@ void main() {
 
     test('generates toDeepObject that delegates to parameterProperties', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfSimple',
         models: {
@@ -89,12 +91,14 @@ void main() {
 
     test('generates toDeepObject for complex AnyOf', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfComplex',
         models: {
           (
             discriminatorValue: 'model1',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Model1',
               properties: [
@@ -113,6 +117,7 @@ void main() {
           (
             discriminatorValue: 'model2',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Model2',
               properties: [
@@ -150,6 +155,7 @@ void main() {
 
     test('toDeepObject passes allowLists=false to parameterProperties', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfWithAllowLists',
         models: {
@@ -177,6 +183,7 @@ void main() {
 
     test('toDeepObject passes alreadyEncoded=true', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfEncoded',
         models: {
@@ -203,12 +210,14 @@ void main() {
 
     test('toDeepObject handles discriminator via parameterProperties', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfWithDiscriminator',
         models: {
           (
             discriminatorValue: 'model1',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Model1',
               properties: [
@@ -227,6 +236,7 @@ void main() {
           (
             discriminatorValue: 'model2',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Model2',
               properties: [

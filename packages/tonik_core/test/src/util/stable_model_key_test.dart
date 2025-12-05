@@ -39,6 +39,7 @@ void main() {
         },
         context: sharedContext,
         description: null,
+        isDeprecated: false,
       );
 
       final model2 = AllOfModel(
@@ -50,6 +51,7 @@ void main() {
         },
         context: sharedContext,
         description: null,
+        isDeprecated: false,
       );
 
       final key1 = model1.stableKey;
@@ -73,6 +75,7 @@ void main() {
           },
           context: sharedContext,
           description: null,
+          isDeprecated: false,
         );
 
         final model2 = AllOfModel(
@@ -82,6 +85,7 @@ void main() {
           },
           context: sharedContext,
           description: null,
+          isDeprecated: false,
         );
 
         expect(model1.stableKey, isNot(model2.stableKey));
@@ -92,6 +96,7 @@ void main() {
       final sharedContext = context.push('Test').push('oneOf');
 
       final model1 = OneOfModel(
+        isDeprecated: false,
         name: null,
         models: {
           (
@@ -109,6 +114,7 @@ void main() {
       );
 
       final model2 = OneOfModel(
+        isDeprecated: false,
         name: null,
         models: {
           (
@@ -132,6 +138,7 @@ void main() {
       final sharedContext = context.push('Test').push('anyOf');
 
       final model1 = AnyOfModel(
+        isDeprecated: false,
         name: null,
         models: {
           (
@@ -149,6 +156,7 @@ void main() {
       );
 
       final model2 = AnyOfModel(
+        isDeprecated: false,
         name: null,
         models: {
           (
@@ -187,6 +195,7 @@ void main() {
 
     test('generates stable key for ClassModel with sorted properties', () {
       final model1 = ClassModel(
+        isDeprecated: false,
         name: 'TestClass',
         properties: [
           Property(
@@ -223,6 +232,7 @@ void main() {
         isNullable: false,
         context: context,
         description: null,
+        isDeprecated: false,
       );
 
       final model2 = EnumModel(
@@ -231,6 +241,7 @@ void main() {
         isNullable: false,
         context: context,
         description: null,
+        isDeprecated: false,
       );
 
       expect(model1.stableKey, model2.stableKey);
@@ -245,6 +256,7 @@ void main() {
         },
         context: context.push('inner'),
         description: null,
+        isDeprecated: false,
       );
 
       final outerAllOf = AllOfModel(
@@ -255,6 +267,7 @@ void main() {
         },
         context: context.push('outer'),
         description: null,
+        isDeprecated: false,
       );
 
       final key = outerAllOf.stableKey;

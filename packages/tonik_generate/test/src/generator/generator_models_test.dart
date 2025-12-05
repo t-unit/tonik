@@ -24,12 +24,14 @@ void main() {
       () {
         final models = <Model>{
           ClassModel(
+            isDeprecated: false,
             name: 'User',
             properties: const [],
             context: ctx,
             description: null,
           ),
           EnumModel<String>(
+            isDeprecated: false,
             name: 'Status',
             values: const {'active'},
             isNullable: false,
@@ -37,6 +39,7 @@ void main() {
             description: null,
           ),
           OneOfModel(
+            isDeprecated: false,
             name: 'Choice',
             models: {
               (discriminatorValue: null, model: StringModel(context: ctx)),
@@ -47,6 +50,7 @@ void main() {
             description: null,
           ),
           AnyOfModel(
+            isDeprecated: false,
             name: 'FlexibleModel',
             models: {
               (discriminatorValue: null, model: StringModel(context: ctx)),
@@ -57,6 +61,7 @@ void main() {
             description: null,
           ),
           AllOfModel(
+            isDeprecated: false,
             name: 'Many',
             models: {StringModel(context: ctx), IntegerModel(context: ctx)},
             context: ctx,
@@ -70,6 +75,7 @@ void main() {
           ListModel(
             name: 'UserList',
             content: ClassModel(
+              isDeprecated: false,
               name: 'User',
               properties: const [],
               context: ctx,

@@ -23,6 +23,7 @@ void main() {
 
     test('generates code with prefixed dart:core types', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [

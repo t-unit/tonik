@@ -32,6 +32,7 @@ void main() {
 
     test('generates toDeepObject method with correct signature', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'OneOfPrimitive',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -72,6 +73,7 @@ void main() {
 
     test('generates toDeepObject for simple-only OneOf', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'OneOfSimple',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -112,11 +114,13 @@ void main() {
 
     test('generates toDeepObject for complex OneOf', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'OneOfComplex',
         models: {
           (
             discriminatorValue: 'model1',
             model: ClassModel(
+              isDeprecated: false,
               name: 'Model1',
               properties: [
                 Property(
@@ -135,6 +139,7 @@ void main() {
           (
             discriminatorValue: 'model2',
             model: ClassModel(
+              isDeprecated: false,
               name: 'Model2',
               properties: [
                 Property(
@@ -186,6 +191,7 @@ void main() {
 
     test('toDeepObject passes allowLists=false to parameterProperties', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'OneOfWithAllowLists',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -226,6 +232,7 @@ void main() {
 
     test('toDeepObject passes alreadyEncoded=true', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'OneOfEncoded',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -265,11 +272,13 @@ void main() {
 
     test('toDeepObject handles discriminator', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'OneOfWithDiscriminator',
         models: {
           (
             discriminatorValue: 'model1',
             model: ClassModel(
+              isDeprecated: false,
               name: 'Model1',
               properties: [
                 Property(
@@ -288,6 +297,7 @@ void main() {
           (
             discriminatorValue: 'model2',
             model: ClassModel(
+              isDeprecated: false,
               name: 'Model2',
               properties: [
                 Property(

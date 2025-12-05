@@ -105,6 +105,7 @@ void main() {
         rawName: 'status',
         description: 'Status parameter',
         model: EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'Status',
           values: const {'active', 'inactive', 'pending'},
@@ -206,6 +207,7 @@ void main() {
         rawName: 'filter',
         description: 'Filter parameter',
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'Filter',
           description: null,

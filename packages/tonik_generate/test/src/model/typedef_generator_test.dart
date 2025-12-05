@@ -61,6 +61,7 @@ void main() {
 
     test('generates typedef for named models', () {
       final userModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: const [],
         context: context,
@@ -255,6 +256,7 @@ void main() {
           properties: const [],
           context: context,
           description: null,
+          isDeprecated: false,
         );
 
         final model = ListModel(

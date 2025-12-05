@@ -26,6 +26,7 @@ void main() {
 
     test('generates toDeepObject method with correct signature', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfPrimitive',
         models: {
           StringModel(context: context),
@@ -61,6 +62,7 @@ void main() {
 
     test('generates toDeepObject for simple-only AllOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfSimple',
         models: {
           StringModel(context: context),
@@ -87,9 +89,11 @@ void main() {
 
     test('generates toDeepObject for complex AllOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfComplex',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Model1',
             properties: [
               Property(
@@ -105,6 +109,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Model2',
             properties: [
               Property(
@@ -141,6 +146,7 @@ void main() {
 
     test('generates toDeepObject for empty AllOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfEmpty',
         models: const {},
         context: context,
@@ -164,6 +170,7 @@ void main() {
 
     test('toDeepObject passes allowLists=false to parameterProperties', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfWithAllowLists',
         models: {
           StringModel(context: context),
@@ -190,6 +197,7 @@ void main() {
 
     test('toDeepObject passes alreadyEncoded=true', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfEncoded',
         models: {
           StringModel(context: context),

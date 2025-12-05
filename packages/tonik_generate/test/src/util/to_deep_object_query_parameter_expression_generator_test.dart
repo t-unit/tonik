@@ -44,6 +44,7 @@ void main() {
         name: 'user',
         rawName: 'user',
         model: ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: context,
@@ -72,6 +73,7 @@ void main() {
         name: 'user',
         rawName: 'user',
         model: ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: context,
@@ -100,6 +102,7 @@ void main() {
         name: 'user',
         rawName: 'user',
         model: ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: context,
@@ -128,6 +131,7 @@ void main() {
         name: 'combined',
         rawName: 'combined',
         model: AllOfModel(
+          isDeprecated: false,
           name: 'Combined',
           models: const {},
           context: context,
@@ -157,6 +161,7 @@ void main() {
         name: 'variant',
         rawName: 'variant',
         model: OneOfModel(
+          isDeprecated: false,
           name: 'Variant',
           models: const {},
           discriminator: null,
@@ -187,6 +192,7 @@ void main() {
         name: 'flexible',
         rawName: 'flexible',
         model: AnyOfModel(
+          isDeprecated: false,
           name: 'Flexible',
           models: const {},
           discriminator: null,
@@ -219,6 +225,7 @@ void main() {
         model: AliasModel(
           name: 'UserAlias',
           model: ClassModel(
+            isDeprecated: false,
             name: 'User',
             properties: const [],
             context: context,
@@ -305,6 +312,7 @@ void main() {
         name: 'status',
         rawName: 'status',
         model: EnumModel(
+          isDeprecated: false,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: false,
@@ -337,6 +345,7 @@ void main() {
         name: 'userData',
         rawName: 'user-data',
         model: ClassModel(
+          isDeprecated: false,
           name: 'UserData',
           properties: const [],
           context: context,

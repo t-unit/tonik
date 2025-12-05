@@ -32,6 +32,7 @@ void main() {
   group('toSimple', () {
     test('toSimple delegates to active variant value', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Result',
         models: {
           (
@@ -71,6 +72,7 @@ void main() {
       'primitive',
       () {
         final userModel = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: [
             Property(
@@ -87,6 +89,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Response',
           models: {
             (
@@ -134,6 +137,7 @@ void main() {
       'discriminator is present',
       () {
         final person = ClassModel(
+          isDeprecated: false,
           name: 'Person',
           properties: [
             Property(
@@ -150,6 +154,7 @@ void main() {
         );
 
         final company = ClassModel(
+          isDeprecated: false,
           name: 'Company',
           properties: [
             Property(
@@ -166,6 +171,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Entity',
           models: {
             (discriminatorValue: 'person', model: person),
@@ -210,6 +216,7 @@ void main() {
       'primitive (mixed)',
       () {
         final person = ClassModel(
+          isDeprecated: false,
           name: 'Person',
           properties: [
             Property(
@@ -234,6 +241,7 @@ void main() {
           discriminator: 'type',
           context: context,
           description: null,
+          isDeprecated: false,
         );
 
         final classes = generator.generateClasses(model);
@@ -262,6 +270,7 @@ void main() {
   group('fromSimple', () {
     test('fromSimple tries complex variants using fromSimple with explode', () {
       final person = ClassModel(
+        isDeprecated: false,
         name: 'Person',
         properties: [
           Property(
@@ -278,6 +287,7 @@ void main() {
       );
 
       final company = ClassModel(
+        isDeprecated: false,
         name: 'Company',
         properties: [
           Property(
@@ -294,6 +304,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Entity',
         models: {
           (discriminatorValue: 'person', model: person),
@@ -327,7 +338,7 @@ void main() {
 
     test('fromSimple tries variants in declaration order (primitive-only)', () {
       final model = OneOfModel(
-        name: 'Result',
+        isDeprecated: false,
         models: {
           (
             discriminatorValue: 'error',
@@ -341,6 +352,7 @@ void main() {
         discriminator: null,
         context: context,
         description: null,
+        name: '',
       );
 
       final classes = generator.generateClasses(model);
@@ -368,6 +380,7 @@ void main() {
       'fromSimple with discriminator checks discriminator when explode is true',
       () {
         final person = ClassModel(
+          isDeprecated: false,
           name: 'Person',
           properties: [
             Property(
@@ -384,6 +397,7 @@ void main() {
         );
 
         final company = ClassModel(
+          isDeprecated: false,
           name: 'Company',
           properties: [
             Property(
@@ -400,6 +414,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Entity',
           models: {
             (discriminatorValue: 'person', model: person),
@@ -456,6 +471,7 @@ void main() {
       'fromSimple with discriminator but mixed primitive and complex variants',
       () {
         final person = ClassModel(
+          isDeprecated: false,
           name: 'Person',
           properties: [
             Property(
@@ -472,6 +488,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'MixedEntity',
           models: {
             (discriminatorValue: 'person', model: person),
@@ -525,6 +542,7 @@ void main() {
       'fromSimple without discriminator uses only try-catch approach',
       () {
         final person = ClassModel(
+          isDeprecated: false,
           name: 'Person',
           properties: [
             Property(
@@ -541,6 +559,7 @@ void main() {
         );
 
         final company = ClassModel(
+          isDeprecated: false,
           name: 'Company',
           properties: [
             Property(
@@ -557,6 +576,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'EntityNoDisc',
           models: {
             (discriminatorValue: null, model: person),

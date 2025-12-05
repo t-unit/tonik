@@ -31,6 +31,7 @@ void main() {
   group('AllOfGenerator toLabel generation', () {
     test('generates toLabel for complex-only AllOf', () {
       final class1 = ClassModel(
+        isDeprecated: false,
         name: 'Class1',
         properties: [
           Property(
@@ -47,6 +48,7 @@ void main() {
       );
 
       final class2 = ClassModel(
+        isDeprecated: false,
         name: 'Class2',
         properties: [
           Property(
@@ -63,6 +65,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfComplex',
         models: {class1, class2},
         context: context,
@@ -97,6 +100,7 @@ void main() {
 
     test('generates toLabel for primitive-only AllOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfPrimitive',
         models: {
           StringModel(context: context),
@@ -121,12 +125,14 @@ void main() {
 
     test('generates toLabel with runtime validation for dynamic models', () {
       final anyOfModel = AnyOfModel(
+        isDeprecated: false,
         name: 'AnyOfModel',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (
             discriminatorValue: 'complex',
             model: ClassModel(
+              isDeprecated: false,
               name: 'ComplexData',
               properties: [
                 Property(
@@ -149,6 +155,7 @@ void main() {
       );
 
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'ClassModel',
         properties: [
           Property(
@@ -165,6 +172,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfWithDynamic',
         models: {anyOfModel, classModel},
         context: context,
@@ -191,11 +199,13 @@ void main() {
 
     test('generates toLabel that throws for cannotBeSimplyEncoded', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'ClassModel',
         properties: [
           Property(
             name: 'nested',
             model: ClassModel(
+              isDeprecated: false,
               name: 'NestedClass',
               properties: [
                 Property(
@@ -221,6 +231,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfComplex',
         models: {classModel},
         context: context,

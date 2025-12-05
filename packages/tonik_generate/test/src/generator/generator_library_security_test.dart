@@ -22,6 +22,7 @@ void main() {
     test('includes security schemes information in library documentation', () {
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,
@@ -106,6 +107,7 @@ void main() {
     test('includes OAuth2 security scheme information', () {
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,
@@ -190,6 +192,7 @@ void main() {
     test('handles empty security schemes', () {
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,
@@ -252,6 +255,7 @@ void main() {
     test('omits description when none provided', () {
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,

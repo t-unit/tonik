@@ -32,6 +32,7 @@ void main() {
   group('ClassGenerator copyWith generation', () {
     test('generates copyWith method for simple properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -70,6 +71,7 @@ void main() {
 
     test('generates copyWith method with nullable properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -108,6 +110,7 @@ void main() {
 
     test('generates copyWith method with optional non-nullable properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -146,6 +149,7 @@ void main() {
 
     test('generates copyWith method with complex types', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Address',
         properties: [
@@ -162,6 +166,7 @@ void main() {
       );
 
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -212,6 +217,7 @@ void main() {
 
     test('generates copyWith method with list types', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -272,6 +278,7 @@ void main() {
 
     test('generates copyWith method with normalized property names', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [

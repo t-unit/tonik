@@ -32,6 +32,7 @@ void main() {
   group('parameterProperties method', () {
     test('generates parameterProperties method signature', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -90,6 +91,7 @@ void main() {
       'generates parameterProperties method body for simple properties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -141,6 +143,7 @@ Map<String, String> parameterProperties({
 
     test('generates parameterProperties method body for empty model', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Empty',
         properties: const [],
@@ -167,6 +170,7 @@ Map<String, String> parameterProperties({
 
     test('handles allowEmpty parameter for nullable properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Container',
         properties: [
@@ -228,6 +232,7 @@ Map<String, String> parameterProperties({
       'complex properties',
       () {
         final nestedClass = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Address',
           properties: const [],
@@ -235,6 +240,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -276,6 +282,7 @@ Map<String, String> parameterProperties({
       'encodes oneOf property based on runtime encoding shape',
       () {
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrClass',
           models: {
@@ -283,6 +290,7 @@ Map<String, String> parameterProperties({
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'NestedClass',
                 properties: [
@@ -304,6 +312,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Container',
           properties: [
@@ -350,6 +359,7 @@ Map<String, String> parameterProperties({
       'encodes anyOf property based on runtime encoding shape',
       () {
         final anyOfModel = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrInt',
           models: {
@@ -357,6 +367,7 @@ Map<String, String> parameterProperties({
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'ComplexData',
                 properties: [
@@ -378,6 +389,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'FlexibleContainer',
           properties: [
@@ -425,6 +437,7 @@ Map<String, String> parameterProperties({
       () {
         final stringModel = StringModel(context: context);
         final complexModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexData',
           properties: [
@@ -441,6 +454,7 @@ Map<String, String> parameterProperties({
         );
 
         final allOfModel = AllOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringAndInt',
           models: {stringModel, complexModel},
@@ -448,6 +462,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'CombinedContainer',
           properties: [
@@ -497,6 +512,7 @@ Map<String, String> parameterProperties({
       'preserves optimized path for class with only static simple properties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'SimpleContainer',
           properties: [
@@ -548,6 +564,7 @@ Map<String, String> parameterProperties({
 
     test('rejects class with truly complex properties at compile time', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'ComplexContainer',
         properties: [
@@ -555,6 +572,7 @@ Map<String, String> parameterProperties({
             description: null,
             name: 'nested',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Nested',
               properties: [
@@ -600,6 +618,7 @@ Map<String, String> parameterProperties({
       'encodes optional oneOf property based on runtime encoding shape',
       () {
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrClass',
           models: {
@@ -607,6 +626,7 @@ Map<String, String> parameterProperties({
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'NestedClass',
                 properties: [
@@ -628,6 +648,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Container',
           properties: [
@@ -679,6 +700,7 @@ Map<String, String> parameterProperties({
       'handles class with multiple properties (mixed optimized/runtime checks)',
       () {
         final oneOfModel1 = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrInt1',
           models: {
@@ -686,6 +708,7 @@ Map<String, String> parameterProperties({
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'ComplexData1',
                 properties: [
                   Property(
@@ -707,12 +730,14 @@ Map<String, String> parameterProperties({
         );
 
         final oneOfModel2 = OneOfModel(
+          isDeprecated: false,
           name: 'StringOrInt2',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'ComplexData2',
                 properties: [
                   Property(
@@ -735,12 +760,14 @@ Map<String, String> parameterProperties({
         );
 
         final anyOfModel = AnyOfModel(
+          isDeprecated: false,
           name: 'FlexibleData',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'FlexibleComplex',
                 properties: [
                   Property(
@@ -763,6 +790,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           name: 'MixedContainer',
           properties: [
             // Always simple properties (optimized path)
@@ -880,6 +908,7 @@ Map<String, String> parameterProperties({
       'generates parameterProperties for class with list of simple types',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ListContainer',
           properties: [
@@ -937,6 +966,7 @@ Map<String, String> parameterProperties({
       'simple types',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'MultiListContainer',
           properties: [
@@ -1016,6 +1046,7 @@ Map<String, String> parameterProperties({
       'simple types',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'RequiredListContainer',
           properties: [
@@ -1069,6 +1100,7 @@ Map<String, String> parameterProperties({
       'and lists',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'MixedContainer',
           properties: [
             Property(
@@ -1134,6 +1166,7 @@ Map<String, String> parameterProperties({
       'throws exception for class with list of complex types',
       () {
         final complexModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexItem',
           properties: [
@@ -1150,6 +1183,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexListContainer',
           properties: [
@@ -1198,6 +1232,7 @@ Map<String, String> parameterProperties({
       'generates parameterProperties for class with list of enums',
       () {
         final enumModel = EnumModel<String>(
+          isDeprecated: false,
           description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
@@ -1206,6 +1241,7 @@ Map<String, String> parameterProperties({
         );
 
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'EnumListContainer',
           properties: [
@@ -1266,6 +1302,7 @@ Map<String, String> parameterProperties({
       'and list present',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Filter',
           properties: [
@@ -1313,6 +1350,7 @@ Map<String, String> parameterProperties({
       'and nullable list present',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Filter',
           properties: [
@@ -1363,6 +1401,7 @@ Map<String, String> parameterProperties({
       'generates parameterProperties with allowLists for mixed properties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Filter',
           properties: [
@@ -1422,6 +1461,7 @@ Map<String, String> parameterProperties({
       'generates parameterProperties without list check when no lists present',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [

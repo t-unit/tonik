@@ -32,6 +32,7 @@ void main() {
   group('Method signatures', () {
     test('fromForm constructor has correct signature', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Test',
         models: {
@@ -68,6 +69,7 @@ void main() {
 
     test('toForm method has correct signature', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Test',
         models: {
@@ -96,6 +98,7 @@ void main() {
 
     test('currentEncodingShape getter has correct signature', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Test',
         models: {
@@ -121,6 +124,7 @@ void main() {
   group('currentEncodingShape getter generation', () {
     test('primitive-only anyOf returns dynamic shape', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Flexible',
         models: {
@@ -159,12 +163,14 @@ void main() {
 
     test('complex-only anyOf returns dynamic shape', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: const [],
         context: context,
       );
       final classB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'B',
         properties: const [],
@@ -172,6 +178,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Combined',
         models: {
@@ -210,6 +217,7 @@ void main() {
 
     test('mixed primitive and complex anyOf returns dynamic shape', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Data',
         properties: [
@@ -226,6 +234,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Flexible',
         models: {
@@ -266,6 +275,7 @@ void main() {
   group('fromForm constructor generation', () {
     test('primitive-only anyOf tries all variants independently', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Flexible',
         models: {
@@ -312,6 +322,7 @@ void main() {
 
     test('complex-only anyOf tries all variants', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: [
@@ -328,6 +339,7 @@ void main() {
       );
 
       final classB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'B',
         properties: [
@@ -344,6 +356,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Choice',
         models: {
@@ -390,6 +403,7 @@ void main() {
 
     test('mixed primitive and complex tries all', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -406,6 +420,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'SearchKey',
         models: {
@@ -454,6 +469,7 @@ void main() {
       'anyOf with complex lists and simple type tries decodable variants',
       () {
         final classA = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ClassA',
           properties: [
@@ -470,6 +486,7 @@ void main() {
         );
 
         final classB = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ClassB',
           properties: [
@@ -496,6 +513,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedAnyOf',
           models: {
@@ -539,6 +557,7 @@ void main() {
   group('toForm method generation', () {
     test('primitive-only anyOf encodes each field to form', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Simple',
         models: {
@@ -584,6 +603,7 @@ void main() {
 
     test('complex-only anyOf merges parameterProperties', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: [
@@ -600,6 +620,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Wrapper',
         models: {
@@ -637,6 +658,7 @@ void main() {
 
     test('multiple complex fields merge with discriminator', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: [
@@ -653,6 +675,7 @@ void main() {
       );
 
       final classB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'B',
         properties: [
@@ -669,6 +692,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Combined',
         models: {
@@ -719,6 +743,7 @@ void main() {
 
     test('mixed primitive and complex checks for ambiguity', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Data',
         properties: [
@@ -735,6 +760,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Mixed',
         models: {
@@ -804,6 +830,7 @@ void main() {
   group('Edge cases', () {
     test('nested anyOf properly delegates to inner fromForm', () {
       final innerAnyOf = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Inner',
         models: {
@@ -815,6 +842,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Outer',
         models: {
@@ -864,6 +892,7 @@ void main() {
     group('toForm method', () {
       test('uses runtime check for nested oneOf with dynamic shape', () {
         final innerOneOf = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerChoice',
           models: {
@@ -874,6 +903,7 @@ void main() {
             (
               discriminatorValue: 'obj',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Inner',
                 properties: [
@@ -895,6 +925,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'TestAnyOf',
           models: {
@@ -973,6 +1004,7 @@ void main() {
 
       test('uses runtime check for nested anyOf', () {
         final innerAnyOf = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerAnyOf',
           models: {
@@ -980,6 +1012,7 @@ void main() {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Inner',
                 properties: [
@@ -1001,6 +1034,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'TestAnyOf',
           models: {
@@ -1044,6 +1078,7 @@ void main() {
 
       test('uses direct calls for static types without runtime checks', () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'TestAnyOf',
           models: {
@@ -1052,6 +1087,7 @@ void main() {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'MyClass',
                 properties: [
@@ -1129,6 +1165,7 @@ void main() {
 
       test('handles mixed shape with exception in switch', () {
         final innerOneOf = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerChoice',
           models: {
@@ -1136,6 +1173,7 @@ void main() {
             (
               discriminatorValue: 'b',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'ComplexData',
                 properties: [
@@ -1157,6 +1195,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           name: 'TestAnyOf',
           models: {
             (discriminatorValue: null, model: innerOneOf),
@@ -1186,12 +1225,14 @@ void main() {
     group('toSimple method', () {
       test('uses runtime check for nested oneOf', () {
         final innerOneOf = OneOfModel(
+          isDeprecated: false,
           name: 'InnerChoice',
           models: {
             (discriminatorValue: 'str', model: StringModel(context: context)),
             (
               discriminatorValue: 'obj',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Inner',
                 properties: [
                   Property(
@@ -1214,6 +1255,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           name: 'TestAnyOf',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -1257,6 +1299,7 @@ void main() {
 
       test('uses direct calls for static types', () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'TestAnyOf',
           models: {
@@ -1295,12 +1338,14 @@ void main() {
 
     test('skips runtime check for static complex types', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {
           (
             discriminatorValue: null,
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'MyClass',
               properties: [

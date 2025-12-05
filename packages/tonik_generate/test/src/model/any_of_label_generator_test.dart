@@ -31,6 +31,7 @@ void main() {
   group('AnyOfGenerator toLabel generation', () {
     test('generates toLabel for primitive-only AnyOf', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfPrimitive',
         models: {
@@ -81,6 +82,7 @@ void main() {
 
     test('generates toLabel for complex-only AnyOf', () {
       final class1 = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Class1',
         properties: [
@@ -97,6 +99,7 @@ void main() {
       );
 
       final class2 = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Class2',
         properties: [
@@ -113,6 +116,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfComplex',
         models: {
@@ -163,6 +167,7 @@ void main() {
 
     test('generates toLabel that detects mixed encoding ambiguity', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfMixed',
         models: {
@@ -170,6 +175,7 @@ void main() {
           (
             discriminatorValue: 'data',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Data',
               properties: [
@@ -248,6 +254,7 @@ void main() {
 
     test('generates toLabel for empty AnyOf', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfEmpty',
         models: const {},
@@ -272,6 +279,7 @@ void main() {
 
     test('toLabel uses runtime check for nested oneOf', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'InnerChoice',
         models: {
@@ -279,6 +287,7 @@ void main() {
           (
             discriminatorValue: 'obj',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Inner',
               properties: [
@@ -300,6 +309,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {

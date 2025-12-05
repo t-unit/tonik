@@ -151,6 +151,7 @@ void main() {
     test('generates for enum types with explode false', () {
       final value = refer('value');
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         name: 'UserRole',
         values: const {'admin', 'user'},
@@ -186,6 +187,7 @@ void main() {
     test('generates for enum types with explode true', () {
       final value = refer('value');
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         name: 'UserRole',
         values: const {'admin', 'user'},
@@ -221,6 +223,7 @@ void main() {
     test('generates for class types with explode false', () {
       final value = refer('value');
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         name: 'User',
         properties: const [],
@@ -255,6 +258,7 @@ void main() {
     test('generates for class types with explode true', () {
       final value = refer('value');
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         name: 'User',
         properties: const [],
@@ -436,6 +440,7 @@ void main() {
       test('generates for scoped enum types with explode false', () {
         final value = refer('value');
         final enumModel = EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'UserRole',
           values: const {'admin', 'user'},
@@ -459,6 +464,7 @@ void main() {
       test('generates for scoped class types with explode false', () {
         final value = refer('value');
         final classModel = ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'User',
           properties: const [],
@@ -481,6 +487,7 @@ void main() {
       test('generates for scoped list of enums with explode false', () {
         final value = refer('value');
         final enumModel = EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'UserRole',
           values: const {'admin', 'user'},
@@ -509,6 +516,7 @@ void main() {
       test('generates for scoped list of enums with explode true', () {
         final value = refer('value');
         final enumModel = EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'UserRole',
           values: const {'admin', 'user'},

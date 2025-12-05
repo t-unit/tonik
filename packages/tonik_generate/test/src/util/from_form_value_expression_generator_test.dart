@@ -467,6 +467,7 @@ void main() {
         final expression = buildFromFormValueExpression(
           refer("values['nested']"),
           model: ClassModel(
+            isDeprecated: false,
             name: 'NestedClass',
             properties: const [],
             context: context,

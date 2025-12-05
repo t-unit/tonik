@@ -32,6 +32,7 @@ void main() {
   group('toLabel', () {
     test('generates toLabel for primitive-only variants', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'PrimitiveChoice',
         models: {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
@@ -75,6 +76,7 @@ void main() {
 
     test('generates toLabel for class variants with discriminator', () {
       final classA = ClassModel(
+        isDeprecated: false,
         name: 'A',
         properties: [
           Property(
@@ -91,6 +93,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Choice',
         models: {
           (discriminatorValue: 'a', model: classA),
@@ -138,6 +141,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'MixedChoice',
         models: {
           (discriminatorValue: 'm', model: classM),
@@ -171,12 +175,14 @@ void main() {
 
     test('toLabel handles mixed-encoded variant without discriminator', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
             model: ClassModel(
+              isDeprecated: false,
               name: 'Data',
               properties: [
                 Property(
@@ -227,12 +233,14 @@ void main() {
 
     test('toLabel handles mixed-encoded variant with discriminator', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
             model: ClassModel(
+              isDeprecated: false,
               name: 'Data',
               properties: [
                 Property(
@@ -255,6 +263,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Outer',
         models: {
           (discriminatorValue: 'inner', model: innerOneOf),
@@ -294,12 +303,14 @@ void main() {
       'toLabel handles multiple mixed-encoded variants with discriminator',
       () {
         final innerOneOfA = OneOfModel(
+          isDeprecated: false,
           name: 'InnerA',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'DataA',
                 properties: [
                   Property(
@@ -322,12 +333,14 @@ void main() {
         );
 
         final innerOneOfB = OneOfModel(
+          isDeprecated: false,
           name: 'InnerB',
           models: {
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'DataB',
                 properties: [
                   Property(
@@ -350,6 +363,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Outer',
           models: {
             (discriminatorValue: 'a', model: innerOneOfA),

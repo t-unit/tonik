@@ -32,6 +32,7 @@ void main() {
   group('parameterProperties', () {
     test('method exists with correct signature for allOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Combined',
         models: {
@@ -60,6 +61,7 @@ void main() {
 
     test('throws error for allOf containing only primitive types', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Combined',
         models: {
@@ -90,10 +92,12 @@ Map<String, String> parameterProperties({
 
     test('encodes allOf with only complex types by merging properties', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'ComplexOnly',
         models: {
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Base',
             properties: const [],
@@ -127,11 +131,13 @@ Map<String, String> parameterProperties({
 
     test('throws error for allOf with simple and complex types mixed', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Mixed',
         models: {
           StringModel(context: context),
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Base',
             properties: const [],
@@ -163,16 +169,19 @@ Map<String, String> parameterProperties({
 
     test('merges properties for allOf with multiple complex models', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'CombinedModels',
         models: {
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'FirstModel',
             properties: const [],
             context: context,
           ),
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'SecondModel',
             properties: const [],
@@ -217,6 +226,7 @@ Map<String, String> parameterProperties({
       'runtime check for allOf with complex class and mixed encoding anyOf',
       () {
         final anyOfModel = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrComplex',
           models: {
@@ -224,6 +234,7 @@ Map<String, String> parameterProperties({
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'ComplexData',
                 properties: [
@@ -245,10 +256,12 @@ Map<String, String> parameterProperties({
         );
 
         final model = AllOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedEncodingAllOf',
           models: {
             ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'SimpleModel',
               properties: [
@@ -302,6 +315,7 @@ Map<String, String> parameterProperties({
 
     test('returns empty map for empty allOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Empty',
         models: const {},

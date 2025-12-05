@@ -475,6 +475,7 @@ void main() {
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
                   model: ClassModel(
+                    isDeprecated: false,
                     name: 'CreateUserRequestBody',
                     properties: [
                       Property(

@@ -31,6 +31,7 @@ void main() {
 
     test('generates class with correct name', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: const [],
@@ -43,6 +44,7 @@ void main() {
 
     test('generates class with immutable annotation', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: const [],
@@ -60,6 +62,7 @@ void main() {
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: 'A user in the system',
           name: 'User',
           properties: const [],
@@ -73,6 +76,7 @@ void main() {
 
       test('generates class with multiline doc comment', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: 'A user in the system.\nContains user details.',
           name: 'User',
           properties: const [],
@@ -89,6 +93,7 @@ void main() {
 
       test('generates class without doc comment when description is null', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: const [],
@@ -102,6 +107,7 @@ void main() {
 
       test('generates class without doc comment when description is empty', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: '',
           name: 'User',
           properties: const [],
@@ -115,6 +121,7 @@ void main() {
 
       test('generates field with doc comment from property description', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -138,6 +145,7 @@ void main() {
 
       test('generates field with multiline doc comment', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -164,6 +172,7 @@ void main() {
 
       test('generates field without doc comment when description is null', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -189,6 +198,7 @@ void main() {
         'generates field with both doc comment and deprecated annotation',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'User',
             properties: [
@@ -215,6 +225,7 @@ void main() {
 
     test('generates currentEncodingShape getter for class with properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -249,6 +260,7 @@ void main() {
 
     test('generates currentEncodingShape getter for empty class', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Empty',
         properties: const [],
@@ -274,6 +286,7 @@ void main() {
 
     test('generates currentEncodingShape getter for complex class', () {
       final nestedClass = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Address',
         properties: const [],
@@ -281,6 +294,7 @@ void main() {
       );
 
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -315,6 +329,7 @@ void main() {
 
     test('generates constructor with required and optional parameters', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -361,6 +376,7 @@ void main() {
       'generates constructor with required fields before non-required fields',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -438,6 +454,7 @@ void main() {
 
     test('generates filename in snake_case', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'UserProfile',
         properties: const [],
@@ -451,6 +468,7 @@ void main() {
     group('property generation', () {
       test('generates required non-nullable int property', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: [
             Property(
@@ -476,6 +494,7 @@ void main() {
 
       test('generates optional nullable string property', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: [
             Property(
@@ -501,6 +520,7 @@ void main() {
 
       test('generates decimal property', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: [
             Property(
@@ -526,6 +546,7 @@ void main() {
 
       test('generates list of strings property', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -554,6 +575,7 @@ void main() {
 
       test('generates nested class property', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -561,6 +583,7 @@ void main() {
               description: null,
               name: 'address',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Address',
                 properties: const [],
@@ -584,6 +607,7 @@ void main() {
 
       test('generates deprecated property', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -613,6 +637,7 @@ void main() {
 
       test('generates optional non-nullable property', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -638,6 +663,7 @@ void main() {
 
       test('generates required nullable property', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -664,6 +690,7 @@ void main() {
 
     test('generates field with Uri type for UriModel property', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Resource',
         properties: [
@@ -693,6 +720,7 @@ void main() {
 
     test('generates nullable Uri field for nullable UriModel property', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Resource',
         properties: [
@@ -721,6 +749,7 @@ void main() {
 
     test('generates constructor parameter for Uri property', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Resource',
         properties: [
@@ -763,6 +792,7 @@ void main() {
     group('form encoding', () {
       test('generates fromForm constructor for simple properties', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'SimpleModel',
           properties: [
@@ -812,6 +842,7 @@ void main() {
         'simple content',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'ModelWithSimpleList',
             properties: [
@@ -863,6 +894,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
         'complex content',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             name: 'ModelWithComplexList',
             properties: [
               Property(
@@ -870,6 +902,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
                 name: 'items',
                 model: ListModel(
                   content: ClassModel(
+                    isDeprecated: false,
                     properties: const [],
                     context: context,
                     description: null,
@@ -911,6 +944,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
         () {
           final model = ClassModel(
             description: null,
+            isDeprecated: false,
             name: 'ModelWithSimpleListRoundtrip',
             properties: [
               Property(
@@ -993,6 +1027,7 @@ Map<String, String> parameterProperties({
 
       test('generates fromForm constructor for empty model', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'EmptyModel',
           properties: const [],
@@ -1015,6 +1050,7 @@ Map<String, String> parameterProperties({
 
       test('generates toForm method for simple properties', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'SimpleModel',
           properties: [
@@ -1056,6 +1092,7 @@ Map<String, String> parameterProperties({
 
       test('generates toForm method for complex properties', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexModel',
           properties: [
@@ -1090,6 +1127,7 @@ Map<String, String> parameterProperties({
 
       test('generates toForm method for empty model', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'EmptyModel',
           properties: const [],
@@ -1114,6 +1152,7 @@ Map<String, String> parameterProperties({
         'generates fromForm constructor with mixed property types',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'UserForm',
             properties: [
@@ -1184,6 +1223,7 @@ Map<String, String> parameterProperties({
         'generates toForm method with mixed property types',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'UserForm',
             properties: [
@@ -1232,6 +1272,7 @@ Map<String, String> parameterProperties({
 
       test('generates fromForm constructor with all primitive types', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'AllTypesForm',
           properties: [
@@ -1326,6 +1367,7 @@ Map<String, String> parameterProperties({
         'generates fromForm constructor with required nullable properties',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'NullableForm',
             properties: [
@@ -1373,6 +1415,7 @@ Map<String, String> parameterProperties({
     group('toMatrix method', () {
       test('generates toMatrix method for simple properties', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'SimpleModel',
           properties: [
@@ -1445,6 +1488,7 @@ Map<String, String> parameterProperties({
 
       test('generates toMatrix method for complex properties', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexModel',
           properties: [
@@ -1460,6 +1504,7 @@ Map<String, String> parameterProperties({
               description: null,
               name: 'complexProp',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'NestedModel',
                 properties: [
@@ -1510,6 +1555,7 @@ Map<String, String> parameterProperties({
 
       test('generates toMatrix method for empty model', () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'EmptyModel',
           properties: const [],
@@ -1545,6 +1591,7 @@ Map<String, String> parameterProperties({
         'property model',
         () {
           final model = ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'TestModel',
             properties: [

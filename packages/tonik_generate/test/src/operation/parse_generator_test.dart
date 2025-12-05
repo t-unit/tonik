@@ -90,6 +90,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for enum response', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         values: const {'A', 'B', 'C'},
         isNullable: false,
@@ -146,6 +147,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for class response', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -264,6 +266,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for list of classes', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -332,11 +335,13 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for oneOf/allOf polymorphic response', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         name: 'Pet',
         models: {
           (
             discriminatorValue: 'cat',
             model: ClassModel(
+              isDeprecated: false,
               name: 'Cat',
               properties: const [],
               context: context,
@@ -346,6 +351,7 @@ String _parseResponse(Response<Object?> response) {
           (
             discriminatorValue: 'dog',
             model: ClassModel(
+              isDeprecated: false,
               name: 'Dog',
               properties: const [],
               context: context,
@@ -508,6 +514,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for multiple response status codes', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -582,6 +589,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for response with headers', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -679,6 +687,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('combines headers, default, range, and explicit cases', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -694,6 +703,7 @@ String _parseResponse(Response<Object?> response) {
         description: null,
       );
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         values: const {'A', 'B', 'C'},
         isNullable: false,
@@ -790,6 +800,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for response with alias', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -887,6 +898,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for response with header alias', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: const [],
         context: context,
@@ -973,6 +985,7 @@ String _parseResponse(Response<Object?> response) {
 
     test('generates for response with header named body', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: const [],
         context: context,

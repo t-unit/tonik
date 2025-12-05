@@ -31,6 +31,7 @@ void main() {
   group('AllOfGenerator toMatrix generation', () {
     test('generates toMatrix method with correct signature', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfPrimitive',
         models: {
           StringModel(context: context),
@@ -63,6 +64,7 @@ void main() {
 
     test('generates toMatrix for complex-only AllOf', () {
       final class1 = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Class1',
         properties: [
@@ -79,6 +81,7 @@ void main() {
       );
 
       final class2 = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Class2',
         properties: [
@@ -95,6 +98,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfComplex',
         models: {class1, class2},
@@ -130,6 +134,7 @@ void main() {
 
     test('generates toMatrix for primitive-only AllOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfPrimitive',
         models: {
@@ -178,6 +183,7 @@ void main() {
 
     test('generates toMatrix with runtime validation for dynamic models', () {
       final anyOfModel = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfModel',
         models: {
@@ -185,6 +191,7 @@ void main() {
           (
             discriminatorValue: 'complex',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'ComplexData',
               properties: [
@@ -206,6 +213,7 @@ void main() {
       );
 
       final classModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'ClassModel',
         properties: [
@@ -222,6 +230,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfWithDynamic',
         models: {anyOfModel, classModel},
@@ -262,6 +271,7 @@ void main() {
 
     test('generates toMatrix for empty AllOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfEmpty',
         models: const {},
@@ -289,6 +299,7 @@ void main() {
 
     test('generates toMatrix for AllOf with enum', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
@@ -297,6 +308,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfEnum',
         models: {
@@ -345,6 +357,7 @@ void main() {
 
     test('generates toMatrix for AllOf with nested composition types', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'OneOfType',
         models: {
@@ -356,6 +369,7 @@ void main() {
       );
 
       final classModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'ClassModel',
         properties: [
@@ -372,6 +386,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfNested',
         models: {oneOfModel, classModel},
@@ -401,6 +416,7 @@ void main() {
 
     test('generates toMatrix that throws for cannotBeSimplyEncoded', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'ClassModel',
         properties: [
@@ -408,6 +424,7 @@ void main() {
             description: null,
             name: 'nested',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'NestedClass',
               properties: [
@@ -431,6 +448,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfComplex',
         models: {classModel},
@@ -471,6 +489,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          isDeprecated: false,
           description: null,
           name: 'AllOfList',
           models: {listModel},
@@ -514,6 +533,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          isDeprecated: false,
           description: null,
           name: 'AllOfIntList',
           models: {listModel},
@@ -565,6 +585,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          isDeprecated: false,
           description: null,
           name: 'AllOfMultipleLists',
           models: {listStringModel, listIntModel},

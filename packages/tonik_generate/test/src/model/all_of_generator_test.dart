@@ -32,6 +32,7 @@ void main() {
   group('currentEncodingShape', () {
     test('generates simple encoding shape getter for simple allOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           StringModel(context: context),
@@ -59,9 +60,11 @@ void main() {
 
     test('generates complex encoding shape getter for complex allOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: const [],
             context: context,
@@ -92,6 +95,7 @@ void main() {
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = AllOfModel(
+          isDeprecated: false,
           description: 'Combines multiple schemas into one',
           name: 'Combined',
           models: {
@@ -110,6 +114,7 @@ void main() {
 
       test('generates class with multiline doc comment', () {
         final model = AllOfModel(
+          isDeprecated: false,
           description: 'A combined model.\nInherits from multiple schemas.',
           name: 'Combined',
           models: {
@@ -128,6 +133,7 @@ void main() {
 
       test('generates class without doc comment when description is null', () {
         final model = AllOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Combined',
           models: {
@@ -143,6 +149,7 @@ void main() {
 
       test('generates class without doc comment when description is empty', () {
         final model = AllOfModel(
+          isDeprecated: false,
           description: '',
           name: 'Combined',
           models: {
@@ -159,10 +166,12 @@ void main() {
 
     test('generates getter for mixed allOf', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           StringModel(context: context),
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: const [],
             context: context,
@@ -192,6 +201,7 @@ void main() {
 
     test('generates encoding shape getter with full implementation', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           StringModel(context: context),
@@ -216,9 +226,11 @@ void main() {
 
     test('generates getter for complex allOf with full implementation', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -234,6 +246,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -268,10 +281,12 @@ void main() {
 
     test('generates getter for mixed allOf with full implementation', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           StringModel(context: context),
           ClassModel(
+            isDeprecated: false,
             name: 'Data',
             properties: [
               Property(
@@ -306,12 +321,14 @@ void main() {
 
     test('generates getter for allOf with nested oneOf composition', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         name: 'Value',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (
             discriminatorValue: null,
             model: ClassModel(
+              isDeprecated: false,
               name: 'Data',
               properties: const [],
               context: context,
@@ -325,6 +342,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: {
           oneOfModel,
@@ -357,9 +375,11 @@ void main() {
   group('with class models', () {
     test('generates class with references to each model', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -375,6 +395,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -419,9 +440,11 @@ void main() {
 
     test('generates toJson method combining all model properties', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -437,6 +460,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -487,9 +511,11 @@ void main() {
 
     test('generates fromJson method validating all model properties', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -505,6 +531,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -543,9 +570,11 @@ void main() {
 
     test('handles nested models correctly', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -564,11 +593,13 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
                 name: 'metadata',
                 model: ClassModel(
+                  isDeprecated: false,
                   name: 'Metadata',
                   properties: [
                     Property(
@@ -618,9 +649,11 @@ void main() {
 
     test('generates equals and hashCode methods', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: <Model>{
           ClassModel(
+            isDeprecated: false,
             name: 'Base',
             properties: [
               Property(
@@ -639,6 +672,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Mixin',
             properties: [
               Property(
@@ -690,6 +724,7 @@ void main() {
   group('with primitive models', () {
     test('handles string and decimal models with single value', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'StringDecimalModel',
         models: <Model>{
           StringModel(context: context),
@@ -743,9 +778,11 @@ void main() {
 
     test('handles enum and string models with single value', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'EnumStringModel',
         models: {
           EnumModel(
+            isDeprecated: false,
             name: 'Status',
             values: const {'active', 'inactive'},
             isNullable: false,
@@ -827,6 +864,7 @@ void main() {
 
     test('handles date and string models with single value', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'DateStringModel',
         models: <Model>{
           DateModel(context: context),
@@ -882,6 +920,7 @@ void main() {
       'handles number models with single value encoded as most general type',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'NumberModel',
           models: <Model>{
             NumberModel(context: context),
@@ -945,10 +984,12 @@ void main() {
   group('with mixed models', () {
     test('generates class combining primitive and complex models', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'MixedModel',
         models: <Model>{
           StringModel(context: context),
           ClassModel(
+            isDeprecated: false,
             name: 'UserData',
             properties: [
               Property(
@@ -991,6 +1032,7 @@ void main() {
       'generates toJson returning most appropriate value for mixed types',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'MixedModel',
           models: <Model>{
             StringModel(context: context),
@@ -1017,9 +1059,11 @@ void main() {
   group('property normalization', () {
     test('normalizes model names with special characters', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'User-Profile',
             properties: [
               Property(
@@ -1035,6 +1079,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'Account_Info',
             properties: [
               Property(
@@ -1071,9 +1116,11 @@ void main() {
 
     test('handles model name conflicts by making them unique', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           ClassModel(
+            isDeprecated: false,
             name: 'User',
             properties: [
               Property(
@@ -1089,6 +1136,7 @@ void main() {
             description: null,
           ),
           ClassModel(
+            isDeprecated: false,
             name: 'USER',
             properties: [
               Property(
@@ -1124,6 +1172,7 @@ void main() {
 
     test('handles primitive models with normalized type names', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'CombinedModel',
         models: {
           StringModel(context: context),
@@ -1146,6 +1195,7 @@ void main() {
   group('allOf with list models', () {
     test('generates toLabel for allOf with list of DateTime', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfDateTimeList',
         models: {
           ListModel(
@@ -1179,6 +1229,7 @@ void main() {
 
     test('generates toMatrix for allOf with list of DateTime', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfDateTimeList',
         models: {
           ListModel(
@@ -1227,6 +1278,7 @@ void main() {
 
     test('generates toJson for allOf with list of DateTime', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfDateTimeList',
         models: {
           ListModel(
@@ -1266,6 +1318,7 @@ void main() {
 
     test('generates toJson for allOf with two lists', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         name: 'ArrayOneOfModel',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -1277,6 +1330,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfDoubleList',
         models: {
           ListModel(
@@ -1322,6 +1376,7 @@ void main() {
 
     test('generates parameterProperties exception for allOf with list', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfIntList',
         models: {
           ListModel(
@@ -1354,6 +1409,7 @@ void main() {
 
     test('generates exception for allOf with mixed list and class', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'TestClass',
         properties: [
           Property(
@@ -1370,6 +1426,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfMixedListClass',
         models: {
           ListModel(
@@ -1414,6 +1471,7 @@ void main() {
 
     test('generates exception for allOf with mixed list and primitive', () {
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfMixedListPrimitive',
         models: {
           ListModel(
@@ -1458,6 +1516,7 @@ void main() {
 
     test('generates exception for allOf with multiple lists and class', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'TestClass',
         properties: [
           Property(
@@ -1474,6 +1533,7 @@ void main() {
       );
 
       final model = AllOfModel(
+        isDeprecated: false,
         name: 'AllOfMultiListClass',
         models: {
           ListModel(
@@ -1511,6 +1571,7 @@ void main() {
       'complex allOf',
       () {
         final classModel1 = ClassModel(
+          isDeprecated: false,
           name: 'TestClass1',
           properties: [
             Property(
@@ -1527,6 +1588,7 @@ void main() {
         );
 
         final classModel2 = ClassModel(
+          isDeprecated: false,
           name: 'TestClass2',
           properties: [
             Property(
@@ -1543,6 +1605,7 @@ void main() {
         );
 
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'AllOfComplex',
           models: {
             classModel1,
@@ -1588,6 +1651,7 @@ void main() {
       'generates parameterProperties that throws when contains lists',
       () {
         final model = AllOfModel(
+          isDeprecated: false,
           name: 'AllOfWithList',
           models: {
             ListModel(
