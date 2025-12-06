@@ -57,17 +57,17 @@ Packages with other changes:
 #### `tonik_util` - `v0.1.0`
 
  - **REFACTOR**: matrix parameter.
- - **FIX**: various fixes for path parameter encodign.
+ - **FIX**: various fixes for path parameter encoding.
  - **FIX**: toLabel list encoding.
  - **FIX**: form encoding.
  - **FIX**: list handling for allOf toJson.
  - **FIX**: lists in parameters with double encoding.
  - **FIX**: matrix map encoding.
  - **FEAT**: improved deep object query parameter encoding.
- - **FEAT**: imporved matrix encoding for paths.
+ - **FEAT**: improved matrix encoding for paths.
  - **FEAT**: toMatrix for anyOf.
- - **FEAT**: parameter properteis for oneOf.
- - **FEAT**: matrxi encoding extension.
+ - **FEAT**: parameter properties for oneOf.
+ - **FEAT**: matrix encoding extension.
  - **FEAT**: unified parameter encoding.
  - **FEAT**: anyOf and allOf toLabel.
  - **FEAT**: add toLabel for classes.
@@ -206,7 +206,7 @@ Packages with other changes:
 
  - **REFACTOR**: use simple encoding extension for request headers.
  - **REFACTOR**: remove usage of simple encoder for path parameters.
- - **FIX**: add missing simple properteis for one of classes.
+ - **FIX**: add missing simple properties for one of classes.
  - **FIX**: path parameter encoding when only separated by a slash.
  - **FIX**: improved property json handling for one of models.
  - **FEAT**: toSimple for any of classes.
@@ -217,7 +217,7 @@ Packages with other changes:
  - **FEAT**: toSimple for enums.
  - **FEAT**: improved simple en- and decoding for all of models.
  - **FEAT**: fromSimple, toSimple for all of.
- - **FEAT**: property normailization for all of models.
+ - **FEAT**: property normalization for all of models.
  - **FEAT**: Uri property encoding and decoding.
  - **FEAT**: time zone aware encoding of date time objects.
  - **FEAT**: drop api prefix from generated server class.
@@ -277,7 +277,7 @@ Packages with other changes:
 #### `tonik_generate` - `v0.0.6`
 
  - **FIX**: proper handle dates.
- - **FIX**: priority for exlict defined names of schemas.
+ - **FIX**: priority for explicit defined names of schemas.
  - **FIX**: prio for explicitly defined names.
  - **FIX**: proper hash code for classes with >20 properties.
 
@@ -426,7 +426,7 @@ Packages with other changes:
  - **FEAT**: basic api client generation.
  - **FEAT**: complex responses for response wrappers.
  - **FEAT**: resolved content and isRequired for request body.
- - **FEAT**: improved response name genreation.
+ - **FEAT**: improved response name generation.
  - **FEAT**: allow multiple bodies in responses.
  - **FEAT**: improved request and response naming.
  - **FEAT**: support for response aliases.
@@ -440,13 +440,13 @@ Packages with other changes:
  - **REFACTOR**: cleanup code duplication.
  - **REFACTOR**: throw JsonDecodingException instead of ArgumentError.
  - **REFACTOR**: don’t create empty query params method.
- - **REFACTOR**: split tests, reduce code duplicaiton.
+ - **REFACTOR**: split tests, reduce code duplication.
  - **REFACTOR**: extract hash code method generation.
  - **REFACTOR**: extract common equal method generation.
  - **FIX**: broken test assumption.
  - **FIX**: correct class names for multi content types response parsing.
  - **FIX**: handling of aliases in response parsing.
- - **FIX**: gneric type of response added.
+ - **FIX**: generic type of response added.
  - **FIX**: proper handling in fromJson for nullable or non-required fields.
  - **FIX**: allow properties with names conflicting dart class methods.
  - **FIX**: options don’t need body if there is only a single body.
@@ -454,7 +454,7 @@ Packages with other changes:
  - **FIX**: catch any thrown objects.
  - **FIX**: not-scoped typdef for alias request bodies.
  - **FIX**: broken test.
- - **FIX**: missing inline reponses.
+ - **FIX**: missing inline responses.
  - **FIX**: reduce warnings in generated code.
  - **FEAT**: set accept headers.
  - **FEAT**: generate server class.
@@ -469,7 +469,7 @@ Packages with other changes:
  - **FEAT**: improved api client generation.
  - **FEAT**: handle classes with json or map properties names.
  - **FEAT**: provide request data.
- - **FEAT**: supply context when decoring headers.
+ - **FEAT**: supply context when decoding headers.
  - **FEAT**: basic api client generation.
  - **FEAT**: improved name creation for multi-request bodies.
  - **FEAT**: content-type for requests.
@@ -487,7 +487,7 @@ Packages with other changes:
  - **FEAT**: improve verbosity for naming.
  - **FEAT**: response parsing in call method.
  - **FEAT**: response generator for single body responses.
- - **FEAT**: improved response name genreation.
+ - **FEAT**: improved response name generation.
  - **FEAT**: allow multiple bodies in responses.
  - **FEAT**: generate request body sealed classes.
  - **FEAT**: equals and hash code for one of classes.
@@ -503,7 +503,7 @@ Packages with other changes:
  - **FIX**: extra alias request bodies.
  - **FIX**: inline request body missing in global definition.
  - **FIX**: import request bodies into core objects.
- - **FIX**: missing inline reponses.
+ - **FIX**: missing inline responses.
  - **FEAT**: improved json decoding.
  - **FEAT**: improve context naming.
  - **FEAT**: allow multiple bodies in responses.
