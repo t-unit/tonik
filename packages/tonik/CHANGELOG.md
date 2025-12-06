@@ -1,3 +1,5 @@
+## 0.1.0
+
 ## 0.0.9
 
  - **FEAT**: security information parsing and documentation.

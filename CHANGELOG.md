@@ -3,6 +3,98 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-12-06
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.1.0`](#tonik_util---v010)
+ - [`tonik_core` - `v0.1.0`](#tonik_core---v010)
+ - [`tonik_parse` - `v0.1.0`](#tonik_parse---v010)
+ - [`tonik_generate` - `v0.1.0`](#tonik_generate---v010)
+ - [`tonik` - `v0.1.0`](#tonik---v010)
+
+---
+
+#### `tonik_util` - `v0.1.0`
+
+ - **REFACTOR**: matrix parameter.
+ - **FIX**: various fixes for path parameter encodign.
+ - **FIX**: toLabel list encoding.
+ - **FIX**: form encoding.
+ - **FIX**: list handling for allOf toJson.
+ - **FIX**: lists in parameters with double encoding.
+ - **FIX**: matrix map encoding.
+ - **FEAT**: improved deep object query parameter encoding.
+ - **FEAT**: imporved matrix encoding for paths.
+ - **FEAT**: toMatrix for anyOf.
+ - **FEAT**: parameter properteis for oneOf.
+ - **FEAT**: matrxi encoding extension.
+ - **FEAT**: unified parameter encoding.
+ - **FEAT**: anyOf and allOf toLabel.
+ - **FEAT**: add toLabel for classes.
+
+#### `tonik_core` - `v0.1.0`
+
+ - **FIX**: stabilize names by sorting models.
+ - **FEAT**: parse deprecated fields for models.
+ - **FEAT**: improved list handing for matrix encoding.
+
+#### `tonik_parse` - `v0.1.0`
+
+ - **FIX**: proper default parsing for form encoded parameters.
+ - **FIX**: form encoding.
+ - **FEAT**: parse deprecated fields for models.
+
+#### `tonik_generate` - `v0.1.0`
+
+ - **REFACTOR**: cleanup parameter generation.
+ - **REFACTOR**: improve compile time checks for encoding of composite types in any of.
+ - **REFACTOR**: matrix parameter.
+ - **REFACTOR**: unified parameter encoding for classes.
+ - **FIX**: list handling for allOf toJson.
+ - **FIX**: update range checks for status codes.
+ - **FIX**(parse_generator): add null assertion to status in range check.
+ - **FIX**: toLabel list encoding.
+ - **FIX**: form encoding.
+ - **FIX**: various fixes for path parameter encodign.
+ - **FIX**: stabilize names by sorting models.
+ - **FIX**: lists in parameters with double encoding.
+ - **FIX**: improved list handling for parameter encoding.
+ - **FIX**: don’t double encode paths parameters.
+ - **FIX**: check runtime encoding shape in classes.
+ - **FIX**: anyOf currentEncodingShape wrongly reports mixed encoding.
+ - **FIX**: nested oneOf parameter encodign.
+ - **FIX**: simple encoding with invalid models and without bodies.
+ - **FEAT**: allOf toMatrix.
+ - **FEAT**: toMatrix for anyOf.
+ - **FEAT**: improved list handing for matrix encoding.
+ - **FEAT**: parameter properteis for anyOf.
+ - **FEAT**: add allOf parameterEncoding.
+ - **FEAT**: imporved matrix encoding for paths.
+ - **FEAT**: parse deprecated fields for models.
+ - **FEAT**: toMatrix for enums.
+ - **FEAT**: matrix encoding for classes.
+ - **FEAT**: more doc string generation.
+ - **FEAT**: produce less runtime checks if composite models are not dynamic in encoding.
+ - **FEAT**: anyOf and allOf toLabel.
+ - **FEAT**: improved deep object query parameter encoding.
+ - **FEAT**: toLabel for oneOf.
+ - **FEAT**: add toLabel for classes.
+ - **FEAT**: add toLabel for enums.
+ - **FEAT**: annotate more entities with deprecated.
+ - **FEAT**: parameter properteis for oneOf.
+
+#### `tonik` - `v0.1.0`
+
+
 ## 2025-10-05
 
 ### Changes

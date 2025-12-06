@@ -1,3 +1,21 @@
+## 0.1.0
+
+ - **REFACTOR**: matrix parameter.
+ - **FIX**: various fixes for path parameter encodign.
+ - **FIX**: toLabel list encoding.
+ - **FIX**: form encoding.
+ - **FIX**: list handling for allOf toJson.
+ - **FIX**: lists in parameters with double encoding.
+ - **FIX**: matrix map encoding.
+ - **FEAT**: improved deep object query parameter encoding.
+ - **FEAT**: imporved matrix encoding for paths.
+ - **FEAT**: toMatrix for anyOf.
+ - **FEAT**: parameter properteis for oneOf.
+ - **FEAT**: matrxi encoding extension.
+ - **FEAT**: unified parameter encoding.
+ - **FEAT**: anyOf and allOf toLabel.
+ - **FEAT**: add toLabel for classes.
+
 ## 0.0.9
 
  - **FEAT**: form encoding and decoding support for classes and composition types.

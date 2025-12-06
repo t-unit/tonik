@@ -1,3 +1,9 @@
+## 0.1.0
+
+ - **FIX**: stabilize names by sorting models.
+ - **FEAT**: parse deprecated fields for models.
+ - **FEAT**: improved list handing for matrix encoding.
+
 ## 0.0.9
 
  - **FEAT**: security information parsing and documentation support.
