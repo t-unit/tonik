@@ -63,6 +63,8 @@ void main() {
         complete: true,
       );
 
+      // deprecation is defined by the OpenAPI spec and correct
+      // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
       final success = order as TonikSuccess<PlaceOrderResponse>;
       expect(success.response.statusCode, 200);
@@ -72,6 +74,8 @@ void main() {
       expect(responseBody.id, isA<int?>());
       expect(responseBody.petId, isA<int?>());
       expect(responseBody.quantity, isA<int?>());
+      // deprecation is defined by the OpenAPI spec and correct
+      // ignore: deprecated_member_use
       expect(responseBody.shipDate, isA<DateTime?>());
       expect(responseBody.status, isA<OrderStatusModel?>());
       expect(responseBody.complete, isA<bool?>());
@@ -81,6 +85,8 @@ void main() {
       final storeApi = buildStoreApi(responseStatus: '400');
 
       const body = Order();
+      // deprecation is defined by the OpenAPI spec and correct
+      // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
       final success = order as TonikSuccess<PlaceOrderResponse>;
       expect(success.response.statusCode, 400);
@@ -91,6 +97,8 @@ void main() {
       final storeApi = buildStoreApi(responseStatus: '422');
 
       final body = Order(id: -484848, shipDate: DateTime(10299, 12, 12, 1));
+      // deprecation is defined by the OpenAPI spec and correct
+      // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
       final success = order as TonikSuccess<PlaceOrderResponse>;
       expect(success.response.statusCode, 422);
@@ -101,6 +109,8 @@ void main() {
       final storeApi = buildStoreApi(responseStatus: '499');
 
       const body = Order(status: OrderStatusModel.approved);
+      // deprecation is defined by the OpenAPI spec and correct
+      // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
       final success = order as TonikSuccess<PlaceOrderResponse>;
       expect(success.value, isA<PlaceOrderResponseDefault>());
