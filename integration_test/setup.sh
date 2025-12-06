@@ -14,6 +14,30 @@ if [[ $(echo "$JAVA_VERSION" | cut -d. -f1) -lt 11 ]]; then
     exit 1
 fi
 
+# Function to restore local dependency overrides to test packages
+# This reverts changes made by verify_published_version.sh
+restore_test_package_overrides() {
+    local test_pubspec="$1"
+    local override_path="$2"
+    
+    if [ -f "$test_pubspec" ]; then
+        echo "Restoring local dependency overrides in $test_pubspec"
+        
+        # Add dependency_overrides section if it doesn't exist
+        if ! grep -q "dependency_overrides:" "$test_pubspec"; then
+            echo "" >> "$test_pubspec"
+            echo "dependency_overrides:" >> "$test_pubspec"
+            echo "  tonik_util:" >> "$test_pubspec"
+            echo "    path: $override_path" >> "$test_pubspec"
+        fi
+        
+        # Run pub get to apply the overrides
+        local test_dir=$(dirname "$test_pubspec")
+        echo "Running dart pub get in $test_dir"
+        (cd "$test_dir" && dart pub get)
+    fi
+}
+
 # Function to add dependency overrides to generated packages
 add_dependency_overrides() {
     local pubspec_file="$1"
@@ -111,5 +135,18 @@ if ! java -jar imposter.jar --version &> /dev/null; then
     echo "Error: Failed to execute Imposter JAR. Please check the download."
     exit 1
 fi
+
+# Restore local dependency overrides to test packages
+# This ensures test packages use local tonik_util during development
+# (reverts any changes made by verify_published_version.sh)
+echo "Restoring local dependency overrides in test packages..."
+restore_test_package_overrides "petstore/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "music_streaming/music_streaming_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "gov/gov_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "simple_encoding/simple_encoding_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "fastify_type_provider_zod/fastify_type_provider_zod_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "composition/composition_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "query_parameters/query_parameters_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "path_encoding/path_encoding_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"

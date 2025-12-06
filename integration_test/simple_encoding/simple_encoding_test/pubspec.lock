@@ -358,7 +358,7 @@ packages:
       path: "../../../packages/tonik_util"
       relative: true
     source: path
-    version: "0.0.9"
+    version: "0.1.0"
   typed_data:
     dependency: transitive
     description:

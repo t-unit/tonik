@@ -12,11 +12,12 @@ dependencies:
   path: ^1.9.1
   simple_encoding_api:
     path: ../simple_encoding_api
-  tonik_util: ^0.0.8
+  tonik_util: ^0.1.0
 
 dev_dependencies:
   test: ^1.25.15
   very_good_analysis: ^9.0.0
+
 
 dependency_overrides:
   tonik_util:
