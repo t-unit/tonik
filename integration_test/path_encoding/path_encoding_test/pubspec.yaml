@@ -1,0 +1,18 @@
+name: path_encoding_test
+description: Integration tests for label and matrix path parameter encoding
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  path_encoding_api:
+    path: ../path_encoding_api
+
+dev_dependencies:
+  test: ^1.25.8
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

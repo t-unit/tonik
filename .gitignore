@@ -13,6 +13,7 @@
 /integration_test/fastify_type_provider_zod/fastify_type_provider_zod_api
 /integration_test/composition/composition_api
 /integration_test/query_parameters/query_parameters_api
+/integration_test/path_encoding/path_encoding_api
 
 # Dependencies
 /pubspec.lock
