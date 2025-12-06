@@ -489,6 +489,7 @@ void main() {
         final expression = buildFromFormValueExpression(
           refer("values['status']"),
           model: EnumModel<String>(
+            isDeprecated: false,
             name: 'Status',
             values: const {'active', 'inactive'},
             isNullable: false,

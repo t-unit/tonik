@@ -125,6 +125,7 @@ void main() {
 
     test('generates toLabel for mixed variants', () {
       final classM = ClassModel(
+        isDeprecated: false,
         name: 'M',
         properties: [
           Property(
@@ -205,6 +206,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Outer',
         models: {
           (discriminatorValue: null, model: innerOneOf),

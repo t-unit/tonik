@@ -77,66 +77,77 @@ class AllOfGenerator {
     final properties = _buildPropertiesFromNormalized(normalizedProperties);
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..docs.addAll(formatDocComment(model.description))
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(_buildDefaultConstructor(normalizedProperties))
-            ..constructors.addAll([
-              _buildFromSimpleConstructor(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              _buildFromFormConstructor(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              _buildFromJsonConstructor(className, normalizedProperties),
-            ])
-            ..methods.addAll([
-              _buildCurrentEncodingShapeGetter(model, normalizedProperties),
-              _buildToJsonMethod(className, model, normalizedProperties),
-              _buildParameterPropertiesMethod(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              _buildToSimpleMethod(
-                normalizedProperties,
-                model,
-              ),
-              _buildToFormMethod(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              _buildToLabelMethod(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              _buildToMatrixMethod(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              _buildToDeepObjectMethod(),
-              _buildUriEncodeMethod(
-                className,
-                normalizedProperties,
-                model,
-              ),
-              generateEqualsMethod(
-                className: className,
-                properties: properties,
-              ),
-              generateHashCodeMethod(properties: properties),
-              _buildCopyWithMethod(className, normalizedProperties),
-            ])
-            ..fields.addAll(_buildFields(normalizedProperties)),
+      (b) {
+        b
+          ..name = className
+          ..docs.addAll(formatDocComment(model.description))
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+
+        if (model.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This class is deprecated.'),
+            ]),
+          );
+        }
+
+        b
+          ..constructors.add(_buildDefaultConstructor(normalizedProperties))
+          ..constructors.addAll([
+            _buildFromSimpleConstructor(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            _buildFromFormConstructor(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            _buildFromJsonConstructor(className, normalizedProperties),
+          ])
+          ..methods.addAll([
+            _buildCurrentEncodingShapeGetter(model, normalizedProperties),
+            _buildToJsonMethod(className, model, normalizedProperties),
+            _buildParameterPropertiesMethod(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            _buildToSimpleMethod(
+              normalizedProperties,
+              model,
+            ),
+            _buildToFormMethod(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            _buildToLabelMethod(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            _buildToMatrixMethod(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            _buildToDeepObjectMethod(),
+            _buildUriEncodeMethod(
+              className,
+              normalizedProperties,
+              model,
+            ),
+            generateEqualsMethod(
+              className: className,
+              properties: properties,
+            ),
+            generateHashCodeMethod(properties: properties),
+            _buildCopyWithMethod(className, normalizedProperties),
+          ])
+          ..fields.addAll(_buildFields(normalizedProperties));
+      },
     );
   }
 

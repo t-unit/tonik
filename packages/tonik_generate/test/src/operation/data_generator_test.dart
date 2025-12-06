@@ -73,6 +73,7 @@ void main() {
           content: {
             RequestContent(
               model: ClassModel(
+                isDeprecated: false,
                 name: 'TestModel',
                 properties: const [],
                 context: testContext,
@@ -122,6 +123,7 @@ void main() {
           content: {
             RequestContent(
               model: ClassModel(
+                isDeprecated: false,
                 name: 'JsonModel',
                 properties: const [],
                 context: testContext,
@@ -132,6 +134,7 @@ void main() {
             ),
             RequestContent(
               model: ClassModel(
+                isDeprecated: false,
                 name: 'FormModel',
                 properties: const [],
                 context: testContext,
@@ -322,6 +325,7 @@ void main() {
             ),
             RequestContent(
               model: EnumModel(
+                isDeprecated: false,
                 name: 'TestEnum',
                 values: const {'value1', 'value2'},
                 context: testContext,
@@ -375,6 +379,7 @@ void main() {
           content: {
             RequestContent(
               model: ClassModel(
+                isDeprecated: false,
                 name: 'TestModel',
                 properties: const [],
                 context: testContext,

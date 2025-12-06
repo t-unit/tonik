@@ -339,6 +339,7 @@ void main() {
     test('fromSimple tries variants in declaration order (primitive-only)', () {
       final model = OneOfModel(
         isDeprecated: false,
+        name: 'Result',
         models: {
           (
             discriminatorValue: 'error',
@@ -352,7 +353,6 @@ void main() {
         discriminator: null,
         context: context,
         description: null,
-        name: '',
       );
 
       final classes = generator.generateClasses(model);

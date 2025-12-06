@@ -140,6 +140,7 @@ void main() {
             (
               discriminatorValue: 'error',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Error',
                 properties: [
                   Property(
@@ -258,6 +259,7 @@ void main() {
             (
               discriminatorValue: 'error',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Error',
                 properties: [
                   Property(
@@ -574,6 +576,7 @@ void main() {
 
       test('toJson method handles Class models correctly', () {
         final classModel = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: [
             Property(
@@ -590,6 +593,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'UserValue',
           models: {
             (
@@ -630,9 +634,11 @@ void main() {
 
       test('toJson method handles AllOf models correctly', () {
         final allOfModel = AllOfModel(
+          isDeprecated: false,
           name: 'Combined',
           models: {
             ClassModel(
+              isDeprecated: false,
               name: 'Base',
               properties: [
                 Property(
@@ -745,6 +751,7 @@ void main() {
         'toJson method handles List models with complex content correctly',
         () {
           final classModel = ClassModel(
+            isDeprecated: false,
             name: 'Item',
             properties: [
               Property(

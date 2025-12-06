@@ -86,66 +86,77 @@ class OneOfGenerator {
     Map<DiscriminatedModel, String> variantNames,
   ) {
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..sealed = true
-            ..docs.addAll(formatDocComment(model.description))
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(Constructor((b) => b..constant = true))
-            ..constructors.add(
-              _generateFromSimpleConstructor(className, model, variantNames),
-            )
-            ..constructors.add(
-              _generateFromFormConstructor(className, model, variantNames),
-            )
-            ..methods.addAll([
-              _generateCurrentEncodingShapeGetter(model, variantNames),
-              _generateParameterPropertiesMethod(
-                className,
-                model,
-                variantNames,
-              ),
-              _generateToSimpleMethod(className, model, variantNames),
-              _generateToFormMethod(className, model, variantNames),
-              _generateToLabelMethod(className, model, variantNames),
-              _generateToMatrixMethod(className, model, variantNames),
-              _generateToDeepObjectMethod(),
-              _generateUriEncodeMethod(className, model, variantNames),
-              Method(
-                (b) =>
-                    b
-                      ..name = 'toJson'
-                      ..returns = refer('Object?', 'dart:core')
-                      ..body = _generateToJsonBody(
-                        className,
-                        model,
-                        variantNames,
-                      )
-                      ..lambda = false,
-              ),
-            ])
-            ..constructors.add(
-              Constructor(
-                (b) =>
-                    b
-                      ..factory = true
-                      ..name = 'fromJson'
-                      ..requiredParameters.add(
-                        Parameter(
-                          (p) =>
-                              p
-                                ..name = 'json'
-                                ..type = refer('Object?', 'dart:core'),
-                        ),
-                      )
-                      ..body = _generateFromJsonBody(
-                        className,
-                        model,
-                        variantNames,
-                      ),
-              ),
+      (b) {
+        b
+          ..name = className
+          ..sealed = true
+          ..docs.addAll(formatDocComment(model.description))
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+
+        if (model.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This class is deprecated.'),
+            ]),
+          );
+        }
+
+        b
+          ..constructors.add(Constructor((b) => b..constant = true))
+          ..constructors.add(
+            _generateFromSimpleConstructor(className, model, variantNames),
+          )
+          ..constructors.add(
+            _generateFromFormConstructor(className, model, variantNames),
+          )
+          ..methods.addAll([
+            _generateCurrentEncodingShapeGetter(model, variantNames),
+            _generateParameterPropertiesMethod(
+              className,
+              model,
+              variantNames,
             ),
+            _generateToSimpleMethod(className, model, variantNames),
+            _generateToFormMethod(className, model, variantNames),
+            _generateToLabelMethod(className, model, variantNames),
+            _generateToMatrixMethod(className, model, variantNames),
+            _generateToDeepObjectMethod(),
+            _generateUriEncodeMethod(className, model, variantNames),
+            Method(
+              (b) =>
+                  b
+                    ..name = 'toJson'
+                    ..returns = refer('Object?', 'dart:core')
+                    ..body = _generateToJsonBody(
+                      className,
+                      model,
+                      variantNames,
+                    )
+                    ..lambda = false,
+            ),
+          ])
+          ..constructors.add(
+            Constructor(
+              (b) =>
+                  b
+                    ..factory = true
+                    ..name = 'fromJson'
+                    ..requiredParameters.add(
+                      Parameter(
+                        (p) =>
+                            p
+                              ..name = 'json'
+                              ..type = refer('Object?', 'dart:core'),
+                      ),
+                    )
+                    ..body = _generateFromJsonBody(
+                      className,
+                      model,
+                      variantNames,
+                    ),
+            ),
+          );
+      },
     );
   }
 

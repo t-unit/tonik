@@ -143,16 +143,25 @@ class ResponseGenerator {
             ..fields.addAll(
               properties.map(
                 (prop) => Field(
-                  (b) =>
-                      b
-                        ..name = prop.normalizedName
-                        ..modifier = FieldModifier.final$
-                        ..type = typeReference(
-                          prop.property.model,
-                          nameManager,
-                          package,
-                          isNullableOverride: !prop.property.isRequired,
-                        ),
+                  (b) {
+                    b
+                      ..name = prop.normalizedName
+                      ..modifier = FieldModifier.final$
+                      ..type = typeReference(
+                        prop.property.model,
+                        nameManager,
+                        package,
+                        isNullableOverride: !prop.property.isRequired,
+                      );
+
+                    if (prop.property.isDeprecated) {
+                      b.annotations.add(
+                        refer('Deprecated', 'dart:core').call([
+                          literalString('This field is deprecated.'),
+                        ]),
+                      );
+                    }
+                  },
                 ),
               ),
             ),
@@ -193,16 +202,25 @@ class ResponseGenerator {
             ..fields.addAll(
               normalizedBaseProperties.map(
                 (prop) => Field(
-                  (b) =>
-                      b
-                        ..name = prop.normalizedName
-                        ..modifier = FieldModifier.final$
-                        ..type = typeReference(
-                          prop.property.model,
-                          nameManager,
-                          package,
-                          isNullableOverride: !prop.property.isRequired,
-                        ),
+                  (b) {
+                    b
+                      ..name = prop.normalizedName
+                      ..modifier = FieldModifier.final$
+                      ..type = typeReference(
+                        prop.property.model,
+                        nameManager,
+                        package,
+                        isNullableOverride: !prop.property.isRequired,
+                      );
+
+                    if (prop.property.isDeprecated) {
+                      b.annotations.add(
+                        refer('Deprecated', 'dart:core').call([
+                          literalString('This field is deprecated.'),
+                        ]),
+                      );
+                    }
+                  },
                 ),
               ),
             ),

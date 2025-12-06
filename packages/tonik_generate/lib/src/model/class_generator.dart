@@ -69,51 +69,63 @@ class ClassGenerator {
     });
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..docs.addAll(formatDocComment(model.description))
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.addAll([
-              Constructor(
-                (b) =>
-                    b
-                      ..constant = true
-                      ..optionalParameters.addAll(
-                        sortedProperties.map(
-                          (prop) => Parameter(
-                            (b) =>
-                                b
-                                  ..name = prop.normalizedName
-                                  ..named = true
-                                  ..required = prop.property.isRequired
-                                  ..toThis = true,
-                          ),
-                        ),
+      (b) {
+        b
+          ..name = className
+          ..docs.addAll(formatDocComment(model.description))
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+
+        if (model.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This class is deprecated.'),
+            ]),
+          );
+        }
+
+        b.constructors.addAll([
+          Constructor(
+            (b) =>
+                b
+                  ..constant = true
+                  ..optionalParameters.addAll(
+                    sortedProperties.map(
+                      (prop) => Parameter(
+                        (b) =>
+                            b
+                              ..name = prop.normalizedName
+                              ..named = true
+                              ..required = prop.property.isRequired
+                              ..toThis = true,
                       ),
-              ),
-              _buildFromSimpleConstructor(className, model),
-              _buildFromJsonConstructor(className, model),
-              _buildFromFormConstructor(className, model),
-            ])
-            ..methods.addAll([
-              _buildToJsonMethod(model),
-              _buildCopyWithMethod(className, normalizedProperties),
-              _buildEqualsMethod(className, normalizedProperties),
-              _buildHashCodeMethod(normalizedProperties),
-              _buildCurrentEncodingShapeGetter(),
-              _buildParameterPropertiesMethod(model, normalizedProperties),
-              _buildToSimpleMethod(),
-              _buildToFormMethod(),
-              _buildToLabelMethod(),
-              _buildToMatrixMethod(),
-              _buildToDeepObjectMethod(),
-            ])
-            ..fields.addAll(
-              normalizedProperties.map(
-                (prop) => _generateField(prop.property, prop.normalizedName),
-              ),
-            ),
+                    ),
+                  ),
+          ),
+          _buildFromSimpleConstructor(className, model),
+          _buildFromJsonConstructor(className, model),
+          _buildFromFormConstructor(className, model),
+        ]);
+
+        b.methods.addAll([
+          _buildToJsonMethod(model),
+          _buildCopyWithMethod(className, normalizedProperties),
+          _buildEqualsMethod(className, normalizedProperties),
+          _buildHashCodeMethod(normalizedProperties),
+          _buildCurrentEncodingShapeGetter(),
+          _buildParameterPropertiesMethod(model, normalizedProperties),
+          _buildToSimpleMethod(),
+          _buildToFormMethod(),
+          _buildToLabelMethod(),
+          _buildToMatrixMethod(),
+          _buildToDeepObjectMethod(),
+        ]);
+
+        b.fields.addAll(
+          normalizedProperties.map(
+            (prop) => _generateField(prop.property, prop.normalizedName),
+          ),
+        );
+      },
     );
   }
 
