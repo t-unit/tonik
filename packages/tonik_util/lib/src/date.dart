@@ -99,6 +99,17 @@ class Date {
     return '.${uriEncode(allowEmpty: allowEmpty)}';
   }
 
+  /// Converts this [Date] to a matrix-encoded string.
+  ///
+  /// Returns the date in ISO 8601 format (YYYY-MM-DD) with matrix prefix.
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) {
+    return ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }
+
   /// URI encodes this Date value.
   String uriEncode({
     required bool allowEmpty,

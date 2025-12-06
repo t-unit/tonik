@@ -268,5 +268,284 @@ void main() {
         );
       },
     );
+
+    test(
+      'generates toLabel expression for array of enums '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'statuses',
+          rawName: 'statuses',
+          description: 'Status values parameter',
+          model: ListModel(
+            context: context,
+            content: EnumModel(
+              isDeprecated: false,
+              context: context,
+              name: 'Status',
+              values: const {'active', 'inactive', 'pending'},
+              isNullable: false,
+              description: null,
+            ),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('statuses', parameter),
+          '''statuses.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of integers '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'ids',
+          rawName: 'ids',
+          description: 'Integer IDs parameter',
+          model: ListModel(
+            context: context,
+            content: IntegerModel(context: context),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('ids', parameter),
+          '''ids.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for optional array of enums',
+      () {
+        final parameter = PathParameterObject(
+          name: 'statuses',
+          rawName: 'statuses',
+          description: 'Optional status values parameter',
+          model: ListModel(
+            context: context,
+            content: EnumModel(
+              isDeprecated: false,
+              context: context,
+              name: 'Status',
+              values: const {'active', 'inactive', 'pending'},
+              isNullable: false,
+              description: null,
+            ),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: true,
+          allowEmptyValue: true,
+          isRequired: false,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('statuses', parameter),
+          '''statuses?.map((e) => e.uriEncode(allowEmpty: true)).toList().toLabel(explode: true, allowEmpty: true, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of doubles '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'prices',
+          rawName: 'prices',
+          description: 'Price values parameter',
+          model: ListModel(
+            context: context,
+            content: DoubleModel(context: context),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('prices', parameter),
+          '''prices.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of booleans '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'flags',
+          rawName: 'flags',
+          description: 'Boolean flags parameter',
+          model: ListModel(
+            context: context,
+            content: BooleanModel(context: context),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('flags', parameter),
+          '''flags.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of DateTimes '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'timestamps',
+          rawName: 'timestamps',
+          description: 'Timestamp values parameter',
+          model: ListModel(
+            context: context,
+            content: DateTimeModel(context: context),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('timestamps', parameter),
+          '''timestamps.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of OneOf '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'values',
+          rawName: 'values',
+          description: 'OneOf values parameter',
+          model: ListModel(
+            context: context,
+            content: OneOfModel(
+              isDeprecated: false,
+              context: context,
+              name: 'StringOrInt',
+              description: null,
+              discriminator: null,
+              models: {
+                (
+                  discriminatorValue: 's',
+                  model: StringModel(context: context),
+                ),
+                (
+                  discriminatorValue: 'i',
+                  model: IntegerModel(context: context),
+                ),
+              },
+            ),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('values', parameter),
+          '''values.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of AnyOf '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'values',
+          rawName: 'values',
+          description: 'AnyOf values parameter',
+          model: ListModel(
+            context: context,
+            content: AnyOfModel(
+              isDeprecated: false,
+              context: context,
+              name: 'StringOrInt',
+              description: null,
+              discriminator: null,
+              models: {
+                (
+                  discriminatorValue: 's',
+                  model: StringModel(context: context),
+                ),
+                (
+                  discriminatorValue: 'i',
+                  model: IntegerModel(context: context),
+                ),
+              },
+            ),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('values', parameter),
+          '''values.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of numbers '
+      '(maps to uriEncode first)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'amounts',
+          rawName: 'amounts',
+          description: 'Number values parameter',
+          model: ListModel(
+            context: context,
+            content: NumberModel(context: context),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          buildToLabelPathParameterExpression('amounts', parameter),
+          '''amounts.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+        );
+      },
+    );
   });
 }
