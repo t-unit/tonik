@@ -88,6 +88,12 @@ melos:
         dart pub get
         dart test
 
+    test-integration-path-encoding:
+      run: |
+        cd integration_test/path_encoding/path_encoding_test
+        dart pub get
+        dart test
+
     test-integration-all:
       run: |
         melos run test-integration-petstore
@@ -97,3 +103,4 @@ melos:
         melos run test-integration-fastify-type-provider-zod
         melos run test-integration-composition
         melos run test-integration-query-parameters
+        melos run test-integration-path-encoding

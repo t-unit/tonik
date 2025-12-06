@@ -1,0 +1,798 @@
+openapi: 3.0.4
+info:
+  title: Path Encoding API
+  description: |
+    OpenAPI specification for testing label and matrix path parameter encoding styles.
+  version: 1.0.0
+  contact:
+    name: Tonik Integration Tests
+    url: https://github.com/t-unit/tonik
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: label
+    description: Operations testing label-style path parameters (RFC 6570 Section 3.2.5)
+  - name: matrix
+    description: Operations testing matrix-style path parameters (RFC 6570 Section 3.2.7)
+
+paths:
+  /label/primitive/string/{value}:
+    get:
+      operationId: testLabelPrimitiveString
+      tags: [label]
+      summary: Label-style string path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/integer/{value}:
+    get:
+      operationId: testLabelPrimitiveInteger
+      tags: [label]
+      summary: Label-style integer path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/number/{value}:
+    get:
+      operationId: testLabelPrimitiveNumber
+      tags: [label]
+      summary: Label-style number path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/boolean/{value}:
+    get:
+      operationId: testLabelPrimitiveBoolean
+      tags: [label]
+      summary: Label-style boolean path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/date/{value}:
+    get:
+      operationId: testLabelPrimitiveDate
+      tags: [label]
+      summary: Label-style date path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/datetime/{value}:
+    get:
+      operationId: testLabelPrimitiveDatetime
+      tags: [label]
+      summary: Label-style datetime path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/enum/{value}:
+    get:
+      operationId: testLabelPrimitiveEnum
+      tags: [label]
+      summary: Label-style enum path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/StatusEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  # =============================================================================
+  # LABEL STYLE - ARRAYS
+  # =============================================================================
+  /label/array/string/{values}:
+    get:
+      operationId: testLabelArrayString
+      tags: [label]
+      summary: Label-style string array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/array/string/explode/{values}:
+    get:
+      operationId: testLabelArrayStringExplode
+      tags: [label]
+      summary: Label-style string array path parameter (explode=true)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/array/integer/{values}:
+    get:
+      operationId: testLabelArrayInteger
+      tags: [label]
+      summary: Label-style integer array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/array/integer/explode/{values}:
+    get:
+      operationId: testLabelArrayIntegerExplode
+      tags: [label]
+      summary: Label-style integer array path parameter (explode=true)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/array/enum/{values}:
+    get:
+      operationId: testLabelArrayEnum
+      tags: [label]
+      summary: Label-style enum array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/StatusEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/object/{value}:
+    get:
+      operationId: testLabelObject
+      tags: [label]
+      summary: Label-style object path parameter (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            $ref: '#/components/schemas/SimpleObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/object/explode/{value}:
+    get:
+      operationId: testLabelObjectExplode
+      tags: [label]
+      summary: Label-style object path parameter (explode=true)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SimpleObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/object/complex/{value}:
+    get:
+      operationId: testLabelObjectComplex
+      tags: [label]
+      summary: Label-style complex object path parameter (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ComplexObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/string/{value}:
+    get:
+      operationId: testMatrixPrimitiveString
+      tags: [matrix]
+      summary: Matrix-style string path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/integer/{value}:
+    get:
+      operationId: testMatrixPrimitiveInteger
+      tags: [matrix]
+      summary: Matrix-style integer path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/number/{value}:
+    get:
+      operationId: testMatrixPrimitiveNumber
+      tags: [matrix]
+      summary: Matrix-style number path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/boolean/{value}:
+    get:
+      operationId: testMatrixPrimitiveBoolean
+      tags: [matrix]
+      summary: Matrix-style boolean path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/date/{value}:
+    get:
+      operationId: testMatrixPrimitiveDate
+      tags: [matrix]
+      summary: Matrix-style date path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/datetime/{value}:
+    get:
+      operationId: testMatrixPrimitiveDatetime
+      tags: [matrix]
+      summary: Matrix-style datetime path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/enum/{value}:
+    get:
+      operationId: testMatrixPrimitiveEnum
+      tags: [matrix]
+      summary: Matrix-style enum path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/StatusEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/array/string/{values}:
+    get:
+      operationId: testMatrixArrayString
+      tags: [matrix]
+      summary: Matrix-style string array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/array/string/explode/{values}:
+    get:
+      operationId: testMatrixArrayStringExplode
+      tags: [matrix]
+      summary: Matrix-style string array path parameter (explode=true)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/array/integer/{values}:
+    get:
+      operationId: testMatrixArrayInteger
+      tags: [matrix]
+      summary: Matrix-style integer array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/array/integer/explode/{values}:
+    get:
+      operationId: testMatrixArrayIntegerExplode
+      tags: [matrix]
+      summary: Matrix-style integer array path parameter (explode=true)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/array/enum/{values}:
+    get:
+      operationId: testMatrixArrayEnum
+      tags: [matrix]
+      summary: Matrix-style enum array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/StatusEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/object/{value}:
+    get:
+      operationId: testMatrixObject
+      tags: [matrix]
+      summary: Matrix-style object path parameter (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            $ref: '#/components/schemas/SimpleObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/object/explode/{value}:
+    get:
+      operationId: testMatrixObjectExplode
+      tags: [matrix]
+      summary: Matrix-style object path parameter (explode=true)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SimpleObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/object/complex/{value}:
+    get:
+      operationId: testMatrixObjectComplex
+      tags: [matrix]
+      summary: Matrix-style complex object path parameter (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ComplexObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/combined/{stringValue}/{intValue}:
+    get:
+      operationId: testLabelCombined
+      tags: [label]
+      summary: Multiple label-style path parameters
+      parameters:
+        - name: stringValue
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+        - name: intValue
+          in: path
+          required: true
+          style: label
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/combined/{stringValue}/{intValue}:
+    get:
+      operationId: testMatrixCombined
+      tags: [matrix]
+      summary: Multiple matrix-style path parameters
+      parameters:
+        - name: stringValue
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+        - name: intValue
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /mixed/{labelValue}/{matrixValue}:
+    get:
+      operationId: testMixedStyles
+      tags: [label, matrix]
+      summary: Mixed label and matrix path parameters in same path
+      parameters:
+        - name: labelValue
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+        - name: matrixValue
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+components:
+  schemas:
+    StatusEnum:
+      type: string
+      enum:
+        - active
+        - inactive
+        - pending
+
+    PriorityEnum:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+
+    SimpleObject:
+      type: object
+      required:
+        - name
+        - count
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+
+    ComplexObject:
+      type: object
+      required:
+        - id
+        - label
+        - active
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+        active:
+          type: boolean
+        score:
+          type: number
+          format: double
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+
+    EchoResponse:
+      type: object
+      properties:
+        path:
+          type: string
+          description: The request path received by the server
+        method:
+          type: string
+          description: The HTTP method used

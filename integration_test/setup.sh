@@ -61,6 +61,7 @@ rm -rf simple_encoding/simple_encoding_api
 rm -rf fastify_type_provider_zod/fastify_type_provider_zod_api
 rm -rf composition/composition_api
 rm -rf query_parameters/query_parameters_api
+rm -rf path_encoding/path_encoding_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore --log-level verbose
@@ -90,6 +91,10 @@ cd composition/composition_api && dart pub get && cd ../..
 dart run ../packages/tonik/bin/tonik.dart -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters --log-level verbose
 add_dependency_overrides_recursive "query_parameters/query_parameters_api"
 cd query_parameters/query_parameters_api && dart pub get && cd ../..
+
+dart run ../packages/tonik/bin/tonik.dart -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding --log-level verbose
+add_dependency_overrides_recursive "path_encoding/path_encoding_api"
+cd path_encoding/path_encoding_api && dart pub get && cd ../..
 
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then

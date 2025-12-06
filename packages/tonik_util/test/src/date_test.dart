@@ -393,4 +393,63 @@ void main() {
       );
     });
   });
+
+  group('matrix encoding', () {
+    test('toMatrix returns matrix-style encoded date string', () {
+      final date = Date(2024, 3, 15);
+      final encoded = date.toMatrix('value', explode: false, allowEmpty: true);
+      expect(encoded, ';value=2024-03-15');
+    });
+
+    test('toMatrix handles explode parameter', () {
+      final date = Date(2024, 12, 31);
+      final encodedNoExplode = date.toMatrix(
+        'date',
+        explode: false,
+        allowEmpty: true,
+      );
+      final encodedExplode = date.toMatrix(
+        'date',
+        explode: true,
+        allowEmpty: true,
+      );
+      expect(encodedNoExplode, ';date=2024-12-31');
+      expect(encodedExplode, ';date=2024-12-31');
+    });
+
+    test('toMatrix handles allowEmpty parameter', () {
+      final date = Date(2024, 1, 1);
+      final encoded1 = date.toMatrix(
+        'myDate',
+        explode: false,
+        allowEmpty: true,
+      );
+      final encoded2 = date.toMatrix(
+        'myDate',
+        explode: false,
+        allowEmpty: false,
+      );
+      expect(encoded1, ';myDate=2024-01-01');
+      expect(encoded2, ';myDate=2024-01-01');
+    });
+
+    test('toMatrix handles edge case dates correctly', () {
+      final testCases = [
+        Date(2024, 1, 1),
+        Date(2024, 12, 31),
+        Date(2024, 2, 29),
+        Date(2023, 2, 28),
+      ];
+
+      for (final testDate in testCases) {
+        final encoded = testDate.toMatrix(
+          'param',
+          explode: false,
+          allowEmpty: true,
+        );
+        expect(encoded, startsWith(';param='));
+        expect(encoded.substring(7), testDate.toString());
+      }
+    });
+  });
 }
