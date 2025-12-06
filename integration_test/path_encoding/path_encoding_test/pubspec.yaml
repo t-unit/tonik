@@ -7,11 +7,15 @@ environment:
   sdk: ^3.7.0
 
 dependencies:
+  dio: ^5.9.0
+  path: ^1.9.1
   path_encoding_api:
     path: ../path_encoding_api
+  tonik_util: ^0.0.8
 
 dev_dependencies:
   test: ^1.25.8
+  very_good_analysis: ^10.0.0
 
 dependency_overrides:
   tonik_util:
