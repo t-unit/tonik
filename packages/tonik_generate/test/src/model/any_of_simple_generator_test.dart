@@ -29,6 +29,7 @@ void main() {
       'generates fromSimple factory that wraps each property decode in try/catch and assigns null on failure',
       () {
         final complex = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -45,6 +46,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Flexible',
           models: {
@@ -122,6 +124,7 @@ void main() {
       'anyOf with complex lists and simple type tries decodable variants',
       () {
         final classA = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ClassA',
           properties: [
@@ -138,6 +141,7 @@ void main() {
         );
 
         final classB = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ClassB',
           properties: [
@@ -164,6 +168,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedAnyOf',
           models: {
@@ -212,6 +217,7 @@ void main() {
   group('toSimple', () {
     test('generates toSimple method with merge-or-equal algorithm', () {
       final modelA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: [
@@ -228,6 +234,7 @@ void main() {
       );
 
       final modelB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'B',
         properties: [
@@ -244,6 +251,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'PayloadSimple',
         models: {
@@ -301,6 +309,7 @@ void main() {
       'generates toSimple method without discriminator when none configured',
       () {
         final modelA = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'A',
           properties: [
@@ -317,6 +326,7 @@ void main() {
         );
 
         final modelB = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'B',
           properties: [
@@ -333,6 +343,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'PayloadSimpleNoDisc',
           models: {
@@ -382,6 +393,7 @@ void main() {
 
     test('generates toSimple method for primitive-only anyOf models', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'OnlyPrimitivesSimple',
         models: {
@@ -437,6 +449,7 @@ void main() {
       'throws exception when mixed class and primitive anyOf are both set',
       () {
         final user = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -453,6 +466,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedSimple',
           models: {

@@ -460,6 +460,7 @@ void main() {
 
     test('handles simple list of enums', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         values: const {'RED', 'GREEN', 'BLUE'},
         isNullable: false,
@@ -532,6 +533,7 @@ void main() {
 
     test('handles nested list of class models', () {
       final innerModel = ClassModel(
+        isDeprecated: false,
         context: context,
         properties: const [],
         description: null,

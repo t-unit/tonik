@@ -43,6 +43,7 @@ paths:
       summary: Update an existing pet.
       description: Update an existing pet by Id.
       operationId: updatePet
+      deprecated: true
       requestBody:
         description: Update an existent pet in the store
         content:
@@ -130,6 +131,7 @@ paths:
           description: Status values that need to be considered for filter
           required: false
           explode: true
+          deprecated: true
           schema:
             type: string
             default: available
@@ -381,6 +383,7 @@ paths:
       description: Place a new order in the store.
       x-swagger-router-controller: OrderController
       operationId: placeOrder
+      deprecated: true
       requestBody:
         content:
           application/json:
@@ -686,6 +689,7 @@ components:
         shipDate:
           type: string
           format: date-time
+          deprecated: true
         status:
           type: string
           description: Order Status
@@ -761,6 +765,7 @@ components:
         - name
         - photoUrls
       type: object
+      deprecated: true
       properties:
         id:
           type: integer

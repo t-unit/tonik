@@ -31,6 +31,7 @@ void main() {
 
     test('fromForm constructor exists with correct signature', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'TestModel',
         properties: [
@@ -75,6 +76,7 @@ void main() {
 
     test('generates complete fromForm method with parsing logic', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'TestModel',
         properties: [
@@ -128,6 +130,7 @@ void main() {
 
     test('generates fromForm method with all property types', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'ComplexForm',
         properties: [
@@ -192,6 +195,7 @@ void main() {
       'generates fromForm for mixed OneOf that attempts decoding',
       () {
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'DynamicValue',
           models: {
@@ -199,6 +203,7 @@ void main() {
             (
               discriminatorValue: 'class',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'ComplexData',
                 properties: [
@@ -219,6 +224,7 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Wrapper',
           properties: [

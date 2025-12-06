@@ -33,6 +33,7 @@ void main() {
   group('AnyOfGenerator basic structure', () {
     test('generates AnyOf class with nullable fields for each model', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'FlexibleModel',
         models: {
@@ -41,6 +42,7 @@ void main() {
           (
             discriminatorValue: 'details',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Details',
               properties: const [],
@@ -88,6 +90,7 @@ void main() {
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: 'A flexible model that can have multiple values',
           name: 'FlexibleModel',
           models: {
@@ -108,6 +111,7 @@ void main() {
 
       test('generates class with multiline doc comment', () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: 'A flexible model.\nSupports multiple types.',
           name: 'FlexibleModel',
           models: {
@@ -128,6 +132,7 @@ void main() {
 
       test('generates class without doc comment when description is null', () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'FlexibleModel',
           models: {
@@ -145,6 +150,7 @@ void main() {
 
       test('generates class without doc comment when description is empty', () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: '',
           name: 'FlexibleModel',
           models: {
@@ -165,12 +171,14 @@ void main() {
       'generates AnyOf class when discriminatorValue is absent for all entries',
       () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'AnonymousChoices',
           models: {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'User',
                 properties: const [],
@@ -217,6 +225,7 @@ void main() {
       'generates AnyOf class with enum, date, dateTime, bool, decimal fields',
       () {
         final enumModel = EnumModel<String>(
+          isDeprecated: false,
           description: null,
           name: 'Status',
           values: const {'active', 'inactive'},
@@ -225,6 +234,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'VariousTypes',
           models: {
@@ -313,6 +323,7 @@ void main() {
   group('equals, hashCode, copyWith', () {
     test('generates equals and hashCode methods that compare all fields', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'ValueChoice',
         models: {
@@ -367,6 +378,7 @@ void main() {
       'generates copyWith method with nullable parameters and field defaults',
       () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'ValueChoice',
           models: {
@@ -430,6 +442,7 @@ void main() {
 
     test('anyOf with multiple primitives returns simple shape', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'StringOrInt',
         models: {
@@ -468,12 +481,14 @@ void main() {
 
     test('anyOf with multiple complex types returns complex shape', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'UserProfile',
         properties: const [],
         context: context,
       );
       final classB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'AdminProfile',
         properties: const [],
@@ -481,6 +496,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Profile',
         models: {
@@ -519,6 +535,7 @@ void main() {
 
     test('anyOf with primitive and complex type returns mixed shape', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Data',
         properties: [
@@ -535,6 +552,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'FlexibleData',
         models: {
@@ -577,6 +595,7 @@ void main() {
       'anyOf with discriminator includes discriminator in toSimple for complex',
       () {
         final personModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Person',
           properties: [
@@ -593,6 +612,7 @@ void main() {
         );
 
         final companyModel = ClassModel(
+          isDeprecated: false,
           name: 'Company',
           properties: [
             Property(
@@ -609,6 +629,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           name: 'EntityChoice',
           models: {
             (
@@ -684,6 +705,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       'anyOf with discriminator includes discriminator in toForm for complex',
       () {
         final personModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Person',
           properties: [
@@ -700,6 +722,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
 
         final companyModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Company',
           properties: [
@@ -716,6 +739,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'EntityChoice',
           models: {
@@ -793,6 +817,7 @@ String toForm({required bool explode, required bool allowEmpty}) {
       'anyOf with discriminator does NOT include discriminator for simple only',
       () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'SimpleChoice',
           models: {
@@ -852,6 +877,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       'anyOf with discriminator handles mixed simple and complex correctly',
       () {
         final classModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Data',
           properties: [
@@ -868,6 +894,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedChoice',
           models: {
@@ -949,12 +976,14 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   group('parameterProperties', () {
     test('method exists with correct signature for anyOf', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'FlexibleChoice',
         models: {
           (
             discriminatorValue: 'user',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'User',
               properties: const [],
@@ -964,6 +993,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           (
             discriminatorValue: 'admin',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Admin',
               properties: const [],
@@ -1007,6 +1037,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 
     test('generates complete method for single complex variant', () {
       final userModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: const [],
@@ -1014,6 +1045,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'FlexibleChoice',
         models: {
@@ -1052,6 +1084,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method for multiple complex variants', () {
       final user = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: const [],
@@ -1059,6 +1092,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final admin = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Admin',
         properties: const [],
@@ -1066,6 +1100,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'MultiChoice',
         models: {
@@ -1108,6 +1143,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method with discriminator', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Data',
         properties: [
@@ -1124,6 +1160,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'DiscriminatedChoice',
         models: {
@@ -1170,6 +1207,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method for anyOf with dynamic encoding shape', () {
       final anyOfModel = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'InnerChoice',
         models: {
@@ -1177,6 +1215,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (
             discriminatorValue: 'data',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Data',
               properties: const [],
@@ -1189,6 +1228,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'MixedChoice',
         models: {
@@ -1244,6 +1284,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       'and discriminator',
       () {
         final anyOfModel = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerChoice',
           models: {
@@ -1254,6 +1295,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
             (
               discriminatorValue: 'data',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Data',
                 properties: const [],
@@ -1266,6 +1308,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedChoice',
           models: {
@@ -1331,6 +1374,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       'complex class',
       () {
         final anyOfModel = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerChoice',
           models: {
@@ -1348,6 +1392,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
 
         final classModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexData',
           properties: const [],
@@ -1355,6 +1400,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedChoice',
           models: {
@@ -1407,6 +1453,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       'at top level',
       () {
         final classModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexData',
           properties: const [],
@@ -1414,6 +1461,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedTopLevel',
           models: {
@@ -1466,6 +1514,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('generates complete method for anyOf with only simple types', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleChoice',
         models: {
@@ -1499,12 +1548,14 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 
     test('passes allowLists to nested complex types', () {
       final user = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: const [],
         context: context,
       );
       final admin = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Admin',
         properties: const [],
@@ -1512,6 +1563,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'FlexibleChoice',
         models: {
@@ -1564,6 +1616,7 @@ Map<String, String> parameterProperties({
 
     test('throws when anyOf contains list model', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'ChoiceWithList',
         models: {
@@ -1614,12 +1667,14 @@ Map<String, String> parameterProperties({
 
     test('passes allowLists to nested anyOf with mixed encoding', () {
       final innerAnyOf = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'InnerChoice',
         models: {
           (
             discriminatorValue: 'data',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Data',
               properties: const [],
@@ -1636,6 +1691,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'OuterChoice',
         models: {
@@ -1696,11 +1752,13 @@ Map<String, String> parameterProperties({
   group('AnyOfGenerator with nested composite models', () {
     test('handles AllOfModel with simple encoding shape correctly', () {
       final allOfModel = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleAllOf',
         models: {
           StringModel(context: context),
           EnumModel<String>(
+            isDeprecated: false,
             description: null,
             values: const {'value1', 'value2'},
             isNullable: false,
@@ -1711,6 +1769,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {
@@ -1751,16 +1810,19 @@ Map<String, String> parameterProperties({
 
     test('handles AllOfModel with complex encoding shape correctly', () {
       final allOfModel = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'ComplexAllOf',
         models: {
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Model1',
             properties: const [],
             context: context,
           ),
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Model2',
             properties: const [],
@@ -1771,6 +1833,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {
@@ -1811,11 +1874,13 @@ Map<String, String> parameterProperties({
 
     test('handles AllOfModel with mixed encoding shape correctly', () {
       final allOfModel = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'MixedAllOf',
         models: {
           StringModel(context: context),
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Model1',
             properties: const [],
@@ -1826,6 +1891,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {
@@ -1866,6 +1932,7 @@ Map<String, String> parameterProperties({
 
     test('handles OneOfModel with simple encoding shape correctly', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleOneOf',
         models: {
@@ -1877,6 +1944,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {
@@ -1917,12 +1985,14 @@ Map<String, String> parameterProperties({
 
     test('handles nested AnyOfModel with complex encoding shape correctly', () {
       final nestedAnyOfModel = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'NestedAnyOf',
         models: {
           (
             discriminatorValue: 'class',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Model1',
               properties: const [],
@@ -1942,6 +2012,7 @@ Map<String, String> parameterProperties({
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {

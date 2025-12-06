@@ -31,6 +31,7 @@ void main() {
 
   test('generates toSimple for allOf with list of DateTime', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'AllOfDateTimeList',
       models: {
@@ -70,6 +71,7 @@ void main() {
 
   test('generates toSimple for allOf with two lists', () {
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'ArrayOneOfModel',
       models: {
@@ -81,6 +83,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'AllOfDoubleList',
       models: {
@@ -129,10 +132,12 @@ void main() {
 
   test('generates toSimple merging all class properties', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'CombinedModel',
       models: <Model>{
         ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Base',
           properties: [
@@ -148,6 +153,7 @@ void main() {
           context: context,
         ),
         ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Mixin',
           properties: [
@@ -184,6 +190,7 @@ void main() {
 
   test('generates toSimple returning primary primitive value', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'StringDecimalModel',
       models: {
@@ -211,10 +218,12 @@ void main() {
     'generates toSimple returning enum value for enum and string models',
     () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'EnumStringModel',
         models: {
           EnumModel(
+            isDeprecated: false,
             description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
@@ -245,11 +254,13 @@ void main() {
     'throws exception for mixed types in toSimple',
     () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'MixedModel',
         models: <Model>{
           StringModel(context: context),
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'UserData',
             properties: [
@@ -290,11 +301,13 @@ void main() {
     'mixed types',
     () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'MixedModel',
         models: {
           StringModel(context: context),
           EnumModel(
+            isDeprecated: false,
             description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
@@ -322,6 +335,7 @@ void main() {
 
   test('allOf with mixed anyOf and primitive validates at runtime', () {
     final anyOfModel = AnyOfModel(
+      isDeprecated: false,
       description: null,
       name: 'FlexibleValue',
       models: {
@@ -329,6 +343,7 @@ void main() {
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Data',
             properties: [
@@ -350,6 +365,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Combined',
       models: {
@@ -383,6 +399,7 @@ void main() {
 
   test('allOf with mixed anyOf and primitive allows fromSimple decoding', () {
     final anyOfModel = AnyOfModel(
+      isDeprecated: false,
       description: null,
       name: 'FlexibleValue',
       models: {
@@ -390,6 +407,7 @@ void main() {
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Data',
             properties: [
@@ -411,6 +429,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Combined',
       models: {
@@ -440,6 +459,7 @@ void main() {
 
   test('generates fromSimple for allOf with list of int', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'AllOfIntList',
       models: {
@@ -473,6 +493,7 @@ void main() {
 
   test('generates fromSimple for allOf with list of DateTime', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'AllOfDateTimeList',
       models: {
@@ -508,6 +529,7 @@ void main() {
 
   test('generates fromSimple for allOf with list of Date', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'AllOfDateList',
       models: {
@@ -541,6 +563,7 @@ void main() {
 
   test('generates fromSimple for allOf with two lists', () {
     final oneOfModel = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'ArrayOneOfModel',
       models: {
@@ -552,6 +575,7 @@ void main() {
     );
 
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'AllOfDoubleList',
       models: {
@@ -593,10 +617,12 @@ void main() {
 
   test('generates fromSimple merging properties from single value', () {
     final model = AllOfModel(
+      isDeprecated: false,
       description: null,
       name: 'CombinedModel',
       models: <Model>{
         ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Base',
           properties: [
@@ -612,6 +638,7 @@ void main() {
           context: context,
         ),
         ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Mixin',
           properties: [
@@ -652,6 +679,7 @@ void main() {
     'types',
     () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'StringDecimalModel',
         models: <Model>{
@@ -688,10 +716,12 @@ void main() {
     'generates fromSimple validating single value against enum and string',
     () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'EnumStringModel',
         models: {
           EnumModel(
+            isDeprecated: false,
             description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
@@ -725,11 +755,13 @@ void main() {
     'generates fromSimple for mixed types attempting decode',
     () {
       final model = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'MixedModel',
         models: {
           StringModel(context: context),
           EnumModel(
+            isDeprecated: false,
             description: null,
             name: 'Status',
             values: const {'active', 'inactive'},
@@ -737,6 +769,7 @@ void main() {
             context: context,
           ),
           ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'UserData',
             properties: [

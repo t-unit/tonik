@@ -31,6 +31,7 @@ void main() {
   group('ClassGenerator toLabel generation', () {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleClass',
         properties: [
@@ -84,6 +85,7 @@ void main() {
       'generates toLabel that throws for class with nested class property',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'NestedClass',
           properties: [
@@ -91,6 +93,7 @@ void main() {
               description: null,
               name: 'nested',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 context: context,
                 name: 'Nested',
@@ -133,6 +136,7 @@ void main() {
   group('ClassGenerator toLabel method for label encoding', () {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleClass',
         properties: [
@@ -176,6 +180,7 @@ void main() {
       'runtime checks',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'CompositeClass',
           properties: [
@@ -191,6 +196,7 @@ void main() {
               description: null,
               name: 'value',
               model: OneOfModel(
+                isDeprecated: false,
                 description: null,
                 context: context,
                 name: 'Value',
@@ -235,6 +241,7 @@ void main() {
       'nullable composites',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedClass',
           properties: [
@@ -250,6 +257,7 @@ void main() {
               description: null,
               name: 'optionalValue',
               model: AnyOfModel(
+                isDeprecated: false,
                 description: null,
                 context: context,
                 name: 'OptionalValue',
@@ -291,6 +299,7 @@ void main() {
 
     test('generates toLabel for empty class', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'EmptyClass',
         properties: const [],

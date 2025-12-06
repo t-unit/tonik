@@ -21,6 +21,7 @@ void main() {
 
     test('generates file for anyOf model', () {
       final anyOfModel = AnyOfModel(
+        isDeprecated: false,
         name: 'FlexibleModel',
         models: {
           (discriminatorValue: null, model: StringModel(context: testContext)),

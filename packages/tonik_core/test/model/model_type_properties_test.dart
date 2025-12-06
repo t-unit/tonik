@@ -50,6 +50,7 @@ void main() {
           isNullable: false,
           context: Context.initial(),
           description: null,
+          isDeprecated: false,
         ).encodingShape,
         EncodingShape.simple,
       );
@@ -61,6 +62,7 @@ void main() {
           properties: const [],
           context: Context.initial(),
           description: null,
+          isDeprecated: false,
         ).encodingShape,
         EncodingShape.complex,
       );
@@ -89,6 +91,7 @@ void main() {
             properties: const [],
             context: Context.initial(),
             description: null,
+            isDeprecated: false,
           ),
           context: Context.initial(),
         ).encodingShape,
@@ -105,6 +108,7 @@ void main() {
         },
         context: Context.initial(),
         description: null,
+        isDeprecated: false,
       );
       expect(simpleAllOf.encodingShape, EncodingShape.simple);
 
@@ -115,6 +119,7 @@ void main() {
             properties: const [],
             context: Context.initial(),
             description: null,
+            isDeprecated: false,
           ),
           ListModel(
             content: StringModel(context: Context.initial()),
@@ -123,6 +128,7 @@ void main() {
         },
         context: Context.initial(),
         description: null,
+        isDeprecated: false,
       );
       expect(complexAllOf.encodingShape, EncodingShape.complex);
 
@@ -134,10 +140,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             description: null,
+            isDeprecated: false,
           ),
         },
         context: Context.initial(),
         description: null,
+        isDeprecated: false,
       );
       expect(mixedAllOf.encodingShape, EncodingShape.mixed);
     });

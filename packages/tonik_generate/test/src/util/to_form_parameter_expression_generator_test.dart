@@ -101,6 +101,7 @@ void main() {
 
     test('generates toForm call for EnumModel', () {
       final model = EnumModel(
+        isDeprecated: false,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -127,6 +128,7 @@ void main() {
 
     test('generates toForm call for ClassModel', () {
       final model = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -207,6 +209,7 @@ void main() {
 
     test('generates map and toForm call for List<Enum>', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -237,6 +240,7 @@ void main() {
 
     test('generates toForm call for List<Class>', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -302,6 +306,7 @@ void main() {
 
     test('generates toForm call for OneOfModel', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Choice',
         models: {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
@@ -355,6 +360,7 @@ void main() {
 
     test('generates map and toForm call for List<OneOf>', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         name: 'Choice',
         models: {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),

@@ -36,6 +36,7 @@ void main() {
 
       setUp(() {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Result',
           models: {
             (
@@ -114,11 +115,13 @@ void main() {
 
       setUp(() {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Result',
           models: {
             (
               discriminatorValue: 'success',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Success',
                 properties: [
                   Property(
@@ -137,6 +140,7 @@ void main() {
             (
               discriminatorValue: 'error',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Error',
                 properties: [
                   Property(
@@ -229,11 +233,13 @@ void main() {
 
       setUp(() {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Result',
           models: {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Success',
                 properties: [
                   Property(
@@ -253,6 +259,7 @@ void main() {
             (
               discriminatorValue: 'error',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Error',
                 properties: [
                   Property(
@@ -355,6 +362,7 @@ void main() {
     group('with complex data types', () {
       test('toJson method handles DateTime models correctly', () {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'TimestampValue',
           models: {
             (
@@ -395,6 +403,7 @@ void main() {
 
       test('toJson method handles Date models correctly', () {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'DateValue',
           models: {
             (
@@ -435,6 +444,7 @@ void main() {
 
       test('toJson method handles Decimal models correctly', () {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'NumericValue',
           models: {
             (
@@ -475,6 +485,7 @@ void main() {
 
       test('toJson method handles Uri models correctly', () {
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'UriValue',
           models: {
             (
@@ -515,6 +526,7 @@ void main() {
 
       test('toJson method handles Enum models correctly', () {
         final enumModel = EnumModel<String>(
+          isDeprecated: false,
           name: 'Status',
           values: const {'active', 'inactive'},
           isNullable: false,
@@ -523,6 +535,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'StatusValue',
           models: {
             (
@@ -563,6 +576,7 @@ void main() {
 
       test('toJson method handles Class models correctly', () {
         final classModel = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: [
             Property(
@@ -579,6 +593,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'UserValue',
           models: {
             (
@@ -619,9 +634,11 @@ void main() {
 
       test('toJson method handles AllOf models correctly', () {
         final allOfModel = AllOfModel(
+          isDeprecated: false,
           name: 'Combined',
           models: {
             ClassModel(
+              isDeprecated: false,
               name: 'Base',
               properties: [
                 Property(
@@ -642,6 +659,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'CombinedValue',
           models: {
             (
@@ -689,6 +707,7 @@ void main() {
           );
 
           final model = OneOfModel(
+            isDeprecated: false,
             name: 'ListValue',
             models: {
               (
@@ -732,6 +751,7 @@ void main() {
         'toJson method handles List models with complex content correctly',
         () {
           final classModel = ClassModel(
+            isDeprecated: false,
             name: 'Item',
             properties: [
               Property(
@@ -753,6 +773,7 @@ void main() {
           );
 
           final model = OneOfModel(
+            isDeprecated: false,
             name: 'ItemListValue',
             models: {
               (
@@ -794,6 +815,7 @@ void main() {
 
       test('toJson method handles AnyOf models correctly', () {
         final anyOfModel = AnyOfModel(
+          isDeprecated: false,
           name: 'Flexible',
           models: {
             (
@@ -811,6 +833,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'FlexibleValue',
           models: {
             (
@@ -857,6 +880,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'IdentifierValue',
           models: {
             (

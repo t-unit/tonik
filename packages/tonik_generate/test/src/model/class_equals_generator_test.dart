@@ -32,6 +32,7 @@ void main() {
   group('ClassGenerator equals method generation', () {
     test('generates equals method with simple properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -73,6 +74,7 @@ void main() {
 
     test('generates equals method with complex types', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Address',
         properties: [
@@ -89,6 +91,7 @@ void main() {
       );
 
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -130,6 +133,7 @@ void main() {
 
     test('generates equals method with list types', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -176,6 +180,7 @@ void main() {
 
     test('generates equals method with normalized property names', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -217,6 +222,7 @@ void main() {
 
     test('generates equals method with deeply nested list types', () {
       final nestedListModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'NestedData',
         properties: [
@@ -266,6 +272,7 @@ void main() {
 
     test('generates equals method for class with no properties', () {
       final emptyModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Empty',
         properties: const [],

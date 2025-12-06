@@ -148,33 +148,44 @@ class AnyOfGenerator {
     );
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..docs.addAll(formatDocComment(model.description))
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(defaultCtor)
-            ..constructors.add(fromJsonCtor)
-            ..constructors.add(fromSimpleCtor)
-            ..constructors.add(fromFormCtor)
-            ..methods.addAll([
-              _buildCurrentEncodingShapeGetter(className, normalized),
-              _buildToJsonMethod(className, model, normalized),
-              _buildParameterPropertiesMethod(className, model, normalized),
-              _buildToSimpleMethod(className, model, normalized),
-              _buildToFormMethod(className, model, normalized),
-              _buildToLabelMethod(className, model, normalized),
-              _buildToMatrixMethod(className, model, normalized),
-              _buildToDeepObjectMethod(className, model, normalized),
-              _buildUriEncodeMethod(className, model, normalized),
-              generateEqualsMethod(
-                className: className,
-                properties: propsForEquality,
-              ),
-              generateHashCodeMethod(properties: propsForEquality),
-              copyWithMethod,
-            ])
-            ..fields.addAll(fields),
+      (b) {
+        b
+          ..name = className
+          ..docs.addAll(formatDocComment(model.description))
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+
+        if (model.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This class is deprecated.'),
+            ]),
+          );
+        }
+
+        b
+          ..constructors.add(defaultCtor)
+          ..constructors.add(fromJsonCtor)
+          ..constructors.add(fromSimpleCtor)
+          ..constructors.add(fromFormCtor)
+          ..methods.addAll([
+            _buildCurrentEncodingShapeGetter(className, normalized),
+            _buildToJsonMethod(className, model, normalized),
+            _buildParameterPropertiesMethod(className, model, normalized),
+            _buildToSimpleMethod(className, model, normalized),
+            _buildToFormMethod(className, model, normalized),
+            _buildToLabelMethod(className, model, normalized),
+            _buildToMatrixMethod(className, model, normalized),
+            _buildToDeepObjectMethod(className, model, normalized),
+            _buildUriEncodeMethod(className, model, normalized),
+            generateEqualsMethod(
+              className: className,
+              properties: propsForEquality,
+            ),
+            generateHashCodeMethod(properties: propsForEquality),
+            copyWithMethod,
+          ])
+          ..fields.addAll(fields);
+      },
     );
   }
 

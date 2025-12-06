@@ -26,6 +26,7 @@ void main() {
 
     test('generates toDeepObject method with correct signature', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleModel',
         properties: [
@@ -89,6 +90,7 @@ void main() {
 
     test('generates toDeepObject method for empty model', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'EmptyModel',
         properties: const [],
@@ -127,6 +129,7 @@ void main() {
       'property model',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'TestModel',
           properties: [
@@ -176,6 +179,7 @@ void main() {
       'properties model',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexModel',
           properties: [
@@ -227,6 +231,7 @@ void main() {
       'toDeepObject method passes allowLists=false to parameterProperties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ModelWithList',
           properties: [
@@ -265,6 +270,7 @@ void main() {
       'toDeepObject method works with nullable required properties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'NullableModel',
           properties: [
@@ -300,6 +306,7 @@ void main() {
       'toDeepObject method works with optional properties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'OptionalModel',
           properties: [
@@ -335,6 +342,7 @@ void main() {
       'toDeepObject method works with mixed simple and complex types',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedModel',
           properties: [
@@ -350,6 +358,7 @@ void main() {
               description: null,
               name: 'nested',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'NestedClass',
                 properties: [
@@ -392,6 +401,7 @@ void main() {
       'toDeepObject method passes alreadyEncoded=true',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'EncodedModel',
           properties: [

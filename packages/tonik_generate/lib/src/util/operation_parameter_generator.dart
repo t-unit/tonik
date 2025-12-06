@@ -63,12 +63,21 @@ List<Parameter> generateParameters({
 
     parameters.add(
       Parameter(
-        (b) =>
-            b
-              ..name = pathParam.normalizedName
-              ..type = parameterType
-              ..named = true
-              ..required = pathParam.parameter.isRequired,
+        (b) {
+          b
+            ..name = pathParam.normalizedName
+            ..type = parameterType
+            ..named = true
+            ..required = pathParam.parameter.isRequired;
+
+          if (pathParam.parameter.isDeprecated) {
+            b.annotations.add(
+              refer('Deprecated', 'dart:core').call([
+                literalString('This parameter is deprecated.'),
+              ]),
+            );
+          }
+        },
       ),
     );
   }
@@ -84,12 +93,21 @@ List<Parameter> generateParameters({
 
     parameters.add(
       Parameter(
-        (b) =>
-            b
-              ..name = queryParam.normalizedName
-              ..type = parameterType
-              ..named = true
-              ..required = queryParam.parameter.isRequired,
+        (b) {
+          b
+            ..name = queryParam.normalizedName
+            ..type = parameterType
+            ..named = true
+            ..required = queryParam.parameter.isRequired;
+
+          if (queryParam.parameter.isDeprecated) {
+            b.annotations.add(
+              refer('Deprecated', 'dart:core').call([
+                literalString('This parameter is deprecated.'),
+              ]),
+            );
+          }
+        },
       ),
     );
   }
@@ -105,12 +123,21 @@ List<Parameter> generateParameters({
 
     parameters.add(
       Parameter(
-        (b) =>
-            b
-              ..name = headerParam.normalizedName
-              ..type = parameterType
-              ..named = true
-              ..required = headerParam.parameter.isRequired,
+        (b) {
+          b
+            ..name = headerParam.normalizedName
+            ..type = parameterType
+            ..named = true
+            ..required = headerParam.parameter.isRequired;
+
+          if (headerParam.parameter.isDeprecated) {
+            b.annotations.add(
+              refer('Deprecated', 'dart:core').call([
+                literalString('This parameter is deprecated.'),
+              ]),
+            );
+          }
+        },
       ),
     );
   }

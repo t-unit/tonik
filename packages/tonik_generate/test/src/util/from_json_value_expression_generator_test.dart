@@ -114,6 +114,7 @@ void main() {
 
       test('generates for class alias', () {
         final userModel = ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'User',
           properties: const [],
@@ -158,6 +159,7 @@ void main() {
 
       test('generates for nested alias', () {
         final userModel = ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'User',
           properties: const [],
@@ -186,6 +188,7 @@ void main() {
 
       test('generates for alias with list of classes', () {
         final userModel = ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'User',
           properties: const [],
@@ -213,6 +216,7 @@ void main() {
 
       test('generates for list of aliases', () {
         final userModel = ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'User',
           properties: const [],
@@ -244,6 +248,7 @@ void main() {
 
     test('generates for enum types', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         name: 'UserRole',
         values: const {'admin', 'user'},
@@ -263,6 +268,7 @@ void main() {
 
     test('generates for class types', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         name: 'User',
         properties: const [],
@@ -366,6 +372,7 @@ void main() {
 
     test('generates for list of classes', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         name: 'User',
         properties: const [],
@@ -388,6 +395,7 @@ void main() {
 
     test('generates for nested lists', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         name: 'User',
         properties: const [],
@@ -415,6 +423,7 @@ void main() {
 
     test('generates for triple-nested lists', () {
       final classModel = ClassModel(
+        isDeprecated: false,
         context: context,
         name: 'User',
         properties: const [],
@@ -448,6 +457,7 @@ void main() {
 
     test('generates for list of enums', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         name: 'UserRole',
         values: const {'admin', 'user'},
@@ -546,6 +556,7 @@ void main() {
     group('with scoped emitter', () {
       test('generates for scoped enum types', () {
         final enumModel = EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'UserRole',
           values: const {'admin', 'user'},
@@ -565,6 +576,7 @@ void main() {
 
       test('generates for scoped list of enums', () {
         final enumModel = EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'UserRole',
           values: const {'admin', 'user'},
@@ -673,6 +685,7 @@ void main() {
 
       test('generates for nullable class types', () {
         final classModel = ClassModel(
+          isDeprecated: false,
           context: context,
           name: 'User',
           properties: const [],
@@ -692,6 +705,7 @@ void main() {
 
       test('generates for nullable enum types', () {
         final enumModel = EnumModel(
+          isDeprecated: false,
           context: context,
           name: 'UserRole',
           values: const {'admin', 'user'},
@@ -730,6 +744,7 @@ void main() {
 
         test('generates for nullable list of classes', () {
           final classModel = ClassModel(
+            isDeprecated: false,
             context: context,
             name: 'User',
             properties: const [],
@@ -756,6 +771,7 @@ void main() {
 
         test('generates for nullable list of enums', () {
           final enumModel = EnumModel(
+            isDeprecated: false,
             context: context,
             name: 'UserRole',
             values: const {'admin', 'user'},

@@ -22,6 +22,7 @@ void main() {
     test('generates library with comprehensive API metadata', () {
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,
@@ -115,6 +116,7 @@ void main() {
     test('handles missing optional metadata gracefully', () {
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,

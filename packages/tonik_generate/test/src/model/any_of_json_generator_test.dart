@@ -29,6 +29,7 @@ void main() {
       'generates fromJson factory that wraps each property decode in try/catch and assigns null on failure',
       () {
         final complex = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -45,6 +46,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Flexible',
           models: {
@@ -117,6 +119,7 @@ void main() {
     'generates toJson method with merge-or-equal algorithm for complex models',
     () {
       final modelA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: [
@@ -133,6 +136,7 @@ void main() {
       );
 
       final modelB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'B',
         properties: [
@@ -149,6 +153,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Payload',
         models: {
@@ -235,6 +240,7 @@ void main() {
     'generates toJson method without discriminator when none configured',
     () {
       final modelA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'A',
         properties: [
@@ -251,6 +257,7 @@ void main() {
       );
 
       final modelB = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'B',
         properties: [
@@ -267,6 +274,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'PayloadNoDisc',
         models: {
@@ -345,6 +353,7 @@ void main() {
 
   test('generates toJson method for primitive-only anyOf models', () {
     final model = AnyOfModel(
+      isDeprecated: false,
       description: null,
       name: 'OnlyPrimitives',
       models: {
@@ -437,6 +446,7 @@ void main() {
     'generates toJson method for mixed class and primitive anyOf models',
     () {
       final user = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -453,6 +463,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Mixed',
         models: {

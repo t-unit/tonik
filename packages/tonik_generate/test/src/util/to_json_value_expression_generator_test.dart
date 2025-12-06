@@ -108,6 +108,7 @@ void main() {
 
     test('for Enum property', () {
       final enumModel = EnumModel<String>(
+        isDeprecated: false,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -130,6 +131,7 @@ void main() {
 
     test('for nullable Enum property', () {
       final enumModel = EnumModel<String>(
+        isDeprecated: false,
         name: 'Priority',
         values: const {'high', 'low'},
         isNullable: true,
@@ -152,6 +154,7 @@ void main() {
 
     test('for required property with nullable Enum type', () {
       final enumModel = EnumModel<String>(
+        isDeprecated: false,
         name: 'Priority',
         values: const {'high', 'low'},
         isNullable: true,
@@ -210,6 +213,7 @@ void main() {
     test('for List<ClassModel> property', () {
       final addressModel = ClassModel(
         name: 'Address',
+        isDeprecated: false,
         properties: const [],
         context: context,
         description: null,
@@ -305,6 +309,7 @@ void main() {
 
     test('for AliasModel property (Class)', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         name: 'Address',
         properties: const [],
         context: context,
@@ -331,6 +336,7 @@ void main() {
 
     test('for nullable AliasModel property (Class)', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         name: 'Address',
         properties: const [],
         context: context,
@@ -357,6 +363,7 @@ void main() {
 
     test('for ClassModel property', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         name: 'Address',
         properties: const [],
         context: context,
@@ -378,6 +385,7 @@ void main() {
 
     test('for nullable ClassModel property', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         name: 'Address',
         properties: const [],
         context: context,
@@ -399,6 +407,7 @@ void main() {
 
     test('for AllOfModel property', () {
       final allOfModel = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: const {},
         context: context,
@@ -420,6 +429,7 @@ void main() {
 
     test('for nullable AllOfModel property', () {
       final allOfModel = AllOfModel(
+        isDeprecated: false,
         name: 'Combined',
         models: const {},
         context: context,
@@ -441,6 +451,7 @@ void main() {
 
     test('for OneOfModel property', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         name: 'Pet',
         models: const {},
         discriminator: 'petType',
@@ -460,6 +471,7 @@ void main() {
 
     test('for nullable OneOfModel property', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         name: 'Pet',
         models: const {},
         discriminator: 'petType',
@@ -479,6 +491,7 @@ void main() {
 
     test('for AnyOfModel property', () {
       final anyOfModel = AnyOfModel(
+        isDeprecated: false,
         name: 'Content',
         models: const {},
         discriminator: 'contentType',
@@ -500,6 +513,7 @@ void main() {
     });
     test('for nullable AnyOfModel property', () {
       final anyOfModel = AnyOfModel(
+        isDeprecated: false,
         name: 'Content',
         models: const {},
         discriminator: 'contentType',
@@ -568,6 +582,7 @@ void main() {
 
     test('for Alias to List<ClassModel>', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Address',
         properties: const [],
@@ -594,6 +609,7 @@ void main() {
 
     test('for nullable Alias to List<ClassModel>', () {
       final addressModel = ClassModel(
+        isDeprecated: false,
         name: 'Address',
         properties: const [],
         context: context,
@@ -679,6 +695,7 @@ void main() {
 
     test('for Enum parameter', () {
       final enumModel = EnumModel<String>(
+        isDeprecated: false,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -767,6 +784,7 @@ void main() {
 
     test('for Enum parameter', () {
       final enumModel = EnumModel<String>(
+        isDeprecated: false,
         description: null,
         name: 'Status',
         values: const {'active', 'inactive'},

@@ -32,6 +32,7 @@ void main() {
   group('toForm', () {
     test('toForm delegates to active variant value', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Result',
         models: {
@@ -68,6 +69,7 @@ void main() {
 
     test('toForm injects discriminator for complex variants', () {
       final userModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -84,6 +86,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Response',
         models: {
@@ -123,6 +126,7 @@ void main() {
 
     test('toForm method has correct signature', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Test',
         models: {
@@ -154,6 +158,7 @@ void main() {
   group('fromForm', () {
     test('fromForm constructor has correct signature', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Test',
         models: {
@@ -191,6 +196,7 @@ void main() {
 
     test('fromForm tries variants in declaration order (primitive-only)', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Result',
         models: {
@@ -230,6 +236,7 @@ void main() {
 
     test('fromForm tries complex variants using fromForm with explode', () {
       final userModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -246,6 +253,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Response',
         models: {
@@ -281,6 +289,7 @@ void main() {
       'fromForm uses discriminator for fast-path routing with explode=true',
       () {
         final classA = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'A',
           properties: [
@@ -297,6 +306,7 @@ void main() {
         );
 
         final classB = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'B',
           properties: [
@@ -313,6 +323,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Choice',
           models: {
@@ -367,6 +378,7 @@ void main() {
 
     test('toForm handles mixed-encoded variant without discriminator', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Inner',
         models: {
@@ -374,6 +386,7 @@ void main() {
           (
             discriminatorValue: null,
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Data',
               properties: [
@@ -395,6 +408,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Outer',
         models: {
@@ -423,6 +437,7 @@ void main() {
 
     test('toForm handles mixed-encoded variant with discriminator', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Inner',
         models: {
@@ -430,6 +445,7 @@ void main() {
           (
             discriminatorValue: null,
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Data',
               properties: [
@@ -451,6 +467,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Outer',
         models: {
@@ -486,6 +503,7 @@ void main() {
       'toForm handles multiple mixed-encoded variants with discriminator',
       () {
         final innerOneOfA = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerA',
           models: {
@@ -493,6 +511,7 @@ void main() {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'DataA',
                 properties: [
@@ -514,6 +533,7 @@ void main() {
         );
 
         final innerOneOfB = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'InnerB',
           models: {
@@ -521,6 +541,7 @@ void main() {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'DataB',
                 properties: [
@@ -542,6 +563,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Outer',
           models: {

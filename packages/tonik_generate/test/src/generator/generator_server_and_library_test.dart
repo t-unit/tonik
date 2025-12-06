@@ -30,6 +30,7 @@ void main() {
 
       final models = <Model>{
         ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: ctx,

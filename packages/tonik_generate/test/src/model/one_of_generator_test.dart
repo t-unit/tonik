@@ -32,6 +32,7 @@ void main() {
   test('generates simple encoding shape getter for primitive oneOf', () {
     final model = OneOfModel(
       description: null,
+      isDeprecated: false,
       name: 'Value',
       models: {
         (discriminatorValue: null, model: StringModel(context: context)),
@@ -62,12 +63,14 @@ void main() {
 
   test('generates complex encoding shape getter for class oneOf', () {
     final classA = ClassModel(
+      isDeprecated: false,
       description: null,
       name: 'A',
       properties: const [],
       context: context,
     );
     final classB = ClassModel(
+      isDeprecated: false,
       description: null,
       name: 'B',
       properties: const [],
@@ -75,6 +78,7 @@ void main() {
     );
 
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Value',
       models: {
@@ -107,6 +111,7 @@ void main() {
   group('doc comments', () {
     test('generates sealed class with doc comment from description', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: 'Represents either a string or an integer value',
         name: 'Value',
         models: {
@@ -128,6 +133,7 @@ void main() {
 
     test('generates sealed class with multiline doc comment', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: 'A flexible value type.\nCan be string or integer.',
         name: 'Value',
         models: {
@@ -151,6 +157,7 @@ void main() {
       'generates sealed class without doc comment when description is null',
       () {
         final model = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Value',
           models: {
@@ -172,6 +179,7 @@ void main() {
       'generates sealed class without doc comment when description is empty',
       () {
         final model = OneOfModel(
+          isDeprecated: false,
           description: '',
           name: 'Value',
           models: {
@@ -192,6 +200,7 @@ void main() {
 
   test('generates mixed encoding shape getter for mixed oneOf', () {
     final classA = ClassModel(
+      isDeprecated: false,
       description: null,
       name: 'A',
       properties: const [],
@@ -199,6 +208,7 @@ void main() {
     );
 
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Value',
       models: {
@@ -230,6 +240,7 @@ void main() {
 
   test('generates sealed class with standard constructor', () {
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Result',
       models: {
@@ -291,6 +302,7 @@ void main() {
 
   test('generates subclasses for each model in oneOf', () {
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Result',
       models: {
@@ -343,12 +355,14 @@ void main() {
 
   test('uses model name when discriminator value is not available', () {
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Result',
       models: {
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Success',
             properties: const [],
@@ -358,6 +372,7 @@ void main() {
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'Error',
             properties: const [],
@@ -400,6 +415,7 @@ void main() {
 
   test('handles nested models correctly', () {
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'Result',
       models: {
@@ -448,12 +464,14 @@ void main() {
 
   test('fromJson factory includes proper catch clause with on Object', () {
     final model = OneOfModel(
+      isDeprecated: false,
       description: null,
       name: 'TestOneOf',
       models: {
         (
           discriminatorValue: null,
           model: ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'TestClass',
             properties: const [],
@@ -481,6 +499,7 @@ void main() {
   group('subclass equals', () {
     test('generates equals method for primitive type', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Result',
         models: {
@@ -519,6 +538,7 @@ void main() {
 
     test('generates equals method for collection type', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Result',
         models: {
@@ -568,6 +588,7 @@ void main() {
   group('subclass names', () {
     test('generates meaningful names for primitive models', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Value',
         models: {
@@ -591,12 +612,14 @@ void main() {
 
     test('generates meaningful names for complex models', () {
       final classA = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'ClassA',
         properties: const [],
         context: context,
       );
       final allOfModel = AllOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AllOfExample',
         models: {classA},
@@ -604,6 +627,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Value',
         models: {
@@ -629,6 +653,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Value',
         models: {
@@ -648,6 +673,7 @@ void main() {
   group('parameterProperties', () {
     test('method exists with correct signature', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Value',
         models: {
@@ -703,6 +729,7 @@ void main() {
 
     test('throws for primitive-only oneOf', () {
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Value',
         models: {
@@ -734,6 +761,7 @@ void main() {
 
     test('delegates to value for complex variant without discriminator', () {
       final userModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -750,6 +778,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Response',
         models: {
@@ -784,6 +813,7 @@ void main() {
 
     test('injects discriminator for complex variant with discriminator', () {
       final userModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -800,6 +830,7 @@ void main() {
       );
 
       final companyModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Company',
         properties: [
@@ -816,6 +847,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'Entity',
         models: {
@@ -863,6 +895,7 @@ void main() {
       'throws at runtime for mixed primitive/complex without discriminator',
       () {
         final userModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -879,6 +912,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Value',
           models: {
@@ -920,6 +954,7 @@ void main() {
       'throws at runtime for mixed primitive/complex with discriminator',
       () {
         final userModel = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'User',
           properties: [
@@ -936,6 +971,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Response',
           models: {
@@ -984,12 +1020,14 @@ void main() {
       'discriminator',
       () {
         final innerOneOf = OneOfModel(
+          isDeprecated: false,
           name: 'Inner',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Data',
                 properties: [
                   Property(
@@ -1012,6 +1050,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Outer',
           models: {
             (discriminatorValue: null, model: innerOneOf),
@@ -1054,6 +1093,7 @@ void main() {
       'discriminator',
       () {
         final innerOneOf = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'Inner',
           models: {
@@ -1061,6 +1101,7 @@ void main() {
             (
               discriminatorValue: null,
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Data',
                 properties: [
@@ -1082,6 +1123,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'Outer',
           models: {
             (discriminatorValue: 'inner', model: innerOneOf),
@@ -1127,6 +1169,7 @@ void main() {
     final sharedContext = context.push('TestOneOf').push('oneOf');
 
     final model = OneOfModel(
+      isDeprecated: false,
       name: 'TestOneOf',
       models: {
         (

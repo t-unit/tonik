@@ -32,6 +32,7 @@ void main() {
   group('ClassGenerator hashCode method generation', () {
     test('generates hashCode method', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -69,6 +70,7 @@ void main() {
 
     test('generates hashCode method with multiple properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -122,6 +124,7 @@ void main() {
 
     test('generates hashCode method with nullable properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -159,6 +162,7 @@ void main() {
 
     test('generates hashCode method with normalized property names', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -196,6 +200,7 @@ void main() {
 
     test('generates hashCode method with list types', () {
       final model = ClassModel(
+        isDeprecated: false,
         name: 'User',
         properties: [
           Property(
@@ -239,6 +244,7 @@ void main() {
 
     test('generates hashCode method with deeply nested list types', () {
       final nestedListModel = ClassModel(
+        isDeprecated: false,
         name: 'NestedData',
         properties: [
           Property(

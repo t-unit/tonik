@@ -14,6 +14,7 @@ void main() {
       group('real world examples', () {
         test('anonymous response', () {
           final model = ClassModel(
+            isDeprecated: false,
             properties: const [],
             context: Context.initial().pushAll([
               'paths',
@@ -33,6 +34,7 @@ void main() {
 
         test('preserves numeric components in context paths', () {
           final model = ClassModel(
+            isDeprecated: false,
             properties: const [],
             context: Context.initial().pushAll([
               'paths',
@@ -53,6 +55,7 @@ void main() {
         test('oneOf model with inline model', () {
           // Create a OneOfModel named Blub with an inline anonymous class model
           final inlineClassModel = ClassModel(
+            isDeprecated: false,
             properties: const [],
             context: Context.initial().pushAll([
               'components',
@@ -63,6 +66,7 @@ void main() {
           );
 
           final oneOfModel = OneOfModel(
+            isDeprecated: false,
             name: 'Blub',
             models: {(discriminatorValue: null, model: inlineClassModel)},
             discriminator: null,
@@ -81,6 +85,7 @@ void main() {
 
         test('enum parameter in path', () {
           final enumModel = EnumModel<String>(
+            isDeprecated: false,
             values: const {'available', 'pending', 'sold'},
             isNullable: false,
             context: Context.initial().pushAll([
@@ -100,6 +105,7 @@ void main() {
 
       test('uses model name when available', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'UserProfile',
           properties: const [],
           context: Context.initial(),
@@ -110,6 +116,7 @@ void main() {
 
       test('converts name to PascalCase', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'user_profile',
           properties: const [],
           context: Context.initial(),
@@ -120,18 +127,21 @@ void main() {
 
       test('makes duplicate names unique using Model suffix', () {
         final model1 = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
           description: null,
         );
         final model2 = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
           description: null,
         );
         final model3 = ClassModel(
+          isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
@@ -149,6 +159,7 @@ void main() {
 
       test('removes illegal characters', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'User-Profile!123',
           properties: const [],
           context: Context.initial(),
@@ -159,6 +170,7 @@ void main() {
 
       test('combines context path components in PascalCase', () {
         final model = ClassModel(
+          isDeprecated: false,
           properties: const [],
           context: Context.initial().pushAll(['api', 'models', 'user']),
           description: null,
@@ -185,6 +197,7 @@ void main() {
 
       test('converts explicit names with underscores to PascalCase', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: 'my_class_name',
           properties: const [],
           context: Context.initial(),
@@ -196,6 +209,7 @@ void main() {
 
       test('converts names with leading underscores to PascalCase', () {
         final model = ClassModel(
+          isDeprecated: false,
           name: '_my_class_name',
           properties: const [],
           context: Context.initial(),
@@ -207,6 +221,7 @@ void main() {
 
       test('uses Anonymous for model without name or context path', () {
         final model = ClassModel(
+          isDeprecated: false,
           properties: const [],
           context: Context.initial(),
           description: null,
@@ -217,16 +232,19 @@ void main() {
 
       test('makes anonymous names unique using Model suffix', () {
         final model1 = ClassModel(
+          isDeprecated: false,
           properties: const [],
           context: Context.initial(),
           description: null,
         );
         final model2 = ClassModel(
+          isDeprecated: false,
           properties: const [],
           context: Context.initial(),
           description: null,
         );
         final model3 = ClassModel(
+          isDeprecated: false,
           properties: const [],
           context: Context.initial(),
           description: null,
@@ -244,6 +262,7 @@ void main() {
       group('number handling', () {
         test('preserves numbers in class names', () {
           final model = ClassModel(
+            isDeprecated: false,
             name: 'Model23',
             properties: const [],
             context: Context.initial(),
@@ -254,6 +273,7 @@ void main() {
 
         test('removes leading numbers', () {
           final model = ClassModel(
+            isDeprecated: false,
             name: '2Model',
             properties: const [],
             context: Context.initial(),
@@ -264,6 +284,7 @@ void main() {
 
         test('removes leading numbers but preserves internal ones', () {
           final model = ClassModel(
+            isDeprecated: false,
             name: '2_Model12String33',
             properties: const [],
             context: Context.initial(),
@@ -274,6 +295,7 @@ void main() {
 
         test('handles multiple number segments', () {
           final model = ClassModel(
+            isDeprecated: false,
             name: 'user2_profile3_data4',
             properties: const [],
             context: Context.initial(),
@@ -284,6 +306,7 @@ void main() {
 
         test('handles names with only numbers', () {
           final model = ClassModel(
+            isDeprecated: false,
             name: '123',
             properties: const [],
             context: Context.initial(),
@@ -297,6 +320,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'hello_world_test',
                 properties: const [],
                 context: Context.initial(),
@@ -311,6 +335,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: '_hello_world',
                 properties: const [],
                 context: Context.initial(),
@@ -325,6 +350,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'Hello-World_Test!123',
                 properties: const [],
                 context: Context.initial(),
@@ -339,6 +365,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: '___hello_world_test',
                 properties: const [],
                 context: Context.initial(),
@@ -353,6 +380,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'My_Class_NAME',
                 properties: const [],
                 context: Context.initial(),
@@ -369,6 +397,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
@@ -382,6 +411,7 @@ void main() {
         test('adds Model suffix for second occurrence', () {
           nameGenerator.generateModelName(
             ClassModel(
+              isDeprecated: false,
               name: 'Test',
               properties: const [],
               context: Context.initial(),
@@ -392,6 +422,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
@@ -406,6 +437,7 @@ void main() {
           nameGenerator
             ..generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
@@ -414,6 +446,7 @@ void main() {
             )
             ..generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
@@ -424,6 +457,7 @@ void main() {
           expect(
             nameGenerator.generateModelName(
               ClassModel(
+                isDeprecated: false,
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
@@ -436,12 +470,14 @@ void main() {
 
         test('handles names that already end with Model', () {
           final model1 = ClassModel(
+            isDeprecated: false,
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
             description: null,
           );
           final model2 = ClassModel(
+            isDeprecated: false,
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
@@ -575,6 +611,7 @@ void main() {
 
         test('ensures global uniqueness with model names', () {
           final model = ClassModel(
+            isDeprecated: false,
             name: 'User',
             properties: const [],
             context: Context.initial(),

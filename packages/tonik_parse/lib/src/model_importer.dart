@@ -135,6 +135,7 @@ class ModelImporter {
         schema.isNullable ?? hasNullType,
         context,
         description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
       ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -146,6 +147,7 @@ class ModelImporter {
         schema.isNullable ?? hasNullType,
         context,
         description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
       ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
@@ -199,6 +201,7 @@ class ModelImporter {
       discriminator: null,
       context: context,
       description: schema.description,
+      isDeprecated: schema.isDeprecated ?? false,
     );
   }
 
@@ -224,6 +227,7 @@ class ModelImporter {
             .toList();
 
     final allOfModel = AllOfModel(
+      isDeprecated: schema.isDeprecated ?? false,
       models: models.toSet(),
       context: modelContext,
       name: name,
@@ -260,6 +264,7 @@ class ModelImporter {
     );
 
     final oneOfModel = OneOfModel(
+      isDeprecated: schema.isDeprecated ?? false,
       models: models.toSet(),
       context: context,
       name: name,
@@ -283,6 +288,7 @@ class ModelImporter {
       ),
     );
     final anyOfModel = AnyOfModel(
+      isDeprecated: schema.isDeprecated ?? false,
       models: models.toSet(),
       context: context,
       name: name,
@@ -313,6 +319,7 @@ class ModelImporter {
     final properties = <Property>[];
 
     final model = ClassModel(
+      isDeprecated: schema.isDeprecated ?? false,
       name: name,
       properties: properties,
       context: context,
@@ -374,6 +381,7 @@ class ModelImporter {
     bool isNullable,
     Context context, {
     required String? description,
+    required bool isDeprecated,
   }) {
     log.fine('Parsing enum $name<$T> for $context with values $values');
 
@@ -391,6 +399,7 @@ class ModelImporter {
     }
 
     final model = EnumModel<T>(
+      isDeprecated: isDeprecated,
       values: typedValues,
       isNullable: isNullable || hasNull,
       context: context,

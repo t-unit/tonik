@@ -31,6 +31,7 @@ void main() {
   group('ClassGenerator fromSimple generation', () {
     test('generates fromSimple for all supported primitive types', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Sample',
         properties: [
@@ -133,6 +134,7 @@ void main() {
 
     test('generates fromSimple for enum property', () {
       final enumModel = EnumModel<String>(
+        isDeprecated: false,
         description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
@@ -140,6 +142,7 @@ void main() {
         context: context,
       );
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Order',
         properties: [
@@ -203,6 +206,7 @@ void main() {
     test('generates fromSimple for all nullable primitive types', () {
       final model = ClassModel(
         description: null,
+        isDeprecated: false,
         name: 'NullableSample',
         properties: [
           Property(
@@ -313,6 +317,7 @@ void main() {
       'generates fromSimple for OneOf model with all supported primitive types',
       () {
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'PrimitiveOneOf',
           models: {
@@ -324,6 +329,7 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Container',
           properties: [
@@ -389,6 +395,7 @@ void main() {
       'generates fromSimple for OneOf model with mixed types attempting decode',
       () {
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'MixedOneOf',
           models: {
@@ -396,6 +403,7 @@ void main() {
             (
               discriminatorValue: 'class',
               model: ClassModel(
+                isDeprecated: false,
                 name: 'Address',
                 properties: const [],
                 context: context,
@@ -407,6 +415,7 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          isDeprecated: false,
           name: 'Container',
           properties: [
             Property(
@@ -459,6 +468,7 @@ void main() {
       'generates fromSimple for mixed OneOf that attempts decoding',
       () {
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           description: null,
           name: 'DynamicValue',
           models: {
@@ -466,6 +476,7 @@ void main() {
             (
               discriminatorValue: 'class',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'ComplexData',
                 properties: [
@@ -486,6 +497,7 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'Wrapper',
           properties: [
@@ -535,6 +547,7 @@ void main() {
         context: context,
       );
       final model = ClassModel(
+        isDeprecated: false,
         name: 'UserIdHolder',
         properties: [
           Property(
@@ -597,6 +610,7 @@ void main() {
 
     test('generates fromSimple for Alias targeting OneOf with primitives', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'PrimitiveOneOf',
         models: {
@@ -612,6 +626,7 @@ void main() {
         context: context,
       );
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'AliasHolder',
         properties: [
@@ -678,6 +693,7 @@ void main() {
         final aliasModel = AliasModel(
           name: 'UserAlias',
           model: ClassModel(
+            isDeprecated: false,
             description: null,
             name: 'User',
             properties: [
@@ -695,6 +711,7 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'AliasHolder',
           properties: [
@@ -747,6 +764,7 @@ void main() {
           context: context,
         );
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'AliasHolder',
           properties: [
@@ -789,12 +807,14 @@ void main() {
 
     test('fromSimple throws for mixed simple and complex properties', () {
       final complexModel = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Address',
         properties: const [],
         context: context,
       );
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'User',
         properties: [
@@ -845,6 +865,7 @@ void main() {
 
     test('generates fromSimple for Uri property', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Resource',
         properties: [
@@ -911,6 +932,7 @@ void main() {
 
     test('generates fromSimple for nullable Uri property', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Resource',
         properties: [
@@ -977,6 +999,7 @@ void main() {
 
     test('generates fromSimple for mixed Uri and primitive properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Resource',
         properties: [
@@ -1074,6 +1097,7 @@ void main() {
   group('ClassGenerator toSimple generation', () {
     test('generates toSimple for class with only simple properties', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'SimpleClass',
         properties: [
@@ -1132,6 +1156,7 @@ void main() {
       'generates toSimple for class with complex properties',
       () {
         final model = ClassModel(
+          isDeprecated: false,
           description: null,
           name: 'ComplexClass',
           properties: [
@@ -1147,6 +1172,7 @@ void main() {
               description: null,
               name: 'address',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Address',
                 properties: const [],
@@ -1185,6 +1211,7 @@ void main() {
 
     test('generates toSimple for empty class', () {
       final model = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'EmptyClass',
         properties: const [],

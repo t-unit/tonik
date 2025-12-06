@@ -32,6 +32,7 @@ void main() {
   group('toMatrix', () {
     test('generates toMatrix method with correct signature', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'PrimitiveChoice',
         models: {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
@@ -69,6 +70,7 @@ void main() {
 
     test('generates toMatrix for primitive-only variants', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'PrimitiveChoice',
         models: {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
@@ -101,6 +103,7 @@ void main() {
 
     test('generates toMatrix for class variants with discriminator', () {
       final classA = ClassModel(
+        isDeprecated: false,
         name: 'A',
         properties: [
           Property(
@@ -117,6 +120,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Choice',
         models: {
           (discriminatorValue: 'a', model: classA),
@@ -145,6 +149,7 @@ void main() {
 
     test('generates toMatrix for mixed variants with discriminator', () {
       final classM = ClassModel(
+        isDeprecated: false,
         name: 'M',
         properties: [
           Property(
@@ -161,6 +166,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'MixedChoice',
         models: {
           (discriminatorValue: 'm', model: classM),
@@ -196,6 +202,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'MixedEncodingChoice',
         models: {
           (discriminatorValue: 'list', model: listModel),
@@ -228,6 +235,7 @@ void main() {
 
     test('generates toMatrix for complex variants without discriminator', () {
       final classA = ClassModel(
+        isDeprecated: false,
         name: 'A',
         properties: [
           Property(
@@ -244,6 +252,7 @@ void main() {
       );
 
       final classB = ClassModel(
+        isDeprecated: false,
         name: 'B',
         properties: [
           Property(
@@ -260,6 +269,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'ComplexChoice',
         models: {
           (discriminatorValue: null, model: classA),
@@ -290,6 +300,7 @@ void main() {
 
     test('generates toMatrix for enum variants', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -298,6 +309,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'StatusChoice',
         models: {
           (discriminatorValue: 'status', model: enumModel),
@@ -333,6 +345,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'ListChoice',
         models: {
           (discriminatorValue: 'list', model: listModel),
@@ -363,6 +376,7 @@ void main() {
       'generates toMatrix for multiple class variants with discriminator',
       () {
         final classA = ClassModel(
+          isDeprecated: false,
           name: 'A',
           properties: [
             Property(
@@ -379,6 +393,7 @@ void main() {
         );
 
         final classB = ClassModel(
+          isDeprecated: false,
           name: 'B',
           properties: [
             Property(
@@ -395,6 +410,7 @@ void main() {
         );
 
         final classC = ClassModel(
+          isDeprecated: false,
           name: 'C',
           properties: [
             Property(
@@ -411,6 +427,7 @@ void main() {
         );
 
         final model = OneOfModel(
+          isDeprecated: false,
           name: 'MultiChoice',
           models: {
             (discriminatorValue: 'a', model: classA),
@@ -444,6 +461,7 @@ void main() {
 
     test('generates toMatrix for nested OneOf variants', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         name: 'Inner',
         models: {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
@@ -455,6 +473,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'Outer',
         models: {
           (discriminatorValue: 'inner', model: innerOneOf),
@@ -485,6 +504,7 @@ void main() {
 
     test('generates toMatrix for single primitive variant', () {
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'SingleChoice',
         models: {
           (discriminatorValue: 's', model: StringModel(context: context)),
@@ -513,6 +533,7 @@ void main() {
 
     test('generates toMatrix for single class variant with discriminator', () {
       final classA = ClassModel(
+        isDeprecated: false,
         name: 'A',
         properties: [
           Property(
@@ -529,6 +550,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'SingleClassChoice',
         models: {
           (discriminatorValue: 'a', model: classA),
@@ -566,6 +588,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'StringOrList',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -614,6 +637,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'StringOrIntList',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -666,6 +690,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'StringOrDateTimeList',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -716,6 +741,7 @@ void main() {
 
     test('generates toMatrix for OneOf with List<Enum> variant', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         name: 'Status',
         values: const {'active', 'inactive'},
         isNullable: false,
@@ -728,6 +754,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'StringOrEnumList',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -784,6 +811,7 @@ void main() {
       );
 
       final model = OneOfModel(
+        isDeprecated: false,
         name: 'StringListOrIntList',
         models: {
           (discriminatorValue: null, model: listStringModel),

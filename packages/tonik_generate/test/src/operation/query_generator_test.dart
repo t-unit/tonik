@@ -130,6 +130,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -196,6 +197,7 @@ void main() {
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -328,6 +330,7 @@ void main() {
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -393,6 +396,7 @@ void main() {
         encoding: QueryParameterEncoding.deepObject,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -514,6 +518,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -606,6 +611,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -670,6 +676,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -869,6 +876,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -887,6 +895,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         allowReserved: false,
         model: ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -950,6 +959,7 @@ void main() {
 
     test('encodes different model types with different encoders', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         values: const {'red', 'green', 'blue'},
         isNullable: false,
@@ -960,6 +970,7 @@ void main() {
       final integerModel = IntegerModel(context: context);
 
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         context: context,
         models: {
           (discriminatorValue: 'string', model: stringModel),
@@ -978,6 +989,7 @@ void main() {
       final enumListModel = ListModel(
         context: context,
         content: EnumModel(
+          isDeprecated: false,
           context: context,
           values: const {'A', 'B', 'C'},
           isNullable: false,
@@ -1123,6 +1135,7 @@ void main() {
 
     test('handles simple list of enums', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         context: context,
         values: const {'RED', 'GREEN', 'BLUE'},
         isNullable: false,
@@ -1197,6 +1210,7 @@ void main() {
 
     test('generates code that throws for nested list of class models', () {
       final innerModel = ClassModel(
+        isDeprecated: false,
         context: context,
         properties: const [],
         description: null,
@@ -1346,12 +1360,14 @@ void main() {
       () {
         final stringModel = StringModel(context: context);
         final classModel = ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
         );
 
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           context: context,
           models: {
             (discriminatorValue: 'string', model: stringModel),
@@ -1449,6 +1465,7 @@ void main() {
         final intModel = IntegerModel(context: context);
 
         final oneOfModel = OneOfModel(
+          isDeprecated: false,
           context: context,
           models: {
             (discriminatorValue: 'string', model: stringModel),
@@ -1535,6 +1552,7 @@ void main() {
       'delimited encoding',
       () {
         final classModel = ClassModel(
+          isDeprecated: false,
           context: context,
           properties: const [],
           description: null,
@@ -1679,6 +1697,7 @@ void main() {
         rawName: 'enum',
         model: ListModel(
           content: EnumModel(
+            isDeprecated: false,
             values: const {'a', 'b'},
             isNullable: false,
             context: context,
@@ -1816,6 +1835,7 @@ void main() {
         rawName: 'void',
         model: ListModel(
           content: ClassModel(
+            isDeprecated: false,
             name: 'SomeClass',
             properties: const [],
             context: context,

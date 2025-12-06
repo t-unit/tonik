@@ -615,12 +615,14 @@ void main() {
         () {
           final models = [
             ClassModel(
+              isDeprecated: false,
               name: 'User',
               properties: const [],
               context: userContext,
               description: null,
             ),
             ClassModel(
+              isDeprecated: false,
               properties: const [],
               context: userContext,
               description: null,
@@ -646,11 +648,13 @@ void main() {
         () {
           final models = [
             ClassModel(
+              isDeprecated: false,
               properties: const [],
               context: userContext,
               description: null,
             ),
             ClassModel(
+              isDeprecated: false,
               name: 'User',
               properties: const [],
               context: userContext,
@@ -677,6 +681,7 @@ void main() {
       final sharedContext = context.push('Test').push('allOf');
 
       final model1 = AllOfModel(
+        isDeprecated: false,
         name: null,
         models: {
           StringModel(context: sharedContext),
@@ -686,6 +691,7 @@ void main() {
       );
 
       final model2 = AllOfModel(
+        isDeprecated: false,
         name: null,
         models: {
           IntegerModel(context: sharedContext),

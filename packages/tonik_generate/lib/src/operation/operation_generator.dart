@@ -90,51 +90,62 @@ class OperationGenerator {
     );
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..fields.add(
-              Field(
-                (b) =>
-                    b
-                      ..name = '_dio'
-                      ..modifier = FieldModifier.final$
-                      ..type = refer('Dio', 'package:dio/dio.dart'),
-              ),
-            )
-            ..constructors.add(
-              Constructor(
-                (b) =>
-                    b
-                      ..requiredParameters.add(
-                        Parameter(
-                          (b) =>
-                              b
-                                ..name = '_dio'
-                                ..toThis = true,
-                        ),
-                      ),
-              ),
-            )
-            ..methods.addAll([
-              generateCallMethod(operation, normalizedParams),
-              _pathGenerator.generatePathMethod(
-                operation,
-                normalizedParams.pathParameters,
-              ),
-              _dataGenerator.generateDataMethod(operation),
-              if (operation.queryParameters.isNotEmpty)
-                _queryParametersGenerator.generateQueryParametersMethod(
-                  operation,
-                  normalizedParams.queryParameters,
-                ),
-              _optionsGenerator.generateOptionsMethod(
-                operation,
-                normalizedParams.headers,
-              ),
-              if (operation.responses.isNotEmpty)
-                _parseGenerator.generateParseResponseMethod(operation),
+      (b) {
+        b
+          ..name = className
+          ..fields.add(
+            Field(
+              (b) =>
+                  b
+                    ..name = '_dio'
+                    ..modifier = FieldModifier.final$
+                    ..type = refer('Dio', 'package:dio/dio.dart'),
+            ),
+          );
+
+        if (operation.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This operation is deprecated.'),
             ]),
+          );
+        }
+
+        b
+          ..constructors.add(
+            Constructor(
+              (b) =>
+                  b
+                    ..requiredParameters.add(
+                      Parameter(
+                        (b) =>
+                            b
+                              ..name = '_dio'
+                              ..toThis = true,
+                      ),
+                    ),
+            ),
+          )
+          ..methods.addAll([
+            generateCallMethod(operation, normalizedParams),
+            _pathGenerator.generatePathMethod(
+              operation,
+              normalizedParams.pathParameters,
+            ),
+            _dataGenerator.generateDataMethod(operation),
+            if (operation.queryParameters.isNotEmpty)
+              _queryParametersGenerator.generateQueryParametersMethod(
+                operation,
+                normalizedParams.queryParameters,
+              ),
+            _optionsGenerator.generateOptionsMethod(
+              operation,
+              normalizedParams.headers,
+            ),
+            if (operation.responses.isNotEmpty)
+              _parseGenerator.generateParseResponseMethod(operation),
+          ]);
+      },
     );
   }
 

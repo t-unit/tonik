@@ -31,6 +31,7 @@ void main() {
   group('AnyOfGenerator toMatrix generation', () {
     test('generates toMatrix method with correct signature', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfPrimitive',
         models: {
@@ -64,6 +65,7 @@ void main() {
 
     test('generates toMatrix for primitive-only AnyOf', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfPrimitive',
         models: {
@@ -127,6 +129,7 @@ void main() {
 
     test('generates toMatrix for complex-only AnyOf', () {
       final class1 = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Class1',
         properties: [
@@ -143,6 +146,7 @@ void main() {
       );
 
       final class2 = ClassModel(
+        isDeprecated: false,
         description: null,
         name: 'Class2',
         properties: [
@@ -159,6 +163,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfComplex',
         models: {
@@ -216,6 +221,7 @@ void main() {
       'generates toMatrix for mixed AnyOf that throws on ambiguous encoding',
       () {
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'AnyOfMixed',
           models: {
@@ -226,6 +232,7 @@ void main() {
             (
               discriminatorValue: 'data',
               model: ClassModel(
+                isDeprecated: false,
                 description: null,
                 name: 'Data',
                 properties: [
@@ -311,6 +318,7 @@ void main() {
 
     test('generates toMatrix for AnyOf with enum variants', () {
       final enumModel = EnumModel(
+        isDeprecated: false,
         description: null,
         name: 'Status',
         values: const {'active', 'inactive'},
@@ -319,6 +327,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfEnum',
         models: {
@@ -373,6 +382,7 @@ void main() {
 
     test('generates toMatrix for empty AnyOf', () {
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfEmpty',
         models: const {},
@@ -401,6 +411,7 @@ void main() {
 
     test('generates toMatrix for AnyOf with nested composition types', () {
       final oneOfModel = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'OneOfType',
         models: {
@@ -412,6 +423,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'AnyOfNested',
         models: {
@@ -466,6 +478,7 @@ void main() {
 
     test('toMatrix uses runtime check for nested oneOf', () {
       final innerOneOf = OneOfModel(
+        isDeprecated: false,
         description: null,
         name: 'InnerChoice',
         models: {
@@ -473,6 +486,7 @@ void main() {
           (
             discriminatorValue: 'obj',
             model: ClassModel(
+              isDeprecated: false,
               description: null,
               name: 'Inner',
               properties: [
@@ -494,6 +508,7 @@ void main() {
       );
 
       final model = AnyOfModel(
+        isDeprecated: false,
         description: null,
         name: 'TestAnyOf',
         models: {
@@ -588,6 +603,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrList',
           models: {
@@ -646,6 +662,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringOrIntList',
           models: {
@@ -712,6 +729,7 @@ void main() {
         );
 
         final model = AnyOfModel(
+          isDeprecated: false,
           description: null,
           name: 'StringListOrIntList',
           models: {

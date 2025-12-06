@@ -78,79 +78,90 @@ class EnumGenerator {
             : enumName;
 
     final enumValue = Enum(
-      (b) =>
-          b
-            ..name = actualEnumName
-            ..docs.addAll(formatDocComment(model.description))
-            ..constructors.add(
-              Constructor(
-                (b) =>
-                    b
-                      ..constant = true
-                      ..requiredParameters.add(
-                        Parameter(
-                          (b) =>
-                              b
-                                ..name = 'rawValue'
-                                ..toThis = true,
-                        ),
+      (b) {
+        b
+          ..name = actualEnumName
+          ..docs.addAll(formatDocComment(model.description));
+
+        if (model.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This enum is deprecated.'),
+            ]),
+          );
+        }
+
+        b
+          ..constructors.add(
+            Constructor(
+              (b) =>
+                  b
+                    ..constant = true
+                    ..requiredParameters.add(
+                      Parameter(
+                        (b) =>
+                            b
+                              ..name = 'rawValue'
+                              ..toThis = true,
                       ),
-              ),
-            )
-            ..constructors.add(
-              _generateFromJsonConstructor<T>(enumName, actualEnumName),
-            )
-            ..constructors.add(
-              _generateFromSimpleConstructor<T>(enumName, actualEnumName),
-            )
-            ..constructors.add(
-              _generateFromFormConstructor<T>(enumName, actualEnumName),
-            )
-            ..methods.add(
-              Method(
-                (b) =>
-                    b
-                      ..name = 'toJson'
-                      ..returns = refer(T.toString(), 'dart:core')
-                      ..lambda = true
-                      ..body = const Code('rawValue'),
-              ),
-            )
-            ..methods.add(
-              Method(
-                (b) =>
-                    b
-                      ..name = 'currentEncodingShape'
-                      ..type = MethodType.getter
-                      ..returns = refer(
-                        'EncodingShape',
-                        'package:tonik_util/tonik_util.dart',
-                      )
-                      ..lambda = true
-                      ..body =
-                          refer(
-                            'EncodingShape',
-                            'package:tonik_util/tonik_util.dart',
-                          ).property('simple').code,
-              ),
-            )
-            ..methods.add(
-              _generateToSimpleMethod<T>(),
-            )
-            ..methods.add(_generateToFormMethod<T>())
-            ..methods.add(_generateToLabelMethod<T>())
-            ..methods.add(_generateUriEncodeMethod<T>())
-            ..methods.add(_generateToMatrixMethod<T>())
-            ..fields.add(
-              Field(
-                (b) =>
-                    b
-                      ..name = 'rawValue'
-                      ..modifier = FieldModifier.final$
-                      ..type = refer(T.toString(), 'dart:core'),
-              ),
-            )
-            ..values.addAll(enumValues),
+                    ),
+            ),
+          )
+          ..constructors.add(
+            _generateFromJsonConstructor<T>(enumName, actualEnumName),
+          )
+          ..constructors.add(
+            _generateFromSimpleConstructor<T>(enumName, actualEnumName),
+          )
+          ..constructors.add(
+            _generateFromFormConstructor<T>(enumName, actualEnumName),
+          )
+          ..methods.add(
+            Method(
+              (b) =>
+                  b
+                    ..name = 'toJson'
+                    ..returns = refer(T.toString(), 'dart:core')
+                    ..lambda = true
+                    ..body = const Code('rawValue'),
+            ),
+          )
+          ..methods.add(
+            Method(
+              (b) =>
+                  b
+                    ..name = 'currentEncodingShape'
+                    ..type = MethodType.getter
+                    ..returns = refer(
+                      'EncodingShape',
+                      'package:tonik_util/tonik_util.dart',
+                    )
+                    ..lambda = true
+                    ..body =
+                        refer(
+                          'EncodingShape',
+                          'package:tonik_util/tonik_util.dart',
+                        ).property('simple').code,
+            ),
+          )
+          ..methods.add(
+            _generateToSimpleMethod<T>(),
+          )
+          ..methods.add(_generateToFormMethod<T>())
+          ..methods.add(_generateToLabelMethod<T>())
+          ..methods.add(_generateUriEncodeMethod<T>())
+          ..methods.add(_generateToMatrixMethod<T>())
+          ..fields.add(
+            Field(
+              (b) =>
+                  b
+                    ..name = 'rawValue'
+                    ..modifier = FieldModifier.final$
+                    ..type = refer(T.toString(), 'dart:core'),
+            ),
+          )
+          ..values.addAll(enumValues);
+      },
     );
 
     final typedefValue =
