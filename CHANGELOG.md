@@ -25,6 +25,37 @@ Packages with other changes:
 
 #### `tonik_util` - `v0.1.0`
 
+#### `tonik_core` - `v0.1.0`
+
+#### `tonik_parse` - `v0.1.0`
+
+#### `tonik_generate` - `v0.1.0`
+
+#### `tonik` - `v0.1.0`
+
+
+## 2025-12-06
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.1.0`](#tonik_util---v010)
+ - [`tonik_core` - `v0.1.0`](#tonik_core---v010)
+ - [`tonik_parse` - `v0.1.0`](#tonik_parse---v010)
+ - [`tonik_generate` - `v0.1.0`](#tonik_generate---v010)
+ - [`tonik` - `v0.1.0`](#tonik---v010)
+
+---
+
+#### `tonik_util` - `v0.1.0`
+
  - **REFACTOR**: matrix parameter.
  - **FIX**: various fixes for path parameter encodign.
  - **FIX**: toLabel list encoding.
@@ -64,21 +95,21 @@ Packages with other changes:
  - **FIX**(parse_generator): add null assertion to status in range check.
  - **FIX**: toLabel list encoding.
  - **FIX**: form encoding.
- - **FIX**: various fixes for path parameter encodign.
+ - **FIX**: various fixes for path parameter encoding.
  - **FIX**: stabilize names by sorting models.
  - **FIX**: lists in parameters with double encoding.
  - **FIX**: improved list handling for parameter encoding.
  - **FIX**: don’t double encode paths parameters.
  - **FIX**: check runtime encoding shape in classes.
  - **FIX**: anyOf currentEncodingShape wrongly reports mixed encoding.
- - **FIX**: nested oneOf parameter encodign.
+ - **FIX**: nested oneOf parameter encoding.
  - **FIX**: simple encoding with invalid models and without bodies.
  - **FEAT**: allOf toMatrix.
  - **FEAT**: toMatrix for anyOf.
  - **FEAT**: improved list handing for matrix encoding.
- - **FEAT**: parameter properteis for anyOf.
+ - **FEAT**: parameter properties for anyOf.
  - **FEAT**: add allOf parameterEncoding.
- - **FEAT**: imporved matrix encoding for paths.
+ - **FEAT**: improved matrix encoding for paths.
  - **FEAT**: parse deprecated fields for models.
  - **FEAT**: toMatrix for enums.
  - **FEAT**: matrix encoding for classes.
@@ -90,7 +121,7 @@ Packages with other changes:
  - **FEAT**: add toLabel for classes.
  - **FEAT**: add toLabel for enums.
  - **FEAT**: annotate more entities with deprecated.
- - **FEAT**: parameter properteis for oneOf.
+ - **FEAT**: parameter properties for oneOf.
 
 #### `tonik` - `v0.1.0`
 
