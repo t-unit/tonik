@@ -1,3 +1,9 @@
+## 0.1.0
+
+ - **FIX**: proper default parsing for form encoded parameters.
+ - **FIX**: form encoding.
+ - **FEAT**: parse deprecated fields for models.
+
 ## 0.0.9
 
  - **FEAT**: improved name generation.

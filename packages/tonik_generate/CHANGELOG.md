@@ -1,3 +1,42 @@
+## 0.1.0
+
+ - **REFACTOR**: cleanup parameter generation.
+ - **REFACTOR**: improve compile time checks for encoding of composite types in any of.
+ - **REFACTOR**: matrix parameter.
+ - **REFACTOR**: unified parameter encoding for classes.
+ - **FIX**: list handling for allOf toJson.
+ - **FIX**: update range checks for status codes.
+ - **FIX**(parse_generator): add null assertion to status in range check.
+ - **FIX**: toLabel list encoding.
+ - **FIX**: form encoding.
+ - **FIX**: various fixes for path parameter encodign.
+ - **FIX**: stabilize names by sorting models.
+ - **FIX**: lists in parameters with double encoding.
+ - **FIX**: improved list handling for parameter encoding.
+ - **FIX**: don’t double encode paths parameters.
+ - **FIX**: check runtime encoding shape in classes.
+ - **FIX**: anyOf currentEncodingShape wrongly reports mixed encoding.
+ - **FIX**: nested oneOf parameter encodign.
+ - **FIX**: simple encoding with invalid models and without bodies.
+ - **FEAT**: allOf toMatrix.
+ - **FEAT**: toMatrix for anyOf.
+ - **FEAT**: improved list handing for matrix encoding.
+ - **FEAT**: parameter properteis for anyOf.
+ - **FEAT**: add allOf parameterEncoding.
+ - **FEAT**: imporved matrix encoding for paths.
+ - **FEAT**: parse deprecated fields for models.
+ - **FEAT**: toMatrix for enums.
+ - **FEAT**: matrix encoding for classes.
+ - **FEAT**: more doc string generation.
+ - **FEAT**: produce less runtime checks if composite models are not dynamic in encoding.
+ - **FEAT**: anyOf and allOf toLabel.
+ - **FEAT**: improved deep object query parameter encoding.
+ - **FEAT**: toLabel for oneOf.
+ - **FEAT**: add toLabel for classes.
+ - **FEAT**: add toLabel for enums.
+ - **FEAT**: annotate more entities with deprecated.
+ - **FEAT**: parameter properteis for oneOf.
+
 ## 0.0.9
 
  - **FEAT**: form encoding and decoding for enums, classes, oneOf and composition types.
