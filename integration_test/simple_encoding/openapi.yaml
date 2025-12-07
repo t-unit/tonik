@@ -935,6 +935,80 @@ paths:
         '200':
           description: OK
 
+  /headers/roundtrip/nullable:
+    get:
+      operationId: testHeaderRoundtripNullable
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for nullable types in headers
+      description: Tests encoding and decoding of nullable primitives and objects
+      parameters:
+        - name: X-Nullable-String
+          in: header
+          style: simple
+          schema:
+            type: string
+            nullable: true
+        - name: X-Nullable-Integer
+          in: header
+          style: simple
+          schema:
+            type: integer
+            nullable: true
+        - name: X-Nullable-Object
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NullableObject'
+        - name: X-Nullable-Enum
+          in: header
+          style: simple
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/StatusEnum'
+            nullable: true
+      responses:
+        '200':
+          description: Echoed nullable headers
+          headers:
+            X-Nullable-String:
+              schema:
+                type: string
+                nullable: true
+            X-Nullable-Integer:
+              schema:
+                type: integer
+                nullable: true
+            X-Nullable-Object:
+              schema:
+                $ref: '#/components/schemas/NullableObject'
+            X-Nullable-Enum:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/StatusEnum'
+                nullable: true
+
+  /headers/roundtrip/integerEnum:
+    get:
+      operationId: testHeaderRoundtripIntegerEnum
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for integer enum in headers
+      description: Tests encoding and decoding of integer enum values
+      parameters:
+        - name: X-Priority
+          in: header
+          style: simple
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+      responses:
+        '200':
+          description: Echoed integer enum header
+          headers:
+            X-Priority:
+              schema:
+                $ref: '#/components/schemas/PriorityEnum'
+
 components:
   schemas:
     StatusEnum:
@@ -953,6 +1027,15 @@ components:
         - 3
         - 4
         - 5
+
+    NullableObject:
+      type: object
+      nullable: true
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
 
     UserProfile:
       type: object

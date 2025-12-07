@@ -77,6 +77,33 @@ paths:
           schema:
             type: string
             format: decimal
+        - name: uri
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+            format: uri
+        - name: integerEnum
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+        - name: nullableString
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+            nullable: true
+        - name: nullableInteger
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: integer
+            nullable: true
       responses:
         '204':
           description: OK
@@ -149,6 +176,24 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -221,6 +266,24 @@ paths:
           explode: true
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -368,6 +431,33 @@ paths:
           schema:
             type: string
             format: decimal
+        - name: uri
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: string
+            format: uri
+        - name: integerEnum
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+        - name: nullableString
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: string
+            nullable: true
+        - name: nullableInteger
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: integer
+            nullable: true
       responses:
         '204':
           description: OK
@@ -440,6 +530,24 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -512,6 +620,24 @@ paths:
           explode: true
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -659,6 +785,33 @@ paths:
           schema:
             type: string
             format: decimal
+        - name: uri
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: string
+            format: uri
+        - name: integerEnum
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+        - name: nullableString
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: string
+            nullable: true
+        - name: nullableInteger
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: integer
+            nullable: true
       responses:
         '204':
           description: OK
@@ -731,6 +884,24 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -803,6 +974,24 @@ paths:
           explode: true
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -950,6 +1139,33 @@ paths:
           schema:
             type: string
             format: decimal
+        - name: uri
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            format: uri
+        - name: integerEnum
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+        - name: nullableString
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: string
+            nullable: true
+        - name: nullableInteger
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            type: integer
+            nullable: true
       responses:
         '204':
           description: OK
@@ -1022,6 +1238,24 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -1094,6 +1328,24 @@ paths:
           explode: true
           schema:
             $ref: '#/components/schemas/AllOfComplex'
+        - name: nullableClass
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/NullableClass'
+        - name: deeplyNestedClass
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedClass'
+        - name: integerEnum
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
       responses:
         '204':
           description: OK
@@ -1253,3 +1505,30 @@ components:
               type: string
             amount:
               type: integer
+    PriorityEnum:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+    NullableClass:
+      type: object
+      nullable: true
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          nullable: true
+    DeeplyNestedClass:
+      type: object
+      required:
+        - name
+        - nested
+      properties:
+        name:
+          type: string
+        nested:
+          $ref: '#/components/schemas/ClassNested'

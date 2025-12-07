@@ -28,9 +28,7 @@ jobs:
           melos bootstrap
 
       - name: Setup integration test
-        run: |
-          cd integration_test
-          ./setup.sh
+        run: ./scripts/setup_integration_tests.sh
 
       - name: Run tests
         run: melos run test 

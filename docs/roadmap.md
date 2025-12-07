@@ -1,8 +1,7 @@
 # Roadmap
 
 ## Short term goals
-- Support for `x-dart-name`, `x-dart-type` and `x-dart-enums`
-- Annotate deprecated fields, methods and classes.
+- Support for `x-dart-name`, `x-dart-type` and `x-dart-enum`
 - Respect `nullable` property on schema objects
 - Normalize allOf with only added description (see https://github.com/sonallux/spotify-web-api/blob/main/official-spotify-open-api.yml#L4180) to be regular class model
 - Discriminator support for allOf
