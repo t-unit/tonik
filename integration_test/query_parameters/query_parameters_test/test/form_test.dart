@@ -509,4 +509,172 @@ void main() {
       expect(error.type, TonikErrorType.encoding);
     });
   });
+
+  group('primitive - new types', () {
+    test('uri', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(
+        uri: Uri.parse('https://example.com/path?query=value'),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'uri=https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+      );
+    });
+
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(
+        integerEnum: PriorityEnum.two,
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'integerEnum=2');
+    });
+
+    test('nullableString with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(nullableString: 'test');
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'nullableString=test');
+    });
+
+    test('nullableString with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(nullableString: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('nullableInteger with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(nullableInteger: 42);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'nullableInteger=42');
+    });
+
+    test('nullableInteger with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(nullableInteger: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+  });
+
+  group('complex - new types', () {
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplex(integerEnum: PriorityEnum.one);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'integerEnum=1');
+    });
+
+    test('nullableClass with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplex(
+        nullableClass: NullableClass(name: 'test', age: 25),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'nullableClass=name,test,age,25',
+      );
+    });
+
+    test('nullableClass with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplex(nullableClass: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('deeplyNestedClass', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplex(
+        deeplyNestedClass: DeeplyNestedClass(
+          name: 'outer',
+          nested: ClassNested(
+            name: 'middle',
+            age: 1,
+            nested: Class(name: 'inner', age: 2),
+          ),
+        ),
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'deeply nested data not supported in form encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
+
+  group('complex - explode true - new types', () {
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplexExplode(
+        integerEnum: PriorityEnum.three,
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'integerEnum=3');
+    });
+
+    test('nullableClass with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplexExplode(
+        nullableClass: NullableClass(name: 'test', age: null),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'nullableClass=name=test',
+      );
+    });
+
+    test('deeplyNestedClass', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplexExplode(
+        deeplyNestedClass: DeeplyNestedClass(
+          name: 'outer',
+          nested: ClassNested(
+            name: 'middle',
+            age: 1,
+            nested: Class(name: 'inner', age: 2),
+          ),
+        ),
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'deeply nested data not supported in form encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
 }

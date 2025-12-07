@@ -575,4 +575,121 @@ void main() {
       expect(error.type, TonikErrorType.encoding);
     });
   });
+
+  group('primitive - new types', () {
+    test('uri', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedPrimitive(
+        uri: Uri.parse('https://example.com'),
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'only lists are supported in spaceDelimited encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedPrimitive(
+        integerEnum: PriorityEnum.two,
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'only lists are supported in spaceDelimited encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('nullableString with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedPrimitive(
+        nullableString: 'test',
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'only lists are supported in spaceDelimited encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('nullableString with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedPrimitive(
+        nullableString: null,
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('nullableInteger with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedPrimitive(
+        nullableInteger: null,
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+  });
+
+  group('complex - new types', () {
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        integerEnum: PriorityEnum.one,
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'only lists are supported in spaceDelimited encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('nullableClass with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(nullableClass: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('deeplyNestedClass', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        deeplyNestedClass: DeeplyNestedClass(
+          name: 'outer',
+          nested: ClassNested(
+            name: 'middle',
+            age: 1,
+            nested: Class(name: 'inner', age: 2),
+          ),
+        ),
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'only lists are supported in spaceDelimited encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
 }
