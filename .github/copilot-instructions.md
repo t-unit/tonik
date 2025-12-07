@@ -12,7 +12,7 @@ Keep suggestions tightly scoped to the codebase: prefer edits under `packages/*`
 ### Key files to inspect for context
 - `packages/tonik/bin/tonik.dart` — CLI flow and logging. Use this to see how command-line flags map to internals.
 - `packages/tonik/lib/src/openapi_loader.dart` — how YAML/JSON specs are loaded and validated.
-- `integration_test/setup.sh` — orchestrates generating API packages and running Imposter tests; documents prerequisite tools (Java, Imposter JAR) and dependency overrides for local packages.
+- `scripts/setup_integration_tests.sh` — orchestrates generating API packages and running Imposter tests; documents prerequisite tools (Java, Imposter JAR) and dependency overrides for local packages.
 - `pubspec.yaml` (workspace root) — melos workspace and useful scripts (e.g., `melos run test-integration-composition`). Use these scripts in examples and tests.
 - `integration_test/*/*/pubspec.yaml` — generated client packages; the tests under `integration_test/*/*/test` are authoritative usage examples for generated code.
 
@@ -24,11 +24,11 @@ Keep suggestions tightly scoped to the codebase: prefer edits under `packages/*`
 - Workspace-level scripts via melos (run from repository root):
   - `melos run test` — runs `dart test` for the selected package via melos scripts
   - `melos run generate` — invokes build_runner for packages that require code generation
-  - `melos run generate-integration-tests` — runs `integration_test/setup.sh` (must have Java and network access)
+  - `melos run generate-integration-tests` — runs `scripts/setup_integration_tests.sh` (must have Java and network access)
   - Individual integration test runners are available in `pubspec.yaml` under `melos.scripts` (e.g. `test-integration-petstore`). Prefer using `melos run <script>` for reproducibility.
 
 ### Integration tests and external dependencies
-- `integration_test/setup.sh` regenerates example client packages using the local `tonik` binary and then runs tests. It requires:
+- `scripts/setup_integration_tests.sh` regenerates example client packages using the local `tonik` binary and then runs tests. It requires:
   - Dart SDK
   - Java 11+ (used to run Imposter JAR for mock HTTP servers)
   - Network access to download `imposter.jar` (the script caches the jar in the `integration_test` folder)
@@ -54,10 +54,10 @@ When changing generated code shapes, update the corresponding integration tests 
 ### Examples from the codebase
 - Loading OpenAPI docs (YAML/JSON): see `packages/tonik/lib/src/openapi_loader.dart` — convert YAML to Map and raise `OpenApiLoaderException` on malformed input.
 - CLI entrypoint: `packages/tonik/bin/tonik.dart` shows try/catch flow around parse → import → generate with helpful `--log-level` mapping.
-- Integration setup: `integration_test/setup.sh` demonstrates practical steps the repo expects when regenerating and running tests: dependency overrides, `dart pub get` per generated package, and Imposter JAR management.
+- Integration setup: `scripts/setup_integration_tests.sh` demonstrates practical steps the repo expects when regenerating and running tests: dependency overrides, `dart pub get` per generated package, and Imposter JAR management.
 
 ### Small, safe defaults for the AI
-- When adding dependencies to generated packages in tests, follow the existing `dependency_overrides` pattern in `integration_test/setup.sh` (override `tonik_util` path to `../../../packages/tonik_util`).
+- When adding dependencies to generated packages in tests, follow the existing `dependency_overrides` pattern in `scripts/setup_integration_tests.sh` (override `tonik_util` path to `../../../packages/tonik_util`).
 - When introducing public API changes across packages, prefer bumping locally referenced versions in integration test generated pubspecs or use dependency_overrides rather than changing global versions.
 
 ### Where to look for more context
