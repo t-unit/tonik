@@ -5,7 +5,7 @@
 
 <p align="center">                    
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>                    
-<a href="https://pub.dev/packages/tonik"><img src="https://img.shields.io/pub/v/tonik?logo=dart" alt="pub verion"></a>                    
+<a href="https://pub.dev/packages/tonik"><img src="https://img.shields.io/pub/v/tonik?logo=dart" alt="pub version"></a>                    
 <a href="https://pub.dev/packages/tonik"><img src="https://img.shields.io/pub/likes/tonik?logo=dart" alt="pub likes"></a>
 <a href="https://github.com/t-unit/tonik"><img src="https://img.shields.io/github/stars/t-unit/tonik?logo=github" alt="stars on github"></a> 
 <a href="https://github.com/t-unit/tonik"><img src="https://github.com/t-unit/tonik/actions/workflows/test.yml/badge.svg?branch=main" alt="tests"></a>  
@@ -15,10 +15,10 @@
 
 
 # Tonik
-A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
+A Dart code generator for OpenAPI 3.x specifications.
 
 ## ⚠️ Warning
-This project is currently in an early development phase. Users should expect:
+This project is currently in the development phase. Users should expect:
 - Breaking changes in future releases
 - Potential bugs and issues
 - Missing features (see Roadmap)
@@ -36,7 +36,7 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
 - [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
 - [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md)
-- [Uri Encoding Limintations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md)
+- [Uri Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md)
 
 more coming soon
 
@@ -63,7 +63,7 @@ tonik --package-name=my_api_client --spec=path/to/openapi.[yaml|json]
 
 ### Usage of Generated Code
 
-Add the genearted package as a dependency to your project.
+Add the generated package as a dependency to your project.
 
 ```bash
 dart pub add "my_client_api:{path: path/to/package}"
@@ -72,7 +72,7 @@ dart pub add "my_client_api:{path: path/to/package}"
 Tonik generates an `Api` class per tag defined in the specification.
 To use the generated client, simply import it and create an instance.
 
-Here we define a custom server URL (servers defined in the specification file are also available). Afterward we  perform a network call. Finally, we check if the request was successfull or failed.
+Here we define a custom server URL (servers defined in the specification file are also available). Afterward we  perform a network call. Finally, we check if the request was successful or failed.
 
 ```dart
 import 'package:my_api_client/my_api_client.dart';
