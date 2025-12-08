@@ -18,23 +18,19 @@ void main() {
     });
 
     test('generates pubspec.yaml and analysis_options.yaml', () {
-      const apiDoc = ApiDocument(
+      final apiDoc = ApiDocument(
         title: 'Test API',
         version: '1.0.0',
         description: 'Test',
-        models: {},
-        responseHeaders: {},
-        requestHeaders: {},
-        servers: {},
-        operations: {},
-        responses: <Response>{},
-        queryParameters: {},
-        pathParameters: {},
-        requestBodies: {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
       );
 
       const packageName = 'test_package';

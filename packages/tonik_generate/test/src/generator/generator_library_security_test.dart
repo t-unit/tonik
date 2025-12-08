@@ -26,7 +26,6 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
-          description: null,
         ),
       };
 
@@ -44,7 +43,9 @@ void main() {
             context: ctx,
             summary: 'Get pet',
             description: 'Get pet by ID',
-            tags: {const Tag(name: 'pets')},
+            tags: {
+              Tag(name: 'pets'),
+            },
             isDeprecated: false,
             path: '/pets/{id}',
             method: HttpMethod.get,
@@ -52,7 +53,6 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {
               ApiKeySecurityScheme(
                 type: SecuritySchemeType.apiKey,
@@ -72,10 +72,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       const packageName = 'petstore_api';
@@ -111,7 +107,6 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
-          description: null,
         ),
       };
 
@@ -129,7 +124,9 @@ void main() {
             context: ctx,
             summary: 'Get user',
             description: 'Get user info',
-            tags: {const Tag(name: 'users')},
+            tags: {
+              Tag(name: 'users'),
+            },
             isDeprecated: false,
             path: '/users/me',
             method: HttpMethod.get,
@@ -137,7 +134,6 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {
               OAuth2SecurityScheme(
                 type: SecuritySchemeType.oauth2,
@@ -161,10 +157,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       const packageName = 'oauth_api';
@@ -196,7 +188,6 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
-          description: null,
         ),
       };
 
@@ -214,7 +205,9 @@ void main() {
             context: ctx,
             summary: 'Get public data',
             description: 'Get public data',
-            tags: {const Tag(name: 'public')},
+            tags: {
+              Tag(name: 'public'),
+            },
             isDeprecated: false,
             path: '/public',
             method: HttpMethod.get,
@@ -222,7 +215,6 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           ),
         },
@@ -230,10 +222,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       const packageName = 'simple_api';
@@ -259,7 +247,6 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
-          description: null,
         ),
       };
 
@@ -277,7 +264,9 @@ void main() {
             context: ctx,
             summary: 'Get secure data',
             description: 'Get secure data',
-            tags: {const Tag(name: 'secure')},
+            tags: {
+              Tag(name: 'secure'),
+            },
             isDeprecated: false,
             path: '/secure',
             method: HttpMethod.get,
@@ -285,7 +274,6 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {
               ApiKeySecurityScheme(
                 type: SecuritySchemeType.apiKey,
@@ -305,10 +293,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       const packageName = 'no_desc_api';

@@ -17,7 +17,6 @@ void main() {
             .push('components')
             .push('schemas')
             .push('User'),
-        description: null,
       );
 
       final variantName = nameManager.generateVariantName(
@@ -60,7 +59,6 @@ void main() {
             .push('components')
             .push('schemas')
             .push('Anonymous'),
-        description: null,
       );
 
       final variantName = nameManager.generateVariantName(
@@ -83,7 +81,6 @@ void main() {
             .push('components')
             .push('schemas')
             .push('Anonymous'),
-        description: null,
       );
 
       final variantName = nameManager.generateVariantName(
@@ -107,7 +104,6 @@ void main() {
             .push('components')
             .push('schemas')
             .push('User'),
-        description: null,
       );
 
       // Generate the same variant name twice
@@ -140,7 +136,6 @@ void main() {
             .push('components')
             .push('schemas')
             .push('User'),
-        description: null,
       );
 
       // Generate variant names for different parent classes

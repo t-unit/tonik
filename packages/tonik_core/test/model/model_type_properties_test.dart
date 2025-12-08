@@ -46,10 +46,12 @@ void main() {
     test('Enum models are simple', () {
       expect(
         EnumModel<String>(
-          values: const {'a', 'b'},
+          values: {
+            const EnumEntry(value: 'a'),
+            const EnumEntry(value: 'b'),
+          },
           isNullable: false,
           context: Context.initial(),
-          description: null,
           isDeprecated: false,
         ).encodingShape,
         EncodingShape.simple,
@@ -61,7 +63,6 @@ void main() {
         ClassModel(
           properties: const [],
           context: Context.initial(),
-          description: null,
           isDeprecated: false,
         ).encodingShape,
         EncodingShape.complex,
@@ -90,7 +91,6 @@ void main() {
           model: ClassModel(
             properties: const [],
             context: Context.initial(),
-            description: null,
             isDeprecated: false,
           ),
           context: Context.initial(),
@@ -107,7 +107,6 @@ void main() {
           IntegerModel(context: Context.initial()),
         },
         context: Context.initial(),
-        description: null,
         isDeprecated: false,
       );
       expect(simpleAllOf.encodingShape, EncodingShape.simple);
@@ -118,7 +117,6 @@ void main() {
           ClassModel(
             properties: const [],
             context: Context.initial(),
-            description: null,
             isDeprecated: false,
           ),
           ListModel(
@@ -127,7 +125,6 @@ void main() {
           ),
         },
         context: Context.initial(),
-        description: null,
         isDeprecated: false,
       );
       expect(complexAllOf.encodingShape, EncodingShape.complex);
@@ -139,12 +136,10 @@ void main() {
           ClassModel(
             properties: const [],
             context: Context.initial(),
-            description: null,
             isDeprecated: false,
           ),
         },
         context: Context.initial(),
-        description: null,
         isDeprecated: false,
       );
       expect(mixedAllOf.encodingShape, EncodingShape.mixed);

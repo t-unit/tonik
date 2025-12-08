@@ -33,7 +33,9 @@ void main() {
         context: testContext,
         summary: 'Get secure data',
         description: 'Get secure data with authentication',
-        tags: {const Tag(name: 'secure')},
+        tags: {
+          Tag(name: 'secure'),
+        },
         isDeprecated: false,
         path: '/secure/data',
         method: HttpMethod.get,
@@ -41,7 +43,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
@@ -59,7 +60,7 @@ void main() {
 
       final generatedClass = generator.generateClass(
         {operation},
-        const Tag(name: 'secure'),
+        Tag(name: 'secure'),
         testServers,
       );
 
@@ -85,7 +86,7 @@ void main() {
         context: testContext,
         summary: 'Get user profile',
         description: 'Get authenticated user profile',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/me',
         method: HttpMethod.get,
@@ -93,7 +94,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {
           OAuth2SecurityScheme(
             type: SecuritySchemeType.oauth2,
@@ -115,7 +115,7 @@ void main() {
 
       final generatedClass = generator.generateClass(
         {operation},
-        const Tag(name: 'users'),
+        Tag(name: 'users'),
         testServers,
       );
 
@@ -134,7 +134,9 @@ void main() {
         context: testContext,
         summary: 'Get identity',
         description: 'Get user identity',
-        tags: {const Tag(name: 'identity')},
+        tags: {
+          Tag(name: 'identity'),
+        },
         isDeprecated: false,
         path: '/identity',
         method: HttpMethod.get,
@@ -142,7 +144,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {
           OpenIdConnectSecurityScheme(
             type: SecuritySchemeType.openIdConnect,
@@ -155,7 +156,7 @@ void main() {
 
       final generatedClass = generator.generateClass(
         {operation},
-        const Tag(name: 'identity'),
+        Tag(name: 'identity'),
         testServers,
       );
 
@@ -182,7 +183,9 @@ void main() {
         context: testContext,
         summary: 'Get public data',
         description: 'Get public data without authentication',
-        tags: {const Tag(name: 'public')},
+        tags: {
+          Tag(name: 'public'),
+        },
         isDeprecated: false,
         path: '/public/data',
         method: HttpMethod.get,
@@ -190,13 +193,12 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
       final generatedClass = generator.generateClass(
         {operation},
-        const Tag(name: 'public'),
+        Tag(name: 'public'),
         testServers,
       );
 
@@ -213,7 +215,9 @@ void main() {
         context: testContext,
         summary: 'Get multi-secure data',
         description: 'Get data with multiple authentication options',
-        tags: {const Tag(name: 'secure')},
+        tags: {
+          Tag(name: 'secure'),
+        },
         isDeprecated: false,
         path: '/multi-secure/data',
         method: HttpMethod.get,
@@ -221,7 +225,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
@@ -244,7 +247,7 @@ void main() {
 
       final generatedClass = generator.generateClass(
         {operation},
-        const Tag(name: 'secure'),
+        Tag(name: 'secure'),
         testServers,
       );
 
@@ -264,15 +267,16 @@ void main() {
         context: testContext,
         summary: 'Get data without descriptions',
         description: 'Get data with security schemes without descriptions',
-        tags: {const Tag(name: 'nodesc')},
+        tags: {
+          Tag(name: 'noDesc'),
+        },
         isDeprecated: false,
-        path: '/nodesc/data',
+        path: '/noDesc/data',
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {
           ApiKeySecurityScheme(
             type: SecuritySchemeType.apiKey,
@@ -290,7 +294,7 @@ void main() {
 
       final generatedClass = generator.generateClass(
         {operation},
-        const Tag(name: 'nodesc'),
+        Tag(name: 'noDesc'),
         testServers,
       );
 

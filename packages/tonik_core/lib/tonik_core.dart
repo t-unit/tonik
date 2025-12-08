@@ -1,6 +1,11 @@
 /// Core data structures and utilities for Tonik.
 library;
 
+export 'src/config/deprecated_config.dart';
+export 'src/config/enum_config.dart';
+export 'src/config/filter_config.dart';
+export 'src/config/name_overrides_config.dart';
+export 'src/config/tonik_config.dart';
 export 'src/model/api_document.dart';
 export 'src/model/contact.dart';
 export 'src/model/content_type.dart';

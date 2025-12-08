@@ -69,7 +69,6 @@ class DataGenerator {
                       isRequired: true,
                       isNullable: false,
                       isDeprecated: false,
-                      description: null,
                     ),
                   );
                   return Code.scope(
@@ -97,7 +96,6 @@ class DataGenerator {
       isRequired: isRequired,
       isNullable: !isRequired,
       isDeprecated: false,
-      description: null,
     );
 
     return Method(

@@ -35,7 +35,6 @@ void main() {
     test('adds @Deprecated annotation when model is deprecated', () {
       final model = ClassModel(
         isDeprecated: true,
-        description: null,
         name: 'LegacyUser',
         properties: const [],
         context: context,
@@ -59,7 +58,6 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'User',
           properties: const [],
           context: context,
@@ -86,9 +84,11 @@ void main() {
     test('adds @Deprecated annotation when enum model is deprecated', () {
       final model = EnumModel<String>(
         isDeprecated: true,
-        description: null,
         name: 'LegacyStatus',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: false,
         context: context,
       );
@@ -111,9 +111,11 @@ void main() {
       () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: false,
           context: context,
         );
@@ -147,9 +149,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
-        description: null,
       );
 
       final result = generator.generateClasses(model);
@@ -176,9 +176,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
-          discriminator: null,
           context: context,
-          description: null,
         );
 
         final result = generator.generateClasses(model);
@@ -211,9 +209,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
-        description: null,
       );
 
       final result = generator.generateClass(model);
@@ -239,9 +235,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
-          discriminator: null,
           context: context,
-          description: null,
         );
 
         final result = generator.generateClass(model);
@@ -271,7 +265,6 @@ void main() {
         name: 'LegacyCombined',
         models: {StringModel(context: context)},
         context: context,
-        description: null,
       );
 
       final result = generator.generateClass(model);
@@ -295,7 +288,6 @@ void main() {
           name: 'Combined',
           models: {StringModel(context: context)},
           context: context,
-          description: null,
         );
 
         final result = generator.generateClass(model);
@@ -324,7 +316,6 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'User',
           properties: [
             Property(
@@ -367,7 +358,6 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'User',
           properties: [
             Property(

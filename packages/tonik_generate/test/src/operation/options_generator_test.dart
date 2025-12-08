@@ -44,7 +44,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -83,7 +82,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -122,7 +120,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -161,7 +158,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -217,7 +213,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -338,7 +333,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -428,7 +422,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -462,12 +455,18 @@ void main() {
       final enumModel = EnumModel(
         isDeprecated: false,
         context: context,
-        values: const {'RED', 'GREEN', 'BLUE'},
+        values: {
+          const EnumEntry(value: 'RED'),
+          const EnumEntry(value: 'GREEN'),
+          const EnumEntry(value: 'BLUE'),
+        },
         isNullable: false,
-        description: null,
       );
 
-      final listModel = ListModel(context: context, content: enumModel);
+      final listModel = ListModel(
+        context: context,
+        content: enumModel,
+      );
 
       final headerParam = RequestHeaderObject(
         name: 'X-Colors',
@@ -495,7 +494,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -536,9 +534,11 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
-        description: null,
       );
-      final innerListModel = ListModel(context: context, content: innerModel);
+      final innerListModel = ListModel(
+        context: context,
+        content: innerModel,
+      );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
@@ -570,7 +570,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -617,7 +616,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -791,7 +789,6 @@ void main() {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -837,7 +834,6 @@ void main() {
             bodies: const {},
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -901,7 +897,6 @@ void main() {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -974,7 +969,6 @@ void main() {
               },
             ),
           },
-          requestBody: null,
           securitySchemes: const {},
         );
 

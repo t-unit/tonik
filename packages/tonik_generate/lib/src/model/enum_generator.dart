@@ -60,7 +60,7 @@ class EnumGenerator {
     }
 
     final normalizedValues = normalizeEnumValues(
-      model.values.map((v) => v.toString()).toList(),
+      model.values.map((v) => v.value.toString()).toList(),
     );
     final enumValues = _generateEnumValues(model, normalizedValues);
 
@@ -413,7 +413,7 @@ class EnumGenerator {
   ) {
     final values = model.values.toList();
     return values.asMap().entries.map((entry) {
-      final value = entry.value;
+      final rawValue = entry.value.value;
       final normalizedName = normalizedValues[entry.key].normalizedName;
 
       return EnumValue(
@@ -421,9 +421,9 @@ class EnumGenerator {
             b
               ..name = normalizedName
               ..arguments.add(
-                value is int
-                    ? literalNum(value)
-                    : literalString(value.toString(), raw: true),
+                rawValue is int
+                    ? literalNum(rawValue)
+                    : literalString(rawValue.toString(), raw: true),
               ),
       );
     }).toList();

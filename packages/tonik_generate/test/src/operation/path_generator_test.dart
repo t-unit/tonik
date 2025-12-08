@@ -37,7 +37,6 @@ void main() {
       queryParameters: const {},
       pathParameters: const {},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -95,7 +94,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -154,7 +152,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -218,7 +215,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -282,7 +278,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -329,7 +324,6 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
-        description: null,
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
@@ -348,7 +342,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -395,7 +388,6 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
-        description: null,
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
@@ -414,7 +406,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -504,7 +495,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {simpleParam, labelParam, matrixParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -544,16 +534,18 @@ void main() {
     final enumModel = EnumModel(
       isDeprecated: false,
       context: context,
-      values: const {'admin', 'user', 'guest'},
+      values: {
+        const EnumEntry(value: 'admin'),
+        const EnumEntry(value: 'user'),
+        const EnumEntry(value: 'guest'),
+      },
       isNullable: false,
-      description: null,
     );
 
     final classModel = ClassModel(
       isDeprecated: false,
       context: context,
       properties: const [],
-      description: null,
     );
 
     final oneOfModel = OneOfModel(
@@ -568,7 +560,6 @@ void main() {
       },
       name: 'OneOfValue',
       discriminator: 'type',
-      description: null,
     );
 
     final enumParam = PathParameterObject(
@@ -623,7 +614,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {enumParam, classParam, oneOfParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -699,7 +689,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {animalIdParam, idParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -761,7 +750,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {userParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -799,12 +787,18 @@ void main() {
     final enumModel = EnumModel(
       isDeprecated: false,
       context: context,
-      values: const {'RED', 'GREEN', 'BLUE'},
+      values: {
+        const EnumEntry(value: 'RED'),
+        const EnumEntry(value: 'GREEN'),
+        const EnumEntry(value: 'BLUE'),
+      },
       isNullable: false,
-      description: null,
     );
 
-    final listModel = ListModel(context: context, content: enumModel);
+    final listModel = ListModel(
+      context: context,
+      content: enumModel,
+    );
 
     final pathParam = PathParameterObject(
       name: 'colors',
@@ -832,7 +826,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -873,9 +866,11 @@ void main() {
       isDeprecated: false,
       context: context,
       properties: const [],
-      description: null,
     );
-    final innerListModel = ListModel(context: context, content: innerModel);
+    final innerListModel = ListModel(
+      context: context,
+      content: innerModel,
+    );
     final outerListModel = ListModel(
       context: context,
       content: innerListModel,
@@ -907,7 +902,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -976,7 +970,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -1042,7 +1035,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -1080,12 +1072,18 @@ void main() {
     final enumModel = EnumModel(
       isDeprecated: false,
       context: context,
-      values: const {'ACTIVE', 'INACTIVE', 'PENDING'},
+      values: {
+        const EnumEntry(value: 'ACTIVE'),
+        const EnumEntry(value: 'INACTIVE'),
+        const EnumEntry(value: 'PENDING'),
+      },
       isNullable: false,
-      description: null,
     );
 
-    final listModel = ListModel(context: context, content: enumModel);
+    final listModel = ListModel(
+      context: context,
+      content: enumModel,
+    );
 
     final pathParam = PathParameterObject(
       name: 'statuses',
@@ -1113,7 +1111,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -1154,9 +1151,11 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
-        description: null,
       );
-      final listModel = ListModel(context: context, content: classModel);
+      final listModel = ListModel(
+        context: context,
+        content: classModel,
+      );
 
       final pathParam = PathParameterObject(
         name: 'filters',
@@ -1184,7 +1183,6 @@ void main() {
         queryParameters: const {},
         pathParameters: {pathParam},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -1255,7 +1253,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {pathParam},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -1343,7 +1340,6 @@ void main() {
       queryParameters: const {},
       pathParameters: {param1, param2, param3},
       responses: const {},
-      requestBody: null,
       securitySchemes: const {},
     );
 

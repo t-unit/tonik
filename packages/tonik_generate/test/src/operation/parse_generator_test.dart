@@ -66,7 +66,6 @@ void main() {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -92,9 +91,12 @@ String _parseResponse(Response<Object?> response) {
       final enumModel = EnumModel(
         isDeprecated: false,
         context: context,
-        values: const {'A', 'B', 'C'},
+        values: {
+          const EnumEntry(value: 'A'),
+          const EnumEntry(value: 'B'),
+          const EnumEntry(value: 'C'),
+        },
         isNullable: false,
-        description: null,
       );
       final operation = Operation(
         operationId: 'enumOp',
@@ -123,7 +125,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -156,11 +157,9 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final operation = Operation(
         operationId: 'classOp',
@@ -189,7 +188,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -242,7 +240,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -275,11 +272,9 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final operation = Operation(
         operationId: 'listClassOp',
@@ -301,14 +296,16 @@ String _parseResponse(Response<Object?> response) {
             description: '',
             bodies: {
               ResponseBody(
-                model: ListModel(content: classModel, context: context),
+                model: ListModel(
+                  content: classModel,
+                  context: context,
+                ),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
               ),
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -345,7 +342,6 @@ String _parseResponse(Response<Object?> response) {
               name: 'Cat',
               properties: const [],
               context: context,
-              description: null,
             ),
           ),
           (
@@ -355,13 +351,11 @@ String _parseResponse(Response<Object?> response) {
               name: 'Dog',
               properties: const [],
               context: context,
-              description: null,
             ),
           ),
         },
         discriminator: 'type',
         context: context,
-        description: null,
       );
       final operation = Operation(
         operationId: 'oneOfOp',
@@ -390,7 +384,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -440,7 +433,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -490,7 +482,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -523,11 +514,9 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final operation = Operation(
         operationId: 'multiStatusOp',
@@ -563,7 +552,6 @@ String _parseResponse(Response<Object?> response) {
             bodies: const {},
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -598,11 +586,9 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final responseHeaders = {
         'x-rate-limit': ResponseHeaderObject(
@@ -653,7 +639,6 @@ String _parseResponse(Response<Object?> response) {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -696,18 +681,19 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final enumModel = EnumModel(
         isDeprecated: false,
         context: context,
-        values: const {'A', 'B', 'C'},
+        values: {
+          const EnumEntry(value: 'A'),
+          const EnumEntry(value: 'B'),
+          const EnumEntry(value: 'C'),
+        },
         isNullable: false,
-        description: null,
       );
       final operation = Operation(
         operationId: 'combinedOp',
@@ -767,7 +753,6 @@ String _parseResponse(Response<Object?> response) {
             bodies: const {},
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -809,11 +794,9 @@ String _parseResponse(Response<Object?> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       // Create the base response object
@@ -854,14 +837,13 @@ String _parseResponse(Response<Object?> response) {
         context: context,
         summary: 'Get user with alias',
         description: 'Get user by ID using aliased response',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): aliasedResponse,
@@ -902,7 +884,6 @@ String _parseResponse(Response<Object?> response) {
         name: 'User',
         properties: const [],
         context: context,
-        description: null,
       );
 
       // The actual header object
@@ -943,14 +924,13 @@ String _parseResponse(Response<Object?> response) {
         context: context,
         summary: 'Get user with header alias',
         description: 'Get user by ID using header alias',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
@@ -989,7 +969,6 @@ String _parseResponse(Response<Object?> response) {
         name: 'User',
         properties: const [],
         context: context,
-        description: null,
       );
 
       final response = ResponseObject(
@@ -1022,14 +1001,13 @@ String _parseResponse(Response<Object?> response) {
         context: context,
         summary: 'Get user with body header',
         description: 'Get user by ID with body header',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
@@ -1087,8 +1065,6 @@ String _parseResponse(Response<Object?> response) {
         final operation = Operation(
           operationId: 'getUser',
           context: context,
-          summary: null,
-          description: null,
           tags: const {},
           isDeprecated: false,
           path: '/user',
@@ -1097,7 +1073,6 @@ String _parseResponse(Response<Object?> response) {
           queryParameters: const {},
           pathParameters: const {},
           responses: {const ExplicitResponseStatus(statusCode: 200): response},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -1159,8 +1134,6 @@ String _parseResponse(Response<Object?> response) {
       final operation = Operation(
         operationId: 'getUser',
         context: context,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/user',
@@ -1172,7 +1145,6 @@ String _parseResponse(Response<Object?> response) {
           const ExplicitResponseStatus(statusCode: 200): successResponse,
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -1224,7 +1196,6 @@ String _parseResponse(Response<Object?> response) {
             bodies: const {}, // Empty bodies will result in null content type
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
@@ -1249,14 +1220,15 @@ String _parseResponse(Response<Object?> response) {
           operationId: 'getUser',
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
+          tags: {
+            Tag(name: 'users'),
+          },
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
-          requestBody: null,
           securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(

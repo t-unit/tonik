@@ -245,7 +245,10 @@ Expression _buildListFromFormExpression(
       ),
     AliasModel() => _buildListFromFormExpression(
       value,
-      ListModel(content: content.model, context: model.context),
+      ListModel(
+        content: content.model,
+        context: model.context,
+      ),
       isRequired,
       nameManager,
       package: package,

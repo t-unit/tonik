@@ -27,11 +27,9 @@ void main() {
     test('generates toDeepObject method with correct signature', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'SimpleModel',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -39,7 +37,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -91,7 +88,6 @@ void main() {
     test('generates toDeepObject method for empty model', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'EmptyModel',
         properties: const [],
         context: context,
@@ -130,11 +126,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'TestModel',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -180,11 +174,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'ComplexModel',
           properties: [
             Property(
-              description: null,
               name: 'firstName',
               model: StringModel(context: context),
               isRequired: true,
@@ -192,7 +184,6 @@ void main() {
               isDeprecated: false,
             ),
             Property(
-              description: null,
               name: 'age',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -200,7 +191,6 @@ void main() {
               isDeprecated: false,
             ),
             Property(
-              description: null,
               name: 'email',
               model: StringModel(context: context),
               isRequired: false,
@@ -232,11 +222,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'ModelWithList',
           properties: [
             Property(
-              description: null,
               name: 'tags',
               model: ListModel(
                 content: StringModel(context: context),
@@ -271,11 +259,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'NullableModel',
           properties: [
             Property(
-              description: null,
               name: 'optionalName',
               model: StringModel(context: context),
               isRequired: true,
@@ -307,11 +293,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'OptionalModel',
           properties: [
             Property(
-              description: null,
               name: 'optionalField',
               model: IntegerModel(context: context),
               isRequired: false,
@@ -343,11 +327,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'MixedModel',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -355,15 +337,12 @@ void main() {
               isDeprecated: false,
             ),
             Property(
-              description: null,
               name: 'nested',
               model: ClassModel(
                 isDeprecated: false,
-                description: null,
                 name: 'NestedClass',
                 properties: [
                   Property(
-                    description: null,
                     name: 'value',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -402,11 +381,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'EncodedModel',
           properties: [
             Property(
-              description: null,
               name: 'data',
               model: StringModel(context: context),
               isRequired: true,

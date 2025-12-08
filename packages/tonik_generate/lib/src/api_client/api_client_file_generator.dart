@@ -11,7 +11,9 @@ class ApiClientFileGenerator {
   final log = Logger('ApiClientFileGenerator');
 
   // Default tag for operations without any tags
-  static const defaultTag = Tag(name: 'default');
+  static final defaultTag = Tag(
+    name: 'default',
+  );
 
   void writeFiles({
     required ApiDocument apiDocument,

@@ -26,11 +26,12 @@ sealed class QueryParameter {
 
   final Context context;
 
-  QueryParameterObject resolve({String? name}) {
+  QueryParameterObject resolve({String? name, String? nameOverride}) {
     switch (this) {
       case final QueryParameterObject param:
         return QueryParameterObject(
           name: name ?? param.name,
+          nameOverride: nameOverride ?? param.nameOverride,
           rawName: param.rawName,
           description: param.description,
           isRequired: param.isRequired,
@@ -43,7 +44,10 @@ sealed class QueryParameter {
           context: context,
         );
       case final QueryParameterAlias alias:
-        return alias.parameter.resolve(name: name ?? alias.name);
+        return alias.parameter.resolve(
+          name: name ?? alias.name,
+          nameOverride: nameOverride,
+        );
     }
   }
 }
@@ -76,9 +80,8 @@ class QueryParameterAlias extends QueryParameter {
   int get hashCode => Object.hash(name, parameter);
 }
 
-@immutable
 class QueryParameterObject extends QueryParameter {
-  const QueryParameterObject({
+  QueryParameterObject({
     required this.name,
     required this.rawName,
     required this.description,
@@ -90,58 +93,29 @@ class QueryParameterObject extends QueryParameter {
     required this.model,
     required this.encoding,
     required super.context,
+    this.nameOverride,
   });
 
+  // ID fields (immutable)
   final String? name;
-
-  /// The name used inside the HTTP request to identify the query parameter.
   final String rawName;
-  final String? description;
-  final bool isRequired;
-  final bool isDeprecated;
-  final bool allowEmptyValue;
-  final bool allowReserved;
-  final bool explode;
-  final Model model;
-  final QueryParameterEncoding encoding;
+
+  // Mutable fields
+  String? nameOverride;
+  String? description;
+  bool isRequired;
+  bool isDeprecated;
+  bool allowEmptyValue;
+  bool allowReserved;
+  bool explode;
+  Model model;
+  QueryParameterEncoding encoding;
 
   @override
   String toString() =>
-      'QueryParameter{name: $name, rawName: $rawName, '
-      'description: $description, isRequired: $isRequired, '
+      'QueryParameter{name: $name, nameOverride: $nameOverride, '
+      'rawName: $rawName, description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'allowReserved: $allowReserved, explode: $explode, '
       'model: $model, encoding: $encoding}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is QueryParameterObject &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          description == other.description &&
-          isRequired == other.isRequired &&
-          isDeprecated == other.isDeprecated &&
-          allowEmptyValue == other.allowEmptyValue &&
-          allowReserved == other.allowReserved &&
-          explode == other.explode &&
-          model == other.model &&
-          encoding == other.encoding &&
-          context == other.context &&
-          rawName == other.rawName;
-
-  @override
-  int get hashCode => Object.hash(
-    name,
-    description,
-    isRequired,
-    isDeprecated,
-    allowEmptyValue,
-    allowReserved,
-    explode,
-    model,
-    encoding,
-    context,
-    rawName,
-  );
 }

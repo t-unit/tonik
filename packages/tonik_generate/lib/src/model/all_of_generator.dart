@@ -69,7 +69,6 @@ class AllOfGenerator {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           );
         }).toList();
 
@@ -536,7 +535,6 @@ class AllOfGenerator {
                       isRequired: true,
                       isNullable: false,
                       isDeprecated: false,
-                      description: null,
                     ),
                   ),
                 ),

@@ -16,7 +16,7 @@ void main() {
     });
 
     test('caches generated names', () {
-      const tag = Tag(name: 'pets');
+      final tag = Tag(name: 'pets');
 
       final name1 = manager.tagName(tag);
       final name2 = manager.tagName(tag);
@@ -30,8 +30,6 @@ void main() {
         final operation = Operation(
           operationId: '_testOperation',
           context: context,
-          summary: null,
-          description: null,
           tags: const {},
           isDeprecated: false,
           path: '/test',
@@ -67,7 +65,6 @@ void main() {
               },
             ),
           },
-          requestBody: null,
           securitySchemes: const {},
         );
         final (baseName, subclassNames) = manager.responseWrapperNames(
@@ -94,8 +91,14 @@ void main() {
 
     test('primes names in correct order', () {
       final models = [
-        ListModel(content: StringModel(context: context), context: context),
-        ListModel(content: IntegerModel(context: context), context: context),
+        ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        ),
       ];
       final responses = [
         ResponseAlias(
@@ -145,7 +148,7 @@ void main() {
           bodies: const {},
         ),
       ];
-      const tags = [Tag(name: 'user')];
+      final tags = [Tag(name: 'user')];
 
       manager.prime(
         models: models,
@@ -619,13 +622,11 @@ void main() {
               name: 'User',
               properties: const [],
               context: userContext,
-              description: null,
             ),
             ClassModel(
               isDeprecated: false,
               properties: const [],
               context: userContext,
-              description: null,
             ),
           ];
 
@@ -651,14 +652,12 @@ void main() {
               isDeprecated: false,
               properties: const [],
               context: userContext,
-              description: null,
             ),
             ClassModel(
               isDeprecated: false,
               name: 'User',
               properties: const [],
               context: userContext,
-              description: null,
             ),
           ];
 
@@ -682,22 +681,18 @@ void main() {
 
       final model1 = AllOfModel(
         isDeprecated: false,
-        name: null,
         models: {
           StringModel(context: sharedContext),
         },
         context: sharedContext,
-        description: null,
       );
 
       final model2 = AllOfModel(
         isDeprecated: false,
-        name: null,
         models: {
           IntegerModel(context: sharedContext),
         },
         context: sharedContext,
-        description: null,
       );
 
       manager.prime(

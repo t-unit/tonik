@@ -33,23 +33,19 @@ void main() {
     });
 
     test('creates api client directory if it does not exist', () {
-      const apiDoc = ApiDocument(
+      final apiDoc = ApiDocument(
         title: 'Test API',
         version: '1.0.0',
         description: 'Test API Description',
-        models: {},
-        responseHeaders: {},
-        requestHeaders: {},
-        servers: {},
-        operations: {},
-        responses: <Response>{},
-        queryParameters: {},
-        pathParameters: {},
-        requestBodies: {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
       );
       generator.writeFiles(
         apiDocument: apiDoc,
@@ -69,7 +65,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -77,7 +73,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -94,10 +89,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -119,7 +110,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -127,7 +118,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -136,7 +126,7 @@ void main() {
         context: testContext,
         summary: 'Get pet',
         description: 'Get pet by ID',
-        tags: {const Tag(name: 'pets')},
+        tags: {Tag(name: 'pets')},
         isDeprecated: false,
         path: '/pets/{id}',
         method: HttpMethod.get,
@@ -144,7 +134,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -161,10 +150,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -197,7 +182,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -214,10 +198,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -246,7 +226,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -254,7 +234,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -271,7 +250,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -288,10 +266,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(

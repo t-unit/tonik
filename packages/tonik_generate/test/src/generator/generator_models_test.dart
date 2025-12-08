@@ -28,15 +28,13 @@ void main() {
             name: 'User',
             properties: const [],
             context: ctx,
-            description: null,
           ),
           EnumModel<String>(
             isDeprecated: false,
             name: 'Status',
-            values: const {'active'},
+            values: {const EnumEntry(value: 'active')},
             isNullable: false,
             context: ctx,
-            description: null,
           ),
           OneOfModel(
             isDeprecated: false,
@@ -45,9 +43,7 @@ void main() {
               (discriminatorValue: null, model: StringModel(context: ctx)),
               (discriminatorValue: null, model: IntegerModel(context: ctx)),
             },
-            discriminator: null,
             context: ctx,
-            description: null,
           ),
           AnyOfModel(
             isDeprecated: false,
@@ -56,16 +52,13 @@ void main() {
               (discriminatorValue: null, model: StringModel(context: ctx)),
               (discriminatorValue: null, model: IntegerModel(context: ctx)),
             },
-            discriminator: null,
             context: ctx,
-            description: null,
           ),
           AllOfModel(
             isDeprecated: false,
             name: 'Many',
             models: {StringModel(context: ctx), IntegerModel(context: ctx)},
             context: ctx,
-            description: null,
           ),
           AliasModel(
             name: 'UserId',
@@ -79,7 +72,6 @@ void main() {
               name: 'User',
               properties: const [],
               context: ctx,
-              description: null,
             ),
             context: ctx,
           ),
@@ -98,10 +90,6 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           requestBodies: const {},
-          contact: null,
-          license: null,
-          termsOfService: null,
-          externalDocs: null,
         );
 
         const packageName = 'test_package';

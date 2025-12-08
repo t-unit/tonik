@@ -118,7 +118,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -163,7 +162,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -192,9 +190,11 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
-        final userListModel = ListModel(content: userModel, context: context);
+        final userListModel = ListModel(
+          content: userModel,
+          context: context,
+        );
         final userListAlias = AliasModel(
           context: context,
           name: 'UserList',
@@ -220,7 +220,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -251,9 +250,11 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(value: 'user'),
+        },
         isNullable: false,
-        description: null,
       );
       expect(
         buildFromJsonValueExpression(
@@ -272,7 +273,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
       expect(
         buildFromJsonValueExpression(
@@ -376,9 +376,11 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
-      final listModel = ListModel(content: classModel, context: context);
+      final listModel = ListModel(
+        content: classModel,
+        context: context,
+      );
       expect(
         buildFromJsonValueExpression(
           'value',
@@ -399,9 +401,11 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
-      final innerListModel = ListModel(content: classModel, context: context);
+      final innerListModel = ListModel(
+        content: classModel,
+        context: context,
+      );
       final outerListModel = ListModel(
         content: innerListModel,
         context: context,
@@ -427,9 +431,11 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
-      final innerListModel = ListModel(content: classModel, context: context);
+      final innerListModel = ListModel(
+        content: classModel,
+        context: context,
+      );
       final middleListModel = ListModel(
         content: innerListModel,
         context: context,
@@ -460,11 +466,16 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(value: 'user'),
+        },
         isNullable: false,
-        description: null,
       );
-      final enumListModel = ListModel(content: enumModel, context: context);
+      final enumListModel = ListModel(
+        content: enumModel,
+        context: context,
+      );
       expect(
         buildFromJsonValueExpression(
           'value',
@@ -559,9 +570,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -579,11 +592,16 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
-        final enumListModel = ListModel(content: enumModel, context: context);
+        final enumListModel = ListModel(
+          content: enumModel,
+          context: context,
+        );
         expect(
           buildFromJsonValueExpression(
             'value',
@@ -689,7 +707,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -708,9 +725,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -748,7 +767,6 @@ void main() {
             context: context,
             name: 'User',
             properties: const [],
-            description: null,
           );
           final classListModel = ListModel(
             content: classModel,
@@ -774,9 +792,11 @@ void main() {
             isDeprecated: false,
             context: context,
             name: 'UserRole',
-            values: const {'admin', 'user'},
+            values: {
+              const EnumEntry(value: 'admin'),
+              const EnumEntry(value: 'user'),
+            },
             isNullable: false,
-            description: null,
           );
           final enumListModel = ListModel(
             content: enumModel,

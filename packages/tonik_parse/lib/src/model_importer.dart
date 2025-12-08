@@ -26,7 +26,11 @@ class ModelImporter {
       var model = _parseSchemaWrapper(name, schema, context);
 
       if (model is PrimitiveModel) {
-        model = AliasModel(name: name, model: model, context: context);
+        model = AliasModel(
+          name: name,
+          model: model,
+          context: context,
+        );
       }
 
       if (models.none((m) => m is NamedModel && m.name == name)) {
@@ -76,7 +80,11 @@ class ModelImporter {
             _parseSchemaWrapper(refName, ref, rootContext);
 
         if (name != null) {
-          model = AliasModel(name: name, model: model, context: context);
+          model = AliasModel(
+            name: name,
+            model: model,
+            context: context,
+          );
         }
 
         return model;
@@ -156,7 +164,11 @@ class ModelImporter {
     };
 
     if (model is PrimitiveModel && name != null) {
-      model = AliasModel(name: name, model: model, context: context);
+      model = AliasModel(
+        name: name,
+        model: model,
+        context: context,
+      );
       _logModelAdded(model);
       models.add(model);
     }
@@ -198,7 +210,6 @@ class ModelImporter {
     return OneOfModel(
       models: models.toSet(),
       name: name,
-      discriminator: null,
       context: context,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
@@ -213,7 +224,11 @@ class ModelImporter {
 
     final modelContext = context.push('array');
     final content = _parseSchemaWrapper(null, items, modelContext);
-    return ListModel(content: content, context: context, name: name);
+    return ListModel(
+      content: content,
+      context: context,
+      name: name,
+    );
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
@@ -398,9 +413,16 @@ class ModelImporter {
       );
     }
 
+    final enumValues =
+        typedValues
+            .map(
+              (v) => EnumEntry<T>(value: v),
+            )
+            .toSet();
+
     final model = EnumModel<T>(
       isDeprecated: isDeprecated,
-      values: typedValues,
+      values: enumValues,
       isNullable: isNullable || hasNull,
       context: context,
       name: name,

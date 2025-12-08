@@ -1,96 +1,50 @@
-import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-@immutable
 class Operation {
-  const Operation({
-    required this.operationId,
+  Operation({
     required this.context,
-    required this.summary,
-    required this.description,
-    required this.tags,
-    required this.isDeprecated,
     required this.path,
     required this.method,
+    required this.tags,
+    required this.isDeprecated,
     required this.headers,
     required this.queryParameters,
     required this.pathParameters,
     required this.responses,
-    required this.requestBody,
     required this.securitySchemes,
+    this.operationId,
+    this.nameOverride,
+    this.summary,
+    this.description,
+    this.requestBody,
   });
 
-  final Set<Tag> tags;
-
+  // ID fields (immutable)
   final String? operationId;
   final Context context;
-  final bool isDeprecated;
-  final String? summary;
-  final String? description;
-
   final String path;
   final HttpMethod method;
 
-  final Set<RequestHeader> headers;
-  final Set<QueryParameter> queryParameters;
-  final Set<PathParameter> pathParameters;
-  final RequestBody? requestBody;
-
-  final Map<ResponseStatus, Response> responses;
-  final Set<SecurityScheme> securitySchemes;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! Operation) return false;
-
-    final deepEquals = const DeepCollectionEquality().equals;
-
-    return operationId == other.operationId &&
-        context == other.context &&
-        summary == other.summary &&
-        description == other.description &&
-        deepEquals(tags, other.tags) &&
-        isDeprecated == other.isDeprecated &&
-        path == other.path &&
-        method == other.method &&
-        deepEquals(headers, other.headers) &&
-        deepEquals(queryParameters, other.queryParameters) &&
-        deepEquals(pathParameters, other.pathParameters) &&
-        requestBody == other.requestBody &&
-        deepEquals(responses, other.responses) &&
-        deepEquals(securitySchemes, other.securitySchemes);
-  }
-
-  @override
-  int get hashCode {
-    final deepHash = const DeepCollectionEquality().hash;
-
-    return Object.hash(
-      operationId,
-      context,
-      summary,
-      description,
-      deepHash(tags),
-      isDeprecated,
-      path,
-      method,
-      deepHash(headers),
-      deepHash(queryParameters),
-      deepHash(pathParameters),
-      requestBody,
-      deepHash(responses),
-      deepHash(securitySchemes),
-    );
-  }
+  // Mutable fields (configuration and structure)
+  String? nameOverride;
+  String? summary;
+  String? description;
+  bool isDeprecated;
+  Set<Tag> tags;
+  Set<RequestHeader> headers;
+  Set<QueryParameter> queryParameters;
+  Set<PathParameter> pathParameters;
+  RequestBody? requestBody;
+  Map<ResponseStatus, Response> responses;
+  Set<SecurityScheme> securitySchemes;
 }
 
-@immutable
 sealed class ResponseStatus {
   const ResponseStatus();
 }
 
+@immutable
 class DefaultResponseStatus extends ResponseStatus {
   const DefaultResponseStatus();
 
@@ -105,6 +59,7 @@ class DefaultResponseStatus extends ResponseStatus {
   int get hashCode => 0;
 }
 
+@immutable
 class ExplicitResponseStatus extends ResponseStatus {
   const ExplicitResponseStatus({required this.statusCode});
 
@@ -124,6 +79,7 @@ class ExplicitResponseStatus extends ResponseStatus {
   String toString() => 'ExplicitResponseStatus(statusCode: $statusCode)';
 }
 
+@immutable
 class RangeResponseStatus extends ResponseStatus {
   const RangeResponseStatus({required this.min, required this.max});
 

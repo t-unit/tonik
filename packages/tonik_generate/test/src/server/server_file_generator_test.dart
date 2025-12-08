@@ -46,14 +46,10 @@ void main() {
         requestHeaders: const {},
         servers: servers,
         operations: const {},
-        responses: const <Response>{},
+        responses: const {},
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -89,14 +85,10 @@ void main() {
         requestHeaders: const {},
         servers: servers,
         operations: const {},
-        responses: const <Response>{},
+        responses: const {},
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -126,23 +118,19 @@ void main() {
     });
 
     test('still generates file when no servers are defined', () {
-      const apiDoc = ApiDocument(
+      final apiDoc = ApiDocument(
         title: 'Test API',
         version: '1.0.0',
         description: 'Test API Description',
-        models: {},
-        responseHeaders: {},
-        requestHeaders: {},
-        servers: {}, // Empty servers collection
-        operations: {},
-        responses: <Response>{},
-        queryParameters: {},
-        pathParameters: {},
-        requestBodies: {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
       );
 
       generator.writeFiles(

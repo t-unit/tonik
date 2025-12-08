@@ -32,13 +32,11 @@ void main() {
     test('generates toMatrix method with correct signature', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfPrimitive',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -66,14 +64,12 @@ void main() {
     test('generates toMatrix for primitive-only AnyOf', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfPrimitive',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -130,11 +126,9 @@ void main() {
     test('generates toMatrix for complex-only AnyOf', () {
       final class1 = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Class1',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -147,11 +141,9 @@ void main() {
 
       final class2 = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Class2',
         properties: [
           Property(
-            description: null,
             name: 'number',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -164,7 +156,6 @@ void main() {
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfComplex',
         models: {
           (discriminatorValue: 'class1', model: class1),
@@ -222,7 +213,6 @@ void main() {
       () {
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'AnyOfMixed',
           models: {
             (
@@ -233,11 +223,9 @@ void main() {
               discriminatorValue: 'data',
               model: ClassModel(
                 isDeprecated: false,
-                description: null,
                 name: 'Data',
                 properties: [
                   Property(
-                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -319,22 +307,22 @@ void main() {
     test('generates toMatrix for AnyOf with enum variants', () {
       final enumModel = EnumModel(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: false,
         context: context,
       );
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfEnum',
         models: {
           (discriminatorValue: 'status', model: enumModel),
           (discriminatorValue: 'string', model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -383,10 +371,8 @@ void main() {
     test('generates toMatrix for empty AnyOf', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfEmpty',
         models: const {},
-        discriminator: null,
         context: context,
       );
 
@@ -412,25 +398,21 @@ void main() {
     test('generates toMatrix for AnyOf with nested composition types', () {
       final oneOfModel = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'OneOfType',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfNested',
         models: {
           (discriminatorValue: 'oneof', model: oneOfModel),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -479,7 +461,6 @@ void main() {
     test('toMatrix uses runtime check for nested oneOf', () {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'InnerChoice',
         models: {
           (discriminatorValue: 'str', model: StringModel(context: context)),
@@ -487,11 +468,9 @@ void main() {
             discriminatorValue: 'obj',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Inner',
               properties: [
                 Property(
-                  description: null,
                   name: 'field',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -509,13 +488,11 @@ void main() {
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: innerOneOf),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -604,13 +581,11 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'StringOrList',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: listModel),
           },
-          discriminator: null,
           context: context,
         );
 
@@ -663,13 +638,11 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'StringOrIntList',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: listModel),
           },
-          discriminator: null,
           context: context,
         );
 
@@ -730,13 +703,11 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'StringListOrIntList',
           models: {
             (discriminatorValue: null, model: listStringModel),
             (discriminatorValue: null, model: listIntModel),
           },
-          discriminator: null,
           context: context,
         );
 

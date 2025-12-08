@@ -46,7 +46,6 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -147,7 +146,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -253,7 +251,6 @@ Future<TonikResult<void>> call({required String myHeader}) async {
             ),
           },
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -360,7 +357,6 @@ Future<TonikResult<void>> call({required int petId}) async {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -476,7 +472,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: {queryParam1, queryParam2},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -581,7 +576,6 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
@@ -839,7 +833,6 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
-          requestBody: null,
           securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -943,7 +936,6 @@ Future<TonikResult<String>> call() async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
-          requestBody: null,
           securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 204): ResponseObject(
@@ -1039,7 +1031,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {}, // Empty responses map
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -1119,7 +1110,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -1268,7 +1258,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: {queryParam},
           pathParameters: {pathParam},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -1306,7 +1295,6 @@ Future<TonikResult<void>> call() async {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
@@ -1334,7 +1322,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {}, // Empty responses map
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -1378,7 +1365,6 @@ Future<TonikResult<void>> call() async {
               },
             ),
           },
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -1424,7 +1410,6 @@ Future<TonikResult<void>> call() async {
           queryParameters: {queryParam},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 

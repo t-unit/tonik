@@ -1,9 +1,7 @@
-import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-@immutable
 class ApiDocument {
-  const ApiDocument({
+  ApiDocument({
     required this.title,
     required this.version,
     required this.models,
@@ -15,32 +13,35 @@ class ApiDocument {
     required this.queryParameters,
     required this.pathParameters,
     required this.requestBodies,
-    required this.description,
-    required this.contact,
-    required this.license,
-    required this.termsOfService,
-    required this.externalDocs,
+    this.description,
+    this.contact,
+    this.license,
+    this.termsOfService,
+    this.externalDocs,
   });
 
+  // ID fields (immutable) - uniquely identify the document
   final String title;
-  final String? description;
   final String version;
-  final Contact? contact;
-  final License? license;
-  final String? termsOfService;
-  final ExternalDocumentation? externalDocs;
 
-  final Set<Model> models;
-  final Set<ResponseHeader> responseHeaders;
-  final Set<RequestHeader> requestHeaders;
-  final Set<QueryParameter> queryParameters;
-  final Set<PathParameter> pathParameters;
+  // Mutable fields
+  String? description;
+  Contact? contact;
+  License? license;
+  String? termsOfService;
+  ExternalDocumentation? externalDocs;
 
-  final Set<Server> servers;
+  Set<Model> models;
+  Set<ResponseHeader> responseHeaders;
+  Set<RequestHeader> requestHeaders;
+  Set<QueryParameter> queryParameters;
+  Set<PathParameter> pathParameters;
 
-  final Set<Operation> operations;
-  final Set<Response> responses;
-  final Set<RequestBody> requestBodies;
+  Set<Server> servers;
+
+  Set<Operation> operations;
+  Set<Response> responses;
+  Set<RequestBody> requestBodies;
 
   Map<Tag, Set<Operation>> get operationsByTag {
     final taggedOperations = <Tag, Set<Operation>>{};

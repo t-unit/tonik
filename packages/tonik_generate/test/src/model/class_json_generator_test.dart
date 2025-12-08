@@ -33,11 +33,9 @@ void main() {
     test('generates toJson method for simple string property', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -70,7 +68,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'age',
@@ -78,7 +75,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'isActive',
@@ -86,11 +82,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       const expectedMethod = '''
@@ -107,11 +101,9 @@ void main() {
     test('generates toJson method with nullable properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -119,7 +111,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'bio',
             model: StringModel(context: context),
             isRequired: false,
@@ -144,11 +135,9 @@ void main() {
     test('generates toJson method with optional non-nullable properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -156,7 +145,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'nickname',
             model: StringModel(context: context),
             isRequired: false,
@@ -184,11 +172,9 @@ void main() {
     test('generates toJson method with raw property names', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: '_id',
             model: StringModel(context: context),
             isRequired: true,
@@ -196,7 +182,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'user-name',
             model: StringModel(context: context),
             isRequired: true,
@@ -221,9 +206,11 @@ void main() {
     test('generates toJson method with mixed property types', () {
       final enumModel = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: false,
         context: context,
       );
@@ -238,11 +225,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       final model = ClassModel(
@@ -255,7 +240,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'createdAt',
@@ -263,7 +247,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'status',
@@ -271,7 +254,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'homeAddress',
@@ -279,11 +261,9 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       const expectedMethod = '''
@@ -313,11 +293,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       final model = ClassModel(
@@ -333,7 +311,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'meetingTimes',
@@ -344,19 +321,19 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'addresses',
-            model: ListModel(content: addressModel, context: context),
+            model: ListModel(
+              content: addressModel,
+              context: context,
+            ),
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       const expectedMethod = '''
@@ -379,14 +356,12 @@ void main() {
     test('generates toJson method with polymorphic model types', () {
       final baseModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Base',
         properties: const [],
         context: context,
       );
       final mixinModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Mixin',
         properties: const [],
         context: context,
@@ -394,7 +369,6 @@ void main() {
 
       final allOfModel = AllOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Combined',
         models: {baseModel, mixinModel},
         context: context,
@@ -402,14 +376,12 @@ void main() {
 
       final catModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Cat',
         properties: const [],
         context: context,
       );
       final dogModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Dog',
         properties: const [],
         context: context,
@@ -417,7 +389,6 @@ void main() {
 
       final oneOfModel = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Pet',
         models: {
           (discriminatorValue: 'cat', model: catModel),
@@ -429,11 +400,9 @@ void main() {
 
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Container',
         properties: [
           Property(
-            description: null,
             name: 'combinedData',
             model: allOfModel,
             isRequired: true,
@@ -441,7 +410,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'pet',
             model: oneOfModel,
             isRequired: false,
@@ -469,14 +437,12 @@ void main() {
     test('generates toJson method with polymorphic model types', () {
       final baseModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Base',
         properties: const [],
         context: context,
       );
       final mixinModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Mixin',
         properties: const [],
         context: context,
@@ -484,7 +450,6 @@ void main() {
 
       final allOfModel = AllOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Combined',
         models: {baseModel, mixinModel},
         context: context,
@@ -492,14 +457,12 @@ void main() {
 
       final catModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Cat',
         properties: const [],
         context: context,
       );
       final dogModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Dog',
         properties: const [],
         context: context,
@@ -507,7 +470,6 @@ void main() {
 
       final oneOfModel = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Pet',
         models: {
           (discriminatorValue: 'cat', model: catModel),
@@ -519,11 +481,9 @@ void main() {
 
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Container',
         properties: [
           Property(
-            description: null,
             name: 'combinedData',
             model: allOfModel,
             isRequired: true,
@@ -531,7 +491,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'pet',
             model: oneOfModel,
             isRequired: false,
@@ -567,11 +526,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       const expectedMethod = '''
@@ -588,11 +545,9 @@ void main() {
     test('generates toJson method for nullable Uri property', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Resource',
         properties: [
           Property(
-            description: null,
             name: 'callback',
             model: UriModel(context: context),
             isRequired: false,
@@ -617,11 +572,9 @@ void main() {
     test('generates toJson method for multiple Uri properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Resource',
         properties: [
           Property(
-            description: null,
             name: 'endpoint',
             model: UriModel(context: context),
             isRequired: true,
@@ -629,7 +582,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'callback',
             model: UriModel(context: context),
             isRequired: false,
@@ -637,7 +589,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'webhook',
             model: UriModel(context: context),
             isRequired: true,
@@ -670,12 +621,10 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           context: context,
           name: 'User',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -683,7 +632,6 @@ void main() {
               isDeprecated: false,
             ),
             Property(
-              description: null,
               name: 'age',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -713,12 +661,10 @@ void main() {
     test('generates fromJson method with nullable properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         context: context,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -726,7 +672,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'bio',
             model: StringModel(context: context),
             isRequired: false,
@@ -755,12 +700,10 @@ void main() {
     test('generates fromJson method with required nullable properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         context: context,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -788,12 +731,10 @@ void main() {
     test('generates fromJson method with property name normalization', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         context: context,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'first-name',
             model: StringModel(context: context),
             isRequired: true,
@@ -801,7 +742,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: '_id',
             model: StringModel(context: context),
             isRequired: true,
@@ -832,12 +772,10 @@ void main() {
     test('generates fromJson method with properties named json and map', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         context: context,
         name: 'Test',
         properties: [
           Property(
-            description: null,
             name: 'json',
             model: StringModel(context: context),
             isRequired: true,
@@ -845,7 +783,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'map',
             model: StringModel(context: context),
             isRequired: true,
@@ -874,7 +811,6 @@ void main() {
     test('generates fromJson method for class without properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         context: context,
         name: 'EmptyClass',
         properties: const [],
@@ -895,7 +831,6 @@ void main() {
     test('generates fromSimple method for class without properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         context: context,
         name: 'EmptyClass',
         properties: const [],

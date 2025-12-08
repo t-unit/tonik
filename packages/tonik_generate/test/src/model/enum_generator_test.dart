@@ -20,9 +20,12 @@ void main() {
     test('generates currentEncodingShape getter', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Color',
-        values: const {'red', 'green', 'blue'},
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'blue'),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -49,9 +52,12 @@ void main() {
     test('generates enum with string values', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Color',
-        values: const {'red', 'green', 'blue'},
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'blue'),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -81,9 +87,11 @@ void main() {
     test('generates nullable enum code', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: true,
         context: Context.initial(),
       );
@@ -98,9 +106,11 @@ void main() {
     test('generates nullable enum value', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: true,
         context: Context.initial(),
       );
@@ -122,9 +132,12 @@ void main() {
     test('generates non-nullable enum', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Color',
-        values: const {'red', 'green', 'blue'},
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'blue'),
+        },
         isNullable: false,
         context: Context.initial(),
       );
@@ -145,9 +158,12 @@ void main() {
     test('generates enum with integer values', () {
       final model = EnumModel<int>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {1, 2, 3},
+        values: {
+          const EnumEntry(value: 1),
+          const EnumEntry(value: 2),
+          const EnumEntry(value: 3),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -179,9 +195,12 @@ void main() {
       () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Placeholder',
-          values: const {'_', '__', '___'},
+          values: {
+            const EnumEntry(value: '_'),
+            const EnumEntry(value: '__'),
+            const EnumEntry(value: '___'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -209,9 +228,12 @@ void main() {
       () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 404},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 404),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -227,9 +249,12 @@ void main() {
     test('throws error for unsupported enum value types like double', () {
       final model = EnumModel<double>(
         isDeprecated: false,
-        description: null,
         name: 'Rate',
-        values: {0.5, 1.5, 2.5},
+        values: {
+          const EnumEntry(value: 0.5),
+          const EnumEntry(value: 1.5),
+          const EnumEntry(value: 2.5),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -242,9 +267,11 @@ void main() {
       () {
         final model = EnumModel<double>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: {1.0, 2.0},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -262,7 +289,11 @@ void main() {
           isDeprecated: false,
           description: 'The color options available',
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -277,7 +308,10 @@ void main() {
           isDeprecated: false,
           description: 'The status of an order.\nCan change over time.',
           name: 'Status',
-          values: const {'pending', 'complete'},
+          values: {
+            const EnumEntry(value: 'pending'),
+            const EnumEntry(value: 'complete'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -293,9 +327,12 @@ void main() {
       test('generates enum without doc comment when description is null', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -310,7 +347,11 @@ void main() {
           isDeprecated: false,
           description: '',
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -325,9 +366,11 @@ void main() {
       test('handles string values', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -340,9 +383,12 @@ void main() {
       test('handles integer values', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -358,9 +404,12 @@ void main() {
       test('generates toJson method', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -378,9 +427,12 @@ void main() {
       test('generates fromJson factory for string enums', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -413,9 +465,12 @@ void main() {
       test('generates fromJson factory for integer enums', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {200, 404, 500},
+          values: {
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 404),
+            const EnumEntry(value: 500),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -448,9 +503,11 @@ void main() {
       test('generates fromJson factory for nullable enums', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -485,9 +542,12 @@ void main() {
       test('generates fromSimple constructor for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -531,9 +591,12 @@ void main() {
       test('generates fromSimple constructor for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -577,9 +640,11 @@ void main() {
       test('generates fromSimple constructor for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -599,9 +664,12 @@ void main() {
       test('generates fromSimple constructor for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -632,9 +700,12 @@ void main() {
       test('generates toSimple method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -672,9 +743,12 @@ void main() {
       test('generates toSimple method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -698,9 +772,11 @@ void main() {
       test('generates toSimple method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -724,9 +800,12 @@ void main() {
       test('generates toSimple method for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 300},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 300),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -750,9 +829,12 @@ void main() {
       test('generates toSimple in complete enum code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -771,9 +853,12 @@ void main() {
       test('generates toSimple in complete enum code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -794,9 +879,12 @@ void main() {
       test('generates fromForm constructor for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -840,9 +928,12 @@ void main() {
       test('generates fromForm constructor for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -886,9 +977,11 @@ void main() {
       test('generates fromForm constructor for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -908,9 +1001,12 @@ void main() {
       test('generates fromForm constructor for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -941,9 +1037,12 @@ void main() {
       test('generates toForm method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -981,9 +1080,12 @@ void main() {
       test('generates toForm method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1007,9 +1109,11 @@ void main() {
       test('generates toForm method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1033,9 +1137,12 @@ void main() {
       test('generates toForm method for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 300},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 300),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1059,9 +1166,12 @@ void main() {
       test('generates toForm in complete enum code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1080,9 +1190,12 @@ void main() {
       test('generates toForm in complete enum code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1103,9 +1216,12 @@ void main() {
       test('generates toLabel method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1142,9 +1258,12 @@ void main() {
       test('generates toLabel method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1167,9 +1286,12 @@ void main() {
       test('generates toLabel method for nullable enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Priority',
-          values: const {'low', 'medium', 'high'},
+          values: {
+            const EnumEntry(value: 'low'),
+            const EnumEntry(value: 'medium'),
+            const EnumEntry(value: 'high'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1192,9 +1314,12 @@ void main() {
       test('toLabel method is included in generated code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1213,9 +1338,12 @@ void main() {
       test('toLabel method is included in generated code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1236,9 +1364,12 @@ void main() {
         () {
           final model = EnumModel<String>(
             isDeprecated: false,
-            description: null,
             name: 'Priority',
-            values: const {'low', 'medium', 'high'},
+            values: {
+              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'medium'),
+              const EnumEntry(value: 'high'),
+            },
             isNullable: true,
             context: Context.initial(),
           );
@@ -1260,9 +1391,12 @@ void main() {
       test('generates toMatrix method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1309,9 +1443,12 @@ void main() {
       test('generates toMatrix method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1344,9 +1481,11 @@ void main() {
       test('generates toMatrix method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1379,9 +1518,12 @@ void main() {
       test('generates toMatrix method for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 300},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 300),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1414,9 +1556,12 @@ void main() {
       test('toMatrix method is included in generated code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1435,9 +1580,12 @@ void main() {
       test('toMatrix method is included in generated code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1458,9 +1606,12 @@ void main() {
         () {
           final model = EnumModel<String>(
             isDeprecated: false,
-            description: null,
             name: 'Priority',
-            values: const {'low', 'medium', 'high'},
+            values: {
+              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'medium'),
+              const EnumEntry(value: 'high'),
+            },
             isNullable: true,
             context: Context.initial(),
           );
@@ -1482,9 +1633,12 @@ void main() {
       test('generates uriEncode method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1515,9 +1669,12 @@ void main() {
       test('generates uriEncode method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1541,9 +1698,11 @@ void main() {
       test('generates uriEncode method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1569,9 +1728,12 @@ void main() {
         () {
           final model = EnumModel<String>(
             isDeprecated: false,
-            description: null,
             name: 'Color',
-            values: const {'red', 'green', 'blue'},
+            values: {
+              const EnumEntry(value: 'red'),
+              const EnumEntry(value: 'green'),
+              const EnumEntry(value: 'blue'),
+            },
             isNullable: false,
             context: Context.initial(),
           );
@@ -1592,10 +1754,13 @@ void main() {
         final model = EnumModel<int>(
           isDeprecated: false,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
-          description: null,
         );
 
         final result = generator.generate(model);
@@ -1615,10 +1780,13 @@ void main() {
           final model = EnumModel<String>(
             isDeprecated: false,
             name: 'Priority',
-            values: const {'low', 'medium', 'high'},
+            values: {
+              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'medium'),
+              const EnumEntry(value: 'high'),
+            },
             isNullable: true,
             context: Context.initial(),
-            description: null,
           );
 
           final result = generator.generate(model);

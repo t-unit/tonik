@@ -13,11 +13,12 @@ sealed class RequestHeader {
 
   final Context context;
 
-  RequestHeaderObject resolve({String? name}) {
+  RequestHeaderObject resolve({String? name, String? nameOverride}) {
     switch (this) {
       case final RequestHeaderObject header:
         return RequestHeaderObject(
           name: name ?? header.name,
+          nameOverride: nameOverride ?? header.nameOverride,
           rawName: header.rawName,
           description: header.description,
           isRequired: header.isRequired,
@@ -29,7 +30,10 @@ sealed class RequestHeader {
           context: context,
         );
       case final RequestHeaderAlias alias:
-        return alias.header.resolve(name: name ?? alias.name);
+        return alias.header.resolve(
+          name: name ?? alias.name,
+          nameOverride: nameOverride,
+        );
     }
   }
 }
@@ -61,9 +65,8 @@ class RequestHeaderAlias extends RequestHeader {
   int get hashCode => Object.hash(name, header);
 }
 
-@immutable
 class RequestHeaderObject extends RequestHeader {
-  const RequestHeaderObject({
+  RequestHeaderObject({
     required this.name,
     required this.rawName,
     required this.description,
@@ -74,54 +77,29 @@ class RequestHeaderObject extends RequestHeader {
     required this.model,
     required this.encoding,
     required super.context,
+    this.nameOverride,
   });
 
+  // ID fields (immutable)
   final String? name;
 
   /// The name used inside the HTTP request to identify the header.
   final String rawName;
-  final String? description;
-  final bool isRequired;
-  final bool isDeprecated;
-  final bool allowEmptyValue;
-  final bool explode;
-  final Model model;
-  final HeaderParameterEncoding encoding;
+
+  // Mutable fields
+  String? nameOverride;
+  String? description;
+  bool isRequired;
+  bool isDeprecated;
+  bool allowEmptyValue;
+  bool explode;
+  Model model;
+  HeaderParameterEncoding encoding;
 
   @override
   String toString() =>
-      'RequestHeader{name: $name, rawName: $rawName, '
-      'description: $description, isRequired: $isRequired, '
+      'RequestHeader{name: $name, nameOverride: $nameOverride, '
+      'rawName: $rawName, description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'explode: $explode, model: $model, encoding: $encoding}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RequestHeaderObject &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          description == other.description &&
-          isRequired == other.isRequired &&
-          isDeprecated == other.isDeprecated &&
-          allowEmptyValue == other.allowEmptyValue &&
-          explode == other.explode &&
-          model == other.model &&
-          encoding == other.encoding &&
-          context == other.context &&
-          rawName == other.rawName;
-
-  @override
-  int get hashCode => Object.hash(
-    name,
-    description,
-    isRequired,
-    isDeprecated,
-    allowEmptyValue,
-    explode,
-    model,
-    encoding,
-    context,
-    rawName,
-  );
 }

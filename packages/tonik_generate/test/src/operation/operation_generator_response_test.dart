@@ -38,7 +38,6 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -94,7 +93,6 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 204): ResponseObject(
@@ -131,7 +129,6 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -185,7 +182,6 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
-        requestBody: null,
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(

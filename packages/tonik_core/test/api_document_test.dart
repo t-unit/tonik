@@ -4,43 +4,38 @@ import 'package:tonik_core/tonik_core.dart';
 void main() {
   group('operationsByTag', () {
     test('returns empty set if no operations', () {
-      const document = ApiDocument(
+      final document = ApiDocument(
         title: 'Test',
         version: '1.0.0',
-        models: {},
-        responseHeaders: {},
-        servers: {},
-        operations: {},
-        responses: {},
-        requestHeaders: {},
-        queryParameters: {},
-        pathParameters: {},
-        requestBodies: {},
-        description: null,
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
+        models: const {},
+        responseHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const {},
+        requestHeaders: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
       );
 
       expect(document.operationsByTag, isEmpty);
     });
 
     test('returns operations grouped by tag', () {
+      final fooTag = Tag(name: 'foo');
+      final barTag = Tag(name: 'bar');
+
       final fooOperation = Operation(
         operationId: 'test',
         context: Context.initial().push('test'),
         path: '/test',
-        tags: {const Tag(name: 'foo')},
-        summary: null,
-        description: null,
+        tags: {fooTag},
         isDeprecated: false,
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -48,16 +43,13 @@ void main() {
         operationId: 'test2',
         context: Context.initial().push('test'),
         path: '/test2',
-        tags: {const Tag(name: 'bar')},
-        summary: null,
-        description: null,
+        tags: {barTag},
         isDeprecated: false,
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -73,35 +65,30 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        description: null,
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
-      final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
+      final fooOperations = document.operationsByTag[fooTag];
       expect(fooOperations, contains(fooOperation));
 
-      final barOperations = document.operationsByTag[const Tag(name: 'bar')];
+      final barOperations = document.operationsByTag[barTag];
       expect(barOperations, contains(barOperation));
     });
 
     test('duplicates operations in different tags', () {
+      final fooTag = Tag(name: 'foo');
+      final barTag = Tag(name: 'bar');
+
       final twoTagOperation = Operation(
         operationId: 'test',
         context: Context.initial().push('test'),
         path: '/test',
-        tags: {const Tag(name: 'foo'), const Tag(name: 'bar')},
-        summary: null,
-        description: null,
+        tags: {fooTag, barTag},
         isDeprecated: false,
         method: HttpMethod.get,
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -117,16 +104,13 @@ void main() {
             operationId: 'test',
             context: Context.initial().push('test'),
             path: '/test',
-            tags: {const Tag(name: 'foo')},
-            summary: null,
-            description: null,
+            tags: {fooTag},
             isDeprecated: false,
             method: HttpMethod.get,
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           ),
         },
@@ -135,17 +119,12 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        description: null,
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
-      final fooOperations = document.operationsByTag[const Tag(name: 'foo')];
+      final fooOperations = document.operationsByTag[fooTag];
       expect(fooOperations, contains(twoTagOperation));
 
-      final barOperations = document.operationsByTag[const Tag(name: 'bar')];
+      final barOperations = document.operationsByTag[barTag];
       expect(barOperations, contains(twoTagOperation));
     });
   });

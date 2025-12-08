@@ -26,7 +26,6 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
-          description: null,
         ),
       };
 
@@ -120,7 +119,6 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
-          description: null,
         ),
       };
 
@@ -137,10 +135,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       const packageName = 'simple_api';

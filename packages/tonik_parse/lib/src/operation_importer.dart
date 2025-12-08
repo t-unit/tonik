@@ -38,7 +38,10 @@ class OperationImporter {
   void import() {
     validTags = {
       for (final tag in openApiObject.tags ?? <Tag>[])
-        core.Tag(name: tag.name, description: tag.description),
+        core.Tag(
+          name: tag.name,
+          description: tag.description,
+        ),
     };
 
     operations = <core.Operation>{};

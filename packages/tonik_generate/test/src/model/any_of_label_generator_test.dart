@@ -32,14 +32,12 @@ void main() {
     test('generates toLabel for primitive-only AnyOf', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfPrimitive',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
           (discriminatorValue: 'bool', model: BooleanModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -83,11 +81,9 @@ void main() {
     test('generates toLabel for complex-only AnyOf', () {
       final class1 = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Class1',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -100,11 +96,9 @@ void main() {
 
       final class2 = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Class2',
         properties: [
           Property(
-            description: null,
             name: 'number',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -117,7 +111,6 @@ void main() {
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfComplex',
         models: {
           (discriminatorValue: 'class1', model: class1),
@@ -168,7 +161,6 @@ void main() {
     test('generates toLabel that detects mixed encoding ambiguity', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfMixed',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
@@ -176,11 +168,9 @@ void main() {
             discriminatorValue: 'data',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Data',
               properties: [
                 Property(
-                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -255,10 +245,8 @@ void main() {
     test('generates toLabel for empty AnyOf', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfEmpty',
         models: const {},
-        discriminator: null,
         context: context,
       );
 
@@ -280,7 +268,6 @@ void main() {
     test('toLabel uses runtime check for nested oneOf', () {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'InnerChoice',
         models: {
           (discriminatorValue: 'str', model: StringModel(context: context)),
@@ -288,11 +275,9 @@ void main() {
             discriminatorValue: 'obj',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Inner',
               properties: [
                 Property(
-                  description: null,
                   name: 'field',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -310,13 +295,11 @@ void main() {
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'TestAnyOf',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: innerOneOf),
         },
-        discriminator: null,
         context: context,
       );
 

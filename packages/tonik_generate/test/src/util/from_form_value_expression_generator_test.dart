@@ -471,7 +471,6 @@ void main() {
             name: 'NestedClass',
             properties: const [],
             context: context,
-            description: null,
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -491,10 +490,12 @@ void main() {
           model: EnumModel<String>(
             isDeprecated: false,
             name: 'Status',
-            values: const {'active', 'inactive'},
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
+            },
             isNullable: false,
             context: context,
-            description: null,
           ),
           isRequired: true,
           nameManager: nameManager,

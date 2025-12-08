@@ -21,11 +21,12 @@ sealed class PathParameter {
 
   final Context context;
 
-  PathParameterObject resolve({String? name}) {
+  PathParameterObject resolve({String? name, String? nameOverride}) {
     switch (this) {
       case final PathParameterObject param:
         return PathParameterObject(
           name: name ?? param.name,
+          nameOverride: nameOverride ?? param.nameOverride,
           rawName: param.rawName,
           description: param.description,
           isRequired: param.isRequired,
@@ -37,7 +38,10 @@ sealed class PathParameter {
           context: context,
         );
       case final PathParameterAlias alias:
-        return alias.parameter.resolve(name: name ?? alias.name);
+        return alias.parameter.resolve(
+          name: name ?? alias.name,
+          nameOverride: nameOverride,
+        );
     }
   }
 }
@@ -69,9 +73,8 @@ class PathParameterAlias extends PathParameter {
   int get hashCode => Object.hash(name, parameter);
 }
 
-@immutable
 class PathParameterObject extends PathParameter {
-  const PathParameterObject({
+  PathParameterObject({
     required this.name,
     required this.rawName,
     required this.description,
@@ -82,52 +85,27 @@ class PathParameterObject extends PathParameter {
     required this.model,
     required this.encoding,
     required super.context,
+    this.nameOverride,
   });
 
+  // ID fields (immutable)
   final String? name;
   final String rawName;
-  final String? description;
-  final bool isRequired;
-  final bool isDeprecated;
-  final bool allowEmptyValue;
-  final bool explode;
-  final Model model;
-  final PathParameterEncoding encoding;
+
+  // Mutable fields
+  String? nameOverride;
+  String? description;
+  bool isRequired;
+  bool isDeprecated;
+  bool allowEmptyValue;
+  bool explode;
+  Model model;
+  PathParameterEncoding encoding;
 
   @override
   String toString() =>
-      'PathParameterObject{name: $name, '
+      'PathParameterObject{name: $name, nameOverride: $nameOverride, '
       'description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'explode: $explode, model: $model, encoding: $encoding}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PathParameterObject &&
-          runtimeType == other.runtimeType &&
-          rawName == other.rawName &&
-          name == other.name &&
-          description == other.description &&
-          isRequired == other.isRequired &&
-          isDeprecated == other.isDeprecated &&
-          allowEmptyValue == other.allowEmptyValue &&
-          explode == other.explode &&
-          model == other.model &&
-          encoding == other.encoding &&
-          context == other.context;
-
-  @override
-  int get hashCode => Object.hash(
-    rawName,
-    name,
-    description,
-    isRequired,
-    isDeprecated,
-    allowEmptyValue,
-    explode,
-    model,
-    encoding,
-    context,
-  );
 }

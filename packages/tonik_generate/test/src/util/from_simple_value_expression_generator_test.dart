@@ -154,9 +154,13 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(
+            value: 'user',
+          ),
+        },
         isNullable: false,
-        description: null,
       );
 
       expect(
@@ -190,9 +194,11 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(value: 'user'),
+        },
         isNullable: false,
-        description: null,
       );
 
       expect(
@@ -227,7 +233,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
 
       expect(
@@ -262,7 +267,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
 
       expect(
@@ -443,9 +447,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
 
         expect(
@@ -468,7 +474,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
 
         expect(
@@ -490,11 +495,16 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
-        final listModel = ListModel(content: enumModel, context: context);
+        final listModel = ListModel(
+          content: enumModel,
+          context: context,
+        );
 
         expect(
           buildSimpleValueExpression(
@@ -519,11 +529,16 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
-        final listModel = ListModel(content: enumModel, context: context);
+        final listModel = ListModel(
+          content: enumModel,
+          context: context,
+        );
 
         expect(
           buildSimpleValueExpression(

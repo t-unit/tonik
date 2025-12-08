@@ -61,8 +61,6 @@ void main() {
       operation = Operation(
         operationId: 'testOperation',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/test',
@@ -71,7 +69,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
     });
@@ -131,8 +128,6 @@ void main() {
       final operation = Operation(
         operationId: 'TestOperation',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/test',
@@ -141,7 +136,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
       final classes = generator.generateClasses(operation);
@@ -196,8 +190,6 @@ void main() {
       final operation = Operation(
         operationId: 'TestOperation',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/test',
@@ -206,7 +198,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
       expect(() => generator.generateClasses(operation), throwsArgumentError);
@@ -231,8 +222,6 @@ void main() {
       final operation = Operation(
         operationId: 'TestOperation',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/test',
@@ -241,7 +230,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -281,8 +269,6 @@ void main() {
       final operation = Operation(
         operationId: 'TestOperation',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/test',
@@ -291,7 +277,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -332,8 +317,6 @@ void main() {
         final operation = Operation(
           operationId: 'TestOperation',
           context: testContext,
-          summary: null,
-          description: null,
           tags: const {},
           isDeprecated: false,
           path: '/test',
@@ -342,7 +325,6 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: responses,
-          requestBody: null,
           securitySchemes: const {},
         );
         final classes = generator.generateClasses(operation);
@@ -397,8 +379,6 @@ void main() {
       final operation = Operation(
         operationId: 'TestOperation',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/test',
@@ -407,7 +387,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
       final classes = generator.generateClasses(operation);
@@ -525,8 +504,6 @@ void main() {
         final operation = Operation(
           operationId: 'CreateEntity',
           context: testContext,
-          summary: null,
-          description: null,
           tags: const {},
           isDeprecated: false,
           path: '/entity',
@@ -535,7 +512,6 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: responses,
-          requestBody: null,
           securitySchemes: const {},
         );
         final classes = generator.generateClasses(operation);
@@ -605,8 +581,6 @@ void main() {
       final operation = Operation(
         operationId: 'CreateEntityAlias',
         context: testContext,
-        summary: null,
-        description: null,
         tags: const {},
         isDeprecated: false,
         path: '/entity/alias',
@@ -615,7 +589,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: responses,
-        requestBody: null,
         securitySchemes: const {},
       );
       final classes = generator.generateClasses(operation);
