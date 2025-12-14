@@ -204,6 +204,67 @@ void main() {
 
     expect(result.first.property.isDeprecated, isTrue);
   });
+
+  group('nameOverride support', () {
+    test('uses nameOverride when set', () {
+      final prop = createProperty('user_profile')..nameOverride = 'customName';
+
+      final result = normalizeProperties([prop]);
+
+      expect(result.first.normalizedName, 'customName');
+      expect(result.first.property.name, 'user_profile');
+    });
+
+    test('sanitizes nameOverride value', () {
+      final prop = createProperty('user')..nameOverride = 'my-custom_name';
+
+      final result = normalizeProperties([prop]);
+
+      expect(result.first.normalizedName, 'myCustomName');
+    });
+
+    test('makes nameOverride unique when duplicate', () {
+      final prop1 = createProperty('field1')..nameOverride = 'value';
+
+      final prop2 = createProperty('field2')..nameOverride = 'value';
+
+      final result = normalizeProperties([prop1, prop2]);
+
+      expect(result[0].normalizedName, 'value');
+      expect(result[1].normalizedName, 'value2');
+    });
+
+    test('falls back to generated name when nameOverride is null', () {
+      final prop = createProperty('user_name');
+
+      final result = normalizeProperties([prop]);
+
+      expect(result.first.normalizedName, 'userName');
+    });
+
+    test('original property name unchanged for JSON serialization', () {
+      final prop = createProperty('_id')..nameOverride = 'identifier';
+
+      final result = normalizeProperties([prop]);
+
+      expect(result.first.normalizedName, 'identifier');
+      expect(
+        result.first.property.name,
+        '_id',
+        reason: 'Original name should be preserved for JSON keys',
+      );
+    });
+
+    test('nameOverride mixes with generated names uniquely', () {
+      final prop1 = createProperty('user');
+      final prop2 = createProperty('profile')..nameOverride = 'user';
+
+      final result = normalizeProperties([prop1, prop2]);
+
+      expect(result[0].normalizedName, 'user');
+      expect(result[1].normalizedName, 'user2');
+    });
+  });
 }
 
 Property createProperty(String name, {bool isDeprecated = false}) {

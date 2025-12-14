@@ -76,11 +76,21 @@ const dartKeywords = {
 };
 
 const generatedClassTokens = {
-  'fromjson',
+  'fromJson',
   'toJson',
   'copyWith',
   'toString',
   'hashCode',
+  'fromSimple',
+  'fromForm',
+  'toSimple',
+  'toForm',
+  'toLabel',
+  'toMatrix',
+  'toDeepObject',
+  'currentEncodingShape',
+  'parameterProperties',
+  'uriEncode',
 };
 
 const Set<String> allKeywords = {...dartKeywords, ...generatedClassTokens};

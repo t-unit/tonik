@@ -5,7 +5,6 @@
 - Discriminator support for allOf
 - Proper OpenAPI 3.1 support including JSON Schema Draft 2020-12
 - Proper OpenAPI 3.2 support
-- Supporting the `not` keyword
 - Encoding and decoding of `application/x-www-form-urlencoded` and `text/plain`
 - Support for `additionalProperties`
 - Server Templating support 
@@ -14,6 +13,7 @@
 - Supporting `byte` and `binary` formatted strings
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Better support for nullable properties and copyWith
+- Supporting the `not` keyword
 
 ## Non-goals
 - `allowReserved` support for query parameters - Dart's `Uri` class always percent-encodes reserved characters per RFC 3986 (see [URI Encoding Limitations](uri_encoding_limitations.md))

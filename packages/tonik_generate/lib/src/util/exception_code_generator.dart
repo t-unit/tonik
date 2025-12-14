@@ -32,6 +32,17 @@ Expression generateFormatDecodingExceptionExpression(String message) {
   );
 }
 
+/// Generates a throw expression for JsonDecodingException.
+/// 
+/// This is used for enum fromJson errors.
+Expression generateDecodingExceptionExpression(String message) {
+  return _generateExceptionExpression(
+    'JsonDecodingException',
+    message,
+    importUrl: 'package:tonik_util/tonik_util.dart',
+  );
+}
+
 /// Generates a throw expression for EncodingException.
 Expression generateEncodingExceptionExpression(
   String message, {

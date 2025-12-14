@@ -10,6 +10,7 @@ class ConfigTransformer {
     final overrides = config.nameOverrides;
     final filter = config.filter;
     final deprecated = config.deprecated;
+    final enumConfig = config.enums;
 
     final hasAnyOverrides =
         overrides.schemas.isNotEmpty ||
@@ -31,7 +32,12 @@ class ConfigTransformer {
         deprecated.parameters != DeprecatedHandling.annotate ||
         deprecated.properties != DeprecatedHandling.annotate;
 
-    if (!hasAnyOverrides && !hasAnyFilters && !hasDeprecationHandling) {
+    final hasEnumFallback = enumConfig.generateUnknownCase;
+
+    if (!hasAnyOverrides &&
+        !hasAnyFilters &&
+        !hasDeprecationHandling &&
+        !hasEnumFallback) {
       return document;
     }
 
@@ -159,6 +165,26 @@ class ConfigTransformer {
       }
     }
 
+    if (hasEnumFallback) {
+      _applyEnumFallbacks(document.models, enumConfig);
+    }
+
     return document;
+  }
+
+  void _applyEnumFallbacks(Set<Model> models, EnumConfig config) {
+    for (final model in models) {
+      if (model case EnumModel<String>()) {
+        model.fallbackValue = EnumEntry(
+          value: config.unknownCaseName,
+          nameOverride: config.unknownCaseName,
+        );
+      } else if (model case EnumModel<int>()) {
+        model.fallbackValue = EnumEntry(
+          value: -1,
+          nameOverride: config.unknownCaseName,
+        );
+      }
+    }
   }
 }

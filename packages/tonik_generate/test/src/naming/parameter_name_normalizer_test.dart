@@ -105,6 +105,118 @@ void main() {
       expect(result.headers.first.parameter.isRequired, isTrue);
     });
   });
+
+  group('nameOverride support', () {
+    test('uses nameOverride for path parameters', () {
+      final param = createPathParameter('user_id')..nameOverride = 'userId';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {param},
+        queryParameters: {},
+        headers: {},
+      );
+
+      expect(result.pathParameters.first.normalizedName, 'userId');
+      expect(
+        result.pathParameters.first.parameter.rawName,
+        'user_id',
+        reason: 'Original raw name should be preserved for URL encoding',
+      );
+    });
+
+    test('uses nameOverride for query parameters', () {
+      final param = createQueryParameter('sort-by')..nameOverride = 'orderBy';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {param},
+        headers: {},
+      );
+
+      expect(result.queryParameters.first.normalizedName, 'orderBy');
+      expect(
+        result.queryParameters.first.parameter.rawName,
+        'sort-by',
+        reason: 'Original raw name should be preserved for query string',
+      );
+    });
+
+    test('uses nameOverride for headers', () {
+      final header = createHeader('x-api-key')..nameOverride = 'apiToken';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {header},
+      );
+
+      expect(result.headers.first.normalizedName, 'apiToken');
+      expect(
+        result.headers.first.parameter.rawName,
+        'x-api-key',
+        reason: 'Original raw name should be preserved for HTTP headers',
+      );
+    });
+
+    test('sanitizes nameOverride values', () {
+      final param = createQueryParameter('filter')
+        ..nameOverride = 'my-custom_filter';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {param},
+        headers: {},
+      );
+
+      expect(result.queryParameters.first.normalizedName, 'myCustomFilter');
+    });
+
+    test('makes nameOverride unique when duplicate', () {
+      final param1 = createQueryParameter('field1')..nameOverride = 'value';
+
+      final param2 = createQueryParameter('field2')..nameOverride = 'value';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {param1, param2},
+        headers: {},
+      );
+
+      final names =
+          result.queryParameters.map((r) => r.normalizedName).toList();
+      expect(names.length, 2, reason: 'Should have 2 parameters');
+      expect(names.toSet().length, 2, reason: 'Should have unique names');
+      expect(names.contains('value'), isTrue);
+    });
+
+    test('applies type suffixes to nameOverride duplicates across types', () {
+      final path = createPathParameter('id')..nameOverride = 'identifier';
+      final query = createQueryParameter('id')..nameOverride = 'identifier';
+      final header = createHeader('id')..nameOverride = 'identifier';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {path},
+        queryParameters: {query},
+        headers: {header},
+      );
+
+      expect(result.pathParameters.first.normalizedName, 'identifierPath');
+      expect(result.queryParameters.first.normalizedName, 'identifierQuery');
+      expect(result.headers.first.normalizedName, 'identifierHeader');
+    });
+
+    test('falls back to generated name when nameOverride is null', () {
+      final param = createQueryParameter('sort_by');
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {param},
+        headers: {},
+      );
+
+      expect(result.queryParameters.first.normalizedName, 'sortBy');
+    });
+  });
 }
 
 PathParameterObject createPathParameter(

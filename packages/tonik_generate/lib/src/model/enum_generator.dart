@@ -59,10 +59,22 @@ class EnumGenerator {
       );
     }
 
-    final normalizedValues = normalizeEnumValues(
-      model.values.map((v) => v.value.toString()).toList(),
-    );
+    // Collect all values for normalization (using nameOverride if provided)
+    final allValuesToNormalize = [
+      ...model.values.map((v) => v.nameOverride ?? v.value.toString()),
+      if (model.fallbackValue != null)
+        model.fallbackValue!.nameOverride ??
+            model.fallbackValue!.value.toString(),
+    ];
+
+    final normalizedValues = normalizeEnumValues(allValuesToNormalize);
     final enumValues = _generateEnumValues(model, normalizedValues);
+
+    // Get the fallback normalized name for use in fromJson and encoding methods
+    final fallbackNormalizedName =
+        model.fallbackValue != null
+            ? normalizedValues[model.values.length].normalizedName
+            : '';
 
     // Generate unique name for nullable enum with prefix to allow
     // using a typedef to express the nullable type.
@@ -108,7 +120,12 @@ class EnumGenerator {
             ),
           )
           ..constructors.add(
-            _generateFromJsonConstructor<T>(enumName, actualEnumName),
+            _generateFromJsonConstructor<T>(
+              enumName,
+              actualEnumName,
+              model,
+              fallbackNormalizedName,
+            ),
           )
           ..constructors.add(
             _generateFromSimpleConstructor<T>(enumName, actualEnumName),
@@ -117,13 +134,10 @@ class EnumGenerator {
             _generateFromFormConstructor<T>(enumName, actualEnumName),
           )
           ..methods.add(
-            Method(
-              (b) =>
-                  b
-                    ..name = 'toJson'
-                    ..returns = refer(T.toString(), 'dart:core')
-                    ..lambda = true
-                    ..body = const Code('rawValue'),
+            _generateToJsonMethod<T>(
+              actualEnumName,
+              fallbackNormalizedName,
+              model.fallbackValue != null,
             ),
           )
           ..methods.add(
@@ -145,12 +159,40 @@ class EnumGenerator {
             ),
           )
           ..methods.add(
-            _generateToSimpleMethod<T>(),
+            _generateToSimpleMethod<T>(
+              actualEnumName,
+              fallbackNormalizedName,
+              model.fallbackValue != null,
+            ),
           )
-          ..methods.add(_generateToFormMethod<T>())
-          ..methods.add(_generateToLabelMethod<T>())
-          ..methods.add(_generateUriEncodeMethod<T>())
-          ..methods.add(_generateToMatrixMethod<T>())
+          ..methods.add(
+            _generateToFormMethod<T>(
+              actualEnumName,
+              fallbackNormalizedName,
+              model.fallbackValue != null,
+            ),
+          )
+          ..methods.add(
+            _generateToLabelMethod<T>(
+              actualEnumName,
+              fallbackNormalizedName,
+              model.fallbackValue != null,
+            ),
+          )
+          ..methods.add(
+            _generateUriEncodeMethod<T>(
+              actualEnumName,
+              fallbackNormalizedName,
+              model.fallbackValue != null,
+            ),
+          )
+          ..methods.add(
+            _generateToMatrixMethod<T>(
+              actualEnumName,
+              fallbackNormalizedName,
+              model.fallbackValue != null,
+            ),
+          )
           ..fields.add(
             Field(
               (b) =>
@@ -286,6 +328,8 @@ class EnumGenerator {
   Constructor _generateFromJsonConstructor<T>(
     String publicEnumName,
     String actualEnumName,
+    EnumModel<T> model,
+    String fallbackNormalizedName,
   ) {
     const valueParam = 'value';
     final typeReference = refer(T.toString(), 'dart:core');
@@ -309,66 +353,246 @@ class EnumGenerator {
             )
             ..body = Block.of([
               Code.scope((a) => 'if (value is! ${a(typeReference)}) {'),
-              generateFormatExceptionExpression(typeErrorMessage).statement,
+              generateDecodingExceptionExpression(typeErrorMessage).statement,
               const Code('}'),
-              const Code('return values.firstWhere('),
-              const Code('(e) => e.rawValue == $valueParam,'),
-              const Code('orElse: () => '),
-              generateFormatExceptionExpression(valueErrorMessage).code,
-              const Code(');'),
+              refer('values')
+                  .property('firstWhere')
+                  .call(
+                    [
+                      Method(
+                        (mb) =>
+                            mb
+                              ..requiredParameters.add(
+                                Parameter((pb) => pb..name = 'e'),
+                              )
+                              ..body =
+                                  refer('e')
+                                      .property('rawValue')
+                                      .equalTo(refer(valueParam))
+                                      .code,
+                      ).closure,
+                    ],
+                    {
+                      'orElse':
+                          model.fallbackValue != null
+                              ? Method(
+                                (mb) =>
+                                    mb
+                                      ..body =
+                                          refer(actualEnumName)
+                                              .property(fallbackNormalizedName)
+                                              .code,
+                              ).closure
+                              : Method(
+                                (mb) =>
+                                    mb
+                                      ..body =
+                                          generateDecodingExceptionExpression(
+                                            valueErrorMessage,
+                                          ).code,
+                              ).closure,
+                    },
+                  )
+                  .returned
+                  .statement,
             ]),
     );
   }
 
-  Method _generateToSimpleMethod<T>() {
+  Method _generateToJsonMethod<T>(
+    String actualEnumName,
+    String fallbackNormalizedName,
+    bool hasFallback,
+  ) {
+    if (!hasFallback) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toJson'
+              ..returns = refer(T.toString(), 'dart:core')
+              ..lambda = true
+              ..body = const Code('rawValue'),
+      );
+    }
+
+    return Method(
+      (b) =>
+          b
+            ..name = 'toJson'
+            ..returns = refer(T.toString(), 'dart:core')
+            ..lambda = false
+            ..body = Block.of([
+              Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode unknown enum value',
+                raw: true,
+              ).statement,
+              const Code('}'),
+              const Code('return rawValue;'),
+            ]),
+    );
+  }
+
+  Method _generateToSimpleMethod<T>(
+    String actualEnumName,
+    String fallbackNormalizedName,
+    bool hasFallback,
+  ) {
+    if (!hasFallback) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toSimple'
+              ..returns = refer('String', 'dart:core')
+              ..lambda = true
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..body = const Code(
+                'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+              ),
+      );
+    }
+
     return Method(
       (b) =>
           b
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..lambda = true
+            ..lambda = false
             ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = const Code(
-              'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
-            ),
+            ..body = Block.of([
+              Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode unknown enum value',
+                raw: true,
+              ).statement,
+              const Code('}'),
+              const Code(
+                '''
+return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
+''',
+              ),
+            ]),
     );
   }
 
-  Method _generateToFormMethod<T>() {
+  Method _generateToFormMethod<T>(
+    String actualEnumName,
+    String fallbackNormalizedName,
+    bool hasFallback,
+  ) {
+    if (!hasFallback) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toForm'
+              ..returns = refer('String', 'dart:core')
+              ..lambda = true
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..body = const Code(
+                'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+              ),
+      );
+    }
+
     return Method(
       (b) =>
           b
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..lambda = true
+            ..lambda = false
             ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = const Code(
-              'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
-            ),
+            ..body = Block.of([
+              Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode unknown enum value',
+                raw: true,
+              ).statement,
+              const Code('}'),
+              const Code(
+                '''
+return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
+''',
+              ),
+            ]),
     );
   }
 
-  Method _generateToLabelMethod<T>() {
+  Method _generateToLabelMethod<T>(
+    String actualEnumName,
+    String fallbackNormalizedName,
+    bool hasFallback,
+  ) {
+    if (!hasFallback) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toLabel'
+              ..returns = refer('String', 'dart:core')
+              ..lambda = true
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..body = const Code(
+                'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+              ),
+      );
+    }
+
     return Method(
       (b) =>
           b
             ..name = 'toLabel'
             ..returns = refer('String', 'dart:core')
-            ..lambda = true
+            ..lambda = false
             ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = const Code(
-              'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
-            ),
+            ..body = Block.of([
+              Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode unknown enum value',
+                raw: true,
+              ).statement,
+              const Code('}'),
+              const Code(
+                '''
+return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+''',
+              ),
+            ]),
     );
   }
 
-  Method _generateUriEncodeMethod<T>() {
+  Method _generateUriEncodeMethod<T>(
+    String actualEnumName,
+    String fallbackNormalizedName,
+    bool hasFallback,
+  ) {
+    if (!hasFallback) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'uriEncode'
+              ..returns = refer('String', 'dart:core')
+              ..lambda = true
+              ..optionalParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'allowEmpty'
+                        ..type = refer('bool', 'dart:core')
+                        ..named = true
+                        ..required = true,
+                ),
+              )
+              ..body = const Code(
+                'rawValue.uriEncode(allowEmpty: allowEmpty)',
+              ),
+      );
+    }
+
     return Method(
       (b) =>
           b
             ..name = 'uriEncode'
             ..returns = refer('String', 'dart:core')
-            ..lambda = true
+            ..lambda = false
             ..optionalParameters.add(
               Parameter(
                 (b) =>
@@ -379,19 +603,53 @@ class EnumGenerator {
                       ..required = true,
               ),
             )
-            ..body = const Code(
-              'rawValue.uriEncode(allowEmpty: allowEmpty)',
-            ),
+            ..body = Block.of([
+              Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode unknown enum value',
+                raw: true,
+              ).statement,
+              const Code('}'),
+              const Code(
+                'return rawValue.uriEncode(allowEmpty: allowEmpty);',
+              ),
+            ]),
     );
   }
 
-  Method _generateToMatrixMethod<T>() {
+  Method _generateToMatrixMethod<T>(
+    String actualEnumName,
+    String fallbackNormalizedName,
+    bool hasFallback,
+  ) {
+    if (!hasFallback) {
+      return Method(
+        (b) =>
+            b
+              ..name = 'toMatrix'
+              ..returns = refer('String', 'dart:core')
+              ..lambda = true
+              ..requiredParameters.add(
+                Parameter(
+                  (b) =>
+                      b
+                        ..name = 'paramName'
+                        ..type = refer('String', 'dart:core'),
+                ),
+              )
+              ..optionalParameters.addAll(buildEncodingParameters())
+              ..body = const Code(
+                '''rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)''',
+              ),
+      );
+    }
+
     return Method(
       (b) =>
           b
             ..name = 'toMatrix'
             ..returns = refer('String', 'dart:core')
-            ..lambda = true
+            ..lambda = false
             ..requiredParameters.add(
               Parameter(
                 (b) =>
@@ -401,9 +659,19 @@ class EnumGenerator {
               ),
             )
             ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = const Code(
-              '''rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)''',
-            ),
+            ..body = Block.of([
+              Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode unknown enum value',
+                raw: true,
+              ).statement,
+              const Code('}'),
+              const Code(
+                '''
+return rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+''',
+              ),
+            ]),
     );
   }
 
@@ -412,20 +680,46 @@ class EnumGenerator {
     List<({String normalizedName, String originalValue})> normalizedValues,
   ) {
     final values = model.values.toList();
-    return values.asMap().entries.map((entry) {
-      final rawValue = entry.value.value;
-      final normalizedName = normalizedValues[entry.key].normalizedName;
+    final enumValues =
+        values.asMap().entries.map((entry) {
+          final rawValue = entry.value.value;
+          // Always use normalized name
+          // (nameOverride is used as input to normalization)
+          final enumName = normalizedValues[entry.key].normalizedName;
 
-      return EnumValue(
-        (b) =>
-            b
-              ..name = normalizedName
-              ..arguments.add(
-                rawValue is int
-                    ? literalNum(rawValue)
-                    : literalString(rawValue.toString(), raw: true),
-              ),
+          return EnumValue(
+            (b) =>
+                b
+                  ..name = enumName
+                  ..arguments.add(
+                    rawValue is int
+                        ? literalNum(rawValue)
+                        : literalString(rawValue.toString(), raw: true),
+                  ),
+          );
+        }).toList();
+
+    // Add fallback value at the end if present
+    if (model.fallbackValue != null) {
+      final fallbackRawValue = model.fallbackValue!.value;
+      // Always use normalized name
+      // (nameOverride is used as input to normalization)
+      final fallbackName = normalizedValues[values.length].normalizedName;
+
+      enumValues.add(
+        EnumValue(
+          (b) =>
+              b
+                ..name = fallbackName
+                ..arguments.add(
+                  fallbackRawValue is int
+                      ? literalNum(fallbackRawValue)
+                      : literalString(fallbackRawValue.toString(), raw: true),
+                ),
+        ),
       );
-    }).toList();
+    }
+
+    return enumValues;
   }
 }
