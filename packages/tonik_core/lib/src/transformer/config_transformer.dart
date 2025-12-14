@@ -1,15 +1,16 @@
+import 'package:tonik_core/src/transformer/deprecation_handler.dart';
 import 'package:tonik_core/src/transformer/filter_applier.dart';
 import 'package:tonik_core/src/transformer/name_override_applier.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-/// Applies configuration to an ApiDocument, returning a transformed document.
 class ConfigTransformer {
   const ConfigTransformer();
 
-  /// Applies all configuration to the given [ApiDocument].
   ApiDocument apply(ApiDocument document, TonikConfig config) {
     final overrides = config.nameOverrides;
     final filter = config.filter;
+    final deprecated = config.deprecated;
+
     final hasAnyOverrides =
         overrides.schemas.isNotEmpty ||
         overrides.properties.isNotEmpty ||
@@ -24,7 +25,13 @@ class ConfigTransformer {
         filter.excludeOperations.isNotEmpty ||
         filter.excludeSchemas.isNotEmpty;
 
-    if (!hasAnyOverrides && !hasAnyFilters) {
+    final hasDeprecationHandling =
+        deprecated.operations != DeprecatedHandling.annotate ||
+        deprecated.schemas != DeprecatedHandling.annotate ||
+        deprecated.parameters != DeprecatedHandling.annotate ||
+        deprecated.properties != DeprecatedHandling.annotate;
+
+    if (!hasAnyOverrides && !hasAnyFilters && !hasDeprecationHandling) {
       return document;
     }
 
@@ -51,6 +58,56 @@ class ConfigTransformer {
           models: document.models,
           excludeSchemas: filter.excludeSchemas,
         );
+      }
+    }
+
+    if (hasDeprecationHandling) {
+      const deprecationHandler = DeprecationHandler();
+
+      if (deprecated.operations != DeprecatedHandling.annotate) {
+        document.operations = deprecationHandler.handleOperations(
+          operations: document.operations,
+          mode: deprecated.operations,
+        );
+      }
+
+      if (deprecated.schemas != DeprecatedHandling.annotate) {
+        document.models = deprecationHandler.handleSchemas(
+          models: document.models,
+          mode: deprecated.schemas,
+        );
+      }
+
+      if (deprecated.parameters != DeprecatedHandling.annotate ||
+          deprecated.properties != DeprecatedHandling.annotate) {
+        for (final op in document.operations) {
+          if (deprecated.parameters != DeprecatedHandling.annotate) {
+            op
+              ..queryParameters = deprecationHandler.handleQueryParameters(
+                parameters: op.queryParameters,
+                mode: deprecated.parameters,
+              )
+              ..pathParameters = deprecationHandler.handlePathParameters(
+                parameters: op.pathParameters,
+                mode: deprecated.parameters,
+              )
+              ..headers = deprecationHandler.handleRequestHeaders(
+                headers: op.headers,
+                mode: deprecated.parameters,
+              );
+          }
+        }
+
+        if (deprecated.properties != DeprecatedHandling.annotate) {
+          for (final model in document.models) {
+            if (model case final ClassModel classModel) {
+              classModel.properties = deprecationHandler.handleProperties(
+                properties: classModel.properties,
+                mode: deprecated.properties,
+              );
+            }
+          }
+        }
       }
     }
 

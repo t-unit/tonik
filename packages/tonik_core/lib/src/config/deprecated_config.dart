@@ -12,20 +12,26 @@ enum DeprecatedHandling {
   ignore,
 }
 
-/// Configuration for handling deprecated operations and schemas.
+/// Configuration for handling deprecated operations, schemas, parameters,
+/// and properties.
 @immutable
 class DeprecatedConfig {
   const DeprecatedConfig({
     this.operations = DeprecatedHandling.annotate,
     this.schemas = DeprecatedHandling.annotate,
+    this.parameters = DeprecatedHandling.annotate,
+    this.properties = DeprecatedHandling.annotate,
   });
 
   final DeprecatedHandling operations;
   final DeprecatedHandling schemas;
+  final DeprecatedHandling parameters;
+  final DeprecatedHandling properties;
 
   @override
   String toString() =>
-      'DeprecatedConfig{operations: $operations, schemas: $schemas}';
+      'DeprecatedConfig{operations: $operations, schemas: $schemas, '
+      'parameters: $parameters, properties: $properties}';
 
   @override
   bool operator ==(Object other) =>
@@ -33,8 +39,10 @@ class DeprecatedConfig {
       other is DeprecatedConfig &&
           runtimeType == other.runtimeType &&
           operations == other.operations &&
-          schemas == other.schemas;
+          schemas == other.schemas &&
+          parameters == other.parameters &&
+          properties == other.properties;
 
   @override
-  int get hashCode => Object.hash(operations, schemas);
+  int get hashCode => Object.hash(operations, schemas, parameters, properties);
 }

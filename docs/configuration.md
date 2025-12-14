@@ -71,10 +71,12 @@ filter:
     - DeprecatedModel
 
 deprecated:
-  # How to handle deprecated operations and schemas
+  # How to handle deprecated operations, schemas, parameters, and properties
   # Options: annotate (default), exclude, ignore
   operations: annotate
   schemas: annotate
+  parameters: annotate
+  properties: annotate
 
 enums:
   # Generate an unknown case for forward compatibility
@@ -272,18 +274,45 @@ When both `includeTags` and `excludeTags` are specified, `includeTags` is applie
 
 ## Deprecation Handling
 
-Control how Tonik handles deprecated operations and schemas marked with `deprecated: true` in the OpenAPI spec.
+Control how Tonik handles deprecated elements marked with `deprecated: true` in the OpenAPI spec.
 
 ```yaml
 deprecated:
   operations: annotate   # annotate | exclude | ignore
   schemas: annotate      # annotate | exclude | ignore
+  parameters: annotate   # annotate | exclude | ignore
+  properties: annotate   # annotate | exclude | ignore
 ```
 
 Options:
 - `annotate` - Generate code with `@Deprecated` annotation (default)
 - `exclude` - Skip generation entirely
 - `ignore` - Generate code without any deprecation annotation
+
+**Example:**
+```yaml
+deprecated:
+  operations: exclude    # Don't generate deprecated API methods
+  schemas: annotate      # Generate deprecated models with @Deprecated
+  parameters: exclude    # Remove deprecated parameters from methods
+  properties: annotate   # Keep deprecated properties with @Deprecated
+```
+
+### Important Limitations
+
+**Cascade filtering is not automatic.** When excluding deprecated schemas, operations, or parameters:
+
+1. **Excluding schemas** won't automatically exclude operations that reference them. You may get generation errors if a non-deprecated operation uses a deprecated (excluded) schema in its request or response.
+
+2. **Excluding parameters** removes them from operation signatures but doesn't validate if the operation becomes invalid without them.
+
+3. **Excluding properties** removes them from model classes but doesn't verify if the model becomes invalid (e.g., all required properties removed).
+
+**Best practices:**
+- Use `annotate` (default) for documentation purposes without breaking generation
+- Use `exclude` carefully and ensure excluded elements aren't referenced elsewhere
+- Test generated code after changing deprecation settings
+- Consider using `filter.excludeOperations` or `filter.excludeSchemas` for explicit control
 
 ## Unknown Enum Case
 

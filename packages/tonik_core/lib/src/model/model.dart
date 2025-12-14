@@ -200,7 +200,7 @@ class EnumModel<T> extends Model with NamedModel {
   String toString() =>
       'EnumModel<$T>{name: $name, nameOverride: $nameOverride, '
       'values: $values, isNullable: $isNullable, description: $description, '
-      'isDeprecated: $isDeprecated}';
+      'isDeprecated: $isDeprecated, fallbackValue: $fallbackValue}';
 }
 
 class AllOfModel extends Model with NamedModel, CompositeModel {
