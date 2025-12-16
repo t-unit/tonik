@@ -20,6 +20,7 @@ class Parameter {
     required this.allowReserved,
     required this.schema,
     required this.content,
+    required this.xDartName,
   });
 
   factory Parameter.fromJson(Map<String, dynamic> json) =>
@@ -39,6 +40,8 @@ class Parameter {
   final bool? allowReserved;
   final ReferenceWrapper<Schema>? schema;
   final Map<String, MediaType>? content;
+  @JsonKey(name: 'x-dart-name')
+  final String? xDartName;
 
   // We ignore the example and examples parameter.
 
@@ -47,7 +50,8 @@ class Parameter {
       'Parameter{name: $name, location: $location, description: $description, '
       'isRequired: $isRequired, isDeprecated: $isDeprecated, '
       'allowEmptyValue: $allowEmptyValue, style: $style, explode: $explode, '
-      'allowReserved: $allowReserved, schema: $schema, content: $content}';
+      'allowReserved: $allowReserved, schema: $schema, content: $content, '
+      'xDartName: $xDartName}';
 }
 
 enum ParameterLocation { query, header, path, cookie }

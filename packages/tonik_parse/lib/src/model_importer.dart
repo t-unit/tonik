@@ -33,6 +33,13 @@ class ModelImporter {
         );
       }
 
+      // Apply x-dart-name vendor extension to schema
+      if (schema is InlinedObject<Schema> && schema.object.xDartName != null) {
+        if (model is NamedModel) {
+          model.nameOverride = schema.object.xDartName;
+        }
+      }
+
       if (models.none((m) => m is NamedModel && m.name == name)) {
         log.fine('Adding model $name');
         models.add(model);
@@ -144,6 +151,7 @@ class ModelImporter {
         context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
+        xDartEnum: schema.xDartEnum,
       ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -156,6 +164,7 @@ class ModelImporter {
         context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
+        xDartEnum: schema.xDartEnum,
       ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
@@ -200,6 +209,8 @@ class ModelImporter {
         discriminator: schema.discriminator,
         isDeprecated: schema.isDeprecated,
         uniqueItems: schema.uniqueItems,
+        xDartName: schema.xDartName,
+        xDartEnum: schema.xDartEnum,
       );
       return (
         discriminatorValue: null,
@@ -360,31 +371,39 @@ class ModelImporter {
       bool isNullable;
       bool isDeprecated;
       String? description;
+      String? nameOverride;
       if (propertySchema is InlinedObject<Schema>) {
         final schema = propertySchema.object;
         isNullable = schema.isNullable ?? schema.type.contains('null');
         isDeprecated = schema.isDeprecated ?? false;
         description = schema.description;
+        nameOverride = schema.xDartName;
       } else {
         isNullable = false;
         isDeprecated = false;
         description = null;
+        nameOverride = null;
       }
 
-      properties.add(
-        Property(
-          name: propertyName,
-          model: _parseSchemaWrapper(
-            null,
-            propertySchema,
-            context.pushAll([name, propertyName].whereType<String>()),
-          ),
-          isRequired: schema.required?.contains(propertyName) ?? false,
-          isNullable: isNullable,
-          isDeprecated: isDeprecated,
-          description: description,
+      final property = Property(
+        name: propertyName,
+        model: _parseSchemaWrapper(
+          null,
+          propertySchema,
+          context.pushAll([name, propertyName].whereType<String>()),
         ),
+        isRequired: schema.required?.contains(propertyName) ?? false,
+        isNullable: isNullable,
+        isDeprecated: isDeprecated,
+        description: description,
       );
+
+      // Apply x-dart-name vendor extension to property
+      if (nameOverride != null) {
+        property.nameOverride = nameOverride;
+      }
+
+      properties.add(property);
     }
 
     return model;
@@ -397,6 +416,7 @@ class ModelImporter {
     Context context, {
     required String? description,
     required bool isDeprecated,
+    List<String>? xDartEnum,
   }) {
     log.fine('Parsing enum $name<$T> for $context with values $values');
 
@@ -413,12 +433,25 @@ class ModelImporter {
       );
     }
 
-    final enumValues =
-        typedValues
-            .map(
-              (v) => EnumEntry<T>(value: v),
-            )
-            .toSet();
+    final enumValues = <EnumEntry<T>>{};
+    final typedValuesList = typedValues.toList();
+
+    for (var i = 0; i < typedValuesList.length; i++) {
+      final value = typedValuesList[i];
+      String? nameOverride;
+
+      // Apply x-dart-enum vendor extension if available
+      if (xDartEnum != null && i < xDartEnum.length) {
+        nameOverride = xDartEnum[i];
+      }
+
+      enumValues.add(
+        EnumEntry<T>(
+          value: value,
+          nameOverride: nameOverride,
+        ),
+      );
+    }
 
     final model = EnumModel<T>(
       isDeprecated: isDeprecated,

@@ -361,13 +361,10 @@ components:
     
     Status:
       type: string
-      x-dart-enum:
-        values:
-          PENDING: pending
-          IN_PROGRESS: inProgress
       enum:
         - PENDING
         - IN_PROGRESS
+      x-dart-enum: [pending, inProgress]
 ```
 
 ### Supported Vendor Extensions

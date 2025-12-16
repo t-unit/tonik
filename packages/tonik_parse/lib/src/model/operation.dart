@@ -20,6 +20,7 @@ class Operation {
     required this.isDeprecated,
     required this.servers,
     required this.security,
+    required this.xDartName,
   });
 
   factory Operation.fromJson(Map<String, dynamic> json) =>
@@ -36,6 +37,8 @@ class Operation {
   final bool? isDeprecated;
   final List<Server>? servers;
   final List<Map<String, List<String>>>? security;
+  @JsonKey(name: 'x-dart-name')
+  final String? xDartName;
 
   // We ignore the externalDocs and callbacks properties.
 
@@ -44,5 +47,6 @@ class Operation {
       'Operation{tags: $tags, summary: $summary, description: $description, '
       'operationId: $operationId, parameters: $parameters, '
       'requestBody: $requestBody, responses: $responses, '
-      'isDeprecated: $isDeprecated, servers: $servers, security: $security}';
+      'isDeprecated: $isDeprecated, servers: $servers, security: $security, '
+      'xDartName: $xDartName}';
 }

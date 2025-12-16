@@ -22,6 +22,8 @@ class Schema {
     required this.discriminator,
     required this.isDeprecated,
     required this.uniqueItems,
+    required this.xDartName,
+    required this.xDartEnum,
   });
 
   factory Schema.fromJson(Map<String, dynamic> json) => _$SchemaFromJson(json);
@@ -45,6 +47,10 @@ class Schema {
   @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
   final bool? uniqueItems;
+  @JsonKey(name: 'x-dart-name')
+  final String? xDartName;
+  @JsonKey(name: 'x-dart-enum')
+  final List<String>? xDartEnum;
 
   // We ignore example, externalDocs, xml, writeOnly, readOnly, default, title,
   // multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum,
@@ -57,7 +63,8 @@ class Schema {
       'enumerated: $enumerated, allOf: $allOf, anyOf: $anyOf, oneOf: $oneOf, '
       'not: $not, items: $items, properties: $properties, description: '
       '$description, isNullable: $isNullable, discriminator: $discriminator, '
-      'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems}';
+      'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems, '
+      'xDartName: $xDartName, xDartEnum: $xDartEnum}';
 }
 
 class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {

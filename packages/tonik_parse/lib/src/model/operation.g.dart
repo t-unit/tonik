@@ -38,4 +38,5 @@ Operation _$OperationFromJson(Map<String, dynamic> json) => Operation(
             ),
           )
           .toList(),
+  xDartName: json['x-dart-name'] as String?,
 );
