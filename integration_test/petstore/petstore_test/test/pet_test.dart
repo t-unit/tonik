@@ -437,4 +437,35 @@ void main() {
       expect(success.value, isA<UploadFileResponseDefault>());
     });
   });
+
+  group('getPetHealth', () {
+    test('200 with custom content type', () async {
+      final petApi = buildPetApi(responseStatus: '200');
+
+      final health = await petApi.getPetHealth(petId: 123);
+      final success = health as TonikSuccess<GetPetHealthResponse>;
+      expect(success.response.statusCode, 200);
+      expect(success.value, isA<GetPetHealthResponse200>());
+
+      final responseBody = (success.value as GetPetHealthResponse200).body;
+      expect(responseBody.$type, isA<String?>());
+      expect(responseBody.title, isA<String?>());
+      expect(responseBody.status, isA<int?>());
+      expect(responseBody.detail, isA<String?>());
+      expect(responseBody.petId, 123);
+      expect(
+        responseBody.healthStatus,
+        isA<PetPetIdHealthGet200BodyHealthStatusModel?>(),
+      );
+    });
+
+    test('404', () async {
+      final petApi = buildPetApi(responseStatus: '404');
+
+      final health = await petApi.getPetHealth(petId: 999);
+      final success = health as TonikSuccess<GetPetHealthResponse>;
+      expect(success.response.statusCode, 404);
+      expect(success.value, isA<GetPetHealthResponse404>());
+    });
+  });
 }

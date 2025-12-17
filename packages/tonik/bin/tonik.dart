@@ -185,7 +185,9 @@ void main(List<String> arguments) {
 
   ApiDocument apiDocument;
   try {
-    apiDocument = Importer().import(apiSpec);
+    apiDocument = Importer(
+      contentTypes: mergedConfig.contentTypes,
+    ).import(apiSpec);
     logger.info('Successfully parsed OpenAPI document');
   } on Object catch (e, s) {
     logger

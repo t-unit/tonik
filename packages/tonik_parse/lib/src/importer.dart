@@ -13,6 +13,13 @@ import 'package:tonik_parse/src/security_scheme_importer.dart';
 import 'package:tonik_parse/src/server_importer.dart';
 
 class Importer {
+  Importer({this.contentTypes = const {}});
+
+  /// Maps media type strings to ContentType for parsing request/response bodies.
+  /// Default includes 'application/json' only. Add custom JSON-like media types
+  /// (e.g., 'application/hal+json': ContentType.json) via configuration.
+  final Map<String, core.ContentType> contentTypes;
+
   core.ApiDocument import(Map<String, dynamic> fileContent) {
     final openApiObject = OpenApiObject.fromJson(fileContent);
 
@@ -26,6 +33,7 @@ class Importer {
       openApiObject: openApiObject,
       modelImporter: modelImporter,
       headerImporter: responseHeaderImporter,
+      contentTypes: contentTypes,
     );
     final parameterImporter = RequestParameterImporter(
       openApiObject: openApiObject,
@@ -34,6 +42,7 @@ class Importer {
     final requestBodyImporter = RequestBodyImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+      contentTypes: contentTypes,
     );
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,

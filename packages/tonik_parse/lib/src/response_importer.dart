@@ -11,12 +11,15 @@ class ResponseImporter {
     required this.openApiObject,
     required this.modelImporter,
     required this.headerImporter,
+    this.contentTypes = const {},
   });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
   final ResponseHeaderImporter headerImporter;
   final log = Logger('ResponseImporter');
+
+  final Map<String, core.ContentType> contentTypes;
 
   late Set<core.Response> responses;
 
@@ -99,10 +102,12 @@ class ResponseImporter {
           final mediaTypes = responseObj.content!;
           final bodies = <core.ResponseBody>[];
 
-          // Process all JSON and JSON-like content types
+          // Process content types based on configuration
           for (final entry in mediaTypes.entries) {
-            final contentType = entry.key.toLowerCase();
-            if (contentType.contains('json') && entry.value.schema != null) {
+            final rawContentType = entry.key;
+            final contentType = _resolveContentType(rawContentType);
+
+            if (contentType != null && entry.value.schema != null) {
               final model = modelImporter.importSchema(
                 entry.value.schema!,
                 context.push('body'),
@@ -110,8 +115,8 @@ class ResponseImporter {
               bodies.add(
                 core.ResponseBody(
                   model: model,
-                  rawContentType: entry.key,
-                  contentType: core.ContentType.json,
+                  rawContentType: rawContentType,
+                  contentType: contentType,
                 ),
               );
             }
@@ -141,5 +146,17 @@ class ResponseImporter {
 
     responses.add(response);
     return response;
+  }
+
+  core.ContentType? _resolveContentType(String mediaType) {
+    if (contentTypes.containsKey(mediaType)) {
+      return contentTypes[mediaType];
+    }
+
+    if (mediaType.toLowerCase() == 'application/json') {
+      return core.ContentType.json;
+    }
+
+    return null;
   }
 }

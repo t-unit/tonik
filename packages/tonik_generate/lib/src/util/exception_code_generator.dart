@@ -33,7 +33,7 @@ Expression generateFormatDecodingExceptionExpression(String message) {
 }
 
 /// Generates a throw expression for JsonDecodingException.
-/// 
+///
 /// This is used for enum fromJson errors.
 Expression generateDecodingExceptionExpression(String message) {
   return _generateExceptionExpression(

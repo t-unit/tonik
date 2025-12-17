@@ -309,6 +309,59 @@ paths:
         - petstore_auth:
             - write:pets
             - read:pets
+  /pet/{petId}/health:
+    get:
+      tags:
+        - pet
+      summary: Get pet health report.
+      description: Returns a health report for a pet in RFC 7807 Problem Details format.
+      operationId: getPetHealth
+      parameters:
+        - name: petId
+          in: path
+          description: ID of pet to get health report for
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: A URI reference that identifies the problem type
+                  title:
+                    type: string
+                    description: A short, human-readable summary of the problem type
+                  status:
+                    type: integer
+                    description: The HTTP status code
+                  detail:
+                    type: string
+                    description: A human-readable explanation specific to this occurrence
+                  petId:
+                    type: integer
+                    format: int64
+                    description: The pet ID this report is for
+                  healthStatus:
+                    type: string
+                    enum:
+                      - healthy
+                      - needs_checkup
+                      - sick
+        '404':
+          description: Pet not found
+        default:
+          description: Unexpected error
+      security:
+        - api_key: []
+        - petstore_auth:
+            - read:pets
   /pet/{petId}/uploadImage:
     post:
       tags:

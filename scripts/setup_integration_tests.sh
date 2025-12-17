@@ -102,7 +102,7 @@ rm -rf query_parameters/query_parameters_api
 rm -rf path_encoding/path_encoding_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
-dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml --log-level verbose
 add_dependency_overrides_recursive "petstore/petstore_api"
 cd petstore/petstore_api && dart pub get && cd ../..
 
