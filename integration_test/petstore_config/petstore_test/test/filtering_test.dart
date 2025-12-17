@@ -75,25 +75,6 @@ void main() {
     });
   });
 
-  group('Filtering Config - Excluded operations not available', () {
-    test('updatePet should not exist (excluded via config)', () {
-      // This test verifies that the excluded operation is not generated
-      // If this compiles, the filtering is NOT working correctly
-      // The operation should not be available in the API class
-
-      // We can't directly test for non-existence in Dart, but we document it
-      // In a real scenario, attempting to call petApi.modifyPet would cause
-      // a compile error, which is the desired behavior
-      expect(true, true, reason: 'updatePet operation excluded by config');
-    });
-
-    test('store operations should not exist (excluded tag)', () {
-      // Store tag is excluded, so no OrdersApi should exist
-      // This would be a compile-time check in real usage
-      expect(true, true, reason: 'store tag excluded by config');
-    });
-  });
-
   group('Filtering Config - User operations included', () {
     AccountsApi buildUserApi({required String responseStatus}) {
       return AccountsApi(
