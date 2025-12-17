@@ -33,6 +33,7 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 
 ## Features and Documentation
 
+- [Configuration]([https:](https://github.com/t-unit/tonik/blob/main/docs/configuration.md))
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
 - [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
 - [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md)

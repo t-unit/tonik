@@ -4,7 +4,7 @@ Tonik supports an optional configuration file that allows you to customize code 
 
 ## Configuration File
 
-Create a `tonik.yaml` file in your project root (or specify a path with the `--config` flag):
+Create a `tonik.yaml` file in your project root. Tonik will automatically look for this file in the current directory when you run the CLI:
 
 ```yaml
 # tonik.yaml
@@ -86,26 +86,25 @@ enums:
 
 ## CLI Options
 
-All basic settings can be specified via CLI flags or in the config file. CLI flags take precedence over config file values.
+All basic settings can be specified via CLI flags or in the config file. CLI flags take precedence over config file values. If a required option (like `--spec` or `--package-name`) is not provided via CLI or config file, Tonik will exit with an error.
 
 ```bash
 # Using CLI flags only
 tonik --spec ./openapi.yaml --output-dir ./generated --package-name my_api
 
-# Using config file
-tonik --config ./tonik.yaml
+# Using config file (tonik.yaml in current directory)
+tonik
 
 # Mix: config file with CLI override
-tonik --config ./tonik.yaml --output-dir ./other-location
+tonik --output-dir ./other-location
 ```
 
 | CLI Flag | Config Key | Description |
 |----------|------------|-------------|
-| `--spec`, `-s` | `spec` | Path to OpenAPI document |
-| `--output-dir`, `-o` | `outputDir` | Directory for generated code |
-| `--package-name`, `-p` | `packageName` | Name of the generated package |
-| `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` |
-| `--config`, `-c` | - | Path to config file (CLI only) |
+| `--spec`, `-s` | `spec` | Path to OpenAPI document (required) |
+| `--output-dir`, `-o` | `outputDir` | Directory for generated code (defaults to `.`) |
+| `--package-name`, `-p` | `packageName` | Name of the generated package (required) |
+| `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` (defaults to `warn`) |
 
 ## Name Overrides
 

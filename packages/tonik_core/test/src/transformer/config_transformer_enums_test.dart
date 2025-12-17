@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:tonik_core/src/transformer/config_transformer.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 void main() {

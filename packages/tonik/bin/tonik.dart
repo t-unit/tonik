@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:logging/logging.dart';
+import 'package:tonik/src/config/config_loader.dart';
+import 'package:tonik/src/config/log_level.dart';
 import 'package:tonik/src/openapi_loader.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/tonik_generate.dart';
@@ -22,26 +24,22 @@ ArgParser buildParser() {
       abbr: 'o',
       help: 'Directory where generated project will be placed.',
       valueHelp: 'path',
-      defaultsTo: '.',
     )
     ..addOption(
       'package-name',
       abbr: 'p',
       help: 'Name of the package to generate.',
       valueHelp: 'name',
-      mandatory: true,
     )
     ..addOption(
       'spec',
       help: 'Path to OpenAPI document.',
       abbr: 's',
       valueHelp: 'path',
-      mandatory: true,
     )
     ..addOption(
       'log-level',
       help: 'Set the logging level (verbose, info, warn, silent).',
-      defaultsTo: 'warn',
       allowed: ['verbose', 'info', 'warn', 'silent'],
     );
 }
@@ -55,10 +53,10 @@ final Logger logger = Logger('tonik');
 
 void main(List<String> arguments) {
   final argParser = buildParser();
-  String logLevel;
-  String packageName;
-  String openApiPath;
-  String outputDir;
+  String? logLevelArg;
+  String? packageNameArg;
+  String? openApiPathArg;
+  String? outputDirArg;
 
   try {
     final results = argParser.parse(arguments);
@@ -68,10 +66,10 @@ void main(List<String> arguments) {
       return;
     }
 
-    logLevel = results['log-level'] as String;
-    packageName = results['package-name'] as String;
-    openApiPath = results['spec'] as String;
-    outputDir = results['output-dir'] as String;
+    logLevelArg = results['log-level'] as String?;
+    packageNameArg = results['package-name'] as String?;
+    openApiPathArg = results['spec'] as String?;
+    outputDirArg = results['output-dir'] as String?;
   } on FormatException catch (formatException) {
     print(formatException.message);
     printUsage(argParser);
@@ -81,12 +79,53 @@ void main(List<String> arguments) {
     exit(128);
   }
 
+  final cliLogLevel = switch (logLevelArg) {
+    null => null,
+    'verbose' => LogLevel.verbose,
+    'info' => LogLevel.info,
+    'warn' => LogLevel.warn,
+    'silent' => LogLevel.silent,
+    _ => () {
+      print(
+        'Error: Invalid log level "$logLevelArg". '
+        'Must be one of: verbose, info, warn, silent',
+      );
+      exit(128);
+    }(),
+  };
+
+  final fileConfig = ConfigLoader.load('tonik.yaml');
+
+  final mergedConfig = fileConfig.merge(
+    spec: openApiPathArg,
+    outputDir: outputDirArg,
+    packageName: packageNameArg,
+    logLevel: cliLogLevel,
+  );
+
+  final packageName = mergedConfig.packageName;
+  final openApiPath = mergedConfig.spec;
+  final outputDir = mergedConfig.outputDir;
+  final logLevel = mergedConfig.logLevel;
+
+  if (packageName == null) {
+    print('Error: --package-name is required (or specify in tonik.yaml)');
+    printUsage(argParser);
+    exit(128);
+  }
+
+  if (openApiPath == null) {
+    print('Error: --spec is required (or specify in tonik.yaml)');
+    printUsage(argParser);
+    exit(128);
+  }
+
   Logger.root.level = switch (logLevel) {
-    'verbose' => Level.FINEST,
-    'info' => Level.INFO,
-    'warn' => Level.WARNING,
-    'silent' => Level.OFF,
-    _ => Level.WARNING,
+    LogLevel.verbose => Level.FINEST,
+    LogLevel.info => Level.INFO,
+    LogLevel.warn => Level.WARNING,
+    LogLevel.silent => Level.OFF,
+    null => Level.WARNING,
   };
 
   Logger.root.onRecord.listen((record) {
@@ -135,7 +174,7 @@ void main(List<String> arguments) {
     exit(1);
   }
 
-  final ApiDocument apiDocument;
+  ApiDocument apiDocument;
   try {
     apiDocument = Importer().import(apiSpec);
     logger.info('Successfully parsed OpenAPI document');
@@ -152,9 +191,23 @@ void main(List<String> arguments) {
   }
 
   try {
+    const transformer = ConfigTransformer();
+    apiDocument = transformer.apply(apiDocument, mergedConfig.toTonikConfig());
+    logger.fine('Applied configuration transformations');
+  } on Object catch (e, s) {
+    logger
+      ..fine('Failed to apply configuration', e, s)
+      ..severe(
+        'Unexpected error while applying configuration. '
+        'Please run with verbose logging and report this issue at $issueUrl',
+      );
+    exit(1);
+  }
+
+  try {
     const Generator().generate(
       apiDocument: apiDocument,
-      outputDirectory: outputDir,
+      outputDirectory: outputDir ?? '.',
       package: packageName,
     );
     logger.info('Successfully generated code');
