@@ -14,6 +14,7 @@
 /integration_test/composition/composition_api
 /integration_test/query_parameters/query_parameters_api
 /integration_test/path_encoding/path_encoding_api
+/integration_test/petstore_config/petstore_api
 
 # Dependencies
 /pubspec.lock
