@@ -33,20 +33,20 @@ void main() {
     test('200', () async {
       final storeApi = buildStoreApi(responseStatus: '200');
 
-      final inventory = await storeApi.getInventory();
-      final success = inventory as TonikSuccess<GetInventoryResponse>;
+      final inventory = await storeApi.fetchInventoryCounts();
+      final success = inventory as TonikSuccess<FetchInventoryCountsResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<GetInventoryResponse200>());
+      expect(success.value, isA<FetchInventoryCountsResponse200>());
     });
 
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '422');
 
-      final inventory = await storeApi.getInventory();
+      final inventory = await storeApi.fetchInventoryCounts();
 
-      final success = inventory as TonikSuccess<GetInventoryResponse>;
+      final success = inventory as TonikSuccess<FetchInventoryCountsResponse>;
       expect(success.response.statusCode, 422);
-      expect(success.value, isA<GetInventoryResponseDefault>());
+      expect(success.value, isA<FetchInventoryCountsResponseDefault>());
     });
   });
 
@@ -54,12 +54,12 @@ void main() {
     test('200', () async {
       final storeApi = buildStoreApi(responseStatus: '200');
 
-      final body = Order(
+      final body = PurchaseOrder(
         id: 1,
-        petId: 1,
-        quantity: 1,
-        shipDate: DateTime.now(),
-        status: OrderStatusModel.placed,
+        animalId: 1,
+        itemCount: 1,
+        deliveryDate: DateTime.now(),
+        status: OrderStatusModel.orderDelivered,
         complete: true,
       );
 
@@ -72,11 +72,11 @@ void main() {
 
       final responseBody = (success.value as PlaceOrderResponse200).body;
       expect(responseBody.id, isA<int?>());
-      expect(responseBody.petId, isA<int?>());
-      expect(responseBody.quantity, isA<int?>());
+      expect(responseBody.animalId, isA<int?>());
+      expect(responseBody.itemCount, isA<int?>());
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
-      expect(responseBody.shipDate, isA<DateTime?>());
+      expect(responseBody.deliveryDate, isA<DateTime?>());
       expect(responseBody.status, isA<OrderStatusModel?>());
       expect(responseBody.complete, isA<bool?>());
     });
@@ -84,7 +84,7 @@ void main() {
     test('400', () async {
       final storeApi = buildStoreApi(responseStatus: '400');
 
-      const body = Order();
+      const body = PurchaseOrder();
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
@@ -96,7 +96,10 @@ void main() {
     test('422', () async {
       final storeApi = buildStoreApi(responseStatus: '422');
 
-      final body = Order(id: -484848, shipDate: DateTime(10299, 12, 12, 1));
+      final body = PurchaseOrder(
+        id: -484848,
+        deliveryDate: DateTime(10299, 12, 12, 1),
+      );
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
@@ -108,7 +111,7 @@ void main() {
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '499');
 
-      const body = Order(status: OrderStatusModel.approved);
+      const body = PurchaseOrder(status: OrderStatusModel.orderApproved);
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
@@ -121,7 +124,7 @@ void main() {
     test('200', () async {
       final storeApi = buildStoreApi(responseStatus: '200');
 
-      final order = await storeApi.getOrderById(orderId: 1);
+      final order = await storeApi.getOrderById(purchaseOrderId: 1);
       final success = order as TonikSuccess<GetOrderByIdResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetOrderByIdResponse200>());
@@ -130,7 +133,7 @@ void main() {
     test('400', () async {
       final storeApi = buildStoreApi(responseStatus: '400');
 
-      final order = await storeApi.getOrderById(orderId: -999);
+      final order = await storeApi.getOrderById(purchaseOrderId: -999);
       final success = order as TonikSuccess<GetOrderByIdResponse>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<GetOrderByIdResponse400>());
@@ -139,7 +142,7 @@ void main() {
     test('404', () async {
       final storeApi = buildStoreApi(responseStatus: '404');
 
-      final order = await storeApi.getOrderById(orderId: 1000000);
+      final order = await storeApi.getOrderById(purchaseOrderId: 1000000);
       final success = order as TonikSuccess<GetOrderByIdResponse>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetOrderByIdResponse404>());
@@ -148,7 +151,9 @@ void main() {
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '503');
 
-      final order = await storeApi.getOrderById(orderId: 99999999999999);
+      final order = await storeApi.getOrderById(
+        purchaseOrderId: 99999999999999,
+      );
       final success = order as TonikSuccess<GetOrderByIdResponse>;
       expect(success.value, isA<GetOrderByIdResponseDefault>());
     });
@@ -158,36 +163,36 @@ void main() {
     test('200', () async {
       final storeApi = buildStoreApi(responseStatus: '200');
 
-      final order = await storeApi.deleteOrder(orderId: 1);
-      final success = order as TonikSuccess<DeleteOrderResponse>;
+      final order = await storeApi.cancelOrder(orderId: 1);
+      final success = order as TonikSuccess<CancelOrderResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<DeleteOrderResponse200>());
+      expect(success.value, isA<CancelOrderResponse200>());
     });
 
     test('400', () async {
       final storeApi = buildStoreApi(responseStatus: '400');
 
-      final order = await storeApi.deleteOrder(orderId: -999);
-      final success = order as TonikSuccess<DeleteOrderResponse>;
+      final order = await storeApi.cancelOrder(orderId: -999);
+      final success = order as TonikSuccess<CancelOrderResponse>;
       expect(success.response.statusCode, 400);
-      expect(success.value, isA<DeleteOrderResponse400>());
+      expect(success.value, isA<CancelOrderResponse400>());
     });
 
     test('404', () async {
       final storeApi = buildStoreApi(responseStatus: '404');
 
-      final order = await storeApi.deleteOrder(orderId: 1000000);
-      final success = order as TonikSuccess<DeleteOrderResponse>;
+      final order = await storeApi.cancelOrder(orderId: 1000000);
+      final success = order as TonikSuccess<CancelOrderResponse>;
       expect(success.response.statusCode, 404);
-      expect(success.value, isA<DeleteOrderResponse404>());
+      expect(success.value, isA<CancelOrderResponse404>());
     });
 
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '665');
 
-      final order = await storeApi.deleteOrder(orderId: -9767);
-      final success = order as TonikSuccess<DeleteOrderResponse>;
-      expect(success.value, isA<DeleteOrderResponseDefault>());
+      final order = await storeApi.cancelOrder(orderId: -9767);
+      final success = order as TonikSuccess<CancelOrderResponse>;
+      expect(success.value, isA<CancelOrderResponseDefault>());
     });
   });
 }

@@ -62,6 +62,8 @@ The supplied API specification file can be written in json or yaml, and must use
 tonik --package-name=my_api_client --spec=path/to/openapi.[yaml|json]
 ```
 
+Fore more information on how to configure the code generation see [Configuration]([https:](https://github.com/t-unit/tonik/blob/main/docs/configuration.md)).
+
 ### Usage of Generated Code
 
 Add the generated package as a dependency to your project.

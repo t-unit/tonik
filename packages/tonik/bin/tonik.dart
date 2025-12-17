@@ -20,6 +20,12 @@ ArgParser buildParser() {
       help: 'Print this usage information.',
     )
     ..addOption(
+      'config',
+      abbr: 'c',
+      help: 'Path to configuration file (defaults to tonik.yaml).',
+      valueHelp: 'path',
+    )
+    ..addOption(
       'output-dir',
       abbr: 'o',
       help: 'Directory where generated project will be placed.',
@@ -57,6 +63,7 @@ void main(List<String> arguments) {
   String? packageNameArg;
   String? openApiPathArg;
   String? outputDirArg;
+  String? configPathArg;
 
   try {
     final results = argParser.parse(arguments);
@@ -70,6 +77,7 @@ void main(List<String> arguments) {
     packageNameArg = results['package-name'] as String?;
     openApiPathArg = results['spec'] as String?;
     outputDirArg = results['output-dir'] as String?;
+    configPathArg = results['config'] as String?;
   } on FormatException catch (formatException) {
     print(formatException.message);
     printUsage(argParser);
@@ -94,7 +102,8 @@ void main(List<String> arguments) {
     }(),
   };
 
-  final fileConfig = ConfigLoader.load('tonik.yaml');
+  final configPath = configPathArg ?? 'tonik.yaml';
+  final fileConfig = ConfigLoader.load(configPath);
 
   final mergedConfig = fileConfig.merge(
     spec: openApiPathArg,

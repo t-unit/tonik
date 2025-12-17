@@ -39,6 +39,12 @@ jobs:
           dart pub get
           dart test --concurrency=1
 
+      - name: Run petstore config integration tests
+        run: |
+          cd integration_test/petstore_config/petstore_test
+          dart pub get
+          dart test --concurrency=1
+
       - name: Run music streaming integration tests
         run: |
           cd integration_test/music_streaming/music_streaming_test

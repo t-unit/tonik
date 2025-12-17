@@ -1,0 +1,71 @@
+# Configuration file for petstore with extensive overrides
+# Tests name override capabilities at all levels
+
+spec: petstore_config/openapi.yaml
+packageName: petstore_overrides_api
+outputDir: petstore_config
+
+nameOverrides:
+  # Override tag-based API class names (note: x-dart-name in spec takes precedence)
+  tags:
+    pet: CreatureApi
+    store: ShopApi
+    user: CustomerApi
+
+  # Override schema names
+  schemas:
+    Pet: Animal
+    Order: Purchase
+    User: Customer
+    Tag: Label
+    Category: Group
+    ApiResponse: FileUploadResult
+
+  # Override operation names
+  operations:
+    addPet: registerAnimal
+    getPetById: fetchAnimalById
+    deletePet: removeAnimal
+    findPetsByStatus: queryAnimalsByStatus
+    placeOrder: submitPurchase
+    getOrderById: fetchPurchaseById
+    createUser: registerCustomer
+    loginUser: signIn
+    logoutUser: signOut
+
+  # Override property names
+  properties:
+    # Pet properties
+    "Pet.name": displayName
+    "Pet.photoUrls": pictures
+    "Pet.tags": labels
+    # Order properties
+    "Order.petId": animalIdentifier
+    "Order.quantity": amount
+    "Order.shipDate": shippingDate
+    # User properties
+    "User.username": loginName
+    "User.firstName": givenName
+    "User.lastName": surname
+    "User.email": emailAddress
+    "User.phone": phoneNumber
+    "User.userStatus": accountStatus
+
+  # Override parameter names
+  parameters:
+    "findPetsByStatus.status": filterStatus
+    "findPetsByTags.tags": filterLabels
+    "getPetById.petId": animalIdentifier
+    "updatePetWithForm.name": displayName
+    "uploadFile.additionalMetadata": fileMetadata
+    "loginUser.username": loginName
+    "loginUser.password": credential
+
+  # Override enum value names
+  enums:
+    "OrderStatus.placed": submitted
+    "OrderStatus.approved": confirmed
+    "OrderStatus.delivered": shipped
+    "PetStatus.available": inStock
+    "PetStatus.pending": reserved
+    "PetStatus.sold": purchased
