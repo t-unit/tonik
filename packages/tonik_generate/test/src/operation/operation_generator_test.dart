@@ -1015,6 +1015,120 @@ Future<TonikResult<void>> call() async {
         );
       });
 
+      test(
+        'generates call method with List return type preserving generics',
+        () {
+          final operation = Operation(
+            operationId: 'getActivePets',
+            context: context,
+            summary: 'Get active pets',
+            description: 'Gets a list of active pets',
+            tags: const {},
+            isDeprecated: false,
+            path: '/pets/active',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            securitySchemes: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: 'Success',
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: ListModel(
+                      content: ClassModel(
+                        name: 'ActivePet',
+                        properties: [],
+                        isDeprecated: false,
+                        context: context,
+                      ),
+                      context: context,
+                    ),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<List<ActivePet>>> call() async {
+  final Uri _$uri;
+  final Object? _$data;
+  final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<dynamic> _$response;
+  try {
+    _$response = await _dio.requestUri<dynamic>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  final List<ActivePet> _$parsedResponse;
+  try {
+    _$parsedResponse = _parseResponse(_$response);
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.decoding,
+      response: _$response,
+    );
+  }
+
+  return TonikSuccess(_$parsedResponse, _$response);
+}
+''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+
       test('does not generate parsing code for operations with no '
           'responses', () {
         final operation = Operation(

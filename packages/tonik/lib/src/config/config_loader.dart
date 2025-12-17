@@ -188,6 +188,14 @@ extension ConfigLoader on CliConfig {
         value['schemas'],
         DeprecatedHandling.annotate,
       ),
+      parameters: _parseDeprecatedHandling(
+        value['parameters'],
+        DeprecatedHandling.annotate,
+      ),
+      properties: _parseDeprecatedHandling(
+        value['properties'],
+        DeprecatedHandling.annotate,
+      ),
     );
   }
 

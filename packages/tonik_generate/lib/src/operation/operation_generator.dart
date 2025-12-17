@@ -424,7 +424,11 @@ class OperationGenerator {
     Reference responseType,
   ) {
     return [
-      declareFinal(parsedResponseVar, type: responseType).statement,
+      Block.of([
+        const Code('final '),
+        responseType.code,
+        Code(' $parsedResponseVar;'),
+      ]),
       Block.of([
         const Code('try {'),
         refer(

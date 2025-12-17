@@ -93,6 +93,7 @@ rm -rf petstore/petstore_api
 rm -rf petstore_config/petstore_api
 rm -rf petstore_config/petstore_filtering_api
 rm -rf petstore_config/petstore_overrides_api
+rm -rf petstore_config/petstore_deprecation_api
 rm -rf music_streaming/music_streaming_api
 rm -rf gov/gov_api
 rm -rf simple_encoding/simple_encoding_api
@@ -119,6 +120,11 @@ cd petstore_config/petstore_filtering_api && dart pub get && cd ../..
 dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_overrides.yaml --log-level verbose
 add_dependency_overrides_recursive "petstore_config/petstore_overrides_api"
 cd petstore_config/petstore_overrides_api && dart pub get && cd ../..
+
+# Generate petstore_config with deprecation configuration
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_deprecation.yaml --log-level verbose
+add_dependency_overrides_recursive "petstore_config/petstore_deprecation_api"
+cd petstore_config/petstore_deprecation_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
 add_dependency_overrides_recursive "music_streaming/music_streaming_api"

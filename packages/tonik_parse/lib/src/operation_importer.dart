@@ -41,6 +41,7 @@ class OperationImporter {
         core.Tag(
           name: tag.name,
           description: tag.description,
+          nameOverride: tag.xDartName,
         ),
     };
 

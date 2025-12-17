@@ -370,8 +370,8 @@ components:
 
 | Extension | Applies To | Description |
 |-----------|------------|-------------|
-| `x-dart-name` | schemas, properties, operations, parameters, enum values | Override the generated Dart identifier |
-| `x-dart-enum` | enums | Customize enum value names |
+| `x-dart-name` | schemas, properties, operations, parameters | Override the generated Dart identifier |
+| `x-dart-enum` | enums | Customize enum value names (array of strings mapping to enum values) |
 
 ## Precedence
 

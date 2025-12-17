@@ -17,6 +17,7 @@
 /integration_test/petstore_config/petstore_api
 /integration_test/petstore_config/petstore_filtering_api
 /integration_test/petstore_config/petstore_overrides_api
+/integration_test/petstore_config/petstore_deprecation_api
 
 # Dependencies
 /pubspec.lock

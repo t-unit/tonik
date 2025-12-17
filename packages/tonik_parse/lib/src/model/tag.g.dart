@@ -9,4 +9,5 @@ part of 'tag.dart';
 Tag _$TagFromJson(Map<String, dynamic> json) => Tag(
   name: json['name'] as String,
   description: json['description'] as String?,
+  xDartName: json['x-dart-name'] as String?,
 );

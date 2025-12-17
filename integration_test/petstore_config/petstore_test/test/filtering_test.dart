@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:petstore_filtering_api/petstore_filtering_api.dart'
-    as filtering;
+import 'package:petstore_filtering_api/petstore_filtering_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -17,9 +16,9 @@ void main() {
     await setupImposterServer(imposterServer);
   });
 
-  filtering.PetApi buildPetApi({required String responseStatus}) {
-    return filtering.PetApi(
-      filtering.CustomServer(
+  AnimalsApi buildPetApi({required String responseStatus}) {
+    return AnimalsApi(
+      CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
           baseOptions: BaseOptions(
@@ -37,42 +36,42 @@ void main() {
       final pet = await petApi.createPet(
         // we expect Pet to be deprecated
         // ignore: deprecated_member_use
-        body: const filtering.Pet(
+        body: const Pet(
           id: 1,
           petName: 'Fido',
           imageUrls: <String>[],
         ),
       );
-      final success = pet as TonikSuccess<filtering.CreatePetResponse>;
+      final success = pet as TonikSuccess<CreatePetResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.CreatePetResponse200>());
+      expect(success.value, isA<CreatePetResponse200>());
     });
 
     test('getPetById - 200', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.getPetById(animalId: 1);
-      final success = pet as TonikSuccess<filtering.GetPetByIdResponse>;
+      final success = pet as TonikSuccess<GetPetByIdResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.GetPetByIdResponse200>());
+      expect(success.value, isA<GetPetByIdResponse200>());
     });
 
     test('searchPetsByTags - 200', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pets = await petApi.searchPetsByTags(filterTags: ['tag1', 'tag2']);
-      final success = pets as TonikSuccess<filtering.SearchPetsByTagsResponse>;
+      final success = pets as TonikSuccess<SearchPetsByTagsResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.SearchPetsByTagsResponse200>());
+      expect(success.value, isA<SearchPetsByTagsResponse200>());
     });
 
     test('removePet - 200', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.removePet(petId: 1);
-      final success = result as TonikSuccess<filtering.RemovePetResponse>;
+      final success = result as TonikSuccess<RemovePetResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.RemovePetResponse200>());
+      expect(success.value, isA<RemovePetResponse200>());
     });
   });
 
@@ -96,9 +95,9 @@ void main() {
   });
 
   group('Filtering Config - User operations included', () {
-    filtering.UserApi buildUserApi({required String responseStatus}) {
-      return filtering.UserApi(
-        filtering.CustomServer(
+    AccountsApi buildUserApi({required String responseStatus}) {
+      return AccountsApi(
+        CustomServer(
           baseUrl: baseUrl,
           serverConfig: ServerConfig(
             baseOptions: BaseOptions(
@@ -113,7 +112,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '200');
 
       final user = await userApi.createUser(
-        body: const filtering.Account(
+        body: const Account(
           id: 1,
           username: 'testUser',
           givenName: 'John',
@@ -124,18 +123,18 @@ void main() {
           accountStatus: 1,
         ),
       );
-      final success = user as TonikSuccess<filtering.CreateUserResponse>;
+      final success = user as TonikSuccess<CreateUserResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.CreateUserResponse200>());
+      expect(success.value, isA<CreateUserResponse200>());
     });
 
     test('fetchUserByName - 200', () async {
       final userApi = buildUserApi(responseStatus: '200');
 
       final user = await userApi.fetchUserByName(username: 'testUser');
-      final success = user as TonikSuccess<filtering.FetchUserByNameResponse>;
+      final success = user as TonikSuccess<FetchUserByNameResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.FetchUserByNameResponse200>());
+      expect(success.value, isA<FetchUserByNameResponse200>());
     });
 
     test('authenticateUser - 200', () async {
@@ -145,10 +144,9 @@ void main() {
         loginName: 'testUser',
         loginPassword: 'password123',
       );
-      final success =
-          result as TonikSuccess<filtering.AuthenticateUserResponse>;
+      final success = result as TonikSuccess<AuthenticateUserResponse>;
       expect(success.response.statusCode, 200);
-      expect(success.value, isA<filtering.AuthenticateUserResponse200>());
+      expect(success.value, isA<AuthenticateUserResponse200>());
     });
   });
 }

@@ -1,6 +1,3 @@
-# Configuration file for petstore with filtering
-# Tests the filtering capabilities of tonik config
-
 spec: petstore_config/openapi.yaml
 packageName: petstore_filtering_api
 outputDir: petstore_config

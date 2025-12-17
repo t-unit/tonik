@@ -1,18 +1,13 @@
-# Configuration file for petstore with extensive overrides
-# Tests name override capabilities at all levels
-
 spec: petstore_config/openapi.yaml
 packageName: petstore_overrides_api
 outputDir: petstore_config
 
 nameOverrides:
-  # Override tag-based API class names (note: x-dart-name in spec takes precedence)
   tags:
     pet: CreatureApi
     store: ShopApi
     user: CustomerApi
 
-  # Override schema names
   schemas:
     Pet: Animal
     Order: Purchase
@@ -21,7 +16,6 @@ nameOverrides:
     Category: Group
     ApiResponse: FileUploadResult
 
-  # Override operation names
   operations:
     addPet: registerAnimal
     getPetById: fetchAnimalById
@@ -33,7 +27,6 @@ nameOverrides:
     loginUser: signIn
     logoutUser: signOut
 
-  # Override property names
   properties:
     # Pet properties
     "Pet.name": displayName
@@ -51,7 +44,6 @@ nameOverrides:
     "User.phone": phoneNumber
     "User.userStatus": accountStatus
 
-  # Override parameter names
   parameters:
     "findPetsByStatus.status": filterStatus
     "findPetsByTags.tags": filterLabels
@@ -61,7 +53,6 @@ nameOverrides:
     "loginUser.username": loginName
     "loginUser.password": credential
 
-  # Override enum value names
   enums:
     "OrderStatus.placed": submitted
     "OrderStatus.approved": confirmed

@@ -1,0 +1,256 @@
+openapi: 3.0.4
+info:
+  title: Petstore API - Deprecation Test
+  description: A simplified version of petstore API for testing deprecation handling
+  version: 1.0.0
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: pet
+    x-dart-name: animals
+    description: Pet operations
+  - name: store
+    x-dart-name: orders
+    description: Store operations
+  - name: user
+    x-dart-name: accounts
+    description: User operations
+paths:
+  # Non-deprecated pet operation using non-deprecated schema
+  /pet/active:
+    get:
+      tags:
+        - pet
+      summary: Get all active pets
+      operationId: getActivePets
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivePet'
+  
+  # Deprecated pet operation
+  /pet/legacy:
+    get:
+      tags:
+        - pet
+      summary: Legacy endpoint to get pets
+      operationId: getLegacyPets
+      deprecated: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivePet'
+  
+  # Operation with deprecated parameter
+  /pet/search:
+    get:
+      tags:
+        - pet
+      summary: Search pets
+      operationId: searchPets
+      parameters:
+        - name: name
+          in: query
+          description: Pet name to search for
+          required: false
+          schema:
+            type: string
+        - name: legacyFilter
+          in: query
+          description: Legacy filter parameter
+          required: false
+          deprecated: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivePet'
+  
+  # Non-deprecated store operation
+  /store/order:
+    post:
+      tags:
+        - store
+      summary: Place an order
+      operationId: placeOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  
+  # Deprecated store operation
+  /store/inventory/legacy:
+    get:
+      tags:
+        - store
+      summary: Legacy inventory endpoint
+      operationId: getLegacyInventory
+      deprecated: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+  
+  # Non-deprecated user operation
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+components:
+  schemas:
+    # Non-deprecated schema
+    ActivePet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Fluffy
+          x-dart-name: petName
+        status:
+          type: string
+          enum:
+            - available
+            - pending
+            - sold
+        category:
+          $ref: '#/components/schemas/Category'
+    
+    # Deprecated schema (not used by any non-deprecated operations)
+    LegacyPet:
+      type: object
+      deprecated: true
+      properties:
+        id:
+          type: integer
+          format: int64
+        oldName:
+          type: string
+    
+    # Non-deprecated schema
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Dogs
+    
+    # Schema with deprecated property
+    Order:
+      type: object
+      required:
+        - id
+        - petId
+        - quantity
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        petId:
+          type: integer
+          format: int64
+          example: 198
+          x-dart-name: animalId
+        quantity:
+          type: integer
+          format: int32
+          example: 7
+        shipDate:
+          type: string
+          format: date-time
+          deprecated: true
+          description: Use deliveryDate instead
+        deliveryDate:
+          type: string
+          format: date-time
+          description: Date when order will be delivered
+        status:
+          type: string
+          enum:
+            - placed
+            - approved
+            - delivered
+          x-dart-enum:
+            - orderPlaced
+            - orderApproved
+            - orderDelivered
+        complete:
+          type: boolean
+    
+    # Non-deprecated schema
+    User:
+      type: object
+      required:
+        - username
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        username:
+          type: string
+          example: john_doe
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: john@example.com

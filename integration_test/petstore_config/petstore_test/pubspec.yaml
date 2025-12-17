@@ -11,6 +11,8 @@ dependencies:
   path: ^1.9.1
   petstore_api:
     path: ../petstore_api
+  petstore_deprecation_api:
+    path: ../petstore_deprecation_api
   petstore_filtering_api:
     path: ../petstore_filtering_api
   petstore_overrides_api:

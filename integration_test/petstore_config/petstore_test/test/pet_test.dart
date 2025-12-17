@@ -16,8 +16,8 @@ void main() {
     await setupImposterServer(imposterServer);
   });
 
-  PetApi buildPetApi({required String responseStatus}) {
-    return PetApi(
+  AnimalsApi buildPetApi({required String responseStatus}) {
+    return AnimalsApi(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(

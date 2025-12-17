@@ -72,6 +72,8 @@ filter:
 deprecated:
   operations: exclude
   schemas: ignore
+  parameters: exclude
+  properties: annotate
 
 enums:
   generateUnknownCase: true
@@ -113,6 +115,8 @@ enums:
 
         expect(config.deprecated.operations, DeprecatedHandling.exclude);
         expect(config.deprecated.schemas, DeprecatedHandling.ignore);
+        expect(config.deprecated.parameters, DeprecatedHandling.exclude);
+        expect(config.deprecated.properties, DeprecatedHandling.annotate);
 
         expect(config.enums.generateUnknownCase, isTrue);
         expect(config.enums.unknownCaseName, 'unrecognized');
@@ -169,12 +173,30 @@ filter:
 deprecated:
   operations: annotate
   schemas: exclude
+  parameters: ignore
+  properties: exclude
 ''');
 
         final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
 
         expect(config.deprecated.operations, DeprecatedHandling.annotate);
         expect(config.deprecated.schemas, DeprecatedHandling.exclude);
+        expect(config.deprecated.parameters, DeprecatedHandling.ignore);
+        expect(config.deprecated.properties, DeprecatedHandling.exclude);
+      });
+
+      test('loads config with partial deprecated fields uses defaults', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+deprecated:
+  operations: exclude
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.deprecated.operations, DeprecatedHandling.exclude);
+        expect(config.deprecated.schemas, DeprecatedHandling.annotate);
+        expect(config.deprecated.parameters, DeprecatedHandling.annotate);
+        expect(config.deprecated.properties, DeprecatedHandling.annotate);
       });
 
       test('loads config with only enums', () {

@@ -16,8 +16,8 @@ void main() {
     await setupImposterServer(imposterServer);
   });
 
-  UserApi buildUserApi({required String responseStatus}) {
-    return UserApi(
+  AccountsApi buildUserApi({required String responseStatus}) {
+    return AccountsApi(
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
