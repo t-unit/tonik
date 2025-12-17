@@ -2,6 +2,10 @@ spec: petstore_config/openapi.yaml
 packageName: petstore_overrides_api
 outputDir: petstore_config
 
+enums:
+  generateUnknownCase: true
+  unknownCaseName: reservedForFutureUse
+
 nameOverrides:
   tags:
     pet: CreatureApi
