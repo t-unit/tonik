@@ -199,4 +199,146 @@ void main() {
       );
     });
   });
+
+  group('Label style - Composite Types', () {
+    test('oneOfPrimitive (string) encodes as .value', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelOneOfPrimitive(
+        value: const OneOfPrimitiveString('test'),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/composite/oneOfPrimitive/.test',
+      );
+    });
+
+    test('oneOfPrimitive (integer) encodes as .value', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelOneOfPrimitive(
+        value: const OneOfPrimitiveInt(42),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/composite/oneOfPrimitive/.42',
+      );
+    });
+
+    test('anyOfPrimitive (string) encodes as .value', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelAnyOfPrimitive(
+        value: const AnyOfPrimitive(string: 'test'),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/composite/anyOfPrimitive/.test',
+      );
+    });
+
+    test('anyOfPrimitive (integer) encodes as .value', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelAnyOfPrimitive(
+        value: const AnyOfPrimitive(int: 123),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/composite/anyOfPrimitive/.123',
+      );
+    });
+
+    test('oneOfComplex encodes object members', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelOneOfComplex(
+        value: const OneOfComplexSimpleObject(
+          SimpleObject(name: 'foo', count: 10),
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/composite/oneOfComplex/.name,foo,count,10',
+      );
+    });
+
+    test('allOfSimple encodes merged object', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelAllOfSimple(
+        value: const AllOfSimple(
+          simpleObject: SimpleObject(name: 'bar', count: 20),
+          allOfSimpleModel: AllOfSimpleModel(extra: 'bonus'),
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/composite/allOfSimple/.name,bar,count,20,extra,bonus',
+      );
+    });
+
+    test('integerEnum encodes as .value', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelIntegerEnum(
+        value: PriorityEnum.two,
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/primitive/integerEnum/.2',
+      );
+    });
+  });
+
+  group('Label style - Deeply Nested', () {
+    test('deeply nested object fails with encoding error', () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelDeeplyNested(
+        value: const DeeplyNestedObject(
+          name: 'outer',
+          child: DeeplyNestedObjectChildModel(
+            value: 1,
+            nested: SimpleObject(name: 'inner', count: 5),
+          ),
+        ),
+      );
+
+      expect(
+        response,
+        isA<TonikError<EchoResponse>>(),
+        reason: 'deeply nested objects cannot be encoded in label style',
+      );
+      final error = response as TonikError<EchoResponse>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
 }

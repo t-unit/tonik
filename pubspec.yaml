@@ -42,9 +42,7 @@ melos:
         depends-on: build_runner
 
     generate-integration-tests:
-      run: |
-        cd integration_test
-        ./setup.sh
+      run: ./scripts/setup_integration_tests.sh
 
     test-integration-petstore:
       run: |

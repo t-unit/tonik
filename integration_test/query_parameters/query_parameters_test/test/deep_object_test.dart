@@ -601,4 +601,195 @@ void main() {
       );
     });
   });
+
+  group('primitive - new types', () {
+    test('uri', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectPrimitive(
+        uri: Uri.parse('https://example.com'),
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(
+        error.type,
+        TonikErrorType.encoding,
+        reason: 'primitive data not supported in deepObject encoding',
+      );
+    });
+
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectPrimitive(
+        integerEnum: PriorityEnum.two,
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(
+        error.type,
+        TonikErrorType.encoding,
+        reason: 'primitive data not supported in deepObject encoding',
+      );
+    });
+
+    test('nullableString with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectPrimitive(
+        nullableString: 'test',
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(
+        error.type,
+        TonikErrorType.encoding,
+        reason: 'primitive data not supported in deepObject encoding',
+      );
+    });
+
+    test('nullableString with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectPrimitive(nullableString: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('nullableInteger with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectPrimitive(nullableInteger: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+  });
+
+  group('complex - new types', () {
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplex(
+        integerEnum: PriorityEnum.one,
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(
+        error.type,
+        TonikErrorType.encoding,
+        reason: 'explode is required in deepObject encoding',
+      );
+    });
+
+    test('nullableClass with null (explode false)', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplex(nullableClass: null);
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('deeplyNestedClass (explode false)', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplex(
+        deeplyNestedClass: DeeplyNestedClass(
+          name: 'outer',
+          nested: ClassNested(
+            name: 'middle',
+            age: 1,
+            nested: Class(name: 'inner', age: 2),
+          ),
+        ),
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(
+        error.type,
+        TonikErrorType.encoding,
+        reason: 'explode is required in deepObject encoding',
+      );
+    });
+  });
+
+  group('complex - explode true - new types', () {
+    test('integerEnum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplexExplode(
+        integerEnum: PriorityEnum.one,
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(
+        error.type,
+        TonikErrorType.encoding,
+        reason: 'primitive data not supported in deepObject encoding',
+      );
+    });
+
+    test('nullableClass with value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplexExplode(
+        nullableClass: NullableClass(name: 'test', age: 25),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'nullableClass%5Bname%5D=test&nullableClass%5Bage%5D=25',
+      );
+    });
+
+    test('nullableClass with null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplexExplode(
+        nullableClass: null,
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('nullableClass with nullable age', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplexExplode(
+        nullableClass: NullableClass(name: 'test', age: null),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'nullableClass%5Bname%5D=test',
+      );
+    });
+
+    test('deeplyNestedClass', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplexExplode(
+        deeplyNestedClass: DeeplyNestedClass(
+          name: 'outer',
+          nested: ClassNested(
+            name: 'middle',
+            age: 1,
+            nested: Class(name: 'inner', age: 2),
+          ),
+        ),
+      );
+
+      expect(
+        response,
+        isA<TonikError<void>>(),
+        reason: 'nested data not supported in deepObject encoding',
+      );
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
 }

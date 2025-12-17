@@ -202,4 +202,146 @@ void main() {
       );
     });
   });
+
+  group('Matrix style - Composite Types', () {
+    test('oneOfPrimitive (string) encodes as ;param=value', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixOneOfPrimitive(
+        value: const OneOfPrimitiveString('test'),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/composite/oneOfPrimitive/;value=test',
+      );
+    });
+
+    test('oneOfPrimitive (integer) encodes as ;param=value', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixOneOfPrimitive(
+        value: const OneOfPrimitiveInt(42),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/composite/oneOfPrimitive/;value=42',
+      );
+    });
+
+    test('anyOfPrimitive (string) encodes as ;param=value', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixAnyOfPrimitive(
+        value: const AnyOfPrimitive(string: 'test'),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/composite/anyOfPrimitive/;value=test',
+      );
+    });
+
+    test('anyOfPrimitive (integer) encodes as ;param=value', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixAnyOfPrimitive(
+        value: const AnyOfPrimitive(int: 123),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/composite/anyOfPrimitive/;value=123',
+      );
+    });
+
+    test('oneOfComplex encodes object members', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixOneOfComplex(
+        value: const OneOfComplexSimpleObject(
+          SimpleObject(name: 'foo', count: 10),
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/composite/oneOfComplex/;value=name,foo,count,10',
+      );
+    });
+
+    test('allOfSimple encodes merged object', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixAllOfSimple(
+        value: const AllOfSimple(
+          simpleObject: SimpleObject(name: 'bar', count: 20),
+          allOfSimpleModel: AllOfSimpleModel(extra: 'bonus'),
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/composite/allOfSimple/;value=name,bar,count,20,extra,bonus',
+      );
+    });
+
+    test('integerEnum encodes as ;param=value', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixIntegerEnum(
+        value: PriorityEnum.two,
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/primitive/integerEnum/;value=2',
+      );
+    });
+  });
+
+  group('Matrix style - Deeply Nested', () {
+    test('deeply nested object fails with encoding error', () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixDeeplyNested(
+        value: const DeeplyNestedObject(
+          name: 'outer',
+          child: DeeplyNestedObjectChildModel(
+            value: 1,
+            nested: SimpleObject(name: 'inner', count: 5),
+          ),
+        ),
+      );
+
+      expect(
+        response,
+        isA<TonikError<EchoResponse>>(),
+        reason: 'deeply nested objects cannot be encoded in matrix style',
+      );
+      final error = response as TonikError<EchoResponse>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
 }

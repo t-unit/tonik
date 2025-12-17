@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the repository root (parent of scripts directory)
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+# Integration test directory
+INTEGRATION_TEST_DIR="$REPO_ROOT/integration_test"
+
 # Check if Java is installed
 if ! command -v java &> /dev/null; then
     echo "Error: Java is not installed. Please install Java to run the tests."
@@ -13,6 +20,10 @@ if [[ $(echo "$JAVA_VERSION" | cut -d. -f1) -lt 11 ]]; then
     echo "Error: Java 11 or higher is required. Found version $JAVA_VERSION"
     exit 1
 fi
+
+# Change to integration test directory
+cd "$INTEGRATION_TEST_DIR"
+echo "Working directory: $(pwd)"
 
 # Function to restore local dependency overrides to test packages
 # This reverts changes made by verify_published_version.sh

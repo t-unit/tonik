@@ -741,6 +741,246 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  /label/composite/oneOfPrimitive/{value}:
+    get:
+      operationId: testLabelOneOfPrimitive
+      tags: [label]
+      summary: Label-style oneOf primitive path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/composite/anyOfPrimitive/{value}:
+    get:
+      operationId: testLabelAnyOfPrimitive
+      tags: [label]
+      summary: Label-style anyOf primitive path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/composite/oneOfComplex/{value}:
+    get:
+      operationId: testLabelOneOfComplex
+      tags: [label]
+      summary: Label-style oneOf complex path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/composite/allOfSimple/{value}:
+    get:
+      operationId: testLabelAllOfSimple
+      tags: [label]
+      summary: Label-style allOf simple path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/AllOfSimple'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/nested/deeply/{value}:
+    get:
+      operationId: testLabelDeeplyNested
+      tags: [label]
+      summary: Label-style deeply nested object path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/primitive/integerEnum/{value}:
+    get:
+      operationId: testLabelIntegerEnum
+      tags: [label]
+      summary: Label-style integer enum path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/composite/oneOfPrimitive/{value}:
+    get:
+      operationId: testMatrixOneOfPrimitive
+      tags: [matrix]
+      summary: Matrix-style oneOf primitive path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/OneOfPrimitive'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/composite/anyOfPrimitive/{value}:
+    get:
+      operationId: testMatrixAnyOfPrimitive
+      tags: [matrix]
+      summary: Matrix-style anyOf primitive path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/AnyOfPrimitive'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/composite/oneOfComplex/{value}:
+    get:
+      operationId: testMatrixOneOfComplex
+      tags: [matrix]
+      summary: Matrix-style oneOf complex path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/OneOfComplex'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/composite/allOfSimple/{value}:
+    get:
+      operationId: testMatrixAllOfSimple
+      tags: [matrix]
+      summary: Matrix-style allOf simple path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/AllOfSimple'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/nested/deeply/{value}:
+    get:
+      operationId: testMatrixDeeplyNested
+      tags: [matrix]
+      summary: Matrix-style deeply nested object path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/DeeplyNestedObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/primitive/integerEnum/{value}:
+    get:
+      operationId: testMatrixIntegerEnum
+      tags: [matrix]
+      summary: Matrix-style integer enum path parameter
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          schema:
+            $ref: '#/components/schemas/PriorityEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
 components:
   schemas:
     StatusEnum:
@@ -786,6 +1026,49 @@ components:
           format: double
         status:
           $ref: '#/components/schemas/StatusEnum'
+
+    DeeplyNestedObject:
+      type: object
+      required:
+        - name
+        - child
+      properties:
+        name:
+          type: string
+        child:
+          type: object
+          required:
+            - value
+            - nested
+          properties:
+            value:
+              type: integer
+            nested:
+              $ref: '#/components/schemas/SimpleObject'
+
+    OneOfPrimitive:
+      oneOf:
+        - type: string
+        - type: integer
+
+    AnyOfPrimitive:
+      anyOf:
+        - type: string
+        - type: integer
+        - type: boolean
+
+    OneOfComplex:
+      oneOf:
+        - $ref: '#/components/schemas/SimpleObject'
+        - $ref: '#/components/schemas/ComplexObject'
+
+    AllOfSimple:
+      allOf:
+        - $ref: '#/components/schemas/SimpleObject'
+        - type: object
+          properties:
+            extra:
+              type: string
 
     EchoResponse:
       type: object
