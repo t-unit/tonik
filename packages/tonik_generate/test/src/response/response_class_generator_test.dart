@@ -418,7 +418,7 @@ void main() {
     });
 
     group('copyWith method generation', () {
-      test('generates copyWith method with all properties', () {
+      test('generates copyWith getter returning interface type', () {
         final response = ResponseObject(
           name: 'CopyWithResponse',
           context: testContext,
@@ -454,24 +454,18 @@ void main() {
           },
         );
 
-        const expectedMethod = '''
-          CopyWithResponse copyWith({String? xRequired, String? body, int? xOptional}) {
-            return CopyWithResponse(
-              xRequired: xRequired ?? this.xRequired,
-              body: body ?? this.body,
-              xOptional: xOptional ?? this.xOptional,
-            );
-          }
-        ''';
-
         final generatedClass = generator.generateResponseClass(response);
+        final copyWith = generatedClass.methods.firstWhere(
+          (m) => m.name == 'copyWith',
+        );
+        expect(copyWith.type, MethodType.getter);
         expect(
-          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          copyWith.returns?.accept(emitter).toString(),
+          r'$$CopyWithResponseCopyWith<CopyWithResponse>',
         );
       });
 
-      test('generates copyWith method with single property', () {
+      test('generates copyWith getter for simple response', () {
         final response = ResponseObject(
           name: 'SimpleCopyWithResponse',
           context: testContext,
@@ -497,19 +491,14 @@ void main() {
           },
         );
 
-        const expectedMethod = '''
-          SimpleCopyWithResponse copyWith({String? xTest, String? body}) {
-            return SimpleCopyWithResponse(
-              xTest: xTest ?? this.xTest,
-              body: body ?? this.body,
-            );
-          }
-        ''';
-
         final generatedClass = generator.generateResponseClass(response);
+        final copyWith = generatedClass.methods.firstWhere(
+          (m) => m.name == 'copyWith',
+        );
+        expect(copyWith.type, MethodType.getter);
         expect(
-          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
-          contains(collapseWhitespace(expectedMethod)),
+          copyWith.returns?.accept(emitter).toString(),
+          r'$$SimpleCopyWithResponseCopyWith<SimpleCopyWithResponse>',
         );
       });
     });

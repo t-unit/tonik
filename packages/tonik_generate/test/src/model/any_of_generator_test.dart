@@ -361,7 +361,7 @@ void main() {
     });
 
     test(
-      'generates copyWith method with nullable parameters and field defaults',
+      'generates copyWith getter returning interface type',
       () {
         final model = AnyOfModel(
           isDeprecated: false,
@@ -376,42 +376,10 @@ void main() {
         final klass = generator.generateClass(model);
 
         final copyWith = klass.methods.firstWhere((m) => m.name == 'copyWith');
-        expect(copyWith.returns?.accept(emitter).toString(), 'ValueChoice');
+        expect(copyWith.type, MethodType.getter);
         expect(
-          copyWith.optionalParameters.map((p) => p.name).toList(),
-          containsAll(['string', 'int']),
-        );
-        expect(
-          copyWith.optionalParameters
-              .firstWhere((p) => p.name == 'string')
-              .type
-              ?.accept(emitter)
-              .toString(),
-          'String?',
-        );
-        expect(
-          copyWith.optionalParameters
-              .firstWhere((p) => p.name == 'int')
-              .type
-              ?.accept(emitter)
-              .toString(),
-          'int?',
-        );
-
-        final format = DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
-        final generated = format(klass.accept(emitter).toString());
-
-        const expectedCopyWithBody = '''
-        ValueChoice copyWith({int? int, String? string}) {
-          return ValueChoice(int: int ?? this.int, string: string ?? this.string);
-        }
-      ''';
-
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedCopyWithBody)),
+          copyWith.returns?.accept(emitter).toString(),
+          r'$$ValueChoiceCopyWith<ValueChoice>',
         );
       },
     );
