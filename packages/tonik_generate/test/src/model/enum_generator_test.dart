@@ -20,9 +20,12 @@ void main() {
     test('generates currentEncodingShape getter', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Color',
-        values: const {'red', 'green', 'blue'},
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'blue'),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -49,9 +52,12 @@ void main() {
     test('generates enum with string values', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Color',
-        values: const {'red', 'green', 'blue'},
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'blue'),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -81,9 +87,11 @@ void main() {
     test('generates nullable enum code', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: true,
         context: Context.initial(),
       );
@@ -98,9 +106,11 @@ void main() {
     test('generates nullable enum value', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: true,
         context: Context.initial(),
       );
@@ -122,9 +132,12 @@ void main() {
     test('generates non-nullable enum', () {
       final model = EnumModel<String>(
         isDeprecated: false,
-        description: null,
         name: 'Color',
-        values: const {'red', 'green', 'blue'},
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+          const EnumEntry(value: 'blue'),
+        },
         isNullable: false,
         context: Context.initial(),
       );
@@ -145,9 +158,12 @@ void main() {
     test('generates enum with integer values', () {
       final model = EnumModel<int>(
         isDeprecated: false,
-        description: null,
         name: 'Status',
-        values: const {1, 2, 3},
+        values: {
+          const EnumEntry(value: 1),
+          const EnumEntry(value: 2),
+          const EnumEntry(value: 3),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -179,9 +195,12 @@ void main() {
       () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Placeholder',
-          values: const {'_', '__', '___'},
+          values: {
+            const EnumEntry(value: '_'),
+            const EnumEntry(value: '__'),
+            const EnumEntry(value: '___'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -209,9 +228,12 @@ void main() {
       () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 404},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 404),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -227,9 +249,12 @@ void main() {
     test('throws error for unsupported enum value types like double', () {
       final model = EnumModel<double>(
         isDeprecated: false,
-        description: null,
         name: 'Rate',
-        values: {0.5, 1.5, 2.5},
+        values: {
+          const EnumEntry(value: 0.5),
+          const EnumEntry(value: 1.5),
+          const EnumEntry(value: 2.5),
+        },
         isNullable: false,
         context: Context.initial().push('test'),
       );
@@ -242,9 +267,11 @@ void main() {
       () {
         final model = EnumModel<double>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: {1.0, 2.0},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -262,7 +289,11 @@ void main() {
           isDeprecated: false,
           description: 'The color options available',
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -277,7 +308,10 @@ void main() {
           isDeprecated: false,
           description: 'The status of an order.\nCan change over time.',
           name: 'Status',
-          values: const {'pending', 'complete'},
+          values: {
+            const EnumEntry(value: 'pending'),
+            const EnumEntry(value: 'complete'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -293,9 +327,12 @@ void main() {
       test('generates enum without doc comment when description is null', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -310,7 +347,11 @@ void main() {
           isDeprecated: false,
           description: '',
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -325,9 +366,11 @@ void main() {
       test('handles string values', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -340,9 +383,12 @@ void main() {
       test('handles integer values', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -358,9 +404,12 @@ void main() {
       test('generates toJson method', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -378,9 +427,12 @@ void main() {
       test('generates fromJson factory for string enums', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -401,11 +453,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw FormatException('Expected String for Color, got ${value.runtimeType}');
+            throw JsonDecodingException('Expected String for Color, got ${value.runtimeType}');
           }
-          return values.firstWhere(
-            (e) => e.rawValue == value,
-            orElse: () => throw FormatException('No matching Color for value: $value') );
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => throw JsonDecodingException('No matching Color for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -413,9 +464,12 @@ void main() {
       test('generates fromJson factory for integer enums', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {200, 404, 500},
+          values: {
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 404),
+            const EnumEntry(value: 500),
+          },
           isNullable: false,
           context: Context.initial().push('test'),
         );
@@ -436,11 +490,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! int) {
-            throw FormatException('Expected int for Status, got ${value.runtimeType}');
+            throw JsonDecodingException('Expected int for Status, got ${value.runtimeType}');
           }
-          return values.firstWhere(
-            (e) => e.rawValue == value,
-            orElse: () => throw FormatException('No matching Status for value: $value') );
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -448,9 +501,11 @@ void main() {
       test('generates fromJson factory for nullable enums', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -471,11 +526,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw FormatException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
           }
-          return values.firstWhere(
-            (e) => e.rawValue == value,
-            orElse: () => throw FormatException('No matching Status for value: $value') );
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -485,9 +539,12 @@ void main() {
       test('generates fromSimple constructor for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -531,9 +588,12 @@ void main() {
       test('generates fromSimple constructor for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -577,9 +637,11 @@ void main() {
       test('generates fromSimple constructor for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -599,9 +661,12 @@ void main() {
       test('generates fromSimple constructor for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -632,9 +697,12 @@ void main() {
       test('generates toSimple method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -672,9 +740,12 @@ void main() {
       test('generates toSimple method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -698,9 +769,11 @@ void main() {
       test('generates toSimple method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -724,9 +797,12 @@ void main() {
       test('generates toSimple method for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 300},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 300),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -750,9 +826,12 @@ void main() {
       test('generates toSimple in complete enum code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -771,9 +850,12 @@ void main() {
       test('generates toSimple in complete enum code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -794,9 +876,12 @@ void main() {
       test('generates fromForm constructor for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -840,9 +925,12 @@ void main() {
       test('generates fromForm constructor for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -886,9 +974,11 @@ void main() {
       test('generates fromForm constructor for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -908,9 +998,12 @@ void main() {
       test('generates fromForm constructor for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -941,9 +1034,12 @@ void main() {
       test('generates toForm method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -981,9 +1077,12 @@ void main() {
       test('generates toForm method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1007,9 +1106,11 @@ void main() {
       test('generates toForm method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1033,9 +1134,12 @@ void main() {
       test('generates toForm method for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 300},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 300),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1059,9 +1163,12 @@ void main() {
       test('generates toForm in complete enum code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1080,9 +1187,12 @@ void main() {
       test('generates toForm in complete enum code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1103,9 +1213,12 @@ void main() {
       test('generates toLabel method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1142,9 +1255,12 @@ void main() {
       test('generates toLabel method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1167,9 +1283,12 @@ void main() {
       test('generates toLabel method for nullable enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Priority',
-          values: const {'low', 'medium', 'high'},
+          values: {
+            const EnumEntry(value: 'low'),
+            const EnumEntry(value: 'medium'),
+            const EnumEntry(value: 'high'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1192,9 +1311,12 @@ void main() {
       test('toLabel method is included in generated code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1213,9 +1335,12 @@ void main() {
       test('toLabel method is included in generated code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1236,9 +1361,12 @@ void main() {
         () {
           final model = EnumModel<String>(
             isDeprecated: false,
-            description: null,
             name: 'Priority',
-            values: const {'low', 'medium', 'high'},
+            values: {
+              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'medium'),
+              const EnumEntry(value: 'high'),
+            },
             isNullable: true,
             context: Context.initial(),
           );
@@ -1260,9 +1388,12 @@ void main() {
       test('generates toMatrix method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1309,9 +1440,12 @@ void main() {
       test('generates toMatrix method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1344,9 +1478,11 @@ void main() {
       test('generates toMatrix method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1379,9 +1515,12 @@ void main() {
       test('generates toMatrix method for nullable int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {100, 200, 300},
+          values: {
+            const EnumEntry(value: 100),
+            const EnumEntry(value: 200),
+            const EnumEntry(value: 300),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1414,9 +1553,12 @@ void main() {
       test('toMatrix method is included in generated code for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1435,9 +1577,12 @@ void main() {
       test('toMatrix method is included in generated code for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1458,9 +1603,12 @@ void main() {
         () {
           final model = EnumModel<String>(
             isDeprecated: false,
-            description: null,
             name: 'Priority',
-            values: const {'low', 'medium', 'high'},
+            values: {
+              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'medium'),
+              const EnumEntry(value: 'high'),
+            },
             isNullable: true,
             context: Context.initial(),
           );
@@ -1482,9 +1630,12 @@ void main() {
       test('generates uriEncode method for string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Color',
-          values: const {'red', 'green', 'blue'},
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1515,9 +1666,12 @@ void main() {
       test('generates uriEncode method for int enum', () {
         final model = EnumModel<int>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
         );
@@ -1541,9 +1695,11 @@ void main() {
       test('generates uriEncode method for nullable string enum', () {
         final model = EnumModel<String>(
           isDeprecated: false,
-          description: null,
           name: 'Status',
-          values: const {'active', 'inactive'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: true,
           context: Context.initial(),
         );
@@ -1569,9 +1725,12 @@ void main() {
         () {
           final model = EnumModel<String>(
             isDeprecated: false,
-            description: null,
             name: 'Color',
-            values: const {'red', 'green', 'blue'},
+            values: {
+              const EnumEntry(value: 'red'),
+              const EnumEntry(value: 'green'),
+              const EnumEntry(value: 'blue'),
+            },
             isNullable: false,
             context: Context.initial(),
           );
@@ -1592,10 +1751,13 @@ void main() {
         final model = EnumModel<int>(
           isDeprecated: false,
           name: 'Status',
-          values: const {1, 2, 3},
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+            const EnumEntry(value: 3),
+          },
           isNullable: false,
           context: Context.initial(),
-          description: null,
         );
 
         final result = generator.generate(model);
@@ -1615,10 +1777,13 @@ void main() {
           final model = EnumModel<String>(
             isDeprecated: false,
             name: 'Priority',
-            values: const {'low', 'medium', 'high'},
+            values: {
+              const EnumEntry(value: 'low'),
+              const EnumEntry(value: 'medium'),
+              const EnumEntry(value: 'high'),
+            },
             isNullable: true,
             context: Context.initial(),
-            description: null,
           );
 
           final result = generator.generate(model);
@@ -1630,6 +1795,842 @@ void main() {
             collapseWhitespace(result.code),
             contains(collapseWhitespace(expectedUriEncodeMethod)),
           );
+        },
+      );
+    });
+
+    group('fallback/unknown case', () {
+      test('includes fallback enum value when fallbackValue is set', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(3));
+        expect(generated.enumValue.values[0].name, 'active');
+        expect(generated.enumValue.values[1].name, 'inactive');
+        expect(generated.enumValue.values[2].name, 'unknown');
+
+        final unknownValue = generated.enumValue.values[2];
+        expect(unknownValue.arguments, hasLength(1));
+        expect(
+          unknownValue.arguments.first.accept(DartEmitter()).toString(),
+          "r'unknown'",
+        );
+      });
+
+      test('fromJson returns fallback case for unknown string values', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        expect(fromJson.factory, isTrue);
+        expect(
+          fromJson.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'dynamic',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if (value is! String) {
+            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+          }
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => Status.unknown,
+          );
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('fromJson returns fallback case for unknown int values', () {
+        final model = EnumModel<int>(
+          isDeprecated: false,
+          name: 'Code',
+          values: {
+            const EnumEntry(value: 0),
+            const EnumEntry(value: 1),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: -1,
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Code');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        expect(fromJson.factory, isTrue);
+        expect(
+          fromJson.requiredParameters.single.type
+              ?.accept(DartEmitter())
+              .toString(),
+          'dynamic',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if (value is! int) {
+            throw JsonDecodingException('Expected int for Code, got ${value.runtimeType}');
+          }
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => Code.unknown,
+          );
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('toJson throws when encoding fallback case', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toJson = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toJson',
+        );
+
+        expect(toJson.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toJson.lambda, isFalse);
+
+        final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          if (this == Status.unknown) {
+            throw EncodingException(r'Cannot encode unknown enum value');
+          }
+          return rawValue;
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('toSimple throws when encoding fallback case', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toSimple = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+
+        expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toSimple.lambda, isFalse);
+        expect(toSimple.optionalParameters, hasLength(2));
+
+        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          if (this == Status.unknown) {
+            throw EncodingException(r'Cannot encode unknown enum value');
+          }
+          return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('toForm throws when encoding fallback case', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toForm = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+
+        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toForm.lambda, isFalse);
+        expect(toForm.optionalParameters, hasLength(2));
+
+        final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          if (this == Status.unknown) {
+            throw EncodingException(r'Cannot encode unknown enum value');
+          }
+          return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('uses custom fallback name from nameOverride', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'fallback',
+            nameOverride: 'fallback',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values.last.name, 'fallback');
+
+        final fallbackValue = generated.enumValue.values.last;
+        expect(fallbackValue.arguments, hasLength(1));
+        expect(
+          fallbackValue.arguments.first.accept(DartEmitter()).toString(),
+          "r'fallback'",
+        );
+      });
+
+      test('does not include fallback when fallbackValue is null', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[0].name, 'active');
+        expect(generated.enumValue.values[1].name, 'inactive');
+      });
+
+      test('toLabel throws when encoding fallback case', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toLabel = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+
+        expect(toLabel.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toLabel.lambda, isFalse);
+        expect(toLabel.optionalParameters, hasLength(2));
+
+        final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          if (this == Status.unknown) {
+            throw EncodingException(r'Cannot encode unknown enum value');
+          }
+          return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('uriEncode throws when encoding fallback case', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final uriEncode = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+
+        expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(uriEncode.lambda, isFalse);
+        expect(uriEncode.optionalParameters, hasLength(1));
+
+        final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          if (this == Status.unknown) {
+            throw EncodingException(r'Cannot encode unknown enum value');
+          }
+          return rawValue.uriEncode(allowEmpty: allowEmpty);
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('toMatrix throws when encoding fallback case', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final toMatrix = generated.enumValue.methods.firstWhere(
+          (m) => m.name == 'toMatrix',
+        );
+
+        expect(toMatrix.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(toMatrix.lambda, isFalse);
+        expect(toMatrix.requiredParameters, hasLength(1));
+        expect(toMatrix.optionalParameters, hasLength(2));
+
+        final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = '''
+          if (this == Status.unknown) {
+            throw EncodingException(r'Cannot encode unknown enum value');
+          }
+          return rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('fromJson throws when no fallback and value does not match', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if (value is! String) {
+            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+          }
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => throw JsonDecodingException('No matching Status for value: $value'),
+          );
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('handles fallback with nullable enum', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: true,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.name, 'RawStatus');
+        expect(generated.typedefValue, isNotNull);
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values.last.name, 'unknown');
+      });
+
+      test(
+        'includes both regular values and fallback when no collision',
+        () {
+          final model = EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
+            },
+            isNullable: false,
+            context: Context.initial().push('test'),
+            fallbackValue: const EnumEntry(
+              value: 'fallback',
+              nameOverride: 'fallback',
+            ),
+          );
+
+          final generated = generator.generateEnum(model, 'Status');
+
+          expect(generated.enumValue.values, hasLength(3));
+          expect(generated.enumValue.values[0].name, 'active');
+          expect(generated.enumValue.values[1].name, 'inactive');
+          expect(generated.enumValue.values[2].name, 'fallback');
+
+          expect(
+            generated.enumValue.values[1].arguments.first
+                .accept(DartEmitter())
+                .toString(),
+            "r'inactive'",
+          );
+          expect(
+            generated.enumValue.values[2].arguments.first
+                .accept(DartEmitter())
+                .toString(),
+            "r'fallback'",
+          );
+        },
+      );
+
+      test(
+        'handles collision when regular value name matches fallback name',
+        () {
+          final model = EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'unknown'),
+            },
+            isNullable: false,
+            context: Context.initial().push('test'),
+            fallbackValue: const EnumEntry(
+              value: 'unknown',
+              nameOverride: 'unknown',
+            ),
+          );
+
+          final generated = generator.generateEnum(model, 'Status');
+
+          expect(generated.enumValue.values, hasLength(3));
+          expect(generated.enumValue.values[0].name, 'active');
+          expect(generated.enumValue.values[1].name, 'unknown');
+          expect(generated.enumValue.values[2].name, 'unknown2');
+
+          expect(
+            generated.enumValue.values[1].arguments.first
+                .accept(DartEmitter())
+                .toString(),
+            "r'unknown'",
+          );
+          expect(
+            generated.enumValue.values[2].arguments.first
+                .accept(DartEmitter())
+                .toString(),
+            "r'unknown'",
+          );
+        },
+      );
+
+      test(
+        'fromJson returns correct value when regular value matches '
+        'fallback rawValue',
+        () {
+          final model = EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'unknown'),
+            },
+            isNullable: false,
+            context: Context.initial().push('test'),
+            fallbackValue: const EnumEntry(
+              value: 'fallback',
+              nameOverride: 'fallback',
+            ),
+          );
+
+          final generated = generator.generateEnum(model, 'Status');
+          final fromJson = generated.enumValue.constructors.firstWhere(
+            (c) => c.name == 'fromJson',
+          );
+
+          final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+          const expectedBody = r'''
+            if (value is! String) {
+              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            }
+            return values.firstWhere((e) => e.rawValue == value,
+              orElse: () => Status.fallback,
+            );
+          ''';
+          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        },
+      );
+
+      test(
+        'fromJson prefers regular enum value over fallback when values match',
+        () {
+          final model = EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'unknown'),
+            },
+            isNullable: false,
+            context: Context.initial().push('test'),
+            fallbackValue: const EnumEntry(
+              value: 'unknown',
+              nameOverride: 'fallbackUnknown',
+            ),
+          );
+
+          final generated = generator.generateEnum(model, 'Status');
+
+          expect(generated.enumValue.values, hasLength(3));
+          expect(generated.enumValue.values[0].name, 'active');
+          expect(generated.enumValue.values[1].name, 'unknown');
+          expect(generated.enumValue.values[2].name, 'fallbackUnknown');
+
+          expect(
+            generated.enumValue.values[1].arguments.first
+                .accept(DartEmitter())
+                .toString(),
+            "r'unknown'",
+          );
+          expect(
+            generated.enumValue.values[2].arguments.first
+                .accept(DartEmitter())
+                .toString(),
+            "r'unknown'",
+          );
+
+          final fromJson = generated.enumValue.constructors.firstWhere(
+            (c) => c.name == 'fromJson',
+          );
+
+          final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+          const expectedBody = r'''
+            if (value is! String) {
+              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            }
+            return values.firstWhere((e) => e.rawValue == value,
+              orElse: () => Status.fallbackUnknown,
+            );
+          ''';
+          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        },
+      );
+
+      test(
+        'encoding methods throw for fallback even when name collides',
+        () {
+          final model = EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'unknown'),
+            },
+            isNullable: false,
+            context: Context.initial().push('test'),
+            fallbackValue: const EnumEntry(
+              value: 'unknown',
+              nameOverride: 'unknown',
+            ),
+          );
+
+          final generated = generator.generateEnum(model, 'Status');
+          final toJson = generated.enumValue.methods.firstWhere(
+            (m) => m.name == 'toJson',
+          );
+
+          final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
+          const expectedBody = '''
+            if (this == Status.unknown2) {
+              throw EncodingException(r'Cannot encode unknown enum value');
+            }
+            return rawValue;
+          ''';
+          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        },
+      );
+
+      test('handles fallback name with reserved keyword (enum)', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Type',
+          values: {
+            const EnumEntry(value: 'class'),
+            const EnumEntry(value: 'struct'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'enum',
+            nameOverride: 'enum',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Type');
+
+        expect(generated.enumValue.values, hasLength(3));
+        expect(generated.enumValue.values[2].name, r'$enum');
+
+        expect(
+          generated.enumValue.values[2].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          "r'enum'",
+        );
+      });
+
+      test(r'handles fallback name with special characters ($unknown)', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: r'$unknown',
+            nameOverride: r'$unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[1].name, 'unknown');
+
+        expect(
+          generated.enumValue.values[1].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          r"r'$unknown'",
+        );
+      });
+
+      test('handles fallback name with leading digits (123unknown)', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: '123unknown',
+            nameOverride: '123unknown',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[1].name, 'unknown123');
+
+        expect(
+          generated.enumValue.values[1].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          "r'123unknown'",
+        );
+      });
+
+      test('handles fallback name with hyphens (un-known)', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'un-known',
+            nameOverride: 'un-known',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[1].name, 'unKnown');
+
+        expect(
+          generated.enumValue.values[1].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          "r'un-known'",
+        );
+      });
+
+      test('handles fallback name with spaces (un known)', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'un known',
+            nameOverride: 'un known',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[1].name, 'unKnown');
+
+        expect(
+          generated.enumValue.values[1].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          "r'un known'",
+        );
+      });
+
+      test('handles fallback name with dots (un.known)', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: 'un.known',
+            nameOverride: 'un.known',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[1].name, 'unknown');
+
+        expect(
+          generated.enumValue.values[1].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          "r'un.known'",
+        );
+      });
+
+      test('handles empty string as fallback value', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          fallbackValue: const EnumEntry(
+            value: '',
+            nameOverride: 'empty',
+          ),
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(2));
+        expect(generated.enumValue.values[1].name, 'empty');
+
+        expect(
+          generated.enumValue.values[1].arguments.first
+              .accept(DartEmitter())
+              .toString(),
+          "r''",
+        );
+      });
+
+      test(
+        'encoding methods use normalized fallback name in comparison',
+        () {
+          final model = EnumModel<String>(
+            isDeprecated: false,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+            },
+            isNullable: false,
+            context: Context.initial().push('test'),
+            fallbackValue: const EnumEntry(
+              value: 'un-known',
+              nameOverride: 'un-known',
+            ),
+          );
+
+          final generated = generator.generateEnum(model, 'Status');
+          final toJson = generated.enumValue.methods.firstWhere(
+            (m) => m.name == 'toJson',
+          );
+
+          final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
+          const expectedBody = '''
+            if (this == Status.unKnown) {
+              throw EncodingException(r'Cannot encode unknown enum value');
+            }
+            return rawValue;
+          ''';
+          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
         },
       );
     });

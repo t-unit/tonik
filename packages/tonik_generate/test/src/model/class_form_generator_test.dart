@@ -32,11 +32,9 @@ void main() {
     test('fromForm constructor exists with correct signature', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'TestModel',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -44,7 +42,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -77,11 +74,9 @@ void main() {
     test('generates complete fromForm method with parsing logic', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'TestModel',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -89,7 +84,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'count',
             model: IntegerModel(context: context),
             isRequired: false,
@@ -131,11 +125,9 @@ void main() {
     test('generates fromForm method with all property types', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'ComplexForm',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -143,7 +135,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -151,7 +142,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'email',
             model: StringModel(context: context),
             isRequired: false,
@@ -196,7 +186,6 @@ void main() {
       () {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
-          description: null,
           name: 'DynamicValue',
           models: {
             (discriminatorValue: 'str', model: StringModel(context: context)),
@@ -204,11 +193,9 @@ void main() {
               discriminatorValue: 'class',
               model: ClassModel(
                 isDeprecated: false,
-                description: null,
                 name: 'ComplexData',
                 properties: [
                   Property(
-                    description: null,
                     name: 'id',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -225,11 +212,9 @@ void main() {
         );
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'Wrapper',
           properties: [
             Property(
-              description: null,
               name: 'data',
               model: oneOfModel,
               isRequired: true,

@@ -31,23 +31,19 @@ void main() {
     });
 
     test('creates response directory if it does not exist', () {
-      const apiDoc = ApiDocument(
+      final apiDoc = ApiDocument(
         title: 'Test API',
         version: '1.0.0',
         description: 'Test API Description',
-        models: {},
-        responseHeaders: {},
-        requestHeaders: {},
-        servers: {},
-        operations: {},
-        responses: <Response>{},
-        queryParameters: {},
-        pathParameters: {},
-        requestBodies: {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
       );
       generator.writeFiles(
         apiDocument: apiDoc,
@@ -88,10 +84,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -144,10 +136,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(
@@ -194,10 +182,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       generator.writeFiles(

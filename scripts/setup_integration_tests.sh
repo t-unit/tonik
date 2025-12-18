@@ -90,6 +90,10 @@ add_dependency_overrides_recursive() {
 # Remove existing generated API projects before regenerating
 echo "Cleaning up existing generated API projects..."
 rm -rf petstore/petstore_api
+rm -rf petstore_config/petstore_api
+rm -rf petstore_config/petstore_filtering_api
+rm -rf petstore_config/petstore_overrides_api
+rm -rf petstore_config/petstore_deprecation_api
 rm -rf music_streaming/music_streaming_api
 rm -rf gov/gov_api
 rm -rf simple_encoding/simple_encoding_api
@@ -99,9 +103,28 @@ rm -rf query_parameters/query_parameters_api
 rm -rf path_encoding/path_encoding_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
-dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore/openapi.yaml -o petstore --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml --log-level verbose
 add_dependency_overrides_recursive "petstore/petstore_api"
 cd petstore/petstore_api && dart pub get && cd ../..
+
+dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore_config/openapi.yaml -o petstore_config --log-level verbose
+add_dependency_overrides_recursive "petstore_config/petstore_api"
+cd petstore_config/petstore_api && dart pub get && cd ../..
+
+# Generate petstore_config with filtering configuration
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_filtering.yaml --log-level verbose
+add_dependency_overrides_recursive "petstore_config/petstore_filtering_api"
+cd petstore_config/petstore_filtering_api && dart pub get && cd ../..
+
+# Generate petstore_config with overrides configuration
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_overrides.yaml --log-level verbose
+add_dependency_overrides_recursive "petstore_config/petstore_overrides_api"
+cd petstore_config/petstore_overrides_api && dart pub get && cd ../..
+
+# Generate petstore_config with deprecation configuration
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_deprecation.yaml --log-level verbose
+add_dependency_overrides_recursive "petstore_config/petstore_deprecation_api"
+cd petstore_config/petstore_deprecation_api && dart pub get && cd ../..
 
 dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
 add_dependency_overrides_recursive "music_streaming/music_streaming_api"
@@ -152,6 +175,7 @@ fi
 # (reverts any changes made by verify_published_version.sh)
 echo "Restoring local dependency overrides in test packages..."
 restore_test_package_overrides "petstore/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "petstore_config/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "music_streaming/music_streaming_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "gov/gov_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "simple_encoding/simple_encoding_test/pubspec.yaml" "../../../packages/tonik_util"

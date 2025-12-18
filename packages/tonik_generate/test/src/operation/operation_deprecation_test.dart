@@ -43,7 +43,7 @@ void main() {
           context: testContext,
           summary: 'Get legacy user',
           description: 'This endpoint is deprecated',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: true,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -51,13 +51,12 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {deprecatedOperation},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -82,7 +81,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -90,13 +89,12 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {activeOperation},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -132,7 +130,7 @@ void main() {
           context: testContext,
           summary: 'Get legacy user',
           description: 'This endpoint is deprecated',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: true,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -140,7 +138,6 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -166,7 +163,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -174,7 +171,6 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
@@ -212,7 +208,7 @@ void main() {
           context: testContext,
           summary: 'Get users',
           description: 'Get list of users',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.get,
@@ -234,13 +230,12 @@ void main() {
           },
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operationWithDeprecatedQueryParam},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -268,7 +263,7 @@ void main() {
           context: testContext,
           summary: 'Get user by legacy ID',
           description: 'Get user',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{legacyId}',
           method: HttpMethod.get,
@@ -289,13 +284,12 @@ void main() {
             ),
           },
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operationWithDeprecatedPathParam},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -323,7 +317,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -344,13 +338,12 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operationWithDeprecatedHeader},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -378,7 +371,7 @@ void main() {
           context: testContext,
           summary: 'Get users',
           description: 'Get list of users',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users',
           method: HttpMethod.get,
@@ -400,13 +393,12 @@ void main() {
           },
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operationWithActiveParams},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 

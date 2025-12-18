@@ -1,0 +1,66 @@
+spec: petstore_config/openapi.yaml
+packageName: petstore_overrides_api
+outputDir: petstore_config
+
+enums:
+  generateUnknownCase: true
+  unknownCaseName: reservedForFutureUse
+
+nameOverrides:
+  tags:
+    pet: CreatureApi
+    store: ShopApi
+    user: CustomerApi
+
+  schemas:
+    Pet: Animal
+    Order: Purchase
+    User: Customer
+    Tag: Label
+    Category: Group
+    ApiResponse: FileUploadResult
+
+  operations:
+    addPet: registerAnimal
+    getPetById: fetchAnimalById
+    deletePet: removeAnimal
+    findPetsByStatus: queryAnimalsByStatus
+    placeOrder: submitPurchase
+    getOrderById: fetchPurchaseById
+    createUser: registerCustomer
+    loginUser: signIn
+    logoutUser: signOut
+
+  properties:
+    # Pet properties
+    "Pet.name": displayName
+    "Pet.photoUrls": pictures
+    "Pet.tags": labels
+    # Order properties
+    "Order.petId": animalIdentifier
+    "Order.quantity": amount
+    "Order.shipDate": shippingDate
+    # User properties
+    "User.username": loginName
+    "User.firstName": givenName
+    "User.lastName": surname
+    "User.email": emailAddress
+    "User.phone": phoneNumber
+    "User.userStatus": accountStatus
+
+  parameters:
+    "findPetsByStatus.status": filterStatus
+    "findPetsByTags.tags": filterLabels
+    "getPetById.petId": animalIdentifier
+    "updatePetWithForm.name": displayName
+    "uploadFile.additionalMetadata": fileMetadata
+    "loginUser.username": loginName
+    "loginUser.password": credential
+
+  enums:
+    "OrderStatus.placed": submitted
+    "OrderStatus.approved": confirmed
+    "OrderStatus.delivered": shipped
+    "PetStatus.available": inStock
+    "PetStatus.pending": reserved
+    "PetStatus.sold": purchased

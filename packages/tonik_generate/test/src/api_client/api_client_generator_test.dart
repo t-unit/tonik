@@ -43,7 +43,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -51,13 +51,12 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -100,7 +99,7 @@ void main() {
           context: testContext,
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {const Tag(name: 'users')},
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,
@@ -108,13 +107,12 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          const Tag(name: 'users'),
+          Tag(name: 'users'),
           testServers,
         );
 
@@ -160,7 +158,10 @@ void main() {
             summary: 'Get user',
             description: 'Get user by ID',
             tags: {
-              const Tag(name: 'users', description: 'User management API'),
+              Tag(
+                name: 'users',
+                description: 'User management API',
+              ),
             },
             isDeprecated: false,
             path: '/users/{id}',
@@ -169,13 +170,15 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users', description: 'User management API'),
+            Tag(
+              name: 'users',
+              description: 'User management API',
+            ),
             testServers,
           );
 
@@ -192,7 +195,7 @@ void main() {
           summary: 'Get user',
           description: 'Get user by ID',
           tags: {
-            const Tag(
+            Tag(
               name: 'users',
               description: 'User management API\nWith multiple lines',
             ),
@@ -204,13 +207,12 @@ void main() {
           queryParameters: const {},
           pathParameters: const {},
           responses: const {},
-          requestBody: null,
           securitySchemes: const {},
         );
 
         final generatedClass = generator.generateClass(
           {operation},
-          const Tag(
+          Tag(
             name: 'users',
             description: 'User management API\nWith multiple lines',
           ),
@@ -236,7 +238,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -244,13 +246,12 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
         });
@@ -301,7 +302,9 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {const Tag(name: 'users')},
+            tags: {
+              Tag(name: 'users'),
+            },
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -322,13 +325,12 @@ void main() {
               ),
             },
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
         });
@@ -370,7 +372,7 @@ void main() {
             context: testContext,
             summary: 'Get users',
             description: 'Get users with filters',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users',
             method: HttpMethod.get,
@@ -405,13 +407,12 @@ void main() {
             },
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
         });
@@ -458,7 +459,9 @@ void main() {
             context: testContext,
             summary: 'Create user',
             description: 'Create a new user',
-            tags: {const Tag(name: 'users')},
+            tags: {
+              Tag(name: 'users'),
+            },
             isDeprecated: false,
             path: '/users',
             method: HttpMethod.post,
@@ -484,11 +487,9 @@ void main() {
                         isRequired: true,
                         isNullable: false,
                         isDeprecated: false,
-                        description: null,
                       ),
                     ],
                     context: testContext,
-                    description: null,
                   ),
                 ),
               },
@@ -499,7 +500,7 @@ void main() {
 
           generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
         });
@@ -543,7 +544,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{user_id}',
             method: HttpMethod.get,
@@ -568,13 +569,12 @@ void main() {
               ),
             },
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
         });
@@ -612,8 +612,7 @@ void main() {
             operationId: 'getUser',
             context: testContext,
             summary: 'Get user',
-            description: null,
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -621,13 +620,12 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
 
@@ -643,9 +641,8 @@ void main() {
           final operation = Operation(
             operationId: 'getUser',
             context: testContext,
-            summary: null,
             description: 'Get user by ID',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -653,13 +650,12 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
 
@@ -677,7 +673,7 @@ void main() {
             context: testContext,
             summary: 'Get user\ndetails',
             description: 'Get user by ID\nand return profile data',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -685,13 +681,12 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
 
@@ -715,7 +710,7 @@ void main() {
             context: testContext,
             summary: 'Get user',
             description: 'Get user by ID',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -723,13 +718,12 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
 
@@ -749,7 +743,7 @@ void main() {
             context: testContext,
             summary: 'Get user\nwith details',
             description: 'Get user by ID\nand return profile data',
-            tags: {const Tag(name: 'users')},
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/{id}',
             method: HttpMethod.get,
@@ -757,13 +751,12 @@ void main() {
             queryParameters: const {},
             pathParameters: const {},
             responses: const {},
-            requestBody: null,
             securitySchemes: const {},
           );
 
           final generatedClass = generator.generateClass(
             {operation},
-            const Tag(name: 'users'),
+            Tag(name: 'users'),
             testServers,
           );
 
@@ -787,7 +780,7 @@ void main() {
         context: testContext,
         summary: 'Get user',
         description: 'Get user by ID',
-        tags: {const Tag(name: 'users')},
+        tags: {Tag(name: 'users')},
         isDeprecated: false,
         path: '/users/{id}',
         method: HttpMethod.get,
@@ -795,13 +788,12 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
       final result = generator.generate(
         {operation},
-        const Tag(name: 'users'),
+        Tag(name: 'users'),
         testServers,
       );
 

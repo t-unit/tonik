@@ -16,7 +16,7 @@ void main() {
     });
 
     test('caches generated names', () {
-      const tag = Tag(name: 'pets');
+      final tag = Tag(name: 'pets');
 
       final name1 = manager.tagName(tag);
       final name2 = manager.tagName(tag);
@@ -30,8 +30,6 @@ void main() {
         final operation = Operation(
           operationId: '_testOperation',
           context: context,
-          summary: null,
-          description: null,
           tags: const {},
           isDeprecated: false,
           path: '/test',
@@ -67,7 +65,6 @@ void main() {
               },
             ),
           },
-          requestBody: null,
           securitySchemes: const {},
         );
         final (baseName, subclassNames) = manager.responseWrapperNames(
@@ -94,8 +91,14 @@ void main() {
 
     test('primes names in correct order', () {
       final models = [
-        ListModel(content: StringModel(context: context), context: context),
-        ListModel(content: IntegerModel(context: context), context: context),
+        ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        ),
       ];
       final responses = [
         ResponseAlias(
@@ -145,7 +148,7 @@ void main() {
           bodies: const {},
         ),
       ];
-      const tags = [Tag(name: 'user')];
+      final tags = [Tag(name: 'user')];
 
       manager.prime(
         models: models,
@@ -619,13 +622,11 @@ void main() {
               name: 'User',
               properties: const [],
               context: userContext,
-              description: null,
             ),
             ClassModel(
               isDeprecated: false,
               properties: const [],
               context: userContext,
-              description: null,
             ),
           ];
 
@@ -651,14 +652,12 @@ void main() {
               isDeprecated: false,
               properties: const [],
               context: userContext,
-              description: null,
             ),
             ClassModel(
               isDeprecated: false,
               name: 'User',
               properties: const [],
               context: userContext,
-              description: null,
             ),
           ];
 
@@ -682,22 +681,14 @@ void main() {
 
       final model1 = AllOfModel(
         isDeprecated: false,
-        name: null,
-        models: {
-          StringModel(context: sharedContext),
-        },
+        models: {StringModel(context: sharedContext)},
         context: sharedContext,
-        description: null,
       );
 
       final model2 = AllOfModel(
         isDeprecated: false,
-        name: null,
-        models: {
-          IntegerModel(context: sharedContext),
-        },
+        models: {IntegerModel(context: sharedContext)},
         context: sharedContext,
-        description: null,
       );
 
       manager.prime(
@@ -816,6 +807,220 @@ void main() {
 
       // Verify custom name exists
       expect(cachedResult.customName.contains('Custom'), isTrue);
+    });
+  });
+
+  group('nameOverride support', () {
+    late NameGenerator generator;
+    late NameManager manager;
+    late Context context;
+
+    setUp(() {
+      generator = NameGenerator();
+      manager = NameManager(generator: generator);
+      context = Context.initial();
+    });
+
+    group('modelName', () {
+      test('uses nameOverride when set on ClassModel', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'UserProfile',
+          nameOverride: 'CustomUser',
+          properties: const [],
+          context: context,
+        );
+
+        final name = manager.modelName(model);
+
+        expect(name, 'CustomUser');
+      });
+
+      test('sanitizes and makes nameOverride unique', () {
+        final model1 = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          nameOverride: 'special-name',
+          properties: const [],
+          context: context,
+        );
+        final model2 = ClassModel(
+          isDeprecated: false,
+          name: 'Profile',
+          nameOverride: 'special_name',
+          properties: const [],
+          context: context.push('other'),
+        );
+
+        final name1 = manager.modelName(model1);
+        final name2 = manager.modelName(model2);
+
+        expect(name1, 'SpecialName');
+        expect(name2, 'SpecialNameModel');
+      });
+
+      test('uses generated name when nameOverride is null', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
+
+        final name = manager.modelName(model);
+
+        expect(name, 'User');
+      });
+
+      test('uses nameOverride for EnumModel', () {
+        final model = EnumModel(
+          name: 'Status',
+          nameOverride: 'CustomStatus',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+        );
+
+        final name = manager.modelName(model);
+
+        expect(name, 'CustomStatus');
+      });
+
+      test('uses nameOverride for AliasModel', () {
+        final model = AliasModel(
+          name: 'UserId',
+          nameOverride: 'CustomId',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final name = manager.modelName(model);
+
+        expect(name, 'CustomId');
+      });
+
+      test('uses nameOverride for ListModel', () {
+        final model = ListModel(
+          name: 'UserList',
+          nameOverride: 'Users',
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final name = manager.modelName(model);
+
+        expect(name, 'Users');
+      });
+    });
+
+    group('operationName', () {
+      test('uses nameOverride when set on Operation', () {
+        final operation = Operation(
+          operationId: 'getUserById',
+          nameOverride: 'fetchUser',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final name = manager.operationName(operation);
+
+        expect(name, 'FetchUser');
+      });
+
+      test('sanitizes and makes operationName override unique', () {
+        final operation1 = Operation(
+          operationId: 'getUser',
+          nameOverride: 'fetch-user',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+        final operation2 = Operation(
+          operationId: 'updateUser',
+          nameOverride: 'fetch_user',
+          context: context.push('other'),
+          tags: const {},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.put,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final name1 = manager.operationName(operation1);
+        final name2 = manager.operationName(operation2);
+
+        expect(name1, 'FetchUser');
+        expect(name2, 'FetchUserOperation');
+      });
+
+      test('uses generated name when nameOverride is null', () {
+        final operation = Operation(
+          operationId: 'getUserById',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final name = manager.operationName(operation);
+
+        expect(name, 'GetUserById');
+      });
+    });
+
+    group('tagName', () {
+      test('uses nameOverride when set on Tag', () {
+        final tag = Tag(name: 'users', nameOverride: 'UserManagement');
+        final name = manager.tagName(tag);
+
+        expect(name, 'UserManagementApi');
+      });
+
+      test('sanitizes and makes tagName override unique', () {
+        final tag1 = Tag(name: 'users', nameOverride: 'my-api');
+        final tag2 = Tag(name: 'products', nameOverride: 'my_api');
+
+        final name1 = manager.tagName(tag1);
+        final name2 = manager.tagName(tag2);
+
+        expect(name1, 'MyApiApi');
+        expect(name2, 'MyApiApi2');
+      });
+
+      test('uses generated name when nameOverride is null', () {
+        final tag = Tag(name: 'pets');
+        final name = manager.tagName(tag);
+
+        expect(name, 'PetsApi');
+      });
     });
   });
 }

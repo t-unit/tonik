@@ -1108,8 +1108,8 @@ void main() {
         final result4 = value.toSimple(explode: false, allowEmpty: true);
 
         // Results should be consistent for the same parameters
-        expect(result1, equals(result2));
-        expect(result3, equals(result4));
+        expect(result1, result2);
+        expect(result3, result4);
       });
     });
 

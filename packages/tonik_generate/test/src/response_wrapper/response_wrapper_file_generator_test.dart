@@ -33,8 +33,6 @@ void main() {
     opWithOneStatus = Operation(
       operationId: 'oneStatus',
       context: testContext,
-      summary: null,
-      description: null,
       tags: const {},
       isDeprecated: false,
       path: '/one',
@@ -57,15 +55,12 @@ void main() {
           },
         ),
       },
-      requestBody: null,
       securitySchemes: const {},
     );
 
     opWithTwoStatuses = Operation(
       operationId: 'twoStatuses',
       context: testContext,
-      summary: null,
-      description: null,
       tags: const {},
       isDeprecated: false,
       path: '/two',
@@ -101,7 +96,6 @@ void main() {
           },
         ),
       },
-      requestBody: null,
       securitySchemes: const {},
     );
 
@@ -117,11 +111,6 @@ void main() {
       queryParameters: const {},
       pathParameters: const {},
       requestBodies: const {},
-      description: null,
-      contact: null,
-      license: null,
-      termsOfService: null,
-      externalDocs: null,
     );
   });
 

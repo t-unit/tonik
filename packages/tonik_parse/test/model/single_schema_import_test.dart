@@ -38,6 +38,8 @@ void main() {
             discriminator: null,
             isDeprecated: false,
             uniqueItems: false,
+            xDartName: null,
+            xDartEnum: null,
           ),
         ),
       },
@@ -67,6 +69,8 @@ void main() {
       discriminator: null,
       isDeprecated: false,
       uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
     ),
   );
 
@@ -87,6 +91,8 @@ void main() {
       discriminator: null,
       isDeprecated: false,
       uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
     ),
   );
 
@@ -107,6 +113,8 @@ void main() {
       discriminator: null,
       isDeprecated: false,
       uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
     ),
   );
 
@@ -127,6 +135,8 @@ void main() {
       discriminator: null,
       isDeprecated: false,
       uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
     ),
   );
 

@@ -1,0 +1,9 @@
+spec: petstore_config/openapi_deprecation.yaml
+packageName: petstore_deprecation_api
+outputDir: petstore_config
+
+deprecated:
+  operations: exclude     # getLegacyPets, getLegacyInventory operations
+  schemas: exclude        # LegacyPet schema
+  parameters: exclude     # legacyFilter parameter in searchPets
+  properties: exclude     # shipDate property in Order

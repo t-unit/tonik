@@ -72,7 +72,6 @@ class AnyOfGenerator {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
         }).toList();
 

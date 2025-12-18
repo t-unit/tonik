@@ -1,23 +1,14 @@
-import 'package:meta/meta.dart';
-
-@immutable
+/// Represents a tag that groups related operations in an API.
 class Tag {
-  const Tag({required this.name, this.description});
+  Tag({required this.name, this.description, this.nameOverride});
 
   final String name;
-  final String? description;
+
+  String? description;
+  String? nameOverride;
 
   @override
-  String toString() => 'Tag{name: $name, description: $description}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Tag &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          description == other.description;
-
-  @override
-  int get hashCode => Object.hash(name, description);
+  String toString() =>
+      'Tag{name: $name, nameOverride: $nameOverride, '
+      'description: $description}';
 }

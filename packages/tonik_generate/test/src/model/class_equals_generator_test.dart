@@ -33,11 +33,9 @@ void main() {
     test('generates equals method with simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -45,7 +43,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -75,11 +72,9 @@ void main() {
     test('generates equals method with complex types', () {
       final addressModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Address',
         properties: [
           Property(
-            description: null,
             name: 'street',
             model: StringModel(context: context),
             isRequired: true,
@@ -92,11 +87,9 @@ void main() {
 
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -104,7 +97,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'address',
             model: addressModel,
             isRequired: false,
@@ -134,11 +126,9 @@ void main() {
     test('generates equals method with list types', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -146,7 +136,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'tags',
             model: ListModel(
               content: StringModel(context: context),
@@ -167,7 +156,7 @@ void main() {
         const _$deepEquals = DeepCollectionEquality();
         return other is User && 
           other.name == name && 
-          _$deepEquals.equals(other.tags, tags);
+          _$deepEquals.other.tags, tags;
       }
       ''';
 
@@ -181,11 +170,9 @@ void main() {
     test('generates equals method with normalized property names', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'first-name',
             model: StringModel(context: context),
             isRequired: true,
@@ -193,7 +180,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'last_name',
             model: StringModel(context: context),
             isRequired: true,
@@ -223,11 +209,9 @@ void main() {
     test('generates equals method with deeply nested list types', () {
       final nestedListModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'NestedData',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -235,7 +219,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'nestedList',
             model: ListModel(
               content: ListModel(
@@ -259,7 +242,7 @@ void main() {
         const _$deepEquals = DeepCollectionEquality();
         return other is NestedData && 
           other.name == name && 
-          _$deepEquals.equals(other.nestedList, nestedList);
+          _$deepEquals.other.nestedList, nestedList;
       }
       ''';
 
@@ -273,7 +256,6 @@ void main() {
     test('generates equals method for class with no properties', () {
       final emptyModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'Empty',
         properties: const [],
         context: context,

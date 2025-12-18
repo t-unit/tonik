@@ -18,13 +18,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
         expect(
           result,
-          equals('name.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'name.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -35,13 +34,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
         expect(
           result,
-          equals('name?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'name?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -52,13 +50,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('count', property);
         expect(
           result,
-          equals('count.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'count.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -69,13 +66,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('count', property);
         expect(
           result,
-          equals('count?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'count?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -86,13 +82,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('price', property);
         expect(
           result,
-          equals('price.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'price.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -103,13 +98,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('price', property);
         expect(
           result,
-          equals('price?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'price?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -120,13 +114,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('value', property);
         expect(
           result,
-          equals('value.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'value.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -137,13 +130,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('active', property);
         expect(
           result,
-          equals('active.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'active.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -154,13 +146,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('active', property);
         expect(
           result,
-          equals('active?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'active?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -171,13 +162,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
         expect(
           result,
-          equals('timestamp.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'timestamp.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -188,13 +178,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
         expect(
           result,
-          equals('timestamp?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'timestamp?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -205,13 +194,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
         expect(
           result,
-          equals('date.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'date.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -222,13 +210,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
         expect(
           result,
-          equals('date?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'date?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -239,13 +226,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('amount', property);
         expect(
           result,
-          equals('amount.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'amount.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -256,13 +242,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('amount', property);
         expect(
           result,
-          equals('amount?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'amount?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -273,13 +258,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
         expect(
           result,
-          equals('url.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'url.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -290,13 +274,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
         expect(
           result,
-          equals('url?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'url?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
     });
@@ -311,7 +294,6 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
 
           final result = buildToFormPropertyExpression('name', property);
@@ -333,7 +315,6 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
 
           final result = buildToFormPropertyExpression('count', property);
@@ -355,7 +336,6 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
 
           final result = buildToFormPropertyExpression('price', property);
@@ -377,7 +357,6 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
 
           final result = buildToFormPropertyExpression('active', property);
@@ -399,7 +378,6 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
 
           final result = buildToFormPropertyExpression('timestamp', property);
@@ -420,7 +398,6 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -441,7 +418,6 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
-            description: null,
           );
 
           final result = buildToFormPropertyExpression('amount', property);
@@ -461,7 +437,6 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -485,7 +460,6 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         expect(
@@ -502,12 +476,10 @@ void main() {
             name: 'NestedClass',
             properties: const [],
             context: context,
-            description: null,
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         expect(
@@ -522,15 +494,16 @@ void main() {
           model: EnumModel<String>(
             isDeprecated: false,
             name: 'Status',
-            values: const {'active', 'inactive'},
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
+            },
             isNullable: false,
             context: context,
-            description: null,
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         expect(
@@ -552,13 +525,12 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('userId', property);
         expect(
           result,
-          equals('userId.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'userId.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -573,13 +545,12 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
-          description: null,
         );
 
         final result = buildToFormPropertyExpression('userId', property);
         expect(
           result,
-          equals('userId?.toForm(explode: explode, allowEmpty: allowEmpty)'),
+          'userId?.toForm(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -597,7 +568,6 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
-          description: null,
         );
 
         expect(

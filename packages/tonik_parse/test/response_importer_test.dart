@@ -232,6 +232,20 @@ void main() {
 
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse, isA<ResponseObject>());
+    // Without explicit contentTypes config, non-standard types are skipped
+    expect((jsonLikeResponse as ResponseObject?)?.bodies, isEmpty);
+  });
+
+  test('imports custom content type response with configuration', () {
+    final api = Importer(
+      contentTypes: {'alto-endpointcost+json': ContentType.json},
+    ).import(fileContent);
+    final jsonLikeResponse = api.responses.firstWhereOrNull(
+      (r) => r.name == 'JsonLikeResponse',
+    );
+
+    expect(jsonLikeResponse, isNotNull);
+    expect(jsonLikeResponse, isA<ResponseObject>());
     expect(
       (jsonLikeResponse as ResponseObject?)?.bodies.first.model,
       isA<StringModel>(),
@@ -242,7 +256,7 @@ void main() {
     );
   });
 
-  test('ingores body of response with invalid body content type', () {
+  test('ignores body of response with invalid body content type', () {
     final api = Importer().import(fileContent);
     final invalidResponse = api.responses.firstWhereOrNull(
       (r) => r.name == 'InvalidResponse',
@@ -293,7 +307,13 @@ void main() {
   });
 
   test('imports multiple json content types as response objects', () {
-    final api = Importer().import(fileContent);
+    final api = Importer(
+      contentTypes: {
+        'application/problem+json': ContentType.json,
+        'application/ld+json': ContentType.json,
+        'application/geo+json': ContentType.json,
+      },
+    ).import(fileContent);
     final multiJsonResponse = api.responses.firstWhereOrNull(
       (r) => r.name == 'MultiJsonResponse',
     );

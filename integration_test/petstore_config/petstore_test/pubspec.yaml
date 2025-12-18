@@ -1,0 +1,29 @@
+name: petstore_test
+description: A test suite for the petstore API.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  dio: ^5.8.0
+  path: ^1.9.1
+  petstore_api:
+    path: ../petstore_api
+  petstore_deprecation_api:
+    path: ../petstore_deprecation_api
+  petstore_filtering_api:
+    path: ../petstore_filtering_api
+  petstore_overrides_api:
+    path: ../petstore_overrides_api
+  tonik_util: ^0.1.0
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^9.0.0
+
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

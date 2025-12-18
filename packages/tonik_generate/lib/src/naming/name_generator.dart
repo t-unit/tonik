@@ -44,7 +44,7 @@ class NameGenerator {
   String generateModelName(Model model) {
     String? name;
     if (model is NamedModel) {
-      name = model.name;
+      name = model.nameOverride ?? model.name;
     }
 
     String baseName;
@@ -150,12 +150,14 @@ class NameGenerator {
   /// Generates a unique name for an operation.
   ///
   /// Names are generated with the following priority:
-  /// 1. Operation's operationId if available
-  /// 2. Combined context path components
-  /// 3. 'Anonymous' as fallback
+  /// 1. Operation's nameOverride if available
+  /// 2. Operation's operationId if available
+  /// 3. Combined context path components
+  /// 4. 'Anonymous' as fallback
   String generateOperationName(Operation operation) {
+    final name = operation.nameOverride ?? operation.operationId;
     final baseName = _generateBaseName(
-      name: operation.operationId,
+      name: name,
       context: operation.context,
     );
     return _makeUniqueWithTypeSuffix(baseName, _operationSuffix);
@@ -163,7 +165,8 @@ class NameGenerator {
 
   /// Generates a unique API class name for a tag.
   String generateTagName(Tag tag) {
-    final baseName = _sanitizeName(tag.name);
+    final name = tag.nameOverride ?? tag.name;
+    final baseName = _sanitizeName(name);
     final nameWithSuffix = '$baseName$_apiSuffix';
 
     if (!_usedNames.contains(nameWithSuffix)) {

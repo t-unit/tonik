@@ -47,7 +47,10 @@ void main() {
     );
 
     expect(stringProperty.model, isA<EnumModel<String>>());
-    expect((stringProperty.model as EnumModel).values, ['a', 'b', 'c']);
+    expect(
+      (stringProperty.model as EnumModel<String>).values.map((e) => e.value),
+      ['a', 'b', 'c'],
+    );
   });
 
   test('imports enum for integer', () {
@@ -58,7 +61,10 @@ void main() {
     );
 
     expect(integerProperty.model, isA<EnumModel<int>>());
-    expect((integerProperty.model as EnumModel).values, [10, 22, 77]);
+    expect(
+      (integerProperty.model as EnumModel<int>).values.map((e) => e.value),
+      [10, 22, 77],
+    );
   });
 
   test('imports enum for int32', () {
@@ -67,7 +73,10 @@ void main() {
     final int32Property = model.properties.firstWhere((p) => p.name == 'int32');
 
     expect(int32Property.model, isA<EnumModel<int>>());
-    expect((int32Property.model as EnumModel).values, [1, 2, 3]);
+    expect(
+      (int32Property.model as EnumModel<int>).values.map((e) => e.value),
+      [1, 2, 3],
+    );
   });
 
   test('imports enum for string', () {
@@ -77,7 +86,10 @@ void main() {
     );
 
     expect(model, isA<EnumModel<String>>());
-    expect((model as EnumModel).values, ['a', 'b', 'c']);
+    expect(
+      (model as EnumModel<String>).values.map((e) => e.value),
+      ['a', 'b', 'c'],
+    );
   });
 
   test('parses nullability for enum', () {

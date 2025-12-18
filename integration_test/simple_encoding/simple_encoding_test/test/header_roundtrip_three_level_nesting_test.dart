@@ -74,7 +74,7 @@ void main() {
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
             success.value.xThreeLevelOneOf! as ThreeLevelOneOfNumber;
-        expect(decoded.value, equals(0));
+        expect(decoded.value, 0);
       });
 
       test('roundtrips negative number', () async {
@@ -118,7 +118,7 @@ void main() {
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
         expect(decoded.value, isA<ThreeLevelOneOfModelBool>());
         final innerValue = decoded.value as ThreeLevelOneOfModelBool;
-        expect(innerValue.value, equals(true));
+        expect(innerValue.value, true);
       });
 
       test('roundtrips false', () async {
@@ -140,7 +140,7 @@ void main() {
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
         expect(decoded.value, isA<ThreeLevelOneOfModelBool>());
         final innerValue = decoded.value as ThreeLevelOneOfModelBool;
-        expect(innerValue.value, equals(false));
+        expect(innerValue.value, false);
       });
     });
 
@@ -238,7 +238,7 @@ void main() {
         final level2 = decoded.value as ThreeLevelOneOfModelOneOf;
         expect(level2.value, isA<ThreeLevelOneOfOneOfModelString>());
         final level3 = level2.value as ThreeLevelOneOfOneOfModelString;
-        expect(level3.value, equals('hello'));
+        expect(level3.value, 'hello');
       });
 
       test('roundtrips string with spaces', () async {
@@ -263,7 +263,7 @@ void main() {
         final level2 = decoded.value as ThreeLevelOneOfModelOneOf;
         expect(level2.value, isA<ThreeLevelOneOfOneOfModelString>());
         final level3 = level2.value as ThreeLevelOneOfOneOfModelString;
-        expect(level3.value, equals('hello world'));
+        expect(level3.value, 'hello world');
       });
     });
   });
@@ -293,7 +293,7 @@ void main() {
         final decoded =
             success.value.xThreeLevelMixed!
                 as ThreeLevelMixedOneOfAllOfAnyOfClass1;
-        expect(decoded.value.name, equals('test-value'));
+        expect(decoded.value.name, 'test-value');
       });
 
       test('roundtrips Class1 with simple name', () async {
@@ -319,7 +319,7 @@ void main() {
         final decoded =
             success.value.xThreeLevelMixed!
                 as ThreeLevelMixedOneOfAllOfAnyOfClass1;
-        expect(decoded.value.name, equals('simple'));
+        expect(decoded.value.name, 'simple');
       });
     });
 
@@ -347,7 +347,7 @@ void main() {
         );
         final error =
             result as TonikError<HeadersRoundtripDeepThreeLevelGet200Response>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
   });
@@ -385,7 +385,7 @@ void main() {
       final mixedDecoded =
           success.value.xThreeLevelMixed!
               as ThreeLevelMixedOneOfAllOfAnyOfClass1;
-      expect(mixedDecoded.value.name, equals('combined-test'));
+      expect(mixedDecoded.value.name, 'combined-test');
     });
 
     test('roundtrips deeply nested OneOf with Class1 mixed', () async {
@@ -415,7 +415,7 @@ void main() {
       final level2 = decoded.value as ThreeLevelOneOfModelOneOf;
       expect(level2.value, isA<ThreeLevelOneOfOneOfModelString>());
       final level3 = level2.value as ThreeLevelOneOfOneOfModelString;
-      expect(level3.value, equals('deep-value'));
+      expect(level3.value, 'deep-value');
 
       // Verify ThreeLevelMixed
       expect(
@@ -425,7 +425,7 @@ void main() {
       final mixedDecoded =
           success.value.xThreeLevelMixed!
               as ThreeLevelMixedOneOfAllOfAnyOfClass1;
-      expect(mixedDecoded.value.name, equals('shallow-value'));
+      expect(mixedDecoded.value.name, 'shallow-value');
     });
   });
 }

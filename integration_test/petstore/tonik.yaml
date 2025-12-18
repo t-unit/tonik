@@ -1,0 +1,6 @@
+spec: petstore/openapi.yaml
+packageName: petstore_api
+outputDir: petstore
+
+contentTypes:
+  "application/problem+json": json

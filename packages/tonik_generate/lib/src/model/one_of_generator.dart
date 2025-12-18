@@ -239,7 +239,6 @@ class OneOfGenerator {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           );
           final jsonValue = buildToJsonPropertyExpression('value', property);
           final discriminatorValue =

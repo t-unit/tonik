@@ -30,7 +30,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals("values['name'].decodeFormString(context: r'TestClass.name')"),
+          "values['name'].decodeFormString(context: r'TestClass.name')",
         );
       });
 
@@ -69,7 +69,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals("values['count'].decodeFormInt(context: r'TestClass.count')"),
+          "values['count'].decodeFormInt(context: r'TestClass.count')",
         );
       });
 
@@ -376,7 +376,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals("values['name'].decodeFormString(context: r'TestClass')"),
+          "values['name'].decodeFormString(context: r'TestClass')",
         );
       });
 
@@ -411,7 +411,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals("values['name'].decodeFormString()"),
+          "values['name'].decodeFormString()",
         );
       });
     });
@@ -471,7 +471,6 @@ void main() {
             name: 'NestedClass',
             properties: const [],
             context: context,
-            description: null,
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -481,7 +480,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals("NestedClass.fromForm(values['nested'], explode: true, )"),
+          "NestedClass.fromForm(values['nested'], explode: true, )",
         );
       });
 
@@ -491,10 +490,12 @@ void main() {
           model: EnumModel<String>(
             isDeprecated: false,
             name: 'Status',
-            values: const {'active', 'inactive'},
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
+            },
             isNullable: false,
             context: context,
-            description: null,
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -504,7 +505,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          equals("Status.fromForm(values['status'], explode: true, )"),
+          "Status.fromForm(values['status'], explode: true, )",
         );
       });
     });

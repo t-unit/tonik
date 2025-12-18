@@ -27,9 +27,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: testContext)),
           (discriminatorValue: null, model: IntegerModel(context: testContext)),
         },
-        discriminator: null,
         context: testContext,
-        description: null,
       );
 
       final apiDoc = ApiDocument(
@@ -45,10 +43,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         requestBodies: const {},
-        contact: null,
-        license: null,
-        termsOfService: null,
-        externalDocs: null,
       );
 
       const packageName = 'test_package';

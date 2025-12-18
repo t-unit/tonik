@@ -33,7 +33,6 @@ void main() {
     test('toForm delegates to active variant value', () {
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Result',
         models: {
           (
@@ -45,7 +44,6 @@ void main() {
             model: IntegerModel(context: context),
           ),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -70,11 +68,9 @@ void main() {
     test('toForm injects discriminator for complex variants', () {
       final userModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -87,7 +83,6 @@ void main() {
 
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Response',
         models: {
           (
@@ -127,12 +122,10 @@ void main() {
     test('toForm method has correct signature', () {
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -159,12 +152,10 @@ void main() {
     test('fromForm constructor has correct signature', () {
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Test',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -197,7 +188,6 @@ void main() {
     test('fromForm tries variants in declaration order (primitive-only)', () {
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Result',
         models: {
           (
@@ -209,7 +199,6 @@ void main() {
             model: StringModel(context: context),
           ),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -237,11 +226,9 @@ void main() {
     test('fromForm tries complex variants using fromForm with explode', () {
       final userModel = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'User',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -254,13 +241,11 @@ void main() {
 
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Response',
         models: {
           (discriminatorValue: 'user', model: userModel),
           (discriminatorValue: 'msg', model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -290,11 +275,9 @@ void main() {
       () {
         final classA = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'A',
           properties: [
             Property(
-              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -307,11 +290,9 @@ void main() {
 
         final classB = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'B',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -324,7 +305,6 @@ void main() {
 
         final model = OneOfModel(
           isDeprecated: false,
-          description: null,
           name: 'Choice',
           models: {
             (discriminatorValue: 'a', model: classA),
@@ -379,7 +359,6 @@ void main() {
     test('toForm handles mixed-encoded variant without discriminator', () {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -387,11 +366,9 @@ void main() {
             discriminatorValue: null,
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Data',
               properties: [
                 Property(
-                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -403,18 +380,15 @@ void main() {
             ),
           ),
         },
-        discriminator: null,
         context: context,
       );
 
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Outer',
         models: {
           (discriminatorValue: null, model: innerOneOf),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -438,7 +412,6 @@ void main() {
     test('toForm handles mixed-encoded variant with discriminator', () {
       final innerOneOf = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Inner',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -446,11 +419,9 @@ void main() {
             discriminatorValue: null,
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Data',
               properties: [
                 Property(
-                  description: null,
                   name: 'value',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -462,13 +433,11 @@ void main() {
             ),
           ),
         },
-        discriminator: null,
         context: context,
       );
 
       final model = OneOfModel(
         isDeprecated: false,
-        description: null,
         name: 'Outer',
         models: {
           (discriminatorValue: 'inner', model: innerOneOf),
@@ -504,7 +473,6 @@ void main() {
       () {
         final innerOneOfA = OneOfModel(
           isDeprecated: false,
-          description: null,
           name: 'InnerA',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
@@ -512,11 +480,9 @@ void main() {
               discriminatorValue: null,
               model: ClassModel(
                 isDeprecated: false,
-                description: null,
                 name: 'DataA',
                 properties: [
                   Property(
-                    description: null,
                     name: 'a',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -528,13 +494,11 @@ void main() {
               ),
             ),
           },
-          discriminator: null,
           context: context,
         );
 
         final innerOneOfB = OneOfModel(
           isDeprecated: false,
-          description: null,
           name: 'InnerB',
           models: {
             (discriminatorValue: null, model: IntegerModel(context: context)),
@@ -542,11 +506,9 @@ void main() {
               discriminatorValue: null,
               model: ClassModel(
                 isDeprecated: false,
-                description: null,
                 name: 'DataB',
                 properties: [
                   Property(
-                    description: null,
                     name: 'b',
                     model: IntegerModel(context: context),
                     isRequired: true,
@@ -558,13 +520,11 @@ void main() {
               ),
             ),
           },
-          discriminator: null,
           context: context,
         );
 
         final model = OneOfModel(
           isDeprecated: false,
-          description: null,
           name: 'Outer',
           models: {
             (discriminatorValue: 'a', model: innerOneOfA),

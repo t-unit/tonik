@@ -208,7 +208,7 @@ class RequestParameterImporter {
 
         switch (parameter.location) {
           case ParameterLocation.header:
-            return core.RequestHeaderObject(
+            final header = core.RequestHeaderObject(
               name: name,
               rawName: parameter.name,
               description: parameter.description,
@@ -220,9 +220,14 @@ class RequestParameterImporter {
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               context: context,
             );
+            // Apply x-dart-name vendor extension
+            if (parameter.xDartName != null) {
+              header.nameOverride = parameter.xDartName;
+            }
+            return header;
 
           case ParameterLocation.query:
-            return core.QueryParameterObject(
+            final queryParam = core.QueryParameterObject(
               name: name,
               rawName: parameter.name,
               description: parameter.description,
@@ -237,9 +242,14 @@ class RequestParameterImporter {
               allowReserved: parameter.allowReserved ?? false,
               context: context,
             );
+            // Apply x-dart-name vendor extension
+            if (parameter.xDartName != null) {
+              queryParam.nameOverride = parameter.xDartName;
+            }
+            return queryParam;
 
           case ParameterLocation.path:
-            return core.PathParameterObject(
+            final pathParam = core.PathParameterObject(
               name: name,
               rawName: parameter.name,
               description: parameter.description,
@@ -251,6 +261,11 @@ class RequestParameterImporter {
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               context: context,
             );
+            // Apply x-dart-name vendor extension
+            if (parameter.xDartName != null) {
+              pathParam.nameOverride = parameter.xDartName;
+            }
+            return pathParam;
 
           case ParameterLocation.cookie:
             log.warning(

@@ -32,11 +32,9 @@ void main() {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'SimpleClass',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -44,7 +42,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -86,20 +83,16 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'NestedClass',
           properties: [
             Property(
-              description: null,
               name: 'nested',
               model: ClassModel(
                 isDeprecated: false,
-                description: null,
                 context: context,
                 name: 'Nested',
                 properties: [
                   Property(
-                    description: null,
                     name: 'value',
                     model: StringModel(context: context),
                     isRequired: true,
@@ -137,11 +130,9 @@ void main() {
     test('generates toLabel for class with only simple properties', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'SimpleClass',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -149,7 +140,6 @@ void main() {
             isDeprecated: false,
           ),
           Property(
-            description: null,
             name: 'age',
             model: IntegerModel(context: context),
             isRequired: true,
@@ -181,11 +171,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'CompositeClass',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -193,11 +181,9 @@ void main() {
               isDeprecated: false,
             ),
             Property(
-              description: null,
               name: 'value',
               model: OneOfModel(
                 isDeprecated: false,
-                description: null,
                 context: context,
                 name: 'Value',
                 discriminator: 'type',
@@ -242,11 +228,9 @@ void main() {
       () {
         final model = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'MixedClass',
           properties: [
             Property(
-              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -254,11 +238,9 @@ void main() {
               isDeprecated: false,
             ),
             Property(
-              description: null,
               name: 'optionalValue',
               model: AnyOfModel(
                 isDeprecated: false,
-                description: null,
                 context: context,
                 name: 'OptionalValue',
                 discriminator: 'type',
@@ -300,7 +282,6 @@ void main() {
     test('generates toLabel for empty class', () {
       final model = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'EmptyClass',
         properties: const [],
         context: context,

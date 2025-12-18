@@ -27,13 +27,11 @@ void main() {
     test('generates toDeepObject method with correct signature', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfPrimitive',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -64,13 +62,11 @@ void main() {
     test('generates toDeepObject that delegates to parameterProperties', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfSimple',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -92,18 +88,15 @@ void main() {
     test('generates toDeepObject for complex AnyOf', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfComplex',
         models: {
           (
             discriminatorValue: 'model1',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Model1',
               properties: [
                 Property(
-                  description: null,
                   name: 'field1',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -118,11 +111,9 @@ void main() {
             discriminatorValue: 'model2',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Model2',
               properties: [
                 Property(
-                  description: null,
                   name: 'field2',
                   model: IntegerModel(context: context),
                   isRequired: true,
@@ -134,7 +125,6 @@ void main() {
             ),
           ),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -156,13 +146,11 @@ void main() {
     test('toDeepObject passes allowLists=false to parameterProperties', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfWithAllowLists',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -184,12 +172,10 @@ void main() {
     test('toDeepObject passes alreadyEncoded=true', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfEncoded',
         models: {
           (discriminatorValue: 'string', model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
       );
 
@@ -211,18 +197,15 @@ void main() {
     test('toDeepObject handles discriminator via parameterProperties', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'AnyOfWithDiscriminator',
         models: {
           (
             discriminatorValue: 'model1',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Model1',
               properties: [
                 Property(
-                  description: null,
                   name: 'field1',
                   model: StringModel(context: context),
                   isRequired: true,
@@ -237,11 +220,9 @@ void main() {
             discriminatorValue: 'model2',
             model: ClassModel(
               isDeprecated: false,
-              description: null,
               name: 'Model2',
               properties: [
                 Property(
-                  description: null,
                   name: 'field2',
                   model: IntegerModel(context: context),
                   isRequired: true,

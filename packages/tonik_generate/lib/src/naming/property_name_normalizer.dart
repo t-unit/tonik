@@ -4,6 +4,9 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 /// Normalizes a list of properties to follow Dart guidelines.
 /// Ensures all normalized names are unique by appending numbers if needed.
 ///
+/// If a property has a nameOverride set, it uses that value (sanitized)
+/// instead of normalizing from the original name.
+///
 /// Examples:
 /// - user_name -> userName
 /// - _name -> name
@@ -11,6 +14,7 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 /// - user-name -> userName2 (if userName already exists)
 /// - user123 -> user123
 /// - empty string or _ -> field1, field2, etc.
+/// - property with nameOverride='customName' -> customName
 List<({String normalizedName, Property property})> normalizeProperties(
   List<Property> properties,
 ) {
@@ -18,7 +22,13 @@ List<({String normalizedName, Property property})> normalizeProperties(
       properties
           .map(
             (prop) => (
-              normalizedName: normalizeSingle(prop.name, preserveNumbers: true),
+              normalizedName:
+                  prop.nameOverride != null
+                      ? normalizeSingle(
+                        prop.nameOverride!,
+                        preserveNumbers: true,
+                      )
+                      : normalizeSingle(prop.name, preserveNumbers: true),
               originalValue: prop,
             ),
           )

@@ -1,0 +1,13 @@
+spec: petstore_config/openapi.yaml
+packageName: petstore_filtering_api
+outputDir: petstore_config
+
+filter:
+  # Only include pet and user operations, exclude store
+  includeTags:
+    - pet
+    - user
+  excludeOperations:
+    # Exclude deprecated operations
+    - updatePet
+    - placeOrder

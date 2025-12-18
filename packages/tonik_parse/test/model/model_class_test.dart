@@ -246,7 +246,10 @@ void main() {
 
     final nested = model.properties.first.model;
     expect(nested, isA<EnumModel<String>>());
-    expect((nested as EnumModel<String>).values, {'value1', 'value2'});
+    expect(
+      (nested as EnumModel<String>).values.map((e) => e.value).toSet(),
+      {'value1', 'value2'},
+    );
     expect(api.models, contains(nested));
   });
 

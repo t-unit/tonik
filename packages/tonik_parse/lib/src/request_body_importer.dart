@@ -9,11 +9,14 @@ class RequestBodyImporter {
   RequestBodyImporter({
     required this.openApiObject,
     required this.modelImporter,
+    required this.contentTypes,
   });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
   final log = Logger('RequestBodyImporter');
+
+  final Map<String, core.ContentType> contentTypes;
 
   late Set<core.RequestBody> requestBodies;
 
@@ -89,10 +92,11 @@ class RequestBodyImporter {
         final content = <core.RequestContent>{};
 
         for (final entry in requestBody.content.entries) {
-          final contentType = entry.key;
+          final rawContentType = entry.key;
           final mediaType = entry.value;
+          final contentType = _resolveContentType(rawContentType);
 
-          if (contentType.toLowerCase().contains('json')) {
+          if (contentType != null) {
             if (mediaType.schema != null) {
               final model = modelImporter.importSchema(
                 mediaType.schema!,
@@ -102,19 +106,19 @@ class RequestBodyImporter {
               content.add(
                 core.RequestContent(
                   model: model,
-                  rawContentType: contentType,
-                  contentType: core.ContentType.json,
+                  rawContentType: rawContentType,
+                  contentType: contentType,
                 ),
               );
             } else {
               log.warning(
                 'No schema found for request body $name. '
-                'Ignoring request body content for $contentType',
+                'Ignoring request body content for $rawContentType',
               );
             }
           } else {
             log.warning(
-              'Unsupported content type $contentType for request body '
+              'Unsupported content type $rawContentType for request body '
               '${name ?? context}',
             );
           }
@@ -130,5 +134,17 @@ class RequestBodyImporter {
         requestBodies.add(bodyObject);
         return bodyObject;
     }
+  }
+
+  core.ContentType? _resolveContentType(String mediaType) {
+    if (contentTypes.containsKey(mediaType)) {
+      return contentTypes[mediaType];
+    }
+
+    if (mediaType.toLowerCase() == 'application/json') {
+      return core.ContentType.json;
+    }
+
+    return null;
   }
 }

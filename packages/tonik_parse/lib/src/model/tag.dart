@@ -4,15 +4,19 @@ part 'tag.g.dart';
 
 @JsonSerializable(createToJson: false)
 class Tag {
-  Tag({required this.name, required this.description});
+  Tag({required this.name, required this.description, this.xDartName});
 
   factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 
   final String name;
   final String? description;
 
+  @JsonKey(name: 'x-dart-name')
+  final String? xDartName;
+
   // We ignore externalDocs property.
 
   @override
-  String toString() => 'Tag{name: $name, description: $description}';
+  String toString() =>
+      'Tag{name: $name, description: $description, xDartName: $xDartName}';
 }

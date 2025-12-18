@@ -52,7 +52,7 @@ void main() {
             result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfBool;
-        expect(decoded.value, equals(true));
+        expect(decoded.value, true);
       });
 
       test('roundtrips false value', () async {
@@ -70,7 +70,7 @@ void main() {
             result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfBool;
-        expect(decoded.value, equals(false));
+        expect(decoded.value, false);
       });
     });
 
@@ -93,7 +93,7 @@ void main() {
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelInt>());
         final innerValue = decoded.value as TwoLevelOneOfModelInt;
-        expect(innerValue.value, equals(42));
+        expect(innerValue.value, 42);
       });
 
       test('roundtrips zero value', () async {
@@ -114,7 +114,7 @@ void main() {
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelInt>());
         final innerValue = decoded.value as TwoLevelOneOfModelInt;
-        expect(innerValue.value, equals(0));
+        expect(innerValue.value, 0);
       });
 
       test('roundtrips negative value', () async {
@@ -135,7 +135,7 @@ void main() {
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelInt>());
         final innerValue = decoded.value as TwoLevelOneOfModelInt;
-        expect(innerValue.value, equals(-100));
+        expect(innerValue.value, -100);
       });
     });
 
@@ -158,7 +158,7 @@ void main() {
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelString>());
         final innerValue = decoded.value as TwoLevelOneOfModelString;
-        expect(innerValue.value, equals('hello'));
+        expect(innerValue.value, 'hello');
       });
 
       test('roundtrips string with special characters', () async {
@@ -179,7 +179,7 @@ void main() {
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelString>());
         final innerValue = decoded.value as TwoLevelOneOfModelString;
-        expect(innerValue.value, equals('hello world'));
+        expect(innerValue.value, 'hello world');
       });
     });
   });
@@ -206,14 +206,14 @@ void main() {
           result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
-      expect(decoded.twoLevelAllOfModel.active, equals(true));
+      expect(decoded.twoLevelAllOfModel.active, true);
       expect(
         decoded.twoLevelAllOfAllOfModel.twoLevelAllOfAllOfModel2.id,
-        equals('user-123'),
+        'user-123',
       );
       expect(
         decoded.twoLevelAllOfAllOfModel.twoLevelAllOfAllOfModel3.name,
-        equals('Alice'),
+        'Alice',
       );
     });
 
@@ -238,14 +238,14 @@ void main() {
           result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
-      expect(decoded.twoLevelAllOfModel.active, equals(false));
+      expect(decoded.twoLevelAllOfModel.active, false);
       expect(
         decoded.twoLevelAllOfAllOfModel.twoLevelAllOfAllOfModel2.id,
-        equals('item-456'),
+        'item-456',
       );
       expect(
         decoded.twoLevelAllOfAllOfModel.twoLevelAllOfAllOfModel3.name,
-        equals('Bob'),
+        'Bob',
       );
     });
 
@@ -270,14 +270,14 @@ void main() {
           result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
-      expect(decoded.twoLevelAllOfModel.active, equals(true));
+      expect(decoded.twoLevelAllOfModel.active, true);
       expect(
         decoded.twoLevelAllOfAllOfModel.twoLevelAllOfAllOfModel2.id,
         isNull,
       );
       expect(
         decoded.twoLevelAllOfAllOfModel.twoLevelAllOfAllOfModel3.name,
-        equals('TestName'),
+        'TestName',
       );
     });
   });
@@ -309,14 +309,14 @@ void main() {
       expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
       expect(
         (success.value.xTwoLevelOneOf! as TwoLevelOneOfBool).value,
-        equals(true),
+        true,
       );
 
       // Verify TwoLevelAllOf
       expect(success.value.xTwoLevelAllOf, isNotNull);
       expect(
         success.value.xTwoLevelAllOf!.twoLevelAllOfModel.active,
-        equals(false),
+        false,
       );
       expect(
         success
@@ -325,7 +325,7 @@ void main() {
             .twoLevelAllOfAllOfModel
             .twoLevelAllOfAllOfModel2
             .id,
-        equals('combo-id'),
+        'combo-id',
       );
       expect(
         success
@@ -334,7 +334,7 @@ void main() {
             .twoLevelAllOfAllOfModel
             .twoLevelAllOfAllOfModel3
             .name,
-        equals('Charlie'),
+        'Charlie',
       );
     });
   });

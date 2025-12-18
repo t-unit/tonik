@@ -30,11 +30,9 @@ void main() {
       () {
         final complex = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'User',
           properties: [
             Property(
-              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -47,14 +45,12 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'Flexible',
           models: {
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
             (discriminatorValue: null, model: complex),
           },
-          discriminator: null,
           context: context,
         );
 
@@ -125,11 +121,9 @@ void main() {
       () {
         final classA = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'ClassA',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -142,11 +136,9 @@ void main() {
 
         final classB = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'ClassB',
           properties: [
             Property(
-              description: null,
               name: 'value',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -169,14 +161,12 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'MixedAnyOf',
           models: {
             (discriminatorValue: null, model: listA),
             (discriminatorValue: null, model: listB),
             (discriminatorValue: null, model: StringModel(context: context)),
           },
-          discriminator: null,
           context: context,
         );
 
@@ -218,11 +208,9 @@ void main() {
     test('generates toSimple method with merge-or-equal algorithm', () {
       final modelA = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'A',
         properties: [
           Property(
-            description: null,
             name: 'id',
             model: StringModel(context: context),
             isRequired: true,
@@ -235,11 +223,9 @@ void main() {
 
       final modelB = ClassModel(
         isDeprecated: false,
-        description: null,
         name: 'B',
         properties: [
           Property(
-            description: null,
             name: 'name',
             model: StringModel(context: context),
             isRequired: true,
@@ -252,7 +238,6 @@ void main() {
 
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'PayloadSimple',
         models: {
           (discriminatorValue: 'a', model: modelA),
@@ -310,11 +295,9 @@ void main() {
       () {
         final modelA = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'A',
           properties: [
             Property(
-              description: null,
               name: 'id',
               model: StringModel(context: context),
               isRequired: true,
@@ -327,11 +310,9 @@ void main() {
 
         final modelB = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'B',
           properties: [
             Property(
-              description: null,
               name: 'name',
               model: StringModel(context: context),
               isRequired: true,
@@ -344,13 +325,11 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'PayloadSimpleNoDisc',
           models: {
             (discriminatorValue: null, model: modelA),
             (discriminatorValue: 'b', model: modelB),
           },
-          discriminator: null,
           context: context,
         );
 
@@ -394,7 +373,6 @@ void main() {
     test('generates toSimple method for primitive-only anyOf models', () {
       final model = AnyOfModel(
         isDeprecated: false,
-        description: null,
         name: 'OnlyPrimitivesSimple',
         models: {
           (discriminatorValue: null, model: StringModel(context: context)),
@@ -450,11 +428,9 @@ void main() {
       () {
         final user = ClassModel(
           isDeprecated: false,
-          description: null,
           name: 'User',
           properties: [
             Property(
-              description: null,
               name: 'id',
               model: IntegerModel(context: context),
               isRequired: true,
@@ -467,7 +443,6 @@ void main() {
 
         final model = AnyOfModel(
           isDeprecated: false,
-          description: null,
           name: 'MixedSimple',
           models: {
             (discriminatorValue: 'user', model: user),

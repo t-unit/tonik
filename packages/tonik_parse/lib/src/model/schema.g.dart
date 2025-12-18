@@ -45,4 +45,7 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
           ),
   isDeprecated: json['deprecated'] as bool?,
   uniqueItems: json['uniqueItems'] as bool?,
+  xDartName: json['x-dart-name'] as String?,
+  xDartEnum:
+      (json['x-dart-enum'] as List<dynamic>?)?.map((e) => e as String).toList(),
 );

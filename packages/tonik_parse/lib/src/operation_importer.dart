@@ -38,7 +38,11 @@ class OperationImporter {
   void import() {
     validTags = {
       for (final tag in openApiObject.tags ?? <Tag>[])
-        core.Tag(name: tag.name, description: tag.description),
+        core.Tag(
+          name: tag.name,
+          description: tag.description,
+          nameOverride: tag.xDartName,
+        ),
     };
 
     operations = <core.Operation>{};
@@ -173,24 +177,29 @@ class OperationImporter {
       );
     }
 
-    operations.add(
-      core.Operation(
-        method: httpMethod,
-        operationId: operation.operationId,
-        context: methodContext,
-        path: path,
-        tags: tags ?? {},
-        isDeprecated: operation.isDeprecated ?? false,
-        summary: operation.summary,
-        description: operation.description,
-        headers: headers,
-        queryParameters: queryParams,
-        pathParameters: pathParams,
-        responses: responses,
-        requestBody: requestBody,
-        securitySchemes: _importSecuritySchemes(operation.security),
-      ),
+    final coreOperation = core.Operation(
+      method: httpMethod,
+      operationId: operation.operationId,
+      context: methodContext,
+      path: path,
+      tags: tags ?? {},
+      isDeprecated: operation.isDeprecated ?? false,
+      summary: operation.summary,
+      description: operation.description,
+      headers: headers,
+      queryParameters: queryParams,
+      pathParameters: pathParams,
+      responses: responses,
+      requestBody: requestBody,
+      securitySchemes: _importSecuritySchemes(operation.security),
     );
+
+    // Apply x-dart-name vendor extension to operation
+    if (operation.xDartName != null) {
+      coreOperation.nameOverride = operation.xDartName;
+    }
+
+    operations.add(coreOperation);
   }
 
   Set<core.SecurityScheme> _importSecuritySchemes(

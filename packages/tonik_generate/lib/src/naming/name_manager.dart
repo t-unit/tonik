@@ -130,8 +130,11 @@ class NameManager {
   }
 
   /// Gets a cached or generates a new unique class name for a model.
-  String modelName(Model model) =>
-      modelNames.putIfAbsent(model, () => generator.generateModelName(model));
+  String modelName(Model model) {
+    return modelNames.putIfAbsent(model, () {
+      return generator.generateModelName(model);
+    });
+  }
 
   /// Gets a cached or generates a new unique response class
   /// name and implementation names.
@@ -157,14 +160,18 @@ class NameManager {
   }
 
   /// Gets a cached or generates a new unique operation name.
-  String operationName(Operation operation) => operationNames.putIfAbsent(
-    operation,
-    () => generator.generateOperationName(operation),
-  );
+  String operationName(Operation operation) {
+    return operationNames.putIfAbsent(operation, () {
+      return generator.generateOperationName(operation);
+    });
+  }
 
   /// Gets a cached or generates a new unique API class name for a tag.
-  String tagName(Tag tag) =>
-      tagNames.putIfAbsent(tag, () => generator.generateTagName(tag));
+  String tagName(Tag tag) {
+    return tagNames.putIfAbsent(tag, () {
+      return generator.generateTagName(tag);
+    });
+  }
 
   /// Generates a unique variant name for composite model variants.
   ///

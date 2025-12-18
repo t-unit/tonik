@@ -108,9 +108,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'Status',
-          values: const {'active', 'inactive', 'pending'},
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
           isNullable: false,
-          description: null,
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -210,7 +212,6 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'Filter',
-          description: null,
           properties: [
             Property(
               name: 'name',
@@ -218,7 +219,6 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
-              description: null,
             ),
             Property(
               name: 'value',
@@ -226,7 +226,6 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
-              description: null,
             ),
           ],
         ),
@@ -283,9 +282,12 @@ void main() {
               isDeprecated: false,
               context: context,
               name: 'Status',
-              values: const {'active', 'inactive', 'pending'},
+              values: {
+                const EnumEntry(value: 'active'),
+                const EnumEntry(value: 'inactive'),
+                const EnumEntry(value: 'pending'),
+              },
               isNullable: false,
-              description: null,
             ),
           ),
           encoding: PathParameterEncoding.label,
@@ -341,9 +343,12 @@ void main() {
               isDeprecated: false,
               context: context,
               name: 'Status',
-              values: const {'active', 'inactive', 'pending'},
+              values: {
+                const EnumEntry(value: 'active'),
+                const EnumEntry(value: 'inactive'),
+                const EnumEntry(value: 'pending'),
+              },
               isNullable: false,
-              description: null,
             ),
           ),
           encoding: PathParameterEncoding.label,
@@ -452,8 +457,6 @@ void main() {
               isDeprecated: false,
               context: context,
               name: 'StringOrInt',
-              description: null,
-              discriminator: null,
               models: {
                 (
                   discriminatorValue: 's',
@@ -494,8 +497,6 @@ void main() {
               isDeprecated: false,
               context: context,
               name: 'StringOrInt',
-              description: null,
-              discriminator: null,
               models: {
                 (
                   discriminatorValue: 's',

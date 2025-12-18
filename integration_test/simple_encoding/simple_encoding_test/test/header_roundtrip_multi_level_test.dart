@@ -88,7 +88,7 @@ void main() {
         final error =
             result
                 as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
 
@@ -118,7 +118,7 @@ void main() {
         final error =
             result
                 as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
 
@@ -149,7 +149,7 @@ void main() {
         final error =
             result
                 as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
 
@@ -221,7 +221,7 @@ void main() {
         final error =
             result
                 as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
   });

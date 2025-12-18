@@ -36,7 +36,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonString()'),
+        'value.decodeJsonString()',
       );
       expect(
         buildFromJsonValueExpression(
@@ -45,7 +45,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonInt()'),
+        'value.decodeJsonInt()',
       );
       expect(
         buildFromJsonValueExpression(
@@ -54,7 +54,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonNum()'),
+        'value.decodeJsonNum()',
       );
       expect(
         buildFromJsonValueExpression(
@@ -63,7 +63,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonDouble()'),
+        'value.decodeJsonDouble()',
       );
       expect(
         buildFromJsonValueExpression(
@@ -72,7 +72,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonBigDecimal()'),
+        'value.decodeJsonBigDecimal()',
       );
       expect(
         buildFromJsonValueExpression(
@@ -81,7 +81,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonBool()'),
+        'value.decodeJsonBool()',
       );
       expect(
         buildFromJsonValueExpression(
@@ -90,7 +90,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonDateTime()'),
+        'value.decodeJsonDateTime()',
       );
     });
 
@@ -108,7 +108,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/my_package.dart',
           ).accept(emitter).toString(),
-          equals('value.decodeJsonString()'),
+          'value.decodeJsonString()',
         );
       });
 
@@ -118,7 +118,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -132,7 +131,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/my_package.dart',
           ).accept(emitter).toString(),
-          equals('User.fromJson(value)'),
+          'User.fromJson(value)',
         );
       });
 
@@ -153,7 +152,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/my_package.dart',
           ).accept(emitter).toString(),
-          equals('value.decodeJsonList<String>()'),
+          'value.decodeJsonList<String>()',
         );
       });
 
@@ -163,7 +162,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -182,7 +180,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/my_package.dart',
           ).accept(emitter).toString(),
-          equals('User.fromJson(value)'),
+          'User.fromJson(value)',
         );
       });
 
@@ -192,7 +190,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userListModel = ListModel(content: userModel, context: context);
         final userListAlias = AliasModel(
@@ -220,7 +217,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         final userAlias = AliasModel(
           context: context,
@@ -251,9 +247,11 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(value: 'user'),
+        },
         isNullable: false,
-        description: null,
       );
       expect(
         buildFromJsonValueExpression(
@@ -262,7 +260,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('UserRole.fromJson(value)'),
+        'UserRole.fromJson(value)',
       );
     });
 
@@ -272,7 +270,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
       expect(
         buildFromJsonValueExpression(
@@ -281,7 +278,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('User.fromJson(value)'),
+        'User.fromJson(value)',
       );
     });
 
@@ -297,7 +294,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonList<String>()'),
+        'value.decodeJsonList<String>()',
       );
 
       // Test list of booleans
@@ -312,7 +309,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        equals('value.decodeJsonList<bool>()'),
+        'value.decodeJsonList<bool>()',
       );
 
       // Test list of dates
@@ -376,7 +373,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
       final listModel = ListModel(content: classModel, context: context);
       expect(
@@ -399,7 +395,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
       final innerListModel = ListModel(content: classModel, context: context);
       final outerListModel = ListModel(
@@ -427,7 +422,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
       final innerListModel = ListModel(content: classModel, context: context);
       final middleListModel = ListModel(
@@ -460,9 +454,11 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(value: 'user'),
+        },
         isNullable: false,
-        description: null,
       );
       final enumListModel = ListModel(content: enumModel, context: context);
       expect(
@@ -559,9 +555,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -570,7 +568,7 @@ void main() {
             nameManager: nameManager,
             package: 'package:my_package/models.dart',
           ).accept(scopedEmitter).toString(),
-          equals('_i1.UserRole.fromJson(value)'),
+          '_i1.UserRole.fromJson(value)',
         );
       });
 
@@ -579,11 +577,16 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
-        final enumListModel = ListModel(content: enumModel, context: context);
+        final enumListModel = ListModel(
+          content: enumModel,
+          context: context,
+        );
         expect(
           buildFromJsonValueExpression(
             'value',
@@ -609,7 +612,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableString()'),
+          'value.decodeJsonNullableString()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -619,7 +622,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableInt()'),
+          'value.decodeJsonNullableInt()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -629,7 +632,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableNum()'),
+          'value.decodeJsonNullableNum()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -639,7 +642,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableDouble()'),
+          'value.decodeJsonNullableDouble()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -649,7 +652,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableBigDecimal()'),
+          'value.decodeJsonNullableBigDecimal()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -659,7 +662,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableBool()'),
+          'value.decodeJsonNullableBool()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -669,7 +672,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableDateTime()'),
+          'value.decodeJsonNullableDateTime()',
         );
         expect(
           buildFromJsonValueExpression(
@@ -679,7 +682,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value.decodeJsonNullableDate()'),
+          'value.decodeJsonNullableDate()',
         );
       });
 
@@ -689,7 +692,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -699,7 +701,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value == null ? null : User.fromJson(value)'),
+          'value == null ? null : User.fromJson(value)',
         );
       });
 
@@ -708,9 +710,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -720,7 +724,7 @@ void main() {
             package: 'package:my_package/my_package.dart',
             isNullable: true,
           ).accept(emitter).toString(),
-          equals('value == null ? null : UserRole.fromJson(value)'),
+          'value == null ? null : UserRole.fromJson(value)',
         );
       });
 
@@ -738,7 +742,7 @@ void main() {
               package: 'package:my_package/my_package.dart',
               isNullable: true,
             ).accept(emitter).toString(),
-            equals('value.decodeJsonNullableList<String>()'),
+            'value.decodeJsonNullableList<String>()',
           );
         });
 
@@ -748,7 +752,6 @@ void main() {
             context: context,
             name: 'User',
             properties: const [],
-            description: null,
           );
           final classListModel = ListModel(
             content: classModel,
@@ -774,9 +777,11 @@ void main() {
             isDeprecated: false,
             context: context,
             name: 'UserRole',
-            values: const {'admin', 'user'},
+            values: {
+              const EnumEntry(value: 'admin'),
+              const EnumEntry(value: 'user'),
+            },
             isNullable: false,
-            description: null,
           );
           final enumListModel = ListModel(
             content: enumModel,

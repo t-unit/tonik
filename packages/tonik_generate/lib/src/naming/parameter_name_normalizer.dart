@@ -40,29 +40,31 @@ NormalizedRequestParameters normalizeRequestParameters({
   final normalizedQueryParams = _normalizeQueryParameters(queryParameters);
   final normalizedHeaders = _normalizeHeaderParameters(headers);
 
-  final nameOccurrences = <String, int>{};
+  // Track which parameter types contain each name
+  final nameInTypes = <String, Set<String>>{};
 
-  // Count occurrences of each name across all parameter types
+  // Count occurrences per type
   for (final item in normalizedPathParams) {
     final lowerName = item.normalizedName.toLowerCase();
-    nameOccurrences[lowerName] = (nameOccurrences[lowerName] ?? 0) + 1;
+    nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('path');
   }
 
   for (final item in normalizedQueryParams) {
     final lowerName = item.normalizedName.toLowerCase();
-    nameOccurrences[lowerName] = (nameOccurrences[lowerName] ?? 0) + 1;
+    nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('query');
   }
 
   for (final item in normalizedHeaders) {
     final lowerName = item.normalizedName.toLowerCase();
-    nameOccurrences[lowerName] = (nameOccurrences[lowerName] ?? 0) + 1;
+    nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('header');
   }
 
   // Add suffixes to all parameters with duplicate names across types
+  // (i.e., the same name appears in multiple parameter types)
   final resolvedPathParams =
       normalizedPathParams.map((item) {
         final lowerName = item.normalizedName.toLowerCase();
-        if (nameOccurrences[lowerName]! > 1) {
+        if (nameInTypes[lowerName]!.length > 1) {
           return (
             normalizedName: '${item.normalizedName}$_pathSuffix',
             parameter: item.parameter,
@@ -74,7 +76,7 @@ NormalizedRequestParameters normalizeRequestParameters({
   final resolvedQueryParams =
       normalizedQueryParams.map((item) {
         final lowerName = item.normalizedName.toLowerCase();
-        if (nameOccurrences[lowerName]! > 1) {
+        if (nameInTypes[lowerName]!.length > 1) {
           return (
             normalizedName: '${item.normalizedName}$_querySuffix',
             parameter: item.parameter,
@@ -86,7 +88,7 @@ NormalizedRequestParameters normalizeRequestParameters({
   final resolvedHeaderParams =
       normalizedHeaders.map((item) {
         final lowerName = item.normalizedName.toLowerCase();
-        if (nameOccurrences[lowerName]! > 1) {
+        if (nameInTypes[lowerName]!.length > 1) {
           return (
             normalizedName: '${item.normalizedName}$_headerSuffix',
             parameter: item.parameter,
@@ -112,21 +114,20 @@ List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
 ) {
   final result = <({String normalizedName, T parameter})>[];
   final usedNames = <String>{}; // lowercase names for uniqueness check
-  final nameCounters = <String, int>{}; // lowercase name -> counter
+  final nameCounters = <String, int>{}; // lowercase base name -> counter
 
   for (final item in parameters) {
     var name = item.normalizedName;
-    var lowerName = name.toLowerCase();
+    final baseLowerName = name.toLowerCase();
 
     // If the name is already used, add a numeric suffix
-    if (usedNames.contains(lowerName)) {
-      final counter = nameCounters.putIfAbsent(lowerName, () => 2);
+    if (usedNames.contains(baseLowerName)) {
+      final counter = nameCounters.putIfAbsent(baseLowerName, () => 2);
       name = '$name$counter';
-      lowerName = name.toLowerCase();
-      nameCounters[lowerName] = counter + 1;
+      nameCounters[baseLowerName] = counter + 1;
     }
 
-    usedNames.add(lowerName);
+    usedNames.add(name.toLowerCase());
     result.add((normalizedName: name, parameter: item.parameter));
   }
 
@@ -134,12 +135,16 @@ List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
 }
 
 /// Normalizes path parameter names.
+/// Uses nameOverride if set, otherwise normalizes from rawName.
 List<({String normalizedName, PathParameterObject parameter})>
 _normalizePathParameters(Set<PathParameterObject> parameters) {
   return parameters
       .map(
         (param) => (
-          normalizedName: _normalizeName(param.rawName),
+          normalizedName:
+              param.nameOverride != null
+                  ? _normalizeName(param.nameOverride!)
+                  : _normalizeName(param.rawName),
           parameter: param,
         ),
       )
@@ -147,12 +152,16 @@ _normalizePathParameters(Set<PathParameterObject> parameters) {
 }
 
 /// Normalizes query parameter names.
+/// Uses nameOverride if set, otherwise normalizes from rawName.
 List<({String normalizedName, QueryParameterObject parameter})>
 _normalizeQueryParameters(Set<QueryParameterObject> parameters) {
   return parameters
       .map(
         (param) => (
-          normalizedName: _normalizeName(param.rawName),
+          normalizedName:
+              param.nameOverride != null
+                  ? _normalizeName(param.nameOverride!)
+                  : _normalizeName(param.rawName),
           parameter: param,
         ),
       )
@@ -160,12 +169,16 @@ _normalizeQueryParameters(Set<QueryParameterObject> parameters) {
 }
 
 /// Normalizes header parameter names, removing any 'x-' prefix.
+/// Uses nameOverride if set, otherwise normalizes from rawName.
 List<({String normalizedName, RequestHeaderObject parameter})>
 _normalizeHeaderParameters(Set<RequestHeaderObject> parameters) {
   return parameters
       .map(
         (param) => (
-          normalizedName: _normalizeHeaderName(param.rawName),
+          normalizedName:
+              param.nameOverride != null
+                  ? _normalizeName(param.nameOverride!)
+                  : _normalizeHeaderName(param.rawName),
           parameter: param,
         ),
       )

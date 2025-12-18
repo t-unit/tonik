@@ -51,7 +51,7 @@ void main() {
 
       expect(result, isA<TonikError<_R>>());
       final error = result as TonikError<_R>;
-      expect(error.type, equals(TonikErrorType.decoding));
+      expect(error.type, TonikErrorType.decoding);
     });
 
     test('round-trips with only tags set', () async {
@@ -105,7 +105,7 @@ void main() {
 
       expect(result, isA<TonikError<_R>>());
       final error = result as TonikError<_R>;
-      expect(error.type, equals(TonikErrorType.decoding));
+      expect(error.type, TonikErrorType.decoding);
     });
 
     group('null parameter', () {

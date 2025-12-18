@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
-import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
@@ -85,13 +84,14 @@ void main() {
     expect(post, isNotNull);
     expect(post?.tags, hasLength(2));
 
-    expect(
-      post?.tags,
-      containsAll([
-        const Tag(name: 'post'),
-        const Tag(name: 'info', description: 'Info operations'),
-      ]),
-    );
+    final postTag = post?.tags.firstWhereOrNull((t) => t.name == 'post');
+    final infoTag = post?.tags.firstWhereOrNull((t) => t.name == 'info');
+
+    expect(postTag, isNotNull);
+    expect(postTag?.description, isNull);
+
+    expect(infoTag, isNotNull);
+    expect(infoTag?.description, 'Info operations');
   });
 
   test('does not require tags with description', () {

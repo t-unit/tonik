@@ -332,7 +332,7 @@ void main() {
       final result2 = map.toForm(explode: false, allowEmpty: true);
 
       // Results should be consistent (though order may vary by implementation)
-      expect(result1, equals(result2));
+      expect(result1, result2);
       expect(result1, contains('z,1'));
       expect(result1, contains('a,2'));
       expect(result1, contains('m,3'));
@@ -361,7 +361,7 @@ void main() {
       final encoded = longString.toForm(explode: false, allowEmpty: true);
       expect(
         encoded,
-        equals('a' * 1000),
+        'a' * 1000,
       ); // No special chars, so no encoding needed
     });
 

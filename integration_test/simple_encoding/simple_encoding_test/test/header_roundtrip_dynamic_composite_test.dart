@@ -258,7 +258,7 @@ void main() {
                 as TonikError<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
 
       test('fails when multiple complex variants are set', () async {

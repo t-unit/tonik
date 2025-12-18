@@ -153,7 +153,25 @@ void main() {
   });
 
   test('imports request body with json-like content', () {
+    // This test verifies backward compatibility: custom JSON-like content
+    // types are no longer auto-detected by 'contains(json)'. They need
+    // explicit config.
     final api = Importer().import(fileContent);
+    final jsonLikeBody = api.requestBodies.firstWhereOrNull(
+      (r) => r.name == 'JsonLikeBody',
+    );
+
+    expect(jsonLikeBody, isNotNull);
+    expect(jsonLikeBody, isA<RequestBodyObject>());
+    expect((jsonLikeBody as RequestBodyObject?)?.isRequired, isTrue);
+    // Without explicit contentTypes config, non-standard types are skipped
+    expect(jsonLikeBody?.content, isEmpty);
+  });
+
+  test('imports custom content type with configuration', () {
+    final api = Importer(
+      contentTypes: {'alto-endpointcost+json': ContentType.json},
+    ).import(fileContent);
     final jsonLikeBody = api.requestBodies.firstWhereOrNull(
       (r) => r.name == 'JsonLikeBody',
     );
@@ -181,7 +199,9 @@ void main() {
   });
 
   test('imports all JSON content types', () {
-    final api = Importer().import(fileContent);
+    final api = Importer(
+      contentTypes: {'application/problem+json': ContentType.json},
+    ).import(fileContent);
     final multipleJsonBody = api.requestBodies.firstWhereOrNull(
       (r) => r.name == 'MultipleJsonBody',
     );
@@ -303,6 +323,7 @@ void main() {
     final importer = RequestBodyImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+      contentTypes: {},
     )..import();
 
     final imported = importer.importRequestBody(

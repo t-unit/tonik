@@ -154,9 +154,13 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(
+            value: 'user',
+          ),
+        },
         isNullable: false,
-        description: null,
       );
 
       expect(
@@ -190,9 +194,11 @@ void main() {
         isDeprecated: false,
         context: context,
         name: 'UserRole',
-        values: const {'admin', 'user'},
+        values: {
+          const EnumEntry(value: 'admin'),
+          const EnumEntry(value: 'user'),
+        },
         isNullable: false,
-        description: null,
       );
 
       expect(
@@ -227,7 +233,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
 
       expect(
@@ -262,7 +267,6 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
-        description: null,
       );
 
       expect(
@@ -443,9 +447,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
 
         expect(
@@ -457,7 +463,7 @@ void main() {
             package: 'package:my_package/models.dart',
             explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          equals('_i1.UserRole.fromSimple(value, explode: false, )'),
+          '_i1.UserRole.fromSimple(value, explode: false, )',
         );
       });
 
@@ -468,7 +474,6 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
-          description: null,
         );
 
         expect(
@@ -480,7 +485,7 @@ void main() {
             package: 'package:my_package/models.dart',
             explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          equals('_i1.User.fromSimple(value, explode: false, )'),
+          '_i1.User.fromSimple(value, explode: false, )',
         );
       });
 
@@ -490,9 +495,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
         final listModel = ListModel(content: enumModel, context: context);
 
@@ -519,9 +526,11 @@ void main() {
           isDeprecated: false,
           context: context,
           name: 'UserRole',
-          values: const {'admin', 'user'},
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
           isNullable: false,
-          description: null,
         );
         final listModel = ListModel(content: enumModel, context: context);
 

@@ -25,7 +25,7 @@ extension StableModelKey on Model {
             ).join(',')}'
             '}',
       EnumModel(:final name, :final values) =>
-        'EnumModel{$name,${values.toList()..sort()}}',
+        'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) =>
         'AliasModel{$name,${model.stableKey}}',
       StringModel() => 'StringModel',
@@ -61,6 +61,14 @@ String _stableSortedDiscriminatedModels(Set<DiscriminatedModel> models) {
   return sorted
       .map((dm) => '${dm.discriminatorValue}:${dm.model.stableKey}')
       .join(',');
+}
+
+/// Creates a stable sorted string representation of enum values.
+String _stableSortedEnumValues<T>(Set<EnumEntry<T>> values) {
+  final sorted =
+      values.toList()
+        ..sort((a, b) => a.value.toString().compareTo(b.value.toString()));
+  return sorted.map((v) => v.value.toString()).join(',');
 }
 
 /// Compares two models for stable sorting.

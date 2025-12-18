@@ -26,7 +26,18 @@ class ModelImporter {
       var model = _parseSchemaWrapper(name, schema, context);
 
       if (model is PrimitiveModel) {
-        model = AliasModel(name: name, model: model, context: context);
+        model = AliasModel(
+          name: name,
+          model: model,
+          context: context,
+        );
+      }
+
+      // Apply x-dart-name vendor extension to schema
+      if (schema is InlinedObject<Schema> && schema.object.xDartName != null) {
+        if (model is NamedModel) {
+          model.nameOverride = schema.object.xDartName;
+        }
       }
 
       if (models.none((m) => m is NamedModel && m.name == name)) {
@@ -76,7 +87,11 @@ class ModelImporter {
             _parseSchemaWrapper(refName, ref, rootContext);
 
         if (name != null) {
-          model = AliasModel(name: name, model: model, context: context);
+          model = AliasModel(
+            name: name,
+            model: model,
+            context: context,
+          );
         }
 
         return model;
@@ -136,6 +151,7 @@ class ModelImporter {
         context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
+        xDartEnum: schema.xDartEnum,
       ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -148,6 +164,7 @@ class ModelImporter {
         context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
+        xDartEnum: schema.xDartEnum,
       ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
@@ -156,7 +173,11 @@ class ModelImporter {
     };
 
     if (model is PrimitiveModel && name != null) {
-      model = AliasModel(name: name, model: model, context: context);
+      model = AliasModel(
+        name: name,
+        model: model,
+        context: context,
+      );
       _logModelAdded(model);
       models.add(model);
     }
@@ -188,6 +209,8 @@ class ModelImporter {
         discriminator: schema.discriminator,
         isDeprecated: schema.isDeprecated,
         uniqueItems: schema.uniqueItems,
+        xDartName: schema.xDartName,
+        xDartEnum: schema.xDartEnum,
       );
       return (
         discriminatorValue: null,
@@ -198,7 +221,6 @@ class ModelImporter {
     return OneOfModel(
       models: models.toSet(),
       name: name,
-      discriminator: null,
       context: context,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
@@ -213,7 +235,11 @@ class ModelImporter {
 
     final modelContext = context.push('array');
     final content = _parseSchemaWrapper(null, items, modelContext);
-    return ListModel(content: content, context: context, name: name);
+    return ListModel(
+      content: content,
+      context: context,
+      name: name,
+    );
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
@@ -345,31 +371,39 @@ class ModelImporter {
       bool isNullable;
       bool isDeprecated;
       String? description;
+      String? nameOverride;
       if (propertySchema is InlinedObject<Schema>) {
         final schema = propertySchema.object;
         isNullable = schema.isNullable ?? schema.type.contains('null');
         isDeprecated = schema.isDeprecated ?? false;
         description = schema.description;
+        nameOverride = schema.xDartName;
       } else {
         isNullable = false;
         isDeprecated = false;
         description = null;
+        nameOverride = null;
       }
 
-      properties.add(
-        Property(
-          name: propertyName,
-          model: _parseSchemaWrapper(
-            null,
-            propertySchema,
-            context.pushAll([name, propertyName].whereType<String>()),
-          ),
-          isRequired: schema.required?.contains(propertyName) ?? false,
-          isNullable: isNullable,
-          isDeprecated: isDeprecated,
-          description: description,
+      final property = Property(
+        name: propertyName,
+        model: _parseSchemaWrapper(
+          null,
+          propertySchema,
+          context.pushAll([name, propertyName].whereType<String>()),
         ),
+        isRequired: schema.required?.contains(propertyName) ?? false,
+        isNullable: isNullable,
+        isDeprecated: isDeprecated,
+        description: description,
       );
+
+      // Apply x-dart-name vendor extension to property
+      if (nameOverride != null) {
+        property.nameOverride = nameOverride;
+      }
+
+      properties.add(property);
     }
 
     return model;
@@ -382,6 +416,7 @@ class ModelImporter {
     Context context, {
     required String? description,
     required bool isDeprecated,
+    List<String>? xDartEnum,
   }) {
     log.fine('Parsing enum $name<$T> for $context with values $values');
 
@@ -398,9 +433,29 @@ class ModelImporter {
       );
     }
 
+    final enumValues = <EnumEntry<T>>{};
+    final typedValuesList = typedValues.toList();
+
+    for (var i = 0; i < typedValuesList.length; i++) {
+      final value = typedValuesList[i];
+      String? nameOverride;
+
+      // Apply x-dart-enum vendor extension if available
+      if (xDartEnum != null && i < xDartEnum.length) {
+        nameOverride = xDartEnum[i];
+      }
+
+      enumValues.add(
+        EnumEntry<T>(
+          value: value,
+          nameOverride: nameOverride,
+        ),
+      );
+    }
+
     final model = EnumModel<T>(
       isDeprecated: isDeprecated,
-      values: typedValues,
+      values: enumValues,
       isNullable: isNullable || hasNull,
       context: context,
       name: name,

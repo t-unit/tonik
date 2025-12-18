@@ -104,13 +104,15 @@ void main() {
     });
 
     test('generates toMatrix call for EnumModel', () {
-      final model = EnumModel(
+      final model = EnumModel<String>(
         isDeprecated: false,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: false,
         context: context,
-        description: null,
       );
       final expression = buildMatrixParameterExpression(
         refer('value'),
@@ -142,11 +144,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final expression = buildMatrixParameterExpression(
         refer('value'),
@@ -219,10 +219,12 @@ void main() {
       final enumModel = EnumModel(
         isDeprecated: false,
         name: 'Status',
-        values: const {'active', 'inactive'},
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
         isNullable: false,
         context: context,
-        description: null,
       );
       final model = ListModel(
         content: enumModel,
@@ -258,11 +260,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
       final model = ListModel(
         content: classModel,
@@ -323,9 +323,7 @@ void main() {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
-        description: null,
       );
       final expression = buildMatrixParameterExpression(
         refer('value'),
@@ -379,9 +377,7 @@ void main() {
           (discriminatorValue: 'i', model: IntegerModel(context: context)),
           (discriminatorValue: 's', model: StringModel(context: context)),
         },
-        discriminator: null,
         context: context,
-        description: null,
       );
       final model = ListModel(
         content: oneOfModel,

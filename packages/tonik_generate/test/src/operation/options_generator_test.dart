@@ -44,7 +44,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -83,7 +82,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -122,7 +120,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -161,7 +158,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -217,7 +213,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -338,7 +333,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -428,7 +422,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -462,9 +455,12 @@ void main() {
       final enumModel = EnumModel(
         isDeprecated: false,
         context: context,
-        values: const {'RED', 'GREEN', 'BLUE'},
+        values: {
+          const EnumEntry(value: 'RED'),
+          const EnumEntry(value: 'GREEN'),
+          const EnumEntry(value: 'BLUE'),
+        },
         isNullable: false,
-        description: null,
       );
 
       final listModel = ListModel(context: context, content: enumModel);
@@ -495,7 +491,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -536,7 +531,6 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
-        description: null,
       );
       final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
@@ -570,7 +564,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -617,7 +610,6 @@ void main() {
         queryParameters: const {},
         pathParameters: const {},
         responses: const {},
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -791,7 +783,6 @@ void main() {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -837,7 +828,6 @@ void main() {
             bodies: const {},
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -901,7 +891,6 @@ void main() {
             },
           ),
         },
-        requestBody: null,
         securitySchemes: const {},
       );
 
@@ -974,7 +963,6 @@ void main() {
               },
             ),
           },
-          requestBody: null,
           securitySchemes: const {},
         );
 

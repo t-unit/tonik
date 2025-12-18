@@ -24,7 +24,6 @@ void main() {
               '200',
               'content',
             ]),
-            description: null,
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -44,7 +43,6 @@ void main() {
               '404',
               'content',
             ]),
-            description: null,
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -53,7 +51,6 @@ void main() {
         });
 
         test('oneOf model with inline model', () {
-          // Create a OneOfModel named Blub with an inline anonymous class model
           final inlineClassModel = ClassModel(
             isDeprecated: false,
             properties: const [],
@@ -62,16 +59,13 @@ void main() {
               'schemas',
               'Blub',
             ]),
-            description: null,
           );
 
           final oneOfModel = OneOfModel(
             isDeprecated: false,
             name: 'Blub',
             models: {(discriminatorValue: null, model: inlineClassModel)},
-            discriminator: null,
             context: Context.initial().pushAll(['components', 'schemas']),
-            description: null,
           );
 
           // First name the oneOf model
@@ -86,14 +80,17 @@ void main() {
         test('enum parameter in path', () {
           final enumModel = EnumModel<String>(
             isDeprecated: false,
-            values: const {'available', 'pending', 'sold'},
+            values: {
+              const EnumEntry(value: 'available'),
+              const EnumEntry(value: 'pending'),
+              const EnumEntry(value: 'sold'),
+            },
             isNullable: false,
             context: Context.initial().pushAll([
               'paths',
               'pet-findByTags',
               'parameter',
             ]),
-            description: null,
           );
 
           expect(
@@ -109,7 +106,6 @@ void main() {
           name: 'UserProfile',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
       });
@@ -120,7 +116,6 @@ void main() {
           name: 'user_profile',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
       });
@@ -131,21 +126,18 @@ void main() {
           name: 'User',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         final model2 = ClassModel(
           isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         final model3 = ClassModel(
           isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
 
         final name1 = nameGenerator.generateModelName(model1);
@@ -163,7 +155,6 @@ void main() {
           name: 'User-Profile!123',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile123');
       });
@@ -173,7 +164,6 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: Context.initial().pushAll(['api', 'models', 'user']),
-          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'ApiModelsUserModel');
@@ -201,7 +191,6 @@ void main() {
           name: 'my_class_name',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'MyClassName');
@@ -213,7 +202,6 @@ void main() {
           name: '_my_class_name',
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'MyClassName');
@@ -224,7 +212,6 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
 
         expect(nameGenerator.generateModelName(model), 'AnonymousModel');
@@ -235,19 +222,16 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         final model2 = ClassModel(
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
         final model3 = ClassModel(
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
-          description: null,
         );
 
         final name1 = nameGenerator.generateModelName(model1);
@@ -266,7 +250,6 @@ void main() {
             name: 'Model23',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Model23');
         });
@@ -277,7 +260,6 @@ void main() {
             name: '2Model',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Model');
         });
@@ -288,7 +270,6 @@ void main() {
             name: '2_Model12String33',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Model12String33');
         });
@@ -299,7 +280,6 @@ void main() {
             name: 'user2_profile3_data4',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'User2Profile3Data4');
         });
@@ -310,7 +290,6 @@ void main() {
             name: '123',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           expect(nameGenerator.generateModelName(model), 'Anonymous');
         });
@@ -324,7 +303,6 @@ void main() {
                 name: 'hello_world_test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'HelloWorldTest',
@@ -339,7 +317,6 @@ void main() {
                 name: '_hello_world',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'HelloWorld',
@@ -354,7 +331,6 @@ void main() {
                 name: 'Hello-World_Test!123',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'HelloWorldTest123',
@@ -369,7 +345,6 @@ void main() {
                 name: '___hello_world_test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'HelloWorldTest',
@@ -384,7 +359,6 @@ void main() {
                 name: 'My_Class_NAME',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'MyClassName',
@@ -401,7 +375,6 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'Test',
@@ -415,7 +388,6 @@ void main() {
               name: 'Test',
               properties: const [],
               context: Context.initial(),
-              description: null,
             ),
           );
 
@@ -426,7 +398,6 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'TestModel',
@@ -441,7 +412,6 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             )
             ..generateModelName(
@@ -450,7 +420,6 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             );
 
@@ -461,7 +430,6 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
-                description: null,
               ),
             ),
             'TestModel2',
@@ -474,14 +442,12 @@ void main() {
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           final model2 = ClassModel(
             isDeprecated: false,
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
 
           final name1 = nameGenerator.generateModelName(model1);
@@ -615,7 +581,6 @@ void main() {
             name: 'User',
             properties: const [],
             context: Context.initial(),
-            description: null,
           );
           final response = ResponseObject(
             name: 'User',
@@ -643,38 +608,26 @@ void main() {
         test('generates unique API class names for tags', () {
           final manager = NameGenerator();
 
-          expect(
-            manager.generateTagName(const Tag(name: 'pets')),
-            equals('PetsApi'),
-          );
+          expect(manager.generateTagName(Tag(name: 'pets')), 'PetsApi');
+
+          expect(manager.generateTagName(Tag(name: 'pets')), 'PetsApi2');
 
           expect(
-            manager.generateTagName(const Tag(name: 'pets')),
-            equals('PetsApi2'),
-          );
-
-          expect(
-            manager.generateTagName(const Tag(name: 'store_inventory')),
-            equals('StoreInventoryApi'),
+            manager.generateTagName(Tag(name: 'store_inventory')),
+            'StoreInventoryApi',
           );
         });
 
         test('handles special characters and numbers in tag names', () {
           final manager = NameGenerator();
 
-          expect(
-            manager.generateTagName(const Tag(name: '2pets')),
-            equals('PetsApi'),
-          );
+          expect(manager.generateTagName(Tag(name: '2pets')), 'PetsApi');
+
+          expect(manager.generateTagName(Tag(name: 'pets-v2')), 'PetsV2Api');
 
           expect(
-            manager.generateTagName(const Tag(name: 'pets-v2')),
-            equals('PetsV2Api'),
-          );
-
-          expect(
-            manager.generateTagName(const Tag(name: '_store_api')),
-            equals('StoreApiApi'),
+            manager.generateTagName(Tag(name: '_store_api')),
+            'StoreApiApi',
           );
         });
       });

@@ -31,26 +31,22 @@ void main() {
       final sharedContext = context.push('Test').push('allOf');
 
       final model1 = AllOfModel(
-        name: null,
         models: {
           StringModel(context: sharedContext),
           IntegerModel(context: sharedContext),
           BooleanModel(context: sharedContext),
         },
         context: sharedContext,
-        description: null,
         isDeprecated: false,
       );
 
       final model2 = AllOfModel(
-        name: null,
         models: {
           BooleanModel(context: sharedContext),
           StringModel(context: sharedContext),
           IntegerModel(context: sharedContext),
         },
         context: sharedContext,
-        description: null,
         isDeprecated: false,
       );
 
@@ -69,22 +65,18 @@ void main() {
         final sharedContext = context.push('Test').push('allOf');
 
         final model1 = AllOfModel(
-          name: null,
           models: {
             StringModel(context: sharedContext),
           },
           context: sharedContext,
-          description: null,
           isDeprecated: false,
         );
 
         final model2 = AllOfModel(
-          name: null,
           models: {
             IntegerModel(context: sharedContext),
           },
           context: sharedContext,
-          description: null,
           isDeprecated: false,
         );
 
@@ -97,7 +89,6 @@ void main() {
 
       final model1 = OneOfModel(
         isDeprecated: false,
-        name: null,
         models: {
           (
             discriminatorValue: 'zebra',
@@ -110,12 +101,10 @@ void main() {
         },
         discriminator: 'type',
         context: sharedContext,
-        description: null,
       );
 
       final model2 = OneOfModel(
         isDeprecated: false,
-        name: null,
         models: {
           (
             discriminatorValue: 'apple',
@@ -128,7 +117,6 @@ void main() {
         },
         discriminator: 'type',
         context: sharedContext,
-        description: null,
       );
 
       expect(model1.stableKey, model2.stableKey);
@@ -139,7 +127,6 @@ void main() {
 
       final model1 = AnyOfModel(
         isDeprecated: false,
-        name: null,
         models: {
           (
             discriminatorValue: null,
@@ -150,14 +137,11 @@ void main() {
             model: IntegerModel(context: sharedContext),
           ),
         },
-        discriminator: null,
         context: sharedContext,
-        description: null,
       );
 
       final model2 = AnyOfModel(
         isDeprecated: false,
-        name: null,
         models: {
           (
             discriminatorValue: null,
@@ -168,9 +152,7 @@ void main() {
             model: StringModel(context: sharedContext),
           ),
         },
-        discriminator: null,
         context: sharedContext,
-        description: null,
       );
 
       expect(model1.stableKey, model2.stableKey);
@@ -204,7 +186,6 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
           Property(
             name: 'count',
@@ -212,11 +193,9 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
-            description: null,
           ),
         ],
         context: context,
-        description: null,
       );
 
       final key = model1.stableKey;
@@ -226,21 +205,27 @@ void main() {
     });
 
     test('generates stable key for EnumModel with sorted values', () {
-      final model1 = EnumModel(
+      final model1 = EnumModel<String>(
         name: 'Status',
-        values: const {'zebra', 'apple', 'banana'},
+        values: {
+          const EnumEntry(value: 'zebra'),
+          const EnumEntry(value: 'apple'),
+          const EnumEntry(value: 'banana'),
+        },
         isNullable: false,
         context: context,
-        description: null,
         isDeprecated: false,
       );
 
-      final model2 = EnumModel(
+      final model2 = EnumModel<String>(
         name: 'Status',
-        values: const {'banana', 'zebra', 'apple'},
+        values: {
+          const EnumEntry(value: 'banana'),
+          const EnumEntry(value: 'zebra'),
+          const EnumEntry(value: 'apple'),
+        },
         isNullable: false,
         context: context,
-        description: null,
         isDeprecated: false,
       );
 
@@ -249,24 +234,20 @@ void main() {
 
     test('generates stable key for nested composite models', () {
       final innerAllOf = AllOfModel(
-        name: null,
         models: {
           StringModel(context: context),
           IntegerModel(context: context),
         },
         context: context.push('inner'),
-        description: null,
         isDeprecated: false,
       );
 
       final outerAllOf = AllOfModel(
-        name: null,
         models: {
           innerAllOf,
           BooleanModel(context: context),
         },
         context: context.push('outer'),
-        description: null,
         isDeprecated: false,
       );
 
