@@ -101,15 +101,16 @@ void main() {
       });
 
       test('handles already encoded values when alreadyEncoded=true', () {
-        final result = {
-          'email': 'test%40example.com',
-          'name': 'John%20Doe',
-        }.toDeepObject(
-          'params',
-          explode: true,
-          allowEmpty: true,
-          alreadyEncoded: true,
-        );
+        final result =
+            {
+              'email': 'test%40example.com',
+              'name': 'John%20Doe',
+            }.toDeepObject(
+              'params',
+              explode: true,
+              allowEmpty: true,
+              alreadyEncoded: true,
+            );
 
         expect(result, hasLength(2));
         expect(
@@ -120,13 +121,14 @@ void main() {
       });
 
       test('double-encodes values when alreadyEncoded=false', () {
-        final result = {
-          'email': 'test%40example.com',
-        }.toDeepObject(
-          'params',
-          explode: true,
-          allowEmpty: true,
-        );
+        final result =
+            {
+              'email': 'test%40example.com',
+            }.toDeepObject(
+              'params',
+              explode: true,
+              allowEmpty: true,
+            );
 
         expect(result, [
           (name: 'params[email]', value: 'test%2540example.com'),

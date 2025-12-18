@@ -128,11 +128,10 @@ extension ConfigLoader on CliConfig {
     final stringValue = value.toString();
     return switch (stringValue) {
       'json' => ContentType.json,
-      _ =>
-        throw ConfigLoaderException(
-          'Invalid content type for "$key": $stringValue. '
-          'Must be one of: json',
-        ),
+      _ => throw ConfigLoaderException(
+        'Invalid content type for "$key": $stringValue. '
+        'Must be one of: json',
+      ),
     };
   }
 
@@ -212,11 +211,10 @@ extension ConfigLoader on CliConfig {
       'annotate' => DeprecatedHandling.annotate,
       'exclude' => DeprecatedHandling.exclude,
       'ignore' => DeprecatedHandling.ignore,
-      _ =>
-        throw ConfigLoaderException(
-          'Invalid deprecated handling value: $stringValue. '
-          'Must be one of: annotate, exclude, ignore',
-        ),
+      _ => throw ConfigLoaderException(
+        'Invalid deprecated handling value: $stringValue. '
+        'Must be one of: annotate, exclude, ignore',
+      ),
     };
   }
 
@@ -245,11 +243,10 @@ extension ConfigLoader on CliConfig {
       'info' => LogLevel.info,
       'warn' => LogLevel.warn,
       'silent' => LogLevel.silent,
-      _ =>
-        throw ConfigLoaderException(
-          'Invalid log level: $stringValue. '
-          'Must be one of: verbose, info, warn, silent',
-        ),
+      _ => throw ConfigLoaderException(
+        'Invalid log level: $stringValue. '
+        'Must be one of: verbose, info, warn, silent',
+      ),
     };
   }
 

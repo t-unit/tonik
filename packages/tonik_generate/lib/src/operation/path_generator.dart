@@ -30,18 +30,16 @@ class PathGenerator {
           .join(', ');
 
       return Method(
-        (b) =>
-            b
-              ..name = '_path'
-              ..returns = TypeReference(
-                (b) =>
-                    b
-                      ..symbol = 'List'
-                      ..url = 'dart:core'
-                      ..types.add(refer('String', 'dart:core')),
-              )
-              ..lambda = false
-              ..body = Code('return [$pathSegments];'),
+        (b) => b
+          ..name = '_path'
+          ..returns = TypeReference(
+            (b) => b
+              ..symbol = 'List'
+              ..url = 'dart:core'
+              ..types.add(refer('String', 'dart:core')),
+          )
+          ..lambda = false
+          ..body = Code('return [$pathSegments];'),
       );
     }
 
@@ -61,21 +59,21 @@ class PathGenerator {
 
       parameters.add(
         Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
+          (b) => b
+            ..name = paramName
+            ..type = parameterType
+            ..named = true
+            ..required = resolvedParam.isRequired,
         ),
       );
     }
 
     final pathPartExpressions = <Expression>[];
 
-    for (final pathComponent in operation.path
-        .splitAndKeep(RegExp(r'\{[^}]+\}'))
-        .where((pathComponent) => pathComponent.isNotEmpty)) {
+    for (final pathComponent
+        in operation.path
+            .splitAndKeep(RegExp(r'\{[^}]+\}'))
+            .where((pathComponent) => pathComponent.isNotEmpty)) {
       if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
         final segments = pathComponent
             .split('/')
@@ -154,19 +152,17 @@ class PathGenerator {
     body.add(listExpr.returned.statement);
 
     return Method(
-      (b) =>
-          b
-            ..name = '_path'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'List'
-                    ..url = 'dart:core'
-                    ..types.add(refer('String', 'dart:core')),
-            )
-            ..optionalParameters.addAll(parameters)
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = '_path'
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'List'
+            ..url = 'dart:core'
+            ..types.add(refer('String', 'dart:core')),
+        )
+        ..optionalParameters.addAll(parameters)
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 }

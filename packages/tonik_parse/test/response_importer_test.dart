@@ -349,13 +349,14 @@ void main() {
       openApiObject: openApiObject,
       modelImporter: modelImporter,
     );
-    final responseImporter = ResponseImporter(
-        openApiObject: openApiObject,
-        modelImporter: modelImporter,
-        headerImporter: headerImporter,
-      )
-      // Initialize the responses set
-      ..responses = {};
+    final responseImporter =
+        ResponseImporter(
+            openApiObject: openApiObject,
+            modelImporter: modelImporter,
+            headerImporter: headerImporter,
+          )
+          // Initialize the responses set
+          ..responses = {};
 
     // Import a single response
     final simpleResponse =
@@ -375,8 +376,9 @@ void main() {
   test('handles duplicate responses correctly', () {
     final api = Importer().import(fileContent);
 
-    final duplicateResponses =
-        api.responses.where((r) => r.name == 'DuplicateResponse').toList();
+    final duplicateResponses = api.responses
+        .where((r) => r.name == 'DuplicateResponse')
+        .toList();
 
     expect(duplicateResponses, hasLength(1));
 

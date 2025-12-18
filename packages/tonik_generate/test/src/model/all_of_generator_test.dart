@@ -13,10 +13,9 @@ void main() {
   late Context context;
   late DartEmitter emitter;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -1101,10 +1100,9 @@ void main() {
 
       expect(fieldNames, ['user', 'userModel']);
 
-      final paramNames =
-          combinedClass.constructors.first.optionalParameters
-              .map((p) => p.name)
-              .toList();
+      final paramNames = combinedClass.constructors.first.optionalParameters
+          .map((p) => p.name)
+          .toList();
       expect(paramNames, ['user', 'userModel']);
     });
 

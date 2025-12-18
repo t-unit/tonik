@@ -86,8 +86,8 @@ void main() {
 
         // Test negative timezone offset
         const negativeOffsetString = '2024-03-14T10:30:45-08:00';
-        final negativeOffsetResult =
-            negativeOffsetString.decodeSimpleDateTime();
+        final negativeOffsetResult = negativeOffsetString
+            .decodeSimpleDateTime();
         expect(negativeOffsetResult.year, 2024);
         expect(negativeOffsetResult.month, 3);
         expect(negativeOffsetResult.day, 14);

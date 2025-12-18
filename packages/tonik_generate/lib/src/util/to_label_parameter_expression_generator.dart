@@ -40,10 +40,9 @@ Expression buildLabelParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for label encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for label encoding: $model',
+    ),
   };
 }
 
@@ -72,32 +71,31 @@ Expression _buildListLabelExpression(
     EnumModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression
-        .property('map')
-        .call([
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body =
-                      refer('e').property('uriEncode').call([], {
-                        'allowEmpty': allowEmpty,
-                      }).code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toLabel')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalTrue,
-          },
-        ),
+    AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e').property('uriEncode').call([], {
+                  'allowEmpty': allowEmpty,
+                }).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
     AliasModel() => _buildListLabelExpression(
       valueExpression,
       contentModel.model,
@@ -111,9 +109,8 @@ Expression _buildListLabelExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported list content type for label encoding: $contentModel',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported list content type for label encoding: $contentModel',
+    ),
   };
 }

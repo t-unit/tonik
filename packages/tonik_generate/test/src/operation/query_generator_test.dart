@@ -14,10 +14,9 @@ void main() {
     late NameManager nameManager;
     late NameGenerator nameGenerator;
 
-    final format =
-        DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
 
     setUp(() {
       nameGenerator = NameGenerator();

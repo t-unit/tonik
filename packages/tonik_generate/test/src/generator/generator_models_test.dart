@@ -57,7 +57,10 @@ void main() {
           AllOfModel(
             isDeprecated: false,
             name: 'Many',
-            models: {StringModel(context: ctx), IntegerModel(context: ctx)},
+            models: {
+              StringModel(context: ctx),
+              IntegerModel(context: ctx),
+            },
             context: ctx,
           ),
           AliasModel(

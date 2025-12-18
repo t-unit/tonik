@@ -62,30 +62,30 @@ class NameManager {
     // Process models in order: root-level models first, then nested models
     // This prevents naming conflicts where nested models get processed
     // before root models
-    final sortedModels =
-        models.toList()..sort((a, b) {
-          // First, sort by context path length (shorter paths first)
-          final aPathLength = a.context.path.length;
-          final bPathLength = b.context.path.length;
-          if (aPathLength != bPathLength) {
-            return aPathLength.compareTo(bPathLength);
-          }
+    final sortedModels = models.toList()
+      ..sort((a, b) {
+        // First, sort by context path length (shorter paths first)
+        final aPathLength = a.context.path.length;
+        final bPathLength = b.context.path.length;
+        if (aPathLength != bPathLength) {
+          return aPathLength.compareTo(bPathLength);
+        }
 
-          // For models with the same path length, sort by name
-          final aName = a is NamedModel ? (a.name ?? '') : '';
-          final bName = b is NamedModel ? (b.name ?? '') : '';
-          final nameComp = aName.compareTo(bName);
-          if (nameComp != 0) return nameComp;
+        // For models with the same path length, sort by name
+        final aName = a is NamedModel ? (a.name ?? '') : '';
+        final bName = b is NamedModel ? (b.name ?? '') : '';
+        final nameComp = aName.compareTo(bName);
+        if (nameComp != 0) return nameComp;
 
-          // For models with same path length and name, sort by context string
-          final contextComp = a.context.toString().compareTo(
-            b.context.toString(),
-          );
-          if (contextComp != 0) return contextComp;
+        // For models with same path length and name, sort by context string
+        final contextComp = a.context.toString().compareTo(
+          b.context.toString(),
+        );
+        if (contextComp != 0) return contextComp;
 
-          // Finally, sort by stable model structure
-          return a.stableKey.compareTo(b.stableKey);
-        });
+        // Finally, sort by stable model structure
+        return a.stableKey.compareTo(b.stableKey);
+      });
 
     for (final model in sortedModels.where(
       (m) => m is NamedModel && m.name != null,
@@ -264,8 +264,9 @@ class NameManager {
   }
 
   void _logModelName(String name, Model model) {
-    final modelName =
-        model is NamedModel && model.name != null ? model.name : model.context;
+    final modelName = model is NamedModel && model.name != null
+        ? model.name
+        : model.context;
     log.fine('Name for model $modelName: $name');
   }
 

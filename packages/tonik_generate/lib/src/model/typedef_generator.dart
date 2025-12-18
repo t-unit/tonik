@@ -35,10 +35,9 @@ class TypedefGenerator {
     final baseType = typeReference(definition, nameManager, package);
 
     return TypeDef(
-      (b) =>
-          b
-            ..name = nameManager.modelName(model)
-            ..definition = baseType,
+      (b) => b
+        ..name = nameManager.modelName(model)
+        ..definition = baseType,
     );
   }
 

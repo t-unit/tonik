@@ -203,13 +203,12 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
   final cleaned = text.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s]'), '');
 
   // Split on separators and case boundaries
-  final tokens =
-      cleaned
-          .split(
-            RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
-          )
-          .where((token) => token.isNotEmpty)
-          .toList();
+  final tokens = cleaned
+      .split(
+        RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
+      )
+      .where((token) => token.isNotEmpty)
+      .toList();
 
   if (tokens.isEmpty) return '';
 
@@ -317,10 +316,9 @@ String normalizeEnumValueName(String value) {
   // Only spell out numbers if the entire value is just a number (no prefix)
   if (RegExp(r'^-?\d+$').hasMatch(value)) {
     final number = int.parse(value);
-    final words =
-        number < 0
-            ? 'minus ${_numberToWords(number.abs())}'
-            : _numberToWords(number);
+    final words = number < 0
+        ? 'minus ${_numberToWords(number.abs())}'
+        : _numberToWords(number);
     final normalized = normalizeSingle(words);
     return normalized.isEmpty ? defaultEnumPrefix : normalized.toCamelCase();
   }

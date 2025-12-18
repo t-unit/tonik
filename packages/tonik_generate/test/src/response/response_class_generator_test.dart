@@ -12,10 +12,9 @@ void main() {
   late ResponseGenerator generator;
   late Context testContext;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     emitter = DartEmitter(orderDirectives: true, useNullSafetySyntax: true);

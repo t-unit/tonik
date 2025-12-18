@@ -11,90 +11,77 @@ TypeReference typeReference(
 }) {
   return switch (model) {
     final ListModel m => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'List'
-            ..url = 'dart:core'
-            ..types.add(typeReference(m.content, nameManager, package))
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'List'
+        ..url = 'dart:core'
+        ..types.add(typeReference(m.content, nameManager, package))
+        ..isNullable = isNullableOverride,
     ),
     final NamedModel m => TypeReference(
-      (b) =>
-          b
-            ..symbol = nameManager.modelName(m)
-            ..url = package
-            ..isNullable =
-                isNullableOverride || ((m is EnumModel) && m.isNullable),
+      (b) => b
+        ..symbol = nameManager.modelName(m)
+        ..url = package
+        ..isNullable = isNullableOverride || ((m is EnumModel) && m.isNullable),
     ),
     StringModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'String'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'String'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     IntegerModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'int'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'int'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     DoubleModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'double'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'double'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     NumberModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'num'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'num'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     BooleanModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'bool'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'bool'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     DateTimeModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'DateTime'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'DateTime'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     DateModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'Date'
-            ..url = 'package:tonik_util/tonik_util.dart'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'Date'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..isNullable = isNullableOverride,
     ),
     DecimalModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'BigDecimal'
-            ..url = 'package:big_decimal/big_decimal.dart'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'BigDecimal'
+        ..url = 'package:big_decimal/big_decimal.dart'
+        ..isNullable = isNullableOverride,
     ),
     UriModel _ => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'Uri'
-            ..url = 'dart:core'
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = 'Uri'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
     ),
     final CompositeModel m => TypeReference(
-      (b) =>
-          b
-            ..symbol = nameManager.modelName(m)
-            ..url = package
-            ..isNullable = isNullableOverride,
+      (b) => b
+        ..symbol = nameManager.modelName(m)
+        ..url = package
+        ..isNullable = isNullableOverride,
     ),
   };
 }
@@ -104,46 +91,40 @@ TypeReference typeReference(
 /// This can be used with Code.scope to create properly
 /// qualified type references in generated code.
 TypeReference buildMapStringObjectType() => TypeReference(
-  (b) =>
-      b
-        ..symbol = 'Map'
-        ..url = 'dart:core'
-        ..types.addAll([
-          TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core',
-          ),
-          TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'Object?'
-                  ..url = 'dart:core',
-          ),
-        ]),
+  (b) => b
+    ..symbol = 'Map'
+    ..url = 'dart:core'
+    ..types.addAll([
+      TypeReference(
+        (b) => b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+      ),
+      TypeReference(
+        (b) => b
+          ..symbol = 'Object?'
+          ..url = 'dart:core',
+      ),
+    ]),
 );
 
 /// Returns a TypeReference for [Map<String, String>].
 TypeReference buildMapStringStringType() => TypeReference(
-  (b) =>
-      b
-        ..symbol = 'Map'
-        ..url = 'dart:core'
-        ..types.addAll([
-          TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core',
-          ),
-          TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core',
-          ),
-        ]),
+  (b) => b
+    ..symbol = 'Map'
+    ..url = 'dart:core'
+    ..types.addAll([
+      TypeReference(
+        (b) => b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+      ),
+      TypeReference(
+        (b) => b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+      ),
+    ]),
 );
 
 /// Returns a Parameter for a boolean named parameter with default value.
@@ -152,13 +133,12 @@ Parameter buildBoolParameter(
   bool defaultValue = false,
   bool required = false,
 }) => Parameter(
-  (b) =>
-      b
-        ..name = name
-        ..type = refer('bool', 'dart:core')
-        ..named = true
-        ..required = required
-        ..defaultTo = required ? null : literalBool(defaultValue).code,
+  (b) => b
+    ..name = name
+    ..type = refer('bool', 'dart:core')
+    ..named = true
+    ..required = required
+    ..defaultTo = required ? null : literalBool(defaultValue).code,
 );
 
 /// Returns a Parameter for a String named parameter with default value.
@@ -167,16 +147,14 @@ Parameter buildStringParameter(
   String? defaultValue,
   bool required = false,
 }) => Parameter(
-  (b) =>
-      b
-        ..name = name
-        ..type = refer('String', 'dart:core')
-        ..named = true
-        ..required = required
-        ..defaultTo =
-            required || defaultValue == null
-                ? null
-                : literalString(defaultValue).code,
+  (b) => b
+    ..name = name
+    ..type = refer('String', 'dart:core')
+    ..named = true
+    ..required = required
+    ..defaultTo = required || defaultValue == null
+        ? null
+        : literalString(defaultValue).code,
 );
 
 /// Returns a list of common encoding parameters (explode and allowEmpty).
@@ -192,16 +170,14 @@ List<Parameter> buildEncodingParameters() => [
 LiteralMapExpression buildEmptyMapStringString() => literalMap(
   {},
   TypeReference(
-    (b) =>
-        b
-          ..symbol = 'String'
-          ..url = 'dart:core',
+    (b) => b
+      ..symbol = 'String'
+      ..url = 'dart:core',
   ),
   TypeReference(
-    (b) =>
-        b
-          ..symbol = 'String'
-          ..url = 'dart:core',
+    (b) => b
+      ..symbol = 'String'
+      ..url = 'dart:core',
   ),
 );
 
@@ -209,15 +185,13 @@ LiteralMapExpression buildEmptyMapStringString() => literalMap(
 LiteralMapExpression buildEmptyMapStringObject() => literalMap(
   {},
   TypeReference(
-    (b) =>
-        b
-          ..symbol = 'String'
-          ..url = 'dart:core',
+    (b) => b
+      ..symbol = 'String'
+      ..url = 'dart:core',
   ),
   TypeReference(
-    (b) =>
-        b
-          ..symbol = 'Object?'
-          ..url = 'dart:core',
+    (b) => b
+      ..symbol = 'Object?'
+      ..url = 'dart:core',
   ),
 );

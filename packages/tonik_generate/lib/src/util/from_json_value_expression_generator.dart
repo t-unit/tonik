@@ -126,21 +126,18 @@ Expression _buildListFromJsonExpression(
 
   switch (unwrappedContent) {
     case final ListModel nestedList:
-      final mapFunction =
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                  ..body =
-                      _buildListFromJsonExpression(
-                        'e',
-                        nestedList,
-                        nameManager,
-                        package: package,
-                        contextClass: contextClass,
-                        contextProperty: contextProperty,
-                      ).code,
-          ).closure;
+      final mapFunction = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = _buildListFromJsonExpression(
+            'e',
+            nestedList,
+            nameManager,
+            package: package,
+            contextClass: contextClass,
+            contextProperty: contextProperty,
+          ).code,
+      ).closure;
       final listExpr = refer(value).property(listDecoder).call(
         [],
         contextParam,
@@ -148,15 +145,15 @@ Expression _buildListFromJsonExpression(
       );
       return isNullable
           ? listExpr
-              .nullSafeProperty('map')
-              .call([mapFunction])
-              .property('toList')
-              .call([])
+                .nullSafeProperty('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([])
           : listExpr
-              .property('map')
-              .call([mapFunction])
-              .property('toList')
-              .call([]);
+                .property('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([]);
 
     case ClassModel() ||
         AllOfModel() ||
@@ -173,29 +170,26 @@ Expression _buildListFromJsonExpression(
       );
       return isNullable
           ? listExpr
-              .nullSafeProperty('map')
-              .call([mapFunction])
-              .property('toList')
-              .call([])
+                .nullSafeProperty('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([])
           : listExpr
-              .property('map')
-              .call([mapFunction])
-              .property('toList')
-              .call([]);
+                .property('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([]);
 
     case DateTimeModel() || DateModel() || DecimalModel():
       final jsonType = _jsonTypeForPrimitive(unwrappedContent);
       final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
-      final mapFunction =
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                  ..body =
-                      refer(
-                        'e',
-                      ).property(decodeMethod).call([], contextParam).code,
-          ).closure;
+      final mapFunction = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = refer(
+            'e',
+          ).property(decodeMethod).call([], contextParam).code,
+      ).closure;
       final listExpr = refer(value).property(listDecoder).call(
         [],
         contextParam,
@@ -203,15 +197,15 @@ Expression _buildListFromJsonExpression(
       );
       return isNullable
           ? listExpr
-              .nullSafeProperty('map')
-              .call([mapFunction])
-              .property('toList')
-              .call([])
+                .nullSafeProperty('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([])
           : listExpr
-              .property('map')
-              .call([mapFunction])
-              .property('toList')
-              .call([]);
+                .property('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([]);
 
     default:
       final typeArg = typeReference(content, nameManager, package ?? '');

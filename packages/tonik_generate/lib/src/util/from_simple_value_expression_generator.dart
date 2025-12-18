@@ -60,17 +60,16 @@ Expression buildSimpleValueExpression(
   String? contextClass,
   String? contextProperty,
 }) {
-  final contextParam =
-      (contextClass != null || contextProperty != null)
-          ? {
-            'context': literalString(
-              (contextClass != null && contextProperty != null)
-                  ? '$contextClass.$contextProperty'
-                  : contextClass ?? contextProperty!,
-              raw: true,
-            ),
-          }
-          : <String, Expression>{};
+  final contextParam = (contextClass != null || contextProperty != null)
+      ? {
+          'context': literalString(
+            (contextClass != null && contextProperty != null)
+                ? '$contextClass.$contextProperty'
+                : contextClass ?? contextProperty!,
+            raw: true,
+          ),
+        }
+      : <String, Expression>{};
 
   return switch (model) {
     StringModel() =>
@@ -93,8 +92,8 @@ Expression buildSimpleValueExpression(
       isRequired
           ? value.property('decodeSimpleBigDecimal').call([], contextParam)
           : value
-              .property('decodeSimpleNullableBigDecimal')
-              .call([], contextParam),
+                .property('decodeSimpleNullableBigDecimal')
+                .call([], contextParam),
     BooleanModel() =>
       isRequired
           ? value.property('decodeSimpleBool').call([], contextParam)
@@ -103,8 +102,8 @@ Expression buildSimpleValueExpression(
       isRequired
           ? value.property('decodeSimpleDateTime').call([], contextParam)
           : value
-              .property('decodeSimpleNullableDateTime')
-              .call([], contextParam),
+                .property('decodeSimpleNullableDateTime')
+                .call([], contextParam),
     DateModel() =>
       isRequired
           ? value.property('decodeSimpleDate').call([], contextParam)
@@ -168,14 +167,14 @@ Expression _buildFromSimpleExpression(
   return isRequired
       ? refer(name, package).property('fromSimple').call([value], explodeParam)
       : value
-          .equalTo(literalNull)
-          .conditional(
-            literalNull,
-            refer(
-              name,
-              package,
-            ).property('fromSimple').call([value.nullChecked], explodeParam),
-          );
+            .equalTo(literalNull)
+            .conditional(
+              literalNull,
+              refer(
+                name,
+                package,
+              ).property('fromSimple').call([value.nullChecked], explodeParam),
+            );
 }
 
 Expression _buildListDecode(
@@ -203,17 +202,16 @@ Expression _buildListFromSimpleExpression(
   String? contextProperty,
 }) {
   final content = model.content;
-  final contextParam =
-      (contextClass != null || contextProperty != null)
-          ? {
-            'context': literalString(
-              (contextClass != null && contextProperty != null)
-                  ? '$contextClass.$contextProperty'
-                  : contextClass ?? contextProperty!,
-              raw: true,
-            ),
-          }
-          : <String, Expression>{};
+  final contextParam = (contextClass != null || contextProperty != null)
+      ? {
+          'context': literalString(
+            (contextClass != null && contextProperty != null)
+                ? '$contextClass.$contextProperty'
+                : contextClass ?? contextProperty!,
+            raw: true,
+          ),
+        }
+      : <String, Expression>{};
 
   final listDecode = _buildListDecode(
     value,
@@ -271,10 +269,9 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       contextParam: contextParam,
     ),
-    ClassModel() =>
-      throw UnimplementedError(
-        'ClassModel is not supported in lists for simple encoding',
-      ),
+    ClassModel() => throw UnimplementedError(
+      'ClassModel is not supported in lists for simple encoding',
+    ),
     EnumModel() ||
     OneOfModel() ||
     AllOfModel() ||
@@ -288,10 +285,9 @@ Expression _buildListFromSimpleExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    ListModel() =>
-      throw UnimplementedError(
-        'Nested lists are not supported in simple encoding',
-      ),
+    ListModel() => throw UnimplementedError(
+      'Nested lists are not supported in simple encoding',
+    ),
     AliasModel() => _buildListFromSimpleExpression(
       value,
       ListModel(content: content.model, context: model.context),
@@ -313,14 +309,11 @@ Expression _buildPrimitiveList(
   bool isRequired, {
   Map<String, Expression> contextParam = const {},
 }) {
-  final mapFunction =
-      Method(
-        (b) =>
-            b
-              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body =
-                  refer('e').property(decodeMethod).call([], contextParam).code,
-      ).closure;
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body = refer('e').property(decodeMethod).call([], contextParam).code,
+  ).closure;
 
   if (isRequired) {
     return listDecode
@@ -351,19 +344,17 @@ Expression _buildClassList(
   final className = nameManager.modelName(content);
   final explodeParam = {'explode': explode};
 
-  final mapFunction =
-      Method(
-        (b) =>
-            b
-              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body =
-                  refer(
-                    className,
-                    package,
-                  ).property('fromSimple').call([
-                    refer('e'),
-                  ], explodeParam).code,
-      ).closure;
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body =
+          refer(
+            className,
+            package,
+          ).property('fromSimple').call([
+            refer('e'),
+          ], explodeParam).code,
+  ).closure;
 
   if (isRequired) {
     return listDecode

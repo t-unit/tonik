@@ -21,17 +21,15 @@ class FilterApplier {
     var filtered = operations;
 
     if (includeTags.isNotEmpty) {
-      filtered =
-          filtered.where((operation) {
-            return operation.tags.any((tag) => includeTags.contains(tag.name));
-          }).toSet();
+      filtered = filtered.where((operation) {
+        return operation.tags.any((tag) => includeTags.contains(tag.name));
+      }).toSet();
     }
 
     if (excludeTags.isNotEmpty) {
-      filtered =
-          filtered.where((operation) {
-            return !operation.tags.any((tag) => excludeTags.contains(tag.name));
-          }).toSet();
+      filtered = filtered.where((operation) {
+        return !operation.tags.any((tag) => excludeTags.contains(tag.name));
+      }).toSet();
     }
 
     return filtered;

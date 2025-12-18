@@ -54,11 +54,10 @@ class ResponseWrapperGenerator {
     );
 
     final baseClass = Class(
-      (b) =>
-          b
-            ..name = baseName
-            ..sealed = true
-            ..constructors.add(Constructor((b) => b..constant = true)),
+      (b) => b
+        ..name = baseName
+        ..sealed = true
+        ..constructors.add(Constructor((b) => b..constant = true)),
     );
 
     final classes = <Class>[baseClass];
@@ -72,30 +71,28 @@ class ResponseWrapperGenerator {
       if (response != null && response.bodyCount == 1 && !response.hasHeaders) {
         final body = response.resolved.bodies.first;
         bodyField = Field(
-          (b) =>
-              b
-                ..name = 'body'
-                ..modifier = FieldModifier.final$
-                ..type = typeReference(body.model, nameManager, package),
+          (b) => b
+            ..name = 'body'
+            ..modifier = FieldModifier.final$
+            ..type = typeReference(body.model, nameManager, package),
         );
       } else if (response != null &&
           (response.bodyCount > 1 || response.hasHeaders)) {
-        final responseClassName =
-            nameManager.responseNames(response.resolved).baseName;
+        final responseClassName = nameManager
+            .responseNames(response.resolved)
+            .baseName;
 
         bodyField = Field(
-          (b) =>
-              b
-                ..name = 'body'
-                ..modifier = FieldModifier.final$
-                ..type = refer(responseClassName, package),
+          (b) => b
+            ..name = 'body'
+            ..modifier = FieldModifier.final$
+            ..type = refer(responseClassName, package),
         );
       }
 
-      final properties =
-          bodyField == null
-              ? <({String normalizedName, bool hasCollectionValue})>[]
-              : [(normalizedName: bodyField.name, hasCollectionValue: false)];
+      final properties = bodyField == null
+          ? <({String normalizedName, bool hasCollectionValue})>[]
+          : [(normalizedName: bodyField.name, hasCollectionValue: false)];
 
       final equalsMethod = generateEqualsMethod(
         className: subclassName,
@@ -106,30 +103,28 @@ class ResponseWrapperGenerator {
 
       classes.add(
         Class(
-          (b) =>
-              b
-                ..name = subclassName
-                ..extend = refer(baseName)
-                ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-                ..fields.addAll(bodyField == null ? [] : [bodyField])
-                ..methods.addAll([equalsMethod, hashCodeMethod])
-                ..constructors.add(
-                  Constructor((cb) {
-                    cb.constant = true;
-                    if (bodyField != null) {
-                      cb.optionalParameters.add(
-                        Parameter(
-                          (pb) =>
-                              pb
-                                ..name = bodyField!.name
-                                ..named = true
-                                ..required = true
-                                ..toThis = true,
-                        ),
-                      );
-                    }
-                  }),
-                ),
+          (b) => b
+            ..name = subclassName
+            ..extend = refer(baseName)
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+            ..fields.addAll(bodyField == null ? [] : [bodyField])
+            ..methods.addAll([equalsMethod, hashCodeMethod])
+            ..constructors.add(
+              Constructor((cb) {
+                cb.constant = true;
+                if (bodyField != null) {
+                  cb.optionalParameters.add(
+                    Parameter(
+                      (pb) => pb
+                        ..name = bodyField!.name
+                        ..named = true
+                        ..required = true
+                        ..toThis = true,
+                    ),
+                  );
+                }
+              }),
+            ),
         ),
       );
     }

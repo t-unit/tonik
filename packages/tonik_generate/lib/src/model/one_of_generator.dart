@@ -123,37 +123,34 @@ class OneOfGenerator {
             _generateToDeepObjectMethod(),
             _generateUriEncodeMethod(className, model, variantNames),
             Method(
-              (b) =>
-                  b
-                    ..name = 'toJson'
-                    ..returns = refer('Object?', 'dart:core')
-                    ..body = _generateToJsonBody(
-                      className,
-                      model,
-                      variantNames,
-                    )
-                    ..lambda = false,
+              (b) => b
+                ..name = 'toJson'
+                ..returns = refer('Object?', 'dart:core')
+                ..body = _generateToJsonBody(
+                  className,
+                  model,
+                  variantNames,
+                )
+                ..lambda = false,
             ),
           ])
           ..constructors.add(
             Constructor(
-              (b) =>
-                  b
-                    ..factory = true
-                    ..name = 'fromJson'
-                    ..requiredParameters.add(
-                      Parameter(
-                        (p) =>
-                            p
-                              ..name = 'json'
-                              ..type = refer('Object?', 'dart:core'),
-                      ),
-                    )
-                    ..body = _generateFromJsonBody(
-                      className,
-                      model,
-                      variantNames,
-                    ),
+              (b) => b
+                ..factory = true
+                ..name = 'fromJson'
+                ..requiredParameters.add(
+                  Parameter(
+                    (p) => p
+                      ..name = 'json'
+                      ..type = refer('Object?', 'dart:core'),
+                  ),
+                )
+                ..body = _generateFromJsonBody(
+                  className,
+                  model,
+                  variantNames,
+                ),
             ),
           );
       },
@@ -180,42 +177,39 @@ class OneOfGenerator {
 
       classes.add(
         Class(
-          (b) =>
-              b
-                ..name = variantName
-                ..extend = refer(parentClassName)
-                ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-                ..fields.add(
-                  Field(
-                    (b) =>
-                        b
-                          ..name = 'value'
-                          ..modifier = FieldModifier.final$
-                          ..type = typeRef,
+          (b) => b
+            ..name = variantName
+            ..extend = refer(parentClassName)
+            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+            ..fields.add(
+              Field(
+                (b) => b
+                  ..name = 'value'
+                  ..modifier = FieldModifier.final$
+                  ..type = typeRef,
+              ),
+            )
+            ..constructors.add(
+              Constructor(
+                (b) => b
+                  ..constant = true
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'this.value'),
                   ),
-                )
-                ..constructors.add(
-                  Constructor(
-                    (b) =>
-                        b
-                          ..constant = true
-                          ..requiredParameters.add(
-                            Parameter((b) => b..name = 'this.value'),
-                          ),
+              ),
+            )
+            ..methods.addAll([
+              generateEqualsMethod(
+                className: variantName,
+                properties: [
+                  (
+                    normalizedName: 'value',
+                    hasCollectionValue: hasCollectionValue,
                   ),
-                )
-                ..methods.addAll([
-                  generateEqualsMethod(
-                    className: variantName,
-                    properties: [
-                      (
-                        normalizedName: 'value',
-                        hasCollectionValue: hasCollectionValue,
-                      ),
-                    ],
-                  ),
-                  _buildHashCodeMethod(hasCollectionValue),
-                ]),
+                ],
+              ),
+              _buildHashCodeMethod(hasCollectionValue),
+            ]),
         ),
       );
     }
@@ -243,8 +237,8 @@ class OneOfGenerator {
           final jsonValue = buildToJsonPropertyExpression('value', property);
           final discriminatorValue =
               discriminatedModel.discriminatorValue != null
-                  ? "'${discriminatedModel.discriminatorValue}'"
-                  : 'null';
+              ? "'${discriminatedModel.discriminatorValue}'"
+              : 'null';
 
           return '$variantName(:final value) => '
               '($jsonValue, $discriminatorValue)';
@@ -333,8 +327,9 @@ class OneOfGenerator {
     }
 
     final hasPrimitives = model.models.any((m) => m.model is PrimitiveModel);
-    final hasOnlyPrimitives =
-        !model.models.any((m) => m.model is! PrimitiveModel);
+    final hasOnlyPrimitives = !model.models.any(
+      (m) => m.model is! PrimitiveModel,
+    );
 
     if (hasPrimitives && hasOnlyPrimitives) {
       final cases = <Code>[];
@@ -493,15 +488,16 @@ class OneOfGenerator {
           refer(variantName).call([decodeExpr]).returned.statement,
         );
       } else {
-        final innerFromSimple = refer(
-              nameManager.modelName(modelType),
-              package,
-            )
-            .property('fromSimple')
-            .call(
-              [refer('value')],
-              {'explode': refer('explode')},
-            );
+        final innerFromSimple =
+            refer(
+                  nameManager.modelName(modelType),
+                  package,
+                )
+                .property('fromSimple')
+                .call(
+                  [refer('value')],
+                  {'explode': refer('explode')},
+                );
         tryBody.add(
           refer(variantName).call([innerFromSimple]).returned.statement,
         );
@@ -525,22 +521,20 @@ class OneOfGenerator {
     );
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromSimple'
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'value'
-                      ..type = refer('String?', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.add(
-              buildBoolParameter('explode', required: true),
-            )
-            ..body = Block.of(bodyBlocks),
+      (b) => b
+        ..factory = true
+        ..name = 'fromSimple'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..body = Block.of(bodyBlocks),
     );
   }
 
@@ -623,12 +617,13 @@ class OneOfGenerator {
         );
         tryBody.add(refer(variantName).call([decodeExpr]).returned.statement);
       } else {
-        final innerFromForm = refer(
-              nameManager.modelName(modelType),
-              package,
-            )
-            .property('fromForm')
-            .call([refer('value')], {'explode': refer('explode')});
+        final innerFromForm =
+            refer(
+                  nameManager.modelName(modelType),
+                  package,
+                )
+                .property('fromForm')
+                .call([refer('value')], {'explode': refer('explode')});
         tryBody.add(
           refer(variantName).call([innerFromForm]).returned.statement,
         );
@@ -652,22 +647,20 @@ class OneOfGenerator {
     );
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromForm'
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'value'
-                      ..type = refer('String?', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.add(
-              buildBoolParameter('explode', required: true),
-            )
-            ..body = Block.of(bodyBlocks),
+      (b) => b
+        ..factory = true
+        ..name = 'fromForm'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..body = Block.of(bodyBlocks),
     );
   }
 
@@ -754,13 +747,12 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toSimple'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'toSimple'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = body,
     );
   }
 
@@ -844,13 +836,12 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toForm'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'toForm'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = body,
     );
   }
 
@@ -896,16 +887,15 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'currentEncodingShape'
-            ..type = MethodType.getter
-            ..returns = refer(
-              'EncodingShape',
-              'package:tonik_util/tonik_util.dart',
-            )
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = refer(
+          'EncodingShape',
+          'package:tonik_util/tonik_util.dart',
+        )
+        ..lambda = false
+        ..body = body,
     );
   }
 
@@ -914,24 +904,23 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    final hasOnlyPrimitives =
-        !model.models.any((m) => m.model is! PrimitiveModel);
+    final hasOnlyPrimitives = !model.models.any(
+      (m) => m.model is! PrimitiveModel,
+    );
 
     if (hasOnlyPrimitives) {
       return Method(
-        (b) =>
-            b
-              ..name = 'parameterProperties'
-              ..returns = buildMapStringStringType()
-              ..optionalParameters.addAll([
-                buildBoolParameter('allowEmpty', defaultValue: true),
-                buildBoolParameter('allowLists', defaultValue: true),
-              ])
-              ..body =
-                  generateEncodingExceptionExpression(
-                    'parameterProperties not supported for $className: '
-                    'only contains primitive types',
-                  ).code,
+        (b) => b
+          ..name = 'parameterProperties'
+          ..returns = buildMapStringStringType()
+          ..optionalParameters.addAll([
+            buildBoolParameter('allowEmpty', defaultValue: true),
+            buildBoolParameter('allowLists', defaultValue: true),
+          ])
+          ..body = generateEncodingExceptionExpression(
+            'parameterProperties not supported for $className: '
+            'only contains primitive types',
+          ).code,
       );
     }
 
@@ -1027,16 +1016,15 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'parameterProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.addAll([
-              buildBoolParameter('allowEmpty', defaultValue: true),
-              buildBoolParameter('allowLists', defaultValue: true),
-            ])
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll([
+          buildBoolParameter('allowEmpty', defaultValue: true),
+          buildBoolParameter('allowLists', defaultValue: true),
+        ])
+        ..lambda = false
+        ..body = body,
     );
   }
 
@@ -1122,13 +1110,12 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toLabel'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'toLabel'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = body,
     );
   }
 
@@ -1164,68 +1151,63 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toMatrix'
-            ..returns = refer('String', 'dart:core')
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'paramName'
-                      ..type = refer('String', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'toMatrix'
+        ..returns = refer('String', 'dart:core')
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = body,
     );
   }
 
   Method _generateToDeepObjectMethod() {
     return Method(
-      (b) =>
-          b
-            ..name = 'toDeepObject'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'List'
-                    ..url = 'dart:core'
-                    ..types.add(
-                      refer(
-                        'ParameterEntry',
-                        'package:tonik_util/tonik_util.dart',
-                      ),
-                    ),
-            )
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'paramName'
-                      ..type = refer('String', 'dart:core'),
+      (b) => b
+        ..name = 'toDeepObject'
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'List'
+            ..url = 'dart:core'
+            ..types.add(
+              refer(
+                'ParameterEntry',
+                'package:tonik_util/tonik_util.dart',
               ),
-            )
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = Block.of([
-              refer('parameterProperties')
-                  .call([], {
-                    'allowEmpty': refer('allowEmpty'),
-                    'allowLists': literalBool(false),
-                  })
-                  .property('toDeepObject')
-                  .call(
-                    [refer('paramName')],
-                    {
-                      'explode': refer('explode'),
-                      'allowEmpty': refer('allowEmpty'),
-                      'alreadyEncoded': literalBool(true),
-                    },
-                  )
-                  .returned
-                  .statement,
-            ]),
+            ),
+        )
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..body = Block.of([
+          refer('parameterProperties')
+              .call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'allowLists': literalBool(false),
+              })
+              .property('toDeepObject')
+              .call(
+                [refer('paramName')],
+                {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                  'alreadyEncoded': literalBool(true),
+                },
+              )
+              .returned
+              .statement,
+        ]),
     );
   }
 
@@ -1273,22 +1255,20 @@ class OneOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'uriEncode'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            )
-            ..lambda = false
-            ..body = body,
+      (b) => b
+        ..name = 'uriEncode'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'allowEmpty'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = true,
+          ),
+        )
+        ..lambda = false
+        ..body = body,
     );
   }
 }

@@ -67,8 +67,9 @@ class Importer {
       contact: ContactImporter(openApiObject: openApiObject).import(),
       license: LicenseImporter(openApiObject: openApiObject).import(),
       termsOfService: openApiObject.info.termsOfService,
-      externalDocs:
-          ExternalDocumentationImporter(openApiObject: openApiObject).import(),
+      externalDocs: ExternalDocumentationImporter(
+        openApiObject: openApiObject,
+      ).import(),
       models: modelImporter.models,
       responseHeaders: responseHeaderImporter.headers,
       servers: ServerImporter(openApiObject: openApiObject).import(),

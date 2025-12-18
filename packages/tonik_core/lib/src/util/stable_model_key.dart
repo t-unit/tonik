@@ -37,27 +37,26 @@ extension StableModelKey on Model {
       DateTimeModel() => 'DateTimeModel',
       DecimalModel() => 'DecimalModel',
       UriModel() => 'UriModel',
-      _ =>
-        throw UnimplementedError(
-          'stableKey not implemented for $runtimeType',
-        ),
+      _ => throw UnimplementedError(
+        'stableKey not implemented for $runtimeType',
+      ),
     };
   }
 }
 
 String _stableSortedModels(Set<Model> models) {
-  final sorted =
-      models.toList()..sort((a, b) => a.stableKey.compareTo(b.stableKey));
+  final sorted = models.toList()
+    ..sort((a, b) => a.stableKey.compareTo(b.stableKey));
   return sorted.map((m) => m.stableKey).join(',');
 }
 
 String _stableSortedDiscriminatedModels(Set<DiscriminatedModel> models) {
-  final sorted =
-      models.toList()..sort((a, b) {
-        final aKey = '${a.discriminatorValue}:${a.model.stableKey}';
-        final bKey = '${b.discriminatorValue}:${b.model.stableKey}';
-        return aKey.compareTo(bKey);
-      });
+  final sorted = models.toList()
+    ..sort((a, b) {
+      final aKey = '${a.discriminatorValue}:${a.model.stableKey}';
+      final bKey = '${b.discriminatorValue}:${b.model.stableKey}';
+      return aKey.compareTo(bKey);
+    });
   return sorted
       .map((dm) => '${dm.discriminatorValue}:${dm.model.stableKey}')
       .join(',');
@@ -65,9 +64,8 @@ String _stableSortedDiscriminatedModels(Set<DiscriminatedModel> models) {
 
 /// Creates a stable sorted string representation of enum values.
 String _stableSortedEnumValues<T>(Set<EnumEntry<T>> values) {
-  final sorted =
-      values.toList()
-        ..sort((a, b) => a.value.toString().compareTo(b.value.toString()));
+  final sorted = values.toList()
+    ..sort((a, b) => a.value.toString().compareTo(b.value.toString()));
   return sorted.map((v) => v.value.toString()).join(',');
 }
 

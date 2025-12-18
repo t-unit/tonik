@@ -16,12 +16,11 @@ class ParseGenerator {
   /// Generates the _parseResponse method for the operation.
   Method generateParseResponseMethod(Operation operation) {
     final responses = operation.responses;
-    final responseType =
-        resultTypeForOperation(
-          operation,
-          nameManager,
-          package,
-        ).types.first;
+    final responseType = resultTypeForOperation(
+      operation,
+      nameManager,
+      package,
+    ).types.first;
     final cases = <Code>[];
 
     // Check if we have a default response with null content type
@@ -81,26 +80,23 @@ class ParseGenerator {
     final switchBody = Block.of(switchCases);
 
     return Method(
-      (b) =>
-          b
-            ..name = '_parseResponse'
-            ..returns = responseType
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'response'
-                      ..type = TypeReference(
-                        (b) =>
-                            b
-                              ..symbol = 'Response'
-                              ..url = 'package:dio/dio.dart'
-                              ..types.add(refer('Object?', 'dart:core')),
-                      ),
+      (b) => b
+        ..name = '_parseResponse'
+        ..returns = responseType
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'response'
+              ..type = TypeReference(
+                (b) => b
+                  ..symbol = 'Response'
+                  ..url = 'package:dio/dio.dart'
+                  ..types.add(refer('Object?', 'dart:core')),
               ),
-            )
-            ..lambda = false
-            ..body = switchBody,
+          ),
+        )
+        ..lambda = false
+        ..body = switchBody,
     );
   }
 
@@ -142,15 +138,14 @@ class ParseGenerator {
     final hasBody = response.bodyCount > 0;
     if (!hasBody) return null;
 
-    final bodyModel =
-        contentType != null
-            ? response.bodies
-                .firstWhere(
-                  (body) => body.rawContentType == contentType,
-                  orElse: () => response.bodies.first,
-                )
-                .model
-            : response.bodies.firstOrNull?.model;
+    final bodyModel = contentType != null
+        ? response.bodies
+              .firstWhere(
+                (body) => body.rawContentType == contentType,
+                orElse: () => response.bodies.first,
+              )
+              .model
+        : response.bodies.firstOrNull?.model;
 
     if (bodyModel == null) return null;
 
@@ -226,8 +221,8 @@ class ParseGenerator {
       'body': refer(
         contentType != null && response.bodyCount > 1
             ? nameManager
-                .responseNames(response)
-                .implementationNames[contentType]!
+                  .responseNames(response)
+                  .implementationNames[contentType]!
             : nameManager.responseNames(response).baseName,
         package,
       ).call([], responseArgs),
@@ -271,8 +266,8 @@ class ParseGenerator {
       refer(
         contentType != null && response.bodyCount > 1
             ? nameManager
-                .responseNames(response)
-                .implementationNames[contentType]!
+                  .responseNames(response)
+                  .implementationNames[contentType]!
             : nameManager.responseNames(response).baseName,
         package,
       ).call([], args).statement,
@@ -301,10 +296,9 @@ class ParseGenerator {
     );
 
     for (final norm in normalizedHeaders) {
-      final rawHeaderName =
-          response.headers.entries
-              .firstWhere((entry) => entry.value == norm.header)
-              .key;
+      final rawHeaderName = response.headers.entries
+          .firstWhere((entry) => entry.value == norm.header)
+          .key;
 
       final normalizedName = norm.normalizedName;
       final unsupportedReason = getSimpleDecodingUnsupportedReason(

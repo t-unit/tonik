@@ -13,10 +13,9 @@ void main() {
     late NameGenerator nameGenerator;
     late Context context;
     late DartEmitter emitter;
-    final format =
-        DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
 
     setUp(() {
       nameGenerator = NameGenerator();
@@ -398,20 +397,19 @@ void main() {
         final constructor = result.constructors.first;
 
         // Get the required and optional parameters
-        final requiredParams =
-            constructor.optionalParameters
-                .where((p) => p.required)
-                .map((p) => p.name)
-                .toList();
-        final optionalParams =
-            constructor.optionalParameters
-                .where((p) => !p.required)
-                .map((p) => p.name)
-                .toList();
+        final requiredParams = constructor.optionalParameters
+            .where((p) => p.required)
+            .map((p) => p.name)
+            .toList();
+        final optionalParams = constructor.optionalParameters
+            .where((p) => !p.required)
+            .map((p) => p.name)
+            .toList();
 
         // Verify all required parameters come before optional ones
-        final allParams =
-            constructor.optionalParameters.map((p) => p.name).toList();
+        final allParams = constructor.optionalParameters
+            .map((p) => p.name)
+            .toList();
         final requiredIndices = requiredParams.map(allParams.indexOf);
         final optionalIndices = optionalParams.map(allParams.indexOf);
 

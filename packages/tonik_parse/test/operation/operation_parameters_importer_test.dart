@@ -79,8 +79,9 @@ void main() {
   test('imports path parameters from both path and operation level', () {
     final api = Importer().import(fileContent);
 
-    final pathParams =
-        api.pathParameters.whereType<PathParameterObject>().toList();
+    final pathParams = api.pathParameters
+        .whereType<PathParameterObject>()
+        .toList();
     expect(pathParams, hasLength(2));
 
     final userIdParam = pathParams.firstWhereOrNull(
@@ -99,8 +100,9 @@ void main() {
   test('imports query parameters from both path and operation level', () {
     final api = Importer().import(fileContent);
 
-    final queryParams =
-        api.queryParameters.whereType<QueryParameterObject>().toList();
+    final queryParams = api.queryParameters
+        .whereType<QueryParameterObject>()
+        .toList();
     expect(queryParams, hasLength(2));
 
     final includeDeletedParam = queryParams.firstWhereOrNull(
@@ -122,8 +124,9 @@ void main() {
   test('imports header parameters from both path and operation level', () {
     final api = Importer().import(fileContent);
 
-    final headerParams =
-        api.requestHeaders.whereType<RequestHeaderObject>().toList();
+    final headerParams = api.requestHeaders
+        .whereType<RequestHeaderObject>()
+        .toList();
     expect(headerParams, hasLength(2));
 
     final apiVersionHeader = headerParams.firstWhereOrNull(
@@ -149,8 +152,9 @@ void main() {
     );
 
     // Path parameters
-    final pathParams =
-        operation?.pathParameters.whereType<PathParameterObject>().toList();
+    final pathParams = operation?.pathParameters
+        .whereType<PathParameterObject>()
+        .toList();
     expect(pathParams, hasLength(2));
 
     // Verify path parameter names
@@ -171,8 +175,9 @@ void main() {
     expect(itemIdParam?.description, 'ID of the item');
 
     // Query parameters
-    final queryParams =
-        operation?.queryParameters.whereType<QueryParameterObject>().toList();
+    final queryParams = operation?.queryParameters
+        .whereType<QueryParameterObject>()
+        .toList();
     expect(queryParams, hasLength(2));
 
     // Verify query parameter names
@@ -193,8 +198,9 @@ void main() {
     expect(fieldsParam?.description, 'Fields to include in response');
 
     // Headers
-    final headerParams =
-        operation?.headers.whereType<RequestHeaderObject>().toList();
+    final headerParams = operation?.headers
+        .whereType<RequestHeaderObject>()
+        .toList();
     expect(headerParams, hasLength(2));
 
     // Verify header parameter names

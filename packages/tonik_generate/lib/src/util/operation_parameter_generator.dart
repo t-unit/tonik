@@ -17,30 +17,27 @@ List<Parameter> generateParameters({
   // Add request body parameter if present
   if (hasRequestBody) {
     final requestBody = operation.requestBody!;
-    final parameterType =
-        requestBody.contentCount == 1
-            ? typeReference(
-              requestBody.resolvedContent.first.model,
-              nameManager,
-              package,
-              isNullableOverride: !requestBody.isRequired,
-            )
-            : TypeReference(
-              (b) =>
-                  b
-                    ..symbol = nameManager.requestBodyNames(requestBody).$1
-                    ..url = package
-                    ..isNullable = !requestBody.isRequired,
-            );
+    final parameterType = requestBody.contentCount == 1
+        ? typeReference(
+            requestBody.resolvedContent.first.model,
+            nameManager,
+            package,
+            isNullableOverride: !requestBody.isRequired,
+          )
+        : TypeReference(
+            (b) => b
+              ..symbol = nameManager.requestBodyNames(requestBody).$1
+              ..url = package
+              ..isNullable = !requestBody.isRequired,
+          );
 
     parameters.add(
       Parameter(
-        (b) =>
-            b
-              ..name = 'body'
-              ..type = parameterType
-              ..named = true
-              ..required = requestBody.isRequired,
+        (b) => b
+          ..name = 'body'
+          ..type = parameterType
+          ..named = true
+          ..required = requestBody.isRequired,
       ),
     );
   }

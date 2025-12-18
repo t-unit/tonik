@@ -37,20 +37,19 @@ class OptionsGenerator {
     final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
       'method': literalString(methodString),
       if (headersData != null) 'headers': refer('headers'),
-      if (contentType != null) 'contentType': contentType,
+      'contentType': ?contentType,
       'validateStatus': _generateValidateStatus(),
     });
 
     bodyStatements.add(optionsExpr.returned.statement);
 
     return Method(
-      (b) =>
-          b
-            ..name = '_options'
-            ..returns = refer('Options', 'package:dio/dio.dart')
-            ..optionalParameters.addAll(parameters)
-            ..lambda = false
-            ..body = Block((b) => b..statements.addAll(bodyStatements)),
+      (b) => b
+        ..name = '_options'
+        ..returns = refer('Options', 'package:dio/dio.dart')
+        ..optionalParameters.addAll(parameters)
+        ..lambda = false
+        ..body = Block((b) => b..statements.addAll(bodyStatements)),
     );
   }
 
@@ -81,12 +80,11 @@ class OptionsGenerator {
     final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
     parameters.add(
       Parameter(
-        (b) =>
-            b
-              ..name = 'body'
-              ..type = refer(baseName, package)
-              ..named = true
-              ..required = requestBody.isRequired,
+        (b) => b
+          ..name = 'body'
+          ..type = refer(baseName, package)
+          ..named = true
+          ..required = requestBody.isRequired,
       ),
     );
 
@@ -152,8 +150,9 @@ class OptionsGenerator {
       }
     }
 
-    final acceptValue =
-        contentTypes.isNotEmpty ? contentTypes.join(',') : '*/*';
+    final acceptValue = contentTypes.isNotEmpty
+        ? contentTypes.join(',')
+        : '*/*';
 
     bodyStatements.add(
       declareFinal('headers')
@@ -306,12 +305,11 @@ class OptionsGenerator {
     );
 
     return Parameter(
-      (b) =>
-          b
-            ..name = paramName
-            ..type = parameterType
-            ..named = true
-            ..required = resolvedParam.isRequired,
+      (b) => b
+        ..name = paramName
+        ..type = parameterType
+        ..named = true
+        ..required = resolvedParam.isRequired,
     );
   }
 
@@ -332,12 +330,10 @@ class OptionsGenerator {
         .statement;
   }
 
-  Expression _generateValidateStatus() =>
-      Method(
-        (b) =>
-            b
-              ..lambda = true
-              ..requiredParameters.add(Parameter((b) => b..name = '_'))
-              ..body = literalBool(true).code,
-      ).closure;
+  Expression _generateValidateStatus() => Method(
+    (b) => b
+      ..lambda = true
+      ..requiredParameters.add(Parameter((b) => b..name = '_'))
+      ..body = literalBool(true).code,
+  ).closure;
 }

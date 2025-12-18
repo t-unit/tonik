@@ -112,10 +112,9 @@ extension StringListUriEncoder on List<String> {
     }
 
     return map(
-      (item) =>
-          useQueryComponent
-              ? Uri.encodeQueryComponent(item)
-              : Uri.encodeComponent(item),
+      (item) => useQueryComponent
+          ? Uri.encodeQueryComponent(item)
+          : Uri.encodeComponent(item),
     ).join(',');
   }
 }
@@ -137,14 +136,12 @@ extension StringMapUriEncoder on Map<String, String> {
       return '';
     }
 
-    final encodeKey =
-        encodeKeys
-            ? (useQueryComponent
-                ? Uri.encodeQueryComponent
-                : Uri.encodeComponent)
-            : (String key) => key;
-    final encodeValue =
-        useQueryComponent ? Uri.encodeQueryComponent : Uri.encodeComponent;
+    final encodeKey = encodeKeys
+        ? (useQueryComponent ? Uri.encodeQueryComponent : Uri.encodeComponent)
+        : (String key) => key;
+    final encodeValue = useQueryComponent
+        ? Uri.encodeQueryComponent
+        : Uri.encodeComponent;
 
     return entries
         .expand(

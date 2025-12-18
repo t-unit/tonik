@@ -12,10 +12,9 @@ void main() {
   late Context testContext;
   late DartEmitter emitter;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameManager = NameManager(generator: NameGenerator());

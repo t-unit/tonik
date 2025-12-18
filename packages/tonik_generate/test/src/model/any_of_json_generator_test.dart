@@ -65,10 +65,9 @@ void main() {
           'Object?',
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = '''
@@ -157,10 +156,9 @@ void main() {
 
       final klass = generator.generateClass(model);
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''
@@ -272,10 +270,9 @@ void main() {
 
       final klass = generator.generateClass(model);
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''
@@ -351,10 +348,9 @@ void main() {
 
     final klass = generator.generateClass(model);
 
-    final format =
-        DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
     final generated = format(klass.accept(emitter).toString());
 
     const expectedMethod = '''
@@ -457,10 +453,9 @@ void main() {
 
       final klass = generator.generateClass(model);
 
-      final format =
-          DartFormatter(
-            languageVersion: DartFormatter.latestLanguageVersion,
-          ).format;
+      final format = DartFormatter(
+        languageVersion: DartFormatter.latestLanguageVersion,
+      ).format;
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''

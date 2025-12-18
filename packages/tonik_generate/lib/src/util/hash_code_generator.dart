@@ -7,12 +7,11 @@ import 'package:code_builder/code_builder.dart';
 Method generateHashCodeMethod({
   required List<({String normalizedName, bool hasCollectionValue})> properties,
 }) {
-  final methodBuilder =
-      MethodBuilder()
-        ..name = 'hashCode'
-        ..type = MethodType.getter
-        ..returns = refer('int', 'dart:core')
-        ..annotations.add(refer('override', 'dart:core'));
+  final methodBuilder = MethodBuilder()
+    ..name = 'hashCode'
+    ..type = MethodType.getter
+    ..returns = refer('int', 'dart:core')
+    ..annotations.add(refer('override', 'dart:core'));
 
   final hasCollections = properties.any((p) => p.hasCollectionValue);
   final codeLines = <Code>[];
@@ -65,16 +64,15 @@ Method generateHashCodeMethod({
       );
     }
 
-    final hashArgs =
-        properties.map((prop) {
-          if (prop.hasCollectionValue) {
-            return refer(
-              'deepEquals',
-            ).property('hash').call([refer(prop.normalizedName)]);
-          } else {
-            return refer(prop.normalizedName);
-          }
-        }).toList();
+    final hashArgs = properties.map((prop) {
+      if (prop.hasCollectionValue) {
+        return refer(
+          'deepEquals',
+        ).property('hash').call([refer(prop.normalizedName)]);
+      } else {
+        return refer(prop.normalizedName);
+      }
+    }).toList();
 
     codeLines.add(
       refer(

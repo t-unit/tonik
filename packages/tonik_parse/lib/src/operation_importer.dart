@@ -151,13 +151,12 @@ class OperationImporter {
 
     final methodContext = context.push(httpMethod.name);
 
-    final tags =
-        operation.tags
-            ?.map(
-              (name) => validTags.firstWhereOrNull((tag) => tag.name == name),
-            )
-            .nonNulls
-            .toSet();
+    final tags = operation.tags
+        ?.map(
+          (name) => validTags.firstWhereOrNull((tag) => tag.name == name),
+        )
+        .nonNulls
+        .toSet();
 
     final pathParameters = pathItem.parameters ?? [];
     final operationParameters = operation.parameters ?? [];

@@ -52,11 +52,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(method.requiredParameters, isEmpty);
@@ -108,11 +107,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(method.optionalParameters, hasLength(1));
@@ -172,11 +170,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -235,11 +232,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -298,11 +294,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -362,11 +357,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -426,11 +420,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -517,11 +510,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -636,11 +628,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -710,11 +701,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -770,11 +760,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -843,11 +832,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(method.optionalParameters.first.named, isTrue);
@@ -914,11 +902,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(method.optionalParameters.first.named, isTrue);
@@ -981,11 +968,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -1046,11 +1032,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -1119,11 +1104,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -1188,11 +1172,10 @@ void main() {
       expect(
         method.returns,
         TypeReference(
-          (b) =>
-              b
-                ..symbol = 'List'
-                ..url = 'dart:core'
-                ..types.add(refer('String', 'dart:core')),
+          (b) => b
+            ..symbol = 'List'
+            ..url = 'dart:core'
+            ..types.add(refer('String', 'dart:core')),
         ),
       );
       expect(
@@ -1256,11 +1239,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(
@@ -1344,11 +1326,10 @@ void main() {
     expect(
       method.returns,
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'List'
-              ..url = 'dart:core'
-              ..types.add(refer('String', 'dart:core')),
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(refer('String', 'dart:core')),
       ),
     );
     expect(

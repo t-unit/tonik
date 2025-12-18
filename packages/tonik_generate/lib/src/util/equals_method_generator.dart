@@ -23,19 +23,17 @@ Method generateEqualsMethod({
     }
   }
 
-  final methodBuilder =
-      MethodBuilder()
-        ..name = 'operator =='
-        ..returns = refer('bool', 'dart:core')
-        ..annotations.add(refer('override', 'dart:core'))
-        ..requiredParameters.add(
-          Parameter(
-            (b) =>
-                b
-                  ..name = 'other'
-                  ..type = refer('Object', 'dart:core'),
-          ),
-        );
+  final methodBuilder = MethodBuilder()
+    ..name = 'operator =='
+    ..returns = refer('bool', 'dart:core')
+    ..annotations.add(refer('override', 'dart:core'))
+    ..requiredParameters.add(
+      Parameter(
+        (b) => b
+          ..name = 'other'
+          ..type = refer('Object', 'dart:core'),
+      ),
+    );
 
   final codeLines = <Code>[
     Code.scope((allocate) {

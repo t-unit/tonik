@@ -244,13 +244,11 @@ class ModelImporter {
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
     final modelContext = context.push(name ?? 'allOf');
-    final models =
-        schema.allOf!
-            .map(
-              (allOfSchema) =>
-                  _parseSchemaWrapper(null, allOfSchema, modelContext),
-            )
-            .toList();
+    final models = schema.allOf!
+        .map(
+          (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
+        )
+        .toList();
 
     final allOfModel = AllOfModel(
       isDeprecated: schema.isDeprecated ?? false,
@@ -471,10 +469,9 @@ class ModelImporter {
   }
 
   void _logModelAdded(Model model) {
-    final name =
-        model is NamedModel && model.name != null
-            ? model.name
-            : '${model.context}->${model.runtimeType}';
+    final name = model is NamedModel && model.name != null
+        ? model.name
+        : '${model.context}->${model.runtimeType}';
     log.fine('Adding model $name');
   }
 }

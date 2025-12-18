@@ -30,10 +30,9 @@ Expression buildUriEncodeExpression(
       model.model,
       allowEmpty: allowEmpty,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for URI encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for URI encoding: $model',
+    ),
   };
 }
 
@@ -55,38 +54,36 @@ Expression _buildListUriEncodeExpression(
     DecimalModel() ||
     UriModel() ||
     DateModel() ||
-    EnumModel() => valueExpression
-        .property('map')
-        .call([
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body =
-                      buildUriEncodeExpression(
-                        refer('e'),
-                        contentModel,
-                        allowEmpty: allowEmpty,
-                      ).code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('uriEncode')
-        .call(
-          [],
-          {'allowEmpty': allowEmpty},
-        ),
+    EnumModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildUriEncodeExpression(
+                  refer('e'),
+                  contentModel,
+                  allowEmpty: allowEmpty,
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('uriEncode')
+          .call(
+            [],
+            {'allowEmpty': allowEmpty},
+          ),
     AliasModel() => _buildListUriEncodeExpression(
       valueExpression,
       contentModel.model,
       allowEmpty: allowEmpty,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported list content type for URI encoding: $contentModel',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported list content type for URI encoding: $contentModel',
+    ),
   };
 }

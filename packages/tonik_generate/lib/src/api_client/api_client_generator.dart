@@ -57,53 +57,47 @@ class ApiClientGenerator {
     final serverBaseClassName = serverNames.baseName;
 
     // Create private fields for each operation
-    final operationFields =
-        operations.map((operation) {
-          final operationName = nameManager.operationName(operation);
-          final fieldName = '_${operationName.toCamelCase()}';
+    final operationFields = operations.map((operation) {
+      final operationName = nameManager.operationName(operation);
+      final fieldName = '_${operationName.toCamelCase()}';
 
-          return Field(
-            (b) =>
-                b
-                  ..name = fieldName
-                  ..modifier = FieldModifier.final$
-                  ..type = refer(operationName, package),
-          );
-        }).toList();
+      return Field(
+        (b) => b
+          ..name = fieldName
+          ..modifier = FieldModifier.final$
+          ..type = refer(operationName, package),
+      );
+    }).toList();
 
     // Create constructor initializers for each operation
-    final constructorInitializers =
-        operations.map((operation) {
-          final operationName = nameManager.operationName(operation);
-          final fieldName = '_${operationName.toCamelCase()}';
+    final constructorInitializers = operations.map((operation) {
+      final operationName = nameManager.operationName(operation);
+      final fieldName = '_${operationName.toCamelCase()}';
 
-          return refer(fieldName)
-              .assign(refer(operationName, package).call([refer('server.dio')]))
-              .code;
-        }).toList();
+      return refer(
+        fieldName,
+      ).assign(refer(operationName, package).call([refer('server.dio')])).code;
+    }).toList();
 
     return Class(
-      (b) =>
-          b
-            ..name = nameManager.tagName(tag)
-            ..fields.addAll(operationFields)
-            ..docs.addAll(formatDocComment(tag.description))
-            ..constructors.add(
-              Constructor(
-                (b) =>
-                    b
-                      ..requiredParameters.add(
-                        Parameter(
-                          (b) =>
-                              b
-                                ..name = 'server'
-                                ..type = refer(serverBaseClassName, package),
-                        ),
-                      )
-                      ..initializers.addAll(constructorInitializers),
-              ),
-            )
-            ..methods.addAll(operations.map(_generateMethod)),
+      (b) => b
+        ..name = nameManager.tagName(tag)
+        ..fields.addAll(operationFields)
+        ..docs.addAll(formatDocComment(tag.description))
+        ..constructors.add(
+          Constructor(
+            (b) => b
+              ..requiredParameters.add(
+                Parameter(
+                  (b) => b
+                    ..name = 'server'
+                    ..type = refer(serverBaseClassName, package),
+                ),
+              )
+              ..initializers.addAll(constructorInitializers),
+          ),
+        )
+        ..methods.addAll(operations.map(_generateMethod)),
     );
   }
 
@@ -144,11 +138,10 @@ class ApiClientGenerator {
         b
           ..name = nameManager.operationName(operation).toCamelCase()
           ..returns = TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'Future'
-                  ..url = 'dart:core'
-                  ..types.add(resultType),
+            (b) => b
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(resultType),
           )
           ..docs.addAll(docs);
 
@@ -183,10 +176,9 @@ class ApiClientGenerator {
           ApiKeyLocation.query => 'query',
           ApiKeyLocation.cookie => 'cookie',
         };
-        final description =
-            (scheme.description?.isNotEmpty ?? false)
-                ? ': ${scheme.description}'
-                : '';
+        final description = (scheme.description?.isNotEmpty ?? false)
+            ? ': ${scheme.description}'
+            : '';
         lines.add('/// - API Key ($location)$description');
 
       case HttpSecurityScheme():
@@ -195,17 +187,15 @@ class ApiClientGenerator {
           'basic' => 'Basic',
           _ => scheme.scheme.toUpperCase(),
         };
-        final description =
-            (scheme.description?.isNotEmpty ?? false)
-                ? ': ${scheme.description}'
-                : '';
+        final description = (scheme.description?.isNotEmpty ?? false)
+            ? ': ${scheme.description}'
+            : '';
         lines.add('/// - HTTP $schemeName$description');
 
       case OAuth2SecurityScheme():
-        final description =
-            (scheme.description?.isNotEmpty ?? false)
-                ? ': ${scheme.description}'
-                : '';
+        final description = (scheme.description?.isNotEmpty ?? false)
+            ? ': ${scheme.description}'
+            : '';
         lines.add('/// - OAuth2$description');
         final flows = scheme.flows;
 
@@ -228,10 +218,9 @@ class ApiClientGenerator {
         }
 
       case OpenIdConnectSecurityScheme():
-        final description =
-            (scheme.description?.isNotEmpty ?? false)
-                ? ': ${scheme.description}'
-                : '';
+        final description = (scheme.description?.isNotEmpty ?? false)
+            ? ': ${scheme.description}'
+            : '';
         lines.add('/// - OpenID Connect$description');
         lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
     }

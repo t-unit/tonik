@@ -530,15 +530,14 @@ void main() {
           context: context,
         );
 
-        final expression =
-            buildFromJsonValueExpression(
-              'value',
-              model: nestedListModel,
-              nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
-              contextClass: 'Order',
-              contextProperty: 'items',
-            ).accept(emitter).toString();
+        final expression = buildFromJsonValueExpression(
+          'value',
+          model: nestedListModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          contextClass: 'Order',
+          contextProperty: 'items',
+        ).accept(emitter).toString();
 
         expect(
           expression,

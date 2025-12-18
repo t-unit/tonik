@@ -25,8 +25,9 @@ extension DateTimeEncodingExtension on DateTime {
     final second = _twoDigits(this.second);
 
     // Add milliseconds if present
-    final millisecondString =
-        millisecond > 0 ? '.${_threeDigits(millisecond)}' : '';
+    final millisecondString = millisecond > 0
+        ? '.${_threeDigits(millisecond)}'
+        : '';
 
     // Add microseconds if present
     final microsecondString = microsecond > 0 ? _threeDigits(microsecond) : '';

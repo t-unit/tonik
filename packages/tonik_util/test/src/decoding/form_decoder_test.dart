@@ -221,8 +221,8 @@ void main() {
       });
 
       test('decodes DateTime with timezone offset', () {
-        final dateTime =
-            '2023-06-15T14%3A30%3A00%2B02%3A00'.decodeFormDateTime();
+        final dateTime = '2023-06-15T14%3A30%3A00%2B02%3A00'
+            .decodeFormDateTime();
         expect(dateTime.year, 2023);
         expect(dateTime.month, 6);
         expect(dateTime.day, 15);
@@ -244,8 +244,8 @@ void main() {
 
     group('decodeFormNullableDateTime', () {
       test('decodes DateTime strings', () {
-        final dateTime =
-            '2023-12-25T10%3A30%3A45Z'.decodeFormNullableDateTime();
+        final dateTime = '2023-12-25T10%3A30%3A45Z'
+            .decodeFormNullableDateTime();
         expect(dateTime, isNotNull);
         expect(dateTime!.year, 2023);
       });
@@ -364,8 +364,8 @@ void main() {
 
     group('decodeFormUri', () {
       test('decodes URI strings', () {
-        final uri =
-            'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue'.decodeFormUri();
+        final uri = 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue'
+            .decodeFormUri();
         expect(uri.scheme, 'https');
         expect(uri.host, 'example.com');
         expect(uri.path, '/path');

@@ -19,48 +19,44 @@ TypeReference resultTypeForOperation(
 
   return switch ((hasHeaders, bodyCount, hasMultipleResponses)) {
     (_, _, true) => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'TonikResult'
-            ..url = 'package:tonik_util/tonik_util.dart'
-            ..types.add(
-              refer(nameManager.responseWrapperNames(operation).$1, package),
-            ),
+      (b) => b
+        ..symbol = 'TonikResult'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(
+          refer(nameManager.responseWrapperNames(operation).$1, package),
+        ),
     ),
 
     (false, 0, false) => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'TonikResult'
-            ..url = 'package:tonik_util/tonik_util.dart'
-            ..types.add(refer('void')),
+      (b) => b
+        ..symbol = 'TonikResult'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(refer('void')),
     ),
 
     (false, 1, false) => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'TonikResult'
-            ..url = 'package:tonik_util/tonik_util.dart'
-            ..types.add(
-              typeReference(
-                response!.resolved.bodies.first.model,
-                nameManager,
-                package,
-              ),
-            ),
+      (b) => b
+        ..symbol = 'TonikResult'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(
+          typeReference(
+            response!.resolved.bodies.first.model,
+            nameManager,
+            package,
+          ),
+        ),
     ),
 
     (true, _, false) || (false, _, false) => TypeReference(
-      (b) =>
-          b
-            ..symbol = 'TonikResult'
-            ..url = 'package:tonik_util/tonik_util.dart'
-            ..types.add(
-              refer(
-                nameManager.responseNames(response!.resolved).baseName,
-                package,
-              ),
-            ),
+      (b) => b
+        ..symbol = 'TonikResult'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(
+          refer(
+            nameManager.responseNames(response!.resolved).baseName,
+            package,
+          ),
+        ),
     ),
   };
 }

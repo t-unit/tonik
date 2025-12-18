@@ -45,10 +45,9 @@ String? _getSerializationSuffix(
   bool isNullable, {
   bool forceNonNullReceiver = false,
 }) {
-  final receiverOp =
-      forceNonNullReceiver
-          ? '!'
-          : (isNullable || (model is EnumModel && model.isNullable) ? '?' : '');
+  final receiverOp = forceNonNullReceiver
+      ? '!'
+      : (isNullable || (model is EnumModel && model.isNullable) ? '?' : '');
 
   return switch (model) {
     DateTimeModel() => '$receiverOp.toTimeZonedIso8601String()',

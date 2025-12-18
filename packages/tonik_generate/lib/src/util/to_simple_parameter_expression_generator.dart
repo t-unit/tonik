@@ -40,10 +40,9 @@ Expression buildSimpleParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for simple encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for simple encoding: $model',
+    ),
   };
 }
 
@@ -72,35 +71,34 @@ Expression _buildListSimpleExpression(
     EnumModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression
-        .property('map')
-        .call([
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body =
-                      buildSimpleParameterExpression(
-                        refer('e'),
-                        contentModel,
-                        explode: explode,
-                        allowEmpty: allowEmpty,
-                      ).code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toSimple')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalBool(true),
-          },
-        ),
+    AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildSimpleParameterExpression(
+                  refer('e'),
+                  contentModel,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
     AliasModel() => _buildListSimpleExpression(
       valueExpression,
       contentModel.model,
@@ -114,9 +112,8 @@ Expression _buildListSimpleExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported list content type for simple encoding: $contentModel',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported list content type for simple encoding: $contentModel',
+    ),
   };
 }

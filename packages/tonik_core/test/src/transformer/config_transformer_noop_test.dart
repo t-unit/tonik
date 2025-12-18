@@ -93,10 +93,9 @@ void main() {
       expect(identical(transformedOp, getPet), isTrue);
       expect(identical(transformedOp.tags.single, petTag), isTrue);
 
-      final transformedParam =
-          transformedOp.queryParameters
-              .whereType<QueryParameterObject>()
-              .single;
+      final transformedParam = transformedOp.queryParameters
+          .whereType<QueryParameterObject>()
+          .single;
       expect(identical(transformedParam, petIdParam), isTrue);
       expect(
         identical(

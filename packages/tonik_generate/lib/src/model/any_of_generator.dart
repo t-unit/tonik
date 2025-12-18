@@ -59,55 +59,50 @@ class AnyOfGenerator {
   Class generateClass(AnyOfModel model) {
     final className = nameManager.modelName(model);
 
-    final pseudoProperties =
-        model.models.toSortedList().map((discriminated) {
-          final typeRef = typeReference(
-            discriminated.model,
-            nameManager,
-            package,
-          );
-          return Property(
-            name: typeRef.symbol,
-            model: discriminated.model,
-            isRequired: false,
-            isNullable: true,
-            isDeprecated: false,
-          );
-        }).toList();
+    final pseudoProperties = model.models.toSortedList().map((discriminated) {
+      final typeRef = typeReference(
+        discriminated.model,
+        nameManager,
+        package,
+      );
+      return Property(
+        name: typeRef.symbol,
+        model: discriminated.model,
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+    }).toList();
 
     final normalized = normalizeProperties(pseudoProperties);
-    final fields =
-        normalized.map((n) {
-          final ref = typeReference(
-            n.property.model,
-            nameManager,
-            package,
-            isNullableOverride: true,
-          );
-          return Field(
-            (b) =>
-                b
-                  ..name = n.normalizedName
-                  ..modifier = FieldModifier.final$
-                  ..type = ref,
-          );
-        }).toList();
+    final fields = normalized.map((n) {
+      final ref = typeReference(
+        n.property.model,
+        nameManager,
+        package,
+        isNullableOverride: true,
+      );
+      return Field(
+        (b) => b
+          ..name = n.normalizedName
+          ..modifier = FieldModifier.final$
+          ..type = ref,
+      );
+    }).toList();
 
     final defaultCtor = Constructor(
-      (b) =>
-          b
-            ..constant = true
-            ..optionalParameters.addAll(
-              normalized.map(
-                (n) => Parameter(
-                  (p) =>
-                      p
-                        ..name = n.normalizedName
-                        ..named = true
-                        ..toThis = true,
-                ),
-              ),
+      (b) => b
+        ..constant = true
+        ..optionalParameters.addAll(
+          normalized.map(
+            (n) => Parameter(
+              (p) => p
+                ..name = n.normalizedName
+                ..named = true
+                ..toThis = true,
             ),
+          ),
+        ),
     );
 
     final fromJsonCtor = _buildFromJsonConstructor(className, normalized);
@@ -119,31 +114,29 @@ class AnyOfGenerator {
       normalized,
     );
 
-    final propsForEquality =
-        normalized
-            .map(
-              (n) => (
-                normalizedName: n.normalizedName,
-                hasCollectionValue: n.property.model is ListModel,
-              ),
-            )
-            .toList();
+    final propsForEquality = normalized
+        .map(
+          (n) => (
+            normalizedName: n.normalizedName,
+            hasCollectionValue: n.property.model is ListModel,
+          ),
+        )
+        .toList();
 
     final copyWithMethod = generateCopyWithMethod(
       className: className,
-      properties:
-          normalized
-              .map(
-                (n) => (
-                  normalizedName: n.normalizedName,
-                  typeRef: typeReference(
-                    n.property.model,
-                    nameManager,
-                    package,
-                  ),
-                ),
-              )
-              .toList(),
+      properties: normalized
+          .map(
+            (n) => (
+              normalizedName: n.normalizedName,
+              typeRef: typeReference(
+                n.property.model,
+                nameManager,
+                package,
+              ),
+            ),
+          )
+          .toList(),
     );
 
     return Class(
@@ -219,10 +212,9 @@ class AnyOfGenerator {
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
       // Lists with simple content can be encoded directly
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
-        final buildExpr =
-            isForm
-                ? buildFormParameterExpression
-                : buildSimpleParameterExpression;
+        final buildExpr = isForm
+            ? buildFormParameterExpression
+            : buildSimpleParameterExpression;
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
@@ -505,23 +497,21 @@ class AnyOfGenerator {
     );
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromJson'
-            ..requiredParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'json'
-                      ..type = refer('Object?', 'dart:core'),
-              ),
-            )
-            ..body = Block.of([
-              ...localDecls,
-              validationCheck,
-              refer(className, package).call([], ctorArgs).returned.statement,
-            ]),
+      (b) => b
+        ..factory = true
+        ..name = 'fromJson'
+        ..requiredParameters.add(
+          Parameter(
+            (p) => p
+              ..name = 'json'
+              ..type = refer('Object?', 'dart:core'),
+          ),
+        )
+        ..body = Block.of([
+          ...localDecls,
+          validationCheck,
+          refer(className, package).call([], ctorArgs).returned.statement,
+        ]),
     );
   }
 
@@ -545,11 +535,10 @@ class AnyOfGenerator {
       body
         ..add(
           TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
           ).code,
         )
         ..add(const Code(' discriminatorValue;'));
@@ -586,10 +575,9 @@ class AnyOfGenerator {
         const Code(') {'),
       ];
       final addMap = Code('mapValues.add(${name}Json);');
-      final maybeDisc =
-          hasDiscriminator && discValue != null
-              ? Code("discriminatorValue ??= r'$discValue';")
-              : const Code('');
+      final maybeDisc = hasDiscriminator && discValue != null
+          ? Code("discriminatorValue ??= r'$discValue';")
+          : const Code('');
 
       blocks
         ..addAll([
@@ -661,12 +649,11 @@ class AnyOfGenerator {
       ..add(const Code('return null;'));
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toJson'
-            ..returns = refer('Object?', 'dart:core')
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'toJson'
+        ..returns = refer('Object?', 'dart:core')
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -730,11 +717,10 @@ class AnyOfGenerator {
       body
         ..add(
           TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
           ).code,
         )
         ..add(const Code(' discriminatorValue;'));
@@ -828,13 +814,12 @@ class AnyOfGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toSimple'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'toSimple'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -862,19 +847,20 @@ class AnyOfGenerator {
           ClassModel() ||
           AllOfModel() ||
           OneOfModel() ||
-          AnyOfModel() => refer(
-                nameManager.modelName(modelType),
-                package,
-              )
-              .property('fromSimple')
-              .call(
-                [
-                  refer('value'),
-                ],
-                {
-                  'explode': refer('explode'),
-                },
-              ),
+          AnyOfModel() =>
+            refer(
+                  nameManager.modelName(modelType),
+                  package,
+                )
+                .property('fromSimple')
+                .call(
+                  [
+                    refer('value'),
+                  ],
+                  {
+                    'explode': refer('explode'),
+                  },
+                ),
           _ => buildSimpleValueExpression(
             refer('value'),
             model: modelType,
@@ -898,10 +884,9 @@ class AnyOfGenerator {
 
     final ctorArgs = {
       for (final n in normalizedProperties)
-        n.normalizedName:
-            nonDecodableProperties.contains(n)
-                ? literalNull
-                : refer(n.normalizedName),
+        n.normalizedName: nonDecodableProperties.contains(n)
+            ? literalNull
+            : refer(n.normalizedName),
     };
 
     final validationCheck = _buildAllNullValidation(
@@ -911,26 +896,24 @@ class AnyOfGenerator {
     );
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromSimple'
-            ..requiredParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'value'
-                      ..type = refer('String?', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.add(
-              buildBoolParameter('explode', required: true),
-            )
-            ..body = Block.of([
-              ...localDecls,
-              validationCheck,
-              refer(className, package).call([], ctorArgs).returned.statement,
-            ]),
+      (b) => b
+        ..factory = true
+        ..name = 'fromSimple'
+        ..requiredParameters.add(
+          Parameter(
+            (p) => p
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..body = Block.of([
+          ...localDecls,
+          validationCheck,
+          refer(className, package).call([], ctorArgs).returned.statement,
+        ]),
     );
   }
 
@@ -958,19 +941,20 @@ class AnyOfGenerator {
           ClassModel() ||
           AllOfModel() ||
           OneOfModel() ||
-          AnyOfModel() => refer(
-                nameManager.modelName(modelType),
-                package,
-              )
-              .property('fromForm')
-              .call(
-                [
-                  refer('value'),
-                ],
-                {
-                  'explode': refer('explode'),
-                },
-              ),
+          AnyOfModel() =>
+            refer(
+                  nameManager.modelName(modelType),
+                  package,
+                )
+                .property('fromForm')
+                .call(
+                  [
+                    refer('value'),
+                  ],
+                  {
+                    'explode': refer('explode'),
+                  },
+                ),
           _ => buildFromFormValueExpression(
             refer('value'),
             model: modelType,
@@ -993,10 +977,9 @@ class AnyOfGenerator {
 
     final ctorArgs = {
       for (final n in normalizedProperties)
-        n.normalizedName:
-            nonDecodableProperties.contains(n)
-                ? literalNull
-                : refer(n.normalizedName),
+        n.normalizedName: nonDecodableProperties.contains(n)
+            ? literalNull
+            : refer(n.normalizedName),
     };
 
     final validationCheck = _buildAllNullValidation(
@@ -1006,26 +989,24 @@ class AnyOfGenerator {
     );
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromForm'
-            ..requiredParameters.add(
-              Parameter(
-                (p) =>
-                    p
-                      ..name = 'value'
-                      ..type = refer('String?', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.add(
-              buildBoolParameter('explode', required: true),
-            )
-            ..body = Block.of([
-              ...localDecls,
-              validationCheck,
-              refer(className, package).call([], ctorArgs).returned.statement,
-            ]),
+      (b) => b
+        ..factory = true
+        ..name = 'fromForm'
+        ..requiredParameters.add(
+          Parameter(
+            (p) => p
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..body = Block.of([
+          ...localDecls,
+          validationCheck,
+          refer(className, package).call([], ctorArgs).returned.statement,
+        ]),
     );
   }
 
@@ -1082,13 +1063,12 @@ class AnyOfGenerator {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'currentEncodingShape'
-            ..type = MethodType.getter
-            ..returns = encodingShapeType
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = encodingShapeType
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -1144,11 +1124,10 @@ class AnyOfGenerator {
       body
         ..add(
           TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
           ).code,
         )
         ..add(const Code(' discriminatorValue;'));
@@ -1242,13 +1221,12 @@ class AnyOfGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toForm'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'toForm'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -1263,19 +1241,17 @@ class AnyOfGenerator {
 
     if (hasOnlySimpleTypes) {
       return Method(
-        (b) =>
-            b
-              ..name = 'parameterProperties'
-              ..returns = buildMapStringStringType()
-              ..optionalParameters.addAll([
-                buildBoolParameter('allowEmpty', defaultValue: true),
-                buildBoolParameter('allowLists', defaultValue: true),
-              ])
-              ..body =
-                  generateEncodingExceptionExpression(
-                    'parameterProperties not supported for $className: '
-                    'contains only simple types',
-                  ).statement,
+        (b) => b
+          ..name = 'parameterProperties'
+          ..returns = buildMapStringStringType()
+          ..optionalParameters.addAll([
+            buildBoolParameter('allowEmpty', defaultValue: true),
+            buildBoolParameter('allowLists', defaultValue: true),
+          ])
+          ..body = generateEncodingExceptionExpression(
+            'parameterProperties not supported for $className: '
+            'contains only simple types',
+          ).statement,
       );
     }
 
@@ -1310,11 +1286,10 @@ class AnyOfGenerator {
       body
         ..add(
           TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
           ).code,
         )
         ..add(const Code(r' _$discriminatorValue;'));
@@ -1409,16 +1384,15 @@ class AnyOfGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'parameterProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.addAll([
-              buildBoolParameter('allowEmpty', defaultValue: true),
-              buildBoolParameter('allowLists', defaultValue: true),
-            ])
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll([
+          buildBoolParameter('allowEmpty', defaultValue: true),
+          buildBoolParameter('allowLists', defaultValue: true),
+        ])
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -1566,11 +1540,10 @@ class AnyOfGenerator {
       body
         ..add(
           TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
           ).code,
         )
         ..add(const Code(' discriminatorValue;'));
@@ -1663,13 +1636,12 @@ class AnyOfGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toLabel'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'toLabel'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -1727,11 +1699,10 @@ class AnyOfGenerator {
       body
         ..add(
           TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'String'
-                  ..url = 'dart:core'
-                  ..isNullable = true,
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
           ).code,
         )
         ..add(const Code(' discriminatorValue;'));
@@ -1825,21 +1796,19 @@ class AnyOfGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toMatrix'
-            ..returns = refer('String', 'dart:core')
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'paramName'
-                      ..type = refer('String', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'toMatrix'
+        ..returns = refer('String', 'dart:core')
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -1849,48 +1818,45 @@ class AnyOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
     return Method(
-      (b) =>
-          b
-            ..name = 'toDeepObject'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'List'
-                    ..url = 'dart:core'
-                    ..types.add(
-                      refer(
-                        'ParameterEntry',
-                        'package:tonik_util/tonik_util.dart',
-                      ),
-                    ),
-            )
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'paramName'
-                      ..type = refer('String', 'dart:core'),
+      (b) => b
+        ..name = 'toDeepObject'
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'List'
+            ..url = 'dart:core'
+            ..types.add(
+              refer(
+                'ParameterEntry',
+                'package:tonik_util/tonik_util.dart',
               ),
-            )
-            ..optionalParameters.addAll(buildEncodingParameters())
-            ..body = Block.of([
-              refer('parameterProperties')
-                  .call([], {
-                    'allowEmpty': refer('allowEmpty'),
-                    'allowLists': literalBool(false),
-                  })
-                  .property('toDeepObject')
-                  .call(
-                    [refer('paramName')],
-                    {
-                      'explode': refer('explode'),
-                      'allowEmpty': refer('allowEmpty'),
-                      'alreadyEncoded': literalBool(true),
-                    },
-                  )
-                  .returned
-                  .statement,
-            ]),
+            ),
+        )
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..body = Block.of([
+          refer('parameterProperties')
+              .call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'allowLists': literalBool(false),
+              })
+              .property('toDeepObject')
+              .call(
+                [refer('paramName')],
+                {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                  'alreadyEncoded': literalBool(true),
+                },
+              )
+              .returned
+              .statement,
+        ]),
     );
   }
 
@@ -1936,22 +1902,20 @@ class AnyOfGenerator {
     );
 
     return Method(
-      (b) =>
-          b
-            ..name = 'uriEncode'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'allowEmpty'
-                      ..type = refer('bool', 'dart:core')
-                      ..named = true
-                      ..required = true,
-              ),
-            )
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = 'uriEncode'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'allowEmpty'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = true,
+          ),
+        )
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 

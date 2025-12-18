@@ -16,10 +16,9 @@ Parameter _$ParameterFromJson(Map<String, dynamic> json) => Parameter(
   style: $enumDecodeNullable(_$SerializationStyleEnumMap, json['style']),
   explode: json['explode'] as bool?,
   allowReserved: json['allowReserved'] as bool?,
-  schema:
-      json['schema'] == null
-          ? null
-          : ReferenceWrapper<Schema>.fromJson(json['schema']),
+  schema: json['schema'] == null
+      ? null
+      : ReferenceWrapper<Schema>.fromJson(json['schema']),
   content: (json['content'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
   ),

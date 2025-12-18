@@ -12,10 +12,9 @@ List<Code> buildToDelimitedQueryParameterCode(
   bool allowEmpty = true,
 }) {
   final model = parameter.model;
-  final encodingName =
-      encoding == QueryParameterEncoding.spaceDelimited
-          ? 'spaceDelimited'
-          : 'pipeDelimited';
+  final encodingName = encoding == QueryParameterEncoding.spaceDelimited
+      ? 'spaceDelimited'
+      : 'pipeDelimited';
 
   if (model is! ListModel) {
     return [
@@ -47,10 +46,9 @@ List<Code> _buildDelimitedCode(
   required bool allowEmpty,
   required String encodingName,
 }) {
-  final methodName =
-      encoding == QueryParameterEncoding.spaceDelimited
-          ? 'toSpaceDelimited'
-          : 'toPipeDelimited';
+  final methodName = encoding == QueryParameterEncoding.spaceDelimited
+      ? 'toSpaceDelimited'
+      : 'toPipeDelimited';
 
   return switch (contentModel) {
     StringModel() => _buildForLoop(
@@ -121,13 +119,12 @@ List<Code> _buildForLoop(
   required bool needsMapping,
   String? mapExpression,
 }) {
-  final baseExpression =
-      needsMapping
-          ? '$parameterName.map((e) => $mapExpression).toList().$methodName('
-              ' explode: $explode, allowEmpty: $allowEmpty,'
-              ' alreadyEncoded: true)'
-          : '$parameterName.$methodName('
-              ' explode: $explode, allowEmpty: $allowEmpty)';
+  final baseExpression = needsMapping
+      ? '$parameterName.map((e) => $mapExpression).toList().$methodName('
+            ' explode: $explode, allowEmpty: $allowEmpty,'
+            ' alreadyEncoded: true)'
+      : '$parameterName.$methodName('
+            ' explode: $explode, allowEmpty: $allowEmpty)';
 
   return [
     Code('for (final value in $baseExpression) {'),

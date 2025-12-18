@@ -152,13 +152,12 @@ extension FormStringMapEncoder on Map<String, String> {
       return entries
           .map(
             (e) {
-              final value =
-                  alreadyEncoded
-                      ? e.value
-                      : e.value.toForm(
-                        explode: explode,
-                        allowEmpty: allowEmpty,
-                      );
+              final value = alreadyEncoded
+                  ? e.value
+                  : e.value.toForm(
+                      explode: explode,
+                      allowEmpty: allowEmpty,
+                    );
               return '${e.key.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,

@@ -79,8 +79,9 @@ class OperationGenerator {
   @visibleForTesting
   Class generateClass(Operation operation, String className) {
     final pathParams = operation.pathParameters.map((p) => p.resolve()).toSet();
-    final queryParams =
-        operation.queryParameters.map((p) => p.resolve()).toSet();
+    final queryParams = operation.queryParameters
+        .map((p) => p.resolve())
+        .toSet();
     final headerParams = operation.headers.map((p) => p.resolve()).toSet();
 
     final normalizedParams = normalizeRequestParameters(
@@ -95,11 +96,10 @@ class OperationGenerator {
           ..name = className
           ..fields.add(
             Field(
-              (b) =>
-                  b
-                    ..name = '_dio'
-                    ..modifier = FieldModifier.final$
-                    ..type = refer('Dio', 'package:dio/dio.dart'),
+              (b) => b
+                ..name = '_dio'
+                ..modifier = FieldModifier.final$
+                ..type = refer('Dio', 'package:dio/dio.dart'),
             ),
           );
 
@@ -114,16 +114,14 @@ class OperationGenerator {
         b
           ..constructors.add(
             Constructor(
-              (b) =>
-                  b
-                    ..requiredParameters.add(
-                      Parameter(
-                        (b) =>
-                            b
-                              ..name = '_dio'
-                              ..toThis = true,
-                      ),
-                    ),
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter(
+                    (b) => b
+                      ..name = '_dio'
+                      ..toThis = true,
+                  ),
+                ),
             ),
           )
           ..methods.addAll([
@@ -186,8 +184,9 @@ class OperationGenerator {
       );
     }
 
-    final pathExpr =
-        pathArgs.isEmpty ? refer('_path()') : refer('_path').call([], pathArgs);
+    final pathExpr = pathArgs.isEmpty
+        ? refer('_path()')
+        : refer('_path').call([], pathArgs);
 
     final queryExpr = refer('_queryParameters').call([], queryArgs);
 
@@ -196,8 +195,9 @@ class OperationGenerator {
         resultType.types.isNotEmpty && resultType.types.first.symbol == 'void';
     const responseVar = r'_$response';
     const parsedResponseVar = r'_$parsedResponse';
-    final responseType =
-        resultType.types.isNotEmpty ? resultType.types.first : refer('void');
+    final responseType = resultType.types.isNotEmpty
+        ? resultType.types.first
+        : refer('void');
 
     final bodyStatements = <Code>[
       _generateRequestStatements(
@@ -277,20 +277,18 @@ class OperationGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'call'
-            ..returns = TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'Future'
-                    ..url = 'dart:core'
-                    ..types.add(resultType),
-            )
-            ..optionalParameters.addAll(parameters)
-            ..modifier = MethodModifier.async
-            ..lambda = false
-            ..body = Block((b) => b..statements.addAll(bodyStatements)),
+      (b) => b
+        ..name = 'call'
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'Future'
+            ..url = 'dart:core'
+            ..types.add(resultType),
+        )
+        ..optionalParameters.addAll(parameters)
+        ..modifier = MethodModifier.async
+        ..lambda = false
+        ..body = Block((b) => b..statements.addAll(bodyStatements)),
     );
   }
 
@@ -378,11 +376,10 @@ class OperationGenerator {
     return Block.of([
       const Code('final '),
       TypeReference(
-        (b) =>
-            b
-              ..symbol = 'Response'
-              ..url = 'package:dio/dio.dart'
-              ..types.add(refer('dynamic', 'dart:core')),
+        (b) => b
+          ..symbol = 'Response'
+          ..url = 'package:dio/dio.dart'
+          ..types.add(refer('dynamic', 'dart:core')),
       ).code,
       Code(' $responseVar;'),
       Block.of([

@@ -61,41 +61,38 @@ NormalizedRequestParameters normalizeRequestParameters({
 
   // Add suffixes to all parameters with duplicate names across types
   // (i.e., the same name appears in multiple parameter types)
-  final resolvedPathParams =
-      normalizedPathParams.map((item) {
-        final lowerName = item.normalizedName.toLowerCase();
-        if (nameInTypes[lowerName]!.length > 1) {
-          return (
-            normalizedName: '${item.normalizedName}$_pathSuffix',
-            parameter: item.parameter,
-          );
-        }
-        return item;
-      }).toList();
+  final resolvedPathParams = normalizedPathParams.map((item) {
+    final lowerName = item.normalizedName.toLowerCase();
+    if (nameInTypes[lowerName]!.length > 1) {
+      return (
+        normalizedName: '${item.normalizedName}$_pathSuffix',
+        parameter: item.parameter,
+      );
+    }
+    return item;
+  }).toList();
 
-  final resolvedQueryParams =
-      normalizedQueryParams.map((item) {
-        final lowerName = item.normalizedName.toLowerCase();
-        if (nameInTypes[lowerName]!.length > 1) {
-          return (
-            normalizedName: '${item.normalizedName}$_querySuffix',
-            parameter: item.parameter,
-          );
-        }
-        return item;
-      }).toList();
+  final resolvedQueryParams = normalizedQueryParams.map((item) {
+    final lowerName = item.normalizedName.toLowerCase();
+    if (nameInTypes[lowerName]!.length > 1) {
+      return (
+        normalizedName: '${item.normalizedName}$_querySuffix',
+        parameter: item.parameter,
+      );
+    }
+    return item;
+  }).toList();
 
-  final resolvedHeaderParams =
-      normalizedHeaders.map((item) {
-        final lowerName = item.normalizedName.toLowerCase();
-        if (nameInTypes[lowerName]!.length > 1) {
-          return (
-            normalizedName: '${item.normalizedName}$_headerSuffix',
-            parameter: item.parameter,
-          );
-        }
-        return item;
-      }).toList();
+  final resolvedHeaderParams = normalizedHeaders.map((item) {
+    final lowerName = item.normalizedName.toLowerCase();
+    if (nameInTypes[lowerName]!.length > 1) {
+      return (
+        normalizedName: '${item.normalizedName}$_headerSuffix',
+        parameter: item.parameter,
+      );
+    }
+    return item;
+  }).toList();
 
   final uniquePathParams = _ensureUniquenessInGroup(resolvedPathParams);
   final uniqueQueryParams = _ensureUniquenessInGroup(resolvedQueryParams);
@@ -141,10 +138,9 @@ _normalizePathParameters(Set<PathParameterObject> parameters) {
   return parameters
       .map(
         (param) => (
-          normalizedName:
-              param.nameOverride != null
-                  ? _normalizeName(param.nameOverride!)
-                  : _normalizeName(param.rawName),
+          normalizedName: param.nameOverride != null
+              ? _normalizeName(param.nameOverride!)
+              : _normalizeName(param.rawName),
           parameter: param,
         ),
       )
@@ -158,10 +154,9 @@ _normalizeQueryParameters(Set<QueryParameterObject> parameters) {
   return parameters
       .map(
         (param) => (
-          normalizedName:
-              param.nameOverride != null
-                  ? _normalizeName(param.nameOverride!)
-                  : _normalizeName(param.rawName),
+          normalizedName: param.nameOverride != null
+              ? _normalizeName(param.nameOverride!)
+              : _normalizeName(param.rawName),
           parameter: param,
         ),
       )
@@ -175,10 +170,9 @@ _normalizeHeaderParameters(Set<RequestHeaderObject> parameters) {
   return parameters
       .map(
         (param) => (
-          normalizedName:
-              param.nameOverride != null
-                  ? _normalizeName(param.nameOverride!)
-                  : _normalizeHeaderName(param.rawName),
+          normalizedName: param.nameOverride != null
+              ? _normalizeName(param.nameOverride!)
+              : _normalizeHeaderName(param.rawName),
           parameter: param,
         ),
       )

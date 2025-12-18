@@ -23,11 +23,10 @@ Map<String, dynamic> loadOpenApiDocument(String path) {
     final apiSpec = switch (extension) {
       'json' => json.decode(content) as Map<String, dynamic>,
       'yaml' || 'yml' => _convertYamlToMap(loadYaml(content)),
-      _ =>
-        throw OpenApiLoaderException(
-          'Unsupported file extension: .$extension. '
-          'Must be .json, .yaml, or .yml',
-        ),
+      _ => throw OpenApiLoaderException(
+        'Unsupported file extension: .$extension. '
+        'Must be .json, .yaml, or .yml',
+      ),
     };
 
     logger.fine('Parsed OpenAPI document as ${extension.toUpperCase()}');

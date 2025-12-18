@@ -13,10 +13,9 @@ void main() {
   late Context context;
   late DartEmitter emitter;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -1129,8 +1128,10 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-    final variantNames =
-        classes.where((c) => c.name != 'TestOneOf').map((c) => c.name).toList();
+    final variantNames = classes
+        .where((c) => c.name != 'TestOneOf')
+        .map((c) => c.name)
+        .toList();
 
     // Verify variants are in stable sorted order by discriminator value.
     expect(variantNames, [

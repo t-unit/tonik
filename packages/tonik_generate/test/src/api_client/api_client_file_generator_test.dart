@@ -213,8 +213,9 @@ void main() {
       expect(clientDir.listSync().first.path, endsWith('default_api.dart'));
 
       // Read the generated file to verify it contains the operation
-      final fileContent =
-          File(clientDir.listSync().first.path).readAsStringSync();
+      final fileContent = File(
+        clientDir.listSync().first.path,
+      ).readAsStringSync();
 
       expect(fileContent, contains('untaggedOperation'));
       expect(fileContent, contains('class DefaultApi'));
@@ -285,16 +286,16 @@ void main() {
       expect(fileNames, ['default_api.dart', 'users_api.dart']);
 
       // Check content of default API
-      final defaultApiContent =
-          File(
-            path.join(clientDir.path, 'default_api.dart'),
-          ).readAsStringSync();
+      final defaultApiContent = File(
+        path.join(clientDir.path, 'default_api.dart'),
+      ).readAsStringSync();
       expect(defaultApiContent, contains('untaggedOperation'));
       expect(defaultApiContent, contains('class DefaultApi'));
 
       // Check content of users API
-      final usersApiContent =
-          File(path.join(clientDir.path, 'users_api.dart')).readAsStringSync();
+      final usersApiContent = File(
+        path.join(clientDir.path, 'users_api.dart'),
+      ).readAsStringSync();
       expect(usersApiContent, contains('getUser'));
       expect(usersApiContent, contains('class UsersApi'));
     });

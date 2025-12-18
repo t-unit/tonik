@@ -182,8 +182,9 @@ void main() {
         headers: {},
       );
 
-      final names =
-          result.queryParameters.map((r) => r.normalizedName).toList();
+      final names = result.queryParameters
+          .map((r) => r.normalizedName)
+          .toList();
       expect(names.length, 2, reason: 'Should have 2 parameters');
       expect(names.toSet().length, 2, reason: 'Should have unique names');
       expect(names.contains('value'), isTrue);

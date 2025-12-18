@@ -16,12 +16,11 @@ class DataGenerator {
     final requestBody = operation.requestBody;
     if (requestBody == null || requestBody.resolvedContent.isEmpty) {
       return Method(
-        (b) =>
-            b
-              ..name = '_data'
-              ..returns = refer('Object?', 'dart:core')
-              ..lambda = false
-              ..body = const Code('return null;'),
+        (b) => b
+          ..name = '_data'
+          ..returns = refer('Object?', 'dart:core')
+          ..lambda = false
+          ..body = const Code('return null;'),
       );
     }
 
@@ -31,54 +30,51 @@ class DataGenerator {
 
     if (hasMultipleContent) {
       final parameterType = TypeReference(
-        (b) =>
-            b
-              ..symbol = nameManager.requestBodyNames(requestBody).$1
-              ..url = package
-              ..isNullable = !isRequired,
+        (b) => b
+          ..symbol = nameManager.requestBodyNames(requestBody).$1
+          ..url = package
+          ..isNullable = !isRequired,
       );
 
       return Method(
-        (b) =>
-            b
-              ..name = '_data'
-              ..returns = refer('Object?', 'dart:core')
-              ..optionalParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'body'
-                        ..type = parameterType
-                        ..named = true
-                        ..required = isRequired,
+        (b) => b
+          ..name = '_data'
+          ..returns = refer('Object?', 'dart:core')
+          ..optionalParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'body'
+                ..type = parameterType
+                ..named = true
+                ..required = isRequired,
+            ),
+          )
+          ..lambda = false
+          ..body = Block.of([
+            if (!isRequired) const Code('if (body == null) return null;\n'),
+            const Code('return switch (body) {'),
+            ...content.map((c) {
+              final variantName = nameManager
+                  .requestBodyNames(requestBody)
+                  .$2[c.rawContentType]!;
+              final valueExpr = buildToJsonPropertyExpression(
+                'value',
+                Property(
+                  name: 'value',
+                  model: c.model,
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
                 ),
-              )
-              ..lambda = false
-              ..body = Block.of([
-                if (!isRequired) const Code('if (body == null) return null;\n'),
-                const Code('return switch (body) {'),
-                ...content.map((c) {
-                  final variantName =
-                      nameManager.requestBodyNames(requestBody).$2[c
-                          .rawContentType]!;
-                  final valueExpr = buildToJsonPropertyExpression(
-                    'value',
-                    Property(
-                      name: 'value',
-                      model: c.model,
-                      isRequired: true,
-                      isNullable: false,
-                      isDeprecated: false,
-                    ),
-                  );
-                  return Code.scope(
-                    (a) =>
-                        'final ${a(refer(variantName, package))} value => '
-                        'value.$valueExpr,',
-                  );
-                }),
-                const Code('\n};'),
-              ]),
+              );
+              return Code.scope(
+                (a) =>
+                    'final ${a(refer(variantName, package))} value => '
+                    'value.$valueExpr,',
+              );
+            }),
+            const Code('\n};'),
+          ]),
       );
     }
 
@@ -99,24 +95,22 @@ class DataGenerator {
     );
 
     return Method(
-      (b) =>
-          b
-            ..name = '_data'
-            ..returns = refer('Object?', 'dart:core')
-            ..optionalParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'body'
-                      ..type = parameterType
-                      ..named = true
-                      ..required = true,
-              ),
-            )
-            ..lambda = false
-            ..body = Code(
-              'return ${buildToJsonPropertyExpression('body', property)};',
-            ),
+      (b) => b
+        ..name = '_data'
+        ..returns = refer('Object?', 'dart:core')
+        ..optionalParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'body'
+              ..type = parameterType
+              ..named = true
+              ..required = true,
+          ),
+        )
+        ..lambda = false
+        ..body = Code(
+          'return ${buildToJsonPropertyExpression('body', property)};',
+        ),
     );
   }
 }

@@ -18,11 +18,10 @@ Method generateCopyWithMethod({
 
     parameters.add(
       Parameter(
-        (b) =>
-            b
-              ..name = name
-              ..named = true
-              ..type = typeRef.rebuild((b) => b..isNullable = true),
+        (b) => b
+          ..name = name
+          ..named = true
+          ..type = typeRef.rebuild((b) => b..isNullable = true),
       ),
     );
 
@@ -30,13 +29,12 @@ Method generateCopyWithMethod({
   }
 
   return Method(
-    (b) =>
-        b
-          ..name = 'copyWith'
-          ..returns = refer(className)
-          ..optionalParameters.addAll(parameters)
-          ..body = Code(
-            'return $className(\n  ${assignments.join('\n  ')}\n);',
-          ),
+    (b) => b
+      ..name = 'copyWith'
+      ..returns = refer(className)
+      ..optionalParameters.addAll(parameters)
+      ..body = Code(
+        'return $className(\n  ${assignments.join('\n  ')}\n);',
+      ),
   );
 }

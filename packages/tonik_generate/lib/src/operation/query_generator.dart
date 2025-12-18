@@ -44,12 +44,11 @@ class QueryGenerator {
 
       parameters.add(
         Parameter(
-          (b) =>
-              b
-                ..name = paramName
-                ..type = parameterType
-                ..named = true
-                ..required = resolvedParam.isRequired,
+          (b) => b
+            ..name = paramName
+            ..type = parameterType
+            ..named = true
+            ..required = resolvedParam.isRequired,
         ),
       );
 
@@ -60,13 +59,12 @@ class QueryGenerator {
     body.add(_generateReturnStatement());
 
     return Method(
-      (b) =>
-          b
-            ..name = '_queryParameters'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(parameters)
-            ..lambda = false
-            ..body = Block.of(body),
+      (b) => b
+        ..name = '_queryParameters'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(parameters)
+        ..lambda = false
+        ..body = Block.of(body),
     );
   }
 
@@ -141,11 +139,10 @@ class QueryGenerator {
         .property('map')
         .call([
           Method(
-            (b) =>
-                b
-                  ..lambda = true
-                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                  ..body = const Code(r"'${e.name}=${e.value}'"),
+            (b) => b
+              ..lambda = true
+              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+              ..body = const Code(r"'${e.name}=${e.value}'"),
           ).closure,
         ])
         .property('join')

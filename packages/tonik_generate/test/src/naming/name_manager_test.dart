@@ -568,7 +568,9 @@ void main() {
       final (
         baseName: baseName2,
         implementationNames: implementationNames2,
-      ) = manager.responseNames(response);
+      ) = manager.responseNames(
+        response,
+      );
       expect(baseName2, baseName);
       expect(identical(implementationNames, implementationNames2), isTrue);
     });
@@ -597,7 +599,9 @@ void main() {
       final (
         baseName: baseName2,
         implementationNames: implementationNames2,
-      ) = manager.responseNames(response);
+      ) = manager.responseNames(
+        response,
+      );
       expect(baseName2, baseName);
       expect(identical(implementationNames, implementationNames2), isTrue);
     });

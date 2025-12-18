@@ -49,8 +49,9 @@ class ResponseImporter {
   }) {
     // Check if we already have a response with this name
     if (name != null) {
-      final existing =
-          responses.where((response) => response.name == name).firstOrNull;
+      final existing = responses
+          .where((response) => response.name == name)
+          .firstOrNull;
       if (existing != null) {
         return existing;
       }

@@ -17,59 +17,70 @@ Expression buildFromFormValueExpression(
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
   return switch (model) {
-    StringModel() => value
-        .property(
-          isRequired ? 'decodeFormString' : 'decodeFormNullableString',
-        )
-        .call([], contextParam),
+    StringModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormString' : 'decodeFormNullableString',
+          )
+          .call([], contextParam),
 
-    IntegerModel() => value
-        .property(
-          isRequired ? 'decodeFormInt' : 'decodeFormNullableInt',
-        )
-        .call([], contextParam),
+    IntegerModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormInt' : 'decodeFormNullableInt',
+          )
+          .call([], contextParam),
 
-    DoubleModel() => value
-        .property(
-          isRequired ? 'decodeFormDouble' : 'decodeFormNullableDouble',
-        )
-        .call([], contextParam),
+    DoubleModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormDouble' : 'decodeFormNullableDouble',
+          )
+          .call([], contextParam),
 
-    NumberModel() => value
-        .property(
-          isRequired ? 'decodeFormDouble' : 'decodeFormNullableDouble',
-        )
-        .call([], contextParam),
+    NumberModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormDouble' : 'decodeFormNullableDouble',
+          )
+          .call([], contextParam),
 
-    BooleanModel() => value
-        .property(
-          isRequired ? 'decodeFormBool' : 'decodeFormNullableBool',
-        )
-        .call([], contextParam),
+    BooleanModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormBool' : 'decodeFormNullableBool',
+          )
+          .call([], contextParam),
 
-    DateTimeModel() => value
-        .property(
-          isRequired ? 'decodeFormDateTime' : 'decodeFormNullableDateTime',
-        )
-        .call([], contextParam),
+    DateTimeModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormDateTime' : 'decodeFormNullableDateTime',
+          )
+          .call([], contextParam),
 
-    DateModel() => value
-        .property(
-          isRequired ? 'decodeFormDate' : 'decodeFormNullableDate',
-        )
-        .call([], contextParam),
+    DateModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormDate' : 'decodeFormNullableDate',
+          )
+          .call([], contextParam),
 
-    DecimalModel() => value
-        .property(
-          isRequired ? 'decodeFormBigDecimal' : 'decodeFormNullableBigDecimal',
-        )
-        .call([], contextParam),
+    DecimalModel() =>
+      value
+          .property(
+            isRequired
+                ? 'decodeFormBigDecimal'
+                : 'decodeFormNullableBigDecimal',
+          )
+          .call([], contextParam),
 
-    UriModel() => value
-        .property(
-          isRequired ? 'decodeFormUri' : 'decodeFormNullableUri',
-        )
-        .call([], contextParam),
+    UriModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormUri' : 'decodeFormNullableUri',
+          )
+          .call([], contextParam),
 
     AliasModel() => buildFromFormValueExpression(
       value,
@@ -128,14 +139,14 @@ Expression _buildFromFormExpression(
   return isRequired
       ? refer(name, package).property('fromForm').call([value], explodeParam)
       : value
-          .equalTo(literalNull)
-          .conditional(
-            literalNull,
-            refer(
-              name,
-              package,
-            ).property('fromForm').call([value], explodeParam),
-          );
+            .equalTo(literalNull)
+            .conditional(
+              literalNull,
+              refer(
+                name,
+                package,
+              ).property('fromForm').call([value], explodeParam),
+            );
 }
 
 Map<String, Expression> _buildContextParam(
@@ -143,10 +154,9 @@ Map<String, Expression> _buildContextParam(
   String? contextProperty,
 ) {
   if (contextClass != null || contextProperty != null) {
-    final contextString =
-        (contextClass != null && contextProperty != null)
-            ? '$contextClass.$contextProperty'
-            : contextClass ?? contextProperty!;
+    final contextString = (contextClass != null && contextProperty != null)
+        ? '$contextClass.$contextProperty'
+        : contextClass ?? contextProperty!;
 
     return {'context': literalString(contextString, raw: true)};
   }
@@ -222,10 +232,9 @@ Expression _buildListFromFormExpression(
       isRequired,
       contextParam: contextParam,
     ),
-    ClassModel() =>
-      throw UnimplementedError(
-        'ClassModel is not supported in lists for form encoding',
-      ),
+    ClassModel() => throw UnimplementedError(
+      'ClassModel is not supported in lists for form encoding',
+    ),
     EnumModel() ||
     AllOfModel() ||
     OneOfModel() ||
@@ -239,10 +248,9 @@ Expression _buildListFromFormExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    ListModel() =>
-      throw UnimplementedError(
-        'Nested lists are not supported in form encoding',
-      ),
+    ListModel() => throw UnimplementedError(
+      'Nested lists are not supported in form encoding',
+    ),
     AliasModel() => _buildListFromFormExpression(
       value,
       ListModel(content: content.model, context: model.context),
@@ -268,13 +276,11 @@ Expression _buildPrimitiveList(
       .property('map')
       .call([
         Method(
-          (b) =>
-              b
-                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                ..body =
-                    refer(
-                      'e',
-                    ).property(decodeFunctionName).call([], contextParam).code,
+          (b) => b
+            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+            ..body = refer(
+              'e',
+            ).property(decodeFunctionName).call([], contextParam).code,
         ).closure,
       ])
       .property('toList')
@@ -298,13 +304,11 @@ Expression _buildClassList(
       .property('map')
       .call([
         Method(
-          (b) =>
-              b
-                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                ..body =
-                    refer(name, package).property('fromForm').call([
-                      refer('e'),
-                    ], explodeParam).code,
+          (b) => b
+            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+            ..body = refer(name, package).property('fromForm').call([
+              refer('e'),
+            ], explodeParam).code,
         ).closure,
       ])
       .property('toList')

@@ -14,12 +14,13 @@ void generatePubspec({
     pubspecFile.parent.createSync(recursive: true);
   }
 
-  final content = '''
+  final content =
+      '''
 name: $package
 description: Generated API client for ${apiDocument.title}
 version: ${apiDocument.version}
 environment:
-  sdk: ">=3.7.0 <4.0.0"
+  sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
   big_decimal: ^0.5.0

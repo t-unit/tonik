@@ -78,12 +78,11 @@ class ResponseHeaderImporter {
         // Check if we already imported this header
         final existing = headers.firstWhere(
           (h) => h.name == refName,
-          orElse:
-              () => _importHeader(
-                name: refName,
-                wrapper: refHeader,
-                context: context,
-              ),
+          orElse: () => _importHeader(
+            name: refName,
+            wrapper: refHeader,
+            context: context,
+          ),
         );
 
         return core.ResponseHeaderAlias(
@@ -109,10 +108,9 @@ class ResponseHeaderImporter {
           );
         }
 
-        final model =
-            header.schema != null
-                ? modelImporter.importSchema(header.schema!, context)
-                : core.StringModel(context: context);
+        final model = header.schema != null
+            ? modelImporter.importSchema(header.schema!, context)
+            : core.StringModel(context: context);
 
         if (header.schema == null) {
           log.warning(

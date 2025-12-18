@@ -30,12 +30,11 @@ void generateLibraryFile({
 
   final docComments = _formatApiDocumentation(apiDocument);
 
-  final buffer =
-      StringBuffer()
-        ..writeln('// Generated code - do not modify by hand')
-        ..writeln('// ignore_for_file: lines_longer_than_80_chars')
-        ..writeln()
-        ..writeln();
+  final buffer = StringBuffer()
+    ..writeln('// Generated code - do not modify by hand')
+    ..writeln('// ignore_for_file: lines_longer_than_80_chars')
+    ..writeln()
+    ..writeln();
 
   docComments.forEach(buffer.writeln);
 
@@ -136,10 +135,9 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
         ApiKeyLocation.query => 'query',
         ApiKeyLocation.cookie => 'cookie',
       };
-      final description =
-          (scheme.description?.isNotEmpty ?? false)
-              ? ': ${scheme.description}'
-              : '';
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
       lines.add('/// - API Key ($location)$description');
 
     case HttpSecurityScheme():
@@ -148,20 +146,18 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
         'basic' => 'Basic',
         _ => scheme.scheme.toUpperCase(),
       };
-      final description =
-          (scheme.description?.isNotEmpty ?? false)
-              ? ': ${scheme.description}'
-              : '';
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
       lines.add('/// - HTTP $schemeName$description');
       if (scheme.bearerFormat != null) {
         lines.add('///   Format: ${scheme.bearerFormat}');
       }
 
     case OAuth2SecurityScheme():
-      final description =
-          (scheme.description?.isNotEmpty ?? false)
-              ? ': ${scheme.description}'
-              : '';
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
       lines.add('/// - OAuth2$description');
       final flows = scheme.flows;
 
@@ -194,10 +190,9 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
       }
 
     case OpenIdConnectSecurityScheme():
-      final description =
-          (scheme.description?.isNotEmpty ?? false)
-              ? ': ${scheme.description}'
-              : '';
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
       lines.add('/// - OpenID Connect$description');
       lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
   }

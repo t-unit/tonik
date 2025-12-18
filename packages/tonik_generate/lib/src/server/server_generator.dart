@@ -41,11 +41,10 @@ class ServerGenerator {
   List<Class> generateClasses(List<Server> servers) {
     final names = nameManager.serverNames(servers);
     final baseClass = _generateBaseClass(names.baseName);
-    final serverClasses =
-        servers.map((server) {
-          final serverName = names.serverMap[server]!;
-          return _generateServerClass(serverName, names.baseName, server);
-        }).toList();
+    final serverClasses = servers.map((server) {
+      final serverName = names.serverMap[server]!;
+      return _generateServerClass(serverName, names.baseName, server);
+    }).toList();
 
     final customServerClass = _generateCustomServerClass(
       names.customName,
@@ -60,78 +59,70 @@ class ServerGenerator {
     final dioNullableType = refer('Dio?', 'package:dio/dio.dart');
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..abstract = true
-            ..sealed = true
-            ..fields.addAll([
-              Field(
-                (f) =>
-                    f
-                      ..name = 'baseUrl'
-                      ..type = refer('String', 'dart:core')
-                      ..modifier = FieldModifier.final$,
-              ),
-              Field(
-                (f) =>
-                    f
-                      ..name = 'serverConfig'
-                      ..type = refer(
-                        'ServerConfig',
-                        'package:tonik_util/tonik_util.dart',
-                      )
-                      ..modifier = FieldModifier.final$,
-              ),
-              Field(
-                (f) =>
-                    f
-                      ..name = '_dio'
-                      ..type = dioNullableType,
-              ),
-            ])
-            ..constructors.add(
-              Constructor(
-                (c) =>
-                    c
-                      ..optionalParameters.addAll([
-                        Parameter(
-                          (p) =>
-                              p
-                                ..name = 'baseUrl'
-                                ..named = true
-                                ..required = true
-                                ..toThis = true,
-                        ),
-                        Parameter(
-                          (p) =>
-                              p
-                                ..name = 'serverConfig'
-                                ..named = true
-                                ..required = true
-                                ..toThis = true,
-                        ),
-                      ]),
-              ),
-            )
-            ..methods.add(
-              Method(
-                (m) =>
-                    m
-                      ..name = 'dio'
-                      ..type = MethodType.getter
-                      ..returns = dioType
-                      ..body = Block.of([
-                        const Code('if (_dio == null) {'),
-                        Code.scope((a) => '  _dio = ${a(dioType)}();'),
-                        const Code(
-                          '  serverConfig.configureDio(_dio!, baseUrl);',
-                        ),
-                        const Code('}'),
-                        const Code('return _dio!;'),
-                      ]),
-              ),
-            ),
+      (b) => b
+        ..name = className
+        ..abstract = true
+        ..sealed = true
+        ..fields.addAll([
+          Field(
+            (f) => f
+              ..name = 'baseUrl'
+              ..type = refer('String', 'dart:core')
+              ..modifier = FieldModifier.final$,
+          ),
+          Field(
+            (f) => f
+              ..name = 'serverConfig'
+              ..type = refer(
+                'ServerConfig',
+                'package:tonik_util/tonik_util.dart',
+              )
+              ..modifier = FieldModifier.final$,
+          ),
+          Field(
+            (f) => f
+              ..name = '_dio'
+              ..type = dioNullableType,
+          ),
+        ])
+        ..constructors.add(
+          Constructor(
+            (c) => c
+              ..optionalParameters.addAll([
+                Parameter(
+                  (p) => p
+                    ..name = 'baseUrl'
+                    ..named = true
+                    ..required = true
+                    ..toThis = true,
+                ),
+                Parameter(
+                  (p) => p
+                    ..name = 'serverConfig'
+                    ..named = true
+                    ..required = true
+                    ..toThis = true,
+                ),
+              ]),
+          ),
+        )
+        ..methods.add(
+          Method(
+            (m) => m
+              ..name = 'dio'
+              ..type = MethodType.getter
+              ..returns = dioType
+              ..body = Block.of([
+                const Code('if (_dio == null) {'),
+                Code.scope((a) => '  _dio = ${a(dioType)}();'),
+                const Code(
+                  '  serverConfig.configureDio(_dio!, baseUrl);',
+                ),
+                const Code('}'),
+                const Code('return _dio!;'),
+              ]),
+          ),
+        ),
     );
   }
 
@@ -146,32 +137,29 @@ class ServerGenerator {
     );
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..extend = refer(baseClassName)
-            ..docs.add('/// ${server.description ?? 'Server'} - ${server.url}')
-            ..constructors.add(
-              Constructor(
-                (c) =>
-                    c
-                      ..optionalParameters.add(
-                        Parameter(
-                          (p) =>
-                              p
-                                ..name = 'serverConfig'
-                                ..named = true
-                                ..defaultTo = Code.scope(
-                                  (a) => 'const ${a(serverConfigType)}()',
-                                )
-                                ..toSuper = true,
-                        ),
-                      )
-                      ..initializers.add(
-                        Code("super(baseUrl: '${server.url}')"),
-                      ),
+      (b) => b
+        ..name = className
+        ..extend = refer(baseClassName)
+        ..docs.add('/// ${server.description ?? 'Server'} - ${server.url}')
+        ..constructors.add(
+          Constructor(
+            (c) => c
+              ..optionalParameters.add(
+                Parameter(
+                  (p) => p
+                    ..name = 'serverConfig'
+                    ..named = true
+                    ..defaultTo = Code.scope(
+                      (a) => 'const ${a(serverConfigType)}()',
+                    )
+                    ..toSuper = true,
+                ),
+              )
+              ..initializers.add(
+                Code("super(baseUrl: '${server.url}')"),
               ),
-            ),
+          ),
+        ),
     );
   }
 
@@ -182,37 +170,33 @@ class ServerGenerator {
     );
 
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..extend = refer(baseClassName)
-            ..docs.add('/// Custom server with user-defined base URL')
-            ..constructors.add(
-              Constructor(
-                (c) =>
-                    c
-                      ..optionalParameters.addAll([
-                        Parameter(
-                          (p) =>
-                              p
-                                ..name = 'baseUrl'
-                                ..named = true
-                                ..required = true
-                                ..toSuper = true,
-                        ),
-                        Parameter(
-                          (p) =>
-                              p
-                                ..name = 'serverConfig'
-                                ..named = true
-                                ..defaultTo = Code.scope(
-                                  (a) => 'const ${a(serverConfigType)}()',
-                                )
-                                ..toSuper = true,
-                        ),
-                      ]),
-              ),
-            ),
+      (b) => b
+        ..name = className
+        ..extend = refer(baseClassName)
+        ..docs.add('/// Custom server with user-defined base URL')
+        ..constructors.add(
+          Constructor(
+            (c) => c
+              ..optionalParameters.addAll([
+                Parameter(
+                  (p) => p
+                    ..name = 'baseUrl'
+                    ..named = true
+                    ..required = true
+                    ..toSuper = true,
+                ),
+                Parameter(
+                  (p) => p
+                    ..name = 'serverConfig'
+                    ..named = true
+                    ..defaultTo = Code.scope(
+                      (a) => 'const ${a(serverConfigType)}()',
+                    )
+                    ..toSuper = true,
+                ),
+              ]),
+          ),
+        ),
     );
   }
 }

@@ -8,10 +8,9 @@ void main() {
   late Context context;
   late DartEmitter emitter;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     context = Context.initial();

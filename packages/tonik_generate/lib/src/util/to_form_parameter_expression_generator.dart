@@ -40,10 +40,9 @@ Expression buildFormParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for form encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for form encoding: $model',
+    ),
   };
 }
 
@@ -72,35 +71,34 @@ Expression _buildListFormExpression(
     EnumModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression
-        .property('map')
-        .call([
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body =
-                      buildFormParameterExpression(
-                        refer('e'),
-                        contentModel,
-                        explode: explode,
-                        allowEmpty: allowEmpty,
-                      ).code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toForm')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalBool(true),
-          },
-        ),
+    AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildFormParameterExpression(
+                  refer('e'),
+                  contentModel,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toForm')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
     AliasModel() => _buildListFormExpression(
       valueExpression,
       contentModel.model,
@@ -114,9 +112,8 @@ Expression _buildListFormExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported list content type for form encoding: $contentModel',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported list content type for form encoding: $contentModel',
+    ),
   };
 }

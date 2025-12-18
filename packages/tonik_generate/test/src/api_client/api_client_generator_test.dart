@@ -13,10 +13,9 @@ void main() {
   late DartEmitter emitter;
   late List<Server> testServers;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameManager = NameManager(generator: NameGenerator());
@@ -85,8 +84,9 @@ void main() {
 
         // Test constructor initializers
         expect(constructor.initializers.length, 1);
-        final initializerCode =
-            constructor.initializers.first.accept(emitter).toString();
+        final initializerCode = constructor.initializers.first
+            .accept(emitter)
+            .toString();
         expect(
           initializerCode,
           '_getUser = GetUser(server.dio)',
@@ -141,8 +141,9 @@ void main() {
 
         // Test constructor initializers
         expect(constructor.initializers.length, 1);
-        final initializerCode =
-            constructor.initializers.first.accept(emitter).toString();
+        final initializerCode = constructor.initializers.first
+            .accept(emitter)
+            .toString();
         expect(
           initializerCode,
           '_getUser = GetUser(server.dio)',

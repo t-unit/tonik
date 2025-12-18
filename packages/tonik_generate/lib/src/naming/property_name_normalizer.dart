@@ -18,21 +18,19 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 List<({String normalizedName, Property property})> normalizeProperties(
   List<Property> properties,
 ) {
-  final normalized =
-      properties
-          .map(
-            (prop) => (
-              normalizedName:
-                  prop.nameOverride != null
-                      ? normalizeSingle(
-                        prop.nameOverride!,
-                        preserveNumbers: true,
-                      )
-                      : normalizeSingle(prop.name, preserveNumbers: true),
-              originalValue: prop,
-            ),
-          )
-          .toList();
+  final normalized = properties
+      .map(
+        (prop) => (
+          normalizedName: prop.nameOverride != null
+              ? normalizeSingle(
+                  prop.nameOverride!,
+                  preserveNumbers: true,
+                )
+              : normalizeSingle(prop.name, preserveNumbers: true),
+          originalValue: prop,
+        ),
+      )
+      .toList();
 
   final unique = ensureUniqueness(
     normalized,
@@ -59,15 +57,14 @@ List<({String normalizedName, Property property})> normalizeProperties(
 List<({String normalizedName, String originalValue})> normalizeEnumValues(
   List<String> values,
 ) {
-  final normalized =
-      values
-          .map(
-            (value) => (
-              normalizedName: normalizeEnumValueName(value),
-              originalValue: value,
-            ),
-          )
-          .toList();
+  final normalized = values
+      .map(
+        (value) => (
+          normalizedName: normalizeEnumValueName(value),
+          originalValue: value,
+        ),
+      )
+      .toList();
 
   return ensureUniqueness(normalized);
 }

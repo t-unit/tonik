@@ -22,17 +22,16 @@ class DeprecationHandler {
   }) {
     return switch (mode) {
       DeprecatedHandling.annotate => models,
-      DeprecatedHandling.exclude =>
-        models.where((model) {
-          return switch (model) {
-            final ClassModel m => !m.isDeprecated,
-            final EnumModel<Object?> m => !m.isDeprecated,
-            final AllOfModel m => !m.isDeprecated,
-            final OneOfModel m => !m.isDeprecated,
-            final AnyOfModel m => !m.isDeprecated,
-            _ => true,
-          };
-        }).toSet(),
+      DeprecatedHandling.exclude => models.where((model) {
+        return switch (model) {
+          final ClassModel m => !m.isDeprecated,
+          final EnumModel<Object?> m => !m.isDeprecated,
+          final AllOfModel m => !m.isDeprecated,
+          final OneOfModel m => !m.isDeprecated,
+          final AnyOfModel m => !m.isDeprecated,
+          _ => true,
+        };
+      }).toSet(),
       DeprecatedHandling.ignore =>
         models..forEach((model) {
           switch (model) {
@@ -58,14 +57,13 @@ class DeprecationHandler {
   }) {
     return switch (mode) {
       DeprecatedHandling.annotate => parameters,
-      DeprecatedHandling.exclude =>
-        parameters.where((param) {
-          return switch (param) {
-            final QueryParameterObject obj => !obj.isDeprecated,
-            final QueryParameterAlias alias =>
-              !alias.parameter.resolve().isDeprecated,
-          };
-        }).toSet(),
+      DeprecatedHandling.exclude => parameters.where((param) {
+        return switch (param) {
+          final QueryParameterObject obj => !obj.isDeprecated,
+          final QueryParameterAlias alias =>
+            !alias.parameter.resolve().isDeprecated,
+        };
+      }).toSet(),
       DeprecatedHandling.ignore =>
         parameters..forEach((param) {
           if (param case final QueryParameterObject obj) {
@@ -81,14 +79,13 @@ class DeprecationHandler {
   }) {
     return switch (mode) {
       DeprecatedHandling.annotate => parameters,
-      DeprecatedHandling.exclude =>
-        parameters.where((param) {
-          return switch (param) {
-            final PathParameterObject obj => !obj.isDeprecated,
-            final PathParameterAlias alias =>
-              !alias.parameter.resolve().isDeprecated,
-          };
-        }).toSet(),
+      DeprecatedHandling.exclude => parameters.where((param) {
+        return switch (param) {
+          final PathParameterObject obj => !obj.isDeprecated,
+          final PathParameterAlias alias =>
+            !alias.parameter.resolve().isDeprecated,
+        };
+      }).toSet(),
       DeprecatedHandling.ignore =>
         parameters..forEach((param) {
           if (param case final PathParameterObject obj) {
@@ -104,14 +101,13 @@ class DeprecationHandler {
   }) {
     return switch (mode) {
       DeprecatedHandling.annotate => headers,
-      DeprecatedHandling.exclude =>
-        headers.where((header) {
-          return switch (header) {
-            final RequestHeaderObject obj => !obj.isDeprecated,
-            final RequestHeaderAlias alias =>
-              !alias.header.resolve().isDeprecated,
-          };
-        }).toSet(),
+      DeprecatedHandling.exclude => headers.where((header) {
+        return switch (header) {
+          final RequestHeaderObject obj => !obj.isDeprecated,
+          final RequestHeaderAlias alias =>
+            !alias.header.resolve().isDeprecated,
+        };
+      }).toSet(),
       DeprecatedHandling.ignore =>
         headers..forEach((header) {
           if (header case final RequestHeaderObject obj) {

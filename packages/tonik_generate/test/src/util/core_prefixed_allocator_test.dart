@@ -13,41 +13,35 @@ void main() {
     });
 
     test('prefixes dart:core types', () {
-      final code =
-          Class(
-            (b) =>
-                b
-                  ..name = 'Example'
-                  ..fields.addAll([
-                    Field(
-                      (b) =>
-                          b
-                            ..name = 'name'
-                            ..type = refer('String', 'dart:core')
-                            ..modifier = FieldModifier.final$,
-                    ),
-                    Field(
-                      (b) =>
-                          b
-                            ..name = 'age'
-                            ..type = refer('int', 'dart:core')
-                            ..modifier = FieldModifier.final$,
-                    ),
-                    Field(
-                      (b) =>
-                          b
-                            ..name = 'items'
-                            ..type = TypeReference(
-                              (b) =>
-                                  b
-                                    ..symbol = 'List'
-                                    ..url = 'dart:core'
-                                    ..types.add(refer('String', 'dart:core')),
-                            )
-                            ..modifier = FieldModifier.final$,
-                    ),
-                  ]),
-          ).accept(emitter).toString();
+      final code = Class(
+        (b) => b
+          ..name = 'Example'
+          ..fields.addAll([
+            Field(
+              (b) => b
+                ..name = 'name'
+                ..type = refer('String', 'dart:core')
+                ..modifier = FieldModifier.final$,
+            ),
+            Field(
+              (b) => b
+                ..name = 'age'
+                ..type = refer('int', 'dart:core')
+                ..modifier = FieldModifier.final$,
+            ),
+            Field(
+              (b) => b
+                ..name = 'items'
+                ..type = TypeReference(
+                  (b) => b
+                    ..symbol = 'List'
+                    ..url = 'dart:core'
+                    ..types.add(refer('String', 'dart:core')),
+                )
+                ..modifier = FieldModifier.final$,
+            ),
+          ]),
+      ).accept(emitter).toString();
 
       final imports = allocator.imports.map(
         (i) => i.accept(emitter).toString(),
@@ -61,31 +55,27 @@ void main() {
 
     test('prefixes different libraries with different prefixes', () {
       final library = Library(
-        (b) =>
-            b
-              ..body.add(
-                Class(
-                  (b) =>
-                      b
-                        ..name = 'Example'
-                        ..fields.addAll([
-                          Field(
-                            (b) =>
-                                b
-                                  ..name = 'name'
-                                  ..type = refer('String', 'dart:core')
-                                  ..modifier = FieldModifier.final$,
-                          ),
-                          Field(
-                            (b) =>
-                                b
-                                  ..name = 'data'
-                                  ..type = refer('File', 'dart:io')
-                                  ..modifier = FieldModifier.final$,
-                          ),
-                        ]),
-                ),
-              ),
+        (b) => b
+          ..body.add(
+            Class(
+              (b) => b
+                ..name = 'Example'
+                ..fields.addAll([
+                  Field(
+                    (b) => b
+                      ..name = 'name'
+                      ..type = refer('String', 'dart:core')
+                      ..modifier = FieldModifier.final$,
+                  ),
+                  Field(
+                    (b) => b
+                      ..name = 'data'
+                      ..type = refer('File', 'dart:io')
+                      ..modifier = FieldModifier.final$,
+                  ),
+                ]),
+            ),
+          ),
       );
 
       final code = library.accept(emitter).toString();
@@ -102,10 +92,9 @@ void main() {
       expect(code.contains('_i1.File') || code.contains('_i2.File'), isTrue);
 
       // Ensure they have different prefixes
-      final prefixes =
-          RegExp(
-            r'_i(\d+)',
-          ).allMatches(imports).map((m) => m.group(1)).toList();
+      final prefixes = RegExp(
+        r'_i(\d+)',
+      ).allMatches(imports).map((m) => m.group(1)).toList();
       expect(prefixes.toSet().length, 2);
     });
   });

@@ -42,8 +42,9 @@ String? _getSimpleSerializationSuffix(
   bool explode,
   bool allowEmpty,
 ) {
-  final nullablePart =
-      isNullable || (model is EnumModel && model.isNullable) ? '?' : '';
+  final nullablePart = isNullable || (model is EnumModel && model.isNullable)
+      ? '?'
+      : '';
   final paramString = 'explode: $explode, allowEmpty: $allowEmpty';
 
   return switch (model) {
@@ -81,10 +82,9 @@ String? _getSimpleSerializationSuffix(
       allowEmpty,
     ),
 
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for simple encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for simple encoding: $model',
+    ),
   };
 }
 
@@ -98,10 +98,9 @@ String? _handleListExpression(
 
   // Handle different content models
   return switch (contentModel) {
-    ListModel() =>
-      throw UnimplementedError(
-        'Nested lists are not supported for simple encoding.',
-      ),
+    ListModel() => throw UnimplementedError(
+      'Nested lists are not supported for simple encoding.',
+    ),
 
     // For List<String>, use the extension directly
     StringModel() => '${isNullable ? '?' : ''}.toSimple($paramString)',

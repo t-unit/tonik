@@ -14,10 +14,9 @@ void main() {
   late Context context;
   late DartEmitter emitter;
 
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -399,10 +398,9 @@ void main() {
           'int?',
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(klass.accept(emitter).toString());
 
         const expectedCopyWithBody = '''
@@ -420,10 +418,9 @@ void main() {
   });
 
   group('currentEncodingShape with multiple fields of same shape', () {
-    final format =
-        DartFormatter(
-          languageVersion: DartFormatter.latestLanguageVersion,
-        ).format;
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
 
     test('anyOf with multiple primitives returns simple shape', () {
       final model = AnyOfModel(
@@ -632,10 +629,9 @@ void main() {
           isTrue,
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
         const expectedMethod = '''
@@ -739,10 +735,9 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           isTrue,
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(toFormMethod.accept(emitter).toString());
 
         const expectedMethod = '''
@@ -803,10 +798,9 @@ String toForm({required bool explode, required bool allowEmpty}) {
         expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
         expect(toSimpleMethod.optionalParameters.length, 2);
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
         const expectedMethod = '''
@@ -876,10 +870,9 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         expect(toSimpleMethod.name, 'toSimple');
         expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
         const expectedMethod = '''
@@ -1261,10 +1254,9 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (m) => m.name == 'parameterProperties',
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
@@ -1349,10 +1341,9 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (m) => m.name == 'parameterProperties',
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
@@ -1410,10 +1401,9 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (m) => m.name == 'parameterProperties',
         );
 
-        final format =
-            DartFormatter(
-              languageVersion: DartFormatter.latestLanguageVersion,
-            ).format;
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''

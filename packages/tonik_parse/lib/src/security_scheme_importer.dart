@@ -100,18 +100,18 @@ class SecuritySchemeImporter {
 
   core.OAuth2Flows _parseOAuth2Flows(parse.OAuth2Flows flows) {
     return core.OAuth2Flows(
-      implicit:
-          flows.implicit != null ? _parseOAuth2Flow(flows.implicit!) : null,
-      password:
-          flows.password != null ? _parseOAuth2Flow(flows.password!) : null,
-      clientCredentials:
-          flows.clientCredentials != null
-              ? _parseOAuth2Flow(flows.clientCredentials!)
-              : null,
-      authorizationCode:
-          flows.authorizationCode != null
-              ? _parseOAuth2Flow(flows.authorizationCode!)
-              : null,
+      implicit: flows.implicit != null
+          ? _parseOAuth2Flow(flows.implicit!)
+          : null,
+      password: flows.password != null
+          ? _parseOAuth2Flow(flows.password!)
+          : null,
+      clientCredentials: flows.clientCredentials != null
+          ? _parseOAuth2Flow(flows.clientCredentials!)
+          : null,
+      authorizationCode: flows.authorizationCode != null
+          ? _parseOAuth2Flow(flows.authorizationCode!)
+          : null,
     );
   }
 

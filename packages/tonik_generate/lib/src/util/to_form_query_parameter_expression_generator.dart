@@ -37,8 +37,9 @@ List<Code> buildToFormQueryParameterCode(
         explode: explode,
         allowEmpty: allowEmpty,
       );
-      final valueExpression =
-          suffix == null ? parameterName : '$parameterName$suffix';
+      final valueExpression = suffix == null
+          ? parameterName
+          : '$parameterName$suffix';
 
       return [
         Code('for (final item in $parameterName) {'),
@@ -66,8 +67,9 @@ List<Code> buildToFormQueryParameterCode(
     explode: explode,
     allowEmpty: allowEmpty,
   );
-  final valueExpression =
-      suffix == null ? parameterName : '$parameterName$suffix';
+  final valueExpression = suffix == null
+      ? parameterName
+      : '$parameterName$suffix';
 
   return [
     Code(
@@ -114,10 +116,9 @@ String? _getFormSerializationSuffix(
       allowEmpty: allowEmpty,
     ),
 
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for form encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for form encoding: $model',
+    ),
   };
 }
 
@@ -158,9 +159,8 @@ String? _handleListExpression(
       allowEmpty: allowEmpty,
     ),
 
-    _ =>
-      throw UnimplementedError(
-        'Unsupported list content type for form encoding: $contentModel',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported list content type for form encoding: $contentModel',
+    ),
   };
 }

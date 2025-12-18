@@ -22,8 +22,9 @@ class OffsetDateTime implements DateTime {
     required this.offset,
     String? timeZoneName,
   }) : timeZoneName = timeZoneName ?? _generateTimeZoneName(offset),
-       _utcDateTime =
-           dateTime.isUtc ? dateTime : _toUtcDateTime(dateTime, offset);
+       _utcDateTime = dateTime.isUtc
+           ? dateTime
+           : _toUtcDateTime(dateTime, offset);
 
   const OffsetDateTime._fromUtc(
     this._utcDateTime, {

@@ -168,8 +168,9 @@ extension ObjectDecoder on String? {
 
       final listParts = <String>[];
       final rawValue = parts[1];
-      final decodedValue =
-          isFormStyle ? Uri.decodeQueryComponent(rawValue) : rawValue;
+      final decodedValue = isFormStyle
+          ? Uri.decodeQueryComponent(rawValue)
+          : rawValue;
       listParts.add(decodedValue);
 
       if (listKeys.contains(key)) {
@@ -180,8 +181,9 @@ extension ObjectDecoder on String? {
             break;
           }
 
-          final nextValue =
-              isFormStyle ? Uri.decodeQueryComponent(nextPair) : nextPair;
+          final nextValue = isFormStyle
+              ? Uri.decodeQueryComponent(nextPair)
+              : nextPair;
           listParts.add(nextValue);
           i++;
         }
@@ -244,10 +246,9 @@ extension ObjectDecoder on String? {
             break;
           }
 
-          final valueToAdd =
-              isFormStyle
-                  ? Uri.decodeQueryComponent(potentialValue)
-                  : potentialValue;
+          final valueToAdd = isFormStyle
+              ? Uri.decodeQueryComponent(potentialValue)
+              : potentialValue;
           listValues.add(valueToAdd);
           i++;
         }
@@ -255,8 +256,9 @@ extension ObjectDecoder on String? {
         result[key] = listValues.join(',');
       } else {
         final rawValue = parts[i];
-        final decodedValue =
-            isFormStyle ? Uri.decodeQueryComponent(rawValue) : rawValue;
+        final decodedValue = isFormStyle
+            ? Uri.decodeQueryComponent(rawValue)
+            : rawValue;
 
         result[key] = decodedValue;
         i++;

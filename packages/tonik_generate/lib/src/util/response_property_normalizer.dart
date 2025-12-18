@@ -9,10 +9,9 @@ normalizeResponseProperties(ResponseObject response) {
 
   final headerProperties = response.headers.entries.map((header) {
     final property = Property(
-      name:
-          header.key.toLowerCase() == 'body'
-              ? '${header.key}Header'
-              : header.key,
+      name: header.key.toLowerCase() == 'body'
+          ? '${header.key}Header'
+          : header.key,
       model: header.value.resolve(name: header.key).model,
       isRequired: header.value.resolve(name: header.key).isRequired,
       isNullable: false,
@@ -37,14 +36,15 @@ normalizeResponseProperties(ResponseObject response) {
 
   final normalizedProperties = normalizeProperties(properties);
 
-  final sorted = [...normalizedProperties]..sort((a, b) {
-    // Required fields come before non-required fields
-    if (a.property.isRequired != b.property.isRequired) {
-      return a.property.isRequired ? -1 : 1;
-    }
-    // Keep original order for fields with same required status
-    return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
-  });
+  final sorted = [...normalizedProperties]
+    ..sort((a, b) {
+      // Required fields come before non-required fields
+      if (a.property.isRequired != b.property.isRequired) {
+        return a.property.isRequired ? -1 : 1;
+      }
+      // Keep original order for fields with same required status
+      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
+    });
 
   return sorted.map((norm) {
     return (

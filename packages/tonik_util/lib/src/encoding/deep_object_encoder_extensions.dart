@@ -45,8 +45,9 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
 
     return entries.map((e) {
       final encodedKey = Uri.encodeComponent(e.key);
-      final encodedValue =
-          alreadyEncoded ? e.value : Uri.encodeComponent(e.value);
+      final encodedValue = alreadyEncoded
+          ? e.value
+          : Uri.encodeComponent(e.value);
       return (name: '$paramName[$encodedKey]', value: encodedValue);
     }).toList();
   }

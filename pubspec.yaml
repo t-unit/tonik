@@ -8,7 +8,7 @@ workspace:
  - packages/tonik_util
 
 environment:
-  sdk: '>=3.7.0 <4.0.0'
+  sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
   collection: ^1.19.1

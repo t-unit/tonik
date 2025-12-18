@@ -301,8 +301,9 @@ void main() {
   test('handles duplicate request bodies correctly', () {
     final api = Importer().import(fileContent);
 
-    final duplicateBodies =
-        api.requestBodies.where((r) => r.name == 'DuplicateBody').toList();
+    final duplicateBodies = api.requestBodies
+        .where((r) => r.name == 'DuplicateBody')
+        .toList();
 
     expect(duplicateBodies, hasLength(1));
 

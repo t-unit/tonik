@@ -74,11 +74,10 @@ void main() {
           (
             normalizedName: 'items',
             typeRef: TypeReference(
-              (b) =>
-                  b
-                    ..symbol = 'List'
-                    ..url = 'dart:core'
-                    ..types.add(refer('String')),
+              (b) => b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String')),
             ),
           ),
         ],

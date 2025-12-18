@@ -59,14 +59,16 @@ class ClassGenerator {
     final className = nameManager.modelName(model);
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final sortedProperties = [...normalizedProperties]..sort((a, b) {
-      // Required fields come before non-required fields
-      if (a.property.isRequired != b.property.isRequired) {
-        return a.property.isRequired ? -1 : 1;
-      }
-      // Keep original order for fields with same required status
-      return normalizedProperties.indexOf(a) - normalizedProperties.indexOf(b);
-    });
+    final sortedProperties = [...normalizedProperties]
+      ..sort((a, b) {
+        // Required fields come before non-required fields
+        if (a.property.isRequired != b.property.isRequired) {
+          return a.property.isRequired ? -1 : 1;
+        }
+        // Keep original order for fields with same required status
+        return normalizedProperties.indexOf(a) -
+            normalizedProperties.indexOf(b);
+      });
 
     return Class(
       (b) {
@@ -85,21 +87,19 @@ class ClassGenerator {
 
         b.constructors.addAll([
           Constructor(
-            (b) =>
-                b
-                  ..constant = true
-                  ..optionalParameters.addAll(
-                    sortedProperties.map(
-                      (prop) => Parameter(
-                        (b) =>
-                            b
-                              ..name = prop.normalizedName
-                              ..named = true
-                              ..required = prop.property.isRequired
-                              ..toThis = true,
-                      ),
-                    ),
+            (b) => b
+              ..constant = true
+              ..optionalParameters.addAll(
+                sortedProperties.map(
+                  (prop) => Parameter(
+                    (b) => b
+                      ..name = prop.normalizedName
+                      ..named = true
+                      ..required = prop.property.isRequired
+                      ..toThis = true,
                   ),
+                ),
+              ),
           ),
           _buildFromSimpleConstructor(className, model),
           _buildFromJsonConstructor(className, model),
@@ -135,15 +135,14 @@ class ClassGenerator {
   ) {
     return generateCopyWithMethod(
       className: className,
-      properties:
-          properties
-              .map(
-                (prop) => (
-                  normalizedName: prop.normalizedName,
-                  typeRef: _getTypeReference(prop.property),
-                ),
-              )
-              .toList(),
+      properties: properties
+          .map(
+            (prop) => (
+              normalizedName: prop.normalizedName,
+              typeRef: _getTypeReference(prop.property),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -153,15 +152,14 @@ class ClassGenerator {
   ) {
     return generateEqualsMethod(
       className: className,
-      properties:
-          properties
-              .map(
-                (prop) => (
-                  normalizedName: prop.normalizedName,
-                  hasCollectionValue: prop.property.model is ListModel,
-                ),
-              )
-              .toList(),
+      properties: properties
+          .map(
+            (prop) => (
+              normalizedName: prop.normalizedName,
+              hasCollectionValue: prop.property.model is ListModel,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -169,15 +167,14 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> properties,
   ) {
     return generateHashCodeMethod(
-      properties:
-          properties
-              .map(
-                (p) => (
-                  normalizedName: p.normalizedName,
-                  hasCollectionValue: p.property.model is ListModel,
-                ),
-              )
-              .toList(),
+      properties: properties
+          .map(
+            (p) => (
+              normalizedName: p.normalizedName,
+              hasCollectionValue: p.property.model is ListModel,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -200,26 +197,24 @@ class ClassGenerator {
     });
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromSimple'
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'value'
-                      ..type = refer('String?', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.add(
-              buildBoolParameter('explode', required: true),
-            )
-            ..body = _buildFromSimpleBody(
-              className,
-              normalizedProperties,
-              canBeSimplyEncoded,
-            ),
+      (b) => b
+        ..factory = true
+        ..name = 'fromSimple'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..body = _buildFromSimpleBody(
+          className,
+          normalizedProperties,
+          canBeSimplyEncoded,
+        ),
     );
   }
 
@@ -263,11 +258,10 @@ class ClassGenerator {
 
     // Build expectedKeys and listKeys sets
     final expectedKeys = properties.map((p) => p.property.name).toSet();
-    final listKeys =
-        properties
-            .where((p) => p.property.model is ListModel)
-            .map((p) => p.property.name)
-            .toSet();
+    final listKeys = properties
+        .where((p) => p.property.model is ListModel)
+        .map((p) => p.property.name)
+        .toSet();
 
     return Block.of([
       declareFinal('values')
@@ -294,19 +288,17 @@ class ClassGenerator {
 
   Constructor _buildFromJsonConstructor(String className, ClassModel model) =>
       Constructor(
-        (b) =>
-            b
-              ..factory = true
-              ..name = 'fromJson'
-              ..requiredParameters.add(
-                Parameter(
-                  (b) =>
-                      b
-                        ..name = 'json'
-                        ..type = refer('Object?', 'dart:core'),
-                ),
-              )
-              ..body = _buildFromJsonBody(className, model),
+        (b) => b
+          ..factory = true
+          ..name = 'fromJson'
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'json'
+                ..type = refer('Object?', 'dart:core'),
+            ),
+          )
+          ..body = _buildFromJsonBody(className, model),
       );
 
   Code _buildFromJsonBody(String className, ClassModel model) {
@@ -328,16 +320,15 @@ class ClassGenerator {
       final normalizedName = prop.normalizedName;
       final jsonKey = property.name;
 
-      final valueExpr =
-          buildFromJsonValueExpression(
-            "map[r'$jsonKey']",
-            model: property.model,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-            contextProperty: jsonKey,
-            isNullable: property.isNullable || !property.isRequired,
-          ).code;
+      final valueExpr = buildFromJsonValueExpression(
+        "map[r'$jsonKey']",
+        model: property.model,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        contextProperty: jsonKey,
+        isNullable: property.isNullable || !property.isRequired,
+      ).code;
 
       propertyAssignments
         ..add(Code('$normalizedName: '))
@@ -371,22 +362,20 @@ class ClassGenerator {
     }
 
     return Method(
-      (b) =>
-          b
-            ..name = 'toJson'
-            ..returns = refer('Object?', 'dart:core')
-            ..lambda = true
-            ..body = Code('{${propertyAssignments.join(', ')}}'),
+      (b) => b
+        ..name = 'toJson'
+        ..returns = refer('Object?', 'dart:core')
+        ..lambda = true
+        ..body = Code('{${propertyAssignments.join(', ')}}'),
     );
   }
 
   Field _generateField(Property property, String normalizedName) {
-    final fieldBuilder =
-        FieldBuilder()
-          ..name = normalizedName
-          ..docs.addAll(formatDocComment(property.description))
-          ..modifier = FieldModifier.final$
-          ..type = _getTypeReference(property);
+    final fieldBuilder = FieldBuilder()
+      ..name = normalizedName
+      ..docs.addAll(formatDocComment(property.description))
+      ..modifier = FieldModifier.final$
+      ..type = _getTypeReference(property);
 
     if (property.isDeprecated) {
       fieldBuilder.annotations.add(
@@ -416,16 +405,15 @@ class ClassGenerator {
     ).property('complex');
 
     return Method(
-      (b) =>
-          b
-            ..name = 'currentEncodingShape'
-            ..type = MethodType.getter
-            ..returns = refer(
-              'EncodingShape',
-              'package:tonik_util/tonik_util.dart',
-            )
-            ..lambda = true
-            ..body = shapeRef.code,
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = refer(
+          'EncodingShape',
+          'package:tonik_util/tonik_util.dart',
+        )
+        ..lambda = true
+        ..body = shapeRef.code,
     );
   }
 
@@ -469,22 +457,20 @@ class ClassGenerator {
   List<Parameter> _buildParameterPropertiesParameters() {
     return [
       Parameter(
-        (b) =>
-            b
-              ..name = 'allowEmpty'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = false
-              ..defaultTo = literalTrue.code,
+        (b) => b
+          ..name = 'allowEmpty'
+          ..type = refer('bool', 'dart:core')
+          ..named = true
+          ..required = false
+          ..defaultTo = literalTrue.code,
       ),
       Parameter(
-        (b) =>
-            b
-              ..name = 'allowLists'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = false
-              ..defaultTo = literalTrue.code,
+        (b) => b
+          ..name = 'allowLists'
+          ..type = refer('bool', 'dart:core')
+          ..named = true
+          ..required = false
+          ..defaultTo = literalTrue.code,
       ),
     ];
   }
@@ -495,12 +481,11 @@ class ClassGenerator {
   ) {
     if (properties.isEmpty) {
       return Method(
-        (b) =>
-            b
-              ..name = 'parameterProperties'
-              ..returns = buildMapStringStringType()
-              ..optionalParameters.addAll(_buildParameterPropertiesParameters())
-              ..body = buildEmptyMapStringString().returned.statement,
+        (b) => b
+          ..name = 'parameterProperties'
+          ..returns = buildMapStringStringType()
+          ..optionalParameters.addAll(_buildParameterPropertiesParameters())
+          ..body = buildEmptyMapStringString().returned.statement,
       );
     }
 
@@ -548,12 +533,11 @@ if ($name != null) {
     ];
 
     return Method(
-      (b) =>
-          b
-            ..name = 'parameterProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
-            ..body = Block.of(methodBody),
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll(_buildParameterPropertiesParameters())
+        ..body = Block.of(methodBody),
     );
   }
 
@@ -561,14 +545,13 @@ if ($name != null) {
     String className,
     List<({String normalizedName, Property property})> properties,
   ) {
-    final listProperties =
-        properties
-            .where(
-              (p) =>
-                  p.property.model is ListModel &&
-                  (p.property.model as ListModel).hasSimpleContent,
-            )
-            .toList();
+    final listProperties = properties
+        .where(
+          (p) =>
+              p.property.model is ListModel &&
+              (p.property.model as ListModel).hasSimpleContent,
+        )
+        .toList();
 
     final hasRequiredNonNullableLists = listProperties.any(
       (p) => p.property.isRequired && !p.property.isNullable,
@@ -614,8 +597,9 @@ if ($name != null) {
           );
         }
       } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
-        final valueRef =
-            (isRequired && !isNullable) ? refer(name) : refer(name).nullChecked;
+        final valueRef = (isRequired && !isNullable)
+            ? refer(name)
+            : refer(name).nullChecked;
         final encodeExpr = buildUriEncodeExpression(
           valueRef,
           fieldModel,
@@ -660,12 +644,11 @@ if ($name != null) {
     ]);
 
     return Method(
-      (b) =>
-          b
-            ..name = 'parameterProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
-            ..body = Block.of(methodBody),
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll(_buildParameterPropertiesParameters())
+        ..body = Block.of(methodBody),
     );
   }
 
@@ -674,16 +657,14 @@ if ($name != null) {
     List<({String normalizedName, Property property})> properties,
   ) {
     return Method(
-      (b) =>
-          b
-            ..name = 'parameterProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
-            ..body =
-                generateEncodingExceptionExpression(
-                  'parameterProperties not supported for $className: '
-                  'contains complex types',
-                ).code,
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll(_buildParameterPropertiesParameters())
+        ..body = generateEncodingExceptionExpression(
+          'parameterProperties not supported for $className: '
+          'contains complex types',
+        ).code,
     );
   }
 
@@ -781,33 +762,31 @@ if ($name != null) {
     ];
 
     return Method(
-      (b) =>
-          b
-            ..name = 'parameterProperties'
-            ..returns = buildMapStringStringType()
-            ..optionalParameters.addAll(_buildParameterPropertiesParameters())
-            ..body = Block.of(methodBody),
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll(_buildParameterPropertiesParameters())
+        ..body = Block.of(methodBody),
     );
   }
 
   Method _buildToSimpleMethod() => Method(
-    (b) =>
-        b
-          ..name = 'toSimple'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
-          ..body = Block.of([
-            refer('parameterProperties')
-                .call([], {'allowEmpty': refer('allowEmpty')})
-                .property('toSimple')
-                .call([], {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                })
-                .returned
-                .statement,
-          ]),
+    (b) => b
+      ..name = 'toSimple'
+      ..returns = refer('String', 'dart:core')
+      ..optionalParameters.addAll(buildEncodingParameters())
+      ..body = Block.of([
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toSimple')
+            .call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'alreadyEncoded': literalBool(true),
+            })
+            .returned
+            .statement,
+      ]),
   );
 
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
@@ -829,26 +808,24 @@ if ($name != null) {
     });
 
     return Constructor(
-      (b) =>
-          b
-            ..factory = true
-            ..name = 'fromForm'
-            ..requiredParameters.add(
-              Parameter(
-                (b) =>
-                    b
-                      ..name = 'value'
-                      ..type = refer('String?', 'dart:core'),
-              ),
-            )
-            ..optionalParameters.add(
-              buildBoolParameter('explode', required: true),
-            )
-            ..body = _buildFromFormBody(
-              className,
-              normalizedProperties,
-              canBeFormEncoded,
-            ),
+      (b) => b
+        ..factory = true
+        ..name = 'fromForm'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..body = _buildFromFormBody(
+          className,
+          normalizedProperties,
+          canBeFormEncoded,
+        ),
     );
   }
 
@@ -890,11 +867,10 @@ if ($name != null) {
 
     // Build expectedKeys and listKeys sets
     final expectedKeys = properties.map((p) => p.property.name).toSet();
-    final listKeys =
-        properties
-            .where((p) => p.property.model is ListModel)
-            .map((p) => p.property.name)
-            .toSet();
+    final listKeys = properties
+        .where((p) => p.property.model is ListModel)
+        .map((p) => p.property.name)
+        .toSet();
 
     return Block.of([
       declareFinal('values')
@@ -919,23 +895,22 @@ if ($name != null) {
   }
 
   Method _buildToFormMethod() => Method(
-    (b) =>
-        b
-          ..name = 'toForm'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
-          ..body = Block.of([
-            refer('parameterProperties')
-                .call([], {'allowEmpty': refer('allowEmpty')})
-                .property('toForm')
-                .call([], {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                })
-                .returned
-                .statement,
-          ]),
+    (b) => b
+      ..name = 'toForm'
+      ..returns = refer('String', 'dart:core')
+      ..optionalParameters.addAll(buildEncodingParameters())
+      ..body = Block.of([
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toForm')
+            .call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'alreadyEncoded': literalBool(true),
+            })
+            .returned
+            .statement,
+      ]),
   );
 
   /// Builds a toLabel method for label encoding.
@@ -943,98 +918,92 @@ if ($name != null) {
   /// This method delegates to parameterProperties and then calls toLabel on the
   /// result.
   Method _buildToLabelMethod() => Method(
-    (b) =>
-        b
-          ..name = 'toLabel'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
-          ..body = Block.of([
-            refer('parameterProperties')
-                .call([], {'allowEmpty': refer('allowEmpty')})
-                .property('toLabel')
-                .call([], {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                })
-                .returned
-                .statement,
-          ]),
+    (b) => b
+      ..name = 'toLabel'
+      ..returns = refer('String', 'dart:core')
+      ..optionalParameters.addAll(buildEncodingParameters())
+      ..body = Block.of([
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toLabel')
+            .call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'alreadyEncoded': literalBool(true),
+            })
+            .returned
+            .statement,
+      ]),
   );
 
   Method _buildToMatrixMethod() => Method(
-    (b) =>
-        b
-          ..name = 'toMatrix'
-          ..returns = refer('String', 'dart:core')
-          ..requiredParameters.add(
-            Parameter(
-              (b) =>
-                  b
-                    ..name = 'paramName'
-                    ..type = refer('String', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.addAll(buildEncodingParameters())
-          ..body = Block.of([
-            refer('parameterProperties')
-                .call([], {'allowEmpty': refer('allowEmpty')})
-                .property('toMatrix')
-                .call(
-                  [refer('paramName')],
-                  {
-                    'explode': refer('explode'),
-                    'allowEmpty': refer('allowEmpty'),
-                    'alreadyEncoded': literalBool(true),
-                  },
-                )
-                .returned
-                .statement,
-          ]),
+    (b) => b
+      ..name = 'toMatrix'
+      ..returns = refer('String', 'dart:core')
+      ..requiredParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'paramName'
+            ..type = refer('String', 'dart:core'),
+        ),
+      )
+      ..optionalParameters.addAll(buildEncodingParameters())
+      ..body = Block.of([
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toMatrix')
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'alreadyEncoded': literalBool(true),
+              },
+            )
+            .returned
+            .statement,
+      ]),
   );
 
   Method _buildToDeepObjectMethod() => Method(
-    (b) =>
-        b
-          ..name = 'toDeepObject'
-          ..returns = TypeReference(
-            (b) =>
-                b
-                  ..symbol = 'List'
-                  ..url = 'dart:core'
-                  ..types.add(
-                    refer(
-                      'ParameterEntry',
-                      'package:tonik_util/tonik_util.dart',
-                    ),
-                  ),
-          )
-          ..requiredParameters.add(
-            Parameter(
-              (b) =>
-                  b
-                    ..name = 'paramName'
-                    ..type = refer('String', 'dart:core'),
+    (b) => b
+      ..name = 'toDeepObject'
+      ..returns = TypeReference(
+        (b) => b
+          ..symbol = 'List'
+          ..url = 'dart:core'
+          ..types.add(
+            refer(
+              'ParameterEntry',
+              'package:tonik_util/tonik_util.dart',
             ),
-          )
-          ..optionalParameters.addAll(buildEncodingParameters())
-          ..body = Block.of([
-            refer('parameterProperties')
-                .call([], {
-                  'allowEmpty': refer('allowEmpty'),
-                  'allowLists': literalBool(false),
-                })
-                .property('toDeepObject')
-                .call(
-                  [refer('paramName')],
-                  {
-                    'explode': refer('explode'),
-                    'allowEmpty': refer('allowEmpty'),
-                    'alreadyEncoded': literalBool(true),
-                  },
-                )
-                .returned
-                .statement,
-          ]),
+          ),
+      )
+      ..requiredParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'paramName'
+            ..type = refer('String', 'dart:core'),
+        ),
+      )
+      ..optionalParameters.addAll(buildEncodingParameters())
+      ..body = Block.of([
+        refer('parameterProperties')
+            .call([], {
+              'allowEmpty': refer('allowEmpty'),
+              'allowLists': literalBool(false),
+            })
+            .property('toDeepObject')
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'alreadyEncoded': literalBool(true),
+              },
+            )
+            .returned
+            .statement,
+      ]),
   );
 }

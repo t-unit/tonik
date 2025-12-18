@@ -7,10 +7,9 @@ part of 'media_type.dart';
 // **************************************************************************
 
 MediaType _$MediaTypeFromJson(Map<String, dynamic> json) => MediaType(
-  schema:
-      json['schema'] == null
-          ? null
-          : ReferenceWrapper<Schema>.fromJson(json['schema']),
+  schema: json['schema'] == null
+      ? null
+      : ReferenceWrapper<Schema>.fromJson(json['schema']),
   encoding: (json['encoding'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, Encoding.fromJson(e as Map<String, dynamic>)),
   ),

@@ -199,8 +199,8 @@ class NameGenerator {
     // Only add RequestBody suffix for anonymous request bodies
     final uniqueBaseName =
         requestBody.name == null || (requestBody.name?.isEmpty ?? false)
-            ? _makeUnique(baseName, _requestBodySuffix)
-            : _makeUniqueWithTypeSuffix(baseName, _requestBodySuffix);
+        ? _makeUnique(baseName, _requestBodySuffix)
+        : _makeUniqueWithTypeSuffix(baseName, _requestBodySuffix);
 
     final subclassNames = <String, String>{};
     if (requestBody is RequestBodyObject && requestBody.contentCount > 1) {
@@ -371,19 +371,18 @@ class NameGenerator {
       cleaned = cleaned.substring(2);
     }
 
-    cleaned =
-        cleaned
-            .split(RegExp(r'[_\s]+'))
-            .map((part) {
-              if (!isPathComponent) {
-                part = part.replaceFirst(RegExp(r'^\d+'), '');
-              }
-              if (part.isEmpty) return '';
+    cleaned = cleaned
+        .split(RegExp(r'[_\s]+'))
+        .map((part) {
+          if (!isPathComponent) {
+            part = part.replaceFirst(RegExp(r'^\d+'), '');
+          }
+          if (part.isEmpty) return '';
 
-              return part.toPascalCase();
-            })
-            .where((part) => part.isNotEmpty)
-            .join();
+          return part.toPascalCase();
+        })
+        .where((part) => part.isNotEmpty)
+        .join();
 
     if (!isPathComponent && RegExp(r'^\d').hasMatch(cleaned)) {
       cleaned = cleaned.replaceFirst(RegExp(r'^\d+'), '');
@@ -411,8 +410,9 @@ class NameGenerator {
         return name;
       }
 
-      final nameWithModel =
-          name.endsWith(_modelSuffix) ? name : '$name$_modelSuffix';
+      final nameWithModel = name.endsWith(_modelSuffix)
+          ? name
+          : '$name$_modelSuffix';
       if (!_usedNames.contains(nameWithModel)) {
         _usedNames.add(nameWithModel);
         return nameWithModel;
@@ -439,8 +439,9 @@ class NameGenerator {
       return name;
     }
 
-    final nameWithTypeSuffix =
-        name.endsWith(typeSuffix) ? name : '$name$typeSuffix';
+    final nameWithTypeSuffix = name.endsWith(typeSuffix)
+        ? name
+        : '$name$typeSuffix';
     if (!_usedNames.contains(nameWithTypeSuffix)) {
       _usedNames.add(nameWithTypeSuffix);
       return nameWithTypeSuffix;
@@ -487,30 +488,27 @@ class NameGenerator {
       return _generateFallbackServerNames(servers);
     }
 
-    final subdomains =
-        parsedUrls.map((uri) {
-          final hostParts = uri.host.split('.');
-          if (hostParts.length > 2) {
-            // For multi-level subdomains, combine all subdomain parts
-            // e.g., api.dev.example.com -> ApiDev
-            final subdomain =
-                hostParts
-                    .sublist(0, hostParts.length - 2)
-                    .map(_sanitizeName)
-                    .join('_')
-                    .toPascalCase();
-            return subdomain;
-          } else {
-            // For single-level subdomains like api.example.com,
-            // just use the first part
-            return _sanitizeName(hostParts.first);
-          }
-        }).toList();
-    final hosts =
-        parsedUrls.map((uri) {
-          final parts = uri.host.split('.');
-          return parts.length > 1 ? _sanitizeName(parts[parts.length - 2]) : '';
-        }).toList();
+    final subdomains = parsedUrls.map((uri) {
+      final hostParts = uri.host.split('.');
+      if (hostParts.length > 2) {
+        // For multi-level subdomains, combine all subdomain parts
+        // e.g., api.dev.example.com -> ApiDev
+        final subdomain = hostParts
+            .sublist(0, hostParts.length - 2)
+            .map(_sanitizeName)
+            .join('_')
+            .toPascalCase();
+        return subdomain;
+      } else {
+        // For single-level subdomains like api.example.com,
+        // just use the first part
+        return _sanitizeName(hostParts.first);
+      }
+    }).toList();
+    final hosts = parsedUrls.map((uri) {
+      final parts = uri.host.split('.');
+      return parts.length > 1 ? _sanitizeName(parts[parts.length - 2]) : '';
+    }).toList();
     final paths = parsedUrls.map((uri) => _sanitizeName(uri.path)).toList();
 
     final hasDuplicateSubdomains =
@@ -540,10 +538,9 @@ class NameGenerator {
       resultMap[server] = _makeUniqueWithNumericSuffix('${name}Server');
     }
 
-    final customName =
-        resultMap.values.contains('CustomServer')
-            ? r'CustomServer$'
-            : 'CustomServer';
+    final customName = resultMap.values.contains('CustomServer')
+        ? r'CustomServer$'
+        : 'CustomServer';
     return (
       baseName: baseName,
       serverMap: resultMap,

@@ -5,10 +5,9 @@ import 'package:tonik_generate/src/util/equals_method_generator.dart';
 
 void main() {
   late DartEmitter emitter;
-  final format =
-      DartFormatter(
-        languageVersion: DartFormatter.latestLanguageVersion,
-      ).format;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -16,10 +15,9 @@ void main() {
 
   String formatMethod(Method method) {
     final clazz = Class(
-      (b) =>
-          b
-            ..name = 'Temp'
-            ..methods.add(method),
+      (b) => b
+        ..name = 'Temp'
+        ..methods.add(method),
     );
     final library = Library((b) => b..body.add(clazz));
     final code = library.accept(emitter).toString();

@@ -63,10 +63,9 @@ class RequestBodyGenerator {
     );
 
     return TypeDef(
-      (b) =>
-          b
-            ..name = name
-            ..definition = refer(targetName, package),
+      (b) => b
+        ..name = name
+        ..definition = refer(targetName, package),
     );
   }
 
@@ -80,12 +79,11 @@ class RequestBodyGenerator {
 
   Class _generateBaseClass(String className) {
     return Class(
-      (b) =>
-          b
-            ..name = className
-            ..sealed = true
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(Constructor((b) => b..constant = true)),
+      (b) => b
+        ..name = className
+        ..sealed = true
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..constructors.add(Constructor((b) => b..constant = true)),
     );
   }
 
@@ -100,42 +98,39 @@ class RequestBodyGenerator {
       final hasCollectionValue = content.model is ListModel;
 
       return Class(
-        (b) =>
-            b
-              ..name = className
-              ..extend = refer(parentClassName)
-              ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-              ..fields.add(
-                Field(
-                  (b) =>
-                      b
-                        ..name = 'value'
-                        ..modifier = FieldModifier.final$
-                        ..type = typeRef,
+        (b) => b
+          ..name = className
+          ..extend = refer(parentClassName)
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..fields.add(
+            Field(
+              (b) => b
+                ..name = 'value'
+                ..modifier = FieldModifier.final$
+                ..type = typeRef,
+            ),
+          )
+          ..constructors.add(
+            Constructor(
+              (b) => b
+                ..constant = true
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'this.value'),
                 ),
-              )
-              ..constructors.add(
-                Constructor(
-                  (b) =>
-                      b
-                        ..constant = true
-                        ..requiredParameters.add(
-                          Parameter((b) => b..name = 'this.value'),
-                        ),
+            ),
+          )
+          ..methods.addAll([
+            generateEqualsMethod(
+              className: className,
+              properties: [
+                (
+                  normalizedName: 'value',
+                  hasCollectionValue: hasCollectionValue,
                 ),
-              )
-              ..methods.addAll([
-                generateEqualsMethod(
-                  className: className,
-                  properties: [
-                    (
-                      normalizedName: 'value',
-                      hasCollectionValue: hasCollectionValue,
-                    ),
-                  ],
-                ),
-                _buildHashCodeMethod(hasCollectionValue),
-              ]),
+              ],
+            ),
+            _buildHashCodeMethod(hasCollectionValue),
+          ]),
       );
     }).toList();
   }

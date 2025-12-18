@@ -22,15 +22,16 @@ Expression buildMatrixParameterExpression(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
+    AnyOfModel() =>
+      valueExpression
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
     ListModel(:final content) => _buildListMatrixExpression(
       valueExpression,
       content,
@@ -45,10 +46,9 @@ Expression buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported model type for matrix encoding: $model',
-      ),
+    _ => throw UnimplementedError(
+      'Unsupported model type for matrix encoding: $model',
+    ),
   };
 }
 
@@ -60,15 +60,16 @@ Expression _buildListMatrixExpression(
   required Expression allowEmpty,
 }) {
   return switch (contentModel) {
-    StringModel() => valueExpression
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
+    StringModel() =>
+      valueExpression
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -80,33 +81,32 @@ Expression _buildListMatrixExpression(
     EnumModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression
-        .property('map')
-        .call([
-          Method(
-            (b) =>
-                b
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body =
-                      refer('e').property('uriEncode').call(
-                        [],
-                        {'allowEmpty': allowEmpty},
-                      ).code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalTrue,
-          },
-        ),
+    AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e').property('uriEncode').call(
+                  [],
+                  {'allowEmpty': allowEmpty},
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
     AliasModel() => _buildListMatrixExpression(
       valueExpression,
       contentModel.model,
@@ -114,18 +114,18 @@ Expression _buildListMatrixExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
-    ClassModel() || ListModel() => valueExpression
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
-    _ =>
-      throw UnimplementedError(
-        'Unsupported list content type for matrix encoding: $contentModel',
-      ),
+    ClassModel() || ListModel() =>
+      valueExpression
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
+    _ => throw UnimplementedError(
+      'Unsupported list content type for matrix encoding: $contentModel',
+    ),
   };
 }

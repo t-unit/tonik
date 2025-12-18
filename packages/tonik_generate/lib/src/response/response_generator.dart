@@ -61,10 +61,9 @@ class ResponseGenerator {
     final targetName = nameManager.responseNames(response.response).baseName;
 
     return TypeDef(
-      (b) =>
-          b
-            ..name = name
-            ..definition = refer(targetName, package),
+      (b) => b
+        ..name = name
+        ..definition = refer(targetName, package),
     );
   }
 
@@ -75,33 +74,201 @@ class ResponseGenerator {
 
     final equalsMethod = generateEqualsMethod(
       className: className,
-      properties:
-          properties
-              .map(
-                (prop) => (
-                  normalizedName: prop.normalizedName,
-                  hasCollectionValue: prop.property.model is ListModel,
-                ),
-              )
-              .toList(),
+      properties: properties
+          .map(
+            (prop) => (
+              normalizedName: prop.normalizedName,
+              hasCollectionValue: prop.property.model is ListModel,
+            ),
+          )
+          .toList(),
     );
 
     final hashCodeMethod = generateHashCodeMethod(
-      properties:
-          properties
-              .map(
-                (p) => (
-                  normalizedName: p.normalizedName,
-                  hasCollectionValue: p.property.model is ListModel,
-                ),
-              )
-              .toList(),
+      properties: properties
+          .map(
+            (p) => (
+              normalizedName: p.normalizedName,
+              hasCollectionValue: p.property.model is ListModel,
+            ),
+          )
+          .toList(),
     );
 
     final copyWithMethod = generateCopyWithMethod(
       className: className,
-      properties:
-          properties
+      properties: properties
+          .map(
+            (prop) => (
+              normalizedName: prop.normalizedName,
+              typeRef: typeReference(
+                prop.property.model,
+                nameManager,
+                package,
+              ),
+            ),
+          )
+          .toList(),
+    );
+
+    return Class(
+      (b) => b
+        ..name = className
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..constructors.add(
+          Constructor(
+            (b) => b
+              ..constant = true
+              ..optionalParameters.addAll(
+                properties.map(
+                  (prop) => Parameter(
+                    (b) => b
+                      ..name = prop.normalizedName
+                      ..named = true
+                      ..required = prop.property.isRequired
+                      ..toThis = true,
+                  ),
+                ),
+              ),
+          ),
+        )
+        ..methods.addAll([equalsMethod, hashCodeMethod, copyWithMethod])
+        ..fields.addAll(
+          properties.map(
+            (prop) => Field(
+              (b) {
+                b
+                  ..name = prop.normalizedName
+                  ..modifier = FieldModifier.final$
+                  ..type = typeReference(
+                    prop.property.model,
+                    nameManager,
+                    package,
+                    isNullableOverride: !prop.property.isRequired,
+                  );
+
+                if (prop.property.isDeprecated) {
+                  b.annotations.add(
+                    refer('Deprecated', 'dart:core').call([
+                      literalString('This field is deprecated.'),
+                    ]),
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+    );
+  }
+
+  @visibleForTesting
+  List<Class> generateMultiBodyResponseClasses(ResponseObject response) {
+    final className = nameManager.responseNames(response).baseName;
+    final normalizedBaseProperties = normalizeResponseProperties(response);
+
+    // Create base sealed class
+    final baseClass = Class(
+      (b) => b
+        ..name = className
+        ..sealed = true
+        ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+        ..constructors.add(
+          Constructor(
+            (b) => b
+              ..constant = true
+              ..optionalParameters.addAll(
+                normalizedBaseProperties.map(
+                  (prop) => Parameter(
+                    (b) => b
+                      ..name = prop.normalizedName
+                      ..named = true
+                      ..required = prop.property.isRequired
+                      ..toThis = true,
+                  ),
+                ),
+              ),
+          ),
+        )
+        ..fields.addAll(
+          normalizedBaseProperties.map(
+            (prop) => Field(
+              (b) {
+                b
+                  ..name = prop.normalizedName
+                  ..modifier = FieldModifier.final$
+                  ..type = typeReference(
+                    prop.property.model,
+                    nameManager,
+                    package,
+                    isNullableOverride: !prop.property.isRequired,
+                  );
+
+                if (prop.property.isDeprecated) {
+                  b.annotations.add(
+                    refer('Deprecated', 'dart:core').call([
+                      literalString('This field is deprecated.'),
+                    ]),
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+    );
+
+    // Create implementation classes for each body type
+    final implementationClasses = response.bodies.map((body) {
+      final implementationName = nameManager
+          .responseNames(response)
+          .implementationNames[body.rawContentType]!;
+
+      // Create properties for equals and hashCode methods
+      final allProperties = normalizeResponseProperties(
+        ResponseObject(
+          name: null,
+          context: response.context,
+          headers: response.headers,
+          description: '',
+          bodies: {
+            ResponseBody(
+              model: body.model,
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+          },
+        ),
+      );
+
+      final equalsMethod = generateEqualsMethod(
+        className: implementationName,
+        properties: allProperties
+            .map(
+              (prop) => (
+                normalizedName: prop.normalizedName,
+                hasCollectionValue: prop.property.model is ListModel,
+              ),
+            )
+            .toList(),
+      );
+
+      final hashCodeMethod = generateHashCodeMethod(
+        properties: allProperties
+            .map(
+              (p) => (
+                normalizedName: p.normalizedName,
+                hasCollectionValue: p.property.model is ListModel,
+              ),
+            )
+            .toList(),
+      );
+
+      final methods = [equalsMethod, hashCodeMethod];
+
+      // Add copyWith method if we have headers
+      if (response.headers.isNotEmpty) {
+        final copyWithMethod = generateCopyWithMethod(
+          className: implementationName,
+          properties: allProperties
               .map(
                 (prop) => (
                   normalizedName: prop.normalizedName,
@@ -113,242 +280,56 @@ class ResponseGenerator {
                 ),
               )
               .toList(),
-    );
+        );
+        methods.add(copyWithMethod);
+      }
 
-    return Class(
-      (b) =>
-          b
-            ..name = className
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(
-              Constructor(
-                (b) =>
-                    b
-                      ..constant = true
-                      ..optionalParameters.addAll(
-                        properties.map(
-                          (prop) => Parameter(
-                            (b) =>
-                                b
-                                  ..name = prop.normalizedName
-                                  ..named = true
-                                  ..required = prop.property.isRequired
-                                  ..toThis = true,
-                          ),
-                        ),
-                      ),
-              ),
-            )
-            ..methods.addAll([equalsMethod, hashCodeMethod, copyWithMethod])
-            ..fields.addAll(
-              properties.map(
-                (prop) => Field(
-                  (b) {
-                    b
-                      ..name = prop.normalizedName
-                      ..modifier = FieldModifier.final$
-                      ..type = typeReference(
-                        prop.property.model,
-                        nameManager,
-                        package,
-                        isNullableOverride: !prop.property.isRequired,
-                      );
-
-                    if (prop.property.isDeprecated) {
-                      b.annotations.add(
-                        refer('Deprecated', 'dart:core').call([
-                          literalString('This field is deprecated.'),
-                        ]),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-    );
-  }
-
-  @visibleForTesting
-  List<Class> generateMultiBodyResponseClasses(ResponseObject response) {
-    final className = nameManager.responseNames(response).baseName;
-    final normalizedBaseProperties = normalizeResponseProperties(response);
-
-    // Create base sealed class
-    final baseClass = Class(
-      (b) =>
-          b
-            ..name = className
-            ..sealed = true
-            ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
-            ..constructors.add(
-              Constructor(
-                (b) =>
-                    b
-                      ..constant = true
-                      ..optionalParameters.addAll(
-                        normalizedBaseProperties.map(
-                          (prop) => Parameter(
-                            (b) =>
-                                b
-                                  ..name = prop.normalizedName
-                                  ..named = true
-                                  ..required = prop.property.isRequired
-                                  ..toThis = true,
-                          ),
-                        ),
-                      ),
-              ),
-            )
-            ..fields.addAll(
-              normalizedBaseProperties.map(
-                (prop) => Field(
-                  (b) {
-                    b
-                      ..name = prop.normalizedName
-                      ..modifier = FieldModifier.final$
-                      ..type = typeReference(
-                        prop.property.model,
-                        nameManager,
-                        package,
-                        isNullableOverride: !prop.property.isRequired,
-                      );
-
-                    if (prop.property.isDeprecated) {
-                      b.annotations.add(
-                        refer('Deprecated', 'dart:core').call([
-                          literalString('This field is deprecated.'),
-                        ]),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-    );
-
-    // Create implementation classes for each body type
-    final implementationClasses =
-        response.bodies.map((body) {
-          final implementationName =
-              nameManager.responseNames(response).implementationNames[body
-                  .rawContentType]!;
-
-          // Create properties for equals and hashCode methods
-          final allProperties = normalizeResponseProperties(
-            ResponseObject(
-              name: null,
-              context: response.context,
-              headers: response.headers,
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: body.model,
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                ),
-              },
-            ),
-          );
-
-          final equalsMethod = generateEqualsMethod(
-            className: implementationName,
-            properties:
-                allProperties
-                    .map(
-                      (prop) => (
-                        normalizedName: prop.normalizedName,
-                        hasCollectionValue: prop.property.model is ListModel,
-                      ),
-                    )
-                    .toList(),
-          );
-
-          final hashCodeMethod = generateHashCodeMethod(
-            properties:
-                allProperties
-                    .map(
-                      (p) => (
-                        normalizedName: p.normalizedName,
-                        hasCollectionValue: p.property.model is ListModel,
-                      ),
-                    )
-                    .toList(),
-          );
-
-          final methods = [equalsMethod, hashCodeMethod];
-
-          // Add copyWith method if we have headers
-          if (response.headers.isNotEmpty) {
-            final copyWithMethod = generateCopyWithMethod(
-              className: implementationName,
-              properties:
-                  allProperties
-                      .map(
-                        (prop) => (
-                          normalizedName: prop.normalizedName,
-                          typeRef: typeReference(
-                            prop.property.model,
-                            nameManager,
-                            package,
-                          ),
-                        ),
-                      )
-                      .toList(),
-            );
-            methods.add(copyWithMethod);
-          }
-
-          return Class(
-            (b) =>
-                b
-                  ..name = implementationName
-                  ..extend = refer(className)
-                  ..annotations.add(
-                    refer('immutable', 'package:meta/meta.dart'),
-                  )
-                  ..constructors.add(
-                    Constructor(
-                      (b) =>
-                          b
-                            ..constant = true
-                            ..optionalParameters.addAll([
-                              ...normalizedBaseProperties.map(
-                                (prop) => Parameter(
-                                  (b) =>
-                                      b
-                                        ..name = prop.normalizedName
-                                        ..named = true
-                                        ..required = prop.property.isRequired
-                                        ..toSuper = true,
-                                ),
-                              ),
-                              Parameter(
-                                (b) =>
-                                    b
-                                      ..name = 'body'
-                                      ..named = true
-                                      ..required = true
-                                      ..toThis = true,
-                              ),
-                            ]),
-                    ),
-                  )
-                  ..methods.addAll(methods)
-                  ..fields.add(
-                    Field(
-                      (b) =>
-                          b
-                            ..name = 'body'
-                            ..modifier = FieldModifier.final$
-                            ..type = typeReference(
-                              body.model,
-                              nameManager,
-                              package,
-                            ),
+      return Class(
+        (b) => b
+          ..name = implementationName
+          ..extend = refer(className)
+          ..annotations.add(
+            refer('immutable', 'package:meta/meta.dart'),
+          )
+          ..constructors.add(
+            Constructor(
+              (b) => b
+                ..constant = true
+                ..optionalParameters.addAll([
+                  ...normalizedBaseProperties.map(
+                    (prop) => Parameter(
+                      (b) => b
+                        ..name = prop.normalizedName
+                        ..named = true
+                        ..required = prop.property.isRequired
+                        ..toSuper = true,
                     ),
                   ),
-          );
-        }).toList();
+                  Parameter(
+                    (b) => b
+                      ..name = 'body'
+                      ..named = true
+                      ..required = true
+                      ..toThis = true,
+                  ),
+                ]),
+            ),
+          )
+          ..methods.addAll(methods)
+          ..fields.add(
+            Field(
+              (b) => b
+                ..name = 'body'
+                ..modifier = FieldModifier.final$
+                ..type = typeReference(
+                  body.model,
+                  nameManager,
+                  package,
+                ),
+            ),
+          ),
+      );
+    }).toList();
 
     return [baseClass, ...implementationClasses];
   }
