@@ -35,7 +35,7 @@ class ResponseGenerator {
         case ResponseAlias():
           b.body.add(generateTypedef(response, name));
         case ResponseObject() when response.bodies.length <= 1:
-          b.body.add(generateResponseClass(response));
+          b.body.addAll(generateResponseClasses(response));
         case ResponseObject():
           b.body.addAll(generateMultiBodyResponseClasses(response));
       }
@@ -68,9 +68,56 @@ class ResponseGenerator {
   }
 
   @visibleForTesting
-  Class generateResponseClass(ResponseObject response) {
+  List<Spec> generateResponseClasses(ResponseObject response) {
     final className = nameManager.responseNames(response).baseName;
     final properties = normalizeResponseProperties(response);
+
+    final copyWithResult = _buildCopyWith(className, properties);
+
+    return [
+      generateResponseClass(response, copyWithResult?.getter),
+      if (copyWithResult != null) ...[
+        copyWithResult.interfaceClass,
+        copyWithResult.implClass,
+      ],
+    ];
+  }
+
+  CopyWithResult? _buildCopyWith(
+    String className,
+    List<({ResponseHeader? header, String normalizedName, Property property})>
+    properties,
+  ) {
+    return generateCopyWith(
+      className: className,
+      properties: properties
+          .map(
+            (prop) => (
+              normalizedName: prop.normalizedName,
+              typeRef: typeReference(
+                prop.property.model,
+                nameManager,
+                package,
+                isNullableOverride:
+                    prop.property.isNullable || !prop.property.isRequired,
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  @visibleForTesting
+  Class generateResponseClass(
+    ResponseObject response, [
+    Method? copyWithGetter,
+  ]) {
+    final className = nameManager.responseNames(response).baseName;
+    final properties = normalizeResponseProperties(response);
+
+    // If no copyWithGetter provided, generate one
+    final effectiveCopyWithGetter =
+        copyWithGetter ?? _buildCopyWith(className, properties)?.getter;
 
     final equalsMethod = generateEqualsMethod(
       className: className,
@@ -90,22 +137,6 @@ class ResponseGenerator {
             (p) => (
               normalizedName: p.normalizedName,
               hasCollectionValue: p.property.model is ListModel,
-            ),
-          )
-          .toList(),
-    );
-
-    final copyWithMethod = generateCopyWithMethod(
-      className: className,
-      properties: properties
-          .map(
-            (prop) => (
-              normalizedName: prop.normalizedName,
-              typeRef: typeReference(
-                prop.property.model,
-                nameManager,
-                package,
-              ),
             ),
           )
           .toList(),
@@ -132,7 +163,11 @@ class ResponseGenerator {
               ),
           ),
         )
-        ..methods.addAll([equalsMethod, hashCodeMethod, copyWithMethod])
+        ..methods.addAll([
+          equalsMethod,
+          hashCodeMethod,
+          ?effectiveCopyWithGetter,
+        ])
         ..fields.addAll(
           properties.map(
             (prop) => Field(
@@ -162,7 +197,7 @@ class ResponseGenerator {
   }
 
   @visibleForTesting
-  List<Class> generateMultiBodyResponseClasses(ResponseObject response) {
+  List<Spec> generateMultiBodyResponseClasses(ResponseObject response) {
     final className = nameManager.responseNames(response).baseName;
     final normalizedBaseProperties = normalizeResponseProperties(response);
 
@@ -264,73 +299,77 @@ class ResponseGenerator {
 
       final methods = [equalsMethod, hashCodeMethod];
 
-      // Add copyWith method if we have headers
+      // Add copyWith getter and infrastructure classes if we have headers
+      var copyWithInfrastructure = <Spec>[];
       if (response.headers.isNotEmpty) {
-        final copyWithMethod = generateCopyWithMethod(
-          className: implementationName,
-          properties: allProperties
-              .map(
-                (prop) => (
-                  normalizedName: prop.normalizedName,
-                  typeRef: typeReference(
-                    prop.property.model,
+        final copyWithResult = _buildCopyWith(
+          implementationName,
+          allProperties,
+        );
+        if (copyWithResult != null) {
+          methods.add(copyWithResult.getter);
+          copyWithInfrastructure = [
+            copyWithResult.interfaceClass,
+            copyWithResult.implClass,
+          ];
+        }
+      }
+
+      return (
+        mainClass: Class(
+          (b) => b
+            ..name = implementationName
+            ..extend = refer(className)
+            ..annotations.add(
+              refer('immutable', 'package:meta/meta.dart'),
+            )
+            ..constructors.add(
+              Constructor(
+                (b) => b
+                  ..constant = true
+                  ..optionalParameters.addAll([
+                    ...normalizedBaseProperties.map(
+                      (prop) => Parameter(
+                        (b) => b
+                          ..name = prop.normalizedName
+                          ..named = true
+                          ..required = prop.property.isRequired
+                          ..toSuper = true,
+                      ),
+                    ),
+                    Parameter(
+                      (b) => b
+                        ..name = 'body'
+                        ..named = true
+                        ..required = true
+                        ..toThis = true,
+                    ),
+                  ]),
+              ),
+            )
+            ..methods.addAll(methods)
+            ..fields.add(
+              Field(
+                (b) => b
+                  ..name = 'body'
+                  ..modifier = FieldModifier.final$
+                  ..type = typeReference(
+                    body.model,
                     nameManager,
                     package,
                   ),
-                ),
-              )
-              .toList(),
-        );
-        methods.add(copyWithMethod);
-      }
-
-      return Class(
-        (b) => b
-          ..name = implementationName
-          ..extend = refer(className)
-          ..annotations.add(
-            refer('immutable', 'package:meta/meta.dart'),
-          )
-          ..constructors.add(
-            Constructor(
-              (b) => b
-                ..constant = true
-                ..optionalParameters.addAll([
-                  ...normalizedBaseProperties.map(
-                    (prop) => Parameter(
-                      (b) => b
-                        ..name = prop.normalizedName
-                        ..named = true
-                        ..required = prop.property.isRequired
-                        ..toSuper = true,
-                    ),
-                  ),
-                  Parameter(
-                    (b) => b
-                      ..name = 'body'
-                      ..named = true
-                      ..required = true
-                      ..toThis = true,
-                  ),
-                ]),
+              ),
             ),
-          )
-          ..methods.addAll(methods)
-          ..fields.add(
-            Field(
-              (b) => b
-                ..name = 'body'
-                ..modifier = FieldModifier.final$
-                ..type = typeReference(
-                  body.model,
-                  nameManager,
-                  package,
-                ),
-            ),
-          ),
+        ),
+        copyWithInfrastructure: copyWithInfrastructure,
       );
     }).toList();
 
-    return [baseClass, ...implementationClasses];
+    return [
+      baseClass,
+      ...implementationClasses.expand(
+        (item) => [item.mainClass, ...item.copyWithInfrastructure],
+      ),
+    ];
   }
 }

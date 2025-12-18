@@ -41,9 +41,10 @@ class AllOfGenerator {
     );
 
     final snakeCaseName = nameManager.modelName(model).toSnakeCase();
+    final generatedClasses = generateClasses(model);
 
     final library = Library((b) {
-      b.body.add(generateClass(model));
+      b.body.addAll(generatedClasses);
     });
 
     final formatter = DartFormatter(
@@ -55,8 +56,38 @@ class AllOfGenerator {
     return (code: code, filename: '$snakeCaseName.dart');
   }
 
+  /// Generates the main class and the copyWith infrastructure classes.
   @visibleForTesting
-  Class generateClass(AllOfModel model) {
+  List<Spec> generateClasses(AllOfModel model) {
+    final className = nameManager.modelName(model);
+    final models = model.models.toSortedList();
+
+    final pseudoProperties = models.map((m) {
+      final typeRef = typeReference(m, nameManager, package);
+      return Property(
+        name: typeRef.symbol,
+        model: m,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+    }).toList();
+
+    final normalizedProperties = _normalizeModelProperties(pseudoProperties);
+
+    final copyWithResult = _buildCopyWith(className, normalizedProperties);
+
+    return [
+      generateClass(model, copyWithResult?.getter),
+      if (copyWithResult != null) ...[
+        copyWithResult.interfaceClass,
+        copyWithResult.implClass,
+      ],
+    ];
+  }
+
+  @visibleForTesting
+  Class generateClass(AllOfModel model, [Method? copyWithGetter]) {
     final className = nameManager.modelName(model);
     final models = model.models.toSortedList();
 
@@ -73,6 +104,10 @@ class AllOfGenerator {
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
     final properties = _buildPropertiesFromNormalized(normalizedProperties);
+
+    final effectiveCopyWithGetter =
+        copyWithGetter ??
+        _buildCopyWith(className, normalizedProperties)?.getter;
 
     return Class(
       (b) {
@@ -142,7 +177,7 @@ class AllOfGenerator {
               properties: properties,
             ),
             generateHashCodeMethod(properties: properties),
-            _buildCopyWithMethod(className, normalizedProperties),
+            ?effectiveCopyWithGetter,
           ])
           ..fields.addAll(_buildFields(normalizedProperties));
       },
@@ -2186,17 +2221,19 @@ class AllOfGenerator {
     );
   }
 
-  Method _buildCopyWithMethod(
+  CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    return generateCopyWithMethod(
+    return generateCopyWith(
       className: className,
       properties: normalizedProperties.map((normalized) {
         final typeRef = typeReference(
           normalized.property.model,
           nameManager,
           package,
+          isNullableOverride:
+              normalized.property.isNullable || !normalized.property.isRequired,
         );
         return (
           normalizedName: normalized.normalizedName,

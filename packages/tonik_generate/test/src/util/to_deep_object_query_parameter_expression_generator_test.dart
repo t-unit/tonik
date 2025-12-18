@@ -3,10 +3,6 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/to_deep_object_query_parameter_expression_generator.dart';
 
-String collapseWhitespace(String input) {
-  return input.replaceAll(RegExp(r'\s+'), ' ').trim();
-}
-
 void main() {
   group('buildToDeepObjectQueryParameterCode', () {
     late Context context;
