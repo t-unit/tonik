@@ -12,7 +12,6 @@
 - Default values
 - Supporting `byte` and `binary` formatted strings
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
-- Better support for nullable properties and copyWith
 - Supporting the `not` keyword
 
 ## Non-goals
