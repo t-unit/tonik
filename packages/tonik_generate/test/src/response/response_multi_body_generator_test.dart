@@ -10,8 +10,8 @@ void main() {
   late NameManager nameManager;
   late ResponseGenerator generator;
   late Context testContext;
-  late List<Class> classesWithHeaders;
-  late List<Class> classesWithoutHeaders;
+  late List<Spec> classesWithHeaders;
+  late List<Spec> classesWithoutHeaders;
 
   setUp(() {
     emitter = DartEmitter(orderDirectives: true, useNullSafetySyntax: true);
@@ -91,15 +91,19 @@ void main() {
   });
 
   group('response with headers', () {
-    test('generates correct number of classes', () {
-      expect(classesWithHeaders.length, 3);
+    test('generates correct number of classes (main + copyWith helpers)', () {
+      // 3 main classes + 4 copyWith helpers (interface + impl for
+      // each subclass)
+      expect(classesWithHeaders.whereType<Class>().length, 7);
     });
 
     group('base sealed class', () {
       late Class baseClass;
 
       setUp(() {
-        baseClass = classesWithHeaders[0];
+        baseClass = classesWithHeaders.whereType<Class>().firstWhere(
+          (c) => c.name == 'TestResponse',
+        );
       });
 
       test('has correct class definition', () {
@@ -149,7 +153,9 @@ void main() {
       late Class plainClass;
 
       setUp(() {
-        plainClass = classesWithHeaders[1];
+        plainClass = classesWithHeaders.whereType<Class>().firstWhere(
+          (c) => c.name == 'TestResponsePlain',
+        );
       });
 
       test('has correct class definition', () {
@@ -208,28 +214,14 @@ void main() {
           expect(hashCode.returns?.accept(emitter).toString(), 'int');
         });
 
-        test('has copyWith method', () {
+        test('has copyWith getter returning interface type', () {
           final copyWith = methods.firstWhere((m) => m.name == 'copyWith');
           expect(copyWith, isNotNull);
+          expect(copyWith.type, MethodType.getter);
           expect(
             copyWith.returns?.accept(emitter).toString(),
-            'TestResponsePlain',
+            r'$$TestResponsePlainCopyWith<TestResponsePlain>',
           );
-
-          final parameters = copyWith.optionalParameters.toList();
-          expect(parameters.length, 3);
-
-          expect(parameters[0].name, 'contentType');
-          expect(parameters[0].type?.accept(emitter).toString(), 'String?');
-          expect(parameters[0].named, isTrue);
-
-          expect(parameters[1].name, 'bodyHeader');
-          expect(parameters[1].type?.accept(emitter).toString(), 'String?');
-          expect(parameters[1].named, isTrue);
-
-          expect(parameters[2].name, 'body');
-          expect(parameters[2].type?.accept(emitter).toString(), 'String?');
-          expect(parameters[2].named, isTrue);
         });
       });
     });
@@ -238,7 +230,9 @@ void main() {
       late Class jsonClass;
 
       setUp(() {
-        jsonClass = classesWithHeaders[2];
+        jsonClass = classesWithHeaders.whereType<Class>().firstWhere(
+          (c) => c.name == 'TestResponseJson',
+        );
       });
 
       test('has correct class definition', () {
@@ -297,43 +291,32 @@ void main() {
           expect(hashCode.returns?.accept(emitter).toString(), 'int');
         });
 
-        test('has copyWith method', () {
+        test('has copyWith getter returning interface type', () {
           final copyWith = methods.firstWhere((m) => m.name == 'copyWith');
           expect(copyWith, isNotNull);
+          expect(copyWith.type, MethodType.getter);
           expect(
             copyWith.returns?.accept(emitter).toString(),
-            'TestResponseJson',
+            r'$$TestResponseJsonCopyWith<TestResponseJson>',
           );
-
-          final parameters = copyWith.optionalParameters.toList();
-          expect(parameters.length, 3);
-
-          expect(parameters[0].name, 'contentType');
-          expect(parameters[0].type?.accept(emitter).toString(), 'String?');
-          expect(parameters[0].named, isTrue);
-
-          expect(parameters[1].name, 'bodyHeader');
-          expect(parameters[1].type?.accept(emitter).toString(), 'String?');
-          expect(parameters[1].named, isTrue);
-
-          expect(parameters[2].name, 'body');
-          expect(parameters[2].type?.accept(emitter).toString(), 'int?');
-          expect(parameters[2].named, isTrue);
         });
       });
     });
   });
 
   group('response without headers', () {
-    test('generates correct number of classes', () {
-      expect(classesWithoutHeaders.length, 3);
+    test('generates correct number of classes (main only, no copyWith)', () {
+      // 3 main classes, no copyWith helpers since there are no header fields
+      expect(classesWithoutHeaders.whereType<Class>().length, 3);
     });
 
     group('base sealed class', () {
       late Class baseClass;
 
       setUp(() {
-        baseClass = classesWithoutHeaders[0];
+        baseClass = classesWithoutHeaders.whereType<Class>().firstWhere(
+          (c) => c.name == 'MultiContentResponse',
+        );
       });
 
       test('has correct class definition', () {
@@ -364,7 +347,9 @@ void main() {
       late Class jsonClass;
 
       setUp(() {
-        jsonClass = classesWithoutHeaders[1];
+        jsonClass = classesWithoutHeaders.whereType<Class>().firstWhere(
+          (c) => c.name == 'MultiContentResponseJson',
+        );
       });
 
       test('has correct class definition', () {
@@ -428,7 +413,9 @@ void main() {
       late Class problemJsonClass;
 
       setUp(() {
-        problemJsonClass = classesWithoutHeaders[2];
+        problemJsonClass = classesWithoutHeaders.whereType<Class>().firstWhere(
+          (c) => c.name == 'MultiContentResponseProblemJson',
+        );
       });
 
       test('has correct class definition', () {

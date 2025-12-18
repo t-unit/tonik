@@ -210,7 +210,7 @@ void main() {
         final results = generator.generateMultiBodyResponseClasses(response);
 
         // Check the base sealed class has deprecated header field
-        final baseClass = results.firstWhere(
+        final baseClass = results.whereType<Class>().firstWhere(
           (c) => c.name == 'MultiBodyResponse',
           orElse: () => throw StateError('No base class found'),
         );
@@ -263,7 +263,7 @@ void main() {
 
         final results = generator.generateMultiBodyResponseClasses(response);
 
-        final baseClass = results.firstWhere(
+        final baseClass = results.whereType<Class>().firstWhere(
           (c) => c.name == 'MultiBodyResponse',
           orElse: () => throw StateError('No base class found'),
         );

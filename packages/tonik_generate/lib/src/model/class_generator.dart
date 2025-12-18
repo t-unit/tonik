@@ -40,9 +40,10 @@ class ClassGenerator {
     );
 
     final snakeCaseName = nameManager.modelName(model).toSnakeCase();
+    final generatedClasses = generateClasses(model);
 
     final library = Library((b) {
-      b.body.add(generateClass(model));
+      b.body.addAll(generatedClasses);
     });
 
     final formatter = DartFormatter(
@@ -55,17 +56,35 @@ class ClassGenerator {
   }
 
   @visibleForTesting
-  Class generateClass(ClassModel model) {
+  List<Spec> generateClasses(ClassModel model) {
     final className = nameManager.modelName(model);
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
+    final copyWithResult = _buildCopyWith(className, normalizedProperties);
+
+    return [
+      generateClass(model, copyWithResult?.getter),
+      if (copyWithResult != null) ...[
+        copyWithResult.interfaceClass,
+        copyWithResult.implClass,
+      ],
+    ];
+  }
+
+  @visibleForTesting
+  Class generateClass(ClassModel model, [Method? copyWithGetter]) {
+    final className = nameManager.modelName(model);
+    final normalizedProperties = normalizeProperties(model.properties.toList());
+
+    final effectiveCopyWithGetter =
+        copyWithGetter ??
+        _buildCopyWith(className, normalizedProperties)?.getter;
+
     final sortedProperties = [...normalizedProperties]
       ..sort((a, b) {
-        // Required fields come before non-required fields
         if (a.property.isRequired != b.property.isRequired) {
           return a.property.isRequired ? -1 : 1;
         }
-        // Keep original order for fields with same required status
         return normalizedProperties.indexOf(a) -
             normalizedProperties.indexOf(b);
       });
@@ -108,7 +127,7 @@ class ClassGenerator {
 
         b.methods.addAll([
           _buildToJsonMethod(model),
-          _buildCopyWithMethod(className, normalizedProperties),
+          ?effectiveCopyWithGetter,
           _buildEqualsMethod(className, normalizedProperties),
           _buildHashCodeMethod(normalizedProperties),
           _buildCurrentEncodingShapeGetter(),
@@ -129,11 +148,11 @@ class ClassGenerator {
     );
   }
 
-  Method _buildCopyWithMethod(
+  CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> properties,
   ) {
-    return generateCopyWithMethod(
+    return generateCopyWith(
       className: className,
       properties: properties
           .map(
