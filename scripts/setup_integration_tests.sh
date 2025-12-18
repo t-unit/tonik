@@ -103,30 +103,30 @@ rm -rf query_parameters/query_parameters_api
 rm -rf path_encoding/path_encoding_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
-dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml
 add_dependency_overrides_recursive "petstore/petstore_api"
 cd petstore/petstore_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore_config/openapi.yaml -o petstore_config --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore_config/openapi.yaml -o petstore_config
 add_dependency_overrides_recursive "petstore_config/petstore_api"
 cd petstore_config/petstore_api && dart pub get && cd ../..
 
 # Generate petstore_config with filtering configuration
-dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_filtering.yaml --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_filtering.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_filtering_api"
 cd petstore_config/petstore_filtering_api && dart pub get && cd ../..
 
 # Generate petstore_config with overrides configuration
-dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_overrides.yaml --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_overrides.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_overrides_api"
 cd petstore_config/petstore_overrides_api && dart pub get && cd ../..
 
 # Generate petstore_config with deprecation configuration
-dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_deprecation.yaml --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_deprecation.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_deprecation_api"
 cd petstore_config/petstore_deprecation_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming
 add_dependency_overrides_recursive "music_streaming/music_streaming_api"
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
@@ -134,23 +134,23 @@ dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov
 add_dependency_overrides_recursive "gov/gov_api"
 cd gov/gov_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding
 add_dependency_overrides_recursive "simple_encoding/simple_encoding_api"
 cd simple_encoding/simple_encoding_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod
 add_dependency_overrides_recursive "fastify_type_provider_zod/fastify_type_provider_zod_api"
 cd fastify_type_provider_zod/fastify_type_provider_zod_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition
 add_dependency_overrides_recursive "composition/composition_api"
 cd composition/composition_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters
 add_dependency_overrides_recursive "query_parameters/query_parameters_api"
 cd query_parameters/query_parameters_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding --log-level verbose
+dart run ../packages/tonik/bin/tonik.dart -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding
 add_dependency_overrides_recursive "path_encoding/path_encoding_api"
 cd path_encoding/path_encoding_api && dart pub get && cd ../..
 

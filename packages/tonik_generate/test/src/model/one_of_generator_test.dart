@@ -536,7 +536,7 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
-            return other is ResultStrings && _$deepEquals.other.value, value;
+            return other is ResultStrings && _$deepEquals.equals(other.value, value);
           }
           
           @override

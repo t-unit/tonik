@@ -1234,7 +1234,7 @@ void main() {
           values.add(listJson);
           const deepEquals = DeepCollectionEquality();
           for (var i = 1; i < values.length; i++) {
-            if (!deepEquals.values[0], values[i]) {
+            if (!deepEquals.equals(values[0], values[i])) {
               throw EncodingException(
                 'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
               );
@@ -1289,7 +1289,7 @@ void main() {
           values.add(list2Json);
           const deepEquals = DeepCollectionEquality();
           for (var i = 1; i < values.length; i++) {
-            if (!deepEquals.values[0], values[i]) {
+            if (!deepEquals.equals(values[0], values[i])) {
               throw EncodingException(
                 'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
               );
