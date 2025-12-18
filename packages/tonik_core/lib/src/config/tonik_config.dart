@@ -17,11 +17,8 @@ class TonikConfig {
     this.enums = const EnumConfig(),
   });
 
-  // CLI-only fields removed. See CliConfig in tonik for CLI options.
-
   final NameOverridesConfig nameOverrides;
 
-  /// Custom content type mappings: `contentType -> serializationFormat`.
   final Map<String, ContentType> contentTypes;
 
   final FilterConfig filter;
@@ -30,30 +27,33 @@ class TonikConfig {
 
   final EnumConfig enums;
 
-  static const _mapEquality = MapEquality<String, ContentType>();
-
   @override
   String toString() =>
       'TonikConfig{nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
       'filter: $filter, deprecated: $deprecated, enums: $enums}';
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TonikConfig &&
-          runtimeType == other.runtimeType &&
-          nameOverrides == other.nameOverrides &&
-          _mapEquality.equals(contentTypes, other.contentTypes) &&
-          filter == other.filter &&
-          deprecated == other.deprecated &&
-          enums == other.enums;
+  bool operator ==(Object other) {
+    const mapEquality = MapEquality<String, ContentType>();
+    return identical(this, other) ||
+        other is TonikConfig &&
+            runtimeType == other.runtimeType &&
+            nameOverrides == other.nameOverrides &&
+            mapEquality.equals(contentTypes, other.contentTypes) &&
+            filter == other.filter &&
+            deprecated == other.deprecated &&
+            enums == other.enums;
+  }
 
   @override
-  int get hashCode => Object.hash(
-    nameOverrides,
-    _mapEquality.hash(contentTypes),
-    filter,
-    deprecated,
-    enums,
-  );
+  int get hashCode {
+    const mapEquality = MapEquality<String, ContentType>();
+    return Object.hash(
+      nameOverrides,
+      mapEquality.hash(contentTypes),
+      filter,
+      deprecated,
+      enums,
+    );
+  }
 }

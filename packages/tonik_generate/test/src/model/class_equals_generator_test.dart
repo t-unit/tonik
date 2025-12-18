@@ -156,7 +156,7 @@ void main() {
         const _$deepEquals = DeepCollectionEquality();
         return other is User && 
           other.name == name && 
-          _$deepEquals.equals(other.tags, tags);
+          _$deepEquals.other.tags, tags;
       }
       ''';
 
@@ -242,7 +242,7 @@ void main() {
         const _$deepEquals = DeepCollectionEquality();
         return other is NestedData && 
           other.name == name && 
-          _$deepEquals.equals(other.nestedList, nestedList);
+          _$deepEquals.other.nestedList, nestedList;
       }
       ''';
 

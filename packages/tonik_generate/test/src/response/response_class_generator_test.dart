@@ -266,7 +266,7 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
-            return other is ListHeaderResponse && _$deepEquals.equals(other.xList, xList) && other.body == body;
+            return other is ListHeaderResponse && _$deepEquals.other.xList, xList && other.body == body;
           }
         ''';
 

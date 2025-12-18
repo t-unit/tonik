@@ -25,7 +25,7 @@ void main() {
         discriminatorValue: 'user',
       );
 
-      expect(variantName, equals('UserOrStringUser'));
+      expect(variantName, 'UserOrStringUser');
     });
 
     test('generates variant names for primitive models', () {
@@ -45,7 +45,7 @@ void main() {
         discriminatorValue: 'string',
       );
 
-      expect(variantName, equals('MixedTypeString'));
+      expect(variantName, 'MixedTypeString');
     });
 
     test('generates variant names using discriminator values', () {
@@ -67,7 +67,7 @@ void main() {
         discriminatorValue: 'custom',
       );
 
-      expect(variantName, equals('MixedTypeCustom'));
+      expect(variantName, 'MixedTypeCustom');
     });
 
     test('generates variant names using generated discriminator names', () {
@@ -89,7 +89,7 @@ void main() {
         discriminatorValue: null, // No discriminator value provided
       );
 
-      expect(variantName, equals('MixedTypeClass'));
+      expect(variantName, 'MixedTypeClass');
     });
 
     test('ensures uniqueness of variant names', () {
@@ -120,8 +120,8 @@ void main() {
       );
 
       // Both calls should return the same name (cached)
-      expect(variantName1, equals(variantName2));
-      expect(variantName1, equals('UserOrStringUser'));
+      expect(variantName1, variantName2);
+      expect(variantName1, 'UserOrStringUser');
     });
 
     test('generates unique names for different parent classes', () {
@@ -152,9 +152,9 @@ void main() {
       );
 
       // Different parent classes should generate different names
-      expect(variantName1, equals('UserOrStringUser'));
-      expect(variantName2, equals('UserOrIntUser'));
-      expect(variantName1, isNot(equals(variantName2)));
+      expect(variantName1, 'UserOrStringUser');
+      expect(variantName2, 'UserOrIntUser');
+      expect(variantName1, isNot(variantName2));
     });
   });
 }

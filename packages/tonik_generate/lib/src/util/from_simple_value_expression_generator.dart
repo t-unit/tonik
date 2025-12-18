@@ -294,10 +294,7 @@ Expression _buildListFromSimpleExpression(
       ),
     AliasModel() => _buildListFromSimpleExpression(
       value,
-      ListModel(
-        content: content.model,
-        context: model.context,
-      ),
+      ListModel(content: content.model, context: model.context),
       isRequired,
       nameManager,
       package: package,

@@ -2,10 +2,8 @@
 class Tag {
   Tag({required this.name, this.description, this.nameOverride});
 
-  // ID - immutable
   final String name;
 
-  // Metadata/Config - mutable
   String? description;
   String? nameOverride;
 

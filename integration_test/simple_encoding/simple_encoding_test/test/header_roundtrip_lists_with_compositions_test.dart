@@ -55,7 +55,7 @@ void main() {
         // supported in simple encoding for headers
         expect(result, isA<TonikError<_R>>());
         final error = result as TonikError<_R>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
 
       test('encoding error for empty ObjectList still fails', () async {
@@ -69,7 +69,7 @@ void main() {
         // Empty list still causes encoding error due to type checking
         expect(result, isA<TonikError<_R>>());
         final error = result as TonikError<_R>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
 
@@ -86,7 +86,7 @@ void main() {
 
           expect(result, isA<TonikError<_R>>());
           final error = result as TonikError<_R>;
-          expect(error.type, equals(TonikErrorType.decoding));
+          expect(error.type, TonikErrorType.decoding);
         },
       );
 
@@ -102,7 +102,7 @@ void main() {
 
         expect(result, isA<TonikError<_R>>());
         final error = result as TonikError<_R>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
 
       test('fails when AnyOfWithComplexList has Class2 list variant', () async {
@@ -117,7 +117,7 @@ void main() {
 
         expect(result, isA<TonikError<_R>>());
         final error = result as TonikError<_R>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
 
       test('fails when AnyOfWithComplexList has mixed variants', () async {
@@ -133,7 +133,7 @@ void main() {
 
         expect(result, isA<TonikError<_R>>());
         final error = result as TonikError<_R>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
     });
 
@@ -151,7 +151,7 @@ void main() {
 
           expect(result, isA<TonikError<_R>>());
           final error = result as TonikError<_R>;
-          expect(error.type, equals(TonikErrorType.decoding));
+          expect(error.type, TonikErrorType.decoding);
         },
       );
     });

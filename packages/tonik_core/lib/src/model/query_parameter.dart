@@ -96,11 +96,9 @@ class QueryParameterObject extends QueryParameter {
     this.nameOverride,
   });
 
-  // ID fields (immutable)
   final String? name;
   final String rawName;
 
-  // Mutable fields
   String? nameOverride;
   String? description;
   bool isRequired;

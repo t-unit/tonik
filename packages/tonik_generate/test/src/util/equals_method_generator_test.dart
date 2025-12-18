@@ -81,7 +81,7 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           const _$deepEquals = DeepCollectionEquality();
-          return other is TestClass && _$deepEquals.equals(other.values, values);
+          return other is TestClass && _$deepEquals.other.values, values;
         }
       ''';
 
@@ -108,7 +108,7 @@ void main() {
           const _$deepEquals = DeepCollectionEquality();
           return other is TestClass && 
             other.id == id && 
-            _$deepEquals.equals(other.items, items) && 
+            _$deepEquals.other.items, items && 
             other.name == name;
         }
       ''';

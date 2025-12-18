@@ -29,7 +29,7 @@ void main() {
       );
 
       expect(operation, isNotNull);
-      expect(operation!.nameOverride, equals('fetchUsers'));
+      expect(operation!.nameOverride, 'fetchUsers');
     });
 
     test('sets nameOverride to null when x-dart-name is absent', () {

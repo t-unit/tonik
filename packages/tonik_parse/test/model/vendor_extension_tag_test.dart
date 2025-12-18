@@ -37,9 +37,9 @@ void main() {
       expect(getPet!.tags, hasLength(1));
 
       final tag = getPet.tags.first;
-      expect(tag.name, equals('pet'));
-      expect(tag.nameOverride, equals('animals'));
-      expect(tag.description, equals('Pet operations'));
+      expect(tag.name, 'pet');
+      expect(tag.nameOverride, 'animals');
+      expect(tag.description, 'Pet operations');
     });
 
     test('sets nameOverride to null when x-dart-name is absent', () {
@@ -74,7 +74,7 @@ void main() {
       expect(getPet!.tags, hasLength(1));
 
       final tag = getPet.tags.first;
-      expect(tag.name, equals('pet'));
+      expect(tag.name, 'pet');
       expect(tag.nameOverride, isNull);
     });
 
@@ -117,11 +117,11 @@ void main() {
 
       final petTag = getPet.tags.firstWhereOrNull((t) => t.name == 'pet');
       expect(petTag, isNotNull);
-      expect(petTag!.nameOverride, equals('animals'));
+      expect(petTag!.nameOverride, 'animals');
 
       final storeTag = getPet.tags.firstWhereOrNull((t) => t.name == 'store');
       expect(storeTag, isNotNull);
-      expect(storeTag!.nameOverride, equals('orders'));
+      expect(storeTag!.nameOverride, 'orders');
     });
   });
 }

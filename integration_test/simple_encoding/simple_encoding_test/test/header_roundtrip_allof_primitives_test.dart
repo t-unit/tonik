@@ -55,8 +55,8 @@ void main() {
       expect(
         success.response.requestOptions.headers['X-Merged-Object'],
         anyOf(
-          equals('count,42,id,abc'),
-          equals('id,abc,count,42'),
+          'count,42,id,abc',
+          'id,abc,count,42',
         ),
       );
 

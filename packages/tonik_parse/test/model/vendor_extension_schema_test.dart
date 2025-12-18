@@ -31,7 +31,7 @@ void main() {
               as ClassModel?;
 
       expect(model, isNotNull);
-      expect(model!.nameOverride, equals('CustomName'));
+      expect(model!.nameOverride, 'CustomName');
     });
 
     test('sets nameOverride to null when x-dart-name is absent', () {
@@ -95,7 +95,7 @@ void main() {
         (p) => p.name == 'name',
       );
       expect(nameProperty, isNotNull);
-      expect(nameProperty!.nameOverride, equals('customPropertyName'));
+      expect(nameProperty!.nameOverride, 'customPropertyName');
     });
 
     test('sets property nameOverride to null when x-dart-name is absent', () {
@@ -157,25 +157,25 @@ void main() {
               as EnumModel<String>?;
 
       expect(model, isNotNull);
-      expect(model!.values.length, equals(3));
+      expect(model!.values.length, 3);
 
       final activeEntry = model.values.firstWhereOrNull(
         (e) => e.value == 'active',
       );
       expect(activeEntry, isNotNull);
-      expect(activeEntry!.nameOverride, equals('isActive'));
+      expect(activeEntry!.nameOverride, 'isActive');
 
       final inactiveEntry = model.values.firstWhereOrNull(
         (e) => e.value == 'inactive',
       );
       expect(inactiveEntry, isNotNull);
-      expect(inactiveEntry!.nameOverride, equals('isInactive'));
+      expect(inactiveEntry!.nameOverride, 'isInactive');
 
       final pendingEntry = model.values.firstWhereOrNull(
         (e) => e.value == 'pending',
       );
       expect(pendingEntry, isNotNull);
-      expect(pendingEntry!.nameOverride, equals('isPending'));
+      expect(pendingEntry!.nameOverride, 'isPending');
     });
 
     test('sets enum value nameOverride to null when x-dart-enum is absent', () {
@@ -201,7 +201,7 @@ void main() {
               as EnumModel<String>?;
 
       expect(model, isNotNull);
-      expect(model!.values.length, equals(2));
+      expect(model!.values.length, 2);
 
       for (final entry in model.values) {
         expect(entry.nameOverride, isNull);
@@ -232,19 +232,19 @@ void main() {
               as EnumModel<String>?;
 
       expect(model, isNotNull);
-      expect(model!.values.length, equals(3));
+      expect(model!.values.length, 3);
 
       final activeEntry = model.values.firstWhereOrNull(
         (e) => e.value == 'active',
       );
       expect(activeEntry, isNotNull);
-      expect(activeEntry!.nameOverride, equals('isActive'));
+      expect(activeEntry!.nameOverride, 'isActive');
 
       final inactiveEntry = model.values.firstWhereOrNull(
         (e) => e.value == 'inactive',
       );
       expect(inactiveEntry, isNotNull);
-      expect(inactiveEntry!.nameOverride, equals('inactive'));
+      expect(inactiveEntry!.nameOverride, 'inactive');
     });
   });
 }

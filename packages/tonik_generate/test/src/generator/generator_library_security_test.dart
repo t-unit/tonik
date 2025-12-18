@@ -43,9 +43,7 @@ void main() {
             context: ctx,
             summary: 'Get pet',
             description: 'Get pet by ID',
-            tags: {
-              Tag(name: 'pets'),
-            },
+            tags: {Tag(name: 'pets')},
             isDeprecated: false,
             path: '/pets/{id}',
             method: HttpMethod.get,
@@ -124,9 +122,7 @@ void main() {
             context: ctx,
             summary: 'Get user',
             description: 'Get user info',
-            tags: {
-              Tag(name: 'users'),
-            },
+            tags: {Tag(name: 'users')},
             isDeprecated: false,
             path: '/users/me',
             method: HttpMethod.get,
@@ -264,9 +260,7 @@ void main() {
             context: ctx,
             summary: 'Get secure data',
             description: 'Get secure data',
-            tags: {
-              Tag(name: 'secure'),
-            },
+            tags: {Tag(name: 'secure')},
             isDeprecated: false,
             path: '/secure',
             method: HttpMethod.get,

@@ -20,11 +20,9 @@ class ApiDocument {
     this.externalDocs,
   });
 
-  // ID fields (immutable) - uniquely identify the document
   final String title;
   final String version;
 
-  // Mutable fields
   String? description;
   Contact? contact;
   License? license;

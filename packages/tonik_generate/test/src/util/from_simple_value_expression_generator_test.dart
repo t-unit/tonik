@@ -463,7 +463,7 @@ void main() {
             package: 'package:my_package/models.dart',
             explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          equals('_i1.UserRole.fromSimple(value, explode: false, )'),
+          '_i1.UserRole.fromSimple(value, explode: false, )',
         );
       });
 
@@ -485,7 +485,7 @@ void main() {
             package: 'package:my_package/models.dart',
             explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          equals('_i1.User.fromSimple(value, explode: false, )'),
+          '_i1.User.fromSimple(value, explode: false, )',
         );
       });
 
@@ -501,10 +501,7 @@ void main() {
           },
           isNullable: false,
         );
-        final listModel = ListModel(
-          content: enumModel,
-          context: context,
-        );
+        final listModel = ListModel(content: enumModel, context: context);
 
         expect(
           buildSimpleValueExpression(
@@ -535,10 +532,7 @@ void main() {
           },
           isNullable: false,
         );
-        final listModel = ListModel(
-          content: enumModel,
-          context: context,
-        );
+        final listModel = ListModel(content: enumModel, context: context);
 
         expect(
           buildSimpleValueExpression(

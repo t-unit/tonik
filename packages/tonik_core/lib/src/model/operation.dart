@@ -20,13 +20,11 @@ class Operation {
     this.requestBody,
   });
 
-  // ID fields (immutable)
   final String? operationId;
   final Context context;
   final String path;
   final HttpMethod method;
 
-  // Mutable fields (configuration and structure)
   String? nameOverride;
   String? summary;
   String? description;

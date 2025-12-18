@@ -80,13 +80,11 @@ class RequestHeaderObject extends RequestHeader {
     this.nameOverride,
   });
 
-  // ID fields (immutable)
   final String? name;
 
   /// The name used inside the HTTP request to identify the header.
   final String rawName;
 
-  // Mutable fields
   String? nameOverride;
   String? description;
   bool isRequired;

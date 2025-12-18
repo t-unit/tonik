@@ -37,7 +37,7 @@ void main() {
           .firstWhereOrNull((p) => p.rawName == 'user_id');
 
       expect(queryParam, isNotNull);
-      expect(queryParam!.nameOverride, equals('userId'));
+      expect(queryParam!.nameOverride, 'userId');
     });
 
     test('sets nameOverride to null when x-dart-name is absent', () {
@@ -111,7 +111,7 @@ void main() {
           );
 
       expect(pathParam, isNotNull);
-      expect(pathParam!.nameOverride, equals('userId'));
+      expect(pathParam!.nameOverride, 'userId');
     });
 
     test('sets nameOverride to null when x-dart-name is absent', () {
@@ -183,7 +183,7 @@ void main() {
           .firstWhereOrNull((h) => h.rawName == 'x-custom-header');
 
       expect(header, isNotNull);
-      expect(header!.nameOverride, equals('customHeader'));
+      expect(header!.nameOverride, 'customHeader');
     });
 
     test('sets nameOverride to null when x-dart-name is absent', () {

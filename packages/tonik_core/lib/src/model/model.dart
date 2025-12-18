@@ -118,11 +118,9 @@ class ClassModel extends Model with NamedModel {
     this.description,
   });
 
-  // ID fields (immutable)
   @override
   final String? name;
 
-  // Mutable fields (configuration and metadata)
   @override
   String? nameOverride;
   List<Property> properties;
@@ -144,7 +142,6 @@ class ClassModel extends Model with NamedModel {
 class EnumEntry<T> {
   const EnumEntry({required this.value, this.nameOverride});
 
-  /// The original value from the OpenAPI spec (String or int).
   final T value;
 
   final String? nameOverride;
@@ -177,17 +174,14 @@ class EnumModel<T> extends Model with NamedModel {
     this.fallbackValue,
   });
 
-  // ID fields (immutable)
   @override
   final String? name;
 
-  // Mutable fields (configuration and metadata)
   @override
   String? nameOverride;
   Set<EnumEntry<T>> values;
 
   /// Optional fallback value if no other value matches.
-  /// Used for unknown or default cases to guarantee future compatibility.
   EnumEntry<T>? fallbackValue;
   String? description;
   bool isDeprecated;
@@ -213,11 +207,9 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     this.description,
   });
 
-  // ID field (immutable)
   @override
   final String? name;
 
-  // Mutable fields (configuration and structure)
   @override
   String? nameOverride;
   String? description;
@@ -246,11 +238,9 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
     this.discriminator,
   });
 
-  // ID field (immutable)
   @override
   final String? name;
 
-  // Mutable fields (configuration and structure)
   @override
   String? nameOverride;
   String? description;
@@ -279,11 +269,9 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
     this.discriminator,
   });
 
-  // ID field (immutable)
   @override
   final String? name;
 
-  // Mutable fields (configuration and structure)
   @override
   String? nameOverride;
   String? description;
@@ -382,10 +370,8 @@ class Property {
     this.description,
   });
 
-  // ID field (immutable)
   final String name;
 
-  // Mutable fields (configuration, metadata, and structure)
   String? nameOverride;
   String? description;
   bool isDeprecated;

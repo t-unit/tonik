@@ -213,10 +213,7 @@ void main() {
       );
       final property = Property(
         name: 'addresses',
-        model: ListModel(
-          content: addressModel,
-          context: context,
-        ),
+        model: ListModel(content: addressModel, context: context),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
@@ -558,10 +555,7 @@ void main() {
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
-        model: ListModel(
-          content: addressModel,
-          context: context,
-        ),
+        model: ListModel(content: addressModel, context: context),
         context: context,
       );
       final property = Property(
@@ -586,10 +580,7 @@ void main() {
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
-        model: ListModel(
-          content: addressModel,
-          context: context,
-        ),
+        model: ListModel(content: addressModel, context: context),
         context: context,
       );
       final property = Property(

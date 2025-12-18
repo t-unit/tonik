@@ -230,7 +230,7 @@ void main() {
             bool operator ==(Object other) {
               if (identical(this, other)) return true;
               const _$deepEquals = DeepCollectionEquality();
-              return other is MultiBodyJson && _$deepEquals.equals(other.value, value);
+              return other is MultiBodyJson && _$deepEquals.other.value, value;
             }
           ''';
 

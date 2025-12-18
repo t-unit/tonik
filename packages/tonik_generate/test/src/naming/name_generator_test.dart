@@ -608,54 +608,26 @@ void main() {
         test('generates unique API class names for tags', () {
           final manager = NameGenerator();
 
-          expect(
-            manager.generateTagName(
-              Tag(name: 'pets'),
-            ),
-            equals('PetsApi'),
-          );
+          expect(manager.generateTagName(Tag(name: 'pets')), 'PetsApi');
+
+          expect(manager.generateTagName(Tag(name: 'pets')), 'PetsApi2');
 
           expect(
-            manager.generateTagName(
-              Tag(name: 'pets'),
-            ),
-            equals('PetsApi2'),
-          );
-
-          expect(
-            manager.generateTagName(
-              Tag(
-                name: 'store_inventory',
-              ),
-            ),
-            equals('StoreInventoryApi'),
+            manager.generateTagName(Tag(name: 'store_inventory')),
+            'StoreInventoryApi',
           );
         });
 
         test('handles special characters and numbers in tag names', () {
           final manager = NameGenerator();
 
-          expect(
-            manager.generateTagName(
-              Tag(name: '2pets'),
-            ),
-            equals('PetsApi'),
-          );
+          expect(manager.generateTagName(Tag(name: '2pets')), 'PetsApi');
+
+          expect(manager.generateTagName(Tag(name: 'pets-v2')), 'PetsV2Api');
 
           expect(
-            manager.generateTagName(
-              Tag(name: 'pets-v2'),
-            ),
-            equals('PetsV2Api'),
-          );
-
-          expect(
-            manager.generateTagName(
-              Tag(
-                name: '_store_api',
-              ),
-            ),
-            equals('StoreApiApi'),
+            manager.generateTagName(Tag(name: '_store_api')),
+            'StoreApiApi',
           );
         });
       });

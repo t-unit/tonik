@@ -296,10 +296,7 @@ String _parseResponse(Response<Object?> response) {
             description: '',
             bodies: {
               ResponseBody(
-                model: ListModel(
-                  content: classModel,
-                  context: context,
-                ),
+                model: ListModel(content: classModel, context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
               ),
@@ -1220,9 +1217,7 @@ String _parseResponse(Response<Object?> response) {
           operationId: 'getUser',
           summary: 'Get user',
           description: 'Get user by ID',
-          tags: {
-            Tag(name: 'users'),
-          },
+          tags: {Tag(name: 'users')},
           isDeprecated: false,
           path: '/users/{id}',
           method: HttpMethod.get,

@@ -48,7 +48,7 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserId, equals(userId));
+        expect(success.value.xUserId, userId);
       });
 
       test('roundtrips UserId with zero', () async {
@@ -62,7 +62,7 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserId, equals(userId));
+        expect(success.value.xUserId, userId);
       });
 
       test('roundtrips UserId with negative integer', () async {
@@ -76,7 +76,7 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserId, equals(userId));
+        expect(success.value.xUserId, userId);
       });
 
       test('roundtrips UserId with large integer', () async {
@@ -90,7 +90,7 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserId, equals(userId));
+        expect(success.value.xUserId, userId);
       });
     });
 
@@ -106,7 +106,7 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserName, equals(userName));
+        expect(success.value.xUserName, userName);
       });
 
       test('fails to encode empty string', () async {
@@ -121,7 +121,7 @@ void main() {
         );
         final error =
             result as TonikError<HeadersRoundtripAliasesGet200Response>;
-        expect(error.type, equals(TonikErrorType.encoding));
+        expect(error.type, TonikErrorType.encoding);
       });
 
       test('roundtrips UserName with special characters', () async {
@@ -221,8 +221,8 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserId, equals(userId));
-        expect(success.value.xUserName, equals(userName));
+        expect(success.value.xUserId, userId);
+        expect(success.value.xUserName, userName);
         expect(success.value.xTimestamp, isNotNull);
       });
 
@@ -256,7 +256,7 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserId, equals(userId));
+        expect(success.value.xUserId, userId);
         expect(success.value.xUserName, isNull);
         expect(success.value.xTimestamp, isNotNull);
       });

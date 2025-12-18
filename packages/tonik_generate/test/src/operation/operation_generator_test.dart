@@ -1492,7 +1492,7 @@ Future<TonikResult<void>> call() async {
           generatedClass.methods
               .where((m) => m.name == '_parseResponse')
               .length,
-          equals(1),
+          1,
         );
       });
 

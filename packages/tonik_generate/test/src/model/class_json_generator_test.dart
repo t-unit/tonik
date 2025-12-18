@@ -324,10 +324,7 @@ void main() {
           ),
           Property(
             name: 'addresses',
-            model: ListModel(
-              content: addressModel,
-              context: context,
-            ),
+            model: ListModel(content: addressModel, context: context),
             isRequired: false,
             isNullable: true,
             isDeprecated: false,

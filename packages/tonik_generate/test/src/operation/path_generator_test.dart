@@ -795,10 +795,7 @@ void main() {
       isNullable: false,
     );
 
-    final listModel = ListModel(
-      context: context,
-      content: enumModel,
-    );
+    final listModel = ListModel(context: context, content: enumModel);
 
     final pathParam = PathParameterObject(
       name: 'colors',
@@ -867,14 +864,8 @@ void main() {
       context: context,
       properties: const [],
     );
-    final innerListModel = ListModel(
-      context: context,
-      content: innerModel,
-    );
-    final outerListModel = ListModel(
-      context: context,
-      content: innerListModel,
-    );
+    final innerListModel = ListModel(context: context, content: innerModel);
+    final outerListModel = ListModel(context: context, content: innerListModel);
 
     final pathParam = PathParameterObject(
       name: 'matrix',
@@ -1080,10 +1071,7 @@ void main() {
       isNullable: false,
     );
 
-    final listModel = ListModel(
-      context: context,
-      content: enumModel,
-    );
+    final listModel = ListModel(context: context, content: enumModel);
 
     final pathParam = PathParameterObject(
       name: 'statuses',
@@ -1152,10 +1140,7 @@ void main() {
         context: context,
         properties: const [],
       );
-      final listModel = ListModel(
-        context: context,
-        content: classModel,
-      );
+      final listModel = ListModel(context: context, content: classModel);
 
       final pathParam = PathParameterObject(
         name: 'filters',
@@ -1222,10 +1207,7 @@ void main() {
       context: context,
       content: StringModel(context: context),
     );
-    final outerListModel = ListModel(
-      context: context,
-      content: innerListModel,
-    );
+    final outerListModel = ListModel(context: context, content: innerListModel);
 
     final pathParam = PathParameterObject(
       name: 'matrix',

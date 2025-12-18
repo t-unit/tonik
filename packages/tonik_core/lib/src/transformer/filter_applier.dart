@@ -20,7 +20,6 @@ class FilterApplier {
   }) {
     var filtered = operations;
 
-    // Apply include filter first
     if (includeTags.isNotEmpty) {
       filtered =
           filtered.where((operation) {
@@ -28,7 +27,6 @@ class FilterApplier {
           }).toSet();
     }
 
-    // Apply exclude filter second
     if (excludeTags.isNotEmpty) {
       filtered =
           filtered.where((operation) {

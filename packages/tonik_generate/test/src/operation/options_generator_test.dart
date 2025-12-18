@@ -463,10 +463,7 @@ void main() {
         isNullable: false,
       );
 
-      final listModel = ListModel(
-        context: context,
-        content: enumModel,
-      );
+      final listModel = ListModel(context: context, content: enumModel);
 
       final headerParam = RequestHeaderObject(
         name: 'X-Colors',
@@ -535,10 +532,7 @@ void main() {
         context: context,
         properties: const [],
       );
-      final innerListModel = ListModel(
-        context: context,
-        content: innerModel,
-      );
+      final innerListModel = ListModel(context: context, content: innerModel);
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,

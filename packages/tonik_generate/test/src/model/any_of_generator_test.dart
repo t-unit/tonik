@@ -667,7 +667,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 }
       ''';
 
-        expect(generated.trim(), equals(expectedMethod.trim()));
+        expect(generated.trim(), expectedMethod.trim());
       },
     );
 
@@ -774,7 +774,7 @@ String toForm({required bool explode, required bool allowEmpty}) {
 }
       ''';
 
-        expect(generated.trim(), equals(expectedMethod.trim()));
+        expect(generated.trim(), expectedMethod.trim());
       },
     );
 
@@ -833,7 +833,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 }
       ''';
 
-        expect(generated.trim(), equals(expectedMethod.trim()));
+        expect(generated.trim(), expectedMethod.trim());
       },
     );
 
@@ -929,7 +929,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 }
       ''';
 
-        expect(generated.trim(), equals(expectedMethod.trim()));
+        expect(generated.trim(), expectedMethod.trim());
       },
     );
   });

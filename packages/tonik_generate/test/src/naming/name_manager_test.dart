@@ -681,17 +681,13 @@ void main() {
 
       final model1 = AllOfModel(
         isDeprecated: false,
-        models: {
-          StringModel(context: sharedContext),
-        },
+        models: {StringModel(context: sharedContext)},
         context: sharedContext,
       );
 
       final model2 = AllOfModel(
         isDeprecated: false,
-        models: {
-          IntegerModel(context: sharedContext),
-        },
+        models: {IntegerModel(context: sharedContext)},
         context: sharedContext,
       );
 
@@ -1002,25 +998,15 @@ void main() {
 
     group('tagName', () {
       test('uses nameOverride when set on Tag', () {
-        final tag = Tag(
-          name: 'users',
-          nameOverride: 'UserManagement',
-        );
-
+        final tag = Tag(name: 'users', nameOverride: 'UserManagement');
         final name = manager.tagName(tag);
 
         expect(name, 'UserManagementApi');
       });
 
       test('sanitizes and makes tagName override unique', () {
-        final tag1 = Tag(
-          name: 'users',
-          nameOverride: 'my-api',
-        );
-        final tag2 = Tag(
-          name: 'products',
-          nameOverride: 'my_api',
-        );
+        final tag1 = Tag(name: 'users', nameOverride: 'my-api');
+        final tag2 = Tag(name: 'products', nameOverride: 'my_api');
 
         final name1 = manager.tagName(tag1);
         final name2 = manager.tagName(tag2);
@@ -1031,7 +1017,6 @@ void main() {
 
       test('uses generated name when nameOverride is null', () {
         final tag = Tag(name: 'pets');
-
         final name = manager.tagName(tag);
 
         expect(name, 'PetsApi');
