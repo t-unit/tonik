@@ -16,7 +16,7 @@ dependencies:
 dev_dependencies:
   big_decimal: ^0.5.0
   test: ^1.25.15
-  very_good_analysis: ^9.0.0
+  very_good_analysis: ^10.0.0
 
 
 dependency_overrides:
