@@ -34,37 +34,42 @@ void main() {
       final userApi = buildUserApi(responseStatus: '200');
 
       final user = await userApi.createUser(
-        body: const User(
-          id: 1,
-          username: 'test',
-          firstName: 'test',
-          lastName: 'test',
-          email: 'test@test.com',
-          password: 'test',
-          phone: 'test',
-          userStatus: 1,
+        body: const UserPostBodyRequestBodyJson(
+          User(
+            id: 1,
+            username: 'test',
+            firstName: 'test',
+            lastName: 'test',
+            email: 'test@test.com',
+            password: 'test',
+            phone: 'test',
+            userStatus: 1,
+          ),
         ),
       );
       final success = user as TonikSuccess<CreateUserResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreateUserResponse200>());
       final responseBody = (success.value as CreateUserResponse200).body;
-      expect(responseBody, isA<User>());
+      expect(responseBody, isA<UserPost200ResponseJson>());
+      final body = (responseBody as UserPost200ResponseJson).body;
 
-      expect(responseBody.id, isA<int?>());
-      expect(responseBody.username, isA<String?>());
-      expect(responseBody.firstName, isA<String?>());
-      expect(responseBody.lastName, isA<String?>());
-      expect(responseBody.email, isA<String?>());
-      expect(responseBody.password, isA<String?>());
-      expect(responseBody.phone, isA<String?>());
-      expect(responseBody.userStatus, isA<int?>());
+      expect(body.id, isA<int?>());
+      expect(body.username, isA<String?>());
+      expect(body.firstName, isA<String?>());
+      expect(body.lastName, isA<String?>());
+      expect(body.email, isA<String?>());
+      expect(body.password, isA<String?>());
+      expect(body.phone, isA<String?>());
+      expect(body.userStatus, isA<int?>());
     });
 
     test('default', () async {
       final userApi = buildUserApi(responseStatus: '321');
 
-      final user = await userApi.createUser(body: const User());
+      final user = await userApi.createUser(
+        body: const UserPostBodyRequestBodyJson(User()),
+      );
 
       final success = user as TonikSuccess<CreateUserResponse>;
       expect(success.response.statusCode, 321);
@@ -85,7 +90,9 @@ void main() {
       expect(success.value, isA<CreateUsersWithListInputResponse200>());
       final responseBody =
           (success.value as CreateUsersWithListInputResponse200).body;
-      expect(responseBody, isA<User>());
+      expect(responseBody, isA<UserCreateWithListPost200ResponseJson>());
+      final body = (responseBody as UserCreateWithListPost200ResponseJson).body;
+      expect(body, isA<User>());
     });
 
     test('default', () async {
@@ -146,9 +153,11 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(success.value, isA<LoginUserResponse200>());
       final responseBody = (success.value as LoginUserResponse200).body;
-      expect(responseBody.body, isA<String>());
-      expect(responseBody.xExpiresAfter, isA<DateTime?>());
-      expect(responseBody.xRateLimit, isA<int?>());
+      expect(responseBody, isA<UserLoginGet200ResponseJson>());
+      final body = responseBody as UserLoginGet200ResponseJson;
+
+      expect(body.xExpiresAfter, isA<DateTime?>());
+      expect(body.xRateLimit, isA<int?>());
     });
 
     test('400', () async {
@@ -203,7 +212,10 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetUserByNameResponse200>());
       final responseBody = (success.value as GetUserByNameResponse200).body;
-      expect(responseBody, isA<User>());
+      expect(responseBody, isA<UserUsernameGet200ResponseJson>());
+      final body = (responseBody as UserUsernameGet200ResponseJson).body;
+
+      expect(body, isA<User>());
     });
 
     test('400', () async {
@@ -240,7 +252,7 @@ void main() {
 
       final response = await userApi.updateUser(
         username: 'test',
-        body: const User(),
+        body: const UserUsernamePutBodyRequestBodyJson(User()),
       );
 
       final success = response as TonikSuccess<UpdateUserResponse>;
@@ -253,15 +265,17 @@ void main() {
 
       final response = await userApi.updateUser(
         username: 'test',
-        body: const User(
-          id: 1,
-          username: 'test',
-          firstName: 'test',
-          lastName: 'test',
-          email: 'test@test.com',
-          password: 'test',
-          phone: 'test',
-          userStatus: 1,
+        body: const UserUsernamePutBodyRequestBodyJson(
+          User(
+            id: 1,
+            username: 'test',
+            firstName: 'test',
+            lastName: 'test',
+            email: 'test@test.com',
+            password: 'test',
+            phone: 'test',
+            userStatus: 1,
+          ),
         ),
       );
       final success = response as TonikSuccess<UpdateUserResponse>;
@@ -274,7 +288,7 @@ void main() {
 
       final response = await userApi.updateUser(
         username: 'test',
-        body: const User(userStatus: 4674),
+        body: const UserUsernamePutBodyRequestBodyJson(User(userStatus: 4674)),
       );
       final success = response as TonikSuccess<UpdateUserResponse>;
       expect(success.response.statusCode, 404);
@@ -285,7 +299,7 @@ void main() {
 
       final response = await userApi.updateUser(
         username: 'test',
-        body: const User(),
+        body: const UserUsernamePutBodyRequestBodyJson(User()),
       );
       final success = response as TonikSuccess<UpdateUserResponse>;
       expect(success.response.statusCode, 321);

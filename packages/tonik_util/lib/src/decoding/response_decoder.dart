@@ -36,3 +36,16 @@ String decodeResponseText(List<int>? bytes) {
   }
   return utf8.decode(bytes);
 }
+
+/// Returns raw response bytes as-is.
+///
+/// Input is always `List<int>` (from ResponseType.bytes).
+/// Returns the raw bytes as `List<int>`.
+List<int> decodeResponseBytes(List<int>? bytes) {
+  if (bytes == null) {
+    throw const ResponseDecodingException(
+      'Response bytes are null.',
+    );
+  }
+  return bytes;
+}

@@ -54,13 +54,15 @@ void main() {
     test('200', () async {
       final storeApi = buildStoreApi(responseStatus: '200');
 
-      final body = Order(
-        id: 1,
-        petId: 1,
-        quantity: 1,
-        shipDate: DateTime.now(),
-        status: OrderStatusModel.placed,
-        complete: true,
+      final body = StoreOrderPostBodyRequestBodyJson(
+        Order(
+          id: 1,
+          petId: 1,
+          quantity: 1,
+          shipDate: DateTime.now(),
+          status: OrderStatusModel.placed,
+          complete: true,
+        ),
       );
 
       // deprecation is defined by the OpenAPI spec and correct
@@ -84,7 +86,7 @@ void main() {
     test('400', () async {
       final storeApi = buildStoreApi(responseStatus: '400');
 
-      const body = Order();
+      const body = StoreOrderPostBodyRequestBodyJson(Order());
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
@@ -96,7 +98,9 @@ void main() {
     test('422', () async {
       final storeApi = buildStoreApi(responseStatus: '422');
 
-      final body = Order(id: -484848, shipDate: DateTime(10299, 12, 12, 1));
+      final body = StoreOrderPostBodyRequestBodyJson(
+        Order(id: -484848, shipDate: DateTime(10299, 12, 12, 1)),
+      );
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
@@ -108,7 +112,9 @@ void main() {
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '499');
 
-      const body = Order(status: OrderStatusModel.approved);
+      const body = StoreOrderPostBodyRequestBodyJson(
+        Order(status: OrderStatusModel.approved),
+      );
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);

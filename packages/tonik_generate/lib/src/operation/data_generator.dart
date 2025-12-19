@@ -57,16 +57,21 @@ class DataGenerator {
               final variantName = nameManager
                   .requestBodyNames(requestBody)
                   .$2[c.rawContentType]!;
-              final valueExpr = buildToJsonPropertyExpression(
-                'value',
-                Property(
-                  name: 'value',
-                  model: c.model,
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
+
+              final valueExpr = switch (c.contentType) {
+                ContentType.text || ContentType.bytes => 'value',
+                ContentType.json => buildToJsonPropertyExpression(
+                  'value',
+                  Property(
+                    name: 'value',
+                    model: c.model,
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
                 ),
-              );
+              };
+
               return Code.scope(
                 (a) =>
                     'final ${a(refer(variantName, package))} value => '
@@ -79,6 +84,7 @@ class DataGenerator {
     }
 
     final model = content.first.model;
+    final contentType = content.first.contentType;
     final parameterType = typeReference(
       model,
       nameManager,
@@ -93,6 +99,11 @@ class DataGenerator {
       isNullable: !isRequired,
       isDeprecated: false,
     );
+
+    final bodyExpression = switch (contentType) {
+      ContentType.text || ContentType.bytes => 'body',
+      ContentType.json => buildToJsonPropertyExpression('body', property),
+    };
 
     return Method(
       (b) => b
@@ -109,7 +120,7 @@ class DataGenerator {
         )
         ..lambda = false
         ..body = Code(
-          'return ${buildToJsonPropertyExpression('body', property)};',
+          'return $bodyExpression;',
         ),
     );
   }

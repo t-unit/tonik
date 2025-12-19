@@ -38,7 +38,10 @@ class OptionsGenerator {
       'method': literalString(methodString),
       if (headersData != null) 'headers': refer('headers'),
       'contentType': ?contentType,
-      'responseType': refer('ResponseType', 'package:dio/dio.dart').property('bytes'),
+      'responseType': refer(
+        'ResponseType',
+        'package:dio/dio.dart',
+      ).property('bytes'),
       'validateStatus': _generateValidateStatus(),
     });
 
@@ -83,7 +86,12 @@ class OptionsGenerator {
       Parameter(
         (b) => b
           ..name = 'body'
-          ..type = refer(baseName, package)
+          ..type = TypeReference(
+            (b) => b
+              ..symbol = baseName
+              ..url = package
+              ..isNullable = !requestBody.isRequired,
+          )
           ..named = true
           ..required = requestBody.isRequired,
       ),
@@ -99,6 +107,11 @@ class OptionsGenerator {
         const Code(',\n'),
       ];
       cases.addAll(caseCode);
+    }
+
+    // Add null case if body is optional - return null (no Content-Type header)
+    if (!requestBody.isRequired) {
+      cases.add(const Code('null => null,\n'));
     }
 
     bodyStatements.add(

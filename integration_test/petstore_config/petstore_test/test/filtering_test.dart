@@ -34,12 +34,14 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.createPet(
-        // we expect Pet to be deprecated
-        // ignore: deprecated_member_use
-        body: const Pet(
-          id: 1,
-          petName: 'Fido',
-          imageUrls: <String>[],
+        body: const PetPostBodyRequestBodyJson(
+          // we expect Pet to be deprecated
+          // ignore: deprecated_member_use
+          Pet(
+            id: 1,
+            petName: 'Fido',
+            imageUrls: <String>[],
+          ),
         ),
       );
       final success = pet as TonikSuccess<CreatePetResponse>;
@@ -93,15 +95,17 @@ void main() {
       final userApi = buildUserApi(responseStatus: '200');
 
       final user = await userApi.createUser(
-        body: const Account(
-          id: 1,
-          username: 'testUser',
-          givenName: 'John',
-          familyName: 'Doe',
-          emailAddress: 'john@example.com',
-          password: 'password123',
-          phone: '1234567890',
-          accountStatus: 1,
+        body: const UserPostBodyRequestBodyJson(
+          Account(
+            id: 1,
+            username: 'testUser',
+            givenName: 'John',
+            familyName: 'Doe',
+            emailAddress: 'john@example.com',
+            password: 'password123',
+            phone: '1234567890',
+            accountStatus: 1,
+          ),
         ),
       );
       final success = user as TonikSuccess<CreateUserResponse>;
