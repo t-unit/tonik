@@ -70,9 +70,9 @@ Future<TonikResult<void>> call() async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -170,9 +170,9 @@ Future<TonikResult<void>> call({required String myHeader}) async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -273,9 +273,9 @@ Future<TonikResult<void>> call({required int petId}) async {
       response: null,
     );
   }
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -381,9 +381,9 @@ Future<TonikResult<void>> call() async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -498,9 +498,9 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
       response: null,
     );
   }
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -883,9 +883,9 @@ Future<TonikResult<String>> call() async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -977,9 +977,9 @@ Future<TonikResult<void>> call() async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -1088,9 +1088,9 @@ Future<TonikResult<List<ActivePet>>> call() async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,
@@ -1180,9 +1180,9 @@ Future<TonikResult<void>> call() async {
     );
   }
 
-  final Response<dynamic> _$response;
+  final Response<List<int>> _$response;
   try {
-    _$response = await _dio.requestUri<dynamic>(
+    _$response = await _dio.requestUri<List<int>>(
       _$uri,
       data: _$data,
       options: _$options,

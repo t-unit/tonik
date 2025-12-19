@@ -50,7 +50,12 @@ void main() {
         Options _options() {
           final headers = <String, dynamic>{};
           headers['Accept'] = '*/*';
-          return Options(method: 'GET', headers: headers, validateStatus: (_) => true);
+          return Options(
+            method: 'GET',
+            headers: headers,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
         }
       ''';
       final method = generator.generateOptionsMethod(operation, []);
@@ -88,7 +93,12 @@ void main() {
         Options _options() {
           final headers = <String, dynamic>{};
           headers['Accept'] = '*/*';
-          return Options(method: 'POST', headers: headers, validateStatus: (_) => true);
+          return Options(
+            method: 'POST',
+            headers: headers,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
         }
       ''';
       final method = generator.generateOptionsMethod(operation, []);
@@ -126,7 +136,12 @@ void main() {
         Options _options() {
           final headers = <String, dynamic>{};
           headers['Accept'] = '*/*';
-          return Options(method: 'PUT', headers: headers, validateStatus: (_) => true);
+          return Options(
+            method: 'PUT',
+            headers: headers,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
         }
       ''';
       final method = generator.generateOptionsMethod(operation, []);
@@ -167,6 +182,7 @@ void main() {
           return Options(
             method: 'DELETE',
             headers: headers,
+            responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
         }
@@ -224,6 +240,7 @@ void main() {
             return Options(
               method: 'GET',
               headers: headers,
+              responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
           }
@@ -370,6 +387,7 @@ void main() {
             return Options(
               method: 'GET',
               headers: headers,
+              responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
           }
@@ -432,6 +450,7 @@ void main() {
           return Options(
             method: 'GET',
             headers: headers,
+            responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
         }
@@ -504,6 +523,7 @@ void main() {
             return Options(
               method: 'GET',
               headers: headers,
+              responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
           }
@@ -574,6 +594,7 @@ void main() {
             return Options(
               method: 'GET',
               headers: headers,
+              responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
           }
@@ -616,7 +637,12 @@ void main() {
           Options _options() {
             final headers = <String, dynamic>{};
             headers['Accept'] = '*/*';
-            return Options(method: 'POST', headers: headers, validateStatus: (_) => true);
+            return Options(
+              method: 'POST',
+              headers: headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
           }
         ''';
 
@@ -670,6 +696,7 @@ void main() {
               method: 'POST',
               headers: headers,
               contentType: 'application/json',
+              responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
           }
@@ -735,6 +762,7 @@ void main() {
               method: 'POST',
               headers: headers,
               contentType: contentType,
+              responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
           }
@@ -792,6 +820,7 @@ void main() {
           return Options(
             method: 'GET',
             headers: headers,
+            responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
         }
@@ -837,6 +866,7 @@ void main() {
           return Options(
             method: 'GET',
             headers: headers,
+            responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
         }
@@ -900,6 +930,7 @@ void main() {
           return Options(
             method: 'GET',
             headers: headers,
+            responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
         }
@@ -976,6 +1007,7 @@ void main() {
           return Options(
             method: 'GET',
             headers: headers,
+            responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
         }

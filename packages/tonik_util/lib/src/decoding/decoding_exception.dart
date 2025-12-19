@@ -70,3 +70,10 @@ class FormatDecodingException extends DecodingException {
   /// Creates a new [FormatDecodingException] with the specified [message].
   const FormatDecodingException(super.message);
 }
+
+/// Exception thrown when a response body cannot be decoded due to
+/// content-type mismatch or decoding failure.
+class ResponseDecodingException extends DecodingException {
+  /// Creates a new [ResponseDecodingException] with the specified [message].
+  const ResponseDecodingException(super.message);
+}

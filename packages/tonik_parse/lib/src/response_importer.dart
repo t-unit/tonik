@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
@@ -106,9 +107,13 @@ class ResponseImporter {
           // Process content types based on configuration
           for (final entry in mediaTypes.entries) {
             final rawContentType = entry.key;
-            final contentType = _resolveContentType(rawContentType);
+            final contentType = resolveContentType(
+              rawContentType,
+              contentTypes: contentTypes,
+              log: log,
+            );
 
-            if (contentType != null && entry.value.schema != null) {
+            if (entry.value.schema != null) {
               final model = modelImporter.importSchema(
                 entry.value.schema!,
                 context.push('body'),
@@ -147,17 +152,5 @@ class ResponseImporter {
 
     responses.add(response);
     return response;
-  }
-
-  core.ContentType? _resolveContentType(String mediaType) {
-    if (contentTypes.containsKey(mediaType)) {
-      return contentTypes[mediaType];
-    }
-
-    if (mediaType.toLowerCase() == 'application/json') {
-      return core.ContentType.json;
-    }
-
-    return null;
   }
 }

@@ -38,6 +38,7 @@ class OptionsGenerator {
       'method': literalString(methodString),
       if (headersData != null) 'headers': refer('headers'),
       'contentType': ?contentType,
+      'responseType': refer('ResponseType', 'package:dio/dio.dart').property('bytes'),
       'validateStatus': _generateValidateStatus(),
     });
 

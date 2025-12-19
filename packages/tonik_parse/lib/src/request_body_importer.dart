@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/content_type_resolver.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
@@ -95,32 +96,29 @@ class RequestBodyImporter {
         for (final entry in requestBody.content.entries) {
           final rawContentType = entry.key;
           final mediaType = entry.value;
-          final contentType = _resolveContentType(rawContentType);
+          final contentType = resolveContentType(
+            rawContentType,
+            contentTypes: contentTypes,
+            log: log,
+          );
 
-          if (contentType != null) {
-            if (mediaType.schema != null) {
-              final model = modelImporter.importSchema(
-                mediaType.schema!,
-                context.push('body'),
-              );
+          if (mediaType.schema != null) {
+            final model = modelImporter.importSchema(
+              mediaType.schema!,
+              context.push('body'),
+            );
 
-              content.add(
-                core.RequestContent(
-                  model: model,
-                  rawContentType: rawContentType,
-                  contentType: contentType,
-                ),
-              );
-            } else {
-              log.warning(
-                'No schema found for request body $name. '
-                'Ignoring request body content for $rawContentType',
-              );
-            }
+            content.add(
+              core.RequestContent(
+                model: model,
+                rawContentType: rawContentType,
+                contentType: contentType,
+              ),
+            );
           } else {
             log.warning(
-              'Unsupported content type $rawContentType for request body '
-              '${name ?? context}',
+              'No schema found for request body $name. '
+              'Ignoring request body content for $rawContentType',
             );
           }
         }
@@ -137,15 +135,4 @@ class RequestBodyImporter {
     }
   }
 
-  core.ContentType? _resolveContentType(String mediaType) {
-    if (contentTypes.containsKey(mediaType)) {
-      return contentTypes[mediaType];
-    }
-
-    if (mediaType.toLowerCase() == 'application/json') {
-      return core.ContentType.json;
-    }
-
-    return null;
-  }
 }
