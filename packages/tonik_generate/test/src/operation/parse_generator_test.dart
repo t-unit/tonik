@@ -1289,5 +1289,237 @@ String _parseResponse(Response<List<int>> response) {
         expect(generated, contains('_i1.GetUserResponse('));
       });
     });
+
+    group('text/plain responses', () {
+      test('generates text decoder for text/plain response', () {
+        final operation = Operation(
+          operationId: 'textOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/text',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'text/plain',
+                  contentType: ContentType.text,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+String _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'text/plain'):
+      final _$body = decodeResponseText(response.data);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
+
+    group('binary responses', () {
+      test('generates bytes decoder for application/octet-stream response', () {
+        final operation = Operation(
+          operationId: 'binaryOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/binary',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/octet-stream',
+                  contentType: ContentType.bytes,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<int> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/octet-stream'):
+      final _$body = decodeResponseBytes(response.data);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates bytes decoder for image/png response', () {
+        final operation = Operation(
+          operationId: 'imageOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/image',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'image/png',
+                  contentType: ContentType.bytes,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<int> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'image/png'):
+      final _$body = decodeResponseBytes(response.data);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
+
+    group('mixed content types in one response', () {
+      test('generates correct decoders for json, text, and binary', () {
+        final operation = Operation(
+          operationId: 'mixedOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/mixed',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'text/plain',
+                  contentType: ContentType.text,
+                ),
+                ResponseBody(
+                  model: ListModel(
+                    content: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/octet-stream',
+                  contentType: ContentType.bytes,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return AnonymousResponseJson(body: _$body);
+    case (200, 'text/plain'):
+      final _$body = decodeResponseText(response.data);
+      return AnonymousResponsePlain(body: _$body);
+    case (200, 'application/octet-stream'):
+      final _$body = decodeResponseBytes(response.data);
+      return AnonymousResponseOctetStream(body: _$body);
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
   });
 }

@@ -157,6 +157,18 @@ class ParseGenerator {
 
     if (responseBody == null) return null;
 
+    final contentTypeEnum = responseBody.contentType;
+
+    return switch (contentTypeEnum) {
+      ContentType.json => _createJsonBodyDecode(responseBody),
+      ContentType.text => _createTextBodyDecode(),
+      ContentType.bytes => _createBytesBodyDecode(),
+    };
+  }
+
+  ({List<Code> statements, String varName}) _createJsonBodyDecode(
+    ResponseBody responseBody,
+  ) {
     final statements = <Code>[];
     const jsonVar = r'_$json';
     const bodyVar = r'_$body';
@@ -185,6 +197,40 @@ class ParseGenerator {
     statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
 
     return (statements: statements, varName: bodyVar);
+  }
+
+  ({List<Code> statements, String varName}) _createTextBodyDecode() {
+    const bodyVar = r'_$body';
+    return (
+      statements: [
+        declareFinal(bodyVar)
+            .assign(
+              refer(
+                'decodeResponseText',
+                'package:tonik_util/tonik_util.dart',
+              ).call([refer('response.data')]),
+            )
+            .statement,
+      ],
+      varName: bodyVar,
+    );
+  }
+
+  ({List<Code> statements, String varName}) _createBytesBodyDecode() {
+    const bodyVar = r'_$body';
+    return (
+      statements: [
+        declareFinal(bodyVar)
+            .assign(
+              refer(
+                'decodeResponseBytes',
+                'package:tonik_util/tonik_util.dart',
+              ).call([refer('response.data')]),
+            )
+            .statement,
+      ],
+      varName: bodyVar,
+    );
   }
 
   Code _generateMultiResponseCase(
