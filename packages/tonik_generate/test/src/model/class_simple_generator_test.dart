@@ -108,7 +108,14 @@ void main() {
           final values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
-            expectedKeys: {r'flag', r'count', r'label', r'created', r'amount', r'thumbnail'},
+            expectedKeys: {
+              r'flag',
+              r'count',
+              r'label',
+              r'created',
+              r'amount',
+              r'thumbnail',
+            },
             listKeys: {},
             isFormStyle: false,
             context: r'Sample',
