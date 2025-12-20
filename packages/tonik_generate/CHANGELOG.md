@@ -1,3 +1,17 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: binary data type.
+ - **FEAT**: improved response handling for text and binary.
+ - **FEAT**: binary and text bodies in responses.
+ - **FEAT**: improved copyWith allowing to set properties to null.
+ - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: custom content types via configuration.
+ - **FEAT**: fallback cases for enums.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
 ## 0.1.0
 
  - **REFACTOR**: cleanup parameter generation.

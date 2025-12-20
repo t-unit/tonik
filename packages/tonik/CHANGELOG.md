@@ -1,3 +1,14 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: binary data type.
+ - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: custom content types via configuration.
+ - **FEAT**: cli handling for config.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
 ## 0.1.0
 
 ## 0.0.9
