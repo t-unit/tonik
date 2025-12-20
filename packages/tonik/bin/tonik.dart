@@ -202,6 +202,20 @@ void main(List<String> arguments) {
   }
 
   try {
+    const normalizer = ContentTypeNormalizer();
+    apiDocument = normalizer.apply(apiDocument);
+    logger.fine('Applied content type normalization');
+  } on Object catch (e, s) {
+    logger
+      ..fine('Failed to normalize content types', e, s)
+      ..severe(
+        'Unexpected error while normalizing content types. '
+        'Please run with verbose logging and report this issue at $issueUrl',
+      );
+    exit(1);
+  }
+
+  try {
     const transformer = ConfigTransformer();
     apiDocument = transformer.apply(apiDocument, mergedConfig.toTonikConfig());
     logger.fine('Applied configuration transformations');

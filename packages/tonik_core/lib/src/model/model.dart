@@ -359,6 +359,13 @@ class UriModel extends PrimitiveModel {
   String toString() => 'UriModel';
 }
 
+class BinaryModel extends PrimitiveModel {
+  BinaryModel({required super.context});
+
+  @override
+  String toString() => 'BinaryModel';
+}
+
 class Property {
   Property({
     required this.name,

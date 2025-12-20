@@ -68,6 +68,13 @@ void main() {
             isNullable: false,
             isDeprecated: false,
           ),
+          Property(
+            name: 'thumbnail',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
         ],
         context: context,
       );
@@ -101,7 +108,7 @@ void main() {
           final values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
-            expectedKeys: {r'flag', r'count', r'label', r'created', r'amount'},
+            expectedKeys: {r'flag', r'count', r'label', r'created', r'amount', r'thumbnail'},
             listKeys: {},
             isFormStyle: false,
             context: r'Sample',
@@ -115,6 +122,9 @@ void main() {
             ),
             amount: values[r'amount'].decodeSimpleBigDecimal(
               context: r'Sample.amount',
+            ),
+            thumbnail: values[r'thumbnail'].decodeSimpleBinary(
+              context: r'Sample.thumbnail',
             ),
           );
         }

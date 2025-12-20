@@ -146,4 +146,38 @@ void main() {
       );
     });
   });
+
+  group('SpaceDelimitedBinaryEncoder', () {
+    test('encodes List<int> as single item with explode=false', () {
+      const value = [72, 101, 108, 108, 111]; // "Hello"
+      final result = value.toSpaceDelimited(explode: false, allowEmpty: true);
+      expect(result, ['Hello']);
+    });
+
+    test('encodes List<int> as single item with explode=true', () {
+      const value = [72, 101, 108, 108, 111];
+      final result = value.toSpaceDelimited(explode: true, allowEmpty: true);
+      expect(result, ['Hello']);
+    });
+
+    test('encodes empty List<int> when allowEmpty=true', () {
+      const value = <int>[];
+      final result = value.toSpaceDelimited(explode: false, allowEmpty: true);
+      expect(result, ['']);
+    });
+
+    test('throws EmptyValueException when empty and allowEmpty=false', () {
+      const value = <int>[];
+      expect(
+        () => value.toSpaceDelimited(explode: false, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('encodes List<int> with special characters', () {
+      const value = [72, 195, 171, 108, 108, 195, 182]; // "Hëllö"
+      final result = value.toSpaceDelimited(explode: false, allowEmpty: true);
+      expect(result, ['H%C3%ABll%C3%B6']);
+    });
+  });
 }

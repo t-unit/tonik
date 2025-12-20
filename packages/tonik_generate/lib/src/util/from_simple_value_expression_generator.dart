@@ -15,6 +15,7 @@ String? getSimpleDecodingUnsupportedReason(Model model) {
     DateTimeModel() ||
     DateModel() ||
     UriModel() ||
+    BinaryModel() ||
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
@@ -37,6 +38,7 @@ String? _getListContentUnsupportedReason(Model content) {
     DateTimeModel() ||
     DateModel() ||
     UriModel() ||
+    BinaryModel() ||
     EnumModel() ||
     OneOfModel() ||
     AllOfModel() ||
@@ -112,6 +114,10 @@ Expression buildSimpleValueExpression(
       isRequired
           ? value.property('decodeSimpleUri').call([], contextParam)
           : value.property('decodeSimpleNullableUri').call([], contextParam),
+    BinaryModel() =>
+      isRequired
+          ? value.property('decodeSimpleBinary').call([], contextParam)
+          : value.property('decodeSimpleNullableBinary').call([], contextParam),
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
@@ -266,6 +272,12 @@ Expression _buildListFromSimpleExpression(
     UriModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleUri',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    BinaryModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeSimpleBinary',
       isRequired,
       contextParam: contextParam,
     ),

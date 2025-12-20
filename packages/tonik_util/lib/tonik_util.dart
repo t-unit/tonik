@@ -9,6 +9,7 @@ export 'src/decoding/object_decoder.dart';
 export 'src/decoding/response_decoder.dart';
 export 'src/decoding/simple_decoder.dart';
 export 'src/dio/server_config.dart';
+export 'src/encoding/binary_extensions.dart';
 export 'src/encoding/datetime_extension.dart';
 export 'src/encoding/deep_object_encoder_extensions.dart';
 export 'src/encoding/encoding_exception.dart';

@@ -13,7 +13,7 @@ T decodeResponseJson<T>(List<int>? bytes) {
     );
   }
 
-  final jsonString = utf8.decode(bytes);
+  final jsonString = utf8.decode(bytes, allowMalformed: true);
   final decoded = jsonDecode(jsonString);
 
   if (decoded is! T) {
@@ -34,7 +34,7 @@ String decodeResponseText(List<int>? bytes) {
       'Response bytes are null, cannot decode text.',
     );
   }
-  return utf8.decode(bytes);
+  return utf8.decode(bytes, allowMalformed: true);
 }
 
 /// Returns raw response bytes as-is.

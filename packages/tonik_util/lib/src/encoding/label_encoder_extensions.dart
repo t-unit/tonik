@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
@@ -134,5 +135,30 @@ extension LabelStringMapEncoder on Map<String, String> {
       );
       return '.$encodedPairs';
     }
+  }
+}
+
+/// Extension for encoding binary data (`List<int>`).
+extension LabelBinaryEncoder on List<int> {
+  /// Encodes binary data using label style parameter encoding.
+  ///
+  /// Uses Utf8Decoder with allowMalformed: true to handle any byte sequence.
+  /// The resulting string is then URL-encoded and prefixed with `.`.
+  ///
+  /// The [explode] parameter is accepted for consistency but has no effect
+  /// on binary encoding (binary data is treated as a primitive value).
+  ///
+  /// The [allowEmpty] parameter controls whether empty lists are allowed:
+  /// - When `true`, empty lists produce `.`
+  /// - When `false`, empty lists throw an exception
+  String toLabel({required bool explode, required bool allowEmpty}) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    if (isEmpty) {
+      return '.';
+    }
+    final str = decodeToString();
+    return '.${Uri.encodeComponent(str)}';
   }
 }

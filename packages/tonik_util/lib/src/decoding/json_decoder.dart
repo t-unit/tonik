@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
@@ -433,5 +435,45 @@ extension JsonDecoder on Object? {
       return null;
     }
     return decodeJsonUri(context: context);
+  }
+
+  /// Decodes a JSON string value to binary data (`List<int>`).
+  ///
+  /// Uses UTF-8 encoding to handle any string input.
+  /// This provides backward compatibility and handles both text and
+  /// binary data.
+  /// Throws [InvalidTypeException] if the value is not a string or is null.
+  List<int> decodeJsonBinary({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    if (this is! String) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    final str = this! as String;
+    if (str.isEmpty) {
+      return <int>[];
+    }
+    return utf8.encode(str);
+  }
+
+  /// Decodes a JSON value to nullable binary data.
+  ///
+  /// Returns null if the value is null.
+  /// Returns empty list if the value is an empty string.
+  /// Throws [InvalidTypeException] if the value is not a string.
+  List<int>? decodeJsonNullableBinary({String? context}) {
+    if (this == null) {
+      return null;
+    }
+    return decodeJsonBinary(context: context);
   }
 }

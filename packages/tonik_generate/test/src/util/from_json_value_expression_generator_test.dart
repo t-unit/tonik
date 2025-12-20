@@ -92,6 +92,28 @@ void main() {
         ).accept(emitter).toString(),
         'value.decodeJsonDateTime()',
       );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: BinaryModel(context: context),
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonBinary()',
+      );
+    });
+
+    test('generates for nullable primitive types', () {
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: BinaryModel(context: context),
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          isNullable: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableBinary()',
+      );
     });
 
     group('generates for alias types', () {
@@ -363,6 +385,24 @@ void main() {
         equals(
           'value.decodeJsonList<String>()'
           '.map((e) => e.decodeJsonBigDecimal()).toList()',
+        ),
+      );
+
+      // Test list of binary
+      final binaryListModel = ListModel(
+        content: BinaryModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: binaryListModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonList<String>()'
+          '.map((e) => e.decodeJsonBinary()).toList()',
         ),
       );
     });

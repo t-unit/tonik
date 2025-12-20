@@ -99,6 +99,35 @@ void main() {
       );
     });
 
+    test('for Binary property', () {
+      final property = Property(
+        name: 'thumbnail',
+        model: BinaryModel(context: context),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      // Binary data needs to be decoded from List<int> to String for JSON
+      expect(
+        buildToJsonPropertyExpression('thumbnail', property),
+        'thumbnail.decodeToString()',
+      );
+    });
+
+    test('for nullable Binary property', () {
+      final property = Property(
+        name: 'data',
+        model: BinaryModel(context: context),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        buildToJsonPropertyExpression('data', property),
+        'data?.decodeToString()',
+      );
+    });
+
     test('for Enum property', () {
       final enumModel = EnumModel<String>(
         isDeprecated: false,
@@ -201,6 +230,24 @@ void main() {
       expect(
         buildToJsonPropertyExpression('meetingTimes', property),
         'meetingTimes.map((e) => e.toTimeZonedIso8601String()).toList()',
+      );
+    });
+
+    test('for List<Binary> property', () {
+      final property = Property(
+        name: 'images',
+        model: ListModel(
+          content: BinaryModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      // List of binary needs each element decoded to string
+      expect(
+        buildToJsonPropertyExpression('images', property),
+        'images.map((e) => e.decodeToString()).toList()',
       );
     });
 

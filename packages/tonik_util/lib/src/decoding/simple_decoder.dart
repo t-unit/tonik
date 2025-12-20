@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
@@ -197,6 +199,34 @@ extension SimpleDecoder on String? {
   BigDecimal? decodeSimpleNullableBigDecimal({String? context}) {
     if (this?.isEmpty ?? true) return null;
     return decodeSimpleBigDecimal(context: context);
+  }
+
+  /// Decodes a string to binary data (`List<int>`).
+  ///
+  /// Uses UTF-8 encoding with allowMalformed: true to handle any string input.
+  /// This provides backward compatibility and handles both text and
+  /// binary data.
+  /// Throws [InvalidTypeException] if the value is null.
+  List<int> decodeSimpleBinary({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    if (this!.isEmpty) {
+      return <int>[];
+    }
+    return utf8.encode(this!);
+  }
+
+  /// Decodes a string to nullable binary data.
+  ///
+  /// Returns null if the string is empty or null.
+  List<int>? decodeSimpleNullableBinary({String? context}) {
+    if (this?.isEmpty ?? true) return null;
+    return decodeSimpleBinary(context: context);
   }
 
   /// Decodes a string to a list of strings.

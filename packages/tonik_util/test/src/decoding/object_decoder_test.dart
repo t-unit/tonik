@@ -631,5 +631,35 @@ void main() {
         );
       });
     });
+
+    group('Binary', () {
+      test('decodes binary string values in exploded objects', () {
+        const input = 'name=test&data=Hello+World';
+        final result = input.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'name', 'data'},
+          listKeys: {},
+          isFormStyle: true,
+        );
+
+        expect(result['name'], 'test');
+        expect(result['data'], 'Hello World');
+      });
+
+      test('decodes binary string values in non-exploded objects', () {
+        const input = 'name,test,data,Hello World';
+        final result = input.decodeObject(
+          explode: false,
+          explodeSeparator: ',',
+          expectedKeys: {'name', 'data'},
+          listKeys: {},
+          isFormStyle: false,
+        );
+
+        expect(result['name'], 'test');
+        expect(result['data'], 'Hello World');
+      });
+    });
   });
 }
