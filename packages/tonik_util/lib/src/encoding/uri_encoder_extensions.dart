@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 
@@ -84,6 +85,25 @@ extension BigDecimalUriEncoder on BigDecimal {
     return useQueryComponent
         ? Uri.encodeQueryComponent(toString())
         : toString();
+  }
+}
+
+/// Extension for URI encoding binary data (`List<int>`) values.
+extension BinaryUriEncoder on List<int> {
+  /// URI encodes this binary data value.
+  ///
+  /// Converts the binary data to a UTF-8 string first, then URI encodes it.
+  String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    if (isEmpty) {
+      return '';
+    }
+    final str = decodeToString();
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(str)
+        : Uri.encodeComponent(str);
   }
 }
 
