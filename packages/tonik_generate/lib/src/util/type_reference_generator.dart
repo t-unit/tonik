@@ -77,6 +77,19 @@ TypeReference typeReference(
         ..url = 'dart:core'
         ..isNullable = isNullableOverride,
     ),
+    BinaryModel _ => TypeReference(
+      (b) => b
+        ..symbol = 'List'
+        ..url = 'dart:core'
+        ..types.add(
+          TypeReference(
+            (b) => b
+              ..symbol = 'int'
+              ..url = 'dart:core',
+          ),
+        )
+        ..isNullable = isNullableOverride,
+    ),
     final CompositeModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)

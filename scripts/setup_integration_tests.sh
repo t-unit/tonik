@@ -101,6 +101,7 @@ rm -rf fastify_type_provider_zod/fastify_type_provider_zod_api
 rm -rf composition/composition_api
 rm -rf query_parameters/query_parameters_api
 rm -rf path_encoding/path_encoding_api
+rm -rf binary_models/binary_models_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml
@@ -154,6 +155,10 @@ dart run ../packages/tonik/bin/tonik.dart -p path_encoding_api -s path_encoding/
 add_dependency_overrides_recursive "path_encoding/path_encoding_api"
 cd path_encoding/path_encoding_api && dart pub get && cd ../..
 
+dart run ../packages/tonik/bin/tonik.dart -p binary_models_api -s binary_models/openapi.yaml -o binary_models
+add_dependency_overrides_recursive "binary_models/binary_models_api"
+cd binary_models/binary_models_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
@@ -183,5 +188,6 @@ restore_test_package_overrides "fastify_type_provider_zod/fastify_type_provider_
 restore_test_package_overrides "composition/composition_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "query_parameters/query_parameters_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "path_encoding/path_encoding_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "binary_models/binary_models_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"

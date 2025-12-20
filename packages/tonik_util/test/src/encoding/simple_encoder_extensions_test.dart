@@ -1235,4 +1235,46 @@ void main() {
       });
     });
   });
+
+  group('SimpleBinaryEncoder', () {
+    test('encodes List<int> to UTF-8 string', () {
+      const value = [72, 101, 108, 108, 111]; // "Hello"
+      expect(
+        value.toSimple(explode: false, allowEmpty: true),
+        'Hello',
+      );
+    });
+
+    test('encodes empty List<int>', () {
+      const value = <int>[];
+      expect(
+        value.toSimple(explode: false, allowEmpty: true),
+        '',
+      );
+    });
+
+    test('encodes List<int> with special characters', () {
+      const value = [72, 195, 171, 108, 108, 195, 182]; // "Hëllö"
+      expect(
+        value.toSimple(explode: false, allowEmpty: true),
+        'H%C3%ABll%C3%B6',
+      );
+    });
+
+    test('throws EmptyValueException when empty and allowEmpty=false', () {
+      const value = <int>[];
+      expect(
+        () => value.toSimple(explode: false, allowEmpty: false),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('explode parameter has no effect', () {
+      const value = [72, 101, 108, 108, 111];
+      expect(
+        value.toSimple(explode: true, allowEmpty: true),
+        value.toSimple(explode: false, allowEmpty: true),
+      );
+    });
+  });
 }

@@ -395,5 +395,246 @@ void main() {
         collapseWhitespace(format(expectedMethod)),
       );
     });
+
+    test('handles text/plain request body without JSON encoding', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required String body}) {
+          return body;
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test(
+      'handles application/octet-stream request body without JSON encoding',
+      () {
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'test',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: testContext),
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        // Note: For binary, the model is StringModel but at runtime
+        // the user passes List<int> which is passed through directly
+        const expectedMethod = '''
+        Object? _data({required String body}) {
+          return body;
+        }
+      ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test('handles multiple content types with text variant', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'JsonModel',
+                properties: const [],
+                context: testContext,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required Test body}) {
+          return switch (body) {
+            final TestJson value => value.value.toJson(),
+            final TestPlain value => value.value,
+          };
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('handles multiple content types with bytes variant', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'JsonModel',
+                properties: const [],
+                context: testContext,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required Test body}) {
+          return switch (body) {
+            final TestJson value => value.value.toJson(),
+            final TestOctetStream value => value.value,
+          };
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('handles optional text/plain request body', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: false,
+          content: {
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required String? body}) {
+          return body;
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
   });
 }

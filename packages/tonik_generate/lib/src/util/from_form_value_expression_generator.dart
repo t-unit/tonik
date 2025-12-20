@@ -82,6 +82,13 @@ Expression buildFromFormValueExpression(
           )
           .call([], contextParam),
 
+    BinaryModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormBinary' : 'decodeFormNullableBinary',
+          )
+          .call([], contextParam),
+
     AliasModel() => buildFromFormValueExpression(
       value,
       model: model.model,
@@ -229,6 +236,12 @@ Expression _buildListFromFormExpression(
     UriModel() => _buildPrimitiveList(
       listDecode,
       'decodeFormUri',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    BinaryModel() => _buildPrimitiveList(
+      listDecode,
+      'decodeFormBinary',
       isRequired,
       contextParam: contextParam,
     ),

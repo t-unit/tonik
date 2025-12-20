@@ -68,7 +68,7 @@ class ParseGenerator {
             "?? 'not specified';",
           ),
           const Code('final status = response.statusCode;'),
-          generateJsonDecodingExceptionExpression(
+          generateResponseDecodingExceptionExpression(
             r'Unexpected content type: $content for status code: $status',
           ).statement,
         ]),
@@ -91,7 +91,14 @@ class ParseGenerator {
                 (b) => b
                   ..symbol = 'Response'
                   ..url = 'package:dio/dio.dart'
-                  ..types.add(refer('Object?', 'dart:core')),
+                  ..types.add(
+                    TypeReference(
+                      (b) => b
+                        ..symbol = 'List'
+                        ..url = 'dart:core'
+                        ..types.add(refer('int', 'dart:core')),
+                    ),
+                  ),
               ),
           ),
         )
@@ -134,22 +141,96 @@ class ParseGenerator {
     }
   }
 
-  Expression? _createBodyDecode(ResponseObject response, String? contentType) {
+  ({List<Code> statements, String varName})? _createBodyDecode(
+    ResponseObject response,
+    String? contentType,
+  ) {
     final hasBody = response.bodyCount > 0;
     if (!hasBody) return null;
 
-    final bodyModel = contentType != null
-        ? response.bodies
-              .firstWhere(
-                (body) => body.rawContentType == contentType,
-                orElse: () => response.bodies.first,
-              )
-              .model
-        : response.bodies.firstOrNull?.model;
+    final responseBody = contentType != null
+        ? response.bodies.firstWhere(
+            (body) => body.rawContentType == contentType,
+            orElse: () => response.bodies.first,
+          )
+        : response.bodies.firstOrNull;
 
-    if (bodyModel == null) return null;
+    if (responseBody == null) return null;
 
-    return _decodeBody('response.data', bodyModel, nameManager);
+    final contentTypeEnum = responseBody.contentType;
+
+    return switch (contentTypeEnum) {
+      ContentType.json => _createJsonBodyDecode(responseBody),
+      ContentType.text => _createTextBodyDecode(),
+      ContentType.bytes => _createBytesBodyDecode(),
+    };
+  }
+
+  ({List<Code> statements, String varName}) _createJsonBodyDecode(
+    ResponseBody responseBody,
+  ) {
+    final statements = <Code>[];
+    const jsonVar = r'_$json';
+    const bodyVar = r'_$body';
+
+    statements.add(
+      declareFinal(jsonVar)
+          .assign(
+            refer(
+              'decodeResponseJson',
+              'package:tonik_util/tonik_util.dart',
+            ).call(
+              [refer('response.data')],
+              {},
+              [refer('Object?', 'dart:core')],
+            ),
+          )
+          .statement,
+    );
+
+    final bodyExpr = buildFromJsonValueExpression(
+      jsonVar,
+      model: responseBody.model,
+      nameManager: nameManager,
+      package: package,
+    );
+    statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
+
+    return (statements: statements, varName: bodyVar);
+  }
+
+  ({List<Code> statements, String varName}) _createTextBodyDecode() {
+    const bodyVar = r'_$body';
+    return (
+      statements: [
+        declareFinal(bodyVar)
+            .assign(
+              refer(
+                'decodeResponseText',
+                'package:tonik_util/tonik_util.dart',
+              ).call([refer('response.data')]),
+            )
+            .statement,
+      ],
+      varName: bodyVar,
+    );
+  }
+
+  ({List<Code> statements, String varName}) _createBytesBodyDecode() {
+    const bodyVar = r'_$body';
+    return (
+      statements: [
+        declareFinal(bodyVar)
+            .assign(
+              refer(
+                'decodeResponseBytes',
+                'package:tonik_util/tonik_util.dart',
+              ).call([refer('response.data')]),
+            )
+            .statement,
+      ],
+      varName: bodyVar,
+    );
   }
 
   Code _generateMultiResponseCase(
@@ -188,7 +269,10 @@ class ParseGenerator {
         bodyDecode,
       );
     } else if (bodyDecode != null) {
-      return bodyDecode.returned.statement;
+      return Block.of([
+        ...bodyDecode.statements,
+        refer(bodyDecode.varName).returned.statement,
+      ]);
     } else {
       return const Code('return;');
     }
@@ -198,12 +282,10 @@ class ParseGenerator {
     String wrapperName,
     ResponseObject response,
     String? contentType,
-    Expression? bodyDecode,
+    ({List<Code> statements, String varName})? bodyDecode,
   ) {
     final headerResult = _decodeHeaders(response);
 
-    // If there are unsupported headers, generate a throw statement
-    // (only the first one - they all need to be fixed anyway)
     if (headerResult.unsupported.isNotEmpty) {
       final unsupported = headerResult.unsupported.first;
       return generateSimpleDecodingExceptionExpression(
@@ -213,7 +295,7 @@ class ParseGenerator {
 
     final responseArgs = <String, Expression>{};
     if (bodyDecode != null) {
-      responseArgs['body'] = bodyDecode;
+      responseArgs['body'] = refer(bodyDecode.varName);
     }
     responseArgs.addAll(headerResult.supported);
 
@@ -228,23 +310,29 @@ class ParseGenerator {
       ).call([], responseArgs),
     };
 
-    return refer(wrapperName, package).call([], wrapperArgs).returned.statement;
+    return Block.of([
+      if (bodyDecode != null) ...bodyDecode.statements,
+      refer(wrapperName, package).call([], wrapperArgs).returned.statement,
+    ]);
   }
 
   Code _generateMultiResponseWithBody(
     String wrapperName,
-    Expression bodyDecode,
+    ({List<Code> statements, String varName}) bodyDecode,
   ) {
-    return refer(
-      wrapperName,
-      package,
-    ).call([], {'body': bodyDecode}).returned.statement;
+    return Block.of([
+      ...bodyDecode.statements,
+      refer(
+        wrapperName,
+        package,
+      ).call([], {'body': refer(bodyDecode.varName)}).returned.statement,
+    ]);
   }
 
   Code _generateSingleResponseWithHeaders(
     ResponseObject response,
     String? contentType,
-    Expression? bodyDecode,
+    ({List<Code> statements, String varName})? bodyDecode,
   ) {
     final headerResult = _decodeHeaders(response);
 
@@ -257,12 +345,12 @@ class ParseGenerator {
 
     final args = <String, Expression>{};
     if (bodyDecode != null) {
-      args['body'] = bodyDecode;
+      args['body'] = refer(bodyDecode.varName);
     }
     args.addAll(headerResult.supported);
 
     return Block.of([
-      const Code('return '),
+      if (bodyDecode != null) ...bodyDecode.statements,
       refer(
         contentType != null && response.bodyCount > 1
             ? nameManager
@@ -270,17 +358,8 @@ class ParseGenerator {
                   .implementationNames[contentType]!
             : nameManager.responseNames(response).baseName,
         package,
-      ).call([], args).statement,
+      ).call([], args).returned.statement,
     ]);
-  }
-
-  Expression _decodeBody(String expr, Model model, NameManager nameManager) {
-    return buildFromJsonValueExpression(
-      expr,
-      model: model,
-      nameManager: nameManager,
-      package: package,
-    );
   }
 
   ({

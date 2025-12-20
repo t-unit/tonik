@@ -375,4 +375,46 @@ void main() {
       );
     });
   });
+
+  group('MatrixBinaryEncoder', () {
+    test('encodes List<int> with parameter name', () {
+      const value = [72, 101, 108, 108, 111]; // "Hello"
+      expect(
+        value.toMatrix('data', allowEmpty: true, explode: false),
+        ';data=Hello',
+      );
+    });
+
+    test('encodes empty List<int> when allowEmpty=true', () {
+      const value = <int>[];
+      expect(
+        value.toMatrix('data', allowEmpty: true, explode: false),
+        ';data=',
+      );
+    });
+
+    test('throws EmptyValueException when empty and allowEmpty=false', () {
+      const value = <int>[];
+      expect(
+        () => value.toMatrix('data', allowEmpty: false, explode: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('encodes List<int> with special characters', () {
+      const value = [72, 195, 171, 108, 108, 195, 182]; // "Hëllö"
+      expect(
+        value.toMatrix('text', allowEmpty: true, explode: false),
+        ';text=H%C3%ABll%C3%B6',
+      );
+    });
+
+    test('explode parameter has no effect', () {
+      const value = [72, 101, 108, 108, 111];
+      expect(
+        value.toMatrix('data', allowEmpty: true, explode: true),
+        value.toMatrix('data', allowEmpty: true, explode: false),
+      );
+    });
+  });
 }

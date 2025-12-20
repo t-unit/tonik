@@ -6,7 +6,7 @@ import 'package:tonik_util/tonik_util.dart';
 import 'test_helper.dart';
 
 void main() {
-  const port = 8082;
+  const port = 8182;
   const baseUrl = 'http://localhost:$port/api/v3';
 
   late ImposterServer imposterServer;
@@ -34,19 +34,23 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.registerAnimal(
-        // we expect Animal to be deprecated
-        // ignore: deprecated_member_use
-        body: const Animal(
-          id: 1,
-          displayName: 'Fido',
-          pictures: <String>[],
+        body: const PetPostBodyRequestBodyJson(
+          // we expect Animal to be deprecated
+          // ignore: deprecated_member_use
+          Animal(
+            id: 1,
+            displayName: 'Fido',
+            pictures: <String>[],
+          ),
         ),
       );
       final success = result as TonikSuccess<RegisterAnimalResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RegisterAnimalResponse200>());
 
-      final animal = (success.value as RegisterAnimalResponse200).body;
+      final responseValue = success.value as RegisterAnimalResponse200;
+      expect(responseValue.body, isA<PetPost200ResponseJson>());
+      final animal = (responseValue.body as PetPost200ResponseJson).body;
       // we expect Animal to be deprecated
       // ignore: deprecated_member_use
       expect(animal, isA<Animal>());
@@ -69,22 +73,26 @@ void main() {
       );
 
       final result = await userApi.registerCustomer(
-        body: const Customer(
-          id: 1,
-          loginName: 'testUser',
-          givenName: 'John',
-          surname: 'Doe',
-          emailAddress: 'john@example.com',
-          password: 'password123',
-          phoneNumber: '1234567890',
-          accountStatus: 1,
+        body: const UserPostBodyRequestBodyJson(
+          Customer(
+            id: 1,
+            loginName: 'testUser',
+            givenName: 'John',
+            surname: 'Doe',
+            emailAddress: 'john@example.com',
+            password: 'password123',
+            phoneNumber: '1234567890',
+            accountStatus: 1,
+          ),
         ),
       );
       final success = result as TonikSuccess<RegisterCustomerResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RegisterCustomerResponse200>());
 
-      final customer = (success.value as RegisterCustomerResponse200).body;
+      final responseValue = success.value as RegisterCustomerResponse200;
+      expect(responseValue.body, isA<UserPost200ResponseJson>());
+      final customer = (responseValue.body as UserPost200ResponseJson).body;
       expect(customer, isA<Customer>());
       expect(customer.loginName, isA<String?>());
       expect(customer.givenName, isA<String?>());
@@ -109,12 +117,14 @@ void main() {
       // we expect submitPurchase to be deprecated
       // ignore: deprecated_member_use
       final result = await storeApi.submitPurchase(
-        body: const Purchase(
-          id: 1,
-          animalIdentifier: 100,
-          amount: 5,
-          status: OrderStatusModel.orderPlaced,
-          complete: true,
+        body: const StoreOrderPostBodyRequestBodyJson(
+          Purchase(
+            id: 1,
+            animalIdentifier: 100,
+            amount: 5,
+            status: OrderStatusModel.orderPlaced,
+            complete: true,
+          ),
         ),
       );
       final success = result as TonikSuccess<SubmitPurchaseResponse>;
@@ -134,12 +144,14 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.registerAnimal(
-        // we expect Animal to be deprecated
-        // ignore: deprecated_member_use
-        body: const Animal(
-          id: 1,
-          displayName: 'Rex',
-          pictures: <String>[],
+        body: const PetPostBodyRequestBodyJson(
+          // we expect Animal to be deprecated
+          // ignore: deprecated_member_use
+          Animal(
+            id: 1,
+            displayName: 'Rex',
+            pictures: <String>[],
+          ),
         ),
       );
       expect(result, isA<TonikSuccess<RegisterAnimalResponse>>());

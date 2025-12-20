@@ -76,6 +76,13 @@ void main() {
       );
     });
 
+    test('BinaryModel is simple', () {
+      expect(
+        BinaryModel(context: Context.initial()).encodingShape,
+        EncodingShape.simple,
+      );
+    });
+
     test('Alias reflects underlying model', () {
       expect(
         AliasModel(

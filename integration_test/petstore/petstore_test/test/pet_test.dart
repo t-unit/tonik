@@ -36,21 +36,26 @@ void main() {
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final pet = await petApi.updatePet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(id: 1, name: 'Fido', photoUrls: []),
+        body: const PetPutBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(id: 1, name: 'Fido', photoUrls: []),
+        ),
       );
       final success = pet as TonikSuccess<UpdatePetResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UpdatePetResponse200>());
 
       final responseBody = (success.value as UpdatePetResponse200).body;
-      expect(responseBody.id, isA<int?>());
-      expect(responseBody.name, isA<String?>());
-      expect(responseBody.photoUrls, isA<List<String>>());
-      expect(responseBody.tags, isA<List<Tag>?>());
-      expect(responseBody.status, isA<PetStatusModel?>());
-      expect(responseBody.category, isA<Category?>());
+      expect(responseBody, isA<PetPut200ResponseJson>());
+      final body = (responseBody as PetPut200ResponseJson).body;
+
+      expect(body.id, isA<int?>());
+      expect(body.name, isA<String?>());
+      expect(body.photoUrls, isA<List<String>>());
+      expect(body.tags, isA<List<Tag>?>());
+      expect(body.status, isA<PetStatusModel?>());
+      expect(body.category, isA<Category?>());
     });
 
     test('400', () async {
@@ -58,15 +63,17 @@ void main() {
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final pet = await petApi.updatePet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(
-          id: 2,
-          name: 'Bert',
-          photoUrls: ['https://example.com/bert.jpg'],
-          tags: [Tag(id: 1, name: 'tag1')],
-          status: PetStatusModel.available,
-          category: Category(id: 1, name: 'category1'),
+        body: const PetPutBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(
+            id: 2,
+            name: 'Bert',
+            photoUrls: ['https://example.com/bert.jpg'],
+            tags: [Tag(id: 1, name: 'tag1')],
+            status: PetStatusModel.available,
+            category: Category(id: 1, name: 'category1'),
+          ),
         ),
       );
       final success = pet as TonikSuccess<UpdatePetResponse>;
@@ -80,9 +87,11 @@ void main() {
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final pet = await petApi.updatePet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(id: 1, name: 'Fido', photoUrls: []),
+        body: const PetPutBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(id: 1, name: 'Fido', photoUrls: []),
+        ),
       );
       final success = pet as TonikSuccess<UpdatePetResponse>;
       expect(success.response.statusCode, 404);
@@ -95,9 +104,11 @@ void main() {
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final pet = await petApi.updatePet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(id: 1, name: 'Fido', photoUrls: []),
+        body: const PetPutBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(id: 1, name: 'Fido', photoUrls: []),
+        ),
       );
       final success = pet as TonikSuccess<UpdatePetResponse>;
       expect(success.response.statusCode, 422);
@@ -110,9 +121,11 @@ void main() {
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final pet = await petApi.updatePet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(id: 1, name: 'Fido', photoUrls: []),
+        body: const PetPutBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(id: 1, name: 'Fido', photoUrls: []),
+        ),
       );
       final success = pet as TonikSuccess<UpdatePetResponse>;
       expect(success.response.statusCode, 499);
@@ -125,39 +138,45 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.addPet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(
-          id: 2,
-          name: 'Alfie',
-          photoUrls: ['https://example.com/alfie.jpg'],
-          tags: [Tag(id: 1, name: 'tag1')],
-          status: PetStatusModel.available,
-          category: Category(id: 1, name: 'category1'),
+        body: const PetPostBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(
+            id: 2,
+            name: 'Alfie',
+            photoUrls: ['https://example.com/alfie.jpg'],
+            tags: [Tag(id: 1, name: 'tag1')],
+            status: PetStatusModel.available,
+            category: Category(id: 1, name: 'category1'),
+          ),
         ),
       );
       final success = pet as TonikSuccess<AddPetResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<AddPetResponse200>());
       final responseBody = (success.value as AddPetResponse200).body;
+      expect(responseBody, isA<PetPost200ResponseJson>());
+      final body = (responseBody as PetPost200ResponseJson).body;
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
-      expect(responseBody, isA<Pet>());
+      expect(body, isA<Pet>());
     });
 
     test('400', () async {
       final petApi = buildPetApi(responseStatus: '400');
 
       final pet = await petApi.addPet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(
-          id: 2,
-          name: 'Alfie',
-          photoUrls: ['https://example.com/alfie.jpg'],
-          tags: [Tag(id: 1, name: 'tag1')],
-          status: PetStatusModel.available,
-          category: Category(id: 1, name: 'category1'),
+        body: const PetPostBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(
+            id: 2,
+            name: 'Alfie',
+            photoUrls: ['https://example.com/alfie.jpg'],
+            tags: [Tag(id: 1, name: 'tag1')],
+            status: PetStatusModel.available,
+            category: Category(id: 1, name: 'category1'),
+          ),
         ),
       );
       final success = pet as TonikSuccess<AddPetResponse>;
@@ -169,14 +188,16 @@ void main() {
       final petApi = buildPetApi(responseStatus: '123');
 
       final pet = await petApi.addPet(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        body: const Pet(
-          id: 3,
-          name: 'Rex',
-          photoUrls: ['https://example.com/rex.jpg'],
-          tags: [Tag(id: -383928, name: 'tag3309')],
-          status: PetStatusModel.pending,
+        body: const PetPostBodyRequestBodyJson(
+          // deprecation is defined by the OpenAPI spec and correct
+          // ignore: deprecated_member_use
+          Pet(
+            id: 3,
+            name: 'Rex',
+            photoUrls: ['https://example.com/rex.jpg'],
+            tags: [Tag(id: -383928, name: 'tag3309')],
+            status: PetStatusModel.pending,
+          ),
         ),
       );
       final success = pet as TonikSuccess<AddPetResponse>;
@@ -198,9 +219,11 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindPetsByStatusResponse200>());
       final responseBody = (success.value as FindPetsByStatusResponse200).body;
+      expect(responseBody, isA<PetFindByStatusGet200ResponseJson>());
+      final body = (responseBody as PetFindByStatusGet200ResponseJson).body;
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
-      expect(responseBody, isA<List<Pet>>());
+      expect(body, isA<List<Pet>>());
     });
 
     test('400', () async {
@@ -239,9 +262,11 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindPetsByTagsResponse200>());
       final responseBody = (success.value as FindPetsByTagsResponse200).body;
+      expect(responseBody, isA<PetFindByTagsGet200ResponseJson>());
+      final body = (responseBody as PetFindByTagsGet200ResponseJson).body;
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
-      expect(responseBody, isA<List<Pet>>());
+      expect(body, isA<List<Pet>>());
     });
 
     test('400', () async {
@@ -272,9 +297,11 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPetByIdResponse200>());
       final responseBody = (success.value as GetPetByIdResponse200).body;
+      expect(responseBody, isA<PetPetIdGet200ResponseJson>());
+      final body = (responseBody as PetPetIdGet200ResponseJson).body;
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
-      expect(responseBody, isA<Pet>());
+      expect(body, isA<Pet>());
     });
 
     test('400', () async {
@@ -318,9 +345,11 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UpdatePetWithFormResponse200>());
       final responseBody = (success.value as UpdatePetWithFormResponse200).body;
+      expect(responseBody, isA<PetPetIdPost200ResponseJson>());
+      final body = (responseBody as PetPetIdPost200ResponseJson).body;
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
-      expect(responseBody, isA<Pet>());
+      expect(body, isA<Pet>());
     });
 
     test('400', () async {

@@ -54,13 +54,15 @@ void main() {
     test('200', () async {
       final storeApi = buildStoreApi(responseStatus: '200');
 
-      final body = PurchaseOrder(
-        id: 1,
-        animalId: 1,
-        itemCount: 1,
-        deliveryDate: DateTime.now(),
-        status: OrderStatusModel.orderDelivered,
-        complete: true,
+      final body = StoreOrderPostBodyRequestBodyJson(
+        PurchaseOrder(
+          id: 1,
+          animalId: 1,
+          itemCount: 1,
+          deliveryDate: DateTime.now(),
+          status: OrderStatusModel.orderDelivered,
+          complete: true,
+        ),
       );
 
       // deprecation is defined by the OpenAPI spec and correct
@@ -84,7 +86,7 @@ void main() {
     test('400', () async {
       final storeApi = buildStoreApi(responseStatus: '400');
 
-      const body = PurchaseOrder();
+      const body = StoreOrderPostBodyRequestBodyJson(PurchaseOrder());
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);
@@ -96,9 +98,11 @@ void main() {
     test('422', () async {
       final storeApi = buildStoreApi(responseStatus: '422');
 
-      final body = PurchaseOrder(
-        id: -484848,
-        deliveryDate: DateTime(10299, 12, 12, 1),
+      final body = StoreOrderPostBodyRequestBodyJson(
+        PurchaseOrder(
+          id: -484848,
+          deliveryDate: DateTime(10299, 12, 12, 1),
+        ),
       );
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
@@ -111,7 +115,9 @@ void main() {
     test('default', () async {
       final storeApi = buildStoreApi(responseStatus: '499');
 
-      const body = PurchaseOrder(status: OrderStatusModel.orderApproved);
+      const body = StoreOrderPostBodyRequestBodyJson(
+        PurchaseOrder(status: OrderStatusModel.orderApproved),
+      );
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       final order = await storeApi.placeOrder(body: body);

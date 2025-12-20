@@ -377,4 +377,46 @@ void main() {
       expect(double.nan.toForm(explode: false, allowEmpty: true), 'NaN');
     });
   });
+
+  group('FormBinaryEncoder', () {
+    test('encodes List<int> to UTF-8 string with URL encoding', () {
+      const value = [72, 101, 108, 108, 111]; // "Hello"
+      expect(
+        value.toForm(explode: false, allowEmpty: true),
+        'Hello',
+      );
+    });
+
+    test('encodes empty List<int>', () {
+      const value = <int>[];
+      expect(
+        value.toForm(explode: false, allowEmpty: true),
+        '',
+      );
+    });
+
+    test('encodes List<int> with special characters', () {
+      const value = [72, 195, 171, 108, 108, 195, 182]; // "Hëllö"
+      expect(
+        value.toForm(explode: false, allowEmpty: true),
+        'H%C3%ABll%C3%B6',
+      );
+    });
+
+    test('throws EmptyValueException when empty and allowEmpty=false', () {
+      const value = <int>[];
+      expect(
+        () => value.toForm(explode: false, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('explode parameter has no effect', () {
+      const value = [72, 101, 108, 108, 111];
+      expect(
+        value.toForm(explode: true, allowEmpty: true),
+        value.toForm(explode: false, allowEmpty: true),
+      );
+    });
+  });
 }

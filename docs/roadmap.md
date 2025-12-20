@@ -5,12 +5,10 @@
 - Discriminator support for allOf
 - Proper OpenAPI 3.1 support including JSON Schema Draft 2020-12
 - Proper OpenAPI 3.2 support
-- Encoding and decoding of `application/x-www-form-urlencoded` and `text/plain`
+- Encoding and decoding of `application/x-www-form-urlencoded`
 - Support for `additionalProperties`
 - Server Templating support 
-- Remove build_runner dependency from all packages
 - Default values
-- Supporting `byte` and `binary` formatted strings
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
 

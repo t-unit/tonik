@@ -69,14 +69,16 @@ void main() {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-String _parseResponse(Response<Object?> response) {
+String _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, 'application/json'):
-      return response.data.decodeJsonString();
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return _$body;
     default:
       final content = response.headers.value('content-type') ?? 'not specified';
       final status = response.statusCode;
-      throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
   }
 }
 ''';
@@ -128,14 +130,16 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        AnonymousModel _parseResponse(Response<Object?> response) {
+        AnonymousModel _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return AnonymousModel.fromJson(response.data);
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = AnonymousModel.fromJson(_$json);
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -191,14 +195,16 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        User _parseResponse(Response<Object?> response) {
+        User _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return User.fromJson(response.data);
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -243,14 +249,16 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        List<int> _parseResponse(Response<Object?> response) {
+        List<int> _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return response.data.decodeJsonList<int>();
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonList<int>();
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -307,16 +315,18 @@ String _parseResponse(Response<Object?> response) {
 
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        List<User> _parseResponse(Response<Object?> response) {
+        List<User> _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return response.data.decodeJsonList<Object?>()
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonList<Object?>()
                 .map(User.fromJson)
                 .toList();
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -384,14 +394,16 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        Pet _parseResponse(Response<Object?> response) {
+        Pet _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return Pet.fromJson(response.data);
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = Pet.fromJson(_$json);
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -433,14 +445,16 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        String _parseResponse(Response<Object?> response) {
+        String _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (var status, 'application/json') when status != null && status >= 200 && status <= 299:
-              return response.data.decodeJsonString();
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonString();
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -482,14 +496,16 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        String _parseResponse(Response<Object?> response) {
+        String _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (_, 'application/json'):
-              return response.data.decodeJsonString();
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonString();
+              return _$body;
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -552,16 +568,18 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        MultiStatusOpResponse _parseResponse(Response<Object?> response) {
+        MultiStatusOpResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return MultiStatusOpResponse200( body: User.fromJson(response.data), );
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
+              return MultiStatusOpResponse200(body: _$body);
             case (400, _):
               return MultiStatusOpResponse400();
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException('Unexpected content type: $content for status code: $status');
+              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
           }
         }
       ''';
@@ -639,11 +657,13 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = r'''
-        AnonymousResponse _parseResponse(Response<Object?> response) {
+        AnonymousResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
               return AnonymousResponse(
-                  body: User.fromJson(response.data),
+                  body: _$body,
                   xRateLimit: response.headers
                     .value(r'x-rate-limit')
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
@@ -654,7 +674,7 @@ String _parseResponse(Response<Object?> response) {
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException(
+              throw ResponseDecodingException(
                 'Unexpected content type: $content for status code: $status',
               );
           }
@@ -752,22 +772,24 @@ String _parseResponse(Response<Object?> response) {
         securitySchemes: const {},
       );
       final method = generator.generateParseResponseMethod(operation);
-      const expectedMethod = '''
-        CombinedOpResponse _parseResponse(Response<Object?> response) {
+      const expectedMethod = r'''
+        CombinedOpResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
               return CombinedOpResponse200(
                 body: AnonymousResponse(
-                  body: User.fromJson(response.data),
+                  body: _$body,
                   xRateLimit: response.headers
                     .value(r'x-rate-limit')
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
                 ),
               );
             case (var status, 'application/json') when status != null && status >= 400 && status <= 499:
-              return CombinedOpResponse4XX(
-                body: AnonymousModel.fromJson(response.data),
-              );
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = AnonymousModel.fromJson(_$json);
+              return CombinedOpResponse4XX(body: _$body);
             case (_, _):
               return CombinedOpResponseDefault();
           }
@@ -849,11 +871,13 @@ String _parseResponse(Response<Object?> response) {
       final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
-        BaseResponse _parseResponse(Response<Object?> response) {
+        BaseResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
               return BaseResponse(
-                body: User.fromJson(response.data),
+                body: _$body,
                 xUserId: response.headers
                     .value(r'x-user-id')
                     .decodeSimpleString(context: r'x-user-id'),
@@ -861,7 +885,7 @@ String _parseResponse(Response<Object?> response) {
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException(
+              throw ResponseDecodingException(
                 'Unexpected content type: $content for status code: $status',
               );
           }
@@ -934,11 +958,13 @@ String _parseResponse(Response<Object?> response) {
       final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
-        HeaderAliasResponse _parseResponse(Response<Object?> response) {
+        HeaderAliasResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
               return HeaderAliasResponse(
-                body: User.fromJson(response.data),
+                body: _$body,
                 xUserId: response.headers
                     .value(r'x-user-id')
                     .decodeSimpleString(context: r'x-user-id'),
@@ -946,7 +972,7 @@ String _parseResponse(Response<Object?> response) {
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException(
+              throw ResponseDecodingException(
                 'Unexpected content type: $content for status code: $status',
               );
           }
@@ -1011,11 +1037,13 @@ String _parseResponse(Response<Object?> response) {
       final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
-        BodyHeaderResponse _parseResponse(Response<Object?> response) {
+        BodyHeaderResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
               return BodyHeaderResponse(
-                body: User.fromJson(response.data),
+                body: _$body,
                 bodyHeader: response.headers
                     .value(r'body')
                     .decodeSimpleString(context: r'body'),
@@ -1023,7 +1051,7 @@ String _parseResponse(Response<Object?> response) {
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException(
+              throw ResponseDecodingException(
                 'Unexpected content type: $content for status code: $status',
               );
           }
@@ -1075,16 +1103,20 @@ String _parseResponse(Response<Object?> response) {
         final method = generator.generateParseResponseMethod(operation);
 
         const expectedMethod = r'''
-        UserResponse _parseResponse(Response<Object?> response) {
+        UserResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return UserResponseJson(body: response.data.decodeJsonString());
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonString();
+              return UserResponseJson(body: _$body);
             case (200, 'application/xml'):
-              return UserResponseXml(body: response.data.decodeJsonInt());
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonInt();
+              return UserResponseXml(body: _$body);
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException(
+              throw ResponseDecodingException(
                 'Unexpected content type: $content for status code: $status',
               );
           }
@@ -1147,16 +1179,20 @@ String _parseResponse(Response<Object?> response) {
       final method = generator.generateParseResponseMethod(operation);
 
       const expectedMethod = r'''
-        GetUserResponse _parseResponse(Response<Object?> response) {
+        GetUserResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (200, 'application/json'):
-              return GetUserResponse200(body: response.data.decodeJsonString());
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonString();
+              return GetUserResponse200(body: _$body);
             case (400, 'application/json'):
-              return GetUserResponse400(body: response.data.decodeJsonInt());
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonInt();
+              return GetUserResponse400(body: _$body);
             default:
               final content = response.headers.value('content-type') ?? 'not specified';
               final status = response.statusCode;
-              throw JsonDecodingException(
+              throw ResponseDecodingException(
                 'Unexpected content type: $content for status code: $status',
               );
           }
@@ -1196,7 +1232,7 @@ String _parseResponse(Response<Object?> response) {
       );
       final method = generator.generateParseResponseMethod(operation);
       const expectedMethod = '''
-        void _parseResponse(Response<Object?> response) {
+        void _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
             case (_, _):
               return;
@@ -1251,6 +1287,238 @@ String _parseResponse(Response<Object?> response) {
         final generated = method.accept(scopedEmitter).toString();
         expect(generated, contains('_i2.Response'));
         expect(generated, contains('_i1.GetUserResponse('));
+      });
+    });
+
+    group('text/plain responses', () {
+      test('generates text decoder for text/plain response', () {
+        final operation = Operation(
+          operationId: 'textOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/text',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'text/plain',
+                  contentType: ContentType.text,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+String _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'text/plain'):
+      final _$body = decodeResponseText(response.data);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
+
+    group('binary responses', () {
+      test('generates bytes decoder for application/octet-stream response', () {
+        final operation = Operation(
+          operationId: 'binaryOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/binary',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/octet-stream',
+                  contentType: ContentType.bytes,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<int> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/octet-stream'):
+      final _$body = decodeResponseBytes(response.data);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates bytes decoder for image/png response', () {
+        final operation = Operation(
+          operationId: 'imageOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/image',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'image/png',
+                  contentType: ContentType.bytes,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<int> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'image/png'):
+      final _$body = decodeResponseBytes(response.data);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
+
+    group('mixed content types in one response', () {
+      test('generates correct decoders for json, text, and binary', () {
+        final operation = Operation(
+          operationId: 'mixedOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/mixed',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'text/plain',
+                  contentType: ContentType.text,
+                ),
+                ResponseBody(
+                  model: ListModel(
+                    content: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/octet-stream',
+                  contentType: ContentType.bytes,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return AnonymousResponseJson(body: _$body);
+    case (200, 'text/plain'):
+      final _$body = decodeResponseText(response.data);
+      return AnonymousResponsePlain(body: _$body);
+    case (200, 'application/octet-stream'):
+      final _$body = decodeResponseBytes(response.data);
+      return AnonymousResponseOctetStream(body: _$body);
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
       });
     });
   });

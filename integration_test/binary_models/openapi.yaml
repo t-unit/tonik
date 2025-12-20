@@ -1,0 +1,310 @@
+openapi: 3.0.4
+info:
+  title: Binary Models API
+  description: |-
+    Test API for binary model support in Tonik. This spec tests various scenarios:
+    - Binary file downloads (application/octet-stream)
+    - Binary file uploads
+    - Binary fields nested in JSON objects (with automatic base64 encoding)
+    - Image files (image/png, image/jpeg)
+    - Mixed content types
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: files
+    description: Binary file operations
+  - name: images
+    description: Image operations
+  - name: mixed
+    description: Mixed content operations
+paths:
+  /files/{id}:
+    get:
+      tags:
+        - files
+      summary: Download a file
+      description: Downloads a binary file as application/octet-stream
+      operationId: getFile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File downloaded successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - files
+      summary: Upload a file
+      description: Uploads a binary file
+      operationId: uploadFile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /images/{id}:
+    get:
+      tags:
+        - images
+      summary: Download an image
+      description: Downloads an image file
+      operationId: getImage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image downloaded successfully
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /mixed/upload-info:
+    post:
+      tags:
+        - mixed
+      summary: Upload file metadata with thumbnail
+      description: Uploads file info with a binary thumbnail embedded in JSON
+      operationId: uploadFileInfo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileInfo'
+      responses:
+        '201':
+          description: File info uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /mixed/file-with-metadata:
+    get:
+      tags:
+        - mixed
+      summary: Get file with metadata
+      description: Returns file metadata including binary thumbnail
+      operationId: getFileWithMetadata
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File metadata retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileMetadata'
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /base64/data:
+    post:
+      tags:
+        - base64
+      summary: Upload data with base64 encoded field
+      description: Uploads data with format:byte field (base64 in JSON)
+      operationId: uploadBase64Data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Base64Data'
+      responses:
+        '201':
+          description: Data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadBase64DataSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - base64
+      summary: Get data with base64 encoded field
+      description: Returns data with format:byte field (base64 in JSON)
+      operationId: getBase64Data
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base64Data'
+        '404':
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    UploadResponse:
+      type: object
+      required:
+        - id
+        - size
+      properties:
+        id:
+          type: string
+          description: The ID of the uploaded file
+        size:
+          type: integer
+          format: int64
+          description: Size of the file in bytes
+        message:
+          type: string
+          description: Optional message
+    FileInfo:
+      type: object
+      required:
+        - fileName
+        - contentType
+      properties:
+        fileName:
+          type: string
+          description: Name of the file
+        contentType:
+          type: string
+          description: MIME type of the file
+        thumbnail:
+          type: string
+          format: binary
+          description: Binary thumbnail data (auto base64 encoded in JSON)
+        description:
+          type: string
+          description: Optional file description
+    FileMetadata:
+      type: object
+      required:
+        - id
+        - fileName
+        - size
+        - createdAt
+      properties:
+        id:
+          type: string
+          description: File ID
+        fileName:
+          type: string
+          description: Name of the file
+        size:
+          type: integer
+          format: int64
+          description: Size in bytes
+        thumbnail:
+          type: string
+          format: binary
+          description: Binary thumbnail data (auto base64 encoded in JSON)
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+    Base64Data:
+      type: object
+      required:
+        - name
+        - encodedData
+      properties:
+        name:
+          type: string
+          description: Name of the data
+        encodedData:
+          type: string
+          format: byte
+          description: Base64 encoded binary data (format:byte means base64)
+        description:
+          type: string
+          description: Optional description
+    UploadBase64DataSuccess:
+      type: object
+      required:
+        - id
+        - message
+      properties:
+        id:
+          type: string
+        message:
+          type: string

@@ -492,4 +492,46 @@ void main() {
       );
     });
   });
+
+  group('LabelBinaryEncoder', () {
+    test('encodes List<int> with dot prefix', () {
+      const value = [72, 101, 108, 108, 111]; // "Hello"
+      expect(
+        value.toLabel(explode: false, allowEmpty: true),
+        '.Hello',
+      );
+    });
+
+    test('encodes empty List<int> when allowEmpty=true', () {
+      const value = <int>[];
+      expect(
+        value.toLabel(explode: false, allowEmpty: true),
+        '.',
+      );
+    });
+
+    test('throws EmptyValueException when empty and allowEmpty=false', () {
+      const value = <int>[];
+      expect(
+        () => value.toLabel(explode: false, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('encodes List<int> with special characters', () {
+      const value = [72, 195, 171, 108, 108, 195, 182]; // "Hëllö"
+      expect(
+        value.toLabel(explode: false, allowEmpty: true),
+        '.H%C3%ABll%C3%B6',
+      );
+    });
+
+    test('explode parameter has no effect', () {
+      const value = [72, 101, 108, 108, 111];
+      expect(
+        value.toLabel(explode: true, allowEmpty: true),
+        value.toLabel(explode: false, allowEmpty: true),
+      );
+    });
+  });
 }

@@ -379,7 +379,14 @@ class OperationGenerator {
         (b) => b
           ..symbol = 'Response'
           ..url = 'package:dio/dio.dart'
-          ..types.add(refer('dynamic', 'dart:core')),
+          ..types.add(
+            TypeReference(
+              (b) => b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('int', 'dart:core')),
+            ),
+          ),
       ).code,
       Code(' $responseVar;'),
       Block.of([
@@ -389,7 +396,14 @@ class OperationGenerator {
               refer('_dio').property('requestUri').call(
                 [refer(r'_$uri')],
                 {'data': refer(r'_$data'), 'options': refer(r'_$options')},
-                [refer('dynamic', 'dart:core')],
+                [
+                  TypeReference(
+                    (b) => b
+                      ..symbol = 'List'
+                      ..url = 'dart:core'
+                      ..types.add(refer('int', 'dart:core')),
+                  ),
+                ],
               ).awaited,
             )
             .statement,

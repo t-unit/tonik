@@ -232,8 +232,13 @@ void main() {
 
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse, isA<ResponseObject>());
-    // Without explicit contentTypes config, non-standard types are skipped
-    expect((jsonLikeResponse as ResponseObject?)?.bodies, isEmpty);
+    // Without explicit contentTypes config, unknown types default to bytes
+    final bodies = (jsonLikeResponse as ResponseObject?)?.bodies;
+    expect(bodies, hasLength(2));
+
+    for (final body in bodies!) {
+      expect(body.contentType, ContentType.bytes);
+    }
   });
 
   test('imports custom content type response with configuration', () {
@@ -246,14 +251,20 @@ void main() {
 
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse, isA<ResponseObject>());
-    expect(
-      (jsonLikeResponse as ResponseObject?)?.bodies.first.model,
-      isA<StringModel>(),
+    // Should have 2 bodies: one configured as json, one defaulting to bytes
+    final bodies = (jsonLikeResponse as ResponseObject?)?.bodies;
+    expect(bodies, hasLength(2));
+
+    final jsonBody = bodies?.firstWhere(
+      (b) => b.rawContentType == 'alto-endpointcost+json',
     );
-    expect(
-      jsonLikeResponse?.bodies.first.rawContentType,
-      'alto-endpointcost+json',
+    expect(jsonBody?.model, isA<StringModel>());
+    expect(jsonBody?.contentType, ContentType.json);
+
+    final bytesBody = bodies?.firstWhere(
+      (b) => b.rawContentType == 'application/x-www-form-urlencoded',
     );
+    expect(bytesBody?.contentType, ContentType.bytes);
   });
 
   test('ignores body of response with invalid body content type', () {
@@ -264,7 +275,10 @@ void main() {
 
     expect(invalidResponse, isNotNull);
     expect(invalidResponse, isA<ResponseObject>());
-    expect((invalidResponse as ResponseObject?)?.bodies, isEmpty);
+    // Unknown content type defaults to bytes
+    final bodies = (invalidResponse as ResponseObject?)?.bodies;
+    expect(bodies, hasLength(1));
+    expect(bodies?.first.contentType, ContentType.bytes);
   });
 
   test('imports direct reference response', () {
@@ -389,5 +403,178 @@ void main() {
       'First definition',
     );
     expect(duplicateResponse.bodies.first.model, isA<StringModel>());
+  });
+
+  group('content type resolution', () {
+    test('resolves text/plain to ContentType.text', () {
+      final fileContentWithText = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'TextResponse': {
+              'description': 'A plain text response',
+              'content': {
+                'text/plain': {
+                  'schema': {'type': 'string'},
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithText);
+      final textResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'TextResponse',
+      );
+
+      expect(textResponse, isNotNull);
+      expect(textResponse, isA<ResponseObject>());
+      expect((textResponse as ResponseObject?)?.bodies, hasLength(1));
+      final body = textResponse?.bodies.first;
+      expect(body?.contentType, ContentType.text);
+      expect(body?.rawContentType, 'text/plain');
+    });
+
+    test('resolves application/octet-stream to ContentType.bytes', () {
+      final fileContentWithBinary = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'BinaryResponse': {
+              'description': 'A binary response',
+              'content': {
+                'application/octet-stream': {
+                  'schema': {
+                    'type': 'string',
+                    'format': 'binary',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithBinary);
+      final binaryResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'BinaryResponse',
+      );
+
+      expect(binaryResponse, isNotNull);
+      expect(binaryResponse, isA<ResponseObject>());
+      expect((binaryResponse as ResponseObject?)?.bodies, hasLength(1));
+      final body = binaryResponse?.bodies.first;
+      expect(body?.contentType, ContentType.bytes);
+      expect(body?.rawContentType, 'application/octet-stream');
+    });
+
+    test('defaults unknown content type to bytes with warning', () {
+      final fileContentWithUnknown = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'UnknownResponse': {
+              'description': 'A response with unknown content type',
+              'content': {
+                'image/png': {
+                  'schema': {
+                    'type': 'string',
+                    'format': 'binary',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithUnknown);
+      final unknownResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'UnknownResponse',
+      );
+
+      expect(unknownResponse, isNotNull);
+      expect(unknownResponse, isA<ResponseObject>());
+      expect((unknownResponse as ResponseObject?)?.bodies, hasLength(1));
+      final body = unknownResponse?.bodies.first;
+      expect(body?.contentType, ContentType.bytes);
+      expect(body?.rawContentType, 'image/png');
+    });
+
+    test('respects explicit content type configuration overrides', () {
+      final fileContentWithCustom = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'CustomResponse': {
+              'description': 'A response with custom content type',
+              'content': {
+                'text/html': {
+                  'schema': {'type': 'string'},
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer(
+        contentTypes: {'text/html': ContentType.text},
+      ).import(fileContentWithCustom);
+      final customResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'CustomResponse',
+      );
+
+      expect(customResponse, isNotNull);
+      expect(customResponse, isA<ResponseObject>());
+      expect((customResponse as ResponseObject?)?.bodies, hasLength(1));
+      final body = customResponse?.bodies.first;
+      expect(body?.contentType, ContentType.text);
+      expect(body?.rawContentType, 'text/html');
+    });
+
+    test(
+      'resolves application/json to ContentType.json',
+      () {
+        final fileContentWithJson = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'responses': {
+              'JsonResponse': {
+                'description': 'A JSON response',
+                'content': {
+                  'application/json': {
+                    'schema': {'type': 'object'},
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(fileContentWithJson);
+        final jsonResponse = api.responses.firstWhereOrNull(
+          (r) => r.name == 'JsonResponse',
+        );
+
+        expect(jsonResponse, isNotNull);
+        expect(jsonResponse, isA<ResponseObject>());
+        expect((jsonResponse as ResponseObject?)?.bodies, hasLength(1));
+        final body = jsonResponse?.bodies.first;
+        expect(body?.contentType, ContentType.json);
+        expect(body?.rawContentType, 'application/json');
+      },
+    );
   });
 }

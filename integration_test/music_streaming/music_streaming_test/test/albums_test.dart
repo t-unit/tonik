@@ -100,7 +100,7 @@ void main() {
       // Note: api document intends to have properties of
       // [SimplifiedArtistObject] to be non-nullable, but
       // required is defined on wrong level and will get
-      // ingnored by tonic.
+      // ignored by tonic.
       expect(albumObject.artists, isA<List<SimplifiedArtistObject>?>());
       final artist = albumObject.artists?.first;
       expect(

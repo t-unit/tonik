@@ -63,6 +63,12 @@ Expression buildFromJsonValueExpression(
       return refer(value)
           .property(isNullable ? 'decodeJsonNullableUri' : 'decodeJsonUri')
           .call([], contextParam);
+    case BinaryModel():
+      return refer(value)
+          .property(
+            isNullable ? 'decodeJsonNullableBinary' : 'decodeJsonBinary',
+          )
+          .call([], contextParam);
     case ListModel():
       return _buildListFromJsonExpression(
         value,
@@ -180,7 +186,7 @@ Expression _buildListFromJsonExpression(
                 .property('toList')
                 .call([]);
 
-    case DateTimeModel() || DateModel() || DecimalModel():
+    case DateTimeModel() || DateModel() || DecimalModel() || BinaryModel():
       final jsonType = _jsonTypeForPrimitive(unwrappedContent);
       final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
       final mapFunction = Method(
@@ -224,6 +230,7 @@ String? _decodeMethodForPrimitive(Model model) {
   if (model is BooleanModel) return 'decodeJsonBool';
   if (model is DateTimeModel) return 'decodeJsonDateTime';
   if (model is DateModel) return 'decodeJsonDate';
+  if (model is BinaryModel) return 'decodeJsonBinary';
   return null;
 }
 
@@ -234,6 +241,7 @@ String _jsonTypeForPrimitive(Model model) {
   if (model is DecimalModel) return 'String';
   if (model is StringModel) return 'String';
   if (model is BooleanModel) return 'bool';
+  if (model is BinaryModel) return 'String';
   return 'Object?';
 }
 

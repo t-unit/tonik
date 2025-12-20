@@ -53,6 +53,7 @@ String? _getSerializationSuffix(
     DateTimeModel() => '$receiverOp.toTimeZonedIso8601String()',
     DecimalModel() => '$receiverOp.toString()',
     UriModel() => '$receiverOp.toString()',
+    BinaryModel() => '$receiverOp.decodeToString()',
     DateModel() ||
     EnumModel() ||
     ClassModel() ||

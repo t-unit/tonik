@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
@@ -173,5 +174,30 @@ extension FormStringMapEncoder on Map<String, String> {
         encodeKeys: false,
       );
     }
+  }
+}
+
+/// Extension for encoding binary data (`List<int>`).
+extension FormBinaryEncoder on List<int> {
+  /// Encodes binary data to a UTF-8 string using form style encoding.
+  ///
+  /// Uses Utf8Decoder with allowMalformed: true to handle any byte sequence.
+  /// The resulting string is then URL-encoded for safe transport.
+  ///
+  /// The [explode] parameter is accepted for consistency but has no effect
+  /// on binary encoding (binary data is treated as a primitive value).
+  ///
+  /// The [allowEmpty] parameter controls whether empty lists are allowed:
+  /// - When `true`, empty lists are encoded as empty strings
+  /// - When `false`, empty lists throw an exception
+  String toForm({required bool explode, required bool allowEmpty}) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    if (isEmpty) {
+      return '';
+    }
+    final str = decodeToString();
+    return Uri.encodeComponent(str);
   }
 }

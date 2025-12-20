@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
@@ -173,5 +174,32 @@ extension MatrixStringMapEncoder on Map<String, String> {
         alreadyEncoded: alreadyEncoded,
       )}';
     }
+  }
+}
+
+/// Extension for encoding binary data (`List<int>`).
+extension MatrixBinaryEncoder on List<int> {
+  /// Encodes binary data using matrix style parameter encoding.
+  ///
+  /// Uses Utf8Decoder with allowMalformed: true to handle any byte sequence.
+  /// The resulting string is then URL-encoded and prefixed with `;paramName=`.
+  ///
+  /// The [explode] parameter is accepted for consistency but has no effect
+  /// on binary encoding (binary data is treated as a primitive value).
+  ///
+  /// The [allowEmpty] parameter controls whether empty lists are allowed:
+  /// - When `true`, empty lists produce `;paramName=`
+  /// - When `false`, empty lists throw an exception
+  String toMatrix(
+    String paramName, {
+    required bool allowEmpty,
+    required bool explode,
+  }) {
+    if (isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final str = isEmpty ? '' : decodeToString();
+    final encoded = Uri.encodeComponent(str);
+    return ';$paramName=$encoded';
   }
 }

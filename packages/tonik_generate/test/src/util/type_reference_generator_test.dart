@@ -1,5 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
+import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 void main() {
@@ -126,6 +129,78 @@ void main() {
           expect(result.keyType?.url, 'dart:core');
           expect(result.valueType?.symbol, 'String');
           expect(result.valueType?.url, 'dart:core');
+        },
+      );
+    });
+
+    group('typeReference', () {
+      late Context context;
+      late NameManager nameManager;
+      const package = 'package:test/test.dart';
+
+      setUp(() {
+        context = Context.initial();
+        nameManager = NameManager(generator: NameGenerator());
+      });
+
+      test('returns List<int> TypeReference for BinaryModel', () {
+        final model = BinaryModel(context: context);
+
+        final result = typeReference(model, nameManager, package);
+
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(1));
+        expect(result.types[0].symbol, 'int');
+        expect(result.types[0].url, 'dart:core');
+      });
+
+      test(
+        'returns nullable List<int> TypeReference for BinaryModel '
+        'with isNullableOverride',
+        () {
+          final model = BinaryModel(context: context);
+
+          final result = typeReference(
+            model,
+            nameManager,
+            package,
+            isNullableOverride: true,
+          );
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isTrue);
+          expect(result.types, hasLength(1));
+          expect(result.types[0].symbol, 'int');
+          expect(result.types[0].url, 'dart:core');
+        },
+      );
+
+      test(
+        'returns List<List<int>> TypeReference for ListModel '
+        'with BinaryModel content',
+        () {
+          final binaryModel = BinaryModel(context: context);
+          final model = ListModel(
+            content: binaryModel,
+            context: context,
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isFalse);
+          expect(result.types, hasLength(1));
+
+          final innerType = result.types[0] as TypeReference;
+          expect(innerType.symbol, 'List');
+          expect(innerType.url, 'dart:core');
+          expect(innerType.types, hasLength(1));
+          expect(innerType.types[0].symbol, 'int');
+          expect(innerType.types[0].url, 'dart:core');
         },
       );
     });

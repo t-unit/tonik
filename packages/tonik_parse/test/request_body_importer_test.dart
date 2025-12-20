@@ -163,9 +163,15 @@ void main() {
 
     expect(jsonLikeBody, isNotNull);
     expect(jsonLikeBody, isA<RequestBodyObject>());
-    expect((jsonLikeBody as RequestBodyObject?)?.isRequired, isTrue);
-    // Without explicit contentTypes config, non-standard types are skipped
-    expect(jsonLikeBody?.content, isEmpty);
+
+    final body = jsonLikeBody as RequestBodyObject?;
+    expect(body?.isRequired, isTrue);
+    // Without explicit contentTypes config, unknown types default to bytes
+    expect(body?.content, hasLength(2));
+
+    for (final content in body?.content ?? <RequestContent>[]) {
+      expect(content.contentType, ContentType.bytes);
+    }
   });
 
   test('imports custom content type with configuration', () {
@@ -179,12 +185,19 @@ void main() {
     expect(jsonLikeBody, isNotNull);
     expect(jsonLikeBody, isA<RequestBodyObject>());
     expect((jsonLikeBody as RequestBodyObject?)?.isRequired, isTrue);
-    expect(jsonLikeBody?.content, hasLength(1));
 
-    final content = jsonLikeBody?.content.first;
-    expect(content?.model, isA<StringModel>());
-    expect(content?.rawContentType, 'alto-endpointcost+json');
-    expect(content?.contentType, ContentType.json);
+    expect(jsonLikeBody?.content, hasLength(2));
+
+    final jsonContent = jsonLikeBody?.content.firstWhere(
+      (c) => c.rawContentType == 'alto-endpointcost+json',
+    );
+    expect(jsonContent?.model, isA<StringModel>());
+    expect(jsonContent?.contentType, ContentType.json);
+
+    final bytesContent = jsonLikeBody?.content.firstWhere(
+      (c) => c.rawContentType == 'application/x-www-form-urlencoded',
+    );
+    expect(bytesContent?.contentType, ContentType.bytes);
   });
 
   test('skips non-JSON content types', () {
@@ -195,7 +208,10 @@ void main() {
 
     expect(invalidBody, isNotNull);
     expect(invalidBody, isA<RequestBodyObject>());
-    expect((invalidBody as RequestBodyObject?)?.content, isEmpty);
+    // text/plain maps to ContentType.text
+    final content = (invalidBody as RequestBodyObject?)?.content;
+    expect(content, hasLength(1));
+    expect(content?.first.contentType, ContentType.text);
   });
 
   test('imports all JSON content types', () {
@@ -344,5 +360,186 @@ void main() {
     );
 
     expect(importer.requestBodies, contains(imported));
+  });
+
+  group('content type resolution', () {
+    test('resolves text/plain to ContentType.text', () {
+      final fileContentWithText = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'TextBody': {
+              'description': 'A plain text request body',
+              'required': true,
+              'content': {
+                'text/plain': {
+                  'schema': {'type': 'string'},
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithText);
+      final textBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'TextBody',
+      );
+
+      expect(textBody, isNotNull);
+      expect(textBody, isA<RequestBodyObject>());
+      expect((textBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = textBody?.content.first;
+      expect(content?.contentType, ContentType.text);
+      expect(content?.rawContentType, 'text/plain');
+    });
+
+    test('resolves application/octet-stream to ContentType.bytes', () {
+      final fileContentWithBinary = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'BinaryBody': {
+              'description': 'A binary request body',
+              'required': true,
+              'content': {
+                'application/octet-stream': {
+                  'schema': {
+                    'type': 'string',
+                    'format': 'binary',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithBinary);
+      final binaryBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'BinaryBody',
+      );
+
+      expect(binaryBody, isNotNull);
+      expect(binaryBody, isA<RequestBodyObject>());
+      expect((binaryBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = binaryBody?.content.first;
+      expect(content?.contentType, ContentType.bytes);
+      expect(content?.rawContentType, 'application/octet-stream');
+    });
+
+    test('defaults unknown content type to bytes with warning', () {
+      final fileContentWithUnknown = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'UnknownBody': {
+              'description': 'A request body with unknown content type',
+              'required': true,
+              'content': {
+                'image/jpeg': {
+                  'schema': {
+                    'type': 'string',
+                    'format': 'binary',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithUnknown);
+      final unknownBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'UnknownBody',
+      );
+
+      expect(unknownBody, isNotNull);
+      expect(unknownBody, isA<RequestBodyObject>());
+      expect((unknownBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = unknownBody?.content.first;
+      expect(content?.contentType, ContentType.bytes);
+      expect(content?.rawContentType, 'image/jpeg');
+    });
+
+    test('respects explicit content type configuration overrides', () {
+      final fileContentWithCustom = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'CustomBody': {
+              'description': 'A request body with custom content type',
+              'required': true,
+              'content': {
+                'application/pdf': {
+                  'schema': {
+                    'type': 'string',
+                    'format': 'binary',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer(
+        contentTypes: {'application/pdf': ContentType.bytes},
+      ).import(fileContentWithCustom);
+      final customBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'CustomBody',
+      );
+
+      expect(customBody, isNotNull);
+      expect(customBody, isA<RequestBodyObject>());
+      expect((customBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = customBody?.content.first;
+      expect(content?.contentType, ContentType.bytes);
+      expect(content?.rawContentType, 'application/pdf');
+    });
+
+    test(
+      'resolves application/json to ContentType.json',
+      () {
+        final fileContentWithJson = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'requestBodies': {
+              'JsonBody': {
+                'description': 'A JSON request body',
+                'required': true,
+                'content': {
+                  'application/json': {
+                    'schema': {'type': 'object'},
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(fileContentWithJson);
+        final jsonBody = api.requestBodies.firstWhereOrNull(
+          (r) => r.name == 'JsonBody',
+        );
+
+        expect(jsonBody, isNotNull);
+        expect(jsonBody, isA<RequestBodyObject>());
+        expect((jsonBody as RequestBodyObject?)?.content, hasLength(1));
+        final content = jsonBody?.content.first;
+        expect(content?.contentType, ContentType.json);
+        expect(content?.rawContentType, 'application/json');
+      },
+    );
   });
 }

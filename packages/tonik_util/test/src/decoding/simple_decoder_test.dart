@@ -414,5 +414,49 @@ void main() {
         expect(s.decodeSimpleDouble(), closeTo(1.7976931348623157e308, 0));
       });
     });
+
+    group('Binary', () {
+      test('decodes UTF-8 string to List<int>', () {
+        // Test standard UTF-8.
+        const textString = 'Hello World';
+        final result = textString.decodeSimpleBinary();
+        expect(result, [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
+
+        // Test UTF-8 with special characters.
+        const utf8String = 'Hëllö';
+        final utf8Result = utf8String.decodeSimpleBinary();
+        expect(utf8Result, [72, 195, 171, 108, 108, 195, 182]);
+
+        // Test empty string.
+        const emptyString = '';
+        final emptyResult = emptyString.decodeSimpleBinary();
+        expect(emptyResult, <int>[]);
+      });
+
+      test('decodes nullable UTF-8 string to List<int>', () {
+        const textString = 'Hello World';
+        final result = textString.decodeSimpleNullableBinary();
+        expect(result, [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
+
+        expect(null.decodeSimpleNullableBinary(), isNull);
+        expect(''.decodeSimpleNullableBinary(), isNull);
+      });
+
+      test('throws InvalidTypeException if value is null', () {
+        expect(
+          () => null.decodeSimpleBinary(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('includes context in error messages', () {
+        try {
+          null.decodeSimpleBinary(context: 'User.thumbnail');
+          fail('Should have thrown');
+        } on InvalidTypeException catch (e) {
+          expect(e.context, 'User.thumbnail');
+        }
+      });
+    });
   });
 }
