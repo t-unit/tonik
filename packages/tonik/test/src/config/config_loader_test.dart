@@ -403,6 +403,26 @@ contentTypes:
         );
       });
 
+      test('parses all ContentType enum values correctly', () {
+        // Test all enum values to ensure none are missed when updating
+        for (final contentType in ContentType.values) {
+          final typeString = contentType.name;
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+contentTypes:
+  "application/test": $typeString
+''');
+
+          final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+          expect(
+            config.contentTypes['application/test'],
+            contentType,
+            reason:
+                'ContentType.$typeString should be parsable from "$typeString"',
+          );
+        }
+      });
+
       test('throws meaningful error when schemas override is not a map', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
 nameOverrides:

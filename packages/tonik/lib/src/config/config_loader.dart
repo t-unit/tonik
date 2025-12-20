@@ -128,9 +128,11 @@ extension ConfigLoader on CliConfig {
     final stringValue = value.toString();
     return switch (stringValue) {
       'json' => ContentType.json,
+      'text' => ContentType.text,
+      'bytes' => ContentType.bytes,
       _ => throw ConfigLoaderException(
         'Invalid content type for "$key": $stringValue. '
-        'Must be one of: json',
+        'Must be one of: json, text, bytes',
       ),
     };
   }
