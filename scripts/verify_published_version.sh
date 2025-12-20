@@ -142,7 +142,16 @@ generate_api() {
     print_step "Generating $name..."
     rm -rf "$output_dir/${name}"
     
-    dart pub global run tonik -p "$name" -s "$spec_file" -o "$output_dir" $extra_args
+    # Change to the spec directory to allow tonik to discover tonik.yaml if it exists
+    local spec_dir=$(dirname "$spec_file")
+    local spec_basename=$(basename "$spec_file")
+    cd "$spec_dir"
+    
+    # Run tonik from the spec directory (relative paths)
+    dart pub global run tonik -p "$name" -s "$spec_basename" -o "../$output_dir" $extra_args
+    
+    # Return to integration test directory
+    cd "$INTEGRATION_TEST_DIR"
     
     # Update tonik_util version in generated package to match version being tested
     local generated_pubspec="$output_dir/$name/pubspec.yaml"
@@ -204,8 +213,8 @@ run_tests() {
     # Get dependencies
     dart pub get
     
-    # Run tests
-    if dart test; then
+    # Run tests with concurrency=1 to avoid port conflicts with Imposter mock servers
+    if dart test --concurrency=1; then
         print_success "$test_name tests passed"
         cd "$INTEGRATION_TEST_DIR"
         return 0
