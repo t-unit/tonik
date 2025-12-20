@@ -506,7 +506,9 @@ void main() {
       expect(content?.rawContentType, 'application/pdf');
     });
 
-    test('resolves application/json to ContentType.json', () {
+    test(
+      'resolves application/json to ContentType.json',
+      () {
         final fileContentWithJson = {
           'openapi': '3.1.0',
           'info': {'title': 'Test', 'version': '1.0.0'},

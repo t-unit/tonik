@@ -33,7 +33,19 @@ void main() {
     });
 
     test('decodes newlines and special characters', () {
-      const bytes = [72, 101, 108, 108, 111, 10, 87, 111, 114, 108, 100]; // "Hello\nWorld"
+      const bytes = [
+        72,
+        101,
+        108,
+        108,
+        111,
+        10,
+        87,
+        111,
+        114,
+        108,
+        100,
+      ]; // "Hello\nWorld"
       expect(bytes.decodeToString(), 'Hello\nWorld');
     });
   });

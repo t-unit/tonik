@@ -134,5 +134,4 @@ class RequestBodyImporter {
         return bodyObject;
     }
   }
-
 }

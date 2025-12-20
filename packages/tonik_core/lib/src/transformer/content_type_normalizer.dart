@@ -42,7 +42,7 @@ class ContentTypeNormalizer {
       final normalizedRequestBody = operation.requestBody != null
           ? requestBodyMap[operation.requestBody]
           : null;
-      
+
       final normalizedOperationResponses = <ResponseStatus, Response>{};
       var responsesChanged = false;
       for (final entry in operation.responses.entries) {
