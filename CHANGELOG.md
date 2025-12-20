@@ -3,6 +3,75 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-12-20
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`tonik_util` - `v0.2.0`](#tonik_util---v020)
+ - [`tonik_core` - `v0.2.0`](#tonik_core---v020)
+ - [`tonik_parse` - `v0.2.0`](#tonik_parse---v020)
+ - [`tonik_generate` - `v0.2.0`](#tonik_generate---v020)
+ - [`tonik` - `v0.2.0`](#tonik---v020)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `tonik_util` - `v0.2.0`
+
+ - **FEAT**: binary data type.
+ - **FEAT**: binary and text bodies in responses.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
+#### `tonik_core` - `v0.2.0`
+
+ - **FEAT**: binary data type.
+ - **FEAT**: binary and text bodies in responses.
+ - **FEAT**: cli handling for config.
+ - **FEAT**: fallback cases for enums.
+ - **FEAT**: deprecation handling from config.
+ - **FEAT**: apply filter from configuration.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
+#### `tonik_parse` - `v0.2.0`
+
+ - **FEAT**: binary data type.
+ - **FEAT**: binary and text bodies in responses.
+ - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: custom content types via configuration.
+ - **FEAT**: parse vendor extensions for names from openapi specs.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
+#### `tonik_generate` - `v0.2.0`
+
+ - **FEAT**: binary data type.
+ - **FEAT**: improved response handling for text and binary.
+ - **FEAT**: binary and text bodies in responses.
+ - **FEAT**: improved copyWith allowing to set properties to null.
+ - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: custom content types via configuration.
+ - **FEAT**: fallback cases for enums.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
+#### `tonik` - `v0.2.0`
+
+ - **FEAT**: binary data type.
+ - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: custom content types via configuration.
+ - **FEAT**: cli handling for config.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
+
 ## 2025-12-06
 
 ### Changes

@@ -1,3 +1,11 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: binary data type.
+ - **FEAT**: binary and text bodies in responses.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
 ## 0.1.0
 
  - **REFACTOR**: matrix parameter.

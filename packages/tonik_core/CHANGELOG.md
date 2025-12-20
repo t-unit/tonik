@@ -1,3 +1,16 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: binary data type.
+ - **FEAT**: binary and text bodies in responses.
+ - **FEAT**: cli handling for config.
+ - **FEAT**: fallback cases for enums.
+ - **FEAT**: deprecation handling from config.
+ - **FEAT**: apply filter from configuration.
+ - **FEAT**: config and name overrides.
+ - **BREAKING** **FEAT**: require dart 3.10.0 or later.
+
 ## 0.1.0
 
  - **FIX**: stabilize names by sorting models.
