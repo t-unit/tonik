@@ -75,7 +75,7 @@ Packages with other changes:
 
  - **FEAT**: binary data type.
  - **FEAT**: binary and text bodies in responses.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: parse vendor extensions for names from openapi specs.
  - **FEAT**: config and name overrides.
@@ -87,7 +87,7 @@ Packages with other changes:
  - **FEAT**: improved response handling for text and binary.
  - **FEAT**: binary and text bodies in responses.
  - **FEAT**: improved copyWith allowing to set properties to null.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: fallback cases for enums.
  - **FEAT**: config and name overrides.
@@ -96,7 +96,7 @@ Packages with other changes:
 #### `tonik` - `v0.2.0`
 
  - **FEAT**: binary data type.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: cli handling for config.
  - **FEAT**: config and name overrides.

@@ -59,10 +59,11 @@ echo "✅ Tests passed"
 echo ""
 
 if [ "$DRY_RUN" = false ]; then
-  echo "🔄 Versioning packages with Melos..."
+  echo "🔄 Versioning packages with Melos (without tagging)..."
   fvm dart run melos version \
     --all \
     --yes \
+    --no-git-tag-version \
     --manual-version="tonik_util:$VERSION" \
     --manual-version="tonik_core:$VERSION" \
     --manual-version="tonik_parse:$VERSION" \
@@ -74,6 +75,29 @@ if [ "$DRY_RUN" = false ]; then
     exit 1
   fi
   echo "✅ Packages versioned"
+  echo ""
+  
+  echo "🔗 Adding full changelog link to tonik package..."
+  # Add link to root changelog after the version header
+  TONIK_CHANGELOG="packages/tonik/CHANGELOG.md"
+  if grep -q "^## $VERSION$" "$TONIK_CHANGELOG"; then
+    # Check if link already exists
+    if ! grep -q "For full changes across all packages" "$TONIK_CHANGELOG"; then
+      # Add the link after the version header
+      sed -i.bak "/^## $VERSION$/a\\
+\\
+For full changes across all tonik packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).\\
+" "$TONIK_CHANGELOG"
+      rm "$TONIK_CHANGELOG.bak"
+      git add "$TONIK_CHANGELOG"
+      git commit --amend --no-edit
+      echo "✅ Added full changelog link"
+    else
+      echo "✅ Full changelog link already present"
+    fi
+  else
+    echo "⚠️  Version $VERSION not found in tonik changelog"
+  fi
   echo ""
 else
   echo "🔄 Skipping melos version (dry-run mode)"
@@ -140,6 +164,14 @@ if [ "$DRY_RUN" = false ]; then
   else
     echo "✅ Integration test packages already up to date"
   fi
+  echo ""
+  
+  # Create all tags after final commit
+  echo "🏷️  Creating git tags..."
+  for tag in tonik-v$VERSION tonik_util-v$VERSION tonik_core-v$VERSION tonik_parse-v$VERSION tonik_generate-v$VERSION; do
+    git tag $tag
+    echo "  ✅ Created $tag"
+  done
   echo ""
 else
   echo "🔄 Skipping integration test regeneration (dry-run mode)"
