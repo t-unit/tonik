@@ -1521,5 +1521,233 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
         );
       });
     });
+
+    group('form-urlencoded response bodies', () {
+      test('generates for primitive form response', () {
+        final operation = Operation(
+          operationId: 'formPrimitiveOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-primitive',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+String _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/x-www-form-urlencoded'):
+      final _$formString = decodeResponseText(response.data);
+      final _$body = _$formString.decodeFormString();
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates for class model form response', () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'FormData',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'age',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'formClassOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-class',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: classModel,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+FormData _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/x-www-form-urlencoded'):
+      final _$formString = decodeResponseText(response.data);
+      final _$body = FormData.fromForm(_$formString, explode: true);
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates for integer form response', () {
+        final operation = Operation(
+          operationId: 'formIntegerOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-integer',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: IntegerModel(context: context),
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+int _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/x-www-form-urlencoded'):
+      final _$formString = decodeResponseText(response.data);
+      final _$body = _$formString.decodeFormInt();
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates for DateTime form response', () {
+        final operation = Operation(
+          operationId: 'formDateTimeOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-datetime',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: DateTimeModel(context: context),
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+DateTime _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'application/x-www-form-urlencoded'):
+      final _$formString = decodeResponseText(response.data);
+      final _$body = _$formString.decodeFormDateTime();
+      return _$body;
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
   });
 }

@@ -42,9 +42,6 @@ extension ObjectDecoder on String? {
   ///   in the input are ignored for forward compatibility.
   /// - [listKeys]: Subset of [expectedKeys] that contain list values.
   ///   These properties will consume comma-separated values.
-  /// - [isFormStyle]: Whether to use form-style URI decoding for values.
-  ///   When `true`, uses [Uri.decodeQueryComponent] which treats `+` as space.
-  ///   When `false`, uses [Uri.decodeComponent] for simple style.
   /// - [context]: Optional context string included in error messages
   ///   to help identify where decoding failed.
   ///
@@ -69,7 +66,6 @@ extension ObjectDecoder on String? {
   ///   explodeSeparator: '&',
   ///   expectedKeys: {'name', 'age'},
   ///   listKeys: {},
-  ///   isFormStyle: true,
   /// );
   /// // Returns: {'name': 'John', 'age': '30'}
   ///
@@ -79,7 +75,6 @@ extension ObjectDecoder on String? {
   ///   explodeSeparator: ',',
   ///   expectedKeys: {'tags', 'name'},
   ///   listKeys: {'tags'},
-  ///   isFormStyle: false,
   /// );
   /// // Returns: {'tags': 'foo,bar,baz', 'name': 'Test'}
   /// ```
@@ -88,7 +83,6 @@ extension ObjectDecoder on String? {
     required String explodeSeparator,
     required Set<String> expectedKeys,
     required Set<String> listKeys,
-    required bool isFormStyle,
     String? context,
   }) {
     if (this == null || this!.isEmpty) {
@@ -107,7 +101,6 @@ extension ObjectDecoder on String? {
         explodeSeparator,
         expectedKeys,
         listKeys,
-        isFormStyle,
         values,
         context,
       );
@@ -116,7 +109,6 @@ extension ObjectDecoder on String? {
         this!,
         expectedKeys,
         listKeys,
-        isFormStyle,
         values,
         context,
       );
@@ -128,15 +120,17 @@ extension ObjectDecoder on String? {
   /// Parses exploded format where properties are encoded as key=value pairs.
   ///
   /// Splits the input by [separator] and processes each key=value pair.
-  /// For list properties, continues consuming pairs that don't contain `=`
-  /// until the next key is found. Tokens that don't contain `=` and are not
-  /// part of a list being processed are skipped for forward compatibility.
+  /// For list properties, supports both repeated keys (e.g., `a=1&a=2&a=3`)
+  /// and comma-separated values (e.g., `a=1,2,3`).
+  /// Tokens that don't contain `=` are treated as continuation of the previous
+  /// list value.
+  /// Tokens without `=` that are not part of a list are skipped for forward
+  /// compatibility.
   void _parseExploded(
     String value,
     String separator,
     Set<String> expectedKeys,
     Set<String> listKeys,
-    bool isFormStyle,
     Map<String, String> result,
     String? context,
   ) {
@@ -166,14 +160,11 @@ extension ObjectDecoder on String? {
         continue;
       }
 
-      final listParts = <String>[];
       final rawValue = parts[1];
-      final decodedValue = isFormStyle
-          ? Uri.decodeQueryComponent(rawValue)
-          : rawValue;
-      listParts.add(decodedValue);
 
       if (listKeys.contains(key)) {
+        final listParts = <String>[rawValue];
+
         i++;
         while (i < pairs.length) {
           final nextPair = pairs[i];
@@ -181,16 +172,17 @@ extension ObjectDecoder on String? {
             break;
           }
 
-          final nextValue = isFormStyle
-              ? Uri.decodeQueryComponent(nextPair)
-              : nextPair;
-          listParts.add(nextValue);
+          listParts.add(nextPair);
           i++;
         }
 
-        result[key] = listParts.join(',');
+        if (result.containsKey(key)) {
+          result[key] = '${result[key]},${listParts.join(',')}';
+        } else {
+          result[key] = listParts.join(',');
+        }
       } else {
-        result[key] = decodedValue;
+        result[key] = rawValue;
         i++;
       }
     }
@@ -208,7 +200,6 @@ extension ObjectDecoder on String? {
     String value,
     Set<String> expectedKeys,
     Set<String> listKeys,
-    bool isFormStyle,
     Map<String, String> result,
     String? context,
   ) {
@@ -246,21 +237,15 @@ extension ObjectDecoder on String? {
             break;
           }
 
-          final valueToAdd = isFormStyle
-              ? Uri.decodeQueryComponent(potentialValue)
-              : potentialValue;
-          listValues.add(valueToAdd);
+          listValues.add(potentialValue);
           i++;
         }
 
         result[key] = listValues.join(',');
       } else {
         final rawValue = parts[i];
-        final decodedValue = isFormStyle
-            ? Uri.decodeQueryComponent(rawValue)
-            : rawValue;
 
-        result[key] = decodedValue;
+        result[key] = rawValue;
         i++;
       }
     }

@@ -11,7 +11,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'age', 'city'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John', 'age': '30', 'city': 'NYC'});
@@ -23,7 +22,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John'});
@@ -35,22 +33,20 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'first name', 'last name'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'first name': 'John', 'last name': 'Doe'});
       });
 
-      test('decodes URI-encoded values with form style', () {
+      test('does not decode URI-encoded values with form style', () {
         final result = 'name=John%20Doe&email=test%40example.com'.decodeObject(
           explode: true,
           explodeSeparator: '&',
           expectedKeys: {'name', 'email'},
           listKeys: {},
-          isFormStyle: true,
         );
 
-        expect(result, {'name': 'John Doe', 'email': 'test@example.com'});
+        expect(result, {'name': 'John%20Doe', 'email': 'test%40example.com'});
       });
 
       test('does not decode values with simple style', () {
@@ -59,7 +55,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'email'},
           listKeys: {},
-          isFormStyle: false,
         );
 
         expect(
@@ -74,7 +69,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'age'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': '', 'age': '30'});
@@ -86,7 +80,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'age'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John', 'age': '30'});
@@ -98,7 +91,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'ids'},
           listKeys: {'ids'},
-          isFormStyle: true,
         );
 
         expect(result, {'ids': '1,2,3'});
@@ -110,7 +102,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John'});
@@ -123,7 +114,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {'name'},
             listKeys: {},
-            isFormStyle: true,
           ),
           throwsA(isA<InvalidFormatException>()),
         );
@@ -136,7 +126,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {'name'},
             listKeys: {},
-            isFormStyle: true,
             context: 'TestModel.fromForm',
           );
           fail('Should have thrown InvalidFormatException');
@@ -155,7 +144,6 @@ void main() {
               explodeSeparator: ';',
               expectedKeys: {'numbers', 'strings', 'blub'},
               listKeys: {'numbers', 'strings'},
-              isFormStyle: false,
             );
 
         expect(
@@ -170,7 +158,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'ids', 'names', 'count'},
           listKeys: {'ids', 'names'},
-          isFormStyle: true,
         );
 
         expect(
@@ -185,7 +172,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'numbers'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'numbers': '1,2,3'});
@@ -197,7 +183,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'numbers', 'name'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'numbers': '', 'name': 'John'});
@@ -210,7 +195,6 @@ void main() {
               explodeSeparator: '&',
               expectedKeys: {'id', 'tags', 'name', 'codes'},
               listKeys: {'tags', 'codes'},
-              isFormStyle: false,
             );
 
         expect(
@@ -232,7 +216,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'age', 'city'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John', 'age': '30', 'city': 'NYC'});
@@ -244,7 +227,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John'});
@@ -256,22 +238,20 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'first name', 'last name'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'first name': 'John', 'last name': 'Doe'});
       });
 
-      test('decodes URI-encoded values with form style', () {
+      test('does not decode URI-encoded values with form style', () {
         final result = 'name,John%20Doe,email,test%40example.com'.decodeObject(
           explode: false,
           explodeSeparator: '&',
           expectedKeys: {'name', 'email'},
           listKeys: {},
-          isFormStyle: true,
         );
 
-        expect(result, {'name': 'John Doe', 'email': 'test@example.com'});
+        expect(result, {'name': 'John%20Doe', 'email': 'test%40example.com'});
       });
 
       test('does not decode values with simple style', () {
@@ -280,7 +260,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'email'},
           listKeys: {},
-          isFormStyle: false,
         );
 
         expect(
@@ -295,7 +274,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'age'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': '', 'age': '30'});
@@ -307,7 +285,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'name', 'age'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result, {'name': 'John', 'age': '30'});
@@ -322,7 +299,6 @@ void main() {
               explodeSeparator: '&',
               expectedKeys: {'name', 'age'},
               listKeys: {},
-              isFormStyle: true,
             ),
             throwsA(isA<InvalidFormatException>()),
           );
@@ -337,7 +313,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'blub', 'numbers'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'blub': 'asdf', 'numbers': '1,2,3,4,5'});
@@ -350,7 +325,6 @@ void main() {
               explodeSeparator: ',',
               expectedKeys: {'numbers', 'strings', 'blub'},
               listKeys: {'numbers', 'strings'},
-              isFormStyle: false,
             );
 
         expect(
@@ -365,7 +339,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'numbers'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'numbers': '1,2,3,4,5'});
@@ -377,7 +350,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'id', 'tags', 'name'},
           listKeys: {'tags'},
-          isFormStyle: false,
         );
 
         expect(result, {'id': '123', 'tags': 'foo,bar,baz', 'name': 'Test'});
@@ -389,7 +361,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'nums', 'letters', 'value'},
           listKeys: {'nums', 'letters'},
-          isFormStyle: false,
         );
 
         expect(result, {'nums': '1,2,3', 'letters': 'a,b,c', 'value': 'end'});
@@ -401,7 +372,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'name', 'numbers', 'age'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'name': 'John', 'numbers': '42', 'age': '30'});
@@ -413,22 +383,20 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'numbers', 'name'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'numbers': '', 'name': 'John'});
       });
 
-      test('decodes list with URI-encoded values', () {
+      test('does not decode list with URI-encoded values', () {
         final result = 'tags,foo%20bar,baz%20qux,quux,id,123'.decodeObject(
           explode: false,
           explodeSeparator: ',',
           expectedKeys: {'tags', 'id'},
           listKeys: {'tags'},
-          isFormStyle: true,
         );
 
-        expect(result, {'tags': 'foo bar,baz qux,quux', 'id': '123'});
+        expect(result, {'tags': 'foo%20bar,baz%20qux,quux', 'id': '123'});
       });
 
       test('treats non-key values in list as list items', () {
@@ -437,7 +405,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'numbers'},
           listKeys: {'numbers'},
-          isFormStyle: false,
         );
 
         expect(result, {'numbers': '1,2,unknown,4,5'});
@@ -452,7 +419,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {'name'},
             listKeys: {},
-            isFormStyle: true,
           ),
           throwsA(isA<InvalidFormatException>()),
         );
@@ -465,7 +431,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {'name'},
             listKeys: {},
-            isFormStyle: true,
           ),
           throwsA(isA<InvalidFormatException>()),
         );
@@ -478,7 +443,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {'name'},
             listKeys: {},
-            isFormStyle: true,
             context: 'TestModel.fromForm',
           );
           fail('Should have thrown InvalidFormatException');
@@ -489,53 +453,74 @@ void main() {
     });
 
     group('decodeObject with special characters', () {
-      test('handles values with encoded separators', () {
+      test('does not decode values with encoded separators', () {
         final result = 'url=http%3A%2F%2Fexample.com&port=8080'.decodeObject(
           explode: true,
           explodeSeparator: '&',
           expectedKeys: {'url', 'port'},
           listKeys: {},
-          isFormStyle: true,
         );
 
-        expect(result, {'url': 'http://example.com', 'port': '8080'});
+        expect(result, {'url': 'http%3A%2F%2Fexample.com', 'port': '8080'});
       });
 
-      test('handles values with equals signs when properly encoded', () {
-        final result = 'formula=a%3Db%2Bc&result=42'.decodeObject(
-          explode: true,
-          explodeSeparator: '&',
-          expectedKeys: {'formula', 'result'},
-          listKeys: {},
-          isFormStyle: true,
-        );
+      test(
+        'does not decode values with equals signs when properly encoded',
+        () {
+          final result = 'formula=a%3Db%2Bc&result=42'.decodeObject(
+            explode: true,
+            explodeSeparator: '&',
+            expectedKeys: {'formula', 'result'},
+            listKeys: {},
+          );
 
-        expect(result, {'formula': 'a=b+c', 'result': '42'});
-      });
+          expect(result, {'formula': 'a%3Db%2Bc', 'result': '42'});
+        },
+      );
 
-      test('handles unicode characters', () {
+      test('does not decode unicode characters', () {
         final result = 'name=M%C3%BCller&city=Z%C3%BCrich'.decodeObject(
           explode: true,
           explodeSeparator: '&',
           expectedKeys: {'name', 'city'},
           listKeys: {},
-          isFormStyle: true,
         );
 
-        expect(result, {'name': 'Müller', 'city': 'Zürich'});
+        expect(result, {'name': 'M%C3%BCller', 'city': 'Z%C3%BCrich'});
       });
 
-      test('handles emoji in values', () {
+      test('does not decode emoji in values', () {
         final result = 'emoji=%F0%9F%98%80&name=John'.decodeObject(
           explode: true,
           explodeSeparator: '&',
           expectedKeys: {'emoji', 'name'},
           listKeys: {},
-          isFormStyle: true,
         );
 
-        expect(result, {'emoji': '😀', 'name': 'John'});
+        expect(result, {'emoji': '%F0%9F%98%80', 'name': 'John'});
       });
+
+      test(
+        'does not decode complex special characters with percent encoding',
+        () {
+          final result =
+              'text=a%26b%3Dc%2Bd&url=50%25+off%21+Buy+now+%26+save+%24%24%24'
+                  .decodeObject(
+                    explode: true,
+                    explodeSeparator: '&',
+                    expectedKeys: {'text', 'url'},
+                    listKeys: {},
+                  );
+
+          expect(
+            result,
+            {
+              'text': 'a%26b%3Dc%2Bd',
+              'url': '50%25+off%21+Buy+now+%26+save+%24%24%24',
+            },
+          );
+        },
+      );
     });
 
     group('decodeObject complete scenarios', () {
@@ -545,7 +530,6 @@ void main() {
           explodeSeparator: '&',
           expectedKeys: {'ids', 'names', 'count'},
           listKeys: {'ids', 'names'},
-          isFormStyle: true,
         );
 
         expect(
@@ -560,7 +544,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'ids', 'names', 'count'},
           listKeys: {'ids', 'names'},
-          isFormStyle: false,
         );
 
         expect(result, {'ids': '1,2,3', 'names': 'a,b,c', 'count': '5'});
@@ -575,7 +558,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {'ids'},
             listKeys: {'ids'},
-            isFormStyle: false,
           );
 
           expect(result, {'ids': '1,2,3'});
@@ -588,7 +570,6 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'id', 'tags', 'name'},
           listKeys: {'tags'},
-          isFormStyle: true,
         );
 
         expect(result, {'id': '123', 'tags': 'foo,bar,baz', 'name': 'Test'});
@@ -601,7 +582,6 @@ void main() {
               explodeSeparator: ',',
               expectedKeys: {'numbers', 'strings', 'blub'},
               listKeys: {'numbers', 'strings'},
-              isFormStyle: false,
             );
 
         expect(
@@ -610,7 +590,7 @@ void main() {
         );
       });
 
-      test('complex scenario with encoded values and lists', () {
+      test('complex scenario does not decode values with form style', () {
         final result =
             'first%20name,John%20Doe,tags,work,home,email,test%40example.com'
                 .decodeObject(
@@ -618,33 +598,31 @@ void main() {
                   explodeSeparator: ',',
                   expectedKeys: {'first name', 'tags', 'email'},
                   listKeys: {'tags'},
-                  isFormStyle: true,
                 );
 
         expect(
           result,
           {
-            'first name': 'John Doe',
+            'first name': 'John%20Doe',
             'tags': 'work,home',
-            'email': 'test@example.com',
+            'email': 'test%40example.com',
           },
         );
       });
     });
 
     group('Binary', () {
-      test('decodes binary string values in exploded objects', () {
+      test('does not decode binary string values in exploded objects', () {
         const input = 'name=test&data=Hello+World';
         final result = input.decodeObject(
           explode: true,
           explodeSeparator: '&',
           expectedKeys: {'name', 'data'},
           listKeys: {},
-          isFormStyle: true,
         );
 
         expect(result['name'], 'test');
-        expect(result['data'], 'Hello World');
+        expect(result['data'], 'Hello+World');
       });
 
       test('decodes binary string values in non-exploded objects', () {
@@ -654,12 +632,125 @@ void main() {
           explodeSeparator: ',',
           expectedKeys: {'name', 'data'},
           listKeys: {},
-          isFormStyle: false,
         );
 
         expect(result['name'], 'test');
         expect(result['data'], 'Hello World');
       });
+    });
+
+    group('Repeated keys for lists (form-urlencoded style)', () {
+      test('decodes repeated keys as list values', () {
+        final result = 'colors=red&colors=green&colors=blue'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'colors'},
+          listKeys: {'colors'},
+        );
+
+        expect(result, {'colors': 'red,green,blue'});
+      });
+
+      test('decodes repeated keys with single value', () {
+        final result = 'colors=red'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'colors'},
+          listKeys: {'colors'},
+        );
+
+        expect(result, {'colors': 'red'});
+      });
+
+      test('decodes multiple repeated key groups', () {
+        final result =
+            'colors=red&colors=green&colors=blue&numbers=1&numbers=2&numbers=3'
+                .decodeObject(
+                  explode: true,
+                  explodeSeparator: '&',
+                  expectedKeys: {'colors', 'numbers'},
+                  listKeys: {'colors', 'numbers'},
+                );
+
+        expect(
+          result,
+          {'colors': 'red,green,blue', 'numbers': '1,2,3'},
+        );
+      });
+
+      test('decodes repeated keys mixed with non-list properties', () {
+        final result = 'name=John&colors=red&colors=green&age=30&colors=blue'
+            .decodeObject(
+              explode: true,
+              explodeSeparator: '&',
+              expectedKeys: {'name', 'colors', 'age'},
+              listKeys: {'colors'},
+            );
+
+        expect(
+          result,
+          {'name': 'John', 'colors': 'red,green,blue', 'age': '30'},
+        );
+      });
+
+      test('does not decode repeated keys with encoded values', () {
+        final result = 'tags=foo%20bar&tags=baz%20qux&tags=hello+world'
+            .decodeObject(
+              explode: true,
+              explodeSeparator: '&',
+              expectedKeys: {'tags'},
+              listKeys: {'tags'},
+            );
+
+        expect(result, {'tags': 'foo%20bar,baz%20qux,hello+world'});
+      });
+
+      test('decodes repeated keys with empty values', () {
+        final result = 'items=a&items=&items=c'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'items'},
+          listKeys: {'items'},
+        );
+
+        expect(result, {'items': 'a,,c'});
+      });
+
+      test('does not decode repeated keys with special characters', () {
+        final result = 'values=a%26b&values=c%3Dd&values=e%2Bf'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'values'},
+          listKeys: {'values'},
+        );
+
+        expect(result, {'values': 'a%26b,c%3Dd,e%2Bf'});
+      });
+
+      test('handles non-repeated keys that are marked as list keys', () {
+        final result = 'colors=red,green,blue&name=John'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'colors', 'name'},
+          listKeys: {'colors'},
+        );
+
+        expect(result, {'colors': 'red,green,blue', 'name': 'John'});
+      });
+
+      test(
+        'decodes repeated keys in non-contiguous positions',
+        () {
+          final result = 'a=1&b=2&a=3&c=4&a=5'.decodeObject(
+            explode: true,
+            explodeSeparator: '&',
+            expectedKeys: {'a', 'b', 'c'},
+            listKeys: {'a'},
+          );
+
+          expect(result, {'a': '1,3,5', 'b': '2', 'c': '4'});
+        },
+      );
     });
   });
 }

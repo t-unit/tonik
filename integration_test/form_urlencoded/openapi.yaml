@@ -1,0 +1,374 @@
+openapi: 3.0.4
+info:
+  title: Form URL Encoded API
+  description: OpenAPI specification testing application/x-www-form-urlencoded support
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: form
+    description: Operations using form-urlencoded encoding
+  - name: custom
+    description: Operations with custom content type
+
+paths:
+  /form/simple:
+    post:
+      operationId: postSimpleForm
+      tags:
+        - form
+      summary: Post simple flat object with form encoding
+      description: Tests basic form encoding with flat object
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SimpleForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SimpleForm'
+
+  /form/special-chars:
+    post:
+      operationId: postSpecialChars
+      tags:
+        - form
+      summary: Post form with special characters
+      description: Tests encoding of special characters like &, =, +, spaces
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SpecialCharsForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SpecialCharsForm'
+
+  /form/arrays:
+    post:
+      operationId: postArrayForm
+      tags:
+        - form
+      summary: Post form with arrays
+      description: Tests array encoding with explode=true (repeated keys)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayForm'
+
+  /form/types:
+    post:
+      operationId: postTypesForm
+      tags:
+        - form
+      summary: Post form with various types
+      description: Tests type conversions (strings, integers, booleans, dates)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TypesForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/TypesForm'
+
+  /form/response:
+    get:
+      operationId: getFormResponse
+      tags:
+        - form
+      summary: Get response as form-urlencoded
+      description: Tests response body deserialization of form-urlencoded
+      responses:
+        '200':
+          description: Successful response with form-urlencoded body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SimpleForm'
+
+  /form/empty-null:
+    post:
+      operationId: postEmptyNull
+      tags:
+        - form
+      summary: Post form with empty and null values
+      description: Tests handling of empty strings and null values
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmptyNullForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/EmptyNullForm'
+
+  /form/nested:
+    post:
+      operationId: postNestedForm
+      tags:
+        - form
+      summary: Post form with nested object (should fail)
+      description: Tests that nested objects throw runtime error
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NestedForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/NestedForm'
+
+  /form/multi-content-request:
+    post:
+      operationId: postMultiContentRequest
+      tags:
+        - form
+      summary: Post with both form and JSON content types
+      description: Tests operation that accepts both application/x-www-form-urlencoded and application/json
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SimpleForm'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SimpleForm'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleForm'
+
+  /form/multi-content-response:
+    get:
+      operationId: getMultiContentResponse
+      tags:
+        - form
+      summary: Get response with both form and JSON content types
+      description: Tests operation that can return both application/x-www-form-urlencoded and application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/SimpleForm'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleForm'
+
+  /form/multi-content-both:
+    post:
+      operationId: postMultiContentBoth
+      tags:
+        - form
+      summary: Post and receive with multiple content types
+      description: Tests operation with multiple content types for both request and response
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TypesForm'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypesForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/TypesForm'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypesForm'
+
+  /custom/form:
+    post:
+      operationId: postCustomForm
+      tags:
+        - custom
+      summary: Post with custom content type mapped to form encoding
+      description: Tests contentTypeOverrides config with application/vnd.custom-form (returns JSON since Imposter doesn't support custom form responses)
+      requestBody:
+        required: true
+        content:
+          application/vnd.custom-form:
+            schema:
+              $ref: '#/components/schemas/CustomForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.custom-form:
+              schema:
+                $ref: '#/components/schemas/CustomForm'
+
+components:
+  schemas:
+    SimpleForm:
+      type: object
+      required:
+        - name
+        - age
+      properties:
+        name:
+          type: string
+          description: Person name
+          example: John Doe
+        age:
+          type: integer
+          description: Person age
+          example: 30
+
+    SpecialCharsForm:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          description: Text with special characters
+          example: a&b=c+d
+        url:
+          type: string
+          description: URL with special characters
+          example: 50% off! Buy now & save $$$
+
+    ArrayForm:
+      type: object
+      required:
+        - colors
+      properties:
+        colors:
+          type: array
+          items:
+            type: string
+          description: Array of color names
+          example: [red, green, blue]
+        numbers:
+          type: array
+          items:
+            type: integer
+          description: Array of numbers
+          example: [1, 2, 3]
+
+    TypesForm:
+      type: object
+      required:
+        - stringValue
+        - intValue
+        - boolValue
+      properties:
+        stringValue:
+          type: string
+          description: String value
+          example: hello
+        intValue:
+          type: integer
+          description: Integer value
+          example: 42
+        doubleValue:
+          type: number
+          format: double
+          description: Double value
+          example: 3.14
+        boolValue:
+          type: boolean
+          description: Boolean value
+          example: true
+        dateValue:
+          type: string
+          format: date-time
+          description: DateTime value
+          example: 2023-12-25T10:30:00Z
+
+    EmptyNullForm:
+      type: object
+      properties:
+        emptyString:
+          type: string
+          description: Empty string value
+          example: ""
+        nullableString:
+          type: string
+          nullable: true
+          description: Nullable string that may be null
+          example: not empty
+
+    NestedForm:
+      type: object
+      required:
+        - topLevel
+        - nested
+      properties:
+        topLevel:
+          type: string
+          description: Top level property
+        nested:
+          type: object
+          description: Nested object (not supported in form encoding)
+          properties:
+            innerProp:
+              type: string
+
+    CustomForm:
+      type: object
+      required:
+        - field1
+        - field2
+      properties:
+        field1:
+          type: string
+          example: custom value
+        field2:
+          type: integer
+          example: 100

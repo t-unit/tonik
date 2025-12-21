@@ -45,7 +45,7 @@ void main() {
           'description': 'A request body with json-like content',
           'required': true,
           'content': {
-            'application/x-www-form-urlencoded': {
+            'application/vnd.custom+type': {
               'schema': {'type': 'boolean'},
             },
             'alto-endpointcost+json': {
@@ -195,7 +195,7 @@ void main() {
     expect(jsonContent?.contentType, ContentType.json);
 
     final bytesContent = jsonLikeBody?.content.firstWhere(
-      (c) => c.rawContentType == 'application/x-www-form-urlencoded',
+      (c) => c.rawContentType == 'application/vnd.custom+type',
     );
     expect(bytesContent?.contentType, ContentType.bytes);
   });
@@ -539,6 +539,42 @@ void main() {
         final content = jsonBody?.content.first;
         expect(content?.contentType, ContentType.json);
         expect(content?.rawContentType, 'application/json');
+      },
+    );
+
+    test(
+      'resolves application/x-www-form-urlencoded to ContentType.form',
+      () {
+        final fileContentWithForm = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'requestBodies': {
+              'FormBody': {
+                'description': 'A form-urlencoded request body',
+                'required': true,
+                'content': {
+                  'application/x-www-form-urlencoded': {
+                    'schema': {'type': 'object'},
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(fileContentWithForm);
+        final formBody = api.requestBodies.firstWhereOrNull(
+          (r) => r.name == 'FormBody',
+        );
+
+        expect(formBody, isNotNull);
+        expect(formBody, isA<RequestBodyObject>());
+        expect((formBody as RequestBodyObject?)?.content, hasLength(1));
+        final content = formBody?.content.first;
+        expect(content?.contentType, ContentType.form);
+        expect(content?.rawContentType, 'application/x-www-form-urlencoded');
       },
     );
   });

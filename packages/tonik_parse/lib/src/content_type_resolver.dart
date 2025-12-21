@@ -22,6 +22,8 @@ core.ContentType resolveContentType(
       return core.ContentType.text;
     case 'application/octet-stream':
       return core.ContentType.bytes;
+    case 'application/x-www-form-urlencoded':
+      return core.ContentType.form;
     default:
       log.warning(
         'Unknown content type "$mediaType", defaulting to bytes. '

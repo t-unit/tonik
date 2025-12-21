@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -70,6 +71,11 @@ class DataGenerator {
                     isDeprecated: false,
                   ),
                 ),
+                ContentType.form => buildToFormValueExpression(
+                  'value',
+                  c.model,
+                  useQueryComponent: true,
+                ),
               };
 
               return Code.scope(
@@ -103,6 +109,11 @@ class DataGenerator {
     final bodyExpression = switch (contentType) {
       ContentType.text || ContentType.bytes => 'body',
       ContentType.json => buildToJsonPropertyExpression('body', property),
+      ContentType.form => buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      ),
     };
 
     return Method(

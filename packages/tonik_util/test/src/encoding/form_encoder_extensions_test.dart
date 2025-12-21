@@ -419,4 +419,104 @@ void main() {
       );
     });
   });
+
+  group('useQueryComponent parameter', () {
+    group('FormStringEncoder', () {
+      test('encodes spaces as + when useQueryComponent=true', () {
+        expect(
+          'hello world'.toForm(
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello+world',
+        );
+      });
+
+      test('encodes + character as %2B regardless of useQueryComponent', () {
+        expect(
+          'hello+world'.toForm(
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello%2Bworld',
+        );
+      });
+    });
+
+    group('FormStringListEncoder', () {
+      test('encodes list items with + when useQueryComponent=true', () {
+        expect(
+          ['hello world', 'foo bar'].toForm(
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello+world,foo+bar',
+        );
+      });
+    });
+
+    group('FormStringMapEncoder', () {
+      test(
+        'encodes map values with + when useQueryComponent=true and '
+        'explode=false',
+        () {
+          expect(
+            {'name': 'John Doe', 'city': 'New York'}.toForm(
+              explode: false,
+              allowEmpty: true,
+              useQueryComponent: true,
+            ),
+            'name,John+Doe,city,New+York',
+          );
+        },
+      );
+
+      test(
+        'encodes map key=value pairs with + when useQueryComponent=true '
+        'and explode=true',
+        () {
+          expect(
+            {'name': 'John Doe', 'city': 'New York'}.toForm(
+              explode: true,
+              allowEmpty: true,
+              useQueryComponent: true,
+            ),
+            'name=John+Doe&city=New+York',
+          );
+        },
+      );
+    });
+
+    group('FormBinaryEncoder', () {
+      test(
+        'encodes binary with spaces using + when useQueryComponent=true',
+        () {
+          const value = [
+            72,
+            101,
+            108,
+            108,
+            111,
+            32,
+            87,
+            111,
+            114,
+            108,
+            100,
+          ]; // "Hello World"
+          expect(
+            value.toForm(
+              explode: false,
+              allowEmpty: true,
+              useQueryComponent: true,
+            ),
+            'Hello+World',
+          );
+        },
+      );
+    });
+  });
 }

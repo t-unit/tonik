@@ -148,6 +148,51 @@ void main() {
         expect((body.model as ClassModel).name, 'User');
       });
 
+      test('keeps original model for ContentType.form responses', () {
+        final originalModel = ClassModel(
+          name: 'FormData',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+        );
+
+        final response = ResponseObject(
+          name: 'FormResponse',
+          context: context,
+          description: 'A form-urlencoded response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: originalModel,
+              rawContentType: 'application/x-www-form-urlencoded',
+              contentType: ContentType.form,
+            ),
+          },
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: {response},
+          queryParameters: const {},
+          pathParameters: const {},
+          requestBodies: const {},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedResponse =
+            transformed.responses.first as ResponseObject;
+        final body = transformedResponse.bodies.first;
+
+        expect(body.model, isA<ClassModel>());
+        expect((body.model as ClassModel).name, 'FormData');
+      });
+
       test(
         'keeps BinaryModel for ContentType.json responses (nested binary)',
         () {
@@ -407,6 +452,51 @@ void main() {
 
         expect(content.model, isA<ClassModel>());
         expect((content.model as ClassModel).name, 'CreateUserRequest');
+      });
+
+      test('keeps original model for ContentType.form requests', () {
+        final originalModel = ClassModel(
+          name: 'FormRequest',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'SubmitForm',
+          context: context,
+          description: 'Submit form data',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: originalModel,
+              rawContentType: 'application/x-www-form-urlencoded',
+              contentType: ContentType.form,
+            ),
+          },
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          requestBodies: {requestBody},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedBody =
+            transformed.requestBodies.first as RequestBodyObject;
+        final content = transformedBody.content.first;
+
+        expect(content.model, isA<ClassModel>());
+        expect((content.model as ClassModel).name, 'FormRequest');
       });
 
       test('handles RequestBodyAlias by normalizing referenced body', () {

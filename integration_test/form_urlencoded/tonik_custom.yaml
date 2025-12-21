@@ -1,0 +1,7 @@
+spec: form_urlencoded/openapi.yaml
+packageName: form_urlencoded_api
+outputDir: form_urlencoded
+
+contentTypes:
+  # Override a custom content type to be treated as form-encoded
+  application/vnd.custom-form: form

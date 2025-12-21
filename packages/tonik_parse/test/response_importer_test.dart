@@ -62,7 +62,7 @@ void main() {
         'JsonLikeResponse': {
           'description': 'A response with a json-like body',
           'content': {
-            'application/x-www-form-urlencoded': {
+            'application/vnd.custom+type': {
               'schema': {'type': 'boolean'},
             },
             'alto-endpointcost+json': {
@@ -262,7 +262,7 @@ void main() {
     expect(jsonBody?.contentType, ContentType.json);
 
     final bytesBody = bodies?.firstWhere(
-      (b) => b.rawContentType == 'application/x-www-form-urlencoded',
+      (b) => b.rawContentType == 'application/vnd.custom+type',
     );
     expect(bytesBody?.contentType, ContentType.bytes);
   });
@@ -574,6 +574,41 @@ void main() {
         final body = jsonResponse?.bodies.first;
         expect(body?.contentType, ContentType.json);
         expect(body?.rawContentType, 'application/json');
+      },
+    );
+
+    test(
+      'resolves application/x-www-form-urlencoded to ContentType.form',
+      () {
+        final fileContentWithForm = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'responses': {
+              'FormResponse': {
+                'description': 'A form-urlencoded response',
+                'content': {
+                  'application/x-www-form-urlencoded': {
+                    'schema': {'type': 'object'},
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(fileContentWithForm);
+        final formResponse = api.responses.firstWhereOrNull(
+          (r) => r.name == 'FormResponse',
+        );
+
+        expect(formResponse, isNotNull);
+        expect(formResponse, isA<ResponseObject>());
+        expect((formResponse as ResponseObject?)?.bodies, hasLength(1));
+        final body = formResponse?.bodies.first;
+        expect(body?.contentType, ContentType.form);
+        expect(body?.rawContentType, 'application/x-www-form-urlencoded');
       },
     );
   });

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
@@ -163,6 +164,7 @@ class ParseGenerator {
       ContentType.json => _createJsonBodyDecode(responseBody),
       ContentType.text => _createTextBodyDecode(),
       ContentType.bytes => _createBytesBodyDecode(),
+      ContentType.form => _createFormBodyDecode(responseBody),
     };
   }
 
@@ -231,6 +233,37 @@ class ParseGenerator {
       ],
       varName: bodyVar,
     );
+  }
+
+  ({List<Code> statements, String varName}) _createFormBodyDecode(
+    ResponseBody responseBody,
+  ) {
+    final statements = <Code>[];
+    const formStringVar = r'_$formString';
+    const bodyVar = r'_$body';
+
+    statements.add(
+      declareFinal(formStringVar)
+          .assign(
+            refer(
+              'decodeResponseText',
+              'package:tonik_util/tonik_util.dart',
+            ).call([refer('response.data')]),
+          )
+          .statement,
+    );
+
+    final bodyExpr = buildFromFormValueExpression(
+      refer(formStringVar),
+      model: responseBody.model,
+      isRequired: true,
+      nameManager: nameManager,
+      package: package,
+      explode: literalTrue,
+    );
+    statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
+
+    return (statements: statements, varName: bodyVar);
   }
 
   Code _generateMultiResponseCase(

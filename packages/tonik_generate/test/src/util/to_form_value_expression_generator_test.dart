@@ -576,5 +576,157 @@ void main() {
         );
       });
     });
+
+    group('useQueryComponent parameter', () {
+      test('omits useQueryComponent when false (default)', () {
+        final property = Property(
+          name: 'name',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression('name', property);
+        expect(
+          result,
+          'name.toForm(explode: explode, allowEmpty: allowEmpty)',
+        );
+      });
+
+      test('includes useQueryComponent: true when explicitly set', () {
+        final property = Property(
+          name: 'name',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'name',
+          property,
+          useQueryComponent: true,
+        );
+        expect(
+          result,
+          'name.toForm(explode: explode, allowEmpty: allowEmpty, '
+          'useQueryComponent: true)',
+        );
+      });
+
+      test('includes useQueryComponent: true for nullable property', () {
+        final property = Property(
+          name: 'name',
+          model: StringModel(context: context),
+          isRequired: false,
+          isNullable: true,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'name',
+          property,
+          useQueryComponent: true,
+        );
+        expect(
+          result,
+          'name?.toForm(explode: explode, allowEmpty: allowEmpty, '
+          'useQueryComponent: true)',
+        );
+      });
+
+      test(
+        'includes useQueryComponent: true for required nullable property',
+        () {
+          final property = Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: true,
+            isDeprecated: false,
+          );
+
+          final result = buildToFormPropertyExpression(
+            'name',
+            property,
+            useQueryComponent: true,
+          );
+          expect(
+            result,
+            'name?.toForm(explode: explode, allowEmpty: allowEmpty, '
+            "useQueryComponent: true) ?? ''",
+          );
+        },
+      );
+
+      test('includes useQueryComponent: true for integer property', () {
+        final property = Property(
+          name: 'count',
+          model: IntegerModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'count',
+          property,
+          useQueryComponent: true,
+        );
+        expect(
+          result,
+          'count.toForm(explode: explode, allowEmpty: allowEmpty, '
+          'useQueryComponent: true)',
+        );
+      });
+
+      test('includes useQueryComponent: true for DateTime property', () {
+        final property = Property(
+          name: 'timestamp',
+          model: DateTimeModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'timestamp',
+          property,
+          useQueryComponent: true,
+        );
+        expect(
+          result,
+          'timestamp.toForm(explode: explode, allowEmpty: allowEmpty, '
+          'useQueryComponent: true)',
+        );
+      });
+
+      test('includes useQueryComponent: true for AliasModel property', () {
+        final aliasModel = AliasModel(
+          name: 'UserID',
+          model: StringModel(context: context),
+          context: context,
+        );
+        final property = Property(
+          name: 'userId',
+          model: aliasModel,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'userId',
+          property,
+          useQueryComponent: true,
+        );
+        expect(
+          result,
+          'userId.toForm(explode: explode, allowEmpty: allowEmpty, '
+          'useQueryComponent: true)',
+        );
+      });
+    });
   });
 }

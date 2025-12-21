@@ -536,7 +536,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
           ..lambda = true
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             Parameter(
               (b) => b
                 ..name = 'allowEmpty'
@@ -544,9 +544,18 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
                 ..named = true
                 ..required = true,
             ),
-          )
+            Parameter(
+              (b) => b
+                ..name = 'useQueryComponent'
+                ..type = refer('bool', 'dart:core')
+                ..named = true
+                ..required = false
+                ..defaultTo = literalFalse.code,
+            ),
+          ])
           ..body = const Code(
-            'rawValue.uriEncode(allowEmpty: allowEmpty)',
+            'rawValue.uriEncode(allowEmpty: allowEmpty, '
+            'useQueryComponent: useQueryComponent)',
           ),
       );
     }
@@ -556,7 +565,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
         ..lambda = false
-        ..optionalParameters.add(
+        ..optionalParameters.addAll([
           Parameter(
             (b) => b
               ..name = 'allowEmpty'
@@ -564,7 +573,15 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
               ..named = true
               ..required = true,
           ),
-        )
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = false
+              ..defaultTo = literalFalse.code,
+          ),
+        ])
         ..body = Block.of([
           Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
           generateEncodingExceptionExpression(
@@ -573,7 +590,8 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           ).statement,
           const Code('}'),
           const Code(
-            'return rawValue.uriEncode(allowEmpty: allowEmpty);',
+            'return rawValue.uriEncode(allowEmpty: allowEmpty, '
+            'useQueryComponent: useQueryComponent);',
           ),
         ]),
     );
