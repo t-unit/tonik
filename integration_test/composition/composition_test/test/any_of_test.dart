@@ -88,6 +88,108 @@ void main() {
       });
     });
 
+    group('string with URL special characters', () {
+      late AnyOfPrimitive anyOf;
+
+      setUp(() {
+        anyOf = AnyOfPrimitive(string: 'foo%bar&baz=qux');
+      });
+
+      test('toJson', () {
+        expect(anyOf.toJson(), 'foo%bar&baz=qux');
+      });
+
+      test('json roundtrip', () {
+        final json = anyOf.toJson();
+        final reconstructed = AnyOfPrimitive.fromJson(json);
+        expect(reconstructed, anyOf);
+      });
+
+      test('toForm - explode true', () {
+        expect(
+          anyOf.toForm(explode: true, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('form roundtrip - explode true', () {
+        final form = anyOf.toForm(explode: true, allowEmpty: true);
+        final reconstructed = AnyOfPrimitive.fromForm(form, explode: true);
+        expect(reconstructed, anyOf);
+      });
+
+      test('toForm - explode false', () {
+        expect(
+          anyOf.toForm(explode: false, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('form roundtrip - explode false', () {
+        final form = anyOf.toForm(explode: false, allowEmpty: true);
+        final reconstructed = AnyOfPrimitive.fromForm(form, explode: false);
+        expect(reconstructed, anyOf);
+      });
+
+      test('toSimple - explode true', () {
+        expect(
+          anyOf.toSimple(explode: true, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('simple roundtrip - explode true', () {
+        final simple = anyOf.toSimple(explode: true, allowEmpty: true);
+        final reconstructed = AnyOfPrimitive.fromSimple(simple, explode: true);
+        expect(reconstructed, anyOf);
+      });
+
+      test('toSimple - explode false', () {
+        expect(
+          anyOf.toSimple(explode: false, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('simple roundtrip - explode false', () {
+        final simple = anyOf.toSimple(explode: false, allowEmpty: true);
+        final reconstructed = AnyOfPrimitive.fromSimple(simple, explode: false);
+        expect(reconstructed, anyOf);
+      });
+
+      test('toMatrix - explode false', () {
+        expect(
+          anyOf.toMatrix('anyOf', explode: false, allowEmpty: true),
+          ';anyOf=foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('toMatrix - explode true', () {
+        expect(
+          anyOf.toMatrix('anyOf', explode: true, allowEmpty: true),
+          ';anyOf=foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('toLabel - explode true', () {
+        expect(
+          anyOf.toLabel(explode: true, allowEmpty: true),
+          '.foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('toLabel - explode false', () {
+        expect(
+          anyOf.toLabel(explode: false, allowEmpty: true),
+          '.foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('currentEncodingShape', () {
+        expect(anyOf.currentEncodingShape, EncodingShape.simple);
+      });
+    });
+
     group('integer', () {
       late AnyOfPrimitive anyOf;
 

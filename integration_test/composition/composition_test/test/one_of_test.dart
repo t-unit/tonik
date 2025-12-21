@@ -88,6 +88,108 @@ void main() {
       });
     });
 
+    group('string with URL special characters', () {
+      late OneOfPrimitive oneOf;
+
+      setUp(() {
+        oneOf = OneOfPrimitiveString('foo%bar&baz=qux');
+      });
+
+      test('toJson', () {
+        expect(oneOf.toJson(), 'foo%bar&baz=qux');
+      });
+
+      test('json roundtrip', () {
+        final json = oneOf.toJson();
+        final reconstructed = OneOfPrimitive.fromJson(json);
+        expect(reconstructed, oneOf);
+      });
+
+      test('toForm - explode true', () {
+        expect(
+          oneOf.toForm(explode: true, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('form roundtrip - explode true', () {
+        final form = oneOf.toForm(explode: true, allowEmpty: true);
+        final reconstructed = OneOfPrimitive.fromForm(form, explode: true);
+        expect(reconstructed, oneOf);
+      });
+
+      test('toForm - explode false', () {
+        expect(
+          oneOf.toForm(explode: false, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('form roundtrip - explode false', () {
+        final form = oneOf.toForm(explode: false, allowEmpty: true);
+        final reconstructed = OneOfPrimitive.fromForm(form, explode: false);
+        expect(reconstructed, oneOf);
+      });
+
+      test('toSimple - explode true', () {
+        expect(
+          oneOf.toSimple(explode: true, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('simple roundtrip - explode true', () {
+        final simple = oneOf.toSimple(explode: true, allowEmpty: true);
+        final reconstructed = OneOfPrimitive.fromSimple(simple, explode: true);
+        expect(reconstructed, oneOf);
+      });
+
+      test('toSimple - explode false', () {
+        expect(
+          oneOf.toSimple(explode: false, allowEmpty: true),
+          'foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('simple roundtrip - explode false', () {
+        final simple = oneOf.toSimple(explode: false, allowEmpty: true);
+        final reconstructed = OneOfPrimitive.fromSimple(simple, explode: false);
+        expect(reconstructed, oneOf);
+      });
+
+      test('toMatrix - explode false', () {
+        expect(
+          oneOf.toMatrix('id', explode: false, allowEmpty: true),
+          ';id=foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('toMatrix - explode true', () {
+        expect(
+          oneOf.toMatrix('id', explode: true, allowEmpty: true),
+          ';id=foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('toLabel - explode true', () {
+        expect(
+          oneOf.toLabel(explode: true, allowEmpty: true),
+          '.foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('toLabel - explode false', () {
+        expect(
+          oneOf.toLabel(explode: false, allowEmpty: true),
+          '.foo%25bar%26baz%3Dqux',
+        );
+      });
+
+      test('currentEncodingShape', () {
+        expect(oneOf.currentEncodingShape, EncodingShape.simple);
+      });
+    });
+
     group('integer', () {
       late OneOfPrimitive oneOf;
 

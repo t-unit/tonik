@@ -1145,7 +1145,8 @@ Map<String, String> parameterProperties({
       );
 
       test(
-        'generates fromForm with nullable decoder for optional non-nullable properties',
+        'generates fromForm with nullable decoder for optional '
+        'non-nullable properties',
         () {
           final model = ClassModel(
             isDeprecated: false,
@@ -1176,7 +1177,8 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'optional'].decodeFormNullableString(context: r'OptionalForm.optional')",
+                "values[r'optional'].decodeFormNullableString(context: "
+                "r'OptionalForm.optional')",
               ),
             ),
           );
@@ -1185,7 +1187,8 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'required'].decodeFormString(context: r'OptionalForm.required')",
+                "values[r'required'].decodeFormString(context: "
+                "r'OptionalForm.required')",
               ),
             ),
           );
@@ -1233,7 +1236,8 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'required'].decodeFormStringList(context: r'ListForm.required').map",
+                "values[r'required'].decodeFormStringList(context: "
+                "r'ListForm.required').map",
               ),
             ),
           );
@@ -1243,7 +1247,8 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'optional'].decodeFormNullableStringList(context: r'ListForm.optional')?.map",
+                "values[r'optional'].decodeFormNullableStringList(context: "
+                "r'ListForm.optional')?.map",
               ),
             ),
           );
