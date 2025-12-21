@@ -153,11 +153,18 @@ generate_api() {
     # Return to integration test directory
     cd "$INTEGRATION_TEST_DIR"
     
-    # Update tonik_util version in generated package to match version being tested
+    # Verify tonik_util version in generated package matches expected version
     local generated_pubspec="$output_dir/$name/pubspec.yaml"
     if [ -f "$generated_pubspec" ]; then
-        update_tonik_util_version "$generated_pubspec" "$VERSION"
-        print_success "Updated tonik_util to ^$VERSION in generated package"
+        local actual_version=$(grep "tonik_util: \^" "$generated_pubspec" | sed -E 's/.*tonik_util: \^([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        if [ "$actual_version" != "$VERSION" ]; then
+            print_error "Generated package has wrong tonik_util version!"
+            print_error "  Expected: ^$VERSION"
+            print_error "  Found:    ^$actual_version"
+            print_error "  File:     $generated_pubspec"
+            exit 1
+        fi
+        print_success "Verified tonik_util version: ^$VERSION"
     fi
     
     # Run pub get in generated package
