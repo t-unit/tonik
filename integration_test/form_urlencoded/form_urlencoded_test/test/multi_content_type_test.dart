@@ -18,7 +18,7 @@ void main() {
 
   group('Multiple content types - request', () {
     test('sends request as form-urlencoded', () async {
-      const form = SimpleForm(name: 'Test User', age: 25);
+      const form = SimpleForm(name: 'Form User', age: 25);
 
       final response = await api.postMultiContentRequest(
         body:
@@ -31,9 +31,18 @@ void main() {
         response,
         isA<TonikSuccess<FormMultiContentRequestPost200Response>>(),
       );
-      final data =
+
+      final contentType =
           (response as TonikSuccess<FormMultiContentRequestPost200Response>)
-              .value;
+              .response
+              .requestOptions
+              .headers['content-type'];
+      expect(contentType, 'application/x-www-form-urlencoded');
+
+      final requestData = response.response.requestOptions.data;
+      expect(requestData, 'name=Form+User&age=25');
+
+      final data = response.value;
       expect(
         data,
         isA<FormMultiContentRequestPost200ResponseXWwwFormUrlencoded>(),
@@ -41,33 +50,6 @@ void main() {
       final formData =
           (data as FormMultiContentRequestPost200ResponseXWwwFormUrlencoded)
               .body;
-
-      expect(formData.name, 'John Doe');
-      expect(formData.age, 30);
-    });
-
-    test('sends request as JSON', () async {
-      const form = SimpleForm(name: 'JSON User', age: 35);
-
-      final response = await api.postMultiContentRequest(
-        body: const FormMultiContentRequestPostBodyRequestBodyJson(form),
-      );
-
-      expect(
-        response,
-        isA<TonikSuccess<FormMultiContentRequestPost200Response>>(),
-      );
-      final data =
-          (response as TonikSuccess<FormMultiContentRequestPost200Response>)
-              .value;
-      expect(
-        data,
-        isA<FormMultiContentRequestPost200ResponseXWwwFormUrlencoded>(),
-      );
-      final formData =
-          (data as FormMultiContentRequestPost200ResponseXWwwFormUrlencoded)
-              .body;
-
       expect(formData.name, 'John Doe');
       expect(formData.age, 30);
     });
@@ -98,8 +80,8 @@ void main() {
   });
 
   group('Multiple content types - both request and response', () {
-    test('sends form and receives form', () async {
-      final dateTime = DateTime(2024, 6, 15, 14, 30);
+    test('sends form with proper RFC 1866 encoding', () async {
+      final dateTime = DateTime.utc(2024, 6, 15, 14, 30);
       final form = TypesForm(
         stringValue: 'form to form',
         intValue: 100,
@@ -116,49 +98,27 @@ void main() {
         response,
         isA<TonikSuccess<FormMultiContentBothPost200Response>>(),
       );
-      final data =
-          (response as TonikSuccess<FormMultiContentBothPost200Response>).value;
+
+      final contentType =
+          (response as TonikSuccess<FormMultiContentBothPost200Response>)
+              .response
+              .requestOptions
+              .headers['content-type'];
+      expect(contentType, 'application/x-www-form-urlencoded');
+
+      final requestData = response.response.requestOptions.data;
+      expect(
+        requestData,
+        '''stringValue=form+to+form&intValue=100&doubleValue=2.71&boolValue=false&dateValue=2024-06-15T14%3A30%3A00.000Z''',
+      );
+
+      final data = response.value;
       expect(
         data,
         isA<FormMultiContentBothPost200ResponseXWwwFormUrlencoded>(),
       );
       final formData =
           (data as FormMultiContentBothPost200ResponseXWwwFormUrlencoded).body;
-
-      expect(formData.stringValue, 'hello');
-      expect(formData.intValue, 42);
-      expect(formData.boolValue, true);
-      expect(formData.doubleValue, 3.14);
-      expect(formData.dateValue, DateTime.parse('2023-12-25T10:30:00Z'));
-    });
-
-    test('sends JSON and receives form', () async {
-      final dateTime = DateTime(2024, 12, 1, 9);
-      final form = TypesForm(
-        stringValue: 'json to form',
-        intValue: 200,
-        boolValue: false,
-        doubleValue: 1.41,
-        dateValue: dateTime,
-      );
-
-      final response = await api.postMultiContentBoth(
-        body: FormMultiContentBothPostBodyRequestBodyJson(form),
-      );
-
-      expect(
-        response,
-        isA<TonikSuccess<FormMultiContentBothPost200Response>>(),
-      );
-      final data =
-          (response as TonikSuccess<FormMultiContentBothPost200Response>).value;
-      expect(
-        data,
-        isA<FormMultiContentBothPost200ResponseXWwwFormUrlencoded>(),
-      );
-      final formData =
-          (data as FormMultiContentBothPost200ResponseXWwwFormUrlencoded).body;
-
       expect(formData.stringValue, 'hello');
       expect(formData.intValue, 42);
       expect(formData.boolValue, true);

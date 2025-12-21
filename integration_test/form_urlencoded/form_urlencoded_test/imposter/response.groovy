@@ -22,6 +22,26 @@ switch (path) {
         }
         break
         
+    case '/form/echo-special-chars':
+        // Echo the request body back exactly as received
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent requestBody
+        }
+        break
+        
+    case '/form/echo-types':
+        // Echo the request body back exactly as received
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent requestBody
+        }
+        break
+        
     case '/form/arrays':
         def formBody = 'colors=red&colors=green&colors=blue&numbers=1&numbers=2&numbers=3'
         respond {
