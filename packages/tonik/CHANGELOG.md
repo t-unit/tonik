@@ -1,9 +1,13 @@
+## 0.2.1
+
+For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).
+
 ## 0.2.0
 
 > Note: This release has breaking changes.
 
  - **FEAT**: binary data type.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: cli handling for config.
  - **FEAT**: config and name overrides.

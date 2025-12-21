@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-12-21
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.2.1`](#tonik_util---v021)
+ - [`tonik_core` - `v0.2.1`](#tonik_core---v021)
+ - [`tonik_parse` - `v0.2.1`](#tonik_parse---v021)
+ - [`tonik_generate` - `v0.2.1`](#tonik_generate---v021)
+ - [`tonik` - `v0.2.1`](#tonik---v021)
+
+---
+
+#### `tonik_util` - `v0.2.1`
+
+#### `tonik_core` - `v0.2.1`
+
+#### `tonik_parse` - `v0.2.1`
+
+#### `tonik_generate` - `v0.2.1`
+
+#### `tonik` - `v0.2.1`
+
+
 ## 2025-12-20
 
 ### Changes
@@ -44,7 +75,7 @@ Packages with other changes:
 
  - **FEAT**: binary data type.
  - **FEAT**: binary and text bodies in responses.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: parse vendor extensions for names from openapi specs.
  - **FEAT**: config and name overrides.
@@ -56,7 +87,7 @@ Packages with other changes:
  - **FEAT**: improved response handling for text and binary.
  - **FEAT**: binary and text bodies in responses.
  - **FEAT**: improved copyWith allowing to set properties to null.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: fallback cases for enums.
  - **FEAT**: config and name overrides.
@@ -65,7 +96,7 @@ Packages with other changes:
 #### `tonik` - `v0.2.0`
 
  - **FEAT**: binary data type.
- - **FEAT**: various improvemts for configuration handling.
+ - **FEAT**: various improvements for configuration handling.
  - **FEAT**: custom content types via configuration.
  - **FEAT**: cli handling for config.
  - **FEAT**: config and name overrides.
