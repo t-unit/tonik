@@ -67,13 +67,17 @@ echo "🔍 Updating root workspace dependencies..."
 sed -i.bak -E "s/(tonik[_a-z]*: \^)[0-9]+\.[0-9]+\.[0-9]+/\1$VERSION/g" pubspec.yaml
 rm pubspec.yaml.bak
 
+# Update hardcoded tonik_util version in pubspec_generator.dart
+sed -i.bak -E "s/(tonik_util: \^)[0-9]+\.[0-9]+\.[0-9]+/\1$VERSION/g" packages/tonik_generate/lib/src/pubspec_generator.dart
+rm packages/tonik_generate/lib/src/pubspec_generator.dart.bak
+
 # Check if there were changes
-if [ -n "$(git diff pubspec.yaml)" ]; then
-  echo "✅ Updated root workspace dependencies"
-  git add pubspec.yaml
+if [ -n "$(git diff pubspec.yaml packages/tonik_generate/lib/src/pubspec_generator.dart)" ]; then
+  echo "✅ Updated root workspace dependencies and generator"
+  git add pubspec.yaml packages/tonik_generate/lib/src/pubspec_generator.dart
   git commit --amend --no-edit
 else
-  echo "✅ Root workspace dependencies already up to date"
+  echo "✅ Root workspace dependencies and generator already up to date"
 fi
 echo ""
 
@@ -89,6 +93,25 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "✅ All checks passed"
+echo ""
+
+echo "🔄 Regenerating integration test packages with new version..."
+"$PWD/scripts/setup_integration_tests.sh"
+if [ $? -ne 0 ]; then
+  echo "❌ Integration test regeneration failed"
+  echo "Rolling back..."
+  git reset --hard HEAD~1
+  exit 1
+fi
+
+# Check if there were changes
+if [ -n "$(git status --porcelain integration_test)" ]; then
+  echo "✅ Integration test packages regenerated"
+  git add integration_test
+  git commit --amend --no-edit
+else
+  echo "✅ Integration test packages already up to date"
+fi
 echo ""
 
 echo "📋 Version Update Summary:"
