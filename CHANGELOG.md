@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-12-21
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.2.1`](#tonik_util---v021)
+ - [`tonik_core` - `v0.2.1`](#tonik_core---v021)
+ - [`tonik_parse` - `v0.2.1`](#tonik_parse---v021)
+ - [`tonik_generate` - `v0.2.1`](#tonik_generate---v021)
+ - [`tonik` - `v0.2.1`](#tonik---v021)
+
+---
+
+#### `tonik_util` - `v0.2.1`
+
+#### `tonik_core` - `v0.2.1`
+
+#### `tonik_parse` - `v0.2.1`
+
+#### `tonik_generate` - `v0.2.1`
+
+#### `tonik` - `v0.2.1`
+
+
 ## 2025-12-20
 
 ### Changes
