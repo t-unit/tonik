@@ -20,8 +20,11 @@ extension FormUriEncoder on Uri {
   ///
   /// URI values are always URL-encoded regardless of explode setting.
   /// Uses query component encoding for consistency with form style.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding String values.
@@ -30,8 +33,11 @@ extension FormStringEncoder on String {
   ///
   /// String values are URL-encoded per RFC 6570. Empty strings are handled
   /// based on allowEmpty.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding int values.
@@ -39,8 +45,11 @@ extension FormIntEncoder on int {
   /// Encodes this int value using form style encoding.
   ///
   /// Integer values are converted to string representation.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding double values.
@@ -48,8 +57,11 @@ extension FormDoubleEncoder on double {
   /// Encodes this double value using form style encoding.
   ///
   /// Double values are converted to string representation.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding num values.
@@ -57,8 +69,11 @@ extension FormNumEncoder on num {
   /// Encodes this num value using form style encoding.
   ///
   /// Numeric values are converted to string representation.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding bool values.
@@ -66,8 +81,11 @@ extension FormBoolEncoder on bool {
   /// Encodes this bool value using form style encoding.
   ///
   /// Boolean values are converted to 'true' or 'false' strings.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding DateTime values.
@@ -76,8 +94,11 @@ extension FormDateTimeEncoder on DateTime {
   ///
   /// DateTime values are converted to URL-encoded ISO 8601 strings
   /// per RFC 6570.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding BigDecimal values.
@@ -85,8 +106,11 @@ extension FormBigDecimalEncoder on BigDecimal {
   /// Encodes this BigDecimal value using form style encoding.
   ///
   /// BigDecimal values are converted to string representation.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 }
 
 /// Extension for encoding List values.
@@ -110,9 +134,11 @@ extension FormStringListEncoder on List<String> {
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
+    bool useQueryComponent = false,
   }) => uriEncode(
     allowEmpty: allowEmpty,
     alreadyEncoded: alreadyEncoded,
+    useQueryComponent: useQueryComponent,
   );
 }
 
@@ -140,6 +166,7 @@ extension FormStringMapEncoder on Map<String, String> {
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
+    bool useQueryComponent = false,
   }) {
     if (explode) {
       // explode=true: This should be handled at parameter level,
@@ -158,10 +185,12 @@ extension FormStringMapEncoder on Map<String, String> {
                   : e.value.toForm(
                       explode: explode,
                       allowEmpty: allowEmpty,
+                      useQueryComponent: useQueryComponent,
                     );
               return '${e.key.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
               )}=$value';
             },
           )
@@ -172,6 +201,7 @@ extension FormStringMapEncoder on Map<String, String> {
         allowEmpty: allowEmpty,
         alreadyEncoded: alreadyEncoded,
         encodeKeys: false,
+        useQueryComponent: useQueryComponent,
       );
     }
   }
@@ -190,7 +220,11 @@ extension FormBinaryEncoder on List<int> {
   /// The [allowEmpty] parameter controls whether empty lists are allowed:
   /// - When `true`, empty lists are encoded as empty strings
   /// - When `false`, empty lists throw an exception
-  String toForm({required bool explode, required bool allowEmpty}) {
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
@@ -198,6 +232,8 @@ extension FormBinaryEncoder on List<int> {
       return '';
     }
     final str = decodeToString();
-    return Uri.encodeComponent(str);
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(str)
+        : Uri.encodeComponent(str);
   }
 }

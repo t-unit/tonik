@@ -285,19 +285,27 @@ Expression _buildPrimitiveList(
   bool isRequired, {
   Map<String, Expression> contextParam = const {},
 }) {
-  return listDecode
-      .property('map')
-      .call([
-        Method(
-          (b) => b
-            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-            ..body = refer(
-              'e',
-            ).property(decodeFunctionName).call([], contextParam).code,
-        ).closure,
-      ])
-      .property('toList')
-      .call([]);
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body = refer(
+        'e',
+      ).property(decodeFunctionName).call([], contextParam).code,
+  ).closure;
+
+  if (isRequired) {
+    return listDecode
+        .property('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  } else {
+    return listDecode
+        .nullSafeProperty('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  }
 }
 
 Expression _buildClassList(
@@ -313,17 +321,25 @@ Expression _buildClassList(
   final name = nameManager.modelName(content);
   final explodeParam = {'explode': explode ?? literalBool(true)};
 
-  return listDecode
-      .property('map')
-      .call([
-        Method(
-          (b) => b
-            ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-            ..body = refer(name, package).property('fromForm').call([
-              refer('e'),
-            ], explodeParam).code,
-        ).closure,
-      ])
-      .property('toList')
-      .call([]);
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body = refer(name, package).property('fromForm').call([
+        refer('e'),
+      ], explodeParam).code,
+  ).closure;
+
+  if (isRequired) {
+    return listDecode
+        .property('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  } else {
+    return listDecode
+        .nullSafeProperty('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  }
 }

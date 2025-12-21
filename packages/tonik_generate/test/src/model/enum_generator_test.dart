@@ -1646,7 +1646,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(1));
+        expect(uriEncode.optionalParameters, hasLength(2));
 
         final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'allowEmpty',
@@ -1655,10 +1655,25 @@ void main() {
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
 
+        final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'useQueryComponent',
+        );
+        expect(
+          useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+          'bool',
+        );
+        expect(useQueryComponentParam.named, isTrue);
+        expect(useQueryComponentParam.required, isFalse);
+        expect(
+          useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+          'false',
+        );
+
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.uriEncode(allowEmpty: allowEmpty)',
+          'rawValue.uriEncode(allowEmpty: allowEmpty, '
+          'useQueryComponent: useQueryComponent)',
         );
         expect(uriEncode.lambda, isTrue);
       });
@@ -1682,12 +1697,27 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(1));
+        expect(uriEncode.optionalParameters, hasLength(2));
+
+        final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'useQueryComponent',
+        );
+        expect(
+          useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+          'bool',
+        );
+        expect(useQueryComponentParam.named, isTrue);
+        expect(useQueryComponentParam.required, isFalse);
+        expect(
+          useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+          'false',
+        );
 
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.uriEncode(allowEmpty: allowEmpty)',
+          'rawValue.uriEncode(allowEmpty: allowEmpty, '
+          'useQueryComponent: useQueryComponent)',
         );
         expect(uriEncode.lambda, isTrue);
       });
@@ -1710,12 +1740,27 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(1));
+        expect(uriEncode.optionalParameters, hasLength(2));
+
+        final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'useQueryComponent',
+        );
+        expect(
+          useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+          'bool',
+        );
+        expect(useQueryComponentParam.named, isTrue);
+        expect(useQueryComponentParam.required, isFalse);
+        expect(
+          useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+          'false',
+        );
 
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.uriEncode(allowEmpty: allowEmpty)',
+          'rawValue.uriEncode(allowEmpty: allowEmpty, '
+          'useQueryComponent: useQueryComponent)',
         );
         expect(uriEncode.lambda, isTrue);
       });
@@ -1738,7 +1783,14 @@ void main() {
           final result = generator.generate(model);
 
           const expectedUriEncodeMethod = '''
-          _i2.String uriEncode({required _i2.bool allowEmpty}) => rawValue.uriEncode(allowEmpty: allowEmpty);
+          _i2.String uriEncode({
+            required _i2.bool allowEmpty,
+            _i2.bool useQueryComponent = false,
+          }) =>
+              rawValue.uriEncode(
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
         ''';
           expect(
             collapseWhitespace(result.code),
@@ -1763,7 +1815,14 @@ void main() {
         final result = generator.generate(model);
 
         const expectedUriEncodeMethod = '''
-          _i2.String uriEncode({required _i2.bool allowEmpty}) => rawValue.uriEncode(allowEmpty: allowEmpty);
+          _i2.String uriEncode({
+            required _i2.bool allowEmpty,
+            _i2.bool useQueryComponent = false,
+          }) =>
+              rawValue.uriEncode(
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
         ''';
         expect(
           collapseWhitespace(result.code),
@@ -1789,7 +1848,14 @@ void main() {
           final result = generator.generate(model);
 
           const expectedUriEncodeMethod = '''
-          _i2.String uriEncode({required _i2.bool allowEmpty}) => rawValue.uriEncode(allowEmpty: allowEmpty);
+          _i2.String uriEncode({
+            required _i2.bool allowEmpty,
+            _i2.bool useQueryComponent = false,
+          }) =>
+              rawValue.uriEncode(
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
         ''';
           expect(
             collapseWhitespace(result.code),
@@ -2104,14 +2170,35 @@ void main() {
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
         expect(uriEncode.lambda, isFalse);
-        expect(uriEncode.optionalParameters, hasLength(1));
+        expect(uriEncode.optionalParameters, hasLength(2));
+
+        final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
+          (p) => p.name == 'useQueryComponent',
+        );
+        expect(
+          useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+          'bool',
+        );
+        expect(useQueryComponentParam.named, isTrue);
+        expect(useQueryComponentParam.required, isFalse);
+        expect(
+          useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+          'false',
+        );
 
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.uriEncode(allowEmpty: allowEmpty);
+          return rawValue.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });

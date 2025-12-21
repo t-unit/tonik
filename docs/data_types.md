@@ -63,3 +63,18 @@ await filesApi.uploadFile(id: 'my-file', body: fileData);
 final result = await api.getMessage();
 final text = (result as TonikSuccess).value.body; // String
 ```
+
+### Form URL-Encoded Bodies
+
+Tonik supports `application/x-www-form-urlencoded` for flat object schemas. Arrays use exploded syntax (repeated keys). Nested objects throw runtime errors.
+
+```dart
+const form = SimpleForm(name: 'John Doe', age: 30);
+final response = await api.postSimpleForm(body: form);
+// Encoded as: name=John+Doe&age=30
+
+const arrayForm = ArrayForm(colors: ['red', 'green']);
+// Encoded as: colors=red&colors=green
+```
+
+Map custom content types to form encoding in [configuration](configuration.md#content-type-mapping).

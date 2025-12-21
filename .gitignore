@@ -19,6 +19,7 @@
 /integration_test/petstore_config/petstore_overrides_api
 /integration_test/petstore_config/petstore_deprecation_api
 /integration_test/binary_models/binary_models_api
+/integration_test/form_urlencoded/form_urlencoded_api
 
 # Dependencies
 /pubspec.lock

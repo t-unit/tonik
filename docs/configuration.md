@@ -233,19 +233,18 @@ This controls the file and class names for the generated API clients.
 
 ## Content Type Mapping
 
-By default, Tonik supports `application/json` for JSON serialization. Many APIs use custom media types that are JSON-compatible. Use `contentTypes` to map them:
+Map custom content types to built-in serialization:
 
 ```yaml
 contentTypes:
-  "application/problem+json": json      # RFC 7807 Problem Details
-  "application/vnd.api+json": json      # JSON:API
-  "application/hal+json": json          # HAL
-  "application/json-patch+json": json   # JSON Patch
+  "application/problem+json": json
+  "application/vnd.api+json": json
+  "application/vnd.custom-form": form
   "text/csv": text
-  "application/octet-stream": binary
+  "application/pdf": binary
 ```
 
-Currently, only `json` serialization is supported. This allows APIs using custom JSON-based media types to work with Tonik's JSON serialization.
+Supported targets: `json`, `form`, `text`, `binary`.
 
 ## Filtering
 

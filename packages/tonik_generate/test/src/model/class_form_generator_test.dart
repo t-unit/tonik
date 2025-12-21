@@ -103,7 +103,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {r'name', r'count'},
             listKeys: {},
-            isFormStyle: true,
             context: r'TestModel',
           );
           return TestModel(
@@ -161,7 +160,6 @@ void main() {
             explodeSeparator: '&',
             expectedKeys: {r'name', r'age', r'email'},
             listKeys: {},
-            isFormStyle: true,
             context: r'ComplexForm',
           );
           return ComplexForm(
@@ -234,7 +232,6 @@ void main() {
               explodeSeparator: '&',
               expectedKeys: {r'data'},
               listKeys: {},
-              isFormStyle: true,
               context: r'Wrapper',
             );
             return Wrapper(

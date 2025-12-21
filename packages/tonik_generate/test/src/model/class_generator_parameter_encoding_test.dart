@@ -55,7 +55,7 @@ void main() {
         parameterPropertiesMethod.returns?.accept(emitter).toString(),
         'Map<String,String>',
       );
-      expect(parameterPropertiesMethod.optionalParameters.length, 2);
+      expect(parameterPropertiesMethod.optionalParameters.length, 3);
 
       final allowEmptyParam = parameterPropertiesMethod.optionalParameters
           .firstWhere((p) => p.name == 'allowEmpty');
@@ -80,6 +80,20 @@ void main() {
       );
       expect(
         allowListsParam.type?.accept(emitter).toString(),
+        'bool',
+      );
+
+      final useQueryComponentParam = parameterPropertiesMethod
+          .optionalParameters
+          .firstWhere((p) => p.name == 'useQueryComponent');
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(emitter).toString(),
+        'false',
+      );
+      expect(
+        useQueryComponentParam.type?.accept(emitter).toString(),
         'bool',
       );
     });
@@ -116,11 +130,18 @@ void main() {
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
-  result[r'id'] = id.uriEncode(allowEmpty: allowEmpty);
+  result[r'id'] = id.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   if (name != null) {
-    result[r'name'] = name!.uriEncode(allowEmpty: allowEmpty);
+    result[r'name'] = name!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'name'] = '';
   }
@@ -150,6 +171,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   return <String, String>{};
 }
@@ -191,11 +213,13 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
   if (nullableName != null) {
     result[r'nullable_name'] = nullableName!.uriEncode(
       allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
     result[r'nullable_name'] = '';
@@ -203,6 +227,7 @@ Map<String, String> parameterProperties({
   if (nullableCount != null) {
     result[r'nullable_count'] = nullableCount!.uriEncode(
       allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
     result[r'nullable_count'] = '';
@@ -250,6 +275,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) =>
   throw EncodingException(
     'parameterProperties not supported for User: contains complex types',
@@ -316,6 +342,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
@@ -387,6 +414,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
@@ -455,6 +483,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
@@ -510,11 +539,18 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
-  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
+  result[r'name'] = name.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   if (count != null) {
-    result[r'count'] = count!.uriEncode(allowEmpty: allowEmpty);
+    result[r'count'] = count!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'count'] = '';
   }
@@ -565,6 +601,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) =>
   throw EncodingException(
     'parameterProperties not supported for ComplexContainer: contains complex types',
@@ -628,6 +665,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
   if (value != null) {
@@ -793,15 +831,25 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
-  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
+  result[r'name'] = name.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   if (count != null) {
-    result[r'count'] = count.uriEncode(allowEmpty: allowEmpty);
+    result[r'count'] = count.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'count'] = '';
   }
-  result[r'active'] = active.uriEncode(allowEmpty: allowEmpty);
+  result[r'active'] = active.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   if (data1.currentEncodingShape == EncodingShape.simple) {
     result[r'data1'] = data1.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
@@ -876,13 +924,17 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'tags'] = '';
   }
@@ -942,6 +994,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists && ids != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -952,14 +1005,25 @@ Map<String, String> parameterProperties({
   final result = <String, String>{};
   if (ids != null) {
     result[r'ids'] = ids!
-        .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+        .map(
+          (e) => e.uriEncode(
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          ),
+        )
         .toList()
-        .uriEncode(allowEmpty: allowEmpty);
+        .uriEncode(
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+        );
   } else if (allowEmpty) {
     result[r'ids'] = '';
   }
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'tags'] = '';
   }
@@ -1009,12 +1073,16 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
-  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  result[r'tags'] = tags.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   return result;
 }
 ''';
@@ -1068,14 +1136,21 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
-  result[r'id'] = id.uriEncode(allowEmpty: allowEmpty);
+  result[r'id'] = id.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'tags'] = '';
   }
@@ -1139,6 +1214,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) =>
     throw EncodingException(
       'parameterProperties not supported for ComplexListContainer: contains complex types',
@@ -1197,6 +1273,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists && statuses != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1204,9 +1281,17 @@ Map<String, String> parameterProperties({
   final result = <String, String>{};
   if (statuses != null) {
     result[r'statuses'] = statuses!
-        .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+        .map(
+          (e) => e.uriEncode(
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          ),
+        )
         .toList()
-        .uriEncode(allowEmpty: allowEmpty);
+        .uriEncode(
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+        );
   } else if (allowEmpty) {
     result[r'statuses'] = '';
   }
@@ -1250,12 +1335,16 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
-  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  result[r'tags'] = tags.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   return result;
 }
 ''';
@@ -1296,13 +1385,17 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'tags'] = '';
   }
@@ -1352,14 +1445,21 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
-  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
+  result[r'name'] = name.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(allowEmpty: allowEmpty);
+    result[r'tags'] = tags!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   } else if (allowEmpty) {
     result[r'tags'] = '';
   }
@@ -1406,11 +1506,71 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   final result = <String, String>{};
-  result[r'name'] = name.uriEncode(allowEmpty: allowEmpty);
-  result[r'age'] = age.uriEncode(allowEmpty: allowEmpty);
+  result[r'name'] = name.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+  result[r'age'] = age.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   return result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toForm calls parameterProperties with useQueryComponent',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'FormData',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'value',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+String toForm({
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
+  return parameterProperties(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  ).toForm(
+    explode: explode,
+    allowEmpty: allowEmpty,
+    alreadyEncoded: true,
+    useQueryComponent: useQueryComponent,
+  );
 }
 ''';
 

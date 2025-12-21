@@ -231,6 +231,88 @@ void main() {
 
         expect(success.value.xString, 'test@example.com');
       });
+
+      test('string with percent literal roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripPrimitives(
+          string: '50% discount',
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        // Percent sign should survive roundtrip
+        expect(success.value.xString, '50% discount');
+      });
+
+      test('string with multiple percent signs roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripPrimitives(
+          string: '100% free, 50% off',
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        expect(success.value.xString, '100% free, 50% off');
+      });
+
+      test('string with ampersand roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripPrimitives(
+          string: 'foo & bar',
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        expect(success.value.xString, 'foo & bar');
+      });
+
+      test('string with equals sign roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripPrimitives(
+          string: 'key=value',
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        expect(success.value.xString, 'key=value');
+      });
+
+      test('string with all special URL characters roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripPrimitives(
+          string: 'foo%bar&baz=qux',
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        // All special characters should survive roundtrip
+        expect(success.value.xString, 'foo%bar&baz=qux');
+      });
     });
 
     group('boolean', () {
@@ -455,6 +537,43 @@ void main() {
       test('URI with query parameters roundtrip', () async {
         final api = buildApi(responseStatus: '200');
         final uri = Uri.parse('https://example.com/search?q=test&page=1');
+        final response = await api.testHeaderRoundtripPrimitives(
+          uri: uri,
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        expect(success.value.xUri, uri);
+      });
+
+      test('URI with special characters in query roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final uri = Uri.parse(
+          'https://example.com/search?q=50%25+off&filter=a%26b',
+        );
+        final response = await api.testHeaderRoundtripPrimitives(
+          uri: uri,
+        );
+
+        expect(
+          response,
+          isA<TonikSuccess<HeadersRoundtripPrimitivesGet200Response>>(),
+        );
+        final success =
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+
+        // URI with encoded special characters should roundtrip correctly
+        expect(success.value.xUri, uri);
+      });
+
+      test('URI with fragment roundtrip', () async {
+        final api = buildApi(responseStatus: '200');
+        final uri = Uri.parse('https://example.com/page#section');
         final response = await api.testHeaderRoundtripPrimitives(
           uri: uri,
         );

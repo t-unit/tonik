@@ -236,15 +236,9 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
       expect(getter.lambda, isTrue);
-      expect(
-        getter.body?.accept(emitter).toString(),
-        'EncodingShape.complex',
-      );
+      expect(getter.body?.accept(emitter).toString(), 'EncodingShape.complex');
     });
 
     test('generates currentEncodingShape getter for empty class', () {
@@ -261,15 +255,9 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
       expect(getter.lambda, isTrue);
-      expect(
-        getter.body?.accept(emitter).toString(),
-        'EncodingShape.complex',
-      );
+      expect(getter.body?.accept(emitter).toString(), 'EncodingShape.complex');
     });
 
     test('generates currentEncodingShape getter for complex class', () {
@@ -301,15 +289,9 @@ void main() {
       );
 
       expect(getter.type, MethodType.getter);
-      expect(
-        getter.returns?.accept(emitter).toString(),
-        'EncodingShape',
-      );
+      expect(getter.returns?.accept(emitter).toString(), 'EncodingShape');
       expect(getter.lambda, isTrue);
-      expect(
-        getter.body?.accept(emitter).toString(),
-        'EncodingShape.complex',
-      );
+      expect(getter.body?.accept(emitter).toString(), 'EncodingShape.complex');
     });
 
     test('generates constructor with required and optional parameters', () {
@@ -817,7 +799,6 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
     explodeSeparator: '&',
     expectedKeys: {r'items'},
     listKeys: {r'items'},
-    isFormStyle: true,
     context: r'ModelWithSimpleList',
   );
   return ModelWithSimpleList(
@@ -916,7 +897,6 @@ factory ModelWithSimpleListRoundtrip.fromForm(
     explodeSeparator: '&',
     expectedKeys: {r'tags'},
     listKeys: {r'tags'},
-    isFormStyle: true,
     context: r'ModelWithSimpleListRoundtrip',
   );
   return ModelWithSimpleListRoundtrip(
@@ -928,10 +908,20 @@ factory ModelWithSimpleListRoundtrip.fromForm(
           ''';
 
           const expectedToFormMethod = '''
-String toForm({required bool explode, required bool allowEmpty}) {
+String toForm({
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+}) {
 return parameterProperties(
 allowEmpty: allowEmpty,
-).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+useQueryComponent: useQueryComponent,
+).toForm(
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+);
 }
           ''';
 
@@ -939,12 +929,16 @@ allowEmpty: allowEmpty,
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool useQueryComponent = false,
 }) {
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
   final result = <String, String>{};
-  result[r'tags'] = tags.uriEncode(allowEmpty: allowEmpty);
+  result[r'tags'] = tags.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
   return result;
 }
           ''';
@@ -1018,13 +1012,16 @@ Map<String, String> parameterProperties({
         );
 
         expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toFormMethod.optionalParameters.length, 2);
-        expect(toFormMethod.optionalParameters.first.name, 'explode');
-        expect(toFormMethod.optionalParameters.first.required, isTrue);
-        expect(toFormMethod.optionalParameters.first.named, isTrue);
-        expect(toFormMethod.optionalParameters.last.name, 'allowEmpty');
-        expect(toFormMethod.optionalParameters.last.required, isTrue);
-        expect(toFormMethod.optionalParameters.last.named, isTrue);
+        expect(toFormMethod.optionalParameters.length, 3);
+        expect(toFormMethod.optionalParameters[0].name, 'explode');
+        expect(toFormMethod.optionalParameters[0].required, isTrue);
+        expect(toFormMethod.optionalParameters[0].named, isTrue);
+        expect(toFormMethod.optionalParameters[1].name, 'allowEmpty');
+        expect(toFormMethod.optionalParameters[1].required, isTrue);
+        expect(toFormMethod.optionalParameters[1].named, isTrue);
+        expect(toFormMethod.optionalParameters[2].name, 'useQueryComponent');
+        expect(toFormMethod.optionalParameters[2].required, isFalse);
+        expect(toFormMethod.optionalParameters[2].named, isTrue);
       });
 
       test('generates toForm method for complex properties', () {
@@ -1049,8 +1046,8 @@ Map<String, String> parameterProperties({
         final result = generator.generateClass(model);
 
         const expectedToFormBody = '''
-          String toForm({required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          String toForm({required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -1071,8 +1068,8 @@ Map<String, String> parameterProperties({
         final result = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          String toForm({required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          String toForm({required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -1116,7 +1113,6 @@ Map<String, String> parameterProperties({
 
           final result = generator.generateClass(model);
 
-          // Test constructor exists using object introspection
           final fromFormConstructor = result.constructors.firstWhere(
             (c) => c.name == 'fromForm',
           );
@@ -1124,7 +1120,6 @@ Map<String, String> parameterProperties({
           expect(fromFormConstructor.requiredParameters.length, 1);
           expect(fromFormConstructor.optionalParameters.length, 1);
 
-          // Test parameter types
           expect(
             fromFormConstructor.requiredParameters.first.type
                 ?.accept(emitter)
@@ -1145,6 +1140,117 @@ Map<String, String> parameterProperties({
           expect(
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(expectedReturnStatement)),
+          );
+        },
+      );
+
+      test(
+        'generates fromForm with nullable decoder for optional '
+        'non-nullable properties',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'OptionalForm',
+            properties: [
+              Property(
+                name: 'required',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'optional',
+                model: StringModel(context: context),
+                isRequired: false,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = result.accept(emitter).toString();
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(
+              collapseWhitespace(
+                "values[r'optional'].decodeFormNullableString(context: "
+                "r'OptionalForm.optional')",
+              ),
+            ),
+          );
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(
+              collapseWhitespace(
+                "values[r'required'].decodeFormString(context: "
+                "r'OptionalForm.required')",
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'generates fromForm with null-safe list operations for optional lists',
+        () {
+          // Tests that optional list fields use null-safe navigation (.?map)
+          // to avoid calling methods on potentially null lists
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'ListForm',
+            properties: [
+              Property(
+                name: 'required',
+                model: ListModel(
+                  content: IntegerModel(context: context),
+                  context: context,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'optional',
+                model: ListModel(
+                  content: IntegerModel(context: context),
+                  context: context,
+                ),
+                isRequired: false,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = result.accept(emitter).toString();
+
+          // Required list should use regular .map()
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(
+              collapseWhitespace(
+                "values[r'required'].decodeFormStringList(context: "
+                "r'ListForm.required').map",
+              ),
+            ),
+          );
+
+          // Optional list should use null-safe ?.map()
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(
+              collapseWhitespace(
+                "values[r'optional'].decodeFormNullableStringList(context: "
+                "r'ListForm.optional')?.map",
+              ),
+            ),
           );
         },
       );
@@ -1184,8 +1290,8 @@ Map<String, String> parameterProperties({
           final result = generator.generateClass(model);
 
           const expectedToFormMethod = '''
-          String toForm({required bool explode, required bool allowEmpty, }) {
-            return parameterProperties(allowEmpty: allowEmpty).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          String toForm({required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 

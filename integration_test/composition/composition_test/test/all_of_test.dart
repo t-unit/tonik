@@ -90,6 +90,111 @@ void main() {
     });
   });
 
+  group('AllOfPrimitive with URL special characters', () {
+    late AllOfPrimitive allOf;
+
+    setUp(() {
+      allOf = AllOfPrimitive(
+        allOfPrimitiveModel: AllOfPrimitiveModel(count: 1),
+        allOfPrimitiveModel2: AllOfPrimitiveModel2(id: 'foo%bar&baz=qux'),
+      );
+    });
+
+    test('toJson', () {
+      expect(allOf.toJson(), {'id': 'foo%bar&baz=qux', 'count': 1});
+    });
+
+    test('json roundtrip', () {
+      final json = allOf.toJson();
+      final reconstructed = AllOfPrimitive.fromJson(json);
+      expect(reconstructed, allOf);
+    });
+
+    test('toForm - explode true', () {
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'count=1&id=foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('form roundtrip - explode true', () {
+      final form = allOf.toForm(explode: true, allowEmpty: true);
+      final reconstructed = AllOfPrimitive.fromForm(form, explode: true);
+      expect(reconstructed, allOf);
+    });
+
+    test('toForm - explode false', () {
+      expect(
+        allOf.toForm(explode: false, allowEmpty: true),
+        'count,1,id,foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('form roundtrip - explode false', () {
+      final form = allOf.toForm(explode: false, allowEmpty: true);
+      final reconstructed = AllOfPrimitive.fromForm(form, explode: false);
+      expect(reconstructed, allOf);
+    });
+
+    test('toSimple - explode true', () {
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'count=1,id=foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('simple roundtrip - explode true', () {
+      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final reconstructed = AllOfPrimitive.fromSimple(simple, explode: true);
+      expect(reconstructed, allOf);
+    });
+
+    test('toSimple - explode false', () {
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'count,1,id,foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('simple roundtrip - explode false', () {
+      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final reconstructed = AllOfPrimitive.fromSimple(simple, explode: false);
+      expect(reconstructed, allOf);
+    });
+
+    test('toMatrix - explode false', () {
+      expect(
+        allOf.toMatrix('allOf', explode: false, allowEmpty: true),
+        ';allOf=count,1,id,foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('toMatrix - explode true', () {
+      expect(
+        allOf.toMatrix('allOf', explode: true, allowEmpty: true),
+        ';count=1;id=foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('toLabel - explode true', () {
+      expect(
+        allOf.toLabel(explode: true, allowEmpty: true),
+        '.count=1.id=foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('toLabel - explode false', () {
+      expect(
+        allOf.toLabel(explode: false, allowEmpty: true),
+        '.count,1,id,foo%25bar%26baz%3Dqux',
+      );
+    });
+
+    test('currentEncodingShape', () {
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
   group('AllOfComplex', () {
     late AllOfComplex allOf;
 
@@ -181,6 +286,111 @@ void main() {
       expect(
         allOf.toLabel(explode: false, allowEmpty: true),
         '.name,1,number,1',
+      );
+    });
+
+    test('currentEncodingShape', () {
+      expect(allOf.currentEncodingShape, EncodingShape.complex);
+    });
+  });
+
+  group('AllOfComplex with URL special characters', () {
+    late AllOfComplex allOf;
+
+    setUp(() {
+      allOf = AllOfComplex(
+        class1: Class1(name: '50% off! Buy now & save'),
+        class2: Class2(number: 99),
+      );
+    });
+
+    test('toJson', () {
+      expect(allOf.toJson(), {'name': '50% off! Buy now & save', 'number': 99});
+    });
+
+    test('json roundtrip', () {
+      final json = allOf.toJson();
+      final reconstructed = AllOfComplex.fromJson(json);
+      expect(reconstructed, allOf);
+    });
+
+    test('toForm - explode true', () {
+      expect(
+        allOf.toForm(explode: true, allowEmpty: true),
+        'name=50%25%20off!%20Buy%20now%20%26%20save&number=99',
+      );
+    });
+
+    test('form roundtrip - explode true', () {
+      final form = allOf.toForm(explode: true, allowEmpty: true);
+      final reconstructed = AllOfComplex.fromForm(form, explode: true);
+      expect(reconstructed, allOf);
+    });
+
+    test('toForm - explode false', () {
+      expect(
+        allOf.toForm(explode: false, allowEmpty: true),
+        'name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+      );
+    });
+
+    test('form roundtrip - explode false', () {
+      final form = allOf.toForm(explode: false, allowEmpty: true);
+      final reconstructed = AllOfComplex.fromForm(form, explode: false);
+      expect(reconstructed, allOf);
+    });
+
+    test('toSimple - explode true', () {
+      expect(
+        allOf.toSimple(explode: true, allowEmpty: true),
+        'name=50%25%20off!%20Buy%20now%20%26%20save,number=99',
+      );
+    });
+
+    test('simple roundtrip - explode true', () {
+      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final reconstructed = AllOfComplex.fromSimple(simple, explode: true);
+      expect(reconstructed, allOf);
+    });
+
+    test('toSimple - explode false', () {
+      expect(
+        allOf.toSimple(explode: false, allowEmpty: true),
+        'name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+      );
+    });
+
+    test('simple roundtrip - explode false', () {
+      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final reconstructed = AllOfComplex.fromSimple(simple, explode: false);
+      expect(reconstructed, allOf);
+    });
+
+    test('toMatrix - explode false', () {
+      expect(
+        allOf.toMatrix('x', explode: false, allowEmpty: true),
+        ';x=name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
+      );
+    });
+
+    test('toMatrix - explode true', () {
+      expect(
+        allOf.toMatrix('x', explode: true, allowEmpty: true),
+        ';name=50%25%20off!%20Buy%20now%20%26%20save;number=99',
+      );
+    });
+
+    test('toLabel - explode true', () {
+      expect(
+        allOf.toLabel(explode: true, allowEmpty: true),
+        '.name=50%25%20off!%20Buy%20now%20%26%20save.number=99',
+      );
+    });
+
+    test('toLabel - explode false', () {
+      expect(
+        allOf.toLabel(explode: false, allowEmpty: true),
+        '.name,50%25%20off!%20Buy%20now%20%26%20save,number,99',
       );
     });
 

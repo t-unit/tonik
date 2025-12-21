@@ -294,7 +294,6 @@ class ClassGenerator {
               'listKeys': literalSet(
                 listKeys.map((k) => literalString(k, raw: true)),
               ),
-              'isFormStyle': literalFalse,
               'context': literalString(className, raw: true),
             }),
           )
@@ -491,6 +490,14 @@ class ClassGenerator {
           ..required = false
           ..defaultTo = literalTrue.code,
       ),
+      Parameter(
+        (b) => b
+          ..name = 'useQueryComponent'
+          ..type = refer('bool', 'dart:core')
+          ..named = true
+          ..required = false
+          ..defaultTo = literalFalse.code,
+      ),
     ];
   }
 
@@ -520,14 +527,15 @@ class ClassGenerator {
         propertyAssignments.add(
           Code(
             "result[r'$propertyName'] = "
-            '$name.uriEncode(allowEmpty: allowEmpty);',
+            '$name.uriEncode(allowEmpty: allowEmpty, '
+            'useQueryComponent: useQueryComponent);',
           ),
         );
       } else if (isRequired && isNullable) {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -536,7 +544,7 @@ if ($name != null) {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -602,14 +610,15 @@ if ($name != null) {
           propertyAssignments.add(
             Code(
               "result[r'$propertyName'] = "
-              '$name.uriEncode(allowEmpty: allowEmpty);',
+              '$name.uriEncode(allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent);',
             ),
           );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -623,6 +632,7 @@ if ($name != null) {
           valueRef,
           fieldModel,
           allowEmpty: refer('allowEmpty'),
+          useQueryComponent: refer('useQueryComponent'),
         );
         final emitter = DartEmitter(useNullSafetySyntax: true);
         final encodeStr = encodeExpr.accept(emitter).toString();
@@ -706,14 +716,15 @@ if ($name != null) {
           propertyAssignments.add(
             Code(
               "result[r'$propertyName'] = "
-              '$name.uriEncode(allowEmpty: allowEmpty);',
+              '$name.uriEncode(allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent);',
             ),
           );
         } else if (isRequired && isNullable) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -722,7 +733,7 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty);
+  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -870,12 +881,13 @@ if ($name != null) {
       final normalizedName = prop.normalizedName;
       final propertyName = prop.property.name;
       final modelType = prop.property.model;
+      final isRequired = prop.property.isRequired;
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(
         refer("values[r'$propertyName']"),
         model: modelType,
-        isRequired: !isNullable,
+        isRequired: isRequired && !isNullable,
         nameManager: nameManager,
         package: package,
         contextClass: className,
@@ -903,7 +915,6 @@ if ($name != null) {
               'listKeys': literalSet(
                 listKeys.map((k) => literalString(k, raw: true)),
               ),
-              'isFormStyle': literalTrue,
               'context': literalString(className, raw: true),
             }),
           )
@@ -917,15 +928,28 @@ if ($name != null) {
     (b) => b
       ..name = 'toForm'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll(buildEncodingParameters())
+      ..optionalParameters.addAll([
+        ...buildEncodingParameters(),
+        Parameter(
+          (b) => b
+            ..name = 'useQueryComponent'
+            ..type = refer('bool', 'dart:core')
+            ..named = true
+            ..defaultTo = literalFalse.code,
+        ),
+      ])
       ..body = Block.of([
         refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
+            .call([], {
+              'allowEmpty': refer('allowEmpty'),
+              'useQueryComponent': refer('useQueryComponent'),
+            })
             .property('toForm')
             .call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
               'alreadyEncoded': literalBool(true),
+              'useQueryComponent': refer('useQueryComponent'),
             })
             .returned
             .statement,

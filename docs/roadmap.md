@@ -5,7 +5,6 @@
 - Discriminator support for allOf
 - Proper OpenAPI 3.1 support including JSON Schema Draft 2020-12
 - Proper OpenAPI 3.2 support
-- Encoding and decoding of `application/x-www-form-urlencoded`
 - Support for `additionalProperties`
 - Server Templating support 
 - Default values

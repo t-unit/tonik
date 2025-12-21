@@ -117,7 +117,6 @@ void main() {
               r'thumbnail',
             },
             listKeys: {},
-            isFormStyle: false,
             context: r'Sample',
           );
           return Sample(
@@ -199,7 +198,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'status'},
             listKeys: {},
-            isFormStyle: false,
             context: r'Order',
           );
           return Order(
@@ -288,7 +286,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'flag', r'count', r'label', r'created', r'amount'},
             listKeys: {},
-            isFormStyle: false,
             context: r'NullableSample',
           );
           return NullableSample(
@@ -377,7 +374,6 @@ void main() {
               explodeSeparator: ',',
               expectedKeys: {r'value'},
               listKeys: {},
-              isFormStyle: false,
               context: r'Container',
             );
             return Container(
@@ -445,7 +441,6 @@ void main() {
               explodeSeparator: ',',
               expectedKeys: {r'value'},
               listKeys: {},
-              isFormStyle: false,
               context: r'Container',
             );
             return Container(
@@ -514,7 +509,6 @@ void main() {
               explodeSeparator: ',',
               expectedKeys: {r'data'},
               listKeys: {},
-              isFormStyle: false,
               context: r'Wrapper',
             );
             return Wrapper(
@@ -584,7 +578,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'id'},
             listKeys: {},
-            isFormStyle: false,
             context: r'UserIdHolder',
           );
           return UserIdHolder(
@@ -660,7 +653,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'value'},
             listKeys: {},
-            isFormStyle: false,
             context: r'AliasHolder',
           );
           return AliasHolder(
@@ -888,7 +880,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'endpoint'},
             listKeys: {},
-            isFormStyle: false,
             context: r'Resource',
           );
           return Resource(
@@ -953,7 +944,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'callback'},
             listKeys: {},
-            isFormStyle: false,
             context: r'Resource',
           );
           return Resource(
@@ -1039,7 +1029,6 @@ void main() {
             explodeSeparator: ',',
             expectedKeys: {r'name', r'endpoint', r'port', r'callback'},
             listKeys: {},
-            isFormStyle: false,
             context: r'Resource',
           );
           return Resource(

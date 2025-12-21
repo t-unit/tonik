@@ -636,5 +636,71 @@ void main() {
         collapseWhitespace(format(expectedMethod)),
       );
     });
+
+    group('form-urlencoded request bodies', () {
+      test('generates _data method for ClassModel request body', () {
+        final petModel = ClassModel(
+          name: 'Pet',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'age',
+              model: IntegerModel(context: testContext),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final operation = Operation(
+          operationId: 'createPet',
+          path: '/pets',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'pet',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: petModel,
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+          Object? _data({required Pet body}) {
+            return body.toForm(explode: true, allowEmpty: true, useQueryComponent: true);
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
   });
 }
