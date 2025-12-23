@@ -1,3 +1,7 @@
+## 0.3.0
+
+ - **FIX**: remove lints as dependency.
+
 ## 0.2.1
 
 ## 0.2.0

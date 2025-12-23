@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-12-23
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.3.0`](#tonik_util---v030)
+ - [`tonik_core` - `v0.3.0`](#tonik_core---v030)
+ - [`tonik_parse` - `v0.3.0`](#tonik_parse---v030)
+ - [`tonik_generate` - `v0.3.0`](#tonik_generate---v030)
+ - [`tonik` - `v0.3.0`](#tonik---v030)
+
+---
+
+#### `tonik_util` - `v0.3.0`
+
+ - **FIX**: remove lints as dependency.
+
+#### `tonik_core` - `v0.3.0`
+
+ - **FEAT**: better support for nullable schemas.
+
+#### `tonik_parse` - `v0.3.0`
+
+ - **FEAT**: better support for nullable schemas.
+
+#### `tonik_generate` - `v0.3.0`
+
+ - **FIX**: remove lints as dependency.
+ - **FEAT**: better support for nullable schemas.
+
+#### `tonik` - `v0.3.0`
+
+ - **FIX**: allow text and binary in config.
+ - **FEAT**: better documentation.
+ - **FEAT**: better support for nullable schemas.
+
+
 ## 2025-12-21
 
 ### Changes

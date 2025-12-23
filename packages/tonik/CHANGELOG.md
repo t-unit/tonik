@@ -1,3 +1,9 @@
+## 0.3.0
+
+ - **FIX**: allow text and binary in config.
+ - **FEAT**: better documentation.
+ - **FEAT**: better support for nullable schemas.
+
 ## 0.2.1
 
 For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).

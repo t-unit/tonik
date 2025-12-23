@@ -1,3 +1,8 @@
+## 0.3.0
+
+ - **FIX**: remove lints as dependency.
+ - **FEAT**: better support for nullable schemas.
+
 ## 0.2.1
 
 ## 0.2.0
