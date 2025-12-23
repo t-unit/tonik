@@ -7,7 +7,7 @@ void main() {
     late AllOfPrimitive allOf;
 
     setUp(() {
-      allOf = AllOfPrimitive(
+      allOf = const AllOfPrimitive(
         allOfPrimitiveModel: AllOfPrimitiveModel(count: 1),
         allOfPrimitiveModel2: AllOfPrimitiveModel2(id: '1'),
       );
@@ -94,7 +94,7 @@ void main() {
     late AllOfPrimitive allOf;
 
     setUp(() {
-      allOf = AllOfPrimitive(
+      allOf = const AllOfPrimitive(
         allOfPrimitiveModel: AllOfPrimitiveModel(count: 1),
         allOfPrimitiveModel2: AllOfPrimitiveModel2(id: 'foo%bar&baz=qux'),
       );
@@ -199,7 +199,7 @@ void main() {
     late AllOfComplex allOf;
 
     setUp(() {
-      allOf = AllOfComplex(
+      allOf = const AllOfComplex(
         class1: Class1(name: '1'),
         class2: Class2(number: 1),
       );
@@ -298,7 +298,7 @@ void main() {
     late AllOfComplex allOf;
 
     setUp(() {
-      allOf = AllOfComplex(
+      allOf = const AllOfComplex(
         class1: Class1(name: '50% off! Buy now & save'),
         class2: Class2(number: 99),
       );
@@ -403,7 +403,7 @@ void main() {
     late AllOfEnum allOf;
 
     setUp(() {
-      allOf = AllOfEnum(
+      allOf = const AllOfEnum(
         allOfEnumModel2: AllOfEnumModel2(status: Enum1.value1),
         allOfEnumModel: AllOfEnumModel(priority: Enum2.one),
       );
@@ -508,7 +508,7 @@ void main() {
     late AllOfMixed allOf;
 
     setUp(() {
-      allOf = AllOfMixed(
+      allOf = const AllOfMixed(
         string: 'hello, world!',
         class1: Class1(name: '1'),
       );
@@ -562,7 +562,7 @@ void main() {
     late NestedAllOfInAllOf allOf;
 
     setUp(() {
-      allOf = NestedAllOfInAllOf(
+      allOf = const NestedAllOfInAllOf(
         allOfComplex: AllOfComplex(
           class1: Class1(name: 'Albert'),
           class2: Class2(number: 1),
@@ -677,7 +677,7 @@ void main() {
       late NestedOneOfInAllOf allOf;
 
       setUp(() {
-        allOf = NestedOneOfInAllOf(
+        allOf = const NestedOneOfInAllOf(
           oneOfPrimitive: OneOfPrimitiveString('hello, world!'),
           nestedOneOfInAllOfModel: NestedOneOfInAllOfModel(metadata: 'extra'),
         );
@@ -731,7 +731,7 @@ void main() {
       late NestedOneOfInAllOf allOf;
 
       setUp(() {
-        allOf = NestedOneOfInAllOf(
+        allOf = const NestedOneOfInAllOf(
           oneOfPrimitive: OneOfPrimitiveInt(-848),
           nestedOneOfInAllOfModel: NestedOneOfInAllOfModel(metadata: 'extra'),
         );
@@ -772,7 +772,7 @@ void main() {
     late TwoLevelAllOf allOf;
 
     setUp(() {
-      allOf = TwoLevelAllOf(
+      allOf = const TwoLevelAllOf(
         twoLevelAllOfAllOfModel: TwoLevelAllOfAllOfModel(
           twoLevelAllOfAllOfModel3: TwoLevelAllOfAllOfModel3(name: 'Albert'),
           twoLevelAllOfAllOfModel2: TwoLevelAllOfAllOfModel2(id: '123'),
@@ -880,7 +880,7 @@ void main() {
     late ThreeLevelAllOf allOf;
 
     setUp(() {
-      allOf = ThreeLevelAllOf(
+      allOf = const ThreeLevelAllOf(
         threeLevelAllOfAllOfModel: ThreeLevelAllOfAllOfModel(
           threeLevelAllOfAllOfAllOfModel: ThreeLevelAllOfAllOfAllOfModel(
             threeLevelAllOfAllOfAllOfModel3: ThreeLevelAllOfAllOfAllOfModel3(
@@ -1003,7 +1003,7 @@ void main() {
       late TwoLevelMixedAllOfAnyOf allOf;
 
       setUp(() {
-        allOf = TwoLevelMixedAllOfAnyOf(
+        allOf = const TwoLevelMixedAllOfAnyOf(
           twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(int: 1),
           twoLevelMixedAllOfAnyOfModel2: TwoLevelMixedAllOfAnyOfModel2(
             metadata: 'extra',
@@ -1059,7 +1059,7 @@ void main() {
       late TwoLevelMixedAllOfAnyOf allOf;
 
       setUp(() {
-        allOf = TwoLevelMixedAllOfAnyOf(
+        allOf = const TwoLevelMixedAllOfAnyOf(
           twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(
             string: 'extra',
           ),
@@ -1099,7 +1099,7 @@ void main() {
       late TwoLevelMixedAllOfAnyOf allOf;
 
       setUp(() {
-        allOf = TwoLevelMixedAllOfAnyOf(
+        allOf = const TwoLevelMixedAllOfAnyOf(
           twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(
             int: 1,
             string: 'extra',
@@ -1146,7 +1146,7 @@ void main() {
       late ThreeLevelMixedAllOfOneOfAnyOf allOf;
 
       setUp(() {
-        allOf = ThreeLevelMixedAllOfOneOfAnyOf(
+        allOf = const ThreeLevelMixedAllOfOneOfAnyOf(
           threeLevelMixedAllOfOneOfAnyOfOneOfModel:
               ThreeLevelMixedAllOfOneOfAnyOfOneOfModelAnyOf(
                 ThreeLevelMixedAllOfOneOfAnyOfOneOfAnyOfModel(
@@ -1206,7 +1206,7 @@ void main() {
       late ThreeLevelMixedAllOfOneOfAnyOf allOf;
 
       setUp(() {
-        allOf = ThreeLevelMixedAllOfOneOfAnyOf(
+        allOf = const ThreeLevelMixedAllOfOneOfAnyOf(
           threeLevelMixedAllOfOneOfAnyOfOneOfModel:
               ThreeLevelMixedAllOfOneOfAnyOfOneOfModelAnyOf(
                 ThreeLevelMixedAllOfOneOfAnyOfOneOfAnyOfModel(
@@ -1266,7 +1266,7 @@ void main() {
       late ThreeLevelMixedAllOfOneOfAnyOf allOf;
 
       setUp(() {
-        allOf = ThreeLevelMixedAllOfOneOfAnyOf(
+        allOf = const ThreeLevelMixedAllOfOneOfAnyOf(
           threeLevelMixedAllOfOneOfAnyOfOneOfModel:
               ThreeLevelMixedAllOfOneOfAnyOfOneOfModelString('qwerty'),
           threeLevelMixedAllOfOneOfAnyOfModel:
@@ -1310,7 +1310,7 @@ void main() {
       late ThreeLevelMixedRefs allOf;
 
       setUp(() {
-        allOf = ThreeLevelMixedRefs(
+        allOf = const ThreeLevelMixedRefs(
           twoLevelMixedAllOfAnyOf: TwoLevelMixedAllOfAnyOf(
             twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(
               string: 'test',
@@ -1373,7 +1373,7 @@ void main() {
       late ThreeLevelMixedRefs allOf;
 
       setUp(() {
-        allOf = ThreeLevelMixedRefs(
+        allOf = const ThreeLevelMixedRefs(
           twoLevelMixedAllOfAnyOf: TwoLevelMixedAllOfAnyOf(
             twoLevelMixedAllOfAnyOfModel: TwoLevelMixedAllOfAnyOfModel(int: 42),
             twoLevelMixedAllOfAnyOfModel2: TwoLevelMixedAllOfAnyOfModel2(
@@ -1422,7 +1422,7 @@ void main() {
       late ComplexNestedMix allOf;
 
       setUp(() {
-        allOf = ComplexNestedMix(
+        allOf = const ComplexNestedMix(
           complexNestedMixModel: ComplexNestedMixModel($base: 'test'),
           complexNestedMixOneOfModel: ComplexNestedMixOneOfModelClass1(
             Class1(name: 'Albert'),
@@ -1535,7 +1535,7 @@ void main() {
       late ComplexNestedMix allOf;
 
       setUp(() {
-        allOf = ComplexNestedMix(
+        allOf = const ComplexNestedMix(
           complexNestedMixModel: ComplexNestedMixModel($base: 'test'),
           complexNestedMixOneOfModel: ComplexNestedMixOneOfModelClass2(
             Class2(number: 42),
@@ -1593,7 +1593,7 @@ void main() {
       late MultiLevelNesting allOf;
 
       setUp(() {
-        allOf = MultiLevelNesting(
+        allOf = const MultiLevelNesting(
           multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
           multiLevelNestingModel: MultiLevelNestingModel(
             level1: MultiLevelNestingLevel1OneOfModelString('test'),
@@ -1706,7 +1706,7 @@ void main() {
       late MultiLevelNesting allOf;
 
       setUp(() {
-        allOf = MultiLevelNesting(
+        allOf = const MultiLevelNesting(
           multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
           multiLevelNestingModel: MultiLevelNestingModel(
             level1: MultiLevelNestingLevel1OneOfModelAnyOf(
@@ -1755,7 +1755,7 @@ void main() {
       late MultiLevelNesting allOf;
 
       setUp(() {
-        allOf = MultiLevelNesting(
+        allOf = const MultiLevelNesting(
           multiLevelNestingModel2: MultiLevelNestingModel2(level2: 42),
           multiLevelNestingModel: MultiLevelNestingModel(
             level1: MultiLevelNestingLevel1OneOfModelAnyOf(
@@ -1805,7 +1805,7 @@ void main() {
     late AllOfWithSimpleList allOf;
 
     setUp(() {
-      allOf = AllOfWithSimpleList(
+      allOf = const AllOfWithSimpleList(
         allOfWithSimpleListModel: AllOfWithSimpleListModel(ids: [1, 2, 3]),
         allOfWithSimpleListModel2: AllOfWithSimpleListModel2(
           tags: ['tag1', 'tag2', 'tag3'],
@@ -1932,7 +1932,7 @@ void main() {
     late AllOfWithMixedLists allOf;
 
     setUp(() {
-      allOf = AllOfWithMixedLists(
+      allOf = const AllOfWithMixedLists(
         allOfWithMixedListsModel2: AllOfWithMixedListsModel2(
           users: [Class1(name: 'Albert')],
         ),
@@ -2001,7 +2001,7 @@ void main() {
     late AllOfWithEnumList allOf;
 
     setUp(() {
-      allOf = AllOfWithEnumList(
+      allOf = const AllOfWithEnumList(
         allOfWithEnumListModel: AllOfWithEnumListModel(
           priorities: [Enum2.one, Enum2.two],
         ),
@@ -2127,7 +2127,7 @@ void main() {
     late NestedListInAllOf allOf;
 
     setUp(() {
-      allOf = NestedListInAllOf(
+      allOf = const NestedListInAllOf(
         nestedListInAllOfModel: NestedListInAllOfModel(
           matrix: [
             [1, 2, 3],
@@ -2199,7 +2199,7 @@ void main() {
       late ComplexListComposition allOf;
 
       setUp(() {
-        allOf = ComplexListComposition(
+        allOf = const ComplexListComposition(
           complexListCompositionModel: ComplexListCompositionModel(
             simpleList: ['test', 'test2'],
           ),
@@ -2336,7 +2336,7 @@ void main() {
       late ComplexListComposition allOf;
 
       setUp(() {
-        allOf = ComplexListComposition(
+        allOf = const ComplexListComposition(
           complexListCompositionModel: ComplexListCompositionModel(
             simpleList: ['test', 'test2'],
           ),
@@ -2398,7 +2398,7 @@ void main() {
       late ComplexListComposition allOf;
 
       setUp(() {
-        allOf = ComplexListComposition(
+        allOf = const ComplexListComposition(
           complexListCompositionModel: ComplexListCompositionModel(
             simpleList: ['test', 'test2'],
           ),
@@ -2466,7 +2466,7 @@ void main() {
     late AllOfWithListOfComposites allOf;
 
     setUp(() {
-      allOf = AllOfWithListOfComposites(
+      allOf = const AllOfWithListOfComposites(
         allOfWithListOfCompositesModel2: AllOfWithListOfCompositesModel2(
           items: [
             AllOfWithListOfCompositesItemsArrayOneOfModelClass1(
@@ -2559,10 +2559,10 @@ void main() {
     setUp(() {
       allOf = AllOfDoubleList(
         list2: [
-          DateTime.utc(2021, 1, 1).toTimeZonedIso8601String(),
+          DateTime.utc(2021).toTimeZonedIso8601String(),
           DateTime.utc(2021, 1, 2).toTimeZonedIso8601String(),
         ],
-        list: [DateTime.utc(2021, 1, 1), DateTime.utc(2021, 1, 2)],
+        list: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
       );
     });
 
@@ -2670,10 +2670,10 @@ void main() {
 
       setUp(() {
         allOf = AllOfOneOfDoubleList(
-          list: [DateTime.utc(2021, 1, 1), DateTime.utc(2021, 1, 2)],
+          list: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
           list2: [
             AllOfOneOfDoubleListArrayOneOfModelString(
-              DateTime.utc(2021, 1, 1).toTimeZonedIso8601String(),
+              DateTime.utc(2021).toTimeZonedIso8601String(),
             ),
             AllOfOneOfDoubleListArrayOneOfModelString(
               DateTime.utc(2021, 1, 2).toTimeZonedIso8601String(),
@@ -2769,7 +2769,7 @@ void main() {
       test('toMatrix - explode true', () {
         expect(
           allOf.toMatrix('list', explode: true, allowEmpty: true),
-          ';list=2021-01-01T00%3A00%3A00.000Z;list=2021-01-02T00%3A00%3A00.000Z',
+          ''';list=2021-01-01T00%3A00%3A00.000Z;list=2021-01-02T00%3A00%3A00.000Z''',
         );
       });
 
@@ -2797,8 +2797,8 @@ void main() {
 
       setUp(() {
         allOf = AllOfOneOfDoubleList(
-          list: [DateTime.utc(2021, 1, 1), DateTime.utc(2021, 1, 2)],
-          list2: [
+          list: [DateTime.utc(2021), DateTime.utc(2021, 1, 2)],
+          list2: const [
             AllOfOneOfDoubleListArrayOneOfModelInt(1),
             AllOfOneOfDoubleListArrayOneOfModelInt(2),
           ],
@@ -2847,7 +2847,7 @@ void main() {
     late AllOfDirectPrimitive allOf;
 
     setUp(() {
-      allOf = AllOfDirectPrimitive(num: 1, int: 1);
+      allOf = const AllOfDirectPrimitive(num: 1, int: 1);
     });
 
     test('toJson', () {

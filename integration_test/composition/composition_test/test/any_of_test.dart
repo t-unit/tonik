@@ -8,7 +8,7 @@ void main() {
       late AnyOfPrimitive anyOf;
 
       setUp(() {
-        anyOf = AnyOfPrimitive(string: 'hello');
+        anyOf = const AnyOfPrimitive(string: 'hello');
       });
 
       test('toJson', () {
@@ -92,7 +92,7 @@ void main() {
       late AnyOfPrimitive anyOf;
 
       setUp(() {
-        anyOf = AnyOfPrimitive(string: 'foo%bar&baz=qux');
+        anyOf = const AnyOfPrimitive(string: 'foo%bar&baz=qux');
       });
 
       test('toJson', () {
@@ -194,7 +194,7 @@ void main() {
       late AnyOfPrimitive anyOf;
 
       setUp(() {
-        anyOf = AnyOfPrimitive(int: 42);
+        anyOf = const AnyOfPrimitive(int: 42);
       });
 
       test('toJson', () {
@@ -297,7 +297,7 @@ void main() {
       late AnyOfPrimitive anyOf;
 
       setUp(() {
-        anyOf = AnyOfPrimitive(bool: true);
+        anyOf = const AnyOfPrimitive(bool: true);
       });
 
       test('toJson', () {
@@ -400,7 +400,7 @@ void main() {
       late AnyOfPrimitive anyOf;
 
       setUp(() {
-        anyOf = AnyOfPrimitive(string: 'hello', int: 42);
+        anyOf = const AnyOfPrimitive(string: 'hello', int: 42);
       });
 
       test('toJson throws EncodingException', () {
@@ -453,7 +453,7 @@ void main() {
       late AnyOfComplex anyOf;
 
       setUp(() {
-        anyOf = AnyOfComplex(class1: Class1(name: 'Alice'));
+        anyOf = const AnyOfComplex(class1: Class1(name: 'Alice'));
       });
 
       test('toJson', () {
@@ -537,7 +537,7 @@ void main() {
       late AnyOfComplex anyOf;
 
       setUp(() {
-        anyOf = AnyOfComplex(class2: Class2(number: 123));
+        anyOf = const AnyOfComplex(class2: Class2(number: 123));
       });
 
       test('toJson', () {
@@ -621,7 +621,7 @@ void main() {
       late AnyOfComplex anyOf;
 
       setUp(() {
-        anyOf = AnyOfComplex(
+        anyOf = const AnyOfComplex(
           class1: Class1(name: 'Alice'),
           class2: Class2(number: 123),
         );
@@ -728,7 +728,7 @@ void main() {
       late AnyOfEnum anyOf;
 
       setUp(() {
-        anyOf = AnyOfEnum(enum1: Enum1.value1);
+        anyOf = const AnyOfEnum(enum1: Enum1.value1);
       });
 
       test('toJson', () {
@@ -812,7 +812,7 @@ void main() {
       late AnyOfEnum anyOf;
 
       setUp(() {
-        anyOf = AnyOfEnum(enum2: Enum2.two);
+        anyOf = const AnyOfEnum(enum2: Enum2.two);
       });
 
       test('toJson', () {
@@ -896,7 +896,7 @@ void main() {
       late AnyOfEnum anyOf;
 
       setUp(() {
-        anyOf = AnyOfEnum(enum1: Enum1.value1, enum2: Enum2.two);
+        anyOf = const AnyOfEnum(enum1: Enum1.value1, enum2: Enum2.two);
       });
 
       test('toJson throws EncodingException', () {
@@ -949,7 +949,7 @@ void main() {
       late AnyOfMixed anyOf;
 
       setUp(() {
-        anyOf = AnyOfMixed(int: 42);
+        anyOf = const AnyOfMixed(int: 42);
       });
 
       test('toJson', () {
@@ -1033,7 +1033,7 @@ void main() {
       late AnyOfMixed anyOf;
 
       setUp(() {
-        anyOf = AnyOfMixed(class2: Class2(number: 123));
+        anyOf = const AnyOfMixed(class2: Class2(number: 123));
       });
 
       test('toJson', () {
@@ -1119,7 +1119,7 @@ void main() {
       setUp(() {
         // Setting both enum2 and int to avoid ambiguity.
         // Both can be decoded as the same value, 1.
-        anyOf = AnyOfMixed(enum2: Enum2.one, int: 1);
+        anyOf = const AnyOfMixed(enum2: Enum2.one, int: 1);
       });
 
       test('toJson', () {
@@ -1203,7 +1203,7 @@ void main() {
       late AnyOfMixed anyOf;
 
       setUp(() {
-        anyOf = AnyOfMixed(int: 42, class2: Class2(number: 123));
+        anyOf = const AnyOfMixed(int: 42, class2: Class2(number: 123));
       });
 
       test('toJson throws EncodingException', () {
@@ -1256,7 +1256,7 @@ void main() {
       late NestedAnyOfInAllOf anyOf;
 
       setUp(() {
-        anyOf = NestedAnyOfInAllOf(
+        anyOf = const NestedAnyOfInAllOf(
           anyOfComplex: AnyOfComplex(class1: Class1(name: 'Bob')),
           nestedAnyOfInAllOfModel: NestedAnyOfInAllOfModel(timestamp: 123),
         );
@@ -1367,7 +1367,7 @@ void main() {
       late NestedAnyOfInAllOf anyOf;
 
       setUp(() {
-        anyOf = NestedAnyOfInAllOf(
+        anyOf = const NestedAnyOfInAllOf(
           anyOfComplex: AnyOfComplex(class2: Class2(number: 456)),
           nestedAnyOfInAllOfModel: NestedAnyOfInAllOfModel(timestamp: 123),
         );
@@ -1480,7 +1480,7 @@ void main() {
       late NestedAllOfInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedAllOfInAnyOf(
+        anyOf = const NestedAllOfInAnyOf(
           allOfMixed: AllOfMixed(
             string: 'test',
             class1: Class1(name: 'test'),
@@ -1537,7 +1537,7 @@ void main() {
       late NestedAllOfInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedAllOfInAnyOf(class1: Class1(name: 'Charlie'));
+        anyOf = const NestedAllOfInAnyOf(class1: Class1(name: 'Charlie'));
       });
 
       test('toJson', () {
@@ -1557,11 +1557,13 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = NestedAllOfInAnyOf.fromForm(form, explode: true);
-        // Both class1 and allOfMixed are set because AllOfMixed contains a String field.
-        // Any string value can be decoded to String, so allOfMixed.string='name=Charlie'.
+        // Both class1 and allOfMixed are set because AllOfMixed contains
+        // a String field.
+        // Any string value can be decoded to String, so
+        // allOfMixed.string='name=Charlie'.
         expect(
           reconstructed,
-          NestedAllOfInAnyOf(
+          const NestedAllOfInAnyOf(
             class1: Class1(name: 'Charlie'),
             allOfMixed: AllOfMixed(
               class1: Class1(name: 'Charlie'),
@@ -1578,11 +1580,13 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = NestedAllOfInAnyOf.fromForm(form, explode: false);
-        // Both class1 and allOfMixed are set because AllOfMixed contains a String field.
-        // Any string value can be decoded to String, so allOfMixed.string='name,Charlie'.
+        // Both class1 and allOfMixed are set because AllOfMixed contains
+        // a String field.
+        // Any string value can be decoded to String,
+        // so allOfMixed.string='name,Charlie'.
         expect(
           reconstructed,
-          NestedAllOfInAnyOf(
+          const NestedAllOfInAnyOf(
             class1: Class1(name: 'Charlie'),
             allOfMixed: AllOfMixed(
               class1: Class1(name: 'Charlie'),
@@ -1602,11 +1606,13 @@ void main() {
           simple,
           explode: true,
         );
-        // Both class1 and allOfMixed are set because AllOfMixed contains a String field.
-        // Any string value can be decoded to String, so allOfMixed.string='name=Charlie'.
+        // Both class1 and allOfMixed are set because AllOfMixed contains
+        //a String field.
+        // Any string value can be decoded to String, so
+        // allOfMixed.string='name=Charlie'.
         expect(
           reconstructed,
-          NestedAllOfInAnyOf(
+          const NestedAllOfInAnyOf(
             class1: Class1(name: 'Charlie'),
             allOfMixed: AllOfMixed(
               class1: Class1(name: 'Charlie'),
@@ -1629,11 +1635,13 @@ void main() {
           simple,
           explode: false,
         );
-        // Both class1 and allOfMixed are set because AllOfMixed contains a String field.
-        // Any string value can be decoded to String, so allOfMixed.string='name,Charlie'.
+        // Both class1 and allOfMixed are set because AllOfMixed contains a
+        // String field.
+        // Any string value can be decoded to String, so
+        // allOfMixed.string='name,Charlie'.
         expect(
           reconstructed,
-          NestedAllOfInAnyOf(
+          const NestedAllOfInAnyOf(
             class1: Class1(name: 'Charlie'),
             allOfMixed: AllOfMixed(
               class1: Class1(name: 'Charlie'),
@@ -1679,9 +1687,8 @@ void main() {
       late NestedOneOfInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedOneOfInAnyOf(
+        anyOf = const NestedOneOfInAnyOf(
           oneOfEnum: OneOfEnumEnum1(Enum1.value2),
-          num: null,
         );
       });
 
@@ -1772,7 +1779,7 @@ void main() {
       late NestedOneOfInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedOneOfInAnyOf(oneOfEnum: null, num: 3.14);
+        anyOf = const NestedOneOfInAnyOf(num: 3.14);
       });
 
       test('toJson', () {
@@ -1862,7 +1869,7 @@ void main() {
       late NestedOneOfInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedOneOfInAnyOf(
+        anyOf = const NestedOneOfInAnyOf(
           oneOfEnum: OneOfEnumEnum1(Enum1.value2),
           num: 3.14,
         );
@@ -1918,7 +1925,7 @@ void main() {
       late TwoLevelAnyOf anyOf;
 
       setUp(() {
-        anyOf = TwoLevelAnyOf(string: 'test');
+        anyOf = const TwoLevelAnyOf(string: 'test');
       });
 
       test('toJson', () {
@@ -2002,7 +2009,7 @@ void main() {
       late TwoLevelAnyOf anyOf;
 
       setUp(() {
-        anyOf = TwoLevelAnyOf(
+        anyOf = const TwoLevelAnyOf(
           twoLevelAnyOfModel: TwoLevelAnyOfModel(class1: Class1(name: 'test')),
         );
       });
@@ -2024,10 +2031,11 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromForm(form, explode: true);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(
               class1: Class1(name: 'test'),
             ),
@@ -2043,10 +2051,11 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromForm(form, explode: false);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string can
+        // be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(
               class1: Class1(name: 'test'),
             ),
@@ -2062,10 +2071,11 @@ void main() {
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromSimple(simple, explode: true);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(
               class1: Class1(name: 'test'),
             ),
@@ -2081,10 +2091,11 @@ void main() {
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromSimple(simple, explode: false);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(
               class1: Class1(name: 'test'),
             ),
@@ -2124,7 +2135,7 @@ void main() {
       late TwoLevelAnyOf anyOf;
 
       setUp(() {
-        anyOf = TwoLevelAnyOf(
+        anyOf = const TwoLevelAnyOf(
           twoLevelAnyOfModel: TwoLevelAnyOfModel(class2: Class2(number: 42)),
         );
       });
@@ -2146,10 +2157,11 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromForm(form, explode: true);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(class2: Class2(number: 42)),
             string: 'number=42',
           ),
@@ -2163,10 +2175,11 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromForm(form, explode: false);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(class2: Class2(number: 42)),
             string: 'number,42',
           ),
@@ -2180,10 +2193,11 @@ void main() {
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromSimple(simple, explode: true);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(class2: Class2(number: 42)),
             string: 'number=42',
           ),
@@ -2197,10 +2211,11 @@ void main() {
       test('simple roundtrip - explode false', () {
         final simple = anyOf.toSimple(explode: false, allowEmpty: true);
         final reconstructed = TwoLevelAnyOf.fromSimple(simple, explode: false);
-        // Both twoLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both twoLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          TwoLevelAnyOf(
+          const TwoLevelAnyOf(
             twoLevelAnyOfModel: TwoLevelAnyOfModel(class2: Class2(number: 42)),
             string: 'number,42',
           ),
@@ -2240,7 +2255,7 @@ void main() {
       late ThreeLevelAnyOf anyOf;
 
       setUp(() {
-        anyOf = ThreeLevelAnyOf(string: 'deep');
+        anyOf = const ThreeLevelAnyOf(string: 'deep');
       });
 
       test('toJson', () {
@@ -2327,7 +2342,7 @@ void main() {
       late ThreeLevelAnyOf anyOf;
 
       setUp(() {
-        anyOf = ThreeLevelAnyOf(
+        anyOf = const ThreeLevelAnyOf(
           threeLevelAnyOfModel: ThreeLevelAnyOfModel(enum1: Enum1.value1),
         );
       });
@@ -2339,10 +2354,11 @@ void main() {
       test('json roundtrip', () {
         final json = anyOf.toJson();
         final reconstructed = ThreeLevelAnyOf.fromJson(json);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(enum1: Enum1.value1),
             string: 'value1',
           ),
@@ -2356,10 +2372,11 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = ThreeLevelAnyOf.fromForm(form, explode: true);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(enum1: Enum1.value1),
             string: 'value1',
           ),
@@ -2373,10 +2390,11 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = ThreeLevelAnyOf.fromForm(form, explode: false);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(enum1: Enum1.value1),
             string: 'value1',
           ),
@@ -2390,10 +2408,11 @@ void main() {
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
         final reconstructed = ThreeLevelAnyOf.fromSimple(simple, explode: true);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(enum1: Enum1.value1),
             string: 'value1',
           ),
@@ -2410,10 +2429,11 @@ void main() {
           simple,
           explode: false,
         );
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(enum1: Enum1.value1),
             string: 'value1',
           ),
@@ -2451,7 +2471,7 @@ void main() {
       late ThreeLevelAnyOf anyOf;
 
       setUp(() {
-        anyOf = ThreeLevelAnyOf(
+        anyOf = const ThreeLevelAnyOf(
           threeLevelAnyOfModel: ThreeLevelAnyOfModel(
             threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(
               class1: Class1(name: 'test'),
@@ -2477,10 +2497,11 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = ThreeLevelAnyOf.fromForm(form, explode: true);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(
               threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(
                 class1: Class1(name: 'test'),
@@ -2498,10 +2519,11 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = ThreeLevelAnyOf.fromForm(form, explode: false);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any string
+        // can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(
               threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(
                 class1: Class1(name: 'test'),
@@ -2519,10 +2541,11 @@ void main() {
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
         final reconstructed = ThreeLevelAnyOf.fromSimple(simple, explode: true);
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(
               threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(
                 class1: Class1(name: 'test'),
@@ -2543,10 +2566,11 @@ void main() {
           simple,
           explode: false,
         );
-        // Both threeLevelAnyOfModel and string are set because any string can be decoded to String.
+        // Both threeLevelAnyOfModel and string are set because any
+        // string can be decoded to String.
         expect(
           reconstructed,
-          ThreeLevelAnyOf(
+          const ThreeLevelAnyOf(
             threeLevelAnyOfModel: ThreeLevelAnyOfModel(
               threeLevelAnyOfAnyOfModel: ThreeLevelAnyOfAnyOfModel(
                 class1: Class1(name: 'test'),
@@ -2590,7 +2614,7 @@ void main() {
       late DeepNestedAnyOf anyOf;
 
       setUp(() {
-        anyOf = DeepNestedAnyOf(enum1: Enum1.value1);
+        anyOf = const DeepNestedAnyOf(enum1: Enum1.value1);
       });
 
       test('toJson', () {
@@ -2600,11 +2624,13 @@ void main() {
       test('json roundtrip', () {
         final json = anyOf.toJson();
         final reconstructed = DeepNestedAnyOf.fromJson(json);
-        // Both nestedAnyOfInAnyOf and enum1 are set because NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
-        // Any string value can be decoded to String, so nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
+        // Both nestedAnyOfInAnyOf and enum1 are set because
+        // NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
+        // Any string value can be decoded to String, so
+        // nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
         expect(
           reconstructed,
-          DeepNestedAnyOf(
+          const DeepNestedAnyOf(
             nestedAnyOfInAnyOf: NestedAnyOfInAnyOf(
               anyOfPrimitive: AnyOfPrimitive(string: 'value1'),
             ),
@@ -2620,11 +2646,13 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = DeepNestedAnyOf.fromForm(form, explode: true);
-        // Both nestedAnyOfInAnyOf and enum1 are set because NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
-        // Any string value can be decoded to String, so nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
+        // Both nestedAnyOfInAnyOf and enum1 are set because
+        // NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
+        // Any string value can be decoded to String, so
+        // nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
         expect(
           reconstructed,
-          DeepNestedAnyOf(
+          const DeepNestedAnyOf(
             nestedAnyOfInAnyOf: NestedAnyOfInAnyOf(
               anyOfPrimitive: AnyOfPrimitive(string: 'value1'),
             ),
@@ -2640,11 +2668,13 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = DeepNestedAnyOf.fromForm(form, explode: false);
-        // Both nestedAnyOfInAnyOf and enum1 are set because NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
-        // Any string value can be decoded to String, so nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
+        // Both nestedAnyOfInAnyOf and enum1 are set because
+        // NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
+        // Any string value can be decoded to String, so
+        // nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
         expect(
           reconstructed,
-          DeepNestedAnyOf(
+          const DeepNestedAnyOf(
             nestedAnyOfInAnyOf: NestedAnyOfInAnyOf(
               anyOfPrimitive: AnyOfPrimitive(string: 'value1'),
             ),
@@ -2660,11 +2690,13 @@ void main() {
       test('simple roundtrip - explode true', () {
         final simple = anyOf.toSimple(explode: true, allowEmpty: true);
         final reconstructed = DeepNestedAnyOf.fromSimple(simple, explode: true);
-        // Both nestedAnyOfInAnyOf and enum1 are set because NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
-        // Any string value can be decoded to String, so nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
+        // Both nestedAnyOfInAnyOf and enum1 are set because
+        // NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
+        // Any string value can be decoded to String, so
+        // nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
         expect(
           reconstructed,
-          DeepNestedAnyOf(
+          const DeepNestedAnyOf(
             nestedAnyOfInAnyOf: NestedAnyOfInAnyOf(
               anyOfPrimitive: AnyOfPrimitive(string: 'value1'),
             ),
@@ -2683,11 +2715,13 @@ void main() {
           simple,
           explode: false,
         );
-        // Both nestedAnyOfInAnyOf and enum1 are set because NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
-        // Any string value can be decoded to String, so nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
+        // Both nestedAnyOfInAnyOf and enum1 are set because
+        // NestedAnyOfInAnyOf.anyOfPrimitive contains a String variant.
+        // Any string value can be decoded to String, so
+        // nestedAnyOfInAnyOf.anyOfPrimitive.string='value1'.
         expect(
           reconstructed,
-          DeepNestedAnyOf(
+          const DeepNestedAnyOf(
             nestedAnyOfInAnyOf: NestedAnyOfInAnyOf(
               anyOfPrimitive: AnyOfPrimitive(string: 'value1'),
             ),
@@ -2727,10 +2761,9 @@ void main() {
       late DeepNestedAnyOf anyOf;
 
       setUp(() {
-        anyOf = DeepNestedAnyOf(
+        anyOf = const DeepNestedAnyOf(
           nestedAnyOfInAnyOf: NestedAnyOfInAnyOf(
             anyOfPrimitive: AnyOfPrimitive(string: 'test'),
-            anyOfComplex: null,
           ),
         );
       });
@@ -2821,7 +2854,7 @@ void main() {
       late TwoLevelMixedAnyOfOneOf anyOf;
 
       setUp(() {
-        anyOf = TwoLevelMixedAnyOfOneOf(
+        anyOf = const TwoLevelMixedAnyOfOneOf(
           twoLevelMixedAnyOfOneOfModel: TwoLevelMixedAnyOfOneOfModelEnum1(
             Enum1.value1,
           ),
@@ -2921,7 +2954,7 @@ void main() {
       late TwoLevelMixedAnyOfOneOf anyOf;
 
       setUp(() {
-        anyOf = TwoLevelMixedAnyOfOneOf(
+        anyOf = const TwoLevelMixedAnyOfOneOf(
           twoLevelMixedAnyOfOneOfModel: TwoLevelMixedAnyOfOneOfModelEnum2(
             Enum2.two,
           ),
@@ -3023,7 +3056,7 @@ void main() {
       late AnyOfWithSimpleList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithSimpleList(list2: ['test', 'test2']);
+        anyOf = const AnyOfWithSimpleList(list2: ['test', 'test2']);
       });
 
       test('toJson', () {
@@ -3043,10 +3076,14 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = AnyOfWithSimpleList.fromForm(form, explode: true);
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list2: ['test', 'test2'], string: 'test,test2'),
+          const AnyOfWithSimpleList(
+            list2: ['test', 'test2'],
+            string: 'test,test2',
+          ),
         );
       });
 
@@ -3060,10 +3097,14 @@ void main() {
           form,
           explode: false,
         );
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list2: ['test', 'test2'], string: 'test,test2'),
+          const AnyOfWithSimpleList(
+            list2: ['test', 'test2'],
+            string: 'test,test2',
+          ),
         );
       });
 
@@ -3077,10 +3118,14 @@ void main() {
           simple,
           explode: true,
         );
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list2: ['test', 'test2'], string: 'test,test2'),
+          const AnyOfWithSimpleList(
+            list2: ['test', 'test2'],
+            string: 'test,test2',
+          ),
         );
       });
 
@@ -3094,10 +3139,14 @@ void main() {
           simple,
           explode: false,
         );
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(list2: ['test', 'test2'], string: 'test,test2'),
+          const AnyOfWithSimpleList(
+            list2: ['test', 'test2'],
+            string: 'test,test2',
+          ),
         );
       });
 
@@ -3132,7 +3181,7 @@ void main() {
       late AnyOfWithSimpleList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithSimpleList(list: [1, 2, 3]);
+        anyOf = const AnyOfWithSimpleList(list: [1, 2, 3]);
       });
 
       test('toJson', () {
@@ -3153,10 +3202,11 @@ void main() {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = AnyOfWithSimpleList.fromForm(form, explode: true);
         // All three fields are set: list, list2, and string.
-        // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
+        // The string '1,2,3' can be decoded as List<int>,
+        // List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(
+          const AnyOfWithSimpleList(
             list: [1, 2, 3],
             list2: ['1', '2', '3'],
             string: '1,2,3',
@@ -3175,10 +3225,11 @@ void main() {
           explode: false,
         );
         // All three fields are set: list, list2, and string.
-        // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
+        // The string '1,2,3' can be decoded as List<int>,
+        // List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(
+          const AnyOfWithSimpleList(
             list: [1, 2, 3],
             list2: ['1', '2', '3'],
             string: '1,2,3',
@@ -3197,10 +3248,11 @@ void main() {
           explode: true,
         );
         // All three fields are set: list, list2, and string.
-        // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
+        // The string '1,2,3' can be decoded as List<int>,
+        // List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(
+          const AnyOfWithSimpleList(
             list: [1, 2, 3],
             list2: ['1', '2', '3'],
             string: '1,2,3',
@@ -3219,10 +3271,11 @@ void main() {
           explode: false,
         );
         // All three fields are set: list, list2, and string.
-        // The string '1,2,3' can be decoded as List<int>, List<String>, and String.
+        // The string '1,2,3' can be decoded as List<int>,
+        // List<String>, and String.
         expect(
           reconstructed,
-          AnyOfWithSimpleList(
+          const AnyOfWithSimpleList(
             list: [1, 2, 3],
             list2: ['1', '2', '3'],
             string: '1,2,3',
@@ -3261,7 +3314,10 @@ void main() {
       late AnyOfWithSimpleList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithSimpleList(list: [1, 2, 3], list2: ['test', 'test2']);
+        anyOf = const AnyOfWithSimpleList(
+          list: [1, 2, 3],
+          list2: ['test', 'test2'],
+        );
       });
 
       test('toJson throws EncodingException', () {
@@ -3314,7 +3370,7 @@ void main() {
       late AnyOfWithComplexList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithComplexList(
+        anyOf = const AnyOfWithComplexList(
           list: [
             Class1(name: 'test'),
             Class1(name: 'test2'),
@@ -3386,7 +3442,7 @@ void main() {
       late AnyOfWithComplexList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithComplexList(
+        anyOf = const AnyOfWithComplexList(
           list2: [Class2(number: 1), Class2(number: 2)],
         );
       });
@@ -3455,7 +3511,7 @@ void main() {
       late AnyOfWithComplexList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithComplexList(string: 'asdf asdf');
+        anyOf = const AnyOfWithComplexList(string: 'asdf asdf');
       });
 
       test('toJson', () {
@@ -3551,7 +3607,7 @@ void main() {
       late AnyOfWithComplexList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithComplexList(
+        anyOf = const AnyOfWithComplexList(
           list: [Class1(name: 'test')],
           list2: [Class2(number: 1)],
           string: 'asdf',
@@ -3608,7 +3664,7 @@ void main() {
       late AnyOfWithMixedLists anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithMixedLists(list2: [1, 2, 3]);
+        anyOf = const AnyOfWithMixedLists(list2: [1, 2, 3]);
       });
 
       test('toJson', () {
@@ -3701,7 +3757,7 @@ void main() {
       late AnyOfWithMixedLists anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithMixedLists(
+        anyOf = const AnyOfWithMixedLists(
           list: [
             Class1(name: 'test'),
             Class1(name: 'test2'),
@@ -3773,7 +3829,7 @@ void main() {
       late AnyOfWithMixedLists anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithMixedLists(bool: true);
+        anyOf = const AnyOfWithMixedLists(bool: true);
       });
 
       test('toJson', () {
@@ -3866,7 +3922,7 @@ void main() {
       late AnyOfWithMixedLists anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithMixedLists(
+        anyOf = const AnyOfWithMixedLists(
           list: [Class1(name: 'test')],
           list2: [1, 2, 3],
           bool: false,
@@ -3923,7 +3979,7 @@ void main() {
       late AnyOfWithEnumList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithEnumList(list: [Enum1.value1, Enum1.value2]);
+        anyOf = const AnyOfWithEnumList(list: [Enum1.value1, Enum1.value2]);
       });
 
       test('toJson', () {
@@ -3943,10 +3999,11 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = AnyOfWithEnumList.fromForm(form, explode: true);
-        // Both list and string are set because any string can be decoded to String.
+        // Both list and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(
+          const AnyOfWithEnumList(
             list: [Enum1.value1, Enum1.value2],
             string: 'value1,value2',
           ),
@@ -3960,10 +4017,11 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = AnyOfWithEnumList.fromForm(form, explode: false);
-        // Both list and string are set because any string can be decoded to String.
+        // Both list and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(
+          const AnyOfWithEnumList(
             list: [Enum1.value1, Enum1.value2],
             string: 'value1,value2',
           ),
@@ -3983,10 +4041,11 @@ void main() {
           simple,
           explode: true,
         );
-        // Both list and string are set because any string can be decoded to String.
+        // Both list and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(
+          const AnyOfWithEnumList(
             list: [Enum1.value1, Enum1.value2],
             string: 'value1,value2',
           ),
@@ -4006,10 +4065,11 @@ void main() {
           simple,
           explode: false,
         );
-        // Both list and string are set because any string can be decoded to String.
+        // Both list and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(
+          const AnyOfWithEnumList(
             list: [Enum1.value1, Enum1.value2],
             string: 'value1,value2',
           ),
@@ -4053,7 +4113,7 @@ void main() {
       late AnyOfWithEnumList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithEnumList(list2: [Enum2.one, Enum2.two]);
+        anyOf = const AnyOfWithEnumList(list2: [Enum2.one, Enum2.two]);
       });
 
       test('toJson', () {
@@ -4073,10 +4133,11 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = anyOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = AnyOfWithEnumList.fromForm(form, explode: true);
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
+          const AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
         );
       });
 
@@ -4087,10 +4148,11 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = anyOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = AnyOfWithEnumList.fromForm(form, explode: false);
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
+          const AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
         );
       });
 
@@ -4104,10 +4166,11 @@ void main() {
           simple,
           explode: true,
         );
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
+          const AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
         );
       });
 
@@ -4121,10 +4184,11 @@ void main() {
           simple,
           explode: false,
         );
-        // Both list2 and string are set because any string can be decoded to String.
+        // Both list2 and string are set because any string can be
+        // decoded to String.
         expect(
           reconstructed,
-          AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
+          const AnyOfWithEnumList(list2: [Enum2.one, Enum2.two], string: '1,2'),
         );
       });
 
@@ -4159,7 +4223,7 @@ void main() {
       late AnyOfWithEnumList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithEnumList(
+        anyOf = const AnyOfWithEnumList(
           list: [Enum1.value1, Enum1.value2],
           string: 'test',
         );
@@ -4213,7 +4277,7 @@ void main() {
       late AnyOfWithEnumList anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithEnumList(
+        anyOf = const AnyOfWithEnumList(
           list2: [Enum2.one, Enum2.two],
           string: 'test',
         );
@@ -4269,7 +4333,7 @@ void main() {
       late NestedListInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedListInAnyOf(
+        anyOf = const NestedListInAnyOf(
           list: [
             ['test', 'test2'],
           ],
@@ -4346,7 +4410,7 @@ void main() {
       late NestedListInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedListInAnyOf(string: 'just a string');
+        anyOf = const NestedListInAnyOf(string: 'just a string');
       });
 
       test('toJson', () {
@@ -4454,7 +4518,7 @@ void main() {
       late NestedListInAnyOf anyOf;
 
       setUp(() {
-        anyOf = NestedListInAnyOf(
+        anyOf = const NestedListInAnyOf(
           list: [
             ['test', 'test2'],
           ],
@@ -4512,7 +4576,7 @@ void main() {
       late AnyOfWithListOfComposites anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithListOfComposites(
+        anyOf = const AnyOfWithListOfComposites(
           list: [
             AnyOfWithListOfCompositesArrayAllOfModel(
               anyOfWithListOfCompositesArrayAllOfModel2:
@@ -4586,7 +4650,7 @@ void main() {
       late AnyOfWithListOfComposites anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithListOfComposites(string: 'test string');
+        anyOf = const AnyOfWithListOfComposites(string: 'test string');
       });
 
       test('toJson', () {
@@ -4694,7 +4758,7 @@ void main() {
       late AnyOfWithListOfComposites anyOf;
 
       setUp(() {
-        anyOf = AnyOfWithListOfComposites(
+        anyOf = const AnyOfWithListOfComposites(
           list: [
             AnyOfWithListOfCompositesArrayAllOfModel(
               anyOfWithListOfCompositesArrayAllOfModel2:

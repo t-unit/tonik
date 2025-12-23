@@ -1,7 +1,7 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:dio/dio.dart';
-import 'package:test/test.dart';
 import 'package:query_parameters_api/query_parameters_api.dart';
+import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 import 'test_helper.dart';
@@ -46,7 +46,7 @@ void main() {
 
     test('double', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testPipeDelimitedPrimitive(double: 1.0);
+      final response = await api.testPipeDelimitedPrimitive(double: 1);
 
       expect(
         response,
@@ -146,7 +146,7 @@ void main() {
     test('class', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        $class: Class(name: 'test', age: 1),
+        $class: const Class(name: 'test', age: 1),
       );
 
       expect(
@@ -161,7 +161,7 @@ void main() {
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        classNested: ClassNested(
+        classNested: const ClassNested(
           name: 'test',
           age: 1,
           nested: Class(name: 'test', age: 1),
@@ -193,7 +193,7 @@ void main() {
     test('classAlias', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        classAlias: ClassAlias(name: 'test', age: 1),
+        classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
       expect(
@@ -208,7 +208,7 @@ void main() {
     test('anyOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        anyOfPrimitive: AnyOfPrimitive(string: 'test'),
+        anyOfPrimitive: const AnyOfPrimitive(string: 'test'),
       );
 
       expect(
@@ -223,7 +223,7 @@ void main() {
     test('anyOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        anyOfComplex: AnyOfComplex($class: Class(name: 'test', age: 1)),
+        anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
       expect(
@@ -238,7 +238,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        oneOfPrimitive: OneOfPrimitiveString('test'),
+        oneOfPrimitive: const OneOfPrimitiveString('test'),
       );
 
       expect(
@@ -253,7 +253,7 @@ void main() {
     test('oneOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        oneOfComplex: OneOfComplexClassModel(
+        oneOfComplex: const OneOfComplexClassModel(
           OneOfComplexModel(value: 'test', amount: 1),
         ),
       );
@@ -270,7 +270,7 @@ void main() {
     test('allOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        allOfPrimitive: AllOfPrimitive(string: '1', int: 1),
+        allOfPrimitive: const AllOfPrimitive(string: '1', int: 1),
       );
 
       expect(
@@ -285,7 +285,7 @@ void main() {
     test('allOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        allOfComplex: AllOfComplex(
+        allOfComplex: const AllOfComplex(
           $class: Class(name: 'test', age: 1),
           allOfComplexModel: AllOfComplexModel(value: 'test', amount: 1),
         ),
@@ -305,7 +305,7 @@ void main() {
     test('class', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        $class: Class(name: 'test', age: 1),
+        $class: const Class(name: 'test', age: 1),
       );
 
       expect(
@@ -320,7 +320,7 @@ void main() {
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        classNested: ClassNested(
+        classNested: const ClassNested(
           name: 'test',
           age: 1,
           nested: Class(name: 'test', age: 1),
@@ -354,7 +354,7 @@ void main() {
     test('classAlias', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        classAlias: ClassAlias(name: 'test', age: 1),
+        classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
       expect(
@@ -369,7 +369,7 @@ void main() {
     test('anyOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        anyOfPrimitive: AnyOfPrimitive(string: 'test'),
+        anyOfPrimitive: const AnyOfPrimitive(string: 'test'),
       );
 
       expect(
@@ -384,7 +384,7 @@ void main() {
     test('anyOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        anyOfComplex: AnyOfComplex($class: Class(name: 'test', age: 1)),
+        anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
       expect(
@@ -399,7 +399,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        oneOfPrimitive: OneOfPrimitiveString('test'),
+        oneOfPrimitive: const OneOfPrimitiveString('test'),
       );
 
       expect(
@@ -414,7 +414,7 @@ void main() {
     test('oneOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        oneOfComplex: OneOfComplexClassModel(
+        oneOfComplex: const OneOfComplexClassModel(
           OneOfComplexModel(value: 'test', amount: 1),
         ),
       );
@@ -431,7 +431,7 @@ void main() {
     test('allOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        allOfPrimitive: AllOfPrimitive(string: '1', int: 1),
+        allOfPrimitive: const AllOfPrimitive(string: '1', int: 1),
       );
 
       expect(
@@ -446,7 +446,7 @@ void main() {
     test('allOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplexExplode(
-        allOfComplex: AllOfComplex(
+        allOfComplex: const AllOfComplex(
           $class: Class(name: 'test', age: 1),
           allOfComplexModel: AllOfComplexModel(value: 'test', amount: 1),
         ),
@@ -480,8 +480,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
         listOneOfPrimitive: [
-          OneOfPrimitiveString('test'),
-          OneOfPrimitiveString('test2'),
+          const OneOfPrimitiveString('test'),
+          const OneOfPrimitiveString('test2'),
         ],
       );
       expect(response, isA<TonikSuccess<void>>());
@@ -496,7 +496,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
         listOneOfComplex: [
-          OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1)),
+          const OneOfComplexClassModel(
+            OneOfComplexModel(value: 'test', amount: 1),
+          ),
         ],
       );
       expect(response, isA<TonikError<void>>());
@@ -508,7 +510,7 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
         listOneOfComplexMixed: [
-          PipeDelimitedListParametersArrayOneOfModelClass(
+          const PipeDelimitedListParametersArrayOneOfModelClass(
             Class(name: 'test', age: 1),
           ),
         ],
@@ -522,9 +524,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
         listOneOfComplexMixed: [
-          PipeDelimitedListParametersArrayOneOfModelInt(3),
-          PipeDelimitedListParametersArrayOneOfModelInt(4),
-          PipeDelimitedListParametersArrayOneOfModelInt(5),
+          const PipeDelimitedListParametersArrayOneOfModelInt(3),
+          const PipeDelimitedListParametersArrayOneOfModelInt(4),
+          const PipeDelimitedListParametersArrayOneOfModelInt(5),
         ],
       );
       expect(response, isA<TonikSuccess<void>>());
@@ -553,7 +555,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedListExplode(
-        listOneOfPrimitive: [OneOfPrimitiveString('test')],
+        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -567,7 +569,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedListExplode(
         listOneOfComplex: [
-          OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1)),
+          const OneOfComplexClassModel(
+            OneOfComplexModel(value: 'test', amount: 1),
+          ),
         ],
       );
       expect(response, isA<TonikError<void>>());
@@ -624,9 +628,7 @@ void main() {
 
     test('nullableString with null', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testPipeDelimitedPrimitive(
-        nullableString: null,
-      );
+      final response = await api.testPipeDelimitedPrimitive();
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -635,9 +637,7 @@ void main() {
 
     test('nullableInteger with null', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testPipeDelimitedPrimitive(
-        nullableInteger: null,
-      );
+      final response = await api.testPipeDelimitedPrimitive();
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -663,7 +663,7 @@ void main() {
 
     test('nullableClass with null', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testPipeDelimitedComplex(nullableClass: null);
+      final response = await api.testPipeDelimitedComplex();
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -673,7 +673,7 @@ void main() {
     test('deeplyNestedClass', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
-        deeplyNestedClass: DeeplyNestedClass(
+        deeplyNestedClass: const DeeplyNestedClass(
           name: 'outer',
           nested: ClassNested(
             name: 'middle',
