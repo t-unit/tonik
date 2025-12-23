@@ -306,5 +306,340 @@ void main() {
         );
       });
     });
+
+    group('nullable typedef generation', () {
+      test('generates nullable typedef for nullable AliasModel', () {
+        final model = AliasModel(
+          name: 'NullableTimestamp',
+          model: DateTimeModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableTimestamp = DateTime?;',
+        );
+      });
+
+      test('generates non-nullable typedef for non-nullable AliasModel', () {
+        final model = AliasModel(
+          name: 'RegularTimestamp',
+          model: DateTimeModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RegularTimestamp = DateTime;',
+        );
+      });
+
+      test('generates nullable typedef for nullable ListModel', () {
+        final model = ListModel(
+          name: 'NullableTagList',
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = generator.generateListTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableTagList = List<String>?;',
+        );
+      });
+
+      test('generates non-nullable typedef for non-nullable ListModel', () {
+        final model = ListModel(
+          name: 'RegularTagList',
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateListTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RegularTagList = List<String>;',
+        );
+      });
+
+      test('generates nullable typedef for all primitive types', () {
+        final primitiveTypes = [
+          (model: StringModel(context: context), expectedType: 'String'),
+          (model: IntegerModel(context: context), expectedType: 'int'),
+          (model: DoubleModel(context: context), expectedType: 'double'),
+          (model: NumberModel(context: context), expectedType: 'num'),
+          (model: BooleanModel(context: context), expectedType: 'bool'),
+          (model: DateTimeModel(context: context), expectedType: 'DateTime'),
+          (model: DateModel(context: context), expectedType: 'Date'),
+          (model: DecimalModel(context: context), expectedType: 'BigDecimal'),
+          (model: UriModel(context: context), expectedType: 'Uri'),
+        ];
+
+        for (final (index, type) in primitiveTypes.indexed) {
+          final model = AliasModel(
+            name: 'NullableType$index',
+            model: type.model,
+            context: context,
+            isNullable: true,
+          );
+
+          final typedef = generator.generateAliasTypedef(model);
+          expect(
+            typedef.accept(emitter).toString().trim(),
+            'typedef NullableType$index = ${type.expectedType}?;',
+            reason: 'Failed for ${type.expectedType}',
+          );
+        }
+      });
+
+      test('generates correct filename for nullable models', () {
+        final model = AliasModel(
+          name: 'NullableUserId',
+          model: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final result = generator.generateAlias(model);
+
+        expect(result.filename, 'nullable_user_id.dart');
+      });
+
+      test('generates nullable typedef for nullable AllOfModel', () {
+        final allOfModel = AllOfModel(
+          name: 'ExtendedUser',
+          models: {
+            ClassModel(
+              name: 'User',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
+            ),
+          },
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final model = AliasModel(
+          name: 'NullableExtendedUser',
+          model: allOfModel,
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableExtendedUser = ExtendedUser?;',
+        );
+      });
+
+      test('generates non-nullable typedef for non-nullable AllOfModel', () {
+        final allOfModel = AllOfModel(
+          name: 'ExtendedUser',
+          models: {
+            ClassModel(
+              name: 'User',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
+            ),
+          },
+          context: context,
+          isDeprecated: false,
+        );
+
+        final model = AliasModel(
+          name: 'RegularExtendedUser',
+          model: allOfModel,
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RegularExtendedUser = ExtendedUser;',
+        );
+      });
+
+      test('generates nullable typedef for nullable OneOfModel', () {
+        final oneOfModel = OneOfModel(
+          name: 'Pet',
+          models: {
+            (
+              discriminatorValue: 'cat',
+              model: ClassModel(
+                name: 'Cat',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+            (
+              discriminatorValue: 'dog',
+              model: ClassModel(
+                name: 'Dog',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+          },
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final model = AliasModel(
+          name: 'NullablePet',
+          model: oneOfModel,
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullablePet = Pet?;',
+        );
+      });
+
+      test('generates non-nullable typedef for non-nullable OneOfModel', () {
+        final oneOfModel = OneOfModel(
+          name: 'Pet',
+          models: {
+            (
+              discriminatorValue: 'cat',
+              model: ClassModel(
+                name: 'Cat',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+            (
+              discriminatorValue: 'dog',
+              model: ClassModel(
+                name: 'Dog',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+          },
+          context: context,
+          isDeprecated: false,
+        );
+
+        final model = AliasModel(
+          name: 'RegularPet',
+          model: oneOfModel,
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RegularPet = Pet;',
+        );
+      });
+
+      test('generates nullable typedef for nullable AnyOfModel', () {
+        final anyOfModel = AnyOfModel(
+          name: 'Response',
+          models: {
+            (
+              discriminatorValue: 'success',
+              model: ClassModel(
+                name: 'Success',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+            (
+              discriminatorValue: 'error',
+              model: ClassModel(
+                name: 'Error',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+          },
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final model = AliasModel(
+          name: 'NullableResponse',
+          model: anyOfModel,
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableResponse = Response?;',
+        );
+      });
+
+      test('generates non-nullable typedef for non-nullable AnyOfModel', () {
+        final anyOfModel = AnyOfModel(
+          name: 'Response',
+          models: {
+            (
+              discriminatorValue: 'success',
+              model: ClassModel(
+                name: 'Success',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+            (
+              discriminatorValue: 'error',
+              model: ClassModel(
+                name: 'Error',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+            ),
+          },
+          context: context,
+          isDeprecated: false,
+        );
+
+        final model = AliasModel(
+          name: 'RegularResponse',
+          model: anyOfModel,
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RegularResponse = Response;',
+        );
+      });
+    });
   });
 }

@@ -101,7 +101,7 @@ void main() {
 
             if (user == null && int == null && string == null) {
               throw SimpleDecodingException(
-                'Invalid simple value for Flexible: all variants failed to decode',
+                r'Invalid simple value for Flexible: all variants failed to decode',
               );
             }
             return Flexible(user: user, int: int, string: string);
@@ -187,7 +187,7 @@ void main() {
 
         if (string == null) {
           throw SimpleDecodingException(
-            'Invalid simple value for MixedAnyOf: all variants failed to decode',
+            r'Invalid simple value for MixedAnyOf: all variants failed to decode',
           );
         }
         return MixedAnyOf(list: null, list2: null, string: string);
@@ -405,7 +405,7 @@ void main() {
 
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf simple encoding for OnlyPrimitivesSimple: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf simple encoding for OnlyPrimitivesSimple: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -475,13 +475,13 @@ void main() {
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
-              'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values',
+              r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values',
             );
           }
           if (values.isNotEmpty) {
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;

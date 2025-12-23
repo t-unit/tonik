@@ -76,7 +76,7 @@ Map<String, String> parameterProperties({
   bool allowLists = true,
 }) {
   throw EncodingException(
-    'parameterProperties not supported for Combined: contains primitive types',
+    r'parameterProperties not supported for Combined: contains primitive types',
   );
 }
 ''';
@@ -149,7 +149,7 @@ Map<String, String> parameterProperties({
   bool allowLists = true,
 }) {
   throw EncodingException(
-    'parameterProperties not supported for Mixed: contains primitive types',
+    r'parameterProperties not supported for Mixed: contains primitive types',
   );
 }
 ''';

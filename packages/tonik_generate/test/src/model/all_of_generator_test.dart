@@ -1196,7 +1196,7 @@ void main() {
           values.add(listMatrix);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result',
+              r'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result',
             );
           }
           return values.first;
@@ -1325,7 +1325,7 @@ void main() {
           bool allowLists = true,
         }) =>
           throw EncodingException(
-            'parameterProperties not supported for AllOfIntList: contains array types',
+            r'parameterProperties not supported for AllOfIntList: contains array types',
           );
       ''';
 
@@ -1370,7 +1370,7 @@ void main() {
       const expectedToJson = '''
         Object? toJson() =>
           throw EncodingException(
-            'Cannot encode AllOfMixedListClass to JSON: allOf mixing arrays with other types is not supported',
+            r'Cannot encode AllOfMixedListClass to JSON: allOf mixing arrays with other types is not supported',
           );
       ''';
 
@@ -1380,7 +1380,7 @@ void main() {
           bool allowLists = true,
         }) =>
           throw EncodingException(
-            'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
+            r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
           );
       ''';
 
@@ -1414,7 +1414,7 @@ void main() {
       const expectedToJson = '''
         Object? toJson() =>
           throw EncodingException(
-            'Cannot encode AllOfMixedListPrimitive to JSON: allOf mixing arrays with other types is not supported',
+            r'Cannot encode AllOfMixedListPrimitive to JSON: allOf mixing arrays with other types is not supported',
           );
       ''';
 
@@ -1424,7 +1424,7 @@ void main() {
           bool allowLists = true,
         }) =>
           throw EncodingException(
-            'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
+            r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
           );
       ''';
 
@@ -1477,7 +1477,7 @@ void main() {
       const expectedToJson = '''
         Object? toJson() =>
           throw EncodingException(
-            'Cannot encode AllOfMultiListClass to JSON: allOf mixing arrays with other types is not supported',
+            r'Cannot encode AllOfMultiListClass to JSON: allOf mixing arrays with other types is not supported',
           );
       ''';
 
@@ -1587,7 +1587,7 @@ void main() {
             bool allowLists = true,
           }) =>
             throw EncodingException(
-              'parameterProperties not supported for AllOfWithList: contains array types',
+              r'parameterProperties not supported for AllOfWithList: contains array types',
             );
         ''';
 
@@ -1597,5 +1597,145 @@ void main() {
         );
       },
     );
+  });
+
+  group('nullable allOf', () {
+    test('generates Raw-prefixed class for nullable allOf', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            name: 'Cat',
+            properties: const [],
+            context: context,
+          ),
+          ClassModel(
+            isDeprecated: false,
+            name: 'Dog',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final klass = generator.generateClass(model);
+
+      // Verify the class uses Raw prefix.
+      expect(klass.name, r'$RawPet');
+    });
+
+    test('generates normal class for non-nullable allOf', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            name: 'Cat',
+            properties: const [],
+            context: context,
+          ),
+          ClassModel(
+            isDeprecated: false,
+            name: 'Dog',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final klass = generator.generateClass(model);
+
+      // Verify the class uses the normal name (no Raw prefix).
+      expect(klass.name, 'Pet');
+    });
+
+    test('generate method creates typedef for nullable allOf', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final result = generator.generate(model);
+      final formatted = format(result.code);
+
+      // Verify typedef exists pointing to nullable Raw class.
+      expect(
+        collapseWhitespace(formatted),
+        contains(collapseWhitespace(r'typedef Response = $RawResponse?;')),
+      );
+    });
+
+    test('generate method does not create typedef for non-nullable allOf', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final result = generator.generate(model);
+
+      // Verify no typedef is generated.
+      expect(result.code, isNot(contains('typedef')));
+    });
   });
 }

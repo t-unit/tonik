@@ -705,7 +705,7 @@ void main() {
           bool allowLists = true,
         }) =>
           throw EncodingException(
-            'parameterProperties not supported for Value: only contains primitive types',
+            r'parameterProperties not supported for Value: only contains primitive types',
           );
       ''';
 
@@ -880,7 +880,7 @@ void main() {
               allowLists: allowLists,
             ),
             ValueString() => throw EncodingException(
-              'parameterProperties not supported for Value: cannot determine properties at runtime',
+              r'parameterProperties not supported for Value: cannot determine properties at runtime',
             ),
           };
         }
@@ -935,7 +935,7 @@ void main() {
         }) {
           return switch (this) {
             ResponseMessage() => throw EncodingException(
-              'parameterProperties not supported for Response: cannot determine properties at runtime',
+              r'parameterProperties not supported for Response: cannot determine properties at runtime',
             ),
             ResponseUser(:final value) => {
               ...value.parameterProperties(
@@ -1009,7 +1009,7 @@ void main() {
                   allowLists: allowLists,
                 )
               : throw EncodingException(
-                  'parameterProperties not supported for Outer: cannot determine properties at runtime',
+                  r'parameterProperties not supported for Outer: cannot determine properties at runtime',
                 ),
           };
         }
@@ -1080,7 +1080,7 @@ void main() {
                   'type': 'inner',
                 }
               : throw EncodingException(
-                  'parameterProperties not supported for Outer: cannot determine properties at runtime',
+                  r'parameterProperties not supported for Outer: cannot determine properties at runtime',
                 ),
           };
         }
@@ -1139,5 +1139,153 @@ void main() {
       'TestOneOfBanana',
       'TestOneOfZebra',
     ]);
+  });
+
+  group('nullable oneOf', () {
+    test('generates Raw-prefixed sealed class for nullable oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Cat',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Dog',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final classes = generator.generateClasses(model, r'$RawPet');
+      final baseClass = classes.first;
+
+      // Verify the sealed class uses Raw prefix.
+      expect(baseClass.name, r'$RawPet');
+      expect(baseClass.sealed, isTrue);
+    });
+
+    test('generates normal sealed class for non-nullable oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Cat',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Dog',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.first;
+
+      // Verify the sealed class uses the normal name (no Raw prefix).
+      expect(baseClass.name, 'Pet');
+      expect(baseClass.sealed, isTrue);
+    });
+
+    test('generate method creates typedef for nullable oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final result = generator.generate(model);
+      final formatted = format(result.code);
+
+      // Verify typedef exists pointing to nullable Raw class.
+      expect(
+        collapseWhitespace(formatted),
+        contains(collapseWhitespace(r'typedef Response = $RawResponse?;')),
+      );
+    });
+
+    test('generate method does not create typedef for non-nullable oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final result = generator.generate(model);
+
+      // Verify no typedef is generated.
+      expect(result.code, isNot(contains('typedef')));
+    });
   });
 }

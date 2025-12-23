@@ -39,9 +39,6 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 - [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md)
 - [Uri Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md)
 
-more coming soon
-
-
 ## Quick-Start Guide
 
 ### Installation

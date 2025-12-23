@@ -159,6 +159,26 @@ void main() {
         expect(nameGenerator.generateModelName(model), 'UserProfile123');
       });
 
+      test('preserves dollar sign characters', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: r'$UserProfile',
+          properties: const [],
+          context: Context.initial(),
+        );
+        expect(nameGenerator.generateModelName(model), r'$UserProfile');
+      });
+
+      test('preserves dollar sign in compound names', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: r'$raw_user_data',
+          properties: const [],
+          context: Context.initial(),
+        );
+        expect(nameGenerator.generateModelName(model), r'$RawUserData');
+      });
+
       test('combines context path components in PascalCase', () {
         final model = ClassModel(
           isDeprecated: false,

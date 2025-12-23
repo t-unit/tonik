@@ -58,22 +58,57 @@ class ClassGenerator {
   @visibleForTesting
   List<Spec> generateClasses(ClassModel model) {
     final className = nameManager.modelName(model);
+    final actualClassName = model.isNullable
+        ? nameManager.modelName(
+            AliasModel(
+              name: '\$Raw$className',
+              model: model,
+              context: model.context,
+            ),
+          )
+        : className;
+
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
-    final copyWithResult = _buildCopyWith(className, normalizedProperties);
+    final copyWithResult = _buildCopyWith(
+      actualClassName,
+      normalizedProperties,
+    );
 
     return [
-      generateClass(model, copyWithResult?.getter),
+      _generateClassWithName(
+        model,
+        actualClassName,
+        copyWithGetter: copyWithResult?.getter,
+      ),
       if (copyWithResult != null) ...[
         copyWithResult.interfaceClass,
         copyWithResult.implClass,
       ],
+      if (model.isNullable)
+        TypeDef(
+          (b) => b
+            ..name = className
+            ..definition = refer('$actualClassName?'),
+        ),
     ];
   }
 
   @visibleForTesting
   Class generateClass(ClassModel model, [Method? copyWithGetter]) {
     final className = nameManager.modelName(model);
+    return _generateClassWithName(
+      model,
+      className,
+      copyWithGetter: copyWithGetter,
+    );
+  }
+
+  Class _generateClassWithName(
+    ClassModel model,
+    String className, {
+    Method? copyWithGetter,
+  }) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
 
     final effectiveCopyWithGetter =
@@ -251,6 +286,7 @@ class ClassGenerator {
         generateSimpleDecodingExceptionExpression(
           'Simple encoding not supported for $className: '
           'contains complex types',
+          raw: true,
         ).statement,
       ]);
     }
@@ -693,6 +729,7 @@ if ($name != null) {
         ..body = generateEncodingExceptionExpression(
           'parameterProperties not supported for $className: '
           'contains complex types',
+          raw: true,
         ).code,
     );
   }
@@ -761,6 +798,7 @@ if ($name != null) {
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'contains complex types',
+              raw: true,
             ).statement,
             const Code('}}'),
           ]);
@@ -777,6 +815,7 @@ if ($name != null) {
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'contains complex types',
+              raw: true,
             ).statement,
             const Code('}'),
           ]);
@@ -872,6 +911,7 @@ if ($name != null) {
       return Block.of([
         generateFormatDecodingExceptionExpression(
           'Form encoding not supported for $className: contains complex types',
+          raw: true,
         ).statement,
       ]);
     }

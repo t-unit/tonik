@@ -32,7 +32,25 @@ class TypedefGenerator {
       _generateTypedefFromModel(model, model);
 
   TypeDef _generateTypedefFromModel(Model model, Model definition) {
-    final baseType = typeReference(definition, nameManager, package);
+    final isNullable = switch (model) {
+      AliasModel(isNullable: final nullable) => nullable,
+      ListModel(isNullable: final nullable) => nullable,
+      AllOfModel(isNullable: final nullable) => nullable,
+      OneOfModel(isNullable: final nullable) => nullable,
+      AnyOfModel(isNullable: final nullable) => nullable,
+      ClassModel(isNullable: final nullable) => nullable,
+      EnumModel(isNullable: final nullable) => nullable,
+      PrimitiveModel() => false,
+      NamedModel() => false,
+      CompositeModel() => false,
+    };
+
+    final baseType = typeReference(
+      definition,
+      nameManager,
+      package,
+      isNullableOverride: isNullable,
+    );
 
     return TypeDef(
       (b) => b

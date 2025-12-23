@@ -178,6 +178,7 @@ class ModelImporter {
         name: name,
         model: model,
         context: context,
+        isNullable: schema.isNullable ?? hasNullType,
       );
       _logModelAdded(model);
       models.add(model);
@@ -240,6 +241,7 @@ class ModelImporter {
       content: content,
       context: context,
       name: name,
+      isNullable: schema.isNullable ?? false,
     );
   }
 
@@ -257,6 +259,7 @@ class ModelImporter {
       context: modelContext,
       name: name,
       description: schema.description,
+      isNullable: schema.isNullable ?? false,
     );
 
     _addModelToSet(allOfModel);
@@ -295,6 +298,7 @@ class ModelImporter {
       name: name,
       discriminator: schema.discriminator?.propertyName,
       description: schema.description,
+      isNullable: schema.isNullable ?? false,
     );
 
     _addModelToSet(oneOfModel);
@@ -319,6 +323,7 @@ class ModelImporter {
       name: name,
       discriminator: schema.discriminator?.propertyName,
       description: schema.description,
+      isNullable: schema.isNullable ?? false,
     );
 
     _addModelToSet(anyOfModel);
@@ -349,6 +354,7 @@ class ModelImporter {
       properties: properties,
       context: context,
       description: schema.description,
+      isNullable: schema.isNullable ?? false,
     );
 
     if (schema.not != null) {
