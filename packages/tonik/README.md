@@ -15,13 +15,10 @@
 
 
 # Tonik
-A Dart code generator for OpenAPI 3.x specifications.
 
-## ⚠️ Warning
-This project is currently in the development phase. Users should expect:
-- Breaking changes in future releases
-- Potential bugs and issues
-- Missing features (see Roadmap)
+A Dart code generator for OpenAPI specifications that produces complete, ready-to-use client code. Tonik handles the tricky parts other generators miss: `oneOf`/`anyOf`/`allOf` composition, multiple response content types or status codes, integer enums, schema names that clash with Dart built-ins (like `Error` or `List`), and proper encoding for all OpenAPI parameter styles.
+
+**Supported versions:** OpenAPI 3.0 (full), 3.1 (partial/planned), 3.2 (partial/planned)
 
 
 ## Motivation
@@ -33,6 +30,7 @@ Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), 
 
 ## Features and Documentation
 
+- [Features Overview](https://github.com/t-unit/tonik/blob/main/docs/features.md)
 - [Configuration](https://github.com/t-unit/tonik/blob/main/docs/configuration.md)
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
 - [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
@@ -53,13 +51,13 @@ dart pub global activate tonik
 To generate client code you need the path to your OpenAPI specification file ready and define a name for the client package. 
 
 The package name should be snake_case following the official [guidelines](https://dart.dev/tools/pub/pubspec#name).
-The supplied API specification file can be written in json or yaml, and must use version 3.0.x or 3.1.x.
+The supplied API specification file can be written in json or yaml.
 
 ```bash
 tonik --package-name=my_api_client --spec=path/to/openapi.[yaml|json]
 ```
 
-Fore more information on how to configure the code generation see [Configuration]([https:](https://github.com/t-unit/tonik/blob/main/docs/configuration.md)).
+Fore more information on how to configure the code generation see [configuration]([https:](https://github.com/t-unit/tonik/blob/main/docs/configuration.md)).
 
 ### Usage of Generated Code
 
@@ -91,7 +89,7 @@ switch (response) {
 }
 ```
 
-Take a look at the [pet store integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart) and our full usage guide (coming soon) for more information.
+Take a look at the [pet store integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart). Furthermore check [features](https://github.com/t-unit/tonik/blob/main/docs/features.md) for more information.
 
 ## Changelog
 

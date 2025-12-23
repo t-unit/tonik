@@ -9,6 +9,8 @@
 - Default values
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
+- Cookies
+- multipart/form-data
 
 ## Non-goals
 - `allowReserved` support for query parameters - Dart's `Uri` class always percent-encodes reserved characters per RFC 3986 (see [URI Encoding Limitations](uri_encoding_limitations.md))

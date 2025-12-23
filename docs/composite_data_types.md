@@ -1,8 +1,16 @@
-### Composite Data Types (Tonik-generated code)
+# Composite Data Types
 
-This guide shows, at a glance, what Tonik generates for OpenAPI `oneOf`, `anyOf`, and `allOf`, how you use the resulting Dart types, and when things can’t be encoded/decoded. It is user-focused and avoids internal details. See `docs/data_types.md` for primitives.
+OpenAPI's composition keywords (`oneOf`, `anyOf`, `allOf`) let you describe complex type relationships. Tonik generates idiomatic Dart code for each pattern using sealed classes and nullable fields. This guide shows what gets generated and how to use it.
 
-## oneOf: exclusive choice
+For primitive type mappings, see [Data Types](data_types.md).
+
+---
+
+## oneOf: Exactly One Of
+
+Use `oneOf` when a value must be **exactly one** of several types—like a tagged union or sum type.
+
+**What Tonik generates:** A sealed base class with a subclass for each variant. Pattern matching lets you handle each case safely.
 
 OAS input (example):
 ```yaml
@@ -31,11 +39,7 @@ components:
         code: { type: integer }
 ```
 
-What Tonik generates conceptually:
-- A union-like base class `Result` with one subclass per variant (for example `ResultSuccess`, `ResultError`).
-- Each subclass wraps the underlying model instance (`Success`, `Error`).
-
-How to use it:
+**Example usage:**
 ```dart
 // Construct a variant (use the variant subclass, not the base type)
 final r1 = ResultSuccess(Success(type: 'success', message: 'done'));
@@ -52,16 +56,21 @@ final text = switch (roundtrip) {
 };
 ```
 
-Notes:
-- Construct via a variant subclass (for example `ResultSuccess(...)`), not the base `Result`.
-- When a discriminator is present, the discriminator value is preserved on encode and used on decode to select the variant.
+**Tips:**
+- Construct via the variant subclass (`ResultSuccess(...)`), not the base `Result`
+- With a discriminator, the value is preserved on encode and used on decode to select the variant
 
-When things won’t work smoothly (high level):
-- No discriminator and overlapping shapes: decoding may be ambiguous and fail.
-- A discriminator that is missing or inconsistent in payloads: decoding fails.
-- Arrays or primitives as variants are supported, but deeply overlapping shapes can still be ambiguous.
+**Limitations:**
+- Without a discriminator, overlapping shapes may cause ambiguous decoding
+- Discriminator values must be present and consistent in payloads
 
-## anyOf: flexible choice
+---
+
+## anyOf: Any Combination
+
+Use `anyOf` when a value could match **one or more** schemas—though typically you'll use just one.
+
+**What Tonik generates:** A single class with nullable fields for each alternative. Set the field(s) that apply.
 
 OAS input (example):
 ```yaml
@@ -78,10 +87,7 @@ components:
         id: { type: integer }
 ```
 
-What Tonik generates conceptually:
-- A single class `SearchKey` with nullable fields for each alternative (for example `string`, `user`). You typically set exactly one.
-
-How to use it:
+**Example usage:**
 ```dart
 // As a primitive
 final k1 = SearchKey(string: 'alice');
@@ -94,12 +100,17 @@ final json2 = k2.toJson();
 final back2 = SearchKey.fromJson(json2);
 ```
 
-When things won’t work smoothly (high level):
-- Multiple alternatives set at once that serialize to different representations: encoding fails as ambiguous.
-- Mixing primitive and object alternatives at the same time: simple or JSON encoding can be ambiguous and fail.
-- Overlapping object alternatives without a discriminator: decoding can be ambiguous and fail.
+**Limitations:**
+- Setting multiple alternatives with incompatible representations causes ambiguous encoding
+- Overlapping object alternatives without a discriminator may fail to decode
 
-## allOf: composition
+---
+
+## allOf: Merge All
+
+Use `allOf` to **combine multiple schemas** into one—like mixing in traits or extending a base type.
+
+**What Tonik generates:** A class with one field per member schema. JSON encoding merges all members into a single object.
 
 OAS input (example):
 ```yaml
@@ -122,11 +133,7 @@ components:
         updatedAt: { type: string, format: date-time }
 ```
 
-What Tonik generates conceptually:
-- A class `Entity` containing one field for each member schema (for example `base`, `timestamps`).
-- JSON/simple encoding merges the members’ representations.
-
-How to use it:
+**Example usage:**
 ```dart
 final e = Entity(
   base: Base(id: '42'),
@@ -136,17 +143,21 @@ final json = e.toJson();
 final parsed = Entity.fromJson(json);
 ```
 
-When things won’t work smoothly (high level):
-- Members that would conflict on the same JSON keys/types: encoding or decoding fails.
-- Including complex nested structures might make simple (query/path) encoding unsupported.
+**Limitations:**
+- Member schemas with conflicting JSON keys will fail to encode/decode
+- Complex nested structures may not support query/path parameter encoding
 
-## Arrays and nesting
+---
+
+## Arrays and Nesting
 
 Compositions can appear inside arrays and other models. For example, an array of a `oneOf` generates a list of the union type; you create elements using the generated variant subclasses.
 
-## Naming notes
+## Naming
 
-- Class and file names derive from your schema names; `oneOf` variants are prefixed by their base type.
-- Discriminator values (when present) influence variant naming and decoding.
+- Generated names derive from your schema names
+- `oneOf` variants are prefixed by their base type (e.g., `ResultSuccess`, `ResultError`)
+- Discriminator values influence variant naming when present
+- Override any name with `x-dart-name` or [configuration](configuration.md)
 
 
