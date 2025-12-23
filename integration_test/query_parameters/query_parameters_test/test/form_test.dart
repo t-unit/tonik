@@ -1,7 +1,7 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:dio/dio.dart';
-import 'package:test/test.dart';
 import 'package:query_parameters_api/query_parameters_api.dart';
+import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 import 'test_helper.dart';
@@ -43,7 +43,7 @@ void main() {
 
     test('double', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPrimitive(double: 1.0);
+      final response = await api.testFormPrimitive(double: 1);
 
       expect(response, isA<TonikSuccess<void>>());
 
@@ -133,7 +133,7 @@ void main() {
     test('class', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        $class: Class(name: 'test', age: 1),
+        $class: const Class(name: 'test', age: 1),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -147,7 +147,7 @@ void main() {
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        classNested: ClassNested(
+        classNested: const ClassNested(
           name: 'test',
           age: 1,
           nested: Class(name: 'test', age: 1),
@@ -175,7 +175,7 @@ void main() {
     test('classAlias', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        classAlias: ClassAlias(name: 'test', age: 1),
+        classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -189,7 +189,7 @@ void main() {
     test('anyOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        anyOfPrimitive: AnyOfPrimitive(string: 'test'),
+        anyOfPrimitive: const AnyOfPrimitive(string: 'test'),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -200,7 +200,7 @@ void main() {
     test('anyOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        anyOfComplex: AnyOfComplex($class: Class(name: 'test', age: 1)),
+        anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -214,7 +214,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        oneOfPrimitive: OneOfPrimitiveString('test'),
+        oneOfPrimitive: const OneOfPrimitiveString('test'),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -225,7 +225,7 @@ void main() {
     test('oneOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        oneOfComplex: OneOfComplexClassModel(
+        oneOfComplex: const OneOfComplexClassModel(
           OneOfComplexModel(value: 'test', amount: 1),
         ),
       );
@@ -241,7 +241,7 @@ void main() {
     test('allOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        allOfPrimitive: AllOfPrimitive(string: '1', int: 1),
+        allOfPrimitive: const AllOfPrimitive(string: '1', int: 1),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -252,7 +252,7 @@ void main() {
     test('allOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        allOfComplex: AllOfComplex(
+        allOfComplex: const AllOfComplex(
           $class: Class(name: 'test', age: 1),
           allOfComplexModel: AllOfComplexModel(value: 'test', amount: 1),
         ),
@@ -271,7 +271,7 @@ void main() {
     test('class', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        $class: Class(name: 'test', age: 1),
+        $class: const Class(name: 'test', age: 1),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -285,7 +285,7 @@ void main() {
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        classNested: ClassNested(
+        classNested: const ClassNested(
           name: 'test',
           age: 1,
           nested: Class(name: 'test', age: 1),
@@ -313,7 +313,7 @@ void main() {
     test('classAlias', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        classAlias: ClassAlias(name: 'test', age: 1),
+        classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -327,7 +327,7 @@ void main() {
     test('anyOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        anyOfPrimitive: AnyOfPrimitive(string: 'test'),
+        anyOfPrimitive: const AnyOfPrimitive(string: 'test'),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -338,7 +338,7 @@ void main() {
     test('anyOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        anyOfComplex: AnyOfComplex($class: Class(name: 'test', age: 1)),
+        anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -352,7 +352,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        oneOfPrimitive: OneOfPrimitiveString('test'),
+        oneOfPrimitive: const OneOfPrimitiveString('test'),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -363,7 +363,7 @@ void main() {
     test('oneOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        oneOfComplex: OneOfComplexClassModel(
+        oneOfComplex: const OneOfComplexClassModel(
           OneOfComplexModel(value: 'test', amount: 1),
         ),
       );
@@ -379,7 +379,7 @@ void main() {
     test('allOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        allOfPrimitive: AllOfPrimitive(string: '1', int: 1),
+        allOfPrimitive: const AllOfPrimitive(string: '1', int: 1),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -390,7 +390,7 @@ void main() {
     test('allOfComplex', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        allOfComplex: AllOfComplex(
+        allOfComplex: const AllOfComplex(
           $class: Class(name: 'test', age: 1),
           allOfComplexModel: AllOfComplexModel(value: 'test', amount: 1),
         ),
@@ -422,7 +422,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormList(
-        listOneOfPrimitive: [OneOfPrimitiveString('test')],
+        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -436,7 +436,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormList(
         listOneOfComplex: [
-          OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1)),
+          const OneOfComplexClassModel(
+            OneOfComplexModel(value: 'test', amount: 1),
+          ),
         ],
       );
       expect(response, isA<TonikError<void>>());
@@ -448,7 +450,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormList(
         listOneOfComplexMixed: [
-          FormListParametersArrayOneOfModelClass(Class(name: 'test', age: 1)),
+          const FormListParametersArrayOneOfModelClass(
+            Class(name: 'test', age: 1),
+          ),
         ],
       );
       expect(response, isA<TonikError<void>>());
@@ -459,7 +463,7 @@ void main() {
     test('listOneOfComplexMixed - simple', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormList(
-        listOneOfComplexMixed: [FormListParametersArrayOneOfModelInt(1)],
+        listOneOfComplexMixed: [const FormListParametersArrayOneOfModelInt(1)],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -487,7 +491,7 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormListExplode(
-        listOneOfPrimitive: [OneOfPrimitiveString('test')],
+        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -501,7 +505,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormListExplode(
         listOneOfComplex: [
-          OneOfComplexClassModel(OneOfComplexModel(value: 'test', amount: 1)),
+          const OneOfComplexClassModel(
+            OneOfComplexModel(value: 'test', amount: 1),
+          ),
         ],
       );
       expect(response, isA<TonikError<void>>());
@@ -547,7 +553,7 @@ void main() {
 
     test('nullableString with null', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPrimitive(nullableString: null);
+      final response = await api.testFormPrimitive();
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -565,7 +571,7 @@ void main() {
 
     test('nullableInteger with null', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPrimitive(nullableInteger: null);
+      final response = await api.testFormPrimitive();
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -586,7 +592,7 @@ void main() {
     test('nullableClass with value', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        nullableClass: NullableClass(name: 'test', age: 25),
+        nullableClass: const NullableClass(name: 'test', age: 25),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -599,7 +605,7 @@ void main() {
 
     test('nullableClass with null', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormComplex(nullableClass: null);
+      final response = await api.testFormComplex();
 
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
@@ -609,7 +615,7 @@ void main() {
     test('deeplyNestedClass', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(
-        deeplyNestedClass: DeeplyNestedClass(
+        deeplyNestedClass: const DeeplyNestedClass(
           name: 'outer',
           nested: ClassNested(
             name: 'middle',
@@ -644,7 +650,7 @@ void main() {
     test('nullableClass with value', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        nullableClass: NullableClass(name: 'test', age: null),
+        nullableClass: const NullableClass(name: 'test'),
       );
 
       expect(response, isA<TonikSuccess<void>>());
@@ -658,7 +664,7 @@ void main() {
     test('deeplyNestedClass', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(
-        deeplyNestedClass: DeeplyNestedClass(
+        deeplyNestedClass: const DeeplyNestedClass(
           name: 'outer',
           nested: ClassNested(
             name: 'middle',

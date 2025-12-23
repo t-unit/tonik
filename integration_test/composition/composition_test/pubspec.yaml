@@ -7,9 +7,9 @@ environment:
   sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
-  dio: ^5.8.0
   composition_api:
     path: ../composition_api
+  dio: ^5.8.0
   path: ^1.9.1
   tonik_util: ^0.1.0
 

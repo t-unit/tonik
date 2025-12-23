@@ -8,7 +8,7 @@ void main() {
       late OneOfPrimitive oneOf;
 
       setUp(() {
-        oneOf = OneOfPrimitiveString('string');
+        oneOf = const OneOfPrimitiveString('string');
       });
 
       test('toJson', () {
@@ -92,7 +92,7 @@ void main() {
       late OneOfPrimitive oneOf;
 
       setUp(() {
-        oneOf = OneOfPrimitiveString('foo%bar&baz=qux');
+        oneOf = const OneOfPrimitiveString('foo%bar&baz=qux');
       });
 
       test('toJson', () {
@@ -194,7 +194,7 @@ void main() {
       late OneOfPrimitive oneOf;
 
       setUp(() {
-        oneOf = OneOfPrimitiveInt(1);
+        oneOf = const OneOfPrimitiveInt(1);
       });
 
       test('toJson', () {
@@ -280,7 +280,7 @@ void main() {
       late OneOfComplex oneOf;
 
       setUp(() {
-        oneOf = OneOfComplexClass1(Class1(name: 'Kate'));
+        oneOf = const OneOfComplexClass1(Class1(name: 'Kate'));
       });
 
       test('toJson', () {
@@ -364,7 +364,7 @@ void main() {
       late OneOfComplex oneOf;
 
       setUp(() {
-        oneOf = OneOfComplexClass2(Class2(number: 1));
+        oneOf = const OneOfComplexClass2(Class2(number: 1));
       });
 
       test('toJson', () {
@@ -450,7 +450,7 @@ void main() {
       late OneOfEnum oneOf;
 
       setUp(() {
-        oneOf = OneOfEnumEnum1(Enum1.value1);
+        oneOf = const OneOfEnumEnum1(Enum1.value1);
       });
 
       test('toJson', () {
@@ -534,7 +534,7 @@ void main() {
       late OneOfEnum oneOf;
 
       setUp(() {
-        oneOf = OneOfEnumEnum2(Enum2.one);
+        oneOf = const OneOfEnumEnum2(Enum2.one);
       });
 
       test('toJson', () {
@@ -620,7 +620,7 @@ void main() {
       late OneOfMixed oneOf;
 
       setUp(() {
-        oneOf = OneOfMixedString('my value');
+        oneOf = const OneOfMixedString('my value');
       });
 
       test('toJson', () {
@@ -704,7 +704,7 @@ void main() {
       late OneOfMixed oneOf;
 
       setUp(() {
-        oneOf = OneOfMixedClass1(Class1(name: 'Kate'));
+        oneOf = const OneOfMixedClass1(Class1(name: 'Kate'));
       });
 
       test('toJson', () {
@@ -788,7 +788,7 @@ void main() {
       late OneOfMixed oneOf;
 
       setUp(() {
-        oneOf = OneOfMixedEnum1(Enum1.value2);
+        oneOf = const OneOfMixedEnum1(Enum1.value2);
       });
 
       test('toJson', () {
@@ -798,8 +798,10 @@ void main() {
       test('json roundtrip', () {
         final json = oneOf.toJson();
         final reconstructed = OneOfMixed.fromJson(json);
-        // Ambiguous: Enum1.value2 serializes to 'value2', which is indistinguishable
-        // from a plain string. Without discriminators, any valid variant is acceptable.
+        // Ambiguous: Enum1.value2 serializes to 'value2', which is
+        // indistinguishable
+        // from a plain string. Without discriminators, any valid
+        // variant is acceptable.
         expect(
           reconstructed,
           anyOf([
@@ -820,8 +822,9 @@ void main() {
       test('form roundtrip - explode true', () {
         final form = oneOf.toForm(explode: true, allowEmpty: true);
         final reconstructed = OneOfMixed.fromForm(form, explode: true);
-        // Ambiguous: Enum1.value2 encodes to 'value2', which is indistinguishable
-        // from a plain string. Without discriminators, any valid variant is acceptable.
+        // Ambiguous: Enum1.value2 encodes to 'value2', which is
+        // indistinguishable from a plain string. Without discriminators, any
+        // valid variant is acceptable.
         expect(
           reconstructed,
           anyOf([
@@ -842,8 +845,9 @@ void main() {
       test('form roundtrip - explode false', () {
         final form = oneOf.toForm(explode: false, allowEmpty: true);
         final reconstructed = OneOfMixed.fromForm(form, explode: false);
-        // Ambiguous: Enum1.value2 encodes to 'value2', which is indistinguishable
-        // from a plain string. Without discriminators, any valid variant is acceptable.
+        // Ambiguous: Enum1.value2 encodes to 'value2', which is
+        // indistinguishable from a plain string. Without discriminators,
+        // any valid variant is acceptable.
         expect(
           reconstructed,
           anyOf([
@@ -864,8 +868,9 @@ void main() {
       test('simple roundtrip - explode true', () {
         final simple = oneOf.toSimple(explode: true, allowEmpty: true);
         final reconstructed = OneOfMixed.fromSimple(simple, explode: true);
-        // Ambiguous: Enum1.value2 encodes to 'value2', which is indistinguishable
-        // from a plain string. Without discriminators, any valid variant is acceptable.
+        // Ambiguous: Enum1.value2 encodes to 'value2', which is
+        // indistinguishable from a plain string. Without discriminators,
+        // any valid variant is acceptable.
         expect(
           reconstructed,
           anyOf([
@@ -886,8 +891,9 @@ void main() {
       test('simple roundtrip - explode false', () {
         final simple = oneOf.toSimple(explode: false, allowEmpty: true);
         final reconstructed = OneOfMixed.fromSimple(simple, explode: false);
-        // Ambiguous: Enum1.value2 encodes to 'value2', which is indistinguishable
-        // from a plain string. Without discriminators, any valid variant is acceptable.
+        // Ambiguous: Enum1.value2 encodes to 'value2', which is
+        // indistinguishable from a plain string. Without discriminators,
+        // any valid variant is acceptable.
         expect(
           reconstructed,
           anyOf([
@@ -935,7 +941,7 @@ void main() {
         late NestedOneOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedOneOfInOneOfOneOfPrimitive(
+          oneOf = const NestedOneOfInOneOfOneOfPrimitive(
             OneOfPrimitiveString('string'),
           );
         });
@@ -1033,7 +1039,7 @@ void main() {
         late NestedOneOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveInt(1));
+          oneOf = const NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveInt(1));
         });
 
         test('toJson', () {
@@ -1131,7 +1137,7 @@ void main() {
         late NestedOneOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedOneOfInOneOfOneOfComplex(
+          oneOf = const NestedOneOfInOneOfOneOfComplex(
             OneOfComplexClass1(Class1(name: 'Mark')),
           );
         });
@@ -1229,7 +1235,7 @@ void main() {
         late NestedOneOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedOneOfInOneOfOneOfComplex(
+          oneOf = const NestedOneOfInOneOfOneOfComplex(
             OneOfComplexClass2(Class2(number: 2)),
           );
         });
@@ -1331,7 +1337,7 @@ void main() {
         late NestedAllOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAllOfInOneOfAllOfComplex(
+          oneOf = const NestedAllOfInOneOfAllOfComplex(
             AllOfComplex(
               class1: Class1(name: 'Mark'),
               class2: Class2(number: 2),
@@ -1452,7 +1458,7 @@ void main() {
         late NestedAllOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAllOfInOneOfString('Peter');
+          oneOf = const NestedAllOfInOneOfString('Peter');
         });
 
         test('toJson', () {
@@ -1552,7 +1558,7 @@ void main() {
         late NestedAnyOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1));
+          oneOf = const NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1));
         });
 
         test('toJson', () {
@@ -1566,7 +1572,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1, enum2: Enum2.one)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 1, enum2: Enum2.one),
+            ),
           );
         });
 
@@ -1584,7 +1592,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1, enum2: Enum2.one)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 1, enum2: Enum2.one),
+            ),
           );
         });
 
@@ -1602,7 +1612,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1, enum2: Enum2.one)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 1, enum2: Enum2.one),
+            ),
           );
         });
 
@@ -1620,7 +1632,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1, enum2: Enum2.one)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 1, enum2: Enum2.one),
+            ),
           );
         });
 
@@ -1638,7 +1652,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 1, enum2: Enum2.one)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 1, enum2: Enum2.one),
+            ),
           );
         });
 
@@ -1673,7 +1689,7 @@ void main() {
         late NestedAnyOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAnyOfInOneOfAnyOfMixed(
+          oneOf = const NestedAnyOfInOneOfAnyOfMixed(
             AnyOfMixed(class2: Class2(number: 2)),
           );
         });
@@ -1771,7 +1787,9 @@ void main() {
         late NestedAnyOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(enum2: Enum2.two));
+          oneOf = const NestedAnyOfInOneOfAnyOfMixed(
+            AnyOfMixed(enum2: Enum2.two),
+          );
         });
 
         test('toJson', () {
@@ -1785,7 +1803,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 2, enum2: Enum2.two)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 2, enum2: Enum2.two),
+            ),
           );
         });
 
@@ -1803,7 +1823,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 2, enum2: Enum2.two)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 2, enum2: Enum2.two),
+            ),
           );
         });
 
@@ -1821,7 +1843,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 2, enum2: Enum2.two)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 2, enum2: Enum2.two),
+            ),
           );
         });
 
@@ -1839,7 +1863,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 2, enum2: Enum2.two)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 2, enum2: Enum2.two),
+            ),
           );
         });
 
@@ -1857,7 +1883,9 @@ void main() {
           // Decoder will match all valid variants.
           expect(
             reconstructed,
-            NestedAnyOfInOneOfAnyOfMixed(AnyOfMixed(int: 2, enum2: Enum2.two)),
+            const NestedAnyOfInOneOfAnyOfMixed(
+              AnyOfMixed(int: 2, enum2: Enum2.two),
+            ),
           );
         });
 
@@ -1892,7 +1920,7 @@ void main() {
         late NestedAnyOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAnyOfInOneOfAnyOfMixed(
+          oneOf = const NestedAnyOfInOneOfAnyOfMixed(
             AnyOfMixed(int: 1, class2: Class2(number: 2), enum2: Enum2.two),
           );
         });
@@ -1947,7 +1975,7 @@ void main() {
         late NestedAnyOfInOneOf oneOf;
 
         setUp(() {
-          oneOf = NestedAnyOfInOneOfBool(false);
+          oneOf = const NestedAnyOfInOneOfBool(false);
         });
 
         test('toJson', () {
@@ -2006,7 +2034,7 @@ void main() {
           late DeepNestedOneOf oneOf;
 
           setUp(() {
-            oneOf = DeepNestedOneOfNestedOneOfInOneOf(
+            oneOf = const DeepNestedOneOfNestedOneOfInOneOf(
               NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveString('string')),
             );
           });
@@ -2101,7 +2129,7 @@ void main() {
           late DeepNestedOneOf oneOf;
 
           setUp(() {
-            oneOf = DeepNestedOneOfNestedOneOfInOneOf(
+            oneOf = const DeepNestedOneOfNestedOneOfInOneOf(
               NestedOneOfInOneOfOneOfPrimitive(OneOfPrimitiveInt(1)),
             );
           });
@@ -2198,7 +2226,7 @@ void main() {
           late DeepNestedOneOf oneOf;
 
           setUp(() {
-            oneOf = DeepNestedOneOfNestedOneOfInOneOf(
+            oneOf = const DeepNestedOneOfNestedOneOfInOneOf(
               NestedOneOfInOneOfOneOfComplex(
                 OneOfComplexClass1(Class1(name: 'Mark')),
               ),
@@ -2212,11 +2240,12 @@ void main() {
           test('json roundtrip', () {
             final json = oneOf.toJson();
             final reconstructed = DeepNestedOneOf.fromJson(json);
-            // Ambiguous oneOf: Class1 appears both as a direct variant and nested in NestedOneOfInOneOf.
-            // The decoder tries variants in order and returns the first match (DeepNestedOneOfClass1).
+            // Ambiguous oneOf: Class1 appears both as a direct variant
+            // and nested in NestedOneOfInOneOf. The decoder tries variants
+            // in order and returns the first match (DeepNestedOneOfClass1).
             expect(
               reconstructed,
-              anyOf(oneOf, DeepNestedOneOfClass1(Class1(name: 'Mark'))),
+              anyOf(oneOf, const DeepNestedOneOfClass1(Class1(name: 'Mark'))),
             );
           });
 
@@ -2227,11 +2256,12 @@ void main() {
           test('form roundtrip - explode true', () {
             final form = oneOf.toForm(explode: true, allowEmpty: true);
             final reconstructed = DeepNestedOneOf.fromForm(form, explode: true);
-            // Ambiguous oneOf: Class1 appears both as a direct variant and nested in NestedOneOfInOneOf.
-            // The decoder tries variants in order and returns the first match (DeepNestedOneOfClass1).
+            // Ambiguous oneOf: Class1 appears both as a direct variant
+            // and nested in NestedOneOfInOneOf. The decoder tries variants
+            // in order and returns the first match (DeepNestedOneOfClass1).
             expect(
               reconstructed,
-              anyOf(oneOf, DeepNestedOneOfClass1(Class1(name: 'Mark'))),
+              anyOf(oneOf, const DeepNestedOneOfClass1(Class1(name: 'Mark'))),
             );
           });
 
@@ -2245,11 +2275,13 @@ void main() {
               form,
               explode: false,
             );
-            // Ambiguous oneOf: Class1 appears both as a direct variant and nested in NestedOneOfInOneOf.
-            // The decoder tries variants in order and returns the first match (DeepNestedOneOfClass1).
+            // Ambiguous oneOf: Class1 appears both as a direct variant
+            // and nested in NestedOneOfInOneOf.
+            // The decoder tries variants in order and returns the first
+            // match (DeepNestedOneOfClass1).
             expect(
               reconstructed,
-              anyOf(oneOf, DeepNestedOneOfClass1(Class1(name: 'Mark'))),
+              anyOf(oneOf, const DeepNestedOneOfClass1(Class1(name: 'Mark'))),
             );
           });
 
@@ -2266,11 +2298,12 @@ void main() {
               simple,
               explode: true,
             );
-            // Ambiguous oneOf: Class1 appears both as a direct variant and nested in NestedOneOfInOneOf.
-            // The decoder tries variants in order and returns the first match (DeepNestedOneOfClass1).
+            // Ambiguous oneOf: Class1 appears both as a direct variant
+            // and nested in NestedOneOfInOneOf. The decoder tries variants
+            // in order and returns the first match (DeepNestedOneOfClass1).
             expect(
               reconstructed,
-              anyOf(oneOf, DeepNestedOneOfClass1(Class1(name: 'Mark'))),
+              anyOf(oneOf, const DeepNestedOneOfClass1(Class1(name: 'Mark'))),
             );
           });
 
@@ -2287,11 +2320,13 @@ void main() {
               simple,
               explode: false,
             );
-            // Ambiguous oneOf: Class1 appears both as a direct variant and nested in NestedOneOfInOneOf.
-            // The decoder tries variants in order and returns the first match (DeepNestedOneOfClass1).
+            // Ambiguous oneOf: Class1 appears both as a direct variant
+            // and nested in NestedOneOfInOneOf.
+            // The decoder tries variants in order and returns the first
+            // match (DeepNestedOneOfClass1).
             expect(
               reconstructed,
-              anyOf(oneOf, DeepNestedOneOfClass1(Class1(name: 'Mark'))),
+              anyOf(oneOf, const DeepNestedOneOfClass1(Class1(name: 'Mark'))),
             );
           });
 
@@ -2332,7 +2367,7 @@ void main() {
           late DeepNestedOneOf oneOf;
 
           setUp(() {
-            oneOf = DeepNestedOneOfNestedOneOfInOneOf(
+            oneOf = const DeepNestedOneOfNestedOneOfInOneOf(
               NestedOneOfInOneOfOneOfComplex(
                 OneOfComplexClass2(Class2(number: 2)),
               ),
@@ -2438,7 +2473,7 @@ void main() {
         late DeepNestedOneOf oneOf;
 
         setUp(() {
-          oneOf = DeepNestedOneOfClass1(Class1(name: 'Mark'));
+          oneOf = const DeepNestedOneOfClass1(Class1(name: 'Mark'));
         });
 
         test('toJson', () {
@@ -2532,7 +2567,7 @@ void main() {
         late TwoLevelOneOf oneOf;
 
         setUp(() {
-          oneOf = TwoLevelOneOfOneOf(TwoLevelOneOfModelString('Mark'));
+          oneOf = const TwoLevelOneOfOneOf(TwoLevelOneOfModelString('Mark'));
         });
 
         test('toJson', () {
@@ -2619,7 +2654,7 @@ void main() {
         late TwoLevelOneOf oneOf;
 
         setUp(() {
-          oneOf = TwoLevelOneOfOneOf(TwoLevelOneOfModelInt(1));
+          oneOf = const TwoLevelOneOfOneOf(TwoLevelOneOfModelInt(1));
         });
 
         test('toJson', () {
@@ -2708,7 +2743,7 @@ void main() {
         late TwoLevelOneOf oneOf;
 
         setUp(() {
-          oneOf = TwoLevelOneOfBool(false);
+          oneOf = const TwoLevelOneOfBool(false);
         });
 
         test('toJson', () {
@@ -2799,7 +2834,7 @@ void main() {
         late TwoLevelMixedOneOfAllOf oneOf;
 
         setUp(() {
-          oneOf = TwoLevelMixedOneOfAllOfAllOf(
+          oneOf = const TwoLevelMixedOneOfAllOfAllOf(
             TwoLevelMixedOneOfAllOfAllOfModel(
               class1: Class1(name: 'Mark'),
               twoLevelMixedOneOfAllOfAllOfModel2:
@@ -2831,13 +2866,15 @@ void main() {
             form,
             explode: true,
           );
-          // Ambiguous oneOf: AllOf variant encodes to string form that matches the string variant.
-          // The decoder tries string first and succeeds, returning TwoLevelMixedOneOfAllOfString.
+          // Ambiguous oneOf: AllOf variant encodes to string form that
+          // matches the string variant.
+          // The decoder tries string first and succeeds, returning
+          // TwoLevelMixedOneOfAllOfString.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              TwoLevelMixedOneOfAllOfString('name=Mark&timestamp=400'),
+              const TwoLevelMixedOneOfAllOfString('name=Mark&timestamp=400'),
             ),
           );
         });
@@ -2855,13 +2892,15 @@ void main() {
             form,
             explode: false,
           );
-          // Ambiguous oneOf: AllOf variant encodes to string form that matches the string variant.
-          // The decoder tries string first and succeeds, returning TwoLevelMixedOneOfAllOfString.
+          // Ambiguous oneOf: AllOf variant encodes to string form that
+          // matches the string variant.
+          // The decoder tries string first and succeeds, returning
+          // TwoLevelMixedOneOfAllOfString.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              TwoLevelMixedOneOfAllOfString('name,Mark,timestamp,400'),
+              const TwoLevelMixedOneOfAllOfString('name,Mark,timestamp,400'),
             ),
           );
         });
@@ -2879,13 +2918,15 @@ void main() {
             simple,
             explode: true,
           );
-          // Ambiguous oneOf: AllOf variant encodes to string form that matches the string variant.
-          // The decoder tries string first and succeeds, returning TwoLevelMixedOneOfAllOfString.
+          // Ambiguous oneOf: AllOf variant encodes to string form that
+          // matches the string variant.
+          // The decoder tries string first and succeeds, returning
+          // TwoLevelMixedOneOfAllOfString.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              TwoLevelMixedOneOfAllOfString('name=Mark,timestamp=400'),
+              const TwoLevelMixedOneOfAllOfString('name=Mark,timestamp=400'),
             ),
           );
         });
@@ -2903,13 +2944,15 @@ void main() {
             simple,
             explode: false,
           );
-          // Ambiguous oneOf: AllOf variant encodes to string form that matches the string variant.
-          // The decoder tries string first and succeeds, returning TwoLevelMixedOneOfAllOfString.
+          // Ambiguous oneOf: AllOf variant encodes to string form that
+          // matches the string variant.
+          // The decoder tries string first and succeeds, returning
+          // TwoLevelMixedOneOfAllOfString.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              TwoLevelMixedOneOfAllOfString('name,Mark,timestamp,400'),
+              const TwoLevelMixedOneOfAllOfString('name,Mark,timestamp,400'),
             ),
           );
         });
@@ -2952,7 +2995,7 @@ void main() {
       late TwoLevelMixedOneOfAllOf oneOf;
 
       setUp(() {
-        oneOf = TwoLevelMixedOneOfAllOfString('Mark');
+        oneOf = const TwoLevelMixedOneOfAllOfString('Mark');
       });
 
       test('toJson', () {
@@ -3052,7 +3095,7 @@ void main() {
           late ThreeLevelOneOf oneOf;
 
           setUp(() {
-            oneOf = ThreeLevelOneOfOneOf(
+            oneOf = const ThreeLevelOneOfOneOf(
               ThreeLevelOneOfModelOneOf(
                 ThreeLevelOneOfOneOfModelString('string'),
               ),
@@ -3149,7 +3192,7 @@ void main() {
           late ThreeLevelOneOf oneOf;
 
           setUp(() {
-            oneOf = ThreeLevelOneOfOneOf(
+            oneOf = const ThreeLevelOneOfOneOf(
               ThreeLevelOneOfModelOneOf(ThreeLevelOneOfOneOfModelInt(1)),
             );
           });
@@ -3161,9 +3204,10 @@ void main() {
           test('json roundtrip', () {
             final json = oneOf.toJson();
             final reconstructed = ThreeLevelOneOf.fromJson(json);
-            // Ambiguous oneOf: integer (nested) and number (direct) both match numeric values.
-            // The decoder checks for num type first and returns ThreeLevelOneOfNumber.
-            expect(reconstructed, anyOf(oneOf, ThreeLevelOneOfNumber(1)));
+            // Ambiguous oneOf: integer (nested) and number (direct) both
+            // match numeric values. The decoder checks for num type first
+            // and returns ThreeLevelOneOfNumber.
+            expect(reconstructed, anyOf(oneOf, const ThreeLevelOneOfNumber(1)));
           });
 
           test('toForm - explode true', () {
@@ -3173,9 +3217,10 @@ void main() {
           test('form roundtrip - explode true', () {
             final form = oneOf.toForm(explode: true, allowEmpty: true);
             final reconstructed = ThreeLevelOneOf.fromForm(form, explode: true);
-            // Ambiguous oneOf: integer (nested) and number (direct) both match numeric values.
-            // The decoder tries to decode as double first and succeeds, returning ThreeLevelOneOfNumber.
-            expect(reconstructed, anyOf(oneOf, ThreeLevelOneOfNumber(1)));
+            // Ambiguous oneOf: integer (nested) and number (direct) both
+            // match numeric values. The decoder tries to decode as double
+            // first and succeeds, returning ThreeLevelOneOfNumber.
+            expect(reconstructed, anyOf(oneOf, const ThreeLevelOneOfNumber(1)));
           });
 
           test('toForm - explode false', () {
@@ -3188,9 +3233,11 @@ void main() {
               form,
               explode: false,
             );
-            // Ambiguous oneOf: integer (nested) and number (direct) both match numeric values.
-            // The decoder tries to decode as double first and succeeds, returning ThreeLevelOneOfNumber.
-            expect(reconstructed, anyOf(oneOf, ThreeLevelOneOfNumber(1)));
+            // Ambiguous oneOf: integer (nested) and number (direct) both
+            // match numeric values.
+            // The decoder tries to decode as double first and succeeds,
+            // returning ThreeLevelOneOfNumber.
+            expect(reconstructed, anyOf(oneOf, const ThreeLevelOneOfNumber(1)));
           });
 
           test('toSimple - explode true', () {
@@ -3203,9 +3250,10 @@ void main() {
               simple,
               explode: true,
             );
-            // Ambiguous oneOf: integer (nested) and number (direct) both match numeric values.
-            // The decoder tries to decode as double first and succeeds, returning ThreeLevelOneOfNumber.
-            expect(reconstructed, anyOf(oneOf, ThreeLevelOneOfNumber(1)));
+            // Ambiguous oneOf: integer (nested) and number (direct) both
+            // match numeric values. The decoder tries to decode as double
+            // first and succeeds, returning ThreeLevelOneOfNumber.
+            expect(reconstructed, anyOf(oneOf, const ThreeLevelOneOfNumber(1)));
           });
 
           test('toSimple - explode false', () {
@@ -3218,9 +3266,11 @@ void main() {
               simple,
               explode: false,
             );
-            // Ambiguous oneOf: integer (nested) and number (direct) both match numeric values.
-            // The decoder tries to decode as double first and succeeds, returning ThreeLevelOneOfNumber.
-            expect(reconstructed, anyOf(oneOf, ThreeLevelOneOfNumber(1)));
+            // Ambiguous oneOf: integer (nested) and number (direct) both
+            // match numeric values.
+            // The decoder tries to decode as double first and succeeds,
+            // returning ThreeLevelOneOfNumber.
+            expect(reconstructed, anyOf(oneOf, const ThreeLevelOneOfNumber(1)));
           });
 
           test('toMatrix - explode false', () {
@@ -3256,7 +3306,7 @@ void main() {
           late ThreeLevelOneOf oneOf;
 
           setUp(() {
-            oneOf = ThreeLevelOneOfOneOf(ThreeLevelOneOfModelBool(true));
+            oneOf = const ThreeLevelOneOfOneOf(ThreeLevelOneOfModelBool(true));
           });
 
           test('toJson', () {
@@ -3352,7 +3402,7 @@ void main() {
         late ThreeLevelOneOf oneOf;
 
         setUp(() {
-          oneOf = ThreeLevelOneOfNumber(-991);
+          oneOf = const ThreeLevelOneOfNumber(-991);
         });
 
         test('toJson', () {
@@ -3446,7 +3496,7 @@ void main() {
         late ThreeLevelMixedOneOfAllOfAnyOf oneOf;
 
         setUp(() {
-          final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
+          const allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
             threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
                 ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
                   string: 'string',
@@ -3455,7 +3505,7 @@ void main() {
             threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
                 ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: true),
           );
-          oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
+          oneOf = const ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
         });
 
         test('toJson throws EncodingException', () {
@@ -3506,16 +3556,15 @@ void main() {
         late ThreeLevelMixedOneOfAllOfAnyOf oneOf;
 
         setUp(() {
-          final allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
+          const allOfModel = ThreeLevelMixedOneOfAllOfAnyOfAllOfModel(
             threeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel:
                 ThreeLevelMixedOneOfAllOfAnyOfAllOfAnyOfModel(
-                  string: null,
                   int: 456,
                 ),
             threeLevelMixedOneOfAllOfAnyOfAllOfModel2:
                 ThreeLevelMixedOneOfAllOfAnyOfAllOfModel2(flag: false),
           );
-          oneOf = ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
+          oneOf = const ThreeLevelMixedOneOfAllOfAnyOfAllOf(allOfModel);
         });
 
         test('toJson throws EncodingException', () {
@@ -3568,7 +3617,9 @@ void main() {
         late ThreeLevelMixedOneOfAllOfAnyOf oneOf;
 
         setUp(() {
-          oneOf = ThreeLevelMixedOneOfAllOfAnyOfClass1(Class1(name: 'Mark'));
+          oneOf = const ThreeLevelMixedOneOfAllOfAnyOfClass1(
+            Class1(name: 'Mark'),
+          );
         });
 
         test('toJson', () {
@@ -3668,7 +3719,7 @@ void main() {
         late ThreeLevelWithRefs oneOf;
 
         setUp(() {
-          oneOf = ThreeLevelWithRefsTwoLevelOneOf(
+          oneOf = const ThreeLevelWithRefsTwoLevelOneOf(
             TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
           );
         });
@@ -3680,11 +3731,13 @@ void main() {
         test('json roundtrip', () {
           final json = oneOf.toJson();
           final reconstructed = ThreeLevelWithRefs.fromJson(json);
-          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested) and as direct variant.
-          // For JSON, the String type check happens first, returning ThreeLevelWithRefsString.
+          // Ambiguous oneOf: string appears both in TwoLevelOneOf
+          // (nested) and as direct variant.
+          // For JSON, the String type check happens first, returning
+          // ThreeLevelWithRefsString.
           expect(
             reconstructed,
-            anyOf(oneOf, ThreeLevelWithRefsString('string')),
+            anyOf(oneOf, const ThreeLevelWithRefsString('string')),
           );
         });
 
@@ -3771,7 +3824,7 @@ void main() {
         late ThreeLevelWithRefs oneOf;
 
         setUp(() {
-          oneOf = ThreeLevelWithRefsTwoLevelOneOf(
+          oneOf = const ThreeLevelWithRefsTwoLevelOneOf(
             TwoLevelOneOfOneOf(TwoLevelOneOfModelInt(1)),
           );
         });
@@ -3871,7 +3924,7 @@ void main() {
         late ThreeLevelWithRefs oneOf;
 
         setUp(() {
-          oneOf = ThreeLevelWithRefsString('string');
+          oneOf = const ThreeLevelWithRefsString('string');
         });
 
         test('toJson', () {
@@ -3894,13 +3947,15 @@ void main() {
             form,
             explode: true,
           );
-          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested) and as direct variant.
-          // For Form, TwoLevelOneOf is tried first and succeeds, returning ThreeLevelWithRefsTwoLevelOneOf.
+          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested)
+          // and as direct variant.
+          // For Form, TwoLevelOneOf is tried first and succeeds,
+          // returning ThreeLevelWithRefsTwoLevelOneOf.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              ThreeLevelWithRefsTwoLevelOneOf(
+              const ThreeLevelWithRefsTwoLevelOneOf(
                 TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
               ),
             ),
@@ -3917,13 +3972,15 @@ void main() {
             form,
             explode: false,
           );
-          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested) and as direct variant.
-          // For Form, TwoLevelOneOf is tried first and succeeds, returning ThreeLevelWithRefsTwoLevelOneOf.
+          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested)
+          // and as direct variant.
+          // For Form, TwoLevelOneOf is tried first and succeeds, returning
+          // ThreeLevelWithRefsTwoLevelOneOf.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              ThreeLevelWithRefsTwoLevelOneOf(
+              const ThreeLevelWithRefsTwoLevelOneOf(
                 TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
               ),
             ),
@@ -3940,13 +3997,14 @@ void main() {
             simple,
             explode: true,
           );
-          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested) and as direct variant.
-          // For Simple, TwoLevelOneOf is tried first and succeeds, returning ThreeLevelWithRefsTwoLevelOneOf.
+          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested)
+          // and as direct variant. For Simple, TwoLevelOneOf is tried first
+          // and succeeds, returning ThreeLevelWithRefsTwoLevelOneOf.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              ThreeLevelWithRefsTwoLevelOneOf(
+              const ThreeLevelWithRefsTwoLevelOneOf(
                 TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
               ),
             ),
@@ -3963,13 +4021,14 @@ void main() {
             simple,
             explode: false,
           );
-          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested) and as direct variant.
-          // For Simple, TwoLevelOneOf is tried first and succeeds, returning ThreeLevelWithRefsTwoLevelOneOf.
+          // Ambiguous oneOf: string appears both in TwoLevelOneOf (nested)
+          // and as direct variant. For Simple, TwoLevelOneOf is tried first
+          // and succeeds, returning ThreeLevelWithRefsTwoLevelOneOf.
           expect(
             reconstructed,
             anyOf(
               oneOf,
-              ThreeLevelWithRefsTwoLevelOneOf(
+              const ThreeLevelWithRefsTwoLevelOneOf(
                 TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
               ),
             ),
@@ -4010,7 +4069,7 @@ void main() {
       late ComplexNestedMix2 oneOf;
 
       setUp(() {
-        oneOf = ComplexNestedMix2AllOf(
+        oneOf = const ComplexNestedMix2AllOf(
           ComplexNestedMix2AllOfModel(
             class1: Class1(name: 'Mark'),
             complexNestedMix2AllOfModel2: ComplexNestedMix2AllOfModel2(
@@ -4125,7 +4184,7 @@ void main() {
       late ComplexNestedMix2 oneOf;
 
       setUp(() {
-        oneOf = ComplexNestedMix2Enum1(Enum1.value2);
+        oneOf = const ComplexNestedMix2Enum1(Enum1.value2);
       });
 
       test('toJson', () {
