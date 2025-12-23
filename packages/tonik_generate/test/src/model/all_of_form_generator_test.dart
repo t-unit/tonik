@@ -195,7 +195,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
+              r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
           final map = <String, String>{};
@@ -477,7 +477,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
+              r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
           final values = <String>{};
@@ -487,7 +487,7 @@ void main() {
           values.add(choiceForm);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
+              r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
             );
           }
           return values.first;
@@ -626,7 +626,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
+              r'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
           final values = <String>{};
@@ -644,7 +644,7 @@ void main() {
           values.add(stringForm);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf form encoding for MultiDynamic: all values must encode to the same result',
+              r'Inconsistent allOf form encoding for MultiDynamic: all values must encode to the same result',
             );
           }
           return values.first;
@@ -730,7 +730,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
+              r'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
           final values = <String>{};
@@ -750,7 +750,7 @@ void main() {
           values.add(stringForm);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf form encoding for ComplexMixed: all values must encode to the same result',
+              r'Inconsistent allOf form encoding for ComplexMixed: all values must encode to the same result',
             );
           }
           return values.first;
@@ -789,7 +789,7 @@ void main() {
           values.add(listForm);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf form encoding: all values must encode to the same result',
+              r'Inconsistent allOf form encoding: all values must encode to the same result',
             );
           }
           return values.first;
@@ -828,7 +828,7 @@ void main() {
           values.add(listForm);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf form encoding: all values must encode to the same result',
+              r'Inconsistent allOf form encoding: all values must encode to the same result',
             );
           }
           return values.first;
@@ -885,7 +885,7 @@ void main() {
         String toForm({required bool explode, required bool allowEmpty}) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
-              'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
+              r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
           final values = <String>{};
@@ -898,7 +898,7 @@ void main() {
           values.add(intForm);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
+              r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
             );
           }
           return values.first;

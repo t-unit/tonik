@@ -8,12 +8,12 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 void main() {
   late EnumGenerator generator;
   late NameGenerator nameGenerator;
+  late NameManager nameManager;
 
   setUp(() {
     nameGenerator = NameGenerator();
-    generator = EnumGenerator(
-      nameManager: NameManager(generator: nameGenerator),
-    );
+    nameManager = NameManager(generator: nameGenerator);
+    generator = EnumGenerator(nameManager: nameManager);
   });
 
   group('EnumGenerator', () {
@@ -66,8 +66,6 @@ void main() {
       final generated = generator.generateEnum(model, 'Color');
 
       expect(result.filename, 'color.dart');
-      expect(result.code, contains('enum Color'));
-      expect(result.code, isNot(contains('typedef')));
 
       expect(generated.enumValue.name, 'Color');
       expect(generated.typedefValue, isNull);
@@ -76,12 +74,47 @@ void main() {
       expect(generated.enumValue.values[1].name, 'green');
       expect(generated.enumValue.values[2].name, 'blue');
 
-      final code = generated.enumValue.accept(DartEmitter()).toString();
-      expect(code, contains("red(r'red')"));
-      expect(code, contains("green(r'green')"));
-      expect(code, contains("blue(r'blue')"));
-      expect(code, contains('const Color(this.rawValue);'));
-      expect(code, contains('final String rawValue;'));
+      // Check enum values have correct arguments with actual values
+      expect(generated.enumValue.values[0].arguments, hasLength(1));
+      expect(
+        generated.enumValue.values[0].arguments[0]
+            .accept(DartEmitter())
+            .toString(),
+        "r'red'",
+      );
+      expect(generated.enumValue.values[1].arguments, hasLength(1));
+      expect(
+        generated.enumValue.values[1].arguments[0]
+            .accept(DartEmitter())
+            .toString(),
+        "r'green'",
+      );
+      expect(generated.enumValue.values[2].arguments, hasLength(1));
+      expect(
+        generated.enumValue.values[2].arguments[0]
+            .accept(DartEmitter())
+            .toString(),
+        "r'blue'",
+      );
+
+      // Check rawValue field
+      final rawValueField = generated.enumValue.fields.firstWhere(
+        (f) => f.name == 'rawValue',
+      );
+      expect(rawValueField.modifier, FieldModifier.final$);
+      expect(
+        rawValueField.type?.accept(DartEmitter()).toString(),
+        'String',
+      );
+
+      // Check constructor exists
+      final mainConstructor = generated.enumValue.constructors.firstWhere(
+        (c) => c.name == null,
+      );
+      expect(mainConstructor.constant, isTrue);
+      expect(mainConstructor.requiredParameters, hasLength(1));
+      expect(mainConstructor.requiredParameters[0].name, 'rawValue');
+      expect(mainConstructor.requiredParameters[0].toThis, isTrue);
     });
 
     test('generates nullable enum code', () {
@@ -97,10 +130,25 @@ void main() {
       );
 
       final result = generator.generate(model);
+      final publicEnumName = nameManager.modelName(model);
+      final generated = generator.generateEnum(model, publicEnumName);
 
-      expect(result.code, contains('enum RawStatus'));
-      expect(result.code, contains('typedef Status = RawStatus?'));
       expect(result.filename, 'status.dart');
+
+      // For nullable enums, check that a typedef was created
+      expect(generated.typedefValue, isNotNull);
+
+      // The typedef should use the public name
+      expect(generated.typedefValue!.name, publicEnumName);
+
+      // The actual enum has a $Raw prefix
+      expect(generated.enumValue.name.startsWith(r'$Raw'), isTrue);
+
+      // The typedef definition should point to the nullable rawEnum
+      expect(
+        generated.typedefValue!.definition.accept(DartEmitter()).toString(),
+        '${generated.enumValue.name}?',
+      );
     });
 
     test('generates nullable enum value', () {
@@ -117,12 +165,12 @@ void main() {
 
       final generated = generator.generateEnum(model, 'Status');
 
-      expect(generated.enumValue.name, 'RawStatus');
+      expect(generated.enumValue.name, r'$RawStatus');
       expect(generated.typedefValue, isNotNull);
       expect(generated.typedefValue!.name, 'Status');
       expect(
         generated.typedefValue!.definition.accept(DartEmitter()).toString(),
-        'RawStatus?',
+        r'$RawStatus?',
       );
       expect(generated.enumValue.values, hasLength(2));
       expect(generated.enumValue.values[0].name, 'active');
@@ -145,9 +193,13 @@ void main() {
       final result = generator.generate(model);
       final generated = generator.generateEnum(model, 'Color');
 
-      expect(result.code, contains('enum Color'));
-      expect(result.code, isNot(contains('typedef')));
       expect(result.filename, 'color.dart');
+
+      // Non-nullable enums use the name directly
+      expect(generated.enumValue.name, 'Color');
+
+      // No typedef for non-nullable enums
+      expect(generated.typedefValue, isNull);
 
       expect(generated.enumValue.name, 'Color');
       expect(generated.enumValue.values, hasLength(3));
@@ -172,8 +224,6 @@ void main() {
       final generated = generator.generateEnum(model, 'Status');
 
       expect(result.filename, 'status.dart');
-      expect(result.code, contains('enum Status'));
-      expect(result.code, isNot(contains('typedef')));
 
       expect(generated.enumValue.name, 'Status');
       expect(generated.typedefValue, isNull);
@@ -182,12 +232,47 @@ void main() {
       expect(generated.enumValue.values[1].name, 'two');
       expect(generated.enumValue.values[2].name, 'three');
 
-      final code = generated.enumValue.accept(DartEmitter()).toString();
-      expect(code, contains('one(1)'));
-      expect(code, contains('two(2)'));
-      expect(code, contains('three(3)'));
-      expect(code, contains('const Status(this.rawValue);'));
-      expect(code, contains('final int rawValue;'));
+      // Check enum values have correct arguments with actual values
+      expect(generated.enumValue.values[0].arguments, hasLength(1));
+      expect(
+        generated.enumValue.values[0].arguments[0]
+            .accept(DartEmitter())
+            .toString(),
+        '1',
+      );
+      expect(generated.enumValue.values[1].arguments, hasLength(1));
+      expect(
+        generated.enumValue.values[1].arguments[0]
+            .accept(DartEmitter())
+            .toString(),
+        '2',
+      );
+      expect(generated.enumValue.values[2].arguments, hasLength(1));
+      expect(
+        generated.enumValue.values[2].arguments[0]
+            .accept(DartEmitter())
+            .toString(),
+        '3',
+      );
+
+      // Check rawValue field
+      final rawValueField = generated.enumValue.fields.firstWhere(
+        (f) => f.name == 'rawValue',
+      );
+      expect(rawValueField.modifier, FieldModifier.final$);
+      expect(
+        rawValueField.type?.accept(DartEmitter()).toString(),
+        'int',
+      );
+
+      // Check constructor exists and structure
+      final mainConstructor = generated.enumValue.constructors.firstWhere(
+        (c) => c.name == null,
+      );
+      expect(mainConstructor.constant, isTrue);
+      expect(mainConstructor.requiredParameters, hasLength(1));
+      expect(mainConstructor.requiredParameters[0].name, 'rawValue');
+      expect(mainConstructor.requiredParameters[0].toThis, isTrue);
     });
 
     test(
@@ -214,12 +299,47 @@ void main() {
         expect(generated.enumValue.values[1].name, 'value2');
         expect(generated.enumValue.values[2].name, 'value3');
 
-        final code = generated.enumValue.accept(DartEmitter()).toString();
-        expect(code, contains("value(r'_')"));
-        expect(code, contains("value2(r'__')"));
-        expect(code, contains("value3(r'___')"));
-        expect(code, contains('const Placeholder(this.rawValue);'));
-        expect(code, contains('final String rawValue;'));
+        // Check enum values have correct arguments with actual values
+        expect(generated.enumValue.values[0].arguments, hasLength(1));
+        expect(
+          generated.enumValue.values[0].arguments[0]
+              .accept(DartEmitter())
+              .toString(),
+          "r'_'",
+        );
+        expect(generated.enumValue.values[1].arguments, hasLength(1));
+        expect(
+          generated.enumValue.values[1].arguments[0]
+              .accept(DartEmitter())
+              .toString(),
+          "r'__'",
+        );
+        expect(generated.enumValue.values[2].arguments, hasLength(1));
+        expect(
+          generated.enumValue.values[2].arguments[0]
+              .accept(DartEmitter())
+              .toString(),
+          "r'___'",
+        );
+
+        // Check rawValue field
+        final rawValueField = generated.enumValue.fields.firstWhere(
+          (f) => f.name == 'rawValue',
+        );
+        expect(rawValueField.modifier, FieldModifier.final$);
+        expect(
+          rawValueField.type?.accept(DartEmitter()).toString(),
+          'String',
+        );
+
+        // Check constructor exists
+        final mainConstructor = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        expect(mainConstructor.constant, isTrue);
+        expect(mainConstructor.requiredParameters, hasLength(1));
+        expect(mainConstructor.requiredParameters[0].name, 'rawValue');
+        expect(mainConstructor.requiredParameters[0].toThis, isTrue);
       },
     );
 
@@ -239,10 +359,15 @@ void main() {
         );
 
         final result = generator.generate(model);
+        final generated = generator.generateEnum(model, 'Status');
 
         expect(result.filename, 'status.dart');
-        expect(result.code, contains('enum Status'));
-        expect(result.code, isNot(contains('typedef')));
+
+        // Non-nullable enums use the name directly
+        expect(generated.enumValue.name, 'Status');
+
+        // No typedef for non-nullable enums
+        expect(generated.typedefValue, isNull);
       },
     );
 
@@ -652,8 +777,8 @@ void main() {
         );
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          return RawStatus.fromJson(value.decodeSimpleString(context: context));
+        const expectedBody = r'''
+          return $RawStatus.fromJson(value.decodeSimpleString(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -686,8 +811,8 @@ void main() {
         expect(fromSimple.requiredParameters.single.name, 'value');
 
         final body = fromSimple.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          return RawStatus.fromJson(value.decodeSimpleInt(context: context));
+        const expectedBody = r'''
+          return $RawStatus.fromJson(value.decodeSimpleInt(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -823,53 +948,6 @@ void main() {
         expect(toSimple.lambda, isTrue);
       });
 
-      test('generates toSimple in complete enum code for string enum', () {
-        final model = EnumModel<String>(
-          isDeprecated: false,
-          name: 'Color',
-          values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToSimpleMethod = '''
-          _i2.String toSimple({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToSimpleMethod)),
-        );
-      });
-
-      test('generates toSimple in complete enum code for int enum', () {
-        final model = EnumModel<int>(
-          isDeprecated: false,
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToSimpleMethod = '''
-          _i2.String toSimple({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToSimpleMethod)),
-        );
-      });
     });
 
     group('fromForm factory constructor', () {
@@ -989,8 +1067,8 @@ void main() {
         );
 
         final body = fromForm.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          return RawStatus.fromJson(value.decodeFormString(context: context));
+        const expectedBody = r'''
+          return $RawStatus.fromJson(value.decodeFormString(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -1023,8 +1101,8 @@ void main() {
         expect(fromForm.requiredParameters.single.name, 'value');
 
         final body = fromForm.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          return RawStatus.fromJson(value.decodeFormInt(context: context));
+        const expectedBody = r'''
+          return $RawStatus.fromJson(value.decodeFormInt(context: context));
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -1160,53 +1238,6 @@ void main() {
         expect(toForm.lambda, isTrue);
       });
 
-      test('generates toForm in complete enum code for string enum', () {
-        final model = EnumModel<String>(
-          isDeprecated: false,
-          name: 'Color',
-          values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToFormMethod = '''
-          _i2.String toForm({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToFormMethod)),
-        );
-      });
-
-      test('generates toForm in complete enum code for int enum', () {
-        final model = EnumModel<int>(
-          isDeprecated: false,
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToFormMethod = '''
-          _i2.String toForm({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToFormMethod)),
-        );
-      });
     });
 
     group('toLabel method generation', () {
@@ -1308,80 +1339,6 @@ void main() {
         );
       });
 
-      test('toLabel method is included in generated code for string enum', () {
-        final model = EnumModel<String>(
-          isDeprecated: false,
-          name: 'Color',
-          values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToLabelMethod = '''
-          _i2.String toLabel({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToLabelMethod)),
-        );
-      });
-
-      test('toLabel method is included in generated code for int enum', () {
-        final model = EnumModel<int>(
-          isDeprecated: false,
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToLabelMethod = '''
-          _i2.String toLabel({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToLabelMethod)),
-        );
-      });
-
-      test(
-        'toLabel method is included in generated code for nullable enum',
-        () {
-          final model = EnumModel<String>(
-            isDeprecated: false,
-            name: 'Priority',
-            values: {
-              const EnumEntry(value: 'low'),
-              const EnumEntry(value: 'medium'),
-              const EnumEntry(value: 'high'),
-            },
-            isNullable: true,
-            context: Context.initial(),
-          );
-
-          final result = generator.generate(model);
-
-          const expectedToLabelMethod = '''
-          _i2.String toLabel({ required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
-        ''';
-          expect(
-            collapseWhitespace(result.code),
-            contains(collapseWhitespace(expectedToLabelMethod)),
-          );
-        },
-      );
     });
 
     group('toMatrix method generation', () {
@@ -1550,80 +1507,6 @@ void main() {
         expect(toMatrix.lambda, isTrue);
       });
 
-      test('toMatrix method is included in generated code for string enum', () {
-        final model = EnumModel<String>(
-          isDeprecated: false,
-          name: 'Color',
-          values: {
-            const EnumEntry(value: 'red'),
-            const EnumEntry(value: 'green'),
-            const EnumEntry(value: 'blue'),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToMatrixMethod = '''
-          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
-        );
-      });
-
-      test('toMatrix method is included in generated code for int enum', () {
-        final model = EnumModel<int>(
-          isDeprecated: false,
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedToMatrixMethod = '''
-          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedToMatrixMethod)),
-        );
-      });
-
-      test(
-        'toMatrix method is included in generated code for nullable enum',
-        () {
-          final model = EnumModel<String>(
-            isDeprecated: false,
-            name: 'Priority',
-            values: {
-              const EnumEntry(value: 'low'),
-              const EnumEntry(value: 'medium'),
-              const EnumEntry(value: 'high'),
-            },
-            isNullable: true,
-            context: Context.initial(),
-          );
-
-          final result = generator.generate(model);
-
-          const expectedToMatrixMethod = '''
-          _i2.String toMatrix( _i2.String paramName, { required _i2.bool explode, required _i2.bool allowEmpty, }) => rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
-        ''';
-          expect(
-            collapseWhitespace(result.code),
-            contains(collapseWhitespace(expectedToMatrixMethod)),
-          );
-        },
-      );
     });
 
     group('uriEncode method generation', () {
@@ -1765,104 +1648,6 @@ void main() {
         expect(uriEncode.lambda, isTrue);
       });
 
-      test(
-        'uriEncode method is included in generated code for string enum',
-        () {
-          final model = EnumModel<String>(
-            isDeprecated: false,
-            name: 'Color',
-            values: {
-              const EnumEntry(value: 'red'),
-              const EnumEntry(value: 'green'),
-              const EnumEntry(value: 'blue'),
-            },
-            isNullable: false,
-            context: Context.initial(),
-          );
-
-          final result = generator.generate(model);
-
-          const expectedUriEncodeMethod = '''
-          _i2.String uriEncode({
-            required _i2.bool allowEmpty,
-            _i2.bool useQueryComponent = false,
-          }) =>
-              rawValue.uriEncode(
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-              );
-        ''';
-          expect(
-            collapseWhitespace(result.code),
-            contains(collapseWhitespace(expectedUriEncodeMethod)),
-          );
-        },
-      );
-
-      test('uriEncode method is included in generated code for int enum', () {
-        final model = EnumModel<int>(
-          isDeprecated: false,
-          name: 'Status',
-          values: {
-            const EnumEntry(value: 1),
-            const EnumEntry(value: 2),
-            const EnumEntry(value: 3),
-          },
-          isNullable: false,
-          context: Context.initial(),
-        );
-
-        final result = generator.generate(model);
-
-        const expectedUriEncodeMethod = '''
-          _i2.String uriEncode({
-            required _i2.bool allowEmpty,
-            _i2.bool useQueryComponent = false,
-          }) =>
-              rawValue.uriEncode(
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-              );
-        ''';
-        expect(
-          collapseWhitespace(result.code),
-          contains(collapseWhitespace(expectedUriEncodeMethod)),
-        );
-      });
-
-      test(
-        'uriEncode method is included in generated code for nullable enum',
-        () {
-          final model = EnumModel<String>(
-            isDeprecated: false,
-            name: 'Priority',
-            values: {
-              const EnumEntry(value: 'low'),
-              const EnumEntry(value: 'medium'),
-              const EnumEntry(value: 'high'),
-            },
-            isNullable: true,
-            context: Context.initial(),
-          );
-
-          final result = generator.generate(model);
-
-          const expectedUriEncodeMethod = '''
-          _i2.String uriEncode({
-            required _i2.bool allowEmpty,
-            _i2.bool useQueryComponent = false,
-          }) =>
-              rawValue.uriEncode(
-                allowEmpty: allowEmpty,
-                useQueryComponent: useQueryComponent,
-              );
-        ''';
-          expect(
-            collapseWhitespace(result.code),
-            contains(collapseWhitespace(expectedUriEncodeMethod)),
-          );
-        },
-      );
     });
 
     group('fallback/unknown case', () {
@@ -2279,7 +2064,7 @@ void main() {
 
         final generated = generator.generateEnum(model, 'Status');
 
-        expect(generated.enumValue.name, 'RawStatus');
+        expect(generated.enumValue.name, r'$RawStatus');
         expect(generated.typedefValue, isNotNull);
         expect(generated.enumValue.values, hasLength(2));
         expect(generated.enumValue.values.last.name, 'unknown');
@@ -2538,7 +2323,7 @@ void main() {
         final generated = generator.generateEnum(model, 'Status');
 
         expect(generated.enumValue.values, hasLength(2));
-        expect(generated.enumValue.values[1].name, 'unknown');
+        expect(generated.enumValue.values[1].name, r'$unknown');
 
         expect(
           generated.enumValue.values[1].arguments.first

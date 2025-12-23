@@ -715,7 +715,7 @@ void main() {
         const expectedMethod = '''
           factory AliasHolder.fromSimple(String? value, {required bool explode}) {
             throw SimpleDecodingException(
-              'Simple encoding not supported for AliasHolder: contains complex types',
+              r'Simple encoding not supported for AliasHolder: contains complex types',
             );
           }
         ''';
@@ -766,7 +766,7 @@ void main() {
         const expectedMethod = '''
           factory AliasHolder.fromSimple(String? value, {required bool explode}) {
             throw SimpleDecodingException(
-              'Simple encoding not supported for AliasHolder: contains complex types',
+              r'Simple encoding not supported for AliasHolder: contains complex types',
             );
           }
         ''';
@@ -821,7 +821,7 @@ void main() {
       const expectedMethod = '''
         factory User.fromSimple(String? value, {required bool explode}) {
           throw SimpleDecodingException(
-            'Simple encoding not supported for User: contains complex types',
+            r'Simple encoding not supported for User: contains complex types',
           );
         }
       ''';

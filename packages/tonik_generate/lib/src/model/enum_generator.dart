@@ -80,7 +80,7 @@ class EnumGenerator {
     final actualEnumName = model.isNullable
         ? nameManager.modelName(
             AliasModel(
-              name: 'Raw$enumName',
+              name: '\$Raw$enumName',
               model: model,
               context: model.context,
             ),
