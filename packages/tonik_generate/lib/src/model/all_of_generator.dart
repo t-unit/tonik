@@ -40,11 +40,36 @@ class AllOfGenerator {
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = nameManager.modelName(model).toSnakeCase();
-    final generatedClasses = generateClasses(model);
+    final publicClassName = nameManager.modelName(model);
+    final snakeCaseName = publicClassName.toSnakeCase();
+
+    // Generate unique name for nullable allOf with Raw prefix to allow
+    // using a typedef to express the nullable type.
+    final actualClassName = model.isNullable
+        ? nameManager.modelName(
+            AliasModel(
+              name: '\$Raw$publicClassName',
+              model: model,
+              context: model.context,
+            ),
+          )
+        : publicClassName;
+
+    final generatedClasses = generateClasses(model, actualClassName);
 
     final library = Library((b) {
       b.body.addAll(generatedClasses);
+
+      // Add typedef for nullable allOf.
+      if (model.isNullable) {
+        b.body.add(
+          TypeDef(
+            (b) => b
+              ..name = publicClassName
+              ..definition = refer('$actualClassName?'),
+          ),
+        );
+      }
     });
 
     final formatter = DartFormatter(
@@ -58,8 +83,8 @@ class AllOfGenerator {
 
   /// Generates the main class and the copyWith infrastructure classes.
   @visibleForTesting
-  List<Spec> generateClasses(AllOfModel model) {
-    final className = nameManager.modelName(model);
+  List<Spec> generateClasses(AllOfModel model, [String? className]) {
+    final actualClassName = className ?? nameManager.modelName(model);
     final models = model.models.toSortedList();
 
     final pseudoProperties = models.map((m) {
@@ -75,10 +100,13 @@ class AllOfGenerator {
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
 
-    final copyWithResult = _buildCopyWith(className, normalizedProperties);
+    final copyWithResult = _buildCopyWith(
+      actualClassName,
+      normalizedProperties,
+    );
 
     return [
-      generateClass(model, copyWithResult?.getter),
+      generateClass(model, copyWithResult?.getter, actualClassName),
       if (copyWithResult != null) ...[
         copyWithResult.interfaceClass,
         copyWithResult.implClass,
@@ -87,8 +115,26 @@ class AllOfGenerator {
   }
 
   @visibleForTesting
-  Class generateClass(AllOfModel model, [Method? copyWithGetter]) {
-    final className = nameManager.modelName(model);
+  Class generateClass(
+    AllOfModel model, [
+    Method? copyWithGetter,
+    String? className,
+  ]) {
+    final publicClassName = nameManager.modelName(model);
+
+    // Use provided className, or generate Raw prefix for nullable models.
+    final actualClassName =
+        className ??
+        (model.isNullable
+            ? nameManager.modelName(
+                AliasModel(
+                  name: '\$Raw$publicClassName',
+                  model: model,
+                  context: model.context,
+                ),
+              )
+            : publicClassName);
+
     final models = model.models.toSortedList();
 
     final pseudoProperties = models.map((m) {
@@ -107,12 +153,12 @@ class AllOfGenerator {
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
-        _buildCopyWith(className, normalizedProperties)?.getter;
+        _buildCopyWith(actualClassName, normalizedProperties)?.getter;
 
     return Class(
       (b) {
         b
-          ..name = className
+          ..name = actualClassName
           ..docs.addAll(formatDocComment(model.description))
           ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
 
@@ -128,22 +174,22 @@ class AllOfGenerator {
           ..constructors.add(_buildDefaultConstructor(normalizedProperties))
           ..constructors.addAll([
             _buildFromSimpleConstructor(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
             _buildFromFormConstructor(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
-            _buildFromJsonConstructor(className, normalizedProperties),
+            _buildFromJsonConstructor(actualClassName, normalizedProperties),
           ])
           ..methods.addAll([
             _buildCurrentEncodingShapeGetter(model, normalizedProperties),
-            _buildToJsonMethod(className, model, normalizedProperties),
+            _buildToJsonMethod(actualClassName, model, normalizedProperties),
             _buildParameterPropertiesMethod(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
@@ -152,28 +198,28 @@ class AllOfGenerator {
               model,
             ),
             _buildToFormMethod(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
             _buildToLabelMethod(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
             _buildToMatrixMethod(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
             _buildToDeepObjectMethod(),
             _buildUriEncodeMethod(
-              className,
+              actualClassName,
               normalizedProperties,
               model,
             ),
             generateEqualsMethod(
-              className: className,
+              className: actualClassName,
               properties: properties,
             ),
             generateHashCodeMethod(properties: properties),
@@ -391,6 +437,7 @@ class AllOfGenerator {
           ..body = generateEncodingExceptionExpression(
             'Cannot encode $className to JSON: allOf mixing arrays '
             'with other types is not supported',
+            raw: true,
           ).code,
       );
     }
@@ -481,6 +528,7 @@ class AllOfGenerator {
         const Code(') {'),
         generateEncodingExceptionExpression(
           'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('final map = '),
@@ -532,6 +580,7 @@ class AllOfGenerator {
             ..lambda = true
             ..body = generateEncodingExceptionExpression(
               'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
+              raw: true,
             ).code,
         );
 
@@ -763,7 +812,7 @@ class AllOfGenerator {
             buildBoolParameter('allowLists', defaultValue: true),
           ])
           ..lambda = true
-          ..body = generateEncodingExceptionExpression(message).code,
+          ..body = generateEncodingExceptionExpression(message, raw: true).code,
       );
     }
 
@@ -779,6 +828,7 @@ class AllOfGenerator {
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
             'contains primitive types',
+            raw: true,
           ).statement,
       );
     }
@@ -1190,6 +1240,7 @@ class AllOfGenerator {
           const Code(') {'),
           generateEncodingExceptionExpression(
             'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
+            raw: true,
           ).statement,
           const Code('}'),
           declareFinal(
@@ -1219,6 +1270,7 @@ class AllOfGenerator {
           generateEncodingExceptionExpression(
             'Inconsistent allOf form encoding for $className: '
             'all values must encode to the same result',
+            raw: true,
           ).statement,
           const Code('}'),
           const Code('return values.first;'),
@@ -1247,6 +1299,7 @@ class AllOfGenerator {
         const Code(') {'),
         generateEncodingExceptionExpression(
           'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('final map = <'),
@@ -1407,6 +1460,7 @@ class AllOfGenerator {
             generateEncodingExceptionExpression(
               'Inconsistent allOf form encoding: '
               'all values must encode to the same result',
+              raw: true,
             ).statement,
             const Code('}'),
             const Code('return values.first;'),
@@ -1874,6 +1928,7 @@ class AllOfGenerator {
           generateEncodingExceptionExpression(
             'Inconsistent allOf matrix encoding for $className: '
             'all values must encode to the same result',
+            raw: true,
           ).statement,
           const Code('}'),
           const Code('return values.first;'),
@@ -1999,6 +2054,7 @@ class AllOfGenerator {
       generateEncodingExceptionExpression(
         'Inconsistent allOf matrix encoding for $className: '
         'all values must encode to the same result',
+        raw: true,
       ).statement,
       const Code('}'),
       const Code('return values.first;'),
@@ -2198,6 +2254,7 @@ class AllOfGenerator {
       generateEncodingExceptionExpression(
         'Inconsistent allOf encoding for $className: '
         'all values must encode to the same result',
+        raw: true,
       ).statement,
       const Code('}'),
       const Code('return values.first;'),

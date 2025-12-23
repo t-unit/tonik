@@ -278,7 +278,7 @@ Map<String, String> parameterProperties({
   bool useQueryComponent = false,
 }) =>
   throw EncodingException(
-    'parameterProperties not supported for User: contains complex types',
+    r'parameterProperties not supported for User: contains complex types',
   );
 ''';
 
@@ -349,7 +349,7 @@ Map<String, String> parameterProperties({
     result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
-      'parameterProperties not supported for Container: contains complex types',
+      r'parameterProperties not supported for Container: contains complex types',
     );
   }
   return result;
@@ -421,7 +421,7 @@ Map<String, String> parameterProperties({
     result[r'data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
-      'parameterProperties not supported for FlexibleContainer: contains complex types',
+      r'parameterProperties not supported for FlexibleContainer: contains complex types',
     );
   }
   return result;
@@ -493,7 +493,7 @@ Map<String, String> parameterProperties({
     );
   } else {
     throw EncodingException(
-      'parameterProperties not supported for CombinedContainer: contains complex types',
+      r'parameterProperties not supported for CombinedContainer: contains complex types',
     );
   }
   return result;
@@ -604,7 +604,7 @@ Map<String, String> parameterProperties({
   bool useQueryComponent = false,
 }) =>
   throw EncodingException(
-    'parameterProperties not supported for ComplexContainer: contains complex types',
+    r'parameterProperties not supported for ComplexContainer: contains complex types',
   );
 ''';
 
@@ -676,7 +676,7 @@ Map<String, String> parameterProperties({
       );
     } else {
       throw EncodingException(
-        'parameterProperties not supported for Container: contains complex types',
+        r'parameterProperties not supported for Container: contains complex types',
       );
     }
   }
@@ -854,7 +854,7 @@ Map<String, String> parameterProperties({
     result[r'data1'] = data1.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
-      'parameterProperties not supported for MixedContainer: contains complex types',
+      r'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
   if (data2 != null) {
@@ -865,7 +865,7 @@ Map<String, String> parameterProperties({
       );
     } else {
       throw EncodingException(
-        'parameterProperties not supported for MixedContainer: contains complex types',
+        r'parameterProperties not supported for MixedContainer: contains complex types',
       );
     }
   }
@@ -876,7 +876,7 @@ Map<String, String> parameterProperties({
     );
   } else {
     throw EncodingException(
-      'parameterProperties not supported for MixedContainer: contains complex types',
+      r'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
   return result;
@@ -1217,7 +1217,7 @@ Map<String, String> parameterProperties({
   bool useQueryComponent = false,
 }) =>
     throw EncodingException(
-      'parameterProperties not supported for ComplexListContainer: contains complex types',
+      r'parameterProperties not supported for ComplexListContainer: contains complex types',
     );
 ''';
 

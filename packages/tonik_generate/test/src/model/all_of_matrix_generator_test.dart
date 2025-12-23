@@ -160,7 +160,7 @@ void main() {
           values.add(stringMatrix);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf matrix encoding for AllOfPrimitive: all values must encode to the same result',
+              r'Inconsistent allOf matrix encoding for AllOfPrimitive: all values must encode to the same result',
             );
           }
           return values.first;
@@ -328,7 +328,7 @@ void main() {
           values.add(stringMatrix);
           if (values.length > 1) {
             throw EncodingException(
-              'Inconsistent allOf matrix encoding for AllOfEnum: all values must encode to the same result',
+              r'Inconsistent allOf matrix encoding for AllOfEnum: all values must encode to the same result',
             );
           }
           return values.first;
@@ -489,7 +489,7 @@ void main() {
             values.add(listMatrix);
             if (values.length > 1) {
               throw EncodingException(
-                'Inconsistent allOf matrix encoding for AllOfList: all values must encode to the same result',
+                r'Inconsistent allOf matrix encoding for AllOfList: all values must encode to the same result',
               );
             }
             return values.first;
@@ -536,7 +536,7 @@ void main() {
             values.add(listMatrix);
             if (values.length > 1) {
               throw EncodingException(
-                'Inconsistent allOf matrix encoding for AllOfIntList: all values must encode to the same result',
+                r'Inconsistent allOf matrix encoding for AllOfIntList: all values must encode to the same result',
               );
             }
             return values.first;
@@ -593,7 +593,7 @@ void main() {
             values.add(list2Matrix);
             if (values.length > 1) {
               throw EncodingException(
-                'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',
+                r'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',
               );
             }
             return values.first;

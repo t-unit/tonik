@@ -94,7 +94,7 @@ void main() {
               int s => ResultError(s),
               String s => ResultSuccess(s),
               _ => throw JsonDecodingException(
-                'Invalid JSON type for Result: ${json.runtimeType}',
+                r'Invalid JSON type for Result: ${json.runtimeType}',
               ),
             };
           }''';

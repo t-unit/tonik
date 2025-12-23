@@ -200,9 +200,9 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
   if (text.isEmpty) return '';
 
   // Clean invalid characters but preserve separators for splitting
-  final cleaned = text.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s]'), '');
+  final cleaned = text.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s$]'), '');
 
-  // Split on separators and case boundaries
+  // Split on separators and case boundaries, but NOT on $
   final tokens = cleaned
       .split(
         RegExp(r'[_\-\s]+|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])'),
@@ -274,18 +274,36 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
 String _normalizeCasing(String text, {required bool isFirst}) {
   if (text.isEmpty) return text;
 
-  final isAllCaps = text == text.toUpperCase() && text != text.toLowerCase();
+  // Extract $ characters before case conversion (which strips them)
+  final dollars = text.replaceAll(RegExp(r'[^$]'), '');
+  final textWithoutDollars = text.replaceAll(r'$', '');
+
+  if (textWithoutDollars.isEmpty) {
+    return dollars; // Just return the $ characters
+  }
+
+  final isAllCaps =
+      textWithoutDollars == textWithoutDollars.toUpperCase() &&
+      textWithoutDollars != textWithoutDollars.toLowerCase();
 
   // Special handling for keywords - keep them lowercase for first part only
-  if (isFirst && allKeywords.contains(text.toLowerCase())) {
-    return text.toLowerCase();
+  if (isFirst && allKeywords.contains(textWithoutDollars.toLowerCase())) {
+    return dollars + textWithoutDollars.toLowerCase();
   }
 
+  String result;
   if (isFirst) {
-    return isAllCaps ? text.toLowerCase() : text.toCamelCase();
+    result = isAllCaps
+        ? textWithoutDollars.toLowerCase()
+        : textWithoutDollars.toCamelCase();
   } else {
-    return isAllCaps ? text.toPascalCase() : text.toPascalCase();
+    result = isAllCaps
+        ? textWithoutDollars.toPascalCase()
+        : textWithoutDollars.toPascalCase();
   }
+
+  // Restore $ characters at the beginning
+  return dollars + result;
 }
 
 /// Normalizes a single name to follow Dart guidelines.

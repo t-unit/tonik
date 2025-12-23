@@ -288,7 +288,7 @@ void main() {
 
           if (int == null && string == null) {
             throw FormatDecodingException(
-              'Invalid form value for Flexible: all variants failed to decode',
+              r'Invalid form value for Flexible: all variants failed to decode',
             );
           }
           return Flexible(int: int, string: string);
@@ -363,7 +363,7 @@ void main() {
 
           if (a == null && b == null) {
             throw FormatDecodingException(
-              'Invalid form value for Choice: all variants failed to decode',
+              r'Invalid form value for Choice: all variants failed to decode',
             );
           }
           return Choice(a: a, b: b);
@@ -423,7 +423,7 @@ void main() {
 
           if (user == null && string == null) {
             throw FormatDecodingException(
-              'Invalid form value for SearchKey: all variants failed to decode',
+              r'Invalid form value for SearchKey: all variants failed to decode',
             );
           }
           return SearchKey(user: user, string: string);
@@ -504,7 +504,7 @@ void main() {
 
         if (string == null) {
           throw FormatDecodingException(
-            'Invalid form value for MixedAnyOf: all variants failed to decode',
+            r'Invalid form value for MixedAnyOf: all variants failed to decode',
           );
         }
         return MixedAnyOf(list: null, list2: null, string: string);
@@ -551,7 +551,7 @@ void main() {
           if (values.isEmpty) return '';
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf form encoding for Simple: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf form encoding for Simple: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -745,14 +745,14 @@ void main() {
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
-              'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
+              r'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
             );
           }
           
           if (values.isNotEmpty) {
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;
@@ -820,7 +820,7 @@ void main() {
 
           if (inner == null && string == null) {
             throw FormatDecodingException(
-              'Invalid form value for Outer: all variants failed to decode',
+              r'Invalid form value for Outer: all variants failed to decode',
             );
           }
           return Outer(inner: inner, string: string);
@@ -913,13 +913,13 @@ void main() {
             if (values.isEmpty && mapValues.isEmpty) return '';
             if (mapValues.isNotEmpty && values.isNotEmpty) {
               throw EncodingException(
-                'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
+                r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
             if (values.isNotEmpty) {
               if (values.length > 1) {
                 throw EncodingException(
-                  'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+                  r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
               }
               return values.first;
@@ -1064,13 +1064,13 @@ void main() {
             if (values.isEmpty && mapValues.isEmpty) return '';
             if (mapValues.isNotEmpty && values.isNotEmpty) {
               throw EncodingException(
-                'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
+                r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
             if (values.isNotEmpty) {
               if (values.length > 1) {
                 throw EncodingException(
-                  'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+                  r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
               }
               return values.first;

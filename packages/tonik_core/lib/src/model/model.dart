@@ -62,6 +62,7 @@ class AliasModel extends Model with NamedModel {
     required this.model,
     required super.context,
     this.nameOverride,
+    this.isNullable = false,
   });
 
   @override
@@ -69,6 +70,7 @@ class AliasModel extends Model with NamedModel {
   @override
   String? nameOverride;
   Model model;
+  bool isNullable;
 
   Model get resolved => switch (model) {
     final AliasModel alias => alias.resolved,
@@ -89,6 +91,7 @@ class ListModel extends Model with NamedModel {
     required super.context,
     this.name,
     this.nameOverride,
+    this.isNullable = false,
   });
 
   Model content;
@@ -97,6 +100,7 @@ class ListModel extends Model with NamedModel {
   final String? name;
   @override
   String? nameOverride;
+  bool isNullable;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -116,6 +120,7 @@ class ClassModel extends Model with NamedModel {
     this.name,
     this.nameOverride,
     this.description,
+    this.isNullable = false,
   });
 
   @override
@@ -126,6 +131,7 @@ class ClassModel extends Model with NamedModel {
   List<Property> properties;
   String? description;
   bool isDeprecated;
+  bool isNullable;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -205,6 +211,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     this.name,
     this.nameOverride,
     this.description,
+    this.isNullable = false,
   });
 
   @override
@@ -214,6 +221,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   String? nameOverride;
   String? description;
   bool isDeprecated;
+  bool isNullable;
   Set<Model> models;
 
   @override
@@ -236,6 +244,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
     this.nameOverride,
     this.description,
     this.discriminator,
+    this.isNullable = false,
   });
 
   @override
@@ -245,6 +254,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
   String? nameOverride;
   String? description;
   bool isDeprecated;
+  bool isNullable;
   Set<DiscriminatedModel> models;
   String? discriminator;
 
@@ -267,6 +277,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
     this.nameOverride,
     this.description,
     this.discriminator,
+    this.isNullable = false,
   });
 
   @override
@@ -276,6 +287,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
   String? nameOverride;
   String? description;
   bool isDeprecated;
+  bool isNullable;
   Set<DiscriminatedModel> models;
   String? discriminator;
 

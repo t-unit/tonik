@@ -64,7 +64,7 @@ void main() {
           if (values.isEmpty) return '';
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf label encoding for AnyOfPrimitive: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf label encoding for AnyOfPrimitive: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -208,13 +208,13 @@ void main() {
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
-              'Ambiguous anyOf label encoding for AnyOfMixed: mixing simple and complex values',
+              r'Ambiguous anyOf label encoding for AnyOfMixed: mixing simple and complex values',
             );
           }
           if (values.isNotEmpty) {
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf label encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf label encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;
@@ -338,13 +338,13 @@ void main() {
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
-              'Ambiguous anyOf label encoding for TestAnyOf: mixing simple and complex values',
+              r'Ambiguous anyOf label encoding for TestAnyOf: mixing simple and complex values',
             );
           }
           if (values.isNotEmpty) {
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf label encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf label encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;

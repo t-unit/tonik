@@ -39,12 +39,36 @@ class AnyOfGenerator {
       useNullSafetySyntax: true,
     );
 
-    final className = nameManager.modelName(model);
-    final snakeCaseName = className.toSnakeCase();
-    final generatedClasses = generateClasses(model);
+    final publicClassName = nameManager.modelName(model);
+    final snakeCaseName = publicClassName.toSnakeCase();
+
+    // Generate unique name for nullable anyOf with Raw prefix to allow
+    // using a typedef to express the nullable type.
+    final actualClassName = model.isNullable
+        ? nameManager.modelName(
+            AliasModel(
+              name: '\$Raw$publicClassName',
+              model: model,
+              context: model.context,
+            ),
+          )
+        : publicClassName;
+
+    final generatedClasses = generateClasses(model, actualClassName);
 
     final library = Library((b) {
       b.body.addAll(generatedClasses);
+
+      // Add typedef for nullable anyOf.
+      if (model.isNullable) {
+        b.body.add(
+          TypeDef(
+            (b) => b
+              ..name = publicClassName
+              ..definition = refer('$actualClassName?'),
+          ),
+        );
+      }
     });
 
     final formatter = DartFormatter(
@@ -57,8 +81,8 @@ class AnyOfGenerator {
   }
 
   @visibleForTesting
-  List<Spec> generateClasses(AnyOfModel model) {
-    final className = nameManager.modelName(model);
+  List<Spec> generateClasses(AnyOfModel model, [String? className]) {
+    final actualClassName = className ?? nameManager.modelName(model);
 
     final pseudoProperties = model.models.toSortedList().map((discriminated) {
       final typeRef = typeReference(
@@ -77,10 +101,10 @@ class AnyOfGenerator {
 
     final normalized = normalizeProperties(pseudoProperties);
 
-    final copyWithResult = _buildCopyWith(className, normalized);
+    final copyWithResult = _buildCopyWith(actualClassName, normalized);
 
     return [
-      generateClass(model, copyWithResult?.getter),
+      generateClass(model, copyWithResult?.getter, actualClassName),
       if (copyWithResult != null) ...[
         copyWithResult.interfaceClass,
         copyWithResult.implClass,
@@ -112,8 +136,24 @@ class AnyOfGenerator {
   }
 
   @visibleForTesting
-  Class generateClass(AnyOfModel model, [Method? copyWithGetter]) {
-    final className = nameManager.modelName(model);
+  Class generateClass(
+    AnyOfModel model, [
+    Method? copyWithGetter,
+    String? className,
+  ]) {
+    final publicClassName = nameManager.modelName(model);
+
+    // Use provided className, or generate Raw prefix for nullable models.
+    final actualClassName = className ??
+        (model.isNullable
+            ? nameManager.modelName(
+                AliasModel(
+                  name: '\$Raw$publicClassName',
+                  model: model,
+                  context: model.context,
+                ),
+              )
+            : publicClassName);
 
     final pseudoProperties = model.models.toSortedList().map((discriminated) {
       final typeRef = typeReference(discriminated.model, nameManager, package);
@@ -129,7 +169,7 @@ class AnyOfGenerator {
     final normalized = normalizeProperties(pseudoProperties);
 
     final effectiveCopyWithGetter =
-        copyWithGetter ?? _buildCopyWith(className, normalized)?.getter;
+        copyWithGetter ?? _buildCopyWith(actualClassName, normalized)?.getter;
 
     final fields = normalized.map((n) {
       final ref = typeReference(
@@ -161,12 +201,14 @@ class AnyOfGenerator {
         ),
     );
 
-    final fromJsonCtor = _buildFromJsonConstructor(className, normalized);
+    final fromJsonCtor =
+        _buildFromJsonConstructor(actualClassName, normalized);
 
-    final fromSimpleCtor = _buildFromSimpleConstructor(className, normalized);
+    final fromSimpleCtor =
+        _buildFromSimpleConstructor(actualClassName, normalized);
 
     final fromFormCtor = _buildFromFormConstructor(
-      className,
+      actualClassName,
       normalized,
     );
 
@@ -182,7 +224,7 @@ class AnyOfGenerator {
     return Class(
       (b) {
         b
-          ..name = className
+          ..name = actualClassName
           ..docs.addAll(formatDocComment(model.description))
           ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
 
@@ -200,17 +242,17 @@ class AnyOfGenerator {
           ..constructors.add(fromSimpleCtor)
           ..constructors.add(fromFormCtor)
           ..methods.addAll([
-            _buildCurrentEncodingShapeGetter(className, normalized),
-            _buildToJsonMethod(className, model, normalized),
-            _buildParameterPropertiesMethod(className, model, normalized),
-            _buildToSimpleMethod(className, model, normalized),
-            _buildToFormMethod(className, model, normalized),
-            _buildToLabelMethod(className, model, normalized),
-            _buildToMatrixMethod(className, model, normalized),
-            _buildToDeepObjectMethod(className, model, normalized),
-            _buildUriEncodeMethod(className, model, normalized),
+            _buildCurrentEncodingShapeGetter(actualClassName, normalized),
+            _buildToJsonMethod(actualClassName, model, normalized),
+            _buildParameterPropertiesMethod(actualClassName, model, normalized),
+            _buildToSimpleMethod(actualClassName, model, normalized),
+            _buildToFormMethod(actualClassName, model, normalized),
+            _buildToLabelMethod(actualClassName, model, normalized),
+            _buildToMatrixMethod(actualClassName, model, normalized),
+            _buildToDeepObjectMethod(actualClassName, model, normalized),
+            _buildUriEncodeMethod(actualClassName, model, normalized),
             generateEqualsMethod(
-              className: className,
+              className: actualClassName,
               properties: propsForEquality,
             ),
             generateHashCodeMethod(properties: propsForEquality),
@@ -534,6 +576,7 @@ class AnyOfGenerator {
       normalizedProperties,
       'Invalid JSON for $className: all variants failed to decode',
       generateJsonDecodingExceptionExpression,
+      raw: true,
     );
 
     return Constructor(
@@ -642,6 +685,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Mixed encoding not supported for $className: cannot encode both '
           'simple and complex values',
+          raw: true,
         ).statement,
         const Code('}'),
       ])
@@ -652,6 +696,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf encoding for $className: multiple values provided, '
           'anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -822,6 +867,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf simple encoding for $className: '
           'mixing simple and complex values',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('if (values.isNotEmpty) {'),
@@ -829,6 +875,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf simple encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -843,6 +890,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf simple encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -933,6 +981,7 @@ class AnyOfGenerator {
       decodableProperties,
       'Invalid simple value for $className: all variants failed to decode',
       generateSimpleDecodingExceptionExpression,
+      raw: true,
     );
 
     return Constructor(
@@ -1026,6 +1075,7 @@ class AnyOfGenerator {
       decodableProperties,
       'Invalid form value for $className: all variants failed to decode',
       generateFormatDecodingExceptionExpression,
+      raw: true,
     );
 
     return Constructor(
@@ -1229,6 +1279,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf form encoding for $className: '
           'mixing simple and complex values',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('if (values.isNotEmpty) {'),
@@ -1236,6 +1287,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf form encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -1250,6 +1302,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf form encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -1291,6 +1344,7 @@ class AnyOfGenerator {
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
             'contains only simple types',
+            raw: true,
           ).statement,
       );
     }
@@ -1644,6 +1698,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf label encoding for $className: '
           'mixing simple and complex values',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('if (values.isNotEmpty) {'),
@@ -1651,6 +1706,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf label encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -1665,6 +1721,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf label encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -1804,6 +1861,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf matrix encoding for $className: '
           'mixing simple and complex values',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('if (values.isNotEmpty) {'),
@@ -1811,6 +1869,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf matrix encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -1825,6 +1884,7 @@ class AnyOfGenerator {
         generateEncodingExceptionExpression(
           'Ambiguous anyOf matrix encoding for $className: '
           'multiple values provided, anyOf requires exactly one value',
+          raw: true,
         ).statement,
         const Code('}'),
         const Code('return values.first;'),
@@ -2116,8 +2176,9 @@ class AnyOfGenerator {
   Code _buildAllNullValidation(
     List<({String normalizedName, Property property})> normalizedProperties,
     String errorMessage,
-    Expression Function(String) exceptionGenerator,
-  ) {
+    Expression Function(String, {bool raw}) exceptionGenerator, {
+    bool raw = false,
+  }) {
     if (normalizedProperties.isEmpty) {
       return const Code('');
     }
@@ -2128,7 +2189,7 @@ class AnyOfGenerator {
 
     return Block.of([
       Code('if ($nullChecks) {'),
-      exceptionGenerator(errorMessage).statement,
+      exceptionGenerator(errorMessage, raw: raw).statement,
       const Code('}'),
     ]);
   }

@@ -360,7 +360,7 @@ class NameGenerator {
     }
 
     var cleaned = inputName.replaceAll('-', '_');
-    cleaned = cleaned.replaceAll(RegExp(r'[^\w]'), '');
+    cleaned = cleaned.replaceAll(RegExp(r'[^\w$]'), '');
     cleaned = cleaned.replaceFirst(RegExp('^_+'), '');
 
     if (isPathComponent && RegExp(r'^\d+$').hasMatch(cleaned)) {
@@ -379,7 +379,16 @@ class NameGenerator {
           }
           if (part.isEmpty) return '';
 
-          return part.toPascalCase();
+          // Extract $ characters before toPascalCase (which strips them)
+          final dollars = part.replaceAll(RegExp(r'[^$]'), '');
+          final partWithoutDollars = part.replaceAll(r'$', '');
+
+          if (partWithoutDollars.isEmpty) {
+            return dollars; // Just return the $ characters
+          }
+
+          // Apply PascalCase and restore $ characters at the beginning
+          return dollars + partWithoutDollars.toPascalCase();
         })
         .where((part) => part.isNotEmpty)
         .join();

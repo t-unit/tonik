@@ -788,7 +788,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   if (values.isEmpty) return '';
   if (values.length > 1) {
     throw EncodingException(
-      'Ambiguous anyOf simple encoding for SimpleChoice: multiple values provided, anyOf requires exactly one value',
+      r'Ambiguous anyOf simple encoding for SimpleChoice: multiple values provided, anyOf requires exactly one value',
     );
   }
   return values.first;
@@ -863,13 +863,13 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   if (values.isEmpty && mapValues.isEmpty) return '';
   if (mapValues.isNotEmpty && values.isNotEmpty) {
     throw EncodingException(
-      'Ambiguous anyOf simple encoding for MixedChoice: mixing simple and complex values',
+      r'Ambiguous anyOf simple encoding for MixedChoice: mixing simple and complex values',
     );
   }
   if (values.isNotEmpty) {
     if (values.length > 1) {
       throw EncodingException(
-        'Ambiguous anyOf simple encoding for MixedChoice: multiple values provided, anyOf requires exactly one value',
+        r'Ambiguous anyOf simple encoding for MixedChoice: multiple values provided, anyOf requires exactly one value',
       );
     }
     return values.first;
@@ -1421,7 +1421,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       const expectedMethod = '''
 Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, }) {
   throw EncodingException(
-    'parameterProperties not supported for SimpleChoice: contains only simple types',
+    r'parameterProperties not supported for SimpleChoice: contains only simple types',
   );
 }
 ''';
@@ -1912,6 +1912,150 @@ Map<String, String> parameterProperties({
         collapseWhitespace(generated),
         contains(collapseWhitespace(expectedGetter)),
       );
+    });
+  });
+
+  group('nullable anyOf', () {
+    test('generates Raw-prefixed class for nullable anyOf', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Cat',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Dog',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final klass = generator.generateClass(model);
+
+      // Verify the class uses Raw prefix.
+      expect(klass.name, r'$RawPet');
+    });
+
+    test('generates normal class for non-nullable anyOf', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Cat',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Dog',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final klass = generator.generateClass(model);
+
+      // Verify the class uses the normal name (no Raw prefix).
+      expect(klass.name, 'Pet');
+    });
+
+    test('generate method creates typedef for nullable anyOf', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final result = generator.generate(model);
+      final formatted = format(result.code);
+
+      // Verify typedef exists pointing to nullable Raw class.
+      expect(
+        collapseWhitespace(formatted),
+        contains(collapseWhitespace(r'typedef Response = $RawResponse?;')),
+      );
+    });
+
+    test('generate method does not create typedef for non-nullable anyOf', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Response',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final result = generator.generate(model);
+
+      // Verify no typedef is generated.
+      expect(result.code, isNot(contains('typedef')));
     });
   });
 }

@@ -109,7 +109,7 @@ void main() {
           if (values.isEmpty) return '';
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf matrix encoding for AnyOfPrimitive: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf matrix encoding for AnyOfPrimitive: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -268,13 +268,13 @@ void main() {
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
-              'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values',
+              r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values',
             );
           }
           if (values.isNotEmpty) {
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf matrix encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf matrix encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;
@@ -354,7 +354,7 @@ void main() {
           if (values.isEmpty) return '';
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf matrix encoding for AnyOfEnum: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf matrix encoding for AnyOfEnum: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -444,7 +444,7 @@ void main() {
           if (values.isEmpty) return '';
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf matrix encoding for AnyOfNested: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf matrix encoding for AnyOfNested: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -540,13 +540,13 @@ void main() {
           if (values.isEmpty && mapValues.isEmpty) return '';
           if (mapValues.isNotEmpty && values.isNotEmpty) {
             throw EncodingException(
-              'Ambiguous anyOf matrix encoding for TestAnyOf: mixing simple and complex values',
+              r'Ambiguous anyOf matrix encoding for TestAnyOf: mixing simple and complex values',
             );
           }
           if (values.isNotEmpty) {
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf matrix encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf matrix encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;
@@ -617,7 +617,7 @@ void main() {
             if (values.isEmpty) return '';
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf matrix encoding for StringOrList: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf matrix encoding for StringOrList: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;
@@ -678,7 +678,7 @@ void main() {
             if (values.isEmpty) return '';
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf matrix encoding for StringOrIntList: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf matrix encoding for StringOrIntList: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;
@@ -743,7 +743,7 @@ void main() {
             if (values.isEmpty) return '';
             if (values.length > 1) {
               throw EncodingException(
-                'Ambiguous anyOf matrix encoding for StringListOrIntList: multiple values provided, anyOf requires exactly one value',
+                r'Ambiguous anyOf matrix encoding for StringListOrIntList: multiple values provided, anyOf requires exactly one value',
               );
             }
             return values.first;

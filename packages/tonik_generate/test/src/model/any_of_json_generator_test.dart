@@ -95,7 +95,7 @@ void main() {
 
           if (user == null && int == null && string == null) {
             throw JsonDecodingException(
-              'Invalid JSON for Flexible: all variants failed to decode',
+              r'Invalid JSON for Flexible: all variants failed to decode',
             );
           }
           return Flexible(user: user, int: int, string: string);
@@ -190,14 +190,14 @@ void main() {
 
         if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Mixed encoding not supported for Payload: cannot encode both simple and complex values',
+            r'Mixed encoding not supported for Payload: cannot encode both simple and complex values',
           );
         }
 
         if (values.isNotEmpty) {
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -301,14 +301,14 @@ void main() {
 
         if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Mixed encoding not supported for PayloadNoDisc: cannot encode both simple and complex values',
+            r'Mixed encoding not supported for PayloadNoDisc: cannot encode both simple and complex values',
           );
         }
 
         if (values.isNotEmpty) {
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -388,14 +388,14 @@ void main() {
 
         if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Mixed encoding not supported for OnlyPrimitives: cannot encode both simple and complex values',
+            r'Mixed encoding not supported for OnlyPrimitives: cannot encode both simple and complex values',
           );
         }
 
         if (values.isNotEmpty) {
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;
@@ -487,14 +487,14 @@ void main() {
 
         if (values.isNotEmpty && mapValues.isNotEmpty) {
           throw EncodingException(
-            'Mixed encoding not supported for Mixed: cannot encode both simple and complex values',
+            r'Mixed encoding not supported for Mixed: cannot encode both simple and complex values',
           );
         }
 
         if (values.isNotEmpty) {
           if (values.length > 1) {
             throw EncodingException(
-              'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
+              r'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
             );
           }
           return values.first;

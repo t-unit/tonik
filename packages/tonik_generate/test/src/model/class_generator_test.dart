@@ -851,7 +851,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
               required bool explode,
             }) {
               throw FormatDecodingException(
-                'Form encoding not supported for ModelWithComplexList: contains complex types',
+                r'Form encoding not supported for ModelWithComplexList: contains complex types',
               );
             }
           ''';
@@ -1641,6 +1641,111 @@ Map<String, String> parameterProperties({
           );
         },
       );
+    });
+
+    group('nullable class generation', () {
+      test('generates Raw prefix for nullable class', () {
+        final model = ClassModel(
+          name: 'User',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final classes = generator.generateClasses(model);
+
+        expect(classes.length, 2);
+        expect(classes[0], isA<Class>());
+        expect(classes[1], isA<TypeDef>());
+
+        final classSpec = classes[0] as Class;
+        expect(classSpec.name, r'$RawUser');
+      });
+
+      test('generates typedef for nullable class', () {
+        final model = ClassModel(
+          name: 'Product',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final classes = generator.generateClasses(model);
+
+        final typedef = classes[1] as TypeDef;
+        expect(typedef.name, 'Product');
+        expect(
+          typedef.definition.accept(emitter).toString(),
+          r'$RawProduct?',
+        );
+      });
+
+      test('non-nullable class generates only class without typedef', () {
+        final model = ClassModel(
+          name: 'Order',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+        );
+
+        final classes = generator.generateClasses(model);
+
+        // Without properties, no copyWith is generated.
+        expect(classes.length, 1);
+        expect(classes.whereType<Class>().length, 1);
+        expect(classes.whereType<TypeDef>().length, 0);
+
+        final classSpec = classes[0] as Class;
+        expect(classSpec.name, 'Order');
+      });
+
+      test('generates correct filename for nullable class', () {
+        final model = ClassModel(
+          name: 'UserProfile',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final result = generator.generate(model);
+        expect(result.filename, 'user_profile.dart');
+      });
+
+      test('nullable class with properties uses Raw prefix', () {
+        final model = ClassModel(
+          name: 'Account',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isDeprecated: false,
+          isNullable: true,
+        );
+
+        final classes = generator.generateClasses(model);
+
+        final classSpec = classes[0] as Class;
+        expect(classSpec.name, r'$RawAccount');
+        expect(classSpec.fields.length, 1);
+        expect(classSpec.fields.first.name, 'id');
+
+        // Typedef should be the last element.
+        final typedef = classes.last as TypeDef;
+        expect(typedef.name, 'Account');
+        expect(
+          typedef.definition.accept(emitter).toString(),
+          r'$RawAccount?',
+        );
+      });
     });
   });
 }

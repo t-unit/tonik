@@ -34,11 +34,35 @@ class OneOfGenerator {
       useNullSafetySyntax: true,
     );
 
-    final className = nameManager.modelName(model);
-    final snakeCaseName = className.toSnakeCase();
+    final publicClassName = nameManager.modelName(model);
+    final snakeCaseName = publicClassName.toSnakeCase();
+
+    // Generate unique name for nullable oneOf with Raw prefix to allow
+    // using a typedef to express the nullable type.
+    final actualClassName = model.isNullable
+        ? nameManager.modelName(
+            AliasModel(
+              name: '\$Raw$publicClassName',
+              model: model,
+              context: model.context,
+            ),
+          )
+        : publicClassName;
 
     final library = Library((b) {
-      b.body.addAll(generateClasses(model));
+      final classes = generateClasses(model, actualClassName);
+      b.body.addAll(classes);
+
+      // Add typedef for nullable oneOf.
+      if (model.isNullable) {
+        b.body.add(
+          TypeDef(
+            (b) => b
+              ..name = publicClassName
+              ..definition = refer('$actualClassName?'),
+          ),
+        );
+      }
     });
 
     final formatter = DartFormatter(
@@ -51,12 +75,14 @@ class OneOfGenerator {
   }
 
   @visibleForTesting
-  List<Class> generateClasses(OneOfModel model) {
-    final className = nameManager.modelName(model);
+  List<Class> generateClasses(OneOfModel model, [String? className]) {
+    final actualClassName = className ?? nameManager.modelName(model);
 
-    final variantNames = _generateVariantNames(model, className);
-    final baseClass = _generateBaseClass(model, className, variantNames);
-    final subClasses = _generateSubClasses(model, className, variantNames);
+    final variantNames = _generateVariantNames(model, actualClassName);
+    final baseClass =
+        _generateBaseClass(model, actualClassName, variantNames);
+    final subClasses =
+        _generateSubClasses(model, actualClassName, variantNames);
 
     return [baseClass, ...subClasses];
   }
@@ -349,6 +375,7 @@ class OneOfGenerator {
         const Code('_ => '),
         generateJsonDecodingExceptionExpression(
           'Invalid JSON type for $className: \${json.runtimeType}',
+          raw: true,
         ).code,
         const Code(','),
       ]);
@@ -920,6 +947,7 @@ class OneOfGenerator {
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
             'only contains primitive types',
+            raw: true,
           ).code,
       );
     }
@@ -938,6 +966,7 @@ class OneOfGenerator {
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'cannot determine properties at runtime',
+              raw: true,
             ).code,
           );
       } else if (encodingShape == EncodingShape.mixed) {
@@ -962,6 +991,7 @@ class OneOfGenerator {
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'cannot determine properties at runtime',
+              raw: true,
             ).code,
           ]);
         } else {
@@ -980,6 +1010,7 @@ class OneOfGenerator {
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
               'cannot determine properties at runtime',
+              raw: true,
             ).code,
           ]);
         }
