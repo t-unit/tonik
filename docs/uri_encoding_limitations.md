@@ -110,13 +110,3 @@ This limitation has been discussed in the OpenAPI community:
 - [OpenAPI Generator Issue #812](https://github.com/OpenAPITools/openapi-generator/issues/812) - Dart generator doesn't support allowReserved
 - [OpenAPI Specification Issue #1840](https://github.com/OAI/OpenAPI-Specification/issues/1840) - Discussion about allowReserved implementation challenges
 
-## Summary
-
-- Tonik correctly implements `pipeDelimited`, `spaceDelimited`, and `deepObject` parameter serialization
-- Generated clients work with standard HTTP servers
-- Reserved characters (including `|`, spaces, and `[]`) are percent-encoded (cannot be disabled)
-- `allowReserved: true` is not supported
-- This is a Dart ecosystem limitation, not a Tonik limitation
-
-If your API requires unencoded reserved characters in query strings, you may need to reconsider your API design or use a different programming language for client generation.
-
