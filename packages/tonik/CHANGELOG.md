@@ -6,7 +6,7 @@
 
 ## 0.2.1
 
-For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
 
 ## 0.2.0
 

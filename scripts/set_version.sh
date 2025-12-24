@@ -103,12 +103,12 @@ if [ "$DRY_RUN" = false ]; then
         INSERT_LINE=$((VERSION_LINE + NEXT_VERSION_LINE))
         sed -i.bak "${INSERT_LINE}i\\
 \\
-For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).\\
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).\\
 " "$TONIK_CHANGELOG"
       else
         # No next version, append at the end
         echo "" >> "$TONIK_CHANGELOG"
-        echo "For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md)." >> "$TONIK_CHANGELOG"
+        echo "For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md)." >> "$TONIK_CHANGELOG"
       fi
       rm -f "$TONIK_CHANGELOG.bak"
       git add "$TONIK_CHANGELOG"
