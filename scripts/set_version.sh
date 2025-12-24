@@ -81,19 +81,39 @@ if [ "$DRY_RUN" = false ]; then
   # Add link to root changelog after the version header
   TONIK_CHANGELOG="packages/tonik/CHANGELOG.md"
   if grep -q "^## $VERSION$" "$TONIK_CHANGELOG"; then
-    # Check if link already exists
-    if ! grep -q "For full changes across all packages" "$TONIK_CHANGELOG"; then
-      # Add the link after the version header
-      sed -i.bak "/^## $VERSION$/a\\
+    # Find the line number of the version header
+    VERSION_LINE=$(grep -n "^## $VERSION$" "$TONIK_CHANGELOG" | cut -d: -f1)
+    # Find the next version header or end of file
+    NEXT_VERSION_LINE=$(tail -n +$((VERSION_LINE + 1)) "$TONIK_CHANGELOG" | grep -n "^## " | head -n 1 | cut -d: -f1)
+    
+    # Check if link already exists in this version section
+    if [ -n "$NEXT_VERSION_LINE" ]; then
+      END_LINE=$((VERSION_LINE + NEXT_VERSION_LINE - 1))
+      VERSION_SECTION=$(sed -n "${VERSION_LINE},${END_LINE}p" "$TONIK_CHANGELOG")
+    else
+      VERSION_SECTION=$(tail -n +${VERSION_LINE} "$TONIK_CHANGELOG")
+    fi
+    
+    if echo "$VERSION_SECTION" | grep -q "For full changes across all packages"; then
+      echo "✅ Full changelog link already present"
+    else
+      # Add the link after the version header and bullet points
+      if [ -n "$NEXT_VERSION_LINE" ]; then
+        # Insert before the next version
+        INSERT_LINE=$((VERSION_LINE + NEXT_VERSION_LINE))
+        sed -i.bak "${INSERT_LINE}i\\
 \\
-For full changes across all tonik packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).\\
+For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md).\\
 " "$TONIK_CHANGELOG"
-      rm "$TONIK_CHANGELOG.bak"
+      else
+        # No next version, append at the end
+        echo "" >> "$TONIK_CHANGELOG"
+        echo "For full changes across all packages, see the [complete changelog](https://github.com/hatemake/tonik/blob/main/CHANGELOG.md)." >> "$TONIK_CHANGELOG"
+      fi
+      rm -f "$TONIK_CHANGELOG.bak"
       git add "$TONIK_CHANGELOG"
       git commit --amend --no-edit
       echo "✅ Added full changelog link"
-    else
-      echo "✅ Full changelog link already present"
     fi
   else
     echo "⚠️  Version $VERSION not found in tonik changelog"
@@ -105,27 +125,22 @@ else
   echo ""
 fi
 
-echo "🔍 Updating root workspace dependencies..."
-# Update root pubspec.yaml dependencies
-sed -i.bak -E "s/(tonik[_a-z]*: \^)[0-9]+\.[0-9]+\.[0-9]+/\1$VERSION/g" pubspec.yaml
-rm pubspec.yaml.bak
-
+echo "🔍 Updating pubspec_generator with new version..."
 # Update hardcoded tonik_util version in pubspec_generator.dart
 sed -i.bak -E "s/(tonik_util: \^)[0-9]+\.[0-9]+\.[0-9]+/\1$VERSION/g" packages/tonik_generate/lib/src/pubspec_generator.dart
 rm packages/tonik_generate/lib/src/pubspec_generator.dart.bak
 
 if [ "$DRY_RUN" = false ]; then
   # Check if there were changes
-  if [ -n "$(git diff pubspec.yaml packages/tonik_generate/lib/src/pubspec_generator.dart)" ]; then
-    echo "✅ Updated root workspace dependencies and generator"
-    git add pubspec.yaml packages/tonik_generate/lib/src/pubspec_generator.dart
+  if [ -n "$(git diff packages/tonik_generate/lib/src/pubspec_generator.dart)" ]; then
+    echo "✅ Updated pubspec_generator with version $VERSION"
+    git add packages/tonik_generate/lib/src/pubspec_generator.dart
     git commit --amend --no-edit
   else
-    echo "✅ Root workspace dependencies and generator already up to date"
+    echo "✅ pubspec_generator already up to date"
   fi
 else
-  echo "✅ Updated files (not committed):"
-  echo "  - pubspec.yaml"
+  echo "✅ Updated file (not committed):"
   echo "  - packages/tonik_generate/lib/src/pubspec_generator.dart"
 fi
 echo ""
