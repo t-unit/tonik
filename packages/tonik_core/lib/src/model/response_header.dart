@@ -14,6 +14,10 @@ sealed class ResponseHeader {
   final Context context;
   final String? name;
 
+  /// The description of the header.
+  /// For aliases, this may override the referenced header's description.
+  String? get description;
+
   ResponseHeaderObject resolve({String? name}) {
     switch (this) {
       case final ResponseHeaderObject header:
@@ -39,12 +43,17 @@ class ResponseHeaderAlias extends ResponseHeader {
     required super.name,
     required this.header,
     required super.context,
+    this.description,
   });
 
   final ResponseHeader header;
 
   @override
-  String toString() => 'HeaderAlias{name: $name, header: $header}';
+  final String? description;
+
+  @override
+  String toString() =>
+      'HeaderAlias{name: $name, header: $header, description: $description}';
 
   @override
   bool operator ==(Object other) =>
@@ -53,10 +62,11 @@ class ResponseHeaderAlias extends ResponseHeader {
           runtimeType == other.runtimeType &&
           name == other.name &&
           header == other.header &&
+          description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, header);
+  int get hashCode => Object.hash(name, header, description);
 }
 
 @immutable
@@ -72,7 +82,9 @@ class ResponseHeaderObject extends ResponseHeader {
     required this.encoding,
   });
 
+  @override
   final String? description;
+
   final bool explode;
   final Model model;
   final bool isRequired;

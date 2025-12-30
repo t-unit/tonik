@@ -150,5 +150,61 @@ void main() {
       expect(resolved.name, 'secondAliasName');
       expect(resolved.rawName, 'originalRawName');
     });
+
+    group('description override', () {
+      test('RequestHeaderAlias stores description override', () {
+        final context = Context.initial();
+        final model = StringModel(context: context);
+
+        final originalHeader = RequestHeaderObject(
+          name: 'originalName',
+          rawName: 'originalRawName',
+          description: 'Original description',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: model,
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+        );
+
+        final alias = RequestHeaderAlias(
+          name: 'aliasName',
+          header: originalHeader,
+          context: context,
+          description: 'Overridden description',
+        );
+
+        expect(alias.description, 'Overridden description');
+        expect(alias.resolve().description, 'Original description');
+      });
+
+      test('RequestHeaderAlias description is null when not overridden', () {
+        final context = Context.initial();
+        final model = StringModel(context: context);
+
+        final originalHeader = RequestHeaderObject(
+          name: 'originalName',
+          rawName: 'originalRawName',
+          description: 'Original description',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: model,
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+        );
+
+        final alias = RequestHeaderAlias(
+          name: 'aliasName',
+          header: originalHeader,
+          context: context,
+        );
+
+        expect(alias.description, isNull);
+      });
+    });
   });
 }

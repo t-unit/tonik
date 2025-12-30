@@ -117,5 +117,44 @@ void main() {
         expect(alias.resolvedContent, content);
       });
     });
+
+    group('description override', () {
+      test('RequestBodyAlias stores description override', () {
+        final referencedBody = RequestBodyObject(
+          name: 'original',
+          context: context,
+          description: 'Original description',
+          isRequired: true,
+          content: const {},
+        );
+
+        final alias = RequestBodyAlias(
+          name: 'aliased',
+          context: context,
+          requestBody: referencedBody,
+          description: 'Overridden description',
+        );
+
+        expect(alias.description, 'Overridden description');
+      });
+
+      test('RequestBodyAlias description is null when not overridden', () {
+        final referencedBody = RequestBodyObject(
+          name: 'original',
+          context: context,
+          description: 'Original description',
+          isRequired: true,
+          content: const {},
+        );
+
+        final alias = RequestBodyAlias(
+          name: 'aliased',
+          context: context,
+          requestBody: referencedBody,
+        );
+
+        expect(alias.description, isNull);
+      });
+    });
   });
 }

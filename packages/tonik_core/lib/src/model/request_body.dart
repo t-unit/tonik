@@ -8,6 +8,10 @@ sealed class RequestBody {
   final String? name;
   final Context context;
 
+  /// The description of the request body.
+  /// For aliases, this may override the referenced request body's description.
+  String? get description;
+
   /// Returns the number of content objects in this request body.
   int get contentCount;
 
@@ -24,9 +28,13 @@ class RequestBodyAlias extends RequestBody {
     required super.name,
     required this.requestBody,
     required super.context,
+    this.description,
   });
 
   final RequestBody requestBody;
+
+  @override
+  final String? description;
 
   @override
   int get contentCount => requestBody.contentCount;
@@ -44,15 +52,16 @@ class RequestBodyAlias extends RequestBody {
           runtimeType == other.runtimeType &&
           name == other.name &&
           requestBody == other.requestBody &&
+          description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, requestBody, context);
+  int get hashCode => Object.hash(name, requestBody, description, context);
 
   @override
   String toString() =>
       'RequestBodyAlias(name: $name, '
-      'requestBody: $requestBody)';
+      'requestBody: $requestBody, description: $description)';
 }
 
 @immutable
@@ -65,6 +74,7 @@ class RequestBodyObject extends RequestBody {
     required this.content,
   });
 
+  @override
   final String? description;
 
   @override

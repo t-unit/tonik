@@ -26,7 +26,10 @@ sealed class ReferenceWrapper<T> {
     final map = json! as Map<String, dynamic>;
 
     if (map.containsKey(referenceKey)) {
-      return Reference(map[referenceKey]! as String);
+      final ref = map[referenceKey]! as String;
+      final description = map['description'] as String?;
+      final summary = map['summary'] as String?;
+      return Reference(ref, description: description, summary: summary);
     }
 
     if (T == Server) {
@@ -52,12 +55,15 @@ sealed class ReferenceWrapper<T> {
 }
 
 class Reference<T> extends ReferenceWrapper<T> {
-  Reference(this.ref);
+  Reference(this.ref, {this.description, this.summary});
 
   final String ref;
+  final String? description;
+  final String? summary;
 
   @override
-  String toString() => 'Reference{ref: $ref}';
+  String toString() =>
+      'Reference{ref: $ref, description: $description, summary: $summary}';
 }
 
 class InlinedObject<T> extends ReferenceWrapper<T> {
