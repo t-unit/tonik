@@ -25,4 +25,7 @@ Components _$ComponentsFromJson(Map<String, dynamic> json) => Components(
   securitySchemes: (json['securitySchemes'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, ReferenceWrapper<SecurityScheme>.fromJson(e)),
   ),
+  pathItems: (json['pathItems'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, ReferenceWrapper<PathItem>.fromJson(e)),
+  ),
 );

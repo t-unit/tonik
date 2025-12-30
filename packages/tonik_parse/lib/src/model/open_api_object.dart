@@ -3,6 +3,7 @@ import 'package:tonik_parse/src/model/components.dart';
 import 'package:tonik_parse/src/model/external_documentation.dart';
 import 'package:tonik_parse/src/model/info.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
+import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/server.dart';
 import 'package:tonik_parse/src/model/tag.dart';
 
@@ -25,7 +26,7 @@ class OpenApiObject {
 
   final Info info;
   final List<Server>? servers;
-  final Map<String, PathItem> paths;
+  final Map<String, ReferenceWrapper<PathItem>> paths;
   final Components? components;
   final List<Tag>? tags;
   final ExternalDocumentation? externalDocs;

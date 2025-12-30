@@ -35,9 +35,7 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   isNullable: json['nullable'] as bool?,
   discriminator: json['discriminator'] == null
       ? null
-      : Discriminator.fromJson(
-          json['discriminator'] as Map<String, dynamic>,
-        ),
+      : Discriminator.fromJson(json['discriminator'] as Map<String, dynamic>),
   isDeprecated: json['deprecated'] as bool?,
   uniqueItems: json['uniqueItems'] as bool?,
   xDartName: json['x-dart-name'] as String?,

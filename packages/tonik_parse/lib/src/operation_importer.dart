@@ -49,7 +49,7 @@ class OperationImporter {
 
     for (final pathEntry in openApiObject.paths.entries) {
       final path = pathEntry.key;
-      final pathItem = pathEntry.value;
+      final pathItem = _resolvePathItem(pathEntry.value);
       final context = rootContext.push(pathEntry.key);
 
       _addOperation(pathItem.get, context, core.HttpMethod.get, pathItem, path);
@@ -220,5 +220,31 @@ class OperationImporter {
     }
 
     return schemes;
+  }
+
+  PathItem _resolvePathItem(ReferenceWrapper<PathItem> wrapper) {
+    switch (wrapper) {
+      case Reference<PathItem>():
+        if (!wrapper.ref.startsWith('#/components/pathItems/')) {
+          throw UnimplementedError(
+            'Only local pathItem references are supported, '
+            'found ${wrapper.ref}',
+          );
+        }
+
+        final refName = wrapper.ref.split('/').last;
+        final refPathItem = openApiObject.components?.pathItems?[refName];
+
+        if (refPathItem == null) {
+          throw ArgumentError(
+            'PathItem $refName not found in components/pathItems',
+          );
+        }
+
+        return _resolvePathItem(refPathItem);
+
+      case InlinedObject<PathItem>():
+        return wrapper.object;
+    }
   }
 }

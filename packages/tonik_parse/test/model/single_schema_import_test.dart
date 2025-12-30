@@ -48,6 +48,7 @@ void main() {
       requestBodies: {},
       headers: {},
       securitySchemes: {},
+      pathItems: {},
     ),
     tags: [],
   );

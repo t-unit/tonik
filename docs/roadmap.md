@@ -5,6 +5,9 @@
 - Proper OpenAPI 3.1 support including JSON Schema Draft 2020-12
 - Proper OpenAPI 3.2 support
 - Support for `additionalProperties`
+- Advanced OpenAPI 3.1 features:
+  - Support for `if/then/else` schemas (via custom encoding/decoding checks)
+  - Support for `const` schemas (could map to single-value enum)
 - Server Templating support 
 - Default values
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections

@@ -27,6 +27,7 @@ void main() {
         requestBodies: {},
         headers: {},
         securitySchemes: {},
+        pathItems: {},
       ),
       tags: [],
     );
@@ -176,6 +177,7 @@ void main() {
         requestBodies: {},
         headers: {},
         securitySchemes: {},
+        pathItems: {},
       ),
       tags: [],
     );
