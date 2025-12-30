@@ -2,7 +2,6 @@
 
 - Normalize allOf with only added description (see https://github.com/sonallux/spotify-web-api/blob/main/official-spotify-open-api.yml#L4180) to be regular class model
 - Discriminator support for allOf
-- Proper OpenAPI 3.1 support including JSON Schema Draft 2020-12
 - Proper OpenAPI 3.2 support
 - Support for `additionalProperties`
 - Advanced OpenAPI 3.1 features:

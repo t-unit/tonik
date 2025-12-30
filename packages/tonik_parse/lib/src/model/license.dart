@@ -6,6 +6,7 @@ part 'license.g.dart';
 class License {
   License({
     required this.name,
+    required this.identifier,
     required this.url,
   });
 
@@ -13,8 +14,10 @@ class License {
       _$LicenseFromJson(json);
 
   final String name;
+  final String? identifier;
   final String? url;
 
   @override
-  String toString() => 'License{name: $name, url: $url}';
+  String toString() =>
+      'License{name: $name, identifier: $identifier, url: $url}';
 }

@@ -63,6 +63,7 @@ class Importer {
     return core.ApiDocument(
       title: openApiObject.info.title,
       version: openApiObject.info.version,
+      summary: openApiObject.info.summary,
       description: openApiObject.info.description,
       contact: ContactImporter(openApiObject: openApiObject).import(),
       license: LicenseImporter(openApiObject: openApiObject).import(),

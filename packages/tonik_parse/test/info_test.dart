@@ -8,6 +8,16 @@ void main() {
     'paths': <String, dynamic>{},
   };
 
+  const infoWithSummary = {
+    'openapi': '3.1.0',
+    'info': {
+      'title': 'Test API',
+      'version': '1.0.0',
+      'summary': 'A short summary of the API',
+    },
+    'paths': <String, dynamic>{},
+  };
+
   const infoWithDescription = {
     'openapi': '3.0.0',
     'info': {
@@ -40,6 +50,19 @@ void main() {
       'license': {
         'name': 'MIT',
         'url': 'https://opensource.org/licenses/MIT',
+      },
+    },
+    'paths': <String, dynamic>{},
+  };
+
+  const infoWithLicenseIdentifier = {
+    'openapi': '3.1.0',
+    'info': {
+      'title': 'Test API',
+      'version': '1.0.0',
+      'license': {
+        'name': 'Apache 2.0',
+        'identifier': 'Apache-2.0',
       },
     },
     'paths': <String, dynamic>{},
@@ -105,5 +128,27 @@ void main() {
     final api = Importer().import(infoWithExternalDocs);
     expect(api.externalDocs?.description, 'Find out more about our API');
     expect(api.externalDocs?.url, 'https://example.com/docs');
+  });
+
+  test('imports summary (OAS 3.1)', () {
+    final api = Importer().import(infoWithSummary);
+    expect(api.summary, 'A short summary of the API');
+  });
+
+  test('imports license with identifier (OAS 3.1)', () {
+    final api = Importer().import(infoWithLicenseIdentifier);
+    expect(api.license?.name, 'Apache 2.0');
+    expect(api.license?.identifier, 'Apache-2.0');
+    expect(api.license?.url, isNull);
+  });
+
+  test('summary is null when not provided', () {
+    final api = Importer().import(simpleInfo);
+    expect(api.summary, isNull);
+  });
+
+  test('license identifier is null when not provided', () {
+    final api = Importer().import(infoWithLicense);
+    expect(api.license?.identifier, isNull);
   });
 }

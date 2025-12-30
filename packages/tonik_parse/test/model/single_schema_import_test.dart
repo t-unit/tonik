@@ -16,6 +16,7 @@ void main() {
       contact: null,
       license: null,
       termsOfService: null,
+      summary: null,
     ),
     servers: [],
     paths: {},

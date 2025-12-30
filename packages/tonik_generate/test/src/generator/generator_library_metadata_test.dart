@@ -161,5 +161,93 @@ void main() {
       expect(content, isNot(contains('/// Terms of Service:')));
       expect(content, isNot(contains('/// Documentation:')));
     });
+
+    test('generates library with summary (OAS 3.1)', () {
+      final models = <Model>{
+        ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: ctx,
+        ),
+      };
+
+      final apiDoc = ApiDocument(
+        title: 'Pet Store API',
+        version: '1.0.0',
+        summary: 'A short summary of the Pet Store API',
+        description: 'A longer description with more details.',
+        models: models,
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
+      );
+
+      const packageName = 'petstore_summary_api';
+      const Generator().generate(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: packageName,
+      );
+
+      final libraryFile = File(
+        path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
+      );
+      expect(libraryFile.existsSync(), isTrue);
+      final content = libraryFile.readAsStringSync();
+
+      expect(content, contains('/// A short summary of the Pet Store API'));
+      expect(content, contains('/// A longer description with more details.'));
+    });
+
+    test('generates library with license identifier (OAS 3.1)', () {
+      final models = <Model>{
+        ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: ctx,
+        ),
+      };
+
+      final apiDoc = ApiDocument(
+        title: 'API with SPDX License',
+        version: '1.0.0',
+        license: const License(
+          name: 'Apache 2.0',
+          identifier: 'Apache-2.0',
+        ),
+        models: models,
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
+      );
+
+      const packageName = 'spdx_license_api';
+      const Generator().generate(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: packageName,
+      );
+
+      final libraryFile = File(
+        path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
+      );
+      expect(libraryFile.existsSync(), isTrue);
+      final content = libraryFile.readAsStringSync();
+
+      expect(content, contains('/// License: Apache 2.0'));
+      expect(content, contains('/// SPDX Identifier: Apache-2.0'));
+    });
   });
 }

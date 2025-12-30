@@ -12,6 +12,7 @@ class LicenseImporter {
 
     return core.License(
       name: license.name,
+      identifier: license.identifier,
       url: license.url,
     );
   }
