@@ -230,6 +230,12 @@ class ApiClientGenerator {
             : '';
         lines.add('/// - OpenID Connect$description');
         lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+
+      case MutualTlsSecurityScheme():
+        final description = (scheme.description?.isNotEmpty ?? false)
+            ? ': ${scheme.description}'
+            : '';
+        lines.add('/// - Mutual TLS$description');
     }
 
     return lines;

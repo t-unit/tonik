@@ -23,6 +23,7 @@ SecurityScheme _$SecuritySchemeFromJson(Map<String, dynamic> json) =>
 const _$SecuritySchemeTypeEnumMap = {
   SecuritySchemeType.apiKey: 'apiKey',
   SecuritySchemeType.http: 'http',
+  SecuritySchemeType.mutualTLS: 'mutualTLS',
   SecuritySchemeType.oauth2: 'oauth2',
   SecuritySchemeType.openIdConnect: 'openIdConnect',
 };

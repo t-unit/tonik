@@ -173,6 +173,45 @@ void main() {
       );
     });
 
+    test('includes mutual TLS security information', () {
+      final operation = Operation(
+        operationId: 'getMutualTlsData',
+        context: testContext,
+        summary: 'Get data with mutual TLS',
+        description: 'Get data with client certificate authentication',
+        tags: {Tag(name: 'secure')},
+        isDeprecated: false,
+        path: '/secure/mtls',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        responses: const {},
+        securitySchemes: const {
+          MutualTlsSecurityScheme(
+            type: SecuritySchemeType.mutualTLS,
+            description: 'Client certificate authentication',
+          ),
+        },
+      );
+
+      final generatedClass = generator.generateClass(
+        {operation},
+        Tag(name: 'secure'),
+        testServers,
+      );
+
+      final method = generatedClass.methods.first;
+
+      expect(method.docs, isNotEmpty);
+      final docsString = method.docs.join('\n');
+      expect(docsString, contains('Security:'));
+      expect(
+        docsString,
+        contains('- Mutual TLS: Client certificate authentication'),
+      );
+    });
+
     test('omits security section when no security schemes', () {
       final operation = Operation(
         operationId: 'getPublicData',
