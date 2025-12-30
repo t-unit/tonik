@@ -13,6 +13,7 @@ part 'open_api_object.g.dart';
 @JsonSerializable(createToJson: false)
 class OpenApiObject {
   OpenApiObject({
+    required this.openapi,
     required this.info,
     required this.servers,
     required this.paths,
@@ -24,6 +25,7 @@ class OpenApiObject {
   factory OpenApiObject.fromJson(Map<String, dynamic> json) =>
       _$OpenApiObjectFromJson(json);
 
+  final String openapi;
   final Info info;
   final List<Server>? servers;
   final Map<String, ReferenceWrapper<PathItem>> paths;
@@ -31,10 +33,11 @@ class OpenApiObject {
   final List<Tag>? tags;
   final ExternalDocumentation? externalDocs;
 
-  // We ignore openapi and security properties.
+  // We ignore security properties.
 
   @override
   String toString() =>
-      'OpenApiObject{info: $info, servers: $servers, paths: $paths, '
-      'components: $components, tags: $tags, externalDocs: $externalDocs}';
+      'OpenApiObject{openapi: $openapi, info: $info, servers: $servers, '
+      'paths: $paths, components: $components, tags: $tags, '
+      'externalDocs: $externalDocs}';
 }

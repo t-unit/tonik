@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/contact_importer.dart';
 import 'package:tonik_parse/src/external_documentation_importer.dart';
@@ -20,8 +21,13 @@ class Importer {
   /// (e.g., 'application/hal+json': ContentType.json) via configuration.
   final Map<String, core.ContentType> contentTypes;
 
+  static final _log = Logger('Importer');
+
   core.ApiDocument import(Map<String, dynamic> fileContent) {
     final openApiObject = OpenApiObject.fromJson(fileContent);
+
+    // Detect and log OpenAPI version (permissive, no validation)
+    _detectAndLogVersion(openApiObject.openapi);
 
     final modelImporter = ModelImporter(openApiObject);
     final securitySchemeImporter = SecuritySchemeImporter(openApiObject);
@@ -81,5 +87,18 @@ class Importer {
       pathParameters: parameterImporter.pathParameters,
       requestBodies: requestBodyImporter.requestBodies,
     );
+  }
+
+  static void _detectAndLogVersion(String version) {
+    if (version.startsWith('3.0')) {
+      _log.info('Parsing OpenAPI 3.0.x specification (version: $version)');
+    } else if (version.startsWith('3.1')) {
+      _log.info('Parsing OpenAPI 3.1.x specification (version: $version)');
+    } else {
+      _log.warning(
+        'Unknown or unsupported OpenAPI version: $version - '
+        'attempting to parse permissively',
+      );
+    }
   }
 }

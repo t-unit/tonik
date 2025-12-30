@@ -10,6 +10,7 @@ import 'package:tonik_parse/src/model_importer.dart';
 void main() {
   group('Binary format parsing', () {
     final openApiObject = OpenApiObject(
+      openapi: '3.0.0',
       info: Info(
         title: 'Test API',
         description: 'Test API Description',
@@ -118,6 +119,7 @@ void main() {
 
   group('Named binary schema', () {
     final openApiObject = OpenApiObject(
+      openapi: '3.0.0',
       info: Info(
         title: 'Test API',
         description: 'Test API Description',

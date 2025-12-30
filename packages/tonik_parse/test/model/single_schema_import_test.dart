@@ -9,6 +9,7 @@ import 'package:tonik_parse/src/model_importer.dart';
 
 void main() {
   final openApiObject = OpenApiObject(
+    openapi: '3.0.0',
     info: Info(
       title: 'Test API',
       description: 'Test API Description',

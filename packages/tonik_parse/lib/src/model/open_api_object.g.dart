@@ -8,6 +8,7 @@ part of 'open_api_object.dart';
 
 OpenApiObject _$OpenApiObjectFromJson(Map<String, dynamic> json) =>
     OpenApiObject(
+      openapi: json['openapi'] as String,
       info: Info.fromJson(json['info'] as Map<String, dynamic>),
       servers: (json['servers'] as List<dynamic>?)
           ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
