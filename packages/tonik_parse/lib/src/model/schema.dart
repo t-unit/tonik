@@ -24,9 +24,35 @@ class Schema {
     required this.uniqueItems,
     required this.xDartName,
     required this.xDartEnum,
+    this.isBooleanSchema,
   });
 
-  factory Schema.fromJson(Map<String, dynamic> json) => _$SchemaFromJson(json);
+  factory Schema.fromJson(Object? json) {
+    if (json is bool) {
+      return Schema(
+        type: [],
+        format: null,
+        required: null,
+        enumerated: null,
+        allOf: null,
+        anyOf: null,
+        oneOf: null,
+        not: null,
+        items: null,
+        properties: null,
+        description: null,
+        isNullable: null,
+        discriminator: null,
+        isDeprecated: null,
+        uniqueItems: null,
+        xDartName: null,
+        xDartEnum: null,
+        isBooleanSchema: json,
+      );
+    }
+
+    return _$SchemaFromJson(json! as Map<String, dynamic>);
+  }
 
   @_SchemaTypeConverter()
   final List<String> type;
@@ -52,6 +78,14 @@ class Schema {
   @JsonKey(name: 'x-dart-enum')
   final List<String>? xDartEnum;
 
+  /// Indicates if this schema is a boolean schema (true/false).
+  ///
+  /// - `true`: Always validates (accepts any value)
+  /// - `false`: Never validates (rejects all values)
+  /// - `null`: Not a boolean schema (standard object schema)
+  @JsonKey(includeFromJson: false)
+  final bool? isBooleanSchema;
+
   // We ignore example, externalDocs, xml, writeOnly, readOnly, default, title,
   // multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum,
   // maxLength, minLength, pattern, maxItems, minItems, maxProperties,
@@ -64,7 +98,8 @@ class Schema {
       'not: $not, items: $items, properties: $properties, description: '
       '$description, isNullable: $isNullable, discriminator: $discriminator, '
       'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems, '
-      'xDartName: $xDartName, xDartEnum: $xDartEnum}';
+      'xDartName: $xDartName, xDartEnum: $xDartEnum, '
+      'isBooleanSchema: $isBooleanSchema}';
 }
 
 class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {

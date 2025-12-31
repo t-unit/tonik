@@ -22,3 +22,4 @@
 - Pattern validation
 - Remote and URL references
 - Direct security/authentication code generation - authentication must be handled through ServerConfig interceptors (see [Authentication Guide](authentication.md))
+- Code generation for [webhooks](https://spec.openapis.org/oas/v3.1.0.html#oasWebhooks)

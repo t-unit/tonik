@@ -25,7 +25,7 @@ class ModelImporter {
       log.fine('Importing schema $name');
       var model = _parseSchemaWrapper(name, schema, context);
 
-      if (model is PrimitiveModel) {
+      if (model is PrimitiveModel || model is AnyModel || model is NeverModel) {
         model = AliasModel(
           name: name,
           model: model,
@@ -51,7 +51,10 @@ class ModelImporter {
     final model = _parseSchemaWrapper(null, schema, context);
     log.fine('Importing schema $model@$context');
 
-    if (model is! PrimitiveModel && model is! AliasModel) {
+    if (model is! PrimitiveModel &&
+        model is! AnyModel &&
+        model is! NeverModel &&
+        model is! AliasModel) {
       _logModelAdded(model);
       models.add(model);
     }
@@ -107,6 +110,12 @@ class ModelImporter {
     );
     if (existing != null) {
       return existing;
+    }
+
+    if (schema.isBooleanSchema != null) {
+      return schema.isBooleanSchema!
+          ? AnyModel(context: context)
+          : NeverModel(context: context);
     }
 
     if (schema.allOf != null) {

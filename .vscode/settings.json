@@ -28,6 +28,7 @@
     "roundtrips",
     "Slurper",
     "tonik",
-    "typdef"
+    "typdef",
+    "uncallable"
   ]
 }

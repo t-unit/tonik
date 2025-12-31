@@ -13,6 +13,15 @@ sealed class ReferenceWrapper<T> {
   factory ReferenceWrapper.fromJson(Object? json) {
     const referenceKey = r'$ref';
 
+    if (json is bool) {
+      if (T == Schema) {
+        return InlinedObject(Schema.fromJson(json) as T);
+      }
+      throw FormatException(
+        'Boolean schemas are only supported for Schema types, found: $json',
+      );
+    }
+
     if (json is String) {
       if (T == Schema) {
         final schemaMap = {'type': json};
