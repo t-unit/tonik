@@ -15,6 +15,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
   - [Schema Types](#schema-types)
   - [Schema Features](#schema-features)
     - [Composition](#composition)
+    - [Boolean Schemas (OAS 3.1)](#boolean-schemas-oas-31)
     - [Supported Features](#supported-features)
     - [Not Supported](#not-supported)
   - [Parameters](#parameters)
@@ -126,6 +127,41 @@ Tonik maps OpenAPI types to idiomatic Dart types. See [Data Types](data_types.md
 
 See [Composite Data Types](composite_data_types.md) for usage examples.
 
+### Boolean Schemas (OAS 3.1)
+
+OpenAPI 3.1 allows `schema: true` (accepts any value) and `schema: false` (accepts no value).
+
+| Schema | Dart Type | Use Case |
+|--------|-----------|----------|
+| `true` | `Object?` | Flexible fields accepting any JSON |
+| `false` | `Never` | Unreachable fields (always null) |
+
+**Encoding (sending requests):**
+
+Since `Object?` has no static type, Tonik checks the runtime type and encodes accordingly:
+
+| Value Type | JSON Body | Path/Query/Header | Form-urlencoded Body |
+|------------|-----------|-------------------|----------------------|
+| Primitives (`String`, `int`, `double`, `bool`) | ✅ | ✅ | ✅ (via `toString()`) |
+| `DateTime`, `Uri`, `BigDecimal` | ✅ | ✅ | ✅ (via `toString()`) |
+| `List`, `Map` | ✅ recursive | ❌ throws | ✅ (via `toString()`) |
+| Generated models (`JsonEncodable` / `ParameterEncodable`) | ✅ | ✅ | ✅ (via `toString()`) |
+| `Map<String, String>` with `deepObject` style | — | ✅ | — |
+
+Form-urlencoded bodies encode boolean schema fields using `toString()`, which works for any value but loses type information for complex structures.
+
+**Decoding (parsing responses):**
+
+| Context | Behavior |
+|---------|----------|
+| JSON body | Returns parsed value as-is (`Object?`) |
+| Parameters | Passes through raw value as `Object?` |
+
+Parameter decoding works when a class contains only primitives and boolean schema fields. 
+If a class also contains nested objects, `fromSimple`/`fromForm` throw because the nested structure cannot be reconstructed from a flat string.
+
+> **Recommendation:** Avoid boolean schemas when possible. Without a concrete schema, Tonik cannot decode values into typed objects — responses arrive as raw `Object?`. Encoding is also limited since there's no schema to guide serialization. Prefer explicit schema types for reliable round-trip behavior.
+
 ### Supported Features
 
 | Feature | Status |
@@ -137,6 +173,7 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 | String & integer enums | ✅ |
 | `x-dart-enum` | ✅ |
 | Unknown enum case | ✅ (configurable) |
+| Boolean schemas (`true`/`false`) | ✅ (OAS 3.1) |
 
 ### Not Supported
 
