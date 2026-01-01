@@ -22,6 +22,41 @@ This document provides information about how Tonik is mapping data types in Open
 | `boolean` | (any) | `bool` | `dart:core` | Boolean type |
 | `array` | (any) | `List<T>` | `dart:core` | List of specified type |
 
+### Boolean Schemas (OAS 3.1)
+
+OpenAPI 3.1 allows `schema: true` (accepts any value) and `schema: false` (accepts no value).
+
+| Schema | Dart Type | Use Case |
+|--------|-----------|----------|
+| `true` | `Object?` | Flexible fields accepting any JSON |
+| `false` | `Never` | Unreachable fields (always null) |
+
+#### Encoding (sending requests)
+
+Since `Object?` has no static type, Tonik checks the runtime type and encodes accordingly:
+
+| Value Type | JSON Body | Path/Query/Header | Form-urlencoded Body |
+|------------|-----------|-------------------|----------------------|
+| Primitives (`String`, `int`, `double`, `bool`) | ✅ | ✅ | ✅ (via `toString()`) |
+| `DateTime`, `Uri`, `BigDecimal` | ✅ | ✅ | ✅ (via `toString()`) |
+| `List`, `Map` | ✅ recursive | ❌ throws | ✅ (via `toString()`) |
+| Generated models (`JsonEncodable` / `ParameterEncodable`) | ✅ | ✅ | ✅ (via `toString()`) |
+| `Map<String, String>` with `deepObject` style | — | ✅ | — |
+
+Form-urlencoded bodies encode boolean schema fields using `toString()`, which works for any value but loses type information for complex structures.
+
+#### Decoding (parsing responses)
+
+| Context | Behavior |
+|---------|----------|
+| JSON body | Returns parsed value as-is (`Object?`) |
+| Parameters | Passes through raw value as `Object?` |
+
+Parameter decoding works when a class contains only primitives and boolean schema fields. 
+If a class also contains nested objects, `fromSimple`/`fromForm` throw because the nested structure cannot be reconstructed from a flat string.
+
+> **Recommendation:** Avoid boolean schemas when possible. Without a concrete schema, Tonik cannot decode values into typed objects — responses arrive as raw `Object?`. Encoding is also limited since there's no schema to guide serialization. Prefer explicit schema types for reliable round-trip behavior.
+
 ### Timezone-Aware DateTime Parsing
 
 Tonik provides timezone-aware parsing for `date-time` format strings using the `OffsetDateTime` class. The parsing behavior depends on the timezone information present in the input:
