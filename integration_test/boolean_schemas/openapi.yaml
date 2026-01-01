@@ -1,0 +1,710 @@
+openapi: 3.1.0
+info:
+  title: Boolean Schema Test API
+  description: OpenAPI specification testing boolean schemas (true/false) in OAS 3.1
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: boolean-schemas
+    description: Operations testing boolean schemas (AnyModel and NeverModel)
+
+paths:
+  /json/any/echo:
+    post:
+      operationId: echoJsonAny
+      tags:
+        - boolean-schemas
+      summary: Echo JSON body with any value
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectWithAny'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectWithAny'
+
+  /json/any-array:
+    post:
+      operationId: postJsonAnyArray
+      tags:
+        - boolean-schemas
+      summary: Post JSON body with array of any values
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlexibleArray'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlexibleArray'
+
+  /json/pure-any:
+    post:
+      operationId: postPureAny
+      tags:
+        - boolean-schemas
+      summary: Post a pure any value as body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: true
+
+  /form/any/echo:
+    post:
+      operationId: echoFormAny
+      tags:
+        - boolean-schemas
+      summary: Echo form-urlencoded body with any value
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FormWithAny'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/FormWithAny'
+
+  /path/any/{anyValue}:
+    get:
+      operationId: getPathAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in path parameter
+      parameters:
+        - name: anyValue
+          in: path
+          required: true
+          style: simple
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/any-explode/{anyValue}:
+    get:
+      operationId: getPathAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in path parameter with explode
+      parameters:
+        - name: anyValue
+          in: path
+          required: true
+          style: simple
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/label/any/{anyValue}:
+    get:
+      operationId: getPathLabelAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in path parameter with label style
+      parameters:
+        - name: anyValue
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/label/any-explode/{anyValue}:
+    get:
+      operationId: getPathLabelAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in path parameter with label style and explode
+      parameters:
+        - name: anyValue
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/matrix/any/{anyValue}:
+    get:
+      operationId: getPathMatrixAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in path parameter with matrix style
+      parameters:
+        - name: anyValue
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/matrix/any-explode/{anyValue}:
+    get:
+      operationId: getPathMatrixAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in path parameter with matrix style and explode
+      parameters:
+        - name: anyValue
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/never/{neverValue}:
+    get:
+      operationId: getPathNever
+      tags:
+        - boolean-schemas
+      summary: Test never value in path parameter (code generation only)
+      parameters:
+        - name: neverValue
+          in: path
+          required: true
+          style: simple
+          schema: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/any:
+    get:
+      operationId: getQueryAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/any-no-explode:
+    get:
+      operationId: getQueryAnyNoExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter without explode
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: form
+          explode: false
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/space-delimited/any:
+    get:
+      operationId: getQuerySpaceDelimitedAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter with spaceDelimited style
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: spaceDelimited
+          explode: false
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/pipe-delimited/any:
+    get:
+      operationId: getQueryPipeDelimitedAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter with pipeDelimited style
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: pipeDelimited
+          explode: false
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/deep-object/any:
+    get:
+      operationId: getQueryDeepObjectAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter with deepObject style
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/never:
+    get:
+      operationId: getQueryNever
+      tags:
+        - boolean-schemas
+      summary: Test never value in query parameter (code generation only)
+      parameters:
+        - name: neverValue
+          in: query
+          required: true
+          style: form
+          schema: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /header/any:
+    get:
+      operationId: getHeaderAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in header parameter
+      parameters:
+        - name: X-Any-Value
+          in: header
+          required: true
+          style: simple
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /header/any-explode:
+    get:
+      operationId: getHeaderAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in header parameter with explode
+      parameters:
+        - name: X-Any-Value
+          in: header
+          required: true
+          style: simple
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /header/never:
+    get:
+      operationId: getHeaderNever
+      tags:
+        - boolean-schemas
+      summary: Test never value in header parameter (code generation only)
+      parameters:
+        - name: X-Never-Value
+          in: header
+          required: true
+          style: simple
+          schema: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /combined/{pathAny}:
+    get:
+      operationId: getCombinedAny
+      tags:
+        - boolean-schemas
+      summary: Test any value in multiple parameter locations
+      parameters:
+        - name: pathAny
+          in: path
+          required: true
+          style: simple
+          schema: true
+        - name: queryAny
+          in: query
+          required: true
+          style: form
+          schema: true
+        - name: X-Header-Any
+          in: header
+          required: true
+          style: simple
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CombinedResponse'
+
+  /response/any:
+    get:
+      operationId: getResponseAny
+      tags:
+        - boolean-schemas
+      summary: Get response with any value property
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectWithAny'
+
+  /response/any-array:
+    get:
+      operationId: getResponseAnyArray
+      tags:
+        - boolean-schemas
+      summary: Get response with array of any values
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlexibleArray'
+
+  /response/never:
+    get:
+      operationId: getResponseNever
+      tags:
+        - boolean-schemas
+      summary: Get response with never value (code generation only)
+      responses:
+        '200':
+          description: Successful response with never schema
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  neverField:
+                    $ref: '#/components/schemas/NeverValid'
+
+  /response/headers:
+    get:
+      operationId: getResponseHeaders
+      tags:
+        - boolean-schemas
+      summary: Get response with any value in headers
+      responses:
+        '200':
+          description: Successful response with custom headers
+          headers:
+            X-Any-Header:
+              description: Header with any value
+              schema: true
+            X-Never-Header:
+              description: Header with never value (code generation only)
+              schema: false
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /json/never:
+    post:
+      operationId: postJsonNever
+      tags:
+        - boolean-schemas
+      summary: Post JSON body with never value (code generation only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectWithNever'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /json/pure-never:
+    post:
+      operationId: postPureNever
+      tags:
+        - boolean-schemas
+      summary: Post a pure never value as body (code generation only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /form/never:
+    post:
+      operationId: postFormNever
+      tags:
+        - boolean-schemas
+      summary: Post form-urlencoded body with never value (code generation only)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FormWithNever'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+components:
+  schemas:
+    AnyValue: true
+
+    NeverValid: false
+
+    ObjectWithAny:
+      type: object
+      required:
+        - name
+        - anyData
+      properties:
+        name:
+          type: string
+        anyData:
+          $ref: '#/components/schemas/AnyValue'
+        optionalAny:
+          $ref: '#/components/schemas/AnyValue'
+        metadata:
+          type: object
+          properties:
+            version:
+              type: integer
+
+    ObjectWithNever:
+      type: object
+      properties:
+        name:
+          type: string
+        neverField:
+          $ref: '#/components/schemas/NeverValid'
+
+    FlexibleArray:
+      type: array
+      items: true
+
+    FormWithAny:
+      type: object
+      required:
+        - name
+        - anyValue
+      properties:
+        name:
+          type: string
+        anyValue:
+          $ref: '#/components/schemas/AnyValue'
+        count:
+          type: integer
+
+    FormWithNever:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        neverField:
+          $ref: '#/components/schemas/NeverValid'
+
+    CombinedResponse:
+      type: object
+      properties:
+        pathValue:
+          type: string
+        queryValue:
+          type: string
+        headerValue:
+          type: string

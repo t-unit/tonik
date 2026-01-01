@@ -13,6 +13,14 @@ List<Code> buildToFormQueryParameterCode(
 }) {
   final model = parameter.model;
 
+  if (model is NeverModel) {
+    return [
+      generateEncodingExceptionExpression(
+        'Cannot encode NeverModel - this type does not permit any value.',
+      ).statement,
+    ];
+  }
+
   if (model is ListModel) {
     final contentShape = model.content.encodingShape;
 
@@ -115,6 +123,9 @@ String? _getFormSerializationSuffix(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+
+    AnyModel() => '?.toString() ?? ""',
+    NeverModel() => null,
 
     _ => throw UnimplementedError(
       'Unsupported model type for form encoding: $model',

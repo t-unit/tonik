@@ -843,4 +843,87 @@ void main() {
       });
     });
   });
+
+  group('buildFromJsonValueExpression for NeverModel', () {
+    late Context context;
+    late NameManager nameManager;
+    late DartEmitter emitter;
+
+    setUp(() {
+      context = Context.initial();
+      nameManager = NameManager(generator: NameGenerator());
+      emitter = DartEmitter(
+        useNullSafetySyntax: true,
+        allocator: Allocator.simplePrefixing(),
+      );
+    });
+
+    test('generates throw JsonDecodingException for NeverModel', () {
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: NeverModel(context: context),
+        nameManager: nameManager,
+        package: 'package:my_package/my_package.dart',
+      ).accept(emitter).toString();
+      expect(
+        result,
+        'throw  _i1.JsonDecodingException('
+        "'Cannot decode NeverModel - this type does not permit any value.')",
+      );
+    });
+
+    test('generates throw JsonDecodingException for nullable NeverModel', () {
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: NeverModel(context: context),
+        nameManager: nameManager,
+        package: 'package:my_package/my_package.dart',
+        isNullable: true,
+      ).accept(emitter).toString();
+      // Even nullable NeverModel throws since no valid value exists
+      expect(
+        result,
+        'throw  _i1.JsonDecodingException('
+        "'Cannot decode NeverModel - this type does not permit any value.')",
+      );
+    });
+
+    test('generates throw for AliasModel wrapping NeverModel', () {
+      final aliasModel = AliasModel(
+        name: 'ForbiddenAlias',
+        model: NeverModel(context: context),
+        context: context,
+      );
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: aliasModel,
+        nameManager: nameManager,
+        package: 'package:my_package/my_package.dart',
+      ).accept(emitter).toString();
+      expect(
+        result,
+        'throw  _i1.JsonDecodingException('
+        "'Cannot decode NeverModel - this type does not permit any value.')",
+      );
+    });
+
+    test('generates throw for List of NeverModel', () {
+      final listModel = ListModel(
+        content: NeverModel(context: context),
+        context: context,
+      );
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: listModel,
+        nameManager: nameManager,
+        package: 'package:my_package/my_package.dart',
+      ).accept(emitter).toString();
+      expect(
+        result,
+        'throw  _i1.JsonDecodingException('
+        "'Cannot decode List<NeverModel> - "
+        "this type does not permit any value.')",
+      );
+    });
+  });
 }

@@ -79,10 +79,12 @@ class OneOfGenerator {
     final actualClassName = className ?? nameManager.modelName(model);
 
     final variantNames = _generateVariantNames(model, actualClassName);
-    final baseClass =
-        _generateBaseClass(model, actualClassName, variantNames);
-    final subClasses =
-        _generateSubClasses(model, actualClassName, variantNames);
+    final baseClass = _generateBaseClass(model, actualClassName, variantNames);
+    final subClasses = _generateSubClasses(
+      model,
+      actualClassName,
+      variantNames,
+    );
 
     return [baseClass, ...subClasses];
   }
@@ -248,39 +250,41 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    final cases = model.models
-        .toSortedList()
-        .map((discriminatedModel) {
-          final variantName = variantNames[discriminatedModel]!;
+    final caseCodes = <Code>[];
+    final sortedModels = model.models.toSortedList();
+    for (var i = 0; i < sortedModels.length; i++) {
+      final discriminatedModel = sortedModels[i];
+      final variantName = variantNames[discriminatedModel]!;
 
-          final property = Property(
-            name: 'value',
-            model: discriminatedModel.model,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          );
-          final jsonValue = buildToJsonPropertyExpression('value', property);
-          final discriminatorValue =
-              discriminatedModel.discriminatorValue != null
-              ? "'${discriminatedModel.discriminatorValue}'"
-              : 'null';
+      final property = Property(
+        name: 'value',
+        model: discriminatedModel.model,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final jsonValueExpr = buildToJsonPropertyExpression('value', property);
+      final discriminatorValue = discriminatedModel.discriminatorValue != null
+          ? "'${discriminatedModel.discriminatorValue}'"
+          : 'null';
 
-          return '$variantName(:final value) => '
-              '($jsonValue, $discriminatorValue)';
-        })
-        .join(',\n');
+      caseCodes
+        ..add(Code('$variantName(:final value) => ('))
+        ..add(jsonValueExpr.code)
+        ..add(Code(', $discriminatorValue)'));
+      if (i < sortedModels.length - 1) {
+        caseCodes.add(const Code(',\n'));
+      }
+    }
 
-    final blocks = [
-      Code.scope((allocate) {
-        final dynamicRef = refer('dynamic', 'dart:core');
-        final stringNullableRef = refer('String?', 'dart:core');
-
-        return 'final (${allocate(dynamicRef)} json, '
-            '${allocate(stringNullableRef)} discriminator) = switch (this) {\n'
-            '$cases\n'
-            '};';
-      }),
+    final blocks = <Code>[
+      const Code('final ('),
+      refer('dynamic', 'dart:core').code,
+      const Code(' json, '),
+      refer('String?', 'dart:core').code,
+      const Code(' discriminator) = switch (this) {\n'),
+      ...caseCodes,
+      const Code('\n};'),
     ];
 
     if (model.discriminator != null) {

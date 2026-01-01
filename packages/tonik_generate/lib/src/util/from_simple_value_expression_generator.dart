@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 /// Returns the reason why simple decoding is not supported for the given model,
 /// or `null` if simple decoding is supported.
@@ -20,7 +21,9 @@ String? getSimpleDecodingUnsupportedReason(Model model) {
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
+    AnyModel() ||
     AnyOfModel() => null,
+    NeverModel() => 'NeverModel does not permit any value',
     ListModel(:final content) => _getListContentUnsupportedReason(content),
     AliasModel(:final model) => getSimpleDecodingUnsupportedReason(model),
     NamedModel() || CompositeModel() => 'Unsupported model type: $model',
@@ -42,7 +45,9 @@ String? _getListContentUnsupportedReason(Model content) {
     EnumModel() ||
     OneOfModel() ||
     AllOfModel() ||
+    AnyModel() ||
     AnyOfModel() => null,
+    NeverModel() => 'NeverModel does not permit any value',
     ClassModel() => 'Lists of objects are not supported in simple encoding',
     ListModel() => 'Nested lists are not supported in simple encoding',
     AliasModel(:final model) => _getListContentUnsupportedReason(model),
@@ -152,6 +157,10 @@ Expression buildSimpleValueExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
+    NeverModel() => generateSimpleDecodingExceptionExpression(
+      'Cannot decode NeverModel - this type does not permit any value.',
+    ),
+    AnyModel() => value,
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
   };
@@ -310,6 +319,10 @@ Expression _buildListFromSimpleExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
+    NeverModel() => generateSimpleDecodingExceptionExpression(
+      'Cannot decode List<NeverModel> - this type does not permit any value.',
+    ),
+    AnyModel() => listDecode,
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
   };

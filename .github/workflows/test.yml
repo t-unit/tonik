@@ -74,3 +74,9 @@ jobs:
           cd integration_test/composition/composition_test
           dart pub get
           dart test
+
+      - name: Run boolean schemas integration tests
+        run: |
+          cd integration_test/boolean_schemas/boolean_schemas_test
+          dart pub get
+          dart test --concurrency=1

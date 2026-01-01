@@ -90,6 +90,18 @@ TypeReference typeReference(
         )
         ..isNullable = isNullableOverride,
     ),
+    NeverModel _ => TypeReference(
+      (b) => b
+        ..symbol = 'Never'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
+    ),
+    AnyModel _ => TypeReference(
+      (b) => b
+        ..symbol = 'Object'
+        ..url = 'dart:core'
+        ..isNullable = true,
+    ),
     final CompositeModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)

@@ -22,6 +22,12 @@ String buildToLabelPathParameterExpression(
 
   final model = parameter.model;
 
+  // Quick fix: AnyModel (Object?) needs special handling
+  // Proper support will come with encoding refactor
+  if (model is AnyModel) {
+    return '''($parameterName$nullablePart?.toString() ?? '').toLabel(explode: $explode, allowEmpty: $allowEmpty)''';
+  }
+
   if (model is ListModel) {
     final content = model.content;
     final contentModel = content is AliasModel ? content.resolved : content;

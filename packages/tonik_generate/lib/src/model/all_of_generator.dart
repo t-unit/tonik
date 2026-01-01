@@ -461,12 +461,10 @@ class AllOfGenerator {
 
         jsonParts.addAll([
           Code('final $fieldNameJson = '),
-          Code(
-            buildToJsonPropertyExpression(
-              fieldName,
-              normalized.property,
-            ),
-          ),
+          buildToJsonPropertyExpression(
+            fieldName,
+            normalized.property,
+          ).code,
           const Code(';'),
           refer(
             'values',
@@ -593,18 +591,16 @@ class AllOfGenerator {
             ..returns = refer('Object?', 'dart:core')
             ..name = 'toJson'
             ..lambda = true
-            ..body = Code(
-              buildToJsonPropertyExpression(
-                firstFieldName,
-                Property(
-                  name: firstFieldName,
-                  model: firstModel,
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
+            ..body = buildToJsonPropertyExpression(
+              firstFieldName,
+              Property(
+                name: firstFieldName,
+                model: firstModel,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
               ),
-            ),
+            ).code,
         );
 
       case EncodingShape.complex:
@@ -2292,9 +2288,13 @@ class AllOfGenerator {
           isNullableOverride:
               normalized.property.isNullable || !normalized.property.isRequired,
         );
+        final model = normalized.property.model;
+        final resolvedModel = model is AliasModel ? model.resolved : model;
         return (
           normalizedName: normalized.normalizedName,
           typeRef: typeRef,
+          // Skip cast for AnyModel since its typedef is Object?
+          skipCast: resolvedModel is AnyModel,
         );
       }).toList(),
     );

@@ -103,6 +103,7 @@ rm -rf query_parameters/query_parameters_api
 rm -rf path_encoding/path_encoding_api
 rm -rf binary_models/binary_models_api
 rm -rf form_urlencoded/form_urlencoded_api
+rm -rf boolean_schemas/boolean_schemas_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml
@@ -164,6 +165,10 @@ dart run ../packages/tonik/bin/tonik.dart --config form_urlencoded/tonik_custom.
 add_dependency_overrides_recursive "form_urlencoded/form_urlencoded_api"
 cd form_urlencoded/form_urlencoded_api && dart pub get && cd ../..
 
+dart run ../packages/tonik/bin/tonik.dart -p boolean_schemas_api -s boolean_schemas/openapi.yaml -o boolean_schemas
+add_dependency_overrides_recursive "boolean_schemas/boolean_schemas_api"
+cd boolean_schemas/boolean_schemas_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
@@ -195,5 +200,6 @@ restore_test_package_overrides "query_parameters/query_parameters_test/pubspec.y
 restore_test_package_overrides "path_encoding/path_encoding_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "binary_models/binary_models_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "form_urlencoded/form_urlencoded_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "boolean_schemas/boolean_schemas_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"

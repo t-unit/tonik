@@ -46,10 +46,34 @@ Expression buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() => _buildAnyModelMatrixExpression(
+      valueExpression,
+      paramName: paramName,
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for matrix encoding: $model',
     ),
   };
+}
+
+Expression _buildAnyModelMatrixExpression(
+  Expression valueExpression, {
+  required Expression paramName,
+}) {
+  // Quick fix: call toString() on the value
+  // Proper support will come with encoding refactor
+  return valueExpression
+      .nullSafeProperty('toString')
+      .call([])
+      .ifNullThen(literalString(''))
+      .property('toMatrix')
+      .call(
+        [paramName],
+        {
+          'explode': literalFalse,
+          'allowEmpty': literalFalse,
+        },
+      );
 }
 
 Expression _buildListMatrixExpression(

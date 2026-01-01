@@ -118,20 +118,23 @@ class AnyOfGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: normalized
-          .map(
-            (n) => (
-              normalizedName: n.normalizedName,
-              typeRef: typeReference(
-                n.property.model,
-                nameManager,
-                package,
-                isNullableOverride:
-                    n.property.isNullable || !n.property.isRequired,
-              ),
+      properties: normalized.map(
+        (n) {
+          final model = n.property.model;
+          final resolvedModel = model is AliasModel ? model.resolved : model;
+          return (
+            normalizedName: n.normalizedName,
+            typeRef: typeReference(
+              n.property.model,
+              nameManager,
+              package,
+              isNullableOverride:
+                  n.property.isNullable || !n.property.isRequired,
             ),
-          )
-          .toList(),
+            skipCast: resolvedModel is AnyModel,
+          );
+        },
+      ).toList(),
     );
   }
 
@@ -144,7 +147,8 @@ class AnyOfGenerator {
     final publicClassName = nameManager.modelName(model);
 
     // Use provided className, or generate Raw prefix for nullable models.
-    final actualClassName = className ??
+    final actualClassName =
+        className ??
         (model.isNullable
             ? nameManager.modelName(
                 AliasModel(
@@ -201,11 +205,12 @@ class AnyOfGenerator {
         ),
     );
 
-    final fromJsonCtor =
-        _buildFromJsonConstructor(actualClassName, normalized);
+    final fromJsonCtor = _buildFromJsonConstructor(actualClassName, normalized);
 
-    final fromSimpleCtor =
-        _buildFromSimpleConstructor(actualClassName, normalized);
+    final fromSimpleCtor = _buildFromSimpleConstructor(
+      actualClassName,
+      normalized,
+    );
 
     final fromFormCtor = _buildFromFormConstructor(
       actualClassName,
@@ -642,7 +647,7 @@ class AnyOfGenerator {
         const Code('final '),
         refer('Object?', 'dart:core').code,
         Code(' ${name}Json = '),
-        Code(valueExpr),
+        valueExpr.code,
         const Code(';'),
       ]);
 

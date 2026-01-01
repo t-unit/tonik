@@ -189,14 +189,17 @@ class ClassGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: properties
-          .map(
-            (prop) => (
-              normalizedName: prop.normalizedName,
-              typeRef: _getTypeReference(prop.property),
-            ),
-          )
-          .toList(),
+      properties: properties.map(
+        (prop) {
+          final model = prop.property.model;
+          final resolvedModel = model is AliasModel ? model.resolved : model;
+          return (
+            normalizedName: prop.normalizedName,
+            typeRef: _getTypeReference(prop.property),
+            skipCast: resolvedModel is AnyModel,
+          );
+        },
+      ).toList(),
     );
   }
 
@@ -239,7 +242,7 @@ class ClassGenerator {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
 
-      if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
+      if (shape == .simple || shape == .mixed) {
         return true;
       }
 
@@ -335,7 +338,6 @@ class ClassGenerator {
           )
           .statement,
 
-      // Constructor call
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
   }
@@ -400,18 +402,24 @@ class ClassGenerator {
 
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
-    final propertyAssignments = <Code>[];
+
+    // Build the map entries, handling optional properties with if-blocks
+    final mapEntries = <Code>[];
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
       final property = prop.property;
-      final value = buildToJsonPropertyExpression(name, property);
+      final valueExpr = buildToJsonPropertyExpression(name, property);
 
       if (!property.isRequired && !property.isNullable) {
-        propertyAssignments.add(
-          Code("if ($name != null) r'${property.name}': $value"),
-        );
+        mapEntries
+          ..add(Code("if ($name != null) r'${property.name}': "))
+          ..add(valueExpr.code)
+          ..add(const Code(','));
       } else {
-        propertyAssignments.add(Code("r'${property.name}': $value"));
+        mapEntries
+          ..add(Code("r'${property.name}': "))
+          ..add(valueExpr.code)
+          ..add(const Code(','));
       }
     }
 
@@ -420,7 +428,11 @@ class ClassGenerator {
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..lambda = true
-        ..body = Code('{${propertyAssignments.join(', ')}}'),
+        ..body = Block.of([
+          const Code('{'),
+          ...mapEntries,
+          const Code('}'),
+        ]),
     );
   }
 
@@ -558,6 +570,19 @@ class ClassGenerator {
       final propertyName = prop.property.name;
       final isRequired = prop.property.isRequired;
       final isNullable = prop.property.isNullable;
+      final model = prop.property.model;
+      final resolvedModel = model is AliasModel ? model.resolved : model;
+
+      if (resolvedModel is NeverModel) {
+        propertyAssignments.addAll([
+          generateEncodingExceptionExpression(
+            'Cannot encode NeverModel property $propertyName: '
+            'this type does not permit any value',
+            raw: true,
+          ).statement,
+        ]);
+        continue;
+      }
 
       if (isRequired && !isNullable) {
         propertyAssignments.add(
@@ -746,9 +771,27 @@ if ($name != null) {
       final isRequired = prop.property.isRequired;
       final isNullable = prop.property.isNullable;
       final model = prop.property.model;
+      final resolvedModel = model is AliasModel ? model.resolved : model;
 
-      if (model.encodingShape == EncodingShape.simple) {
-        // Simple property - direct encoding
+      if (resolvedModel is AnyModel) {
+        propertyAssignments.add(
+          Code("result[r'$propertyName'] = $name?.toString() ?? '';"),
+        );
+        continue;
+      }
+
+      if (resolvedModel is NeverModel) {
+        propertyAssignments.addAll([
+          generateEncodingExceptionExpression(
+            'Cannot encode NeverModel property $propertyName: '
+            'this type does not permit any value',
+            raw: true,
+          ).statement,
+        ]);
+        continue;
+      }
+
+      if (model.encodingShape == .simple) {
         if (isRequired && !isNullable) {
           propertyAssignments.add(
             Code(
@@ -761,7 +804,7 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -770,14 +813,13 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
           );
         }
       } else {
-        // Composite property - runtime check for encoding shape
         final isFieldNullable = isNullable || !isRequired;
         final encodingShapeRef = refer(
           'EncodingShape',
@@ -865,7 +907,7 @@ if ($name != null) {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
 
-      if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
+      if (shape == .simple || shape == .mixed) {
         return true;
       }
 
@@ -996,10 +1038,6 @@ if ($name != null) {
       ]),
   );
 
-  /// Builds a toLabel method for label encoding.
-  ///
-  /// This method delegates to parameterProperties and then calls toLabel on the
-  /// result.
   Method _buildToLabelMethod() => Method(
     (b) => b
       ..name = 'toLabel'

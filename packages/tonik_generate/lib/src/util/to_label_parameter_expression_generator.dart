@@ -40,6 +40,11 @@ Expression buildLabelParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() => _buildAnyModelLabelExpression(
+      valueExpression,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for label encoding: $model',
     ),
@@ -113,4 +118,25 @@ Expression _buildListLabelExpression(
       'Unsupported list content type for label encoding: $contentModel',
     ),
   };
+}
+
+Expression _buildAnyModelLabelExpression(
+  Expression valueExpression, {
+  required Expression explode,
+  required Expression allowEmpty,
+}) {
+  // Quick fix: call toString() on the value
+  // Proper support will come with encoding refactor
+  return valueExpression
+      .nullSafeProperty('toString')
+      .call([])
+      .ifNullThen(literalString(''))
+      .property('toLabel')
+      .call(
+        [],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        },
+      );
 }
