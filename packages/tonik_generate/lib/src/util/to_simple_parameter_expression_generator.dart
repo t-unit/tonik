@@ -40,6 +40,14 @@ Expression buildSimpleParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() =>
+      refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
+        [valueExpression],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        },
+      ),
     _ => throw UnimplementedError(
       'Unsupported model type for simple encoding: $model',
     ),

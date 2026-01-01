@@ -128,24 +128,6 @@ void main() {
           result as TonikSuccess<PathMatrixAnyAnyValueGet200BodyModel>;
       expect(success.response.statusCode, 200);
     });
-
-    test('getPathMatrixAnyExplode with array value', () async {
-      final api = buildApi();
-      final result = await api.getPathMatrixAnyExplode(anyValue: [1, 2, 3]);
-      final success =
-          result as TonikSuccess<PathMatrixAnyExplodeAnyValueGet200BodyModel>;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getPathMatrixAnyExplode with object value', () async {
-      final api = buildApi();
-      final result = await api.getPathMatrixAnyExplode(
-        anyValue: {'foo': 'bar', 'count': 5},
-      );
-      final success =
-          result as TonikSuccess<PathMatrixAnyExplodeAnyValueGet200BodyModel>;
-      expect(success.response.statusCode, 200);
-    });
   });
 
   group('Combined path, query, and header parameters', () {

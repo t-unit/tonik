@@ -129,7 +129,10 @@ class ClassGenerator {
         b
           ..name = className
           ..docs.addAll(formatDocComment(model.description))
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..implements.add(
+            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -425,6 +428,7 @@ class ClassGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..lambda = true
@@ -883,6 +887,7 @@ if ($name != null) {
 
   Method _buildToSimpleMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toSimple'
       ..returns = refer('String', 'dart:core')
       ..optionalParameters.addAll(buildEncodingParameters())
@@ -1008,18 +1013,10 @@ if ($name != null) {
 
   Method _buildToFormMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toForm'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll([
-        ...buildEncodingParameters(),
-        Parameter(
-          (b) => b
-            ..name = 'useQueryComponent'
-            ..type = refer('bool', 'dart:core')
-            ..named = true
-            ..defaultTo = literalFalse.code,
-        ),
-      ])
+      ..optionalParameters.addAll(buildFormEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
             .call([], {
@@ -1040,6 +1037,7 @@ if ($name != null) {
 
   Method _buildToLabelMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toLabel'
       ..returns = refer('String', 'dart:core')
       ..optionalParameters.addAll(buildEncodingParameters())
@@ -1059,6 +1057,7 @@ if ($name != null) {
 
   Method _buildToMatrixMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toMatrix'
       ..returns = refer('String', 'dart:core')
       ..requiredParameters.add(
@@ -1088,6 +1087,7 @@ if ($name != null) {
 
   Method _buildToDeepObjectMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toDeepObject'
       ..returns = TypeReference(
         (b) => b

@@ -188,6 +188,19 @@ List<Parameter> buildEncodingParameters() => [
   buildBoolParameter('allowEmpty', required: true),
 ];
 
+/// Returns a list of encoding parameters for form encoding, which includes
+/// explode, allowEmpty, and useQueryComponent (optional with default false).
+List<Parameter> buildFormEncodingParameters() => [
+  ...buildEncodingParameters(),
+  Parameter(
+    (b) => b
+      ..name = 'useQueryComponent'
+      ..type = refer('bool', 'dart:core')
+      ..named = true
+      ..defaultTo = literalFalse.code,
+  ),
+];
+
 /// Returns a LiteralMapExpression for an empty [Map<String, String>] literal.
 ///
 /// This can be used with Code.scope to create properly

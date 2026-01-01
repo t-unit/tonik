@@ -109,9 +109,14 @@ Expression buildFromJsonValueExpression(
         isNullable: isNullable,
       );
     case NeverModel():
-      return generateJsonDecodingExceptionExpression(
+      final throwExpr = generateJsonDecodingExceptionExpression(
         'Cannot decode NeverModel - this type does not permit any value.',
       );
+      return isNullable
+          ? refer(
+              value,
+            ).equalTo(literalNull).conditional(literalNull, throwExpr)
+          : throwExpr;
     case AnyModel():
       return refer(value);
     case NamedModel() || CompositeModel():

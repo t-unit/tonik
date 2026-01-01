@@ -125,18 +125,11 @@ Expression _buildAnyModelLabelExpression(
   required Expression explode,
   required Expression allowEmpty,
 }) {
-  // Quick fix: call toString() on the value
-  // Proper support will come with encoding refactor
-  return valueExpression
-      .nullSafeProperty('toString')
-      .call([])
-      .ifNullThen(literalString(''))
-      .property('toLabel')
-      .call(
-        [],
-        {
-          'explode': explode,
-          'allowEmpty': allowEmpty,
-        },
-      );
+  return refer('encodeAnyToLabel', 'package:tonik_util/tonik_util.dart').call(
+    [valueExpression],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
 }

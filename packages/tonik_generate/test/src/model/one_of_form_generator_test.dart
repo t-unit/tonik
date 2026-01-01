@@ -50,7 +50,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
             ResultError(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
             ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
@@ -101,7 +101,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
             ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
             ResponseUser(:final value) => {
@@ -135,14 +135,18 @@ void main() {
       );
 
       expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toFormMethod.optionalParameters, hasLength(2));
+      expect(toFormMethod.optionalParameters, hasLength(3));
       expect(
         toFormMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
+        containsAll(['explode', 'allowEmpty', 'useQueryComponent']),
       );
       expect(
-        toFormMethod.optionalParameters.every((p) => p.required),
+        toFormMethod.optionalParameters.take(2).every((p) => p.required),
         isTrue,
+      );
+      expect(
+        toFormMethod.optionalParameters.last.required,
+        isFalse,
       );
     });
   });
@@ -395,7 +399,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
             OuterInner(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
           };
@@ -449,7 +453,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
             OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
@@ -537,7 +541,7 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
             OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {

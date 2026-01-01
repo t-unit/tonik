@@ -119,7 +119,10 @@ class OneOfGenerator {
           ..name = className
           ..sealed = true
           ..docs.addAll(formatDocComment(model.description))
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..implements.add(
+            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -152,6 +155,7 @@ class OneOfGenerator {
             _generateUriEncodeMethod(className, model, variantNames),
             Method(
               (b) => b
+                ..annotations.add(refer('override', 'dart:core'))
                 ..name = 'toJson'
                 ..returns = refer('Object?', 'dart:core')
                 ..body = _generateToJsonBody(
@@ -779,6 +783,7 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -868,9 +873,10 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = body,
     );
@@ -1146,6 +1152,7 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toLabel'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -1187,6 +1194,7 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toMatrix'
         ..returns = refer('String', 'dart:core')
         ..requiredParameters.add(
@@ -1205,6 +1213,7 @@ class OneOfGenerator {
   Method _generateToDeepObjectMethod() {
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toDeepObject'
         ..returns = TypeReference(
           (b) => b

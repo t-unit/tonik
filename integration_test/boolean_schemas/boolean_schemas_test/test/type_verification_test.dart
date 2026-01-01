@@ -34,8 +34,6 @@ void main() {
     });
 
     test('ObjectWithNever.fromJson parses when neverField is absent', () {
-      // Per JSON Schema: schema: false means no value is valid for that field.
-      // But if the field is optional/nullable and absent, parsing should succeed.
       final json = <String, Object?>{'name': 'parsed'};
       final obj = ObjectWithNever.fromJson(json);
       expect(obj.name, 'parsed');

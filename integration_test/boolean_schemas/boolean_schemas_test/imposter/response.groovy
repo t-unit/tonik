@@ -59,9 +59,9 @@ if (context.request.path.endsWith('/echo')) {
           .withContent(JsonOutput.toJson([neverField: null]))
 } else if (context.request.path == '/response/headers') {
     // Return response with custom headers containing any values
+    // Note: X-Never-Header is NOT set, as NeverModel does not permit any value
     response.withHeader('Content-Type', 'application/json')
           .withHeader('X-Any-Header', 'any-header-value')
-          .withHeader('X-Never-Header', '')
           .withContent(JsonOutput.toJson([status: 'ok']))
 } else if (context.request.path.contains('/path/any/') || 
            context.request.path.contains('/path/any-explode/') ||

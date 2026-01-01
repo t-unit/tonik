@@ -21,6 +21,26 @@ List<Code> buildToFormQueryParameterCode(
     ];
   }
 
+  if (model is AnyModel) {
+    return [
+      const Code('entries.add(('),
+      Code("name: r'${parameter.rawName}', "),
+      const Code('value: '),
+      refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart')
+          .call(
+            [
+              refer(parameterName),
+            ],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(allowEmpty),
+            },
+          )
+          .code,
+      const Code(',),);'),
+    ];
+  }
+
   if (model is ListModel) {
     final contentShape = model.content.encodingShape;
 

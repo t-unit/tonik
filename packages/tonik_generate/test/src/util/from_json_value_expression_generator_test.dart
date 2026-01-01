@@ -872,7 +872,7 @@ void main() {
       );
     });
 
-    test('generates throw JsonDecodingException for nullable NeverModel', () {
+    test('generates null check before throw for nullable NeverModel', () {
       final result = buildFromJsonValueExpression(
         'value',
         model: NeverModel(context: context),
@@ -880,10 +880,9 @@ void main() {
         package: 'package:my_package/my_package.dart',
         isNullable: true,
       ).accept(emitter).toString();
-      // Even nullable NeverModel throws since no valid value exists
       expect(
         result,
-        'throw  _i1.JsonDecodingException('
+        'value == null ? null : throw  _i1.JsonDecodingException('
         "'Cannot decode NeverModel - this type does not permit any value.')",
       );
     });

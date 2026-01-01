@@ -88,6 +88,30 @@ void main() {
       );
     });
 
+    test('generates class implementing ParameterEncodable', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      expect(combinedClass.implements.length, 1);
+      expect(
+        combinedClass.implements.first.accept(emitter).toString(),
+        'ParameterEncodable',
+      );
+    });
+
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = AllOfModel(
@@ -1736,6 +1760,45 @@ void main() {
 
       // Verify no typedef is generated.
       expect(result.code, isNot(contains('typedef')));
+    });
+
+    test('encoding methods have @override annotation', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      final encodingMethods = [
+        'toJson',
+        'toSimple',
+        'toForm',
+        'toLabel',
+        'toMatrix',
+        'toDeepObject',
+      ];
+      for (final methodName in encodingMethods) {
+        final method = combinedClass.methods.firstWhere(
+          (m) => m.name == methodName,
+          orElse: () => throw StateError('Method $methodName not found'),
+        );
+        expect(
+          method.annotations,
+          hasLength(1),
+          reason: '$methodName should have @override annotation',
+        );
+        expect(
+          method.annotations.first.accept(emitter).toString(),
+          'override',
+          reason: '$methodName should have @override annotation',
+        );
+      }
     });
   });
 }

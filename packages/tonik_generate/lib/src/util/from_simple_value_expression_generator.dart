@@ -157,13 +157,20 @@ Expression buildSimpleValueExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    NeverModel() => generateSimpleDecodingExceptionExpression(
-      'Cannot decode NeverModel - this type does not permit any value.',
-    ),
+    NeverModel() => _buildNeverModelExpression(value, isRequired),
     AnyModel() => value,
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
   };
+}
+
+Expression _buildNeverModelExpression(Expression value, bool isRequired) {
+  final throwExpr = generateSimpleDecodingExceptionExpression(
+    'Cannot decode NeverModel - this type does not permit any value.',
+  );
+  return isRequired
+      ? throwExpr
+      : value.equalTo(literalNull).conditional(literalNull, throwExpr);
 }
 
 Expression _buildFromSimpleExpression(

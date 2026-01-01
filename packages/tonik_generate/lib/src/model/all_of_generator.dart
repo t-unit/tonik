@@ -160,7 +160,10 @@ class AllOfGenerator {
         b
           ..name = actualClassName
           ..docs.addAll(formatDocComment(model.description))
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..implements.add(
+            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -431,6 +434,7 @@ class AllOfGenerator {
     if (hasListProperties && !allListProperties) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..returns = refer('Object?', 'dart:core')
           ..name = 'toJson'
           ..lambda = true
@@ -501,6 +505,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..returns = refer('Object?', 'dart:core')
           ..name = 'toJson'
           ..lambda = false
@@ -562,6 +567,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..returns = refer('Object?', 'dart:core')
           ..name = 'toJson'
           ..lambda = false
@@ -573,6 +579,7 @@ class AllOfGenerator {
       case EncodingShape.mixed:
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..returns = refer('Object?', 'dart:core')
             ..name = 'toJson'
             ..lambda = true
@@ -588,6 +595,7 @@ class AllOfGenerator {
 
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..returns = refer('Object?', 'dart:core')
             ..name = 'toJson'
             ..lambda = true
@@ -639,6 +647,7 @@ class AllOfGenerator {
 
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..returns = refer('Object?', 'dart:core')
             ..name = 'toJson'
             ..lambda = false
@@ -899,6 +908,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -955,6 +965,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -966,6 +977,7 @@ class AllOfGenerator {
     if (model.cannotBeSimplyEncoded) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1024,6 +1036,7 @@ class AllOfGenerator {
 
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll(buildEncodingParameters())
@@ -1035,6 +1048,7 @@ class AllOfGenerator {
       // For non-list complex types, use parameterProperties
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1057,6 +1071,7 @@ class AllOfGenerator {
     if (normalizedProperties.isEmpty) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1069,6 +1084,7 @@ class AllOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -1274,9 +1290,10 @@ class AllOfGenerator {
 
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
+            ..optionalParameters.addAll(buildFormEncodingParameters())
             ..lambda = false
             ..body = Block.of(bodyCode),
         );
@@ -1323,9 +1340,10 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toForm'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildFormEncodingParameters())
           ..lambda = false
           ..body = Block.of(bodyCode),
       );
@@ -1378,9 +1396,10 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toForm'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildFormEncodingParameters())
           ..lambda = false
           ..body = Block.of(validationCode),
       );
@@ -1403,9 +1422,10 @@ class AllOfGenerator {
       if (allDynamicModels.isEmpty && model.hasSimpleTypes) {
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
+            ..optionalParameters.addAll(buildFormEncodingParameters())
             ..lambda = false
             ..body = generateEncodingExceptionExpression(
               'Form encoding not supported: contains complex types',
@@ -1464,9 +1484,10 @@ class AllOfGenerator {
 
           return Method(
             (b) => b
+              ..annotations.add(refer('override', 'dart:core'))
               ..name = 'toForm'
               ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll(buildEncodingParameters())
+              ..optionalParameters.addAll(buildFormEncodingParameters())
               ..lambda = false
               ..body = Block.of(valueCollectionCode),
           );
@@ -1475,9 +1496,10 @@ class AllOfGenerator {
         // For non-list complex types, use parameterProperties
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toForm'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
+            ..optionalParameters.addAll(buildFormEncodingParameters())
             ..lambda = false
             ..body = refer('parameterProperties')
                 .call([], {'allowEmpty': refer('allowEmpty')})
@@ -1541,9 +1563,10 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toForm'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildFormEncodingParameters())
           ..lambda = false
           ..body = Block.of(bodyCode),
       );
@@ -1552,9 +1575,10 @@ class AllOfGenerator {
     if (normalizedProperties.isEmpty) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toForm'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildFormEncodingParameters())
           ..lambda = false
           ..body = const Code("return '';"),
       );
@@ -1564,9 +1588,10 @@ class AllOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = Block.of([
           refer(primaryField.normalizedName)
@@ -1615,6 +1640,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toLabel'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1670,6 +1696,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toLabel'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1681,6 +1708,7 @@ class AllOfGenerator {
     if (model.cannotBeSimplyEncoded) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toLabel'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1739,6 +1767,7 @@ class AllOfGenerator {
 
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toLabel'
             ..returns = refer('String', 'dart:core')
             ..optionalParameters.addAll(buildEncodingParameters())
@@ -1750,6 +1779,7 @@ class AllOfGenerator {
       // For non-list complex types, use parameterProperties
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toLabel'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1770,6 +1800,7 @@ class AllOfGenerator {
     if (normalizedProperties.isEmpty) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toLabel'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll(buildEncodingParameters())
@@ -1782,6 +1813,7 @@ class AllOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toLabel'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -1847,6 +1879,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toMatrix'
           ..returns = refer('String', 'dart:core')
           ..requiredParameters.add(
@@ -1865,6 +1898,7 @@ class AllOfGenerator {
     if (model.cannotBeSimplyEncoded) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toMatrix'
           ..returns = refer('String', 'dart:core')
           ..requiredParameters.add(
@@ -1932,6 +1966,7 @@ class AllOfGenerator {
 
         return Method(
           (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toMatrix'
             ..returns = refer('String', 'dart:core')
             ..requiredParameters.add(
@@ -1976,6 +2011,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toMatrix'
           ..returns = refer('String', 'dart:core')
           ..requiredParameters.add(
@@ -1994,6 +2030,7 @@ class AllOfGenerator {
     if (normalizedProperties.isEmpty) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toMatrix'
           ..returns = refer('String', 'dart:core')
           ..requiredParameters.add(
@@ -2058,6 +2095,7 @@ class AllOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toMatrix'
         ..returns = refer('String', 'dart:core')
         ..requiredParameters.add(
@@ -2076,6 +2114,7 @@ class AllOfGenerator {
   Method _buildToDeepObjectMethod() {
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toDeepObject'
         ..returns = TypeReference(
           (b) => b

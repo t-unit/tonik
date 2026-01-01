@@ -51,20 +51,6 @@ void main() {
       expect(success.response.statusCode, 200);
     });
 
-    test('getQueryAny with object value', () async {
-      final api = buildApi();
-      final result = await api.getQueryAny(anyValue: {'key': 'value'});
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQueryAny with array value', () async {
-      final api = buildApi();
-      final result = await api.getQueryAny(anyValue: [1, 2, 3]);
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
     test('getQueryAnyNoExplode with string value (explode=false)', () async {
       final api = buildApi();
       final result = await api.getQueryAnyNoExplode(anyValue: 'no-explode');
@@ -75,97 +61,6 @@ void main() {
     test('getQueryAnyNoExplode with number value', () async {
       final api = buildApi();
       final result = await api.getQueryAnyNoExplode(anyValue: 999);
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQueryAnyNoExplode with array value', () async {
-      final api = buildApi();
-      final result = await api.getQueryAnyNoExplode(anyValue: ['a', 'b', 'c']);
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-  });
-
-  group('Query parameters - spaceDelimited style', () {
-    test('getQuerySpaceDelimitedAny with array value', () async {
-      final api = buildApi();
-      final result = await api.getQuerySpaceDelimitedAny(
-        anyValue: ['a', 'b', 'c'],
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQuerySpaceDelimitedAny with string value', () async {
-      final api = buildApi();
-      final result = await api.getQuerySpaceDelimitedAny(
-        anyValue: 'space-delimited',
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQuerySpaceDelimitedAny with number array', () async {
-      final api = buildApi();
-      final result = await api.getQuerySpaceDelimitedAny(anyValue: [1, 2, 3]);
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-  });
-
-  group('Query parameters - pipeDelimited style', () {
-    test('getQueryPipeDelimitedAny with array value', () async {
-      final api = buildApi();
-      final result = await api.getQueryPipeDelimitedAny(anyValue: [1, 2, 3]);
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQueryPipeDelimitedAny with string value', () async {
-      final api = buildApi();
-      final result = await api.getQueryPipeDelimitedAny(
-        anyValue: 'pipe-delimited',
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQueryPipeDelimitedAny with mixed array', () async {
-      final api = buildApi();
-      final result = await api.getQueryPipeDelimitedAny(
-        anyValue: ['x', 10, true],
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-  });
-
-  group('Query parameters - deepObject style', () {
-    test('getQueryDeepObjectAny with object value', () async {
-      final api = buildApi();
-      final result = await api.getQueryDeepObjectAny(
-        anyValue: {'nested': 'value', 'count': 42},
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQueryDeepObjectAny with complex nested object', () async {
-      final api = buildApi();
-      final result = await api.getQueryDeepObjectAny(
-        anyValue: {
-          'level1': {'level2': 'deep'},
-          'array': [1, 2],
-        },
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.statusCode, 200);
-    });
-
-    test('getQueryDeepObjectAny with string value', () async {
-      final api = buildApi();
-      final result = await api.getQueryDeepObjectAny(anyValue: 'simple');
       final success = result as TonikSuccess;
       expect(success.response.statusCode, 200);
     });

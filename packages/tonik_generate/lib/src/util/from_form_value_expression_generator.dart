@@ -127,14 +127,21 @@ Expression buildFromFormValueExpression(
       explode: explode,
     ),
 
-    NeverModel() => generateFormatDecodingExceptionExpression(
-      'Cannot decode NeverModel - this type does not permit any value.',
-    ),
+    NeverModel() => _buildNeverModelExpression(value, isRequired),
 
     AnyModel() => value,
 
     _ => throw UnimplementedError('Unsupported model type: $model'),
   };
+}
+
+Expression _buildNeverModelExpression(Expression value, bool isRequired) {
+  final throwExpr = generateFormatDecodingExceptionExpression(
+    'Cannot decode NeverModel - this type does not permit any value.',
+  );
+  return isRequired
+      ? throwExpr
+      : value.equalTo(literalNull).conditional(literalNull, throwExpr);
 }
 
 Expression _buildFromFormExpression(

@@ -93,7 +93,10 @@ Expression _buildSerializationExpression(
       forceNonNullReceiver: forceNonNullReceiver,
     ),
     PrimitiveModel() => receiver,
-    AnyModel() => receiver,
+    AnyModel() => refer(
+      'encodeAnyToJson',
+      'package:tonik_util/tonik_util.dart',
+    ).call([receiver]),
     _ => throw UnimplementedError('Unsupported model type: $model'),
   };
 }

@@ -122,7 +122,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
           ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
@@ -192,7 +192,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = r'''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
@@ -230,7 +230,7 @@ void main() {
       final combinedClass = generator.generateClass(model);
 
       const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return bigDecimal.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
@@ -299,7 +299,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return status.toForm(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
@@ -418,7 +418,7 @@ void main() {
         final combinedClass = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          String toForm({required bool explode, required bool allowEmpty}) {
+          String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
             throw EncodingException(
               'Form encoding not supported: contains complex types',
             );
@@ -474,7 +474,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
@@ -623,7 +623,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
@@ -727,7 +727,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
@@ -780,7 +780,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToForm = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final values = <String>{};
           final listForm = list
             .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
@@ -819,7 +819,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToForm = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final values = <String>{};
           final listForm = list
             .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
@@ -882,7 +882,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToFormMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',

@@ -49,6 +49,8 @@ Expression buildMatrixParameterExpression(
     AnyModel() => _buildAnyModelMatrixExpression(
       valueExpression,
       paramName: paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
     ),
     _ => throw UnimplementedError(
       'Unsupported model type for matrix encoding: $model',
@@ -59,21 +61,16 @@ Expression buildMatrixParameterExpression(
 Expression _buildAnyModelMatrixExpression(
   Expression valueExpression, {
   required Expression paramName,
+  required Expression explode,
+  required Expression allowEmpty,
 }) {
-  // Quick fix: call toString() on the value
-  // Proper support will come with encoding refactor
-  return valueExpression
-      .nullSafeProperty('toString')
-      .call([])
-      .ifNullThen(literalString(''))
-      .property('toMatrix')
-      .call(
-        [paramName],
-        {
-          'explode': literalFalse,
-          'allowEmpty': literalFalse,
-        },
-      );
+  return refer('encodeAnyToMatrix', 'package:tonik_util/tonik_util.dart').call(
+    [valueExpression, paramName],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
 }
 
 Expression _buildListMatrixExpression(

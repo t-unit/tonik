@@ -978,4 +978,34 @@ void main() {
       );
     });
   });
+
+  group('buildToJsonPropertyExpression for AnyModel', () {
+    test('generates encodeAnyToJson call for AnyModel property', () {
+      final property = Property(
+        name: 'data',
+        model: AnyModel(context: context),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(buildToJsonPropertyExpression('data', property)),
+        'encodeAnyToJson(data)',
+      );
+    });
+
+    test('generates encodeAnyToJson call for nullable AnyModel property', () {
+      final property = Property(
+        name: 'data',
+        model: AnyModel(context: context),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(buildToJsonPropertyExpression('data', property)),
+        'encodeAnyToJson(data)',
+      );
+    });
+  });
 }
