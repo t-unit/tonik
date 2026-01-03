@@ -37,6 +37,49 @@ class DataGenerator {
           ..isNullable = !isRequired,
       );
 
+      // Build switch cases for multiple content types
+      final switchCases = <Code>[];
+      for (final c in content) {
+        final variantName = nameManager
+            .requestBodyNames(requestBody)
+            .$2[c.rawContentType]!;
+
+        switchCases
+          ..add(const Code('final '))
+          ..add(refer(variantName, package).code)
+          ..add(const Code(' value => value.'));
+
+        switch (c.contentType) {
+          case .text || .bytes:
+            switchCases.add(const Code('value,'));
+          case .json:
+            switchCases.add(
+              buildToJsonPropertyExpression(
+                'value',
+                Property(
+                  name: 'value',
+                  model: c.model,
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ).code,
+            );
+            switchCases.add(const Code(','));
+          case .form:
+            switchCases.add(
+              buildToFormValueExpression(
+                'value',
+                c.model,
+                useQueryComponent: true,
+                explodeLiteral: true,
+                allowEmptyLiteral: true,
+              ).code,
+            );
+            switchCases.add(const Code(','));
+        }
+      }
+
       return Method(
         (b) => b
           ..name = '_data'
@@ -54,36 +97,7 @@ class DataGenerator {
           ..body = Block.of([
             if (!isRequired) const Code('if (body == null) return null;\n'),
             const Code('return switch (body) {'),
-            ...content.map((c) {
-              final variantName = nameManager
-                  .requestBodyNames(requestBody)
-                  .$2[c.rawContentType]!;
-
-              final valueExpr = switch (c.contentType) {
-                ContentType.text || ContentType.bytes => 'value',
-                ContentType.json => buildToJsonPropertyExpression(
-                  'value',
-                  Property(
-                    name: 'value',
-                    model: c.model,
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ),
-                ContentType.form => buildToFormValueExpression(
-                  'value',
-                  c.model,
-                  useQueryComponent: true,
-                ),
-              };
-
-              return Code.scope(
-                (a) =>
-                    'final ${a(refer(variantName, package))} value => '
-                    'value.$valueExpr,',
-              );
-            }),
+            ...switchCases,
             const Code('\n};'),
           ]),
       );
@@ -106,15 +120,27 @@ class DataGenerator {
       isDeprecated: false,
     );
 
-    final bodyExpression = switch (contentType) {
-      ContentType.text || ContentType.bytes => 'body',
-      ContentType.json => buildToJsonPropertyExpression('body', property),
-      ContentType.form => buildToFormValueExpression(
-        'body',
-        model,
-        useQueryComponent: true,
-      ),
-    };
+    // Build return expression based on content type
+    final bodyCode = [const Code('return ')];
+    switch (contentType) {
+      case ContentType.text || ContentType.bytes:
+        bodyCode.add(const Code('body;'));
+      case ContentType.json:
+        bodyCode
+          ..add(buildToJsonPropertyExpression('body', property).code)
+          ..add(const Code(';'));
+      case ContentType.form:
+        final formExpr = buildToFormValueExpression(
+          'body',
+          model,
+          useQueryComponent: true,
+          explodeLiteral: true,
+          allowEmptyLiteral: true,
+        );
+        bodyCode
+          ..add(formExpr.code)
+          ..add(const Code(';'));
+    }
 
     return Method(
       (b) => b
@@ -130,9 +156,7 @@ class DataGenerator {
           ),
         )
         ..lambda = false
-        ..body = Code(
-          'return $bodyExpression;',
-        ),
+        ..body = Block.of(bodyCode),
     );
   }
 }

@@ -40,6 +40,8 @@ class TypedefGenerator {
       AnyOfModel(isNullable: final nullable) => nullable,
       ClassModel(isNullable: final nullable) => nullable,
       EnumModel(isNullable: final nullable) => nullable,
+      NeverModel() => false,
+      AnyModel() => true,
       PrimitiveModel() => false,
       NamedModel() => false,
       CompositeModel() => false,

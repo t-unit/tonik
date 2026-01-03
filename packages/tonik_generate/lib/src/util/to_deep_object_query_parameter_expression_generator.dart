@@ -19,6 +19,18 @@ Code buildToDeepObjectQueryParameterCode(
   final explode = parameter.explode;
   final allowEmpty = parameter.allowEmptyValue;
 
+  if (model is AnyModel) {
+    return refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart')
+        .call(
+          [refer(parameterName), literalString(rawName, raw: true)],
+          {
+            'explode': literalBool(explode),
+            'allowEmpty': literalBool(allowEmpty),
+          },
+        )
+        .code;
+  }
+
   if (_isValidDeepObjectModel(model)) {
     return refer(parameterName)
         .property('toDeepObject')

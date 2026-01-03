@@ -82,6 +82,7 @@ class RequestBodyImporter {
             name: name,
             requestBody: importedBody,
             context: context,
+            description: wrapper.description,
           );
           requestBodies.add(alias);
           return alias;

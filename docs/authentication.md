@@ -150,6 +150,51 @@ final server = YourServer(serverConfig: serverConfig);
 final apiClient = YourApiClient(server);
 ```
 
+### 4. Mutual TLS (mTLS) Authentication
+
+```dart
+class MutualTlsService {
+  MutualTlsService(this._certificatePath, this._keyPath);
+
+  final String _certificatePath;
+  final String _keyPath;
+
+  Interceptor createAuthInterceptor() {
+    return _MutualTlsInterceptor(this);
+  }
+}
+
+class _MutualTlsInterceptor extends Interceptor {
+  _MutualTlsInterceptor(this._tlsService);
+
+  final MutualTlsService _tlsService;
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    // Note: Mutual TLS is typically configured at the HTTP client level
+    // This is a simplified example showing the pattern
+    // In practice, you'd configure the SecurityContext for the underlying
+    // HTTP client (e.g., dart:io HttpClient or similar)
+    handler.next(options);
+  }
+}
+
+// Setup with ServerConfig
+final tlsService = MutualTlsService(
+  '/path/to/client-cert.pem',
+  '/path/to/client-key.pem',
+);
+
+final serverConfig = ServerConfig(
+  interceptors: [tlsService.createAuthInterceptor()],
+);
+
+final server = YourServer(serverConfig: serverConfig);
+final apiClient = YourApiClient(server);
+```
+
+**Note**: Mutual TLS authentication requires client certificates to be configured at the HTTP client level. The above example shows the interceptor pattern for consistency, but actual mTLS setup typically involves configuring the underlying HTTP client's `SecurityContext` with client certificates and private keys.
+
 ## Advanced Authentication Patterns
 
 ### Token Refresh with Retry

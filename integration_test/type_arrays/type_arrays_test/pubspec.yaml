@@ -1,0 +1,19 @@
+name: type_arrays_test
+description: Integration tests for type arrays (OAS 3.1 type arrays with multiple types)
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  dio: ^5.4.0
+  test: ^1.24.0
+  tonik_util:
+    path: ../../../packages/tonik_util
+  type_arrays_api:
+    path: ../type_arrays_api
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

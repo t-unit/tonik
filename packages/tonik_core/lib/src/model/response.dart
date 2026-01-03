@@ -9,6 +9,10 @@ sealed class Response {
   final String? name;
   final Context context;
 
+  /// The description of the response.
+  /// For aliases, this may override the referenced response's description.
+  String? get description;
+
   /// Returns true if the response has no body and no headers.
   bool get isEmpty;
 
@@ -28,9 +32,13 @@ class ResponseAlias extends Response {
     required super.name,
     required this.response,
     required super.context,
+    this.description,
   });
 
   final Response response;
+
+  @override
+  final String? description;
 
   @override
   bool get isEmpty => response.isEmpty;
@@ -51,13 +59,16 @@ class ResponseAlias extends Response {
           runtimeType == other.runtimeType &&
           name == other.name &&
           response == other.response &&
+          description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, response, context);
+  int get hashCode => Object.hash(name, response, description, context);
 
   @override
-  String toString() => 'ResponseAlias(name: $name, response: $response)';
+  String toString() =>
+      'ResponseAlias(name: $name, response: $response, '
+      'description: $description)';
 }
 
 @immutable
@@ -72,6 +83,8 @@ class ResponseObject extends Response {
 
   final Map<String, ResponseHeader> headers;
   final Set<ResponseBody> bodies;
+
+  @override
   final String description;
 
   @override

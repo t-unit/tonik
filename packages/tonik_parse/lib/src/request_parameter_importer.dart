@@ -138,6 +138,7 @@ class RequestParameterImporter {
                 name: name ?? refName,
                 header: existing,
                 context: context,
+                description: wrapper.description,
               );
 
             case ParameterLocation.query:
@@ -159,6 +160,7 @@ class RequestParameterImporter {
                 name: name ?? refName,
                 parameter: existing,
                 context: context,
+                description: wrapper.description,
               );
 
             case ParameterLocation.path:
@@ -180,6 +182,7 @@ class RequestParameterImporter {
                 name: name ?? refName,
                 parameter: existing,
                 context: context,
+                description: wrapper.description,
               );
 
             case ParameterLocation.cookie:

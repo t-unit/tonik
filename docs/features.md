@@ -137,6 +137,7 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 | String & integer enums | ✅ |
 | `x-dart-enum` | ✅ |
 | Unknown enum case | ✅ (configurable) |
+| Boolean schemas (`true`/`false`) | ✅ (OAS 3.1, see [Data Types](data_types.md#boolean-schemas-oas-31)) |
 
 ### Not Supported
 

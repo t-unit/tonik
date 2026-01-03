@@ -118,20 +118,23 @@ class AnyOfGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: normalized
-          .map(
-            (n) => (
-              normalizedName: n.normalizedName,
-              typeRef: typeReference(
-                n.property.model,
-                nameManager,
-                package,
-                isNullableOverride:
-                    n.property.isNullable || !n.property.isRequired,
-              ),
+      properties: normalized.map(
+        (n) {
+          final model = n.property.model;
+          final resolvedModel = model is AliasModel ? model.resolved : model;
+          return (
+            normalizedName: n.normalizedName,
+            typeRef: typeReference(
+              n.property.model,
+              nameManager,
+              package,
+              isNullableOverride:
+                  n.property.isNullable || !n.property.isRequired,
             ),
-          )
-          .toList(),
+            skipCast: resolvedModel is AnyModel,
+          );
+        },
+      ).toList(),
     );
   }
 
@@ -144,7 +147,8 @@ class AnyOfGenerator {
     final publicClassName = nameManager.modelName(model);
 
     // Use provided className, or generate Raw prefix for nullable models.
-    final actualClassName = className ??
+    final actualClassName =
+        className ??
         (model.isNullable
             ? nameManager.modelName(
                 AliasModel(
@@ -201,11 +205,12 @@ class AnyOfGenerator {
         ),
     );
 
-    final fromJsonCtor =
-        _buildFromJsonConstructor(actualClassName, normalized);
+    final fromJsonCtor = _buildFromJsonConstructor(actualClassName, normalized);
 
-    final fromSimpleCtor =
-        _buildFromSimpleConstructor(actualClassName, normalized);
+    final fromSimpleCtor = _buildFromSimpleConstructor(
+      actualClassName,
+      normalized,
+    );
 
     final fromFormCtor = _buildFromFormConstructor(
       actualClassName,
@@ -226,7 +231,10 @@ class AnyOfGenerator {
         b
           ..name = actualClassName
           ..docs.addAll(formatDocComment(model.description))
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..implements.add(
+            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -285,7 +293,8 @@ class AnyOfGenerator {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.$toMethodName( '
-          'explode: explode, allowEmpty: allowEmpty);',
+          'explode: explode, allowEmpty: allowEmpty'
+          '${isForm ? ', useQueryComponent: useQueryComponent' : ''});',
         ),
       );
       if (needsValues) {
@@ -356,7 +365,8 @@ class AnyOfGenerator {
         codes.add(
           Code(
             'values.add($fieldName!.$toMethodName('
-            'explode: explode, allowEmpty: allowEmpty));',
+            'explode: explode, allowEmpty: allowEmpty'
+            '${isForm ? ', useQueryComponent: useQueryComponent' : ''}));',
           ),
         );
       }
@@ -642,7 +652,7 @@ class AnyOfGenerator {
         const Code('final '),
         refer('Object?', 'dart:core').code,
         Code(' ${name}Json = '),
-        Code(valueExpr),
+        valueExpr.code,
         const Code(';'),
       ]);
 
@@ -735,6 +745,7 @@ class AnyOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..lambda = false
@@ -903,6 +914,7 @@ class AnyOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -1315,9 +1327,10 @@ class AnyOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = Block.of(body),
     );
@@ -1734,6 +1747,7 @@ class AnyOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toLabel'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -1897,6 +1911,7 @@ class AnyOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toMatrix'
         ..returns = refer('String', 'dart:core')
         ..requiredParameters.add(
@@ -1919,6 +1934,7 @@ class AnyOfGenerator {
   ) {
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toDeepObject'
         ..returns = TypeReference(
           (b) => b
@@ -1988,7 +2004,7 @@ class AnyOfGenerator {
           ..add(Code('if ($name != null) {'))
           ..add(
             Code(
-              'return $name!.uriEncode(allowEmpty: allowEmpty);',
+              '''return $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);''',
             ),
           )
           ..add(const Code('}'));
@@ -2005,7 +2021,7 @@ class AnyOfGenerator {
       (b) => b
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.add(
+        ..optionalParameters.addAll([
           Parameter(
             (b) => b
               ..name = 'allowEmpty'
@@ -2013,7 +2029,14 @@ class AnyOfGenerator {
               ..named = true
               ..required = true,
           ),
-        )
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..defaultTo = literalBool(false).code,
+          ),
+        ])
         ..lambda = false
         ..body = Block.of(body),
     );

@@ -344,6 +344,7 @@ class ParseGenerator {
     };
 
     return Block.of([
+      ..._generateNeverHeaderChecks(headerResult.neverHeaders),
       if (bodyDecode != null) ...bodyDecode.statements,
       refer(wrapperName, package).call([], wrapperArgs).returned.statement,
     ]);
@@ -383,6 +384,7 @@ class ParseGenerator {
     args.addAll(headerResult.supported);
 
     return Block.of([
+      ..._generateNeverHeaderChecks(headerResult.neverHeaders),
       if (bodyDecode != null) ...bodyDecode.statements,
       refer(
         contentType != null && response.bodyCount > 1
@@ -395,13 +397,34 @@ class ParseGenerator {
     ]);
   }
 
+  List<Code> _generateNeverHeaderChecks(List<String> neverHeaders) {
+    return neverHeaders.map((headerName) {
+      final headerValue = refer('response')
+          .property('headers')
+          .property('value')
+          .call([literalString(headerName, raw: true)]);
+      return Block.of([
+        const Code('if ('),
+        headerValue.code,
+        const Code(' != null) {'),
+        generateSimpleDecodingExceptionExpression(
+          'NeverModel does not permit any value at $headerName',
+          raw: true,
+        ).statement,
+        const Code('}'),
+      ]);
+    }).toList();
+  }
+
   ({
     Map<String, Expression> supported,
     List<({String headerName, String reason})> unsupported,
+    List<String> neverHeaders,
   })
   _decodeHeaders(ResponseObject response) {
     final supported = <String, Expression>{};
     final unsupported = <({String headerName, String reason})>[];
+    final neverHeaders = <String>[];
     final normalizedProperties = normalizeResponseProperties(response);
     final normalizedHeaders = normalizedProperties.where(
       (norm) => norm.property.name != 'body',
@@ -411,6 +434,11 @@ class ParseGenerator {
       final rawHeaderName = response.headers.entries
           .firstWhere((entry) => entry.value == norm.header)
           .key;
+
+      if (norm.property.model is NeverModel) {
+        neverHeaders.add(rawHeaderName);
+        continue;
+      }
 
       final normalizedName = norm.normalizedName;
       final unsupportedReason = getSimpleDecodingUnsupportedReason(
@@ -438,7 +466,11 @@ class ParseGenerator {
       );
       supported[normalizedName] = decode;
     }
-    return (supported: supported, unsupported: unsupported);
+    return (
+      supported: supported,
+      unsupported: unsupported,
+      neverHeaders: neverHeaders,
+    );
   }
 
   Set<String?> _getContentTypes(Response response) {

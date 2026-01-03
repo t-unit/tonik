@@ -85,6 +85,7 @@ class ResponseImporter {
           name: name,
           response: referencedResponse,
           context: context,
+          description: wrapper.description,
         );
 
       case InlinedObject<Response>():

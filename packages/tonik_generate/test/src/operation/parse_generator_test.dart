@@ -1749,5 +1749,213 @@ DateTime _parseResponse(Response<List<int>> response) {
         );
       });
     });
+
+    group('NeverModel response headers', () {
+      test('generates runtime check for NeverModel header', () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+        final responseHeaders = {
+          'X-Any-Header': ResponseHeaderObject(
+            name: 'X-Any-Header',
+            context: context,
+            description: '',
+            isRequired: false,
+            isDeprecated: false,
+            model: AnyModel(context: context),
+            explode: false,
+            encoding: ResponseHeaderEncoding.simple,
+          ),
+          'X-Never-Header': ResponseHeaderObject(
+            name: 'X-Never-Header',
+            context: context,
+            description: '',
+            isRequired: false,
+            isDeprecated: false,
+            model: NeverModel(context: context),
+            explode: false,
+            encoding: ResponseHeaderEncoding.simple,
+          ),
+        };
+        final operation = Operation(
+          operationId: 'neverHeaderOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/never-header',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: responseHeaders,
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: classModel,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+
+        // NeverModel headers should generate a runtime check that throws
+        // only if the server sends a value.
+        const expectedMethod = r'''
+        AnonymousResponse _parseResponse(Response<List<int>> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              if (response.headers.value(r'X-Never-Header') != null) {
+                throw SimpleDecodingException(
+                  r'NeverModel does not permit any value at X-Never-Header',
+                );
+              }
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
+              return AnonymousResponse(
+                  body: _$body,
+                  xAnyHeader: response.headers.value(r'X-Any-Header'),
+              );
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(expectedMethod),
+        );
+      });
+
+      test(
+        'generates runtime check for NeverModel header in multi-response',
+        () {
+          final classModel = ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+          final responseHeaders = {
+            'X-Never-Header': ResponseHeaderObject(
+              name: 'X-Never-Header',
+              context: context,
+              description: '',
+              isRequired: false,
+              isDeprecated: false,
+              model: NeverModel(context: context),
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+            ),
+          };
+          final operation = Operation(
+            operationId: 'multiNeverOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multi-never',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: responseHeaders,
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: classModel,
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+              const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+
+          // Multi-response should also generate runtime check for NeverModel.
+          const expectedMethod = r'''
+        MultiNeverOpResponse _parseResponse(Response<List<int>> response) {
+          switch ((response.statusCode, response.headers.value('content-type'))) {
+            case (200, 'application/json'):
+              if (response.headers.value(r'X-Never-Header') != null) {
+                throw SimpleDecodingException(
+                  r'NeverModel does not permit any value at X-Never-Header',
+                );
+              }
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = User.fromJson(_$json);
+              return MultiNeverOpResponse200(body: AnonymousResponse(body: _$body));
+            case (404, 'application/json'):
+              final _$json = decodeResponseJson<Object?>(response.data);
+              final _$body = _$json.decodeJsonString();
+              return MultiNeverOpResponse404(body: _$body);
+            default:
+              final content = response.headers.value('content-type') ?? 'not specified';
+              final status = response.statusCode;
+              throw ResponseDecodingException(
+                'Unexpected content type: $content for status code: $status',
+              );
+          }
+        }
+      ''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+    });
   });
 }

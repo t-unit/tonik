@@ -550,5 +550,37 @@ void main() {
         );
       });
     });
+
+    group('NeverModel', () {
+      test('generates throw for required NeverModel', () {
+        final value = refer('value');
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: NeverModel(context: context),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'package:my_package/my_package.dart',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          """throw  _i1.SimpleDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
+        );
+      });
+
+      test('generates null check before throw for optional NeverModel', () {
+        final value = refer('value');
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: NeverModel(context: context),
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'package:my_package/my_package.dart',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          """value == null ? null : throw  _i1.SimpleDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
+        );
+      });
+    });
   });
 }

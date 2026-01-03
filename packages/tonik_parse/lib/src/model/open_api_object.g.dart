@@ -8,12 +8,13 @@ part of 'open_api_object.dart';
 
 OpenApiObject _$OpenApiObjectFromJson(Map<String, dynamic> json) =>
     OpenApiObject(
+      openapi: json['openapi'] as String,
       info: Info.fromJson(json['info'] as Map<String, dynamic>),
       servers: (json['servers'] as List<dynamic>?)
           ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
           .toList(),
       paths: (json['paths'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, PathItem.fromJson(e as Map<String, dynamic>)),
+        (k, e) => MapEntry(k, ReferenceWrapper<PathItem>.fromJson(e)),
       ),
       components: json['components'] == null
           ? null

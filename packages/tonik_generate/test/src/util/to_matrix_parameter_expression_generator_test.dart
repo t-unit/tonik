@@ -400,5 +400,26 @@ void main() {
         collapseWhitespace(format(expected)),
       );
     });
+
+    test('generates encodeAnyToMatrix call for AnyModel', () {
+      final model = AnyModel(context: context);
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = encodeAnyToMatrix(value, paramName, explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
   });
 }

@@ -386,5 +386,25 @@ void main() {
         collapseWhitespace(format(expected)),
       );
     });
+
+    test('generates encodeAnyToForm call for AnyModel', () {
+      final model = AnyModel(context: context);
+      final expression = buildFormParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = encodeAnyToForm(value, explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
   });
 }

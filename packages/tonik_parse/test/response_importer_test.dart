@@ -141,6 +141,10 @@ void main() {
         'DuplicateResponseRef': {
           r'$ref': '#/components/responses/DuplicateResponse',
         },
+        'ResponseWithDescriptionOverride': {
+          r'$ref': '#/components/responses/SimpleResponse',
+          'description': 'Overridden description',
+        },
       },
     },
   };
@@ -318,6 +322,36 @@ void main() {
       (secondAlias?.response as ResponseObject?)?.description,
       'A simple response',
     );
+  });
+
+  group(r'reference $ref with description siblings', () {
+    test('uses overridden description from reference', () {
+      final api = Importer().import(fileContent);
+      final response = api.responses.firstWhereOrNull(
+        (r) => r.name == 'ResponseWithDescriptionOverride',
+      );
+
+      expect(response, isNotNull);
+      expect(response, isA<ResponseAlias>());
+
+      final alias = response! as ResponseAlias;
+      expect(alias.description, 'Overridden description');
+      expect(alias.response.resolved.description, 'A simple response');
+    });
+
+    test('alias description is null when reference has no override', () {
+      final api = Importer().import(fileContent);
+      final response = api.responses.firstWhereOrNull(
+        (r) => r.name == 'ReferenceResponse',
+      );
+
+      expect(response, isNotNull);
+      expect(response, isA<ResponseAlias>());
+
+      final alias = response! as ResponseAlias;
+      expect(alias.description, isNull);
+      expect(alias.response.resolved.description, 'A simple response');
+    });
   });
 
   test('imports multiple json content types as response objects', () {

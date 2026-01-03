@@ -80,14 +80,18 @@ void main() {
       );
 
       expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toFormMethod.optionalParameters, hasLength(2));
+      expect(toFormMethod.optionalParameters, hasLength(3));
       expect(
         toFormMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
+        containsAll(['explode', 'allowEmpty', 'useQueryComponent']),
       );
       expect(
-        toFormMethod.optionalParameters.every((p) => p.required),
+        toFormMethod.optionalParameters.take(2).every((p) => p.required),
         isTrue,
+      );
+      expect(
+        toFormMethod.optionalParameters.last.required,
+        isFalse,
       );
     });
 
@@ -535,16 +539,21 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final values = <String>{};
           if (int != null) {
-            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+            final intForm = int!.toForm(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
             values.add(intForm);
           }
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
             );
             values.add(stringForm);
           }
@@ -593,7 +602,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final mapValues = <Map<String, String>>[];
           if (a != null) {
             final aForm = a!.parameterProperties(allowEmpty: allowEmpty);
@@ -661,7 +670,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final mapValues = <Map<String, String>>[];
           String? discriminatorValue;
           if (a != null) {
@@ -678,7 +687,7 @@ void main() {
           for (final m in mapValues) { 
             map.addAll(m); 
           }
-          if (discriminatorValue != null) { 
+          if (discriminatorValue != null) {
             map.putIfAbsent('type', () => discriminatorValue);
           }
           return map.toForm(
@@ -725,7 +734,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toForm({required bool explode, required bool allowEmpty}) {
+        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final values = <String>{};
           final mapValues = <Map<String, String>>[];
           
@@ -738,6 +747,7 @@ void main() {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
             );
             values.add(stringForm);
           }
@@ -881,14 +891,18 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expected = '''
-          String toForm({required bool explode, required bool allowEmpty}) {
+          String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
             final values = <String>{};
             final mapValues = <Map<String, String>>[];
             if (innerChoice != null) {
               switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
                 values.add(
-                  innerChoice!.toForm(explode: explode, allowEmpty: allowEmpty),
+                  innerChoice!.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
                 );
                 break;
                 case EncodingShape.complex:
@@ -907,6 +921,7 @@ void main() {
               final stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
               );
               values.add(stringForm);
             }
@@ -988,7 +1003,11 @@ void main() {
             switch (innerAnyOf!.currentEncodingShape) {
               case EncodingShape.simple:
                 values.add(
-                  innerAnyOf!.toForm(explode: explode, allowEmpty: allowEmpty),
+                  innerAnyOf!.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
                 );
                 break;
               case EncodingShape.complex:
@@ -1043,7 +1062,7 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expected = '''
-          String toForm({required bool explode, required bool allowEmpty}) {
+          String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
             final values = <String>{};
             final mapValues = <Map<String, String>>[]; 
             if (myClass != null) {
@@ -1051,13 +1070,18 @@ void main() {
               mapValues.add(myClassForm);
             }
             if (int != null) {
-              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+              final intForm = int!.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
               values.add(intForm);
             }
             if (string != null) {
               final stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
               );
               values.add(stringForm);
             }

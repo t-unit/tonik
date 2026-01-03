@@ -177,6 +177,71 @@ void main() {
       expect(content, contains('///   Scopes: read, write'));
     });
 
+    test('includes mutual TLS security scheme information', () {
+      final models = <Model>{
+        ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: ctx,
+        ),
+      };
+
+      final apiDoc = ApiDocument(
+        title: 'Mutual TLS API',
+        version: '1.0.0',
+        description: 'An API with mutual TLS',
+        models: models,
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: {
+          Operation(
+            operationId: 'getUser',
+            context: ctx,
+            summary: 'Get user',
+            description: 'Get user info',
+            tags: {Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/me',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            responses: const {},
+            securitySchemes: const {
+              MutualTlsSecurityScheme(
+                type: SecuritySchemeType.mutualTLS,
+                description: 'Client certificate authentication',
+              ),
+            },
+          ),
+        },
+        responses: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        requestBodies: const {},
+      );
+
+      const packageName = 'mutual_tls_api';
+      const Generator().generate(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: packageName,
+      );
+
+      final libraryFile = File(
+        path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
+      );
+      final content = libraryFile.readAsStringSync();
+
+      expect(content, contains('/// Security Schemes:'));
+      expect(
+        content,
+        contains('/// - Mutual TLS: Client certificate authentication'),
+      );
+    });
+
     test('handles empty security schemes', () {
       final models = <Model>{
         ClassModel(

@@ -117,7 +117,7 @@ class PathGenerator {
           explode: param.parameter.explode,
           allowEmpty: param.parameter.allowEmptyValue,
         );
-        pathPartExpressions.add(CodeExpression(Code(valueExpression)));
+        pathPartExpressions.add(valueExpression);
       } else if (param.parameter.encoding == PathParameterEncoding.label) {
         final valueExpression = buildToLabelPathParameterExpression(
           param.normalizedName,

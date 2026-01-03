@@ -26,6 +26,10 @@ sealed class QueryParameter {
 
   final Context context;
 
+  /// The description of the parameter.
+  /// For aliases, this may override the referenced parameter's description.
+  String? get description;
+
   QueryParameterObject resolve({String? name, String? nameOverride}) {
     switch (this) {
       case final QueryParameterObject param:
@@ -58,14 +62,19 @@ class QueryParameterAlias extends QueryParameter {
     required this.name,
     required this.parameter,
     required super.context,
+    this.description,
   });
 
   final String name;
   final QueryParameter parameter;
 
   @override
+  final String? description;
+
+  @override
   String toString() =>
-      'QueryParameterAlias{name: $name, parameter: $parameter}';
+      'QueryParameterAlias{name: $name, parameter: $parameter, '
+      'description: $description}';
 
   @override
   bool operator ==(Object other) =>
@@ -74,10 +83,11 @@ class QueryParameterAlias extends QueryParameter {
           runtimeType == other.runtimeType &&
           name == other.name &&
           parameter == other.parameter &&
+          description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, parameter);
+  int get hashCode => Object.hash(name, parameter, description);
 }
 
 class QueryParameterObject extends QueryParameter {
@@ -100,6 +110,8 @@ class QueryParameterObject extends QueryParameter {
   final String rawName;
 
   String? nameOverride;
+
+  @override
   String? description;
   bool isRequired;
   bool isDeprecated;

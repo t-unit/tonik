@@ -63,6 +63,10 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
     lines.add('/// Version ${apiDocument.version}');
   }
 
+  if (apiDocument.summary != null && apiDocument.summary!.isNotEmpty) {
+    lines.addAll(formatDocComment(apiDocument.summary));
+  }
+
   if (apiDocument.description != null && apiDocument.description!.isNotEmpty) {
     lines.addAll(formatDocComment(apiDocument.description));
   }
@@ -88,6 +92,10 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
 
     if (apiDocument.license!.url != null) {
       lines.add('/// License URL: ${apiDocument.license!.url}');
+    }
+
+    if (apiDocument.license!.identifier != null) {
+      lines.add('/// SPDX Identifier: ${apiDocument.license!.identifier}');
     }
   }
 
@@ -195,6 +203,12 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
           : '';
       lines.add('/// - OpenID Connect$description');
       lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+
+    case MutualTlsSecurityScheme():
+      final description = (scheme.description?.isNotEmpty ?? false)
+          ? ': ${scheme.description}'
+          : '';
+      lines.add('/// - Mutual TLS$description');
   }
 
   return lines;

@@ -303,11 +303,20 @@ class OperationGenerator {
     Map<String, Expression> queryArgs,
   ) {
     return Block.of([
-      declareFinal(r'_$uri', type: refer('Uri', 'dart:core')).statement,
-      declareFinal(r'_$data', type: refer('Object?', 'dart:core')).statement,
+      declareFinal(
+        r'_$uri',
+        type: refer('Uri', 'dart:core'),
+        late: true,
+      ).statement,
+      declareFinal(
+        r'_$data',
+        type: refer('Object?', 'dart:core'),
+        late: true,
+      ).statement,
       declareFinal(
         r'_$options',
         type: refer('Options', 'package:dio/dio.dart'),
+        late: true,
       ).statement,
       Block.of([
         const Code('try {'),

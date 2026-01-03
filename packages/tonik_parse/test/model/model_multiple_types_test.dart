@@ -202,4 +202,45 @@ void main() {
     expect(listModel.content, isA<StringModel>());
     expect((listModel.content as StringModel).context.path, contains('array'));
   });
+
+  test('adds inline type array OneOfModel to models set', () {
+    final api = Importer().import(fileContent);
+
+    final classModel =
+        api.models.firstWhere(
+              (m) => m is ClassModel && m.name == 'MultiTypeModel',
+            )
+            as ClassModel;
+
+    final stringOrNumber = classModel.properties.firstWhere(
+      (p) => p.name == 'stringOrNumber',
+    );
+
+    expect(stringOrNumber.model, isA<OneOfModel>());
+    final oneOfModel = stringOrNumber.model as OneOfModel;
+
+    expect(api.models.contains(oneOfModel), isTrue);
+  });
+
+  test('adds nested inline type array OneOfModel to models set', () {
+    final api = Importer().import(fileContent);
+
+    final classModel =
+        api.models.firstWhere(
+              (m) => m is ClassModel && m.name == 'MultiTypeModel',
+            )
+            as ClassModel;
+
+    final multiTypeArray = classModel.properties.firstWhere(
+      (p) => p.name == 'multiTypeArray',
+    );
+
+    expect(multiTypeArray.model, isA<ListModel>());
+    final listModel = multiTypeArray.model as ListModel;
+
+    expect(listModel.content, isA<OneOfModel>());
+    final oneOfModel = listModel.content as OneOfModel;
+
+    expect(api.models.contains(oneOfModel), isTrue);
+  });
 }

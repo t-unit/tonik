@@ -775,6 +775,122 @@ void main() {
       });
     });
 
+    group('parameter descriptions in docs', () {
+      test('includes parameter descriptions in method doc comments', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          description: 'Get user by ID',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {
+            QueryParameterObject(
+              name: 'includeDetails',
+              rawName: 'include_details',
+              description: 'Whether to include additional details',
+              isRequired: false,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              allowReserved: false,
+              explode: false,
+              model: BooleanModel(context: testContext),
+              encoding: QueryParameterEncoding.form,
+              context: testContext,
+            ),
+          },
+          pathParameters: {
+            PathParameterObject(
+              name: 'id',
+              rawName: 'id',
+              description: 'The unique user identifier',
+              isRequired: true,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              explode: false,
+              model: IntegerModel(context: testContext),
+              encoding: PathParameterEncoding.simple,
+              context: testContext,
+            ),
+          },
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        // Check that parameter descriptions are in the docs.
+        expect(method.docs, contains('/// [id] The unique user identifier'));
+        expect(
+          method.docs,
+          contains(
+            '/// [includeDetails] Whether to include additional details',
+          ),
+        );
+      });
+
+      test('includes overridden description from parameter alias', () {
+        final originalParam = QueryParameterObject(
+          name: 'limit',
+          rawName: 'limit',
+          description: 'Original description from component',
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: IntegerModel(context: testContext),
+          encoding: QueryParameterEncoding.form,
+          context: testContext,
+        );
+
+        final aliasParam = QueryParameterAlias(
+          name: 'limit',
+          parameter: originalParam,
+          context: testContext,
+          description: 'Overridden description from reference',
+        );
+
+        final operation = Operation(
+          operationId: 'listUsers',
+          context: testContext,
+          summary: 'List users',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {aliasParam},
+          pathParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        // Check that the overridden description is used.
+        expect(
+          method.docs,
+          contains('/// [limit] Overridden description from reference'),
+        );
+      });
+    });
+
     test('generates ready-to-use code and filename', () {
       final operation = Operation(
         operationId: 'getUser',

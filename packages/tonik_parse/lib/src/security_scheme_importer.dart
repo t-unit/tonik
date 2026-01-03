@@ -84,6 +84,11 @@ class SecuritySchemeImporter {
           description: scheme.description,
           openIdConnectUrl: scheme.openIdConnectUrl!,
         );
+      case parse.SecuritySchemeType.mutualTLS:
+        return core.MutualTlsSecurityScheme(
+          type: core.SecuritySchemeType.mutualTLS,
+          description: scheme.description,
+        );
     }
   }
 

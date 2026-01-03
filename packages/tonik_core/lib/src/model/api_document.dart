@@ -13,6 +13,7 @@ class ApiDocument {
     required this.queryParameters,
     required this.pathParameters,
     required this.requestBodies,
+    this.summary,
     this.description,
     this.contact,
     this.license,
@@ -23,6 +24,7 @@ class ApiDocument {
   final String title;
   final String version;
 
+  String? summary;
   String? description;
   Contact? contact;
   License? license;
@@ -66,12 +68,12 @@ class ApiDocument {
 
   @override
   String toString() =>
-      'ApiDocument{title: $title, description: $description, '
-      'version: $version, contact: $contact, license: $license, '
-      'termsOfService: $termsOfService, externalDocs: $externalDocs, '
-      'models: $models, responseHeaders: $responseHeaders, '
-      'requestHeaders: $requestHeaders, servers: $servers, '
-      'queryParameters: $queryParameters, pathParameters: $pathParameters, '
-      'operations: $operations, responses: $responses, '
-      'requestBodies: $requestBodies}';
+      'ApiDocument{title: $title, summary: $summary, '
+      'description: $description, version: $version, contact: $contact, '
+      'license: $license, termsOfService: $termsOfService, '
+      'externalDocs: $externalDocs, models: $models, '
+      'responseHeaders: $responseHeaders, requestHeaders: $requestHeaders, '
+      'servers: $servers, queryParameters: $queryParameters, '
+      'pathParameters: $pathParameters, operations: $operations, '
+      'responses: $responses, requestBodies: $requestBodies}';
 }

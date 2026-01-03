@@ -378,6 +378,26 @@ class BinaryModel extends PrimitiveModel {
   String toString() => 'BinaryModel';
 }
 
+class AnyModel extends Model {
+  AnyModel({required super.context});
+
+  @override
+  EncodingShape get encodingShape => EncodingShape.mixed;
+
+  @override
+  String toString() => 'AnyModel';
+}
+
+class NeverModel extends Model {
+  NeverModel({required super.context});
+
+  @override
+  EncodingShape get encodingShape => EncodingShape.simple;
+
+  @override
+  String toString() => 'NeverModel';
+}
+
 class Property {
   Property({
     required this.name,

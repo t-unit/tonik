@@ -129,7 +129,10 @@ class ClassGenerator {
         b
           ..name = className
           ..docs.addAll(formatDocComment(model.description))
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..implements.add(
+            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -189,14 +192,17 @@ class ClassGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: properties
-          .map(
-            (prop) => (
-              normalizedName: prop.normalizedName,
-              typeRef: _getTypeReference(prop.property),
-            ),
-          )
-          .toList(),
+      properties: properties.map(
+        (prop) {
+          final model = prop.property.model;
+          final resolvedModel = model is AliasModel ? model.resolved : model;
+          return (
+            normalizedName: prop.normalizedName,
+            typeRef: _getTypeReference(prop.property),
+            skipCast: resolvedModel is AnyModel,
+          );
+        },
+      ).toList(),
     );
   }
 
@@ -239,7 +245,7 @@ class ClassGenerator {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
 
-      if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
+      if (shape == .simple || shape == .mixed) {
         return true;
       }
 
@@ -335,7 +341,6 @@ class ClassGenerator {
           )
           .statement,
 
-      // Constructor call
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
   }
@@ -400,27 +405,38 @@ class ClassGenerator {
 
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
-    final propertyAssignments = <Code>[];
+
+    // Build the map entries, handling optional properties with if-blocks
+    final mapEntries = <Code>[];
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
       final property = prop.property;
-      final value = buildToJsonPropertyExpression(name, property);
+      final valueExpr = buildToJsonPropertyExpression(name, property);
 
       if (!property.isRequired && !property.isNullable) {
-        propertyAssignments.add(
-          Code("if ($name != null) r'${property.name}': $value"),
-        );
+        mapEntries
+          ..add(Code("if ($name != null) r'${property.name}': "))
+          ..add(valueExpr.code)
+          ..add(const Code(','));
       } else {
-        propertyAssignments.add(Code("r'${property.name}': $value"));
+        mapEntries
+          ..add(Code("r'${property.name}': "))
+          ..add(valueExpr.code)
+          ..add(const Code(','));
       }
     }
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..lambda = true
-        ..body = Code('{${propertyAssignments.join(', ')}}'),
+        ..body = Block.of([
+          const Code('{'),
+          ...mapEntries,
+          const Code('}'),
+        ]),
     );
   }
 
@@ -558,6 +574,19 @@ class ClassGenerator {
       final propertyName = prop.property.name;
       final isRequired = prop.property.isRequired;
       final isNullable = prop.property.isNullable;
+      final model = prop.property.model;
+      final resolvedModel = model is AliasModel ? model.resolved : model;
+
+      if (resolvedModel is NeverModel) {
+        propertyAssignments.addAll([
+          generateEncodingExceptionExpression(
+            'Cannot encode NeverModel property $propertyName: '
+            'this type does not permit any value',
+            raw: true,
+          ).statement,
+        ]);
+        continue;
+      }
 
       if (isRequired && !isNullable) {
         propertyAssignments.add(
@@ -746,9 +775,27 @@ if ($name != null) {
       final isRequired = prop.property.isRequired;
       final isNullable = prop.property.isNullable;
       final model = prop.property.model;
+      final resolvedModel = model is AliasModel ? model.resolved : model;
 
-      if (model.encodingShape == EncodingShape.simple) {
-        // Simple property - direct encoding
+      if (resolvedModel is AnyModel) {
+        propertyAssignments.add(
+          Code("result[r'$propertyName'] = $name?.toString() ?? '';"),
+        );
+        continue;
+      }
+
+      if (resolvedModel is NeverModel) {
+        propertyAssignments.addAll([
+          generateEncodingExceptionExpression(
+            'Cannot encode NeverModel property $propertyName: '
+            'this type does not permit any value',
+            raw: true,
+          ).statement,
+        ]);
+        continue;
+      }
+
+      if (model.encodingShape == .simple) {
         if (isRequired && !isNullable) {
           propertyAssignments.add(
             Code(
@@ -761,7 +808,7 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
@@ -770,14 +817,13 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
           );
         }
       } else {
-        // Composite property - runtime check for encoding shape
         final isFieldNullable = isNullable || !isRequired;
         final encodingShapeRef = refer(
           'EncodingShape',
@@ -841,6 +887,7 @@ if ($name != null) {
 
   Method _buildToSimpleMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toSimple'
       ..returns = refer('String', 'dart:core')
       ..optionalParameters.addAll(buildEncodingParameters())
@@ -865,7 +912,7 @@ if ($name != null) {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
 
-      if (shape == EncodingShape.simple || shape == EncodingShape.mixed) {
+      if (shape == .simple || shape == .mixed) {
         return true;
       }
 
@@ -966,18 +1013,10 @@ if ($name != null) {
 
   Method _buildToFormMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toForm'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll([
-        ...buildEncodingParameters(),
-        Parameter(
-          (b) => b
-            ..name = 'useQueryComponent'
-            ..type = refer('bool', 'dart:core')
-            ..named = true
-            ..defaultTo = literalFalse.code,
-        ),
-      ])
+      ..optionalParameters.addAll(buildFormEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
             .call([], {
@@ -996,12 +1035,9 @@ if ($name != null) {
       ]),
   );
 
-  /// Builds a toLabel method for label encoding.
-  ///
-  /// This method delegates to parameterProperties and then calls toLabel on the
-  /// result.
   Method _buildToLabelMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toLabel'
       ..returns = refer('String', 'dart:core')
       ..optionalParameters.addAll(buildEncodingParameters())
@@ -1021,6 +1057,7 @@ if ($name != null) {
 
   Method _buildToMatrixMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toMatrix'
       ..returns = refer('String', 'dart:core')
       ..requiredParameters.add(
@@ -1050,6 +1087,7 @@ if ($name != null) {
 
   Method _buildToDeepObjectMethod() => Method(
     (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toDeepObject'
       ..returns = TypeReference(
         (b) => b

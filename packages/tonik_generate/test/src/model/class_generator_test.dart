@@ -56,6 +56,23 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
+    test('generates class implementing ParameterEncodable', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+
+      final result = generator.generateClass(model);
+
+      expect(result.implements.length, 1);
+      expect(
+        result.implements.first.accept(emitter).toString(),
+        'ParameterEncodable',
+      );
+    });
+
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = ClassModel(
@@ -1641,6 +1658,75 @@ Map<String, String> parameterProperties({
           );
         },
       );
+
+      test('encoding methods have @override annotation', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'TestModel',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+
+        // Verify toSimple has @override
+        final toSimple = result.methods.firstWhere((m) => m.name == 'toSimple');
+        expect(toSimple.annotations, hasLength(1));
+        expect(
+          toSimple.annotations.first.code.accept(emitter).toString(),
+          'override',
+        );
+
+        // Verify toForm has @override
+        final toForm = result.methods.firstWhere((m) => m.name == 'toForm');
+        expect(toForm.annotations, hasLength(1));
+        expect(
+          toForm.annotations.first.code.accept(emitter).toString(),
+          'override',
+        );
+
+        // Verify toLabel has @override
+        final toLabel = result.methods.firstWhere((m) => m.name == 'toLabel');
+        expect(toLabel.annotations, hasLength(1));
+        expect(
+          toLabel.annotations.first.code.accept(emitter).toString(),
+          'override',
+        );
+
+        // Verify toMatrix has @override
+        final toMatrix = result.methods.firstWhere((m) => m.name == 'toMatrix');
+        expect(toMatrix.annotations, hasLength(1));
+        expect(
+          toMatrix.annotations.first.code.accept(emitter).toString(),
+          'override',
+        );
+
+        // Verify toDeepObject has @override
+        final toDeepObject = result.methods.firstWhere(
+          (m) => m.name == 'toDeepObject',
+        );
+        expect(toDeepObject.annotations, hasLength(1));
+        expect(
+          toDeepObject.annotations.first.code.accept(emitter).toString(),
+          'override',
+        );
+
+        // Verify toJson has @override
+        final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
+        expect(toJson.annotations, hasLength(1));
+        expect(
+          toJson.annotations.first.code.accept(emitter).toString(),
+          'override',
+        );
+      });
     });
 
     group('nullable class generation', () {

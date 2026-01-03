@@ -67,6 +67,10 @@ void main() {
           'openIdConnectUrl':
               'https://example.com/.well-known/openid_configuration',
         },
+        'mutual_tls': {
+          'type': 'mutualTLS',
+          'description': 'Mutual TLS authentication',
+        },
       },
     },
   };
@@ -77,7 +81,7 @@ void main() {
       final openApiObject = OpenApiObject.fromJson(fileContent);
       final importer = SecuritySchemeImporter(openApiObject)..import();
 
-      expect(importer.securitySchemes, hasLength(7));
+      expect(importer.securitySchemes, hasLength(8));
       expect(
         importer.securitySchemes['api_key_header'],
         isA<core.ApiKeySecurityScheme>(),
@@ -190,11 +194,22 @@ void main() {
       );
     });
 
+    test('imports mutual TLS security scheme', () {
+      final openApiObject = OpenApiObject.fromJson(fileContent);
+      final importer = SecuritySchemeImporter(openApiObject)..import();
+
+      final scheme =
+          importer.securitySchemes['mutual_tls']!
+              as core.MutualTlsSecurityScheme;
+      expect(scheme.type, core.SecuritySchemeType.mutualTLS);
+      expect(scheme.description, 'Mutual TLS authentication');
+    });
+
     test('imports all defined security schemes', () {
       final openApiObject = OpenApiObject.fromJson(fileContent);
       final importer = SecuritySchemeImporter(openApiObject)..import();
 
-      expect(importer.securitySchemes, hasLength(7));
+      expect(importer.securitySchemes, hasLength(8));
       expect(
         importer.securitySchemes.keys,
         containsAll([
@@ -205,6 +220,7 @@ void main() {
           'basic_auth',
           'oauth2',
           'openid',
+          'mutual_tls',
         ]),
       );
     });

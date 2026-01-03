@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
-import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
@@ -38,7 +37,8 @@ class Parameter {
   final SerializationStyle? style;
   final bool? explode;
   final bool? allowReserved;
-  final ReferenceWrapper<Schema>? schema;
+  @SchemaConverter()
+  final Schema? schema;
   final Map<String, MediaType>? content;
   @JsonKey(name: 'x-dart-name')
   final String? xDartName;

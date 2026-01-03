@@ -1,0 +1,403 @@
+openapi: 3.1.0
+info:
+  title: Type Arrays Test API
+  description: OpenAPI 3.1 specification testing type arrays with multiple types
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: http://localhost:8290
+
+tags:
+  - name: type-arrays
+    description: Operations testing type arrays with multiple types
+
+paths:
+  /health:
+    get:
+      operationId: health
+      tags:
+        - type-arrays
+      summary: Health check
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /simple-types:
+    post:
+      operationId: testSimpleTypes
+      tags:
+        - type-arrays
+      summary: Test simple type arrays
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleTypeArrays'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleTypeArrays'
+
+  /nullable-types:
+    post:
+      operationId: testNullableTypes
+      tags:
+        - type-arrays
+      summary: Test nullable type arrays
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NullableTypeArrays'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullableTypeArrays'
+
+  /composition:
+    post:
+      operationId: testComposition
+      tags:
+        - type-arrays
+      summary: Test type arrays in composition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompositionWithTypeArrays'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompositionWithTypeArrays'
+
+  /edge-cases:
+    post:
+      operationId: testEdgeCases
+      tags:
+        - type-arrays
+      summary: Test edge cases with type arrays
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EdgeCases'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EdgeCases'
+
+  /top-level/{param}:
+    get:
+      operationId: testTopLevelTypeArray
+      tags:
+        - type-arrays
+      summary: Test top-level type array as response
+      parameters:
+        - name: param
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Response with top-level type array
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StringOrNumber'
+
+components:
+  schemas:
+    # Simple type arrays (no null)
+    StringOrNumber:
+      type: [string, number]
+      description: Can be either a string or a number
+
+    StringOrInteger:
+      type: [string, integer]
+      description: Can be either a string or an integer
+
+    NumberOrBoolean:
+      type: [number, boolean]
+      description: Can be either a number or a boolean
+
+    IntegerOrBoolean:
+      type: [integer, boolean]
+      description: Can be either an integer or a boolean
+
+    ThreeTypes:
+      type: [string, integer, boolean]
+      description: Can be string, integer, or boolean
+
+    # Nullable type arrays (OAS 3.1 style)
+    NullableString:
+      type: [string, 'null']
+      description: Nullable string using type array
+
+    NullableInteger:
+      type: [integer, 'null']
+      description: Nullable integer using type array
+
+    NullableNumber:
+      type: [number, 'null']
+      description: Nullable number using type array
+
+    NullableBoolean:
+      type: [boolean, 'null']
+      description: Nullable boolean using type array
+
+    NullableStringOrNumber:
+      type: [string, number, 'null']
+      description: String or number, nullable
+
+    NullableMultiType:
+      type: [string, integer, boolean, 'null']
+      description: Multiple types, nullable
+
+    # Type arrays in object properties
+    SimpleTypeArrays:
+      type: object
+      required:
+        - requiredStringOrNumber
+        - requiredIntOrBool
+      properties:
+        requiredStringOrNumber:
+          type: [string, number]
+          description: Required property with type array
+        requiredIntOrBool:
+          type: [integer, boolean]
+        optionalStringOrInt:
+          type: [string, integer]
+        threeTypes:
+          type: [string, number, boolean]
+
+    NullableTypeArrays:
+      type: object
+      properties:
+        nullableString:
+          type: [string, 'null']
+        nullableNumber:
+          type: [number, 'null']
+        nullableBoolean:
+          type: [boolean, 'null']
+        nullableStringOrNumber:
+          type: [string, number, 'null']
+        nullableMultiType:
+          type: [string, integer, boolean, 'null']
+        requiredNullable:
+          type: [string, 'null']
+      required:
+        - requiredNullable
+
+    # Type arrays with oneOf
+    OneOfWithTypeArray:
+      oneOf:
+        - type: [string, integer]
+        - type: object
+          properties:
+            name:
+              type: string
+
+    OneOfContainingTypeArrays:
+      oneOf:
+        - type: object
+          properties:
+            value1:
+              type: [string, number]
+        - type: object
+          properties:
+            value2:
+              type: [integer, boolean]
+
+    # Type arrays with anyOf
+    AnyOfWithTypeArray:
+      anyOf:
+        - type: [string, integer]
+        - type: object
+          properties:
+            id:
+              type: string
+
+    AnyOfContainingTypeArrays:
+      anyOf:
+        - type: object
+          properties:
+            flex1:
+              type: [string, number]
+        - type: object
+          properties:
+            flex2:
+              type: [boolean, integer]
+
+    # Type arrays with allOf
+    AllOfWithTypeArrays:
+      allOf:
+        - type: object
+          properties:
+            base:
+              type: [string, integer]
+        - type: object
+          properties:
+            extended:
+              type: [number, boolean]
+
+    AllOfBaseWithTypeArray:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+        - type: object
+          properties:
+            value:
+              type: [string, number, 'null']
+
+    # Composition with nullable type arrays
+    OneOfNullable:
+      oneOf:
+        - type: [string, 'null']
+        - type: [integer, 'null']
+
+    AnyOfNullable:
+      anyOf:
+        - type: [string, 'null']
+        - type: [boolean, 'null']
+
+    # Nested type arrays
+    NestedTypeArrays:
+      type: object
+      properties:
+        outer:
+          type: object
+          properties:
+            inner:
+              type: [string, number]
+            deepNullable:
+              type: [string, 'null']
+
+    # Arrays of type arrays
+    ArrayOfTypeArrays:
+      type: array
+      items:
+        type: [string, number]
+
+    ArrayOfNullableTypeArrays:
+      type: array
+      items:
+        type: [string, integer, 'null']
+
+    # Complex composition
+    CompositionWithTypeArrays:
+      type: object
+      properties:
+        oneOfField:
+          $ref: '#/components/schemas/OneOfWithTypeArray'
+        anyOfField:
+          $ref: '#/components/schemas/AnyOfWithTypeArray'
+        allOfField:
+          $ref: '#/components/schemas/AllOfWithTypeArrays'
+        simpleTypeArray:
+          type: [string, number]
+        nullableTypeArray:
+          type: [integer, boolean, 'null']
+
+    # Edge cases
+    EdgeCases:
+      type: object
+      properties:
+        # All primitives
+        allPrimitives:
+          type: [string, integer, number, boolean]
+        allPrimitivesNullable:
+          type: [string, integer, number, boolean, 'null']
+        
+        # Duplicate semantics (integer is subset of number)
+        integerAndNumber:
+          type: [integer, number]
+        
+        # With format
+        stringOrDateTime:
+          oneOf:
+            - type: string
+            - type: string
+              format: date-time
+        
+        # Nullable array itself vs nullable items
+        nullableArrayOfStrings:
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: 'null'
+        
+        arrayOfNullableStrings:
+          type: array
+          items:
+            type: [string, 'null']
+        
+        # Type array in allOf merging
+        mergedTypeArrays:
+          allOf:
+            - type: object
+              properties:
+                field1:
+                  type: [string, integer]
+            - type: object
+              properties:
+                field2:
+                  type: [number, boolean]
+        
+        # Nested composition with type arrays
+        deepNesting:
+          oneOf:
+            - anyOf:
+                - type: [string, integer]
+                - type: object
+                  properties:
+                    nested:
+                      type: [boolean, number]
+            - type: 'null'
+
+    # Required vs optional with type arrays
+    RequiredVsOptional:
+      type: object
+      required:
+        - requiredTypeArray
+        - requiredNullableTypeArray
+      properties:
+        requiredTypeArray:
+          type: [string, integer]
+        requiredNullableTypeArray:
+          type: [string, number, 'null']
+        optionalTypeArray:
+          type: [boolean, integer]
+        optionalNullableTypeArray:
+          type: [string, 'null']

@@ -186,15 +186,11 @@ class OptionsGenerator {
         refer('headers')
             .index(literalString('Accept', raw: true))
             .assign(
-              CodeExpression(
-                Code(
-                  buildToSimpleHeaderParameterExpression(
-                    acceptParamName!,
-                    acceptHeader!.parameter,
-                    explode: acceptHeader.parameter.explode,
-                    allowEmpty: acceptHeader.parameter.allowEmptyValue,
-                  ),
-                ),
+              buildToSimpleHeaderParameterExpression(
+                acceptParamName!,
+                acceptHeader!.parameter,
+                explode: acceptHeader.parameter.explode,
+                allowEmpty: acceptHeader.parameter.allowEmptyValue,
               ),
             )
             .statement,
@@ -206,15 +202,11 @@ class OptionsGenerator {
           refer('headers')
               .index(literalString('Accept', raw: true))
               .assign(
-                CodeExpression(
-                  Code(
-                    buildToSimpleHeaderParameterExpression(
-                      acceptParamName!,
-                      acceptHeader!.parameter,
-                      explode: acceptHeader.parameter.explode,
-                      allowEmpty: acceptHeader.parameter.allowEmptyValue,
-                    ),
-                  ),
+                buildToSimpleHeaderParameterExpression(
+                  acceptParamName!,
+                  acceptHeader!.parameter,
+                  explode: acceptHeader.parameter.explode,
+                  allowEmpty: acceptHeader.parameter.allowEmptyValue,
                 ),
               )
               .statement,
@@ -340,7 +332,7 @@ class OptionsGenerator {
 
     return refer('headers')
         .index(literalString(resolvedParam.rawName, raw: true))
-        .assign(CodeExpression(Code(valueExpression)))
+        .assign(valueExpression)
         .statement;
   }
 

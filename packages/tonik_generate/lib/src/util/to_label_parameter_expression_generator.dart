@@ -40,6 +40,11 @@ Expression buildLabelParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() => _buildAnyModelLabelExpression(
+      valueExpression,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for label encoding: $model',
     ),
@@ -113,4 +118,18 @@ Expression _buildListLabelExpression(
       'Unsupported list content type for label encoding: $contentModel',
     ),
   };
+}
+
+Expression _buildAnyModelLabelExpression(
+  Expression valueExpression, {
+  required Expression explode,
+  required Expression allowEmpty,
+}) {
+  return refer('encodeAnyToLabel', 'package:tonik_util/tonik_util.dart').call(
+    [valueExpression],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
 }

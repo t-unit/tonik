@@ -128,6 +128,10 @@ void main() {
             },
           },
         },
+        'mutual_tls': {
+          'type': 'mutualTLS',
+          'description': 'Mutual TLS authentication',
+        },
       },
     },
   };
