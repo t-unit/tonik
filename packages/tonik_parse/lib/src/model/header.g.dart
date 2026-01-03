@@ -12,9 +12,7 @@ Header _$HeaderFromJson(Map<String, dynamic> json) => Header(
   isDeprecated: json['deprecated'] as bool?,
   style: $enumDecodeNullable(_$SerializationStyleEnumMap, json['style']),
   explode: json['explode'] as bool?,
-  schema: json['schema'] == null
-      ? null
-      : ReferenceWrapper<Schema>.fromJson(json['schema']),
+  schema: const SchemaConverter().fromJson(json['schema']),
   content: (json['content'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
   ),

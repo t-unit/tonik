@@ -1,12 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/discriminator.dart';
-import 'package:tonik_parse/src/model/reference.dart';
 
 part 'schema.g.dart';
 
 @JsonSerializable(createToJson: false)
 class Schema {
   Schema({
+    required this.ref,
     required this.type,
     required this.format,
     required this.required,
@@ -30,6 +30,7 @@ class Schema {
   factory Schema.fromJson(Object? json) {
     if (json is bool) {
       return Schema(
+        ref: null,
         type: [],
         format: null,
         required: null,
@@ -51,21 +52,53 @@ class Schema {
       );
     }
 
+    // Handle bare type strings (e.g., 'string' instead of {'type': 'string'}).
+    if (json is String) {
+      return Schema(
+        ref: null,
+        type: [json],
+        format: null,
+        required: null,
+        enumerated: null,
+        allOf: null,
+        anyOf: null,
+        oneOf: null,
+        not: null,
+        items: null,
+        properties: null,
+        description: null,
+        isNullable: null,
+        discriminator: null,
+        isDeprecated: null,
+        uniqueItems: null,
+        xDartName: null,
+        xDartEnum: null,
+      );
+    }
+
     return _$SchemaFromJson(json! as Map<String, dynamic>);
   }
 
+  @JsonKey(name: r'$ref')
+  final String? ref;
   @_SchemaTypeConverter()
   final List<String> type;
   final String? format;
   final List<String>? required;
   @JsonKey(name: 'enum')
   final List<dynamic>? enumerated;
-  final List<ReferenceWrapper<Schema>>? allOf;
-  final List<ReferenceWrapper<Schema>>? anyOf;
-  final List<ReferenceWrapper<Schema>>? oneOf;
-  final ReferenceWrapper<Schema>? not;
-  final ReferenceWrapper<Schema>? items;
-  final Map<String, ReferenceWrapper<Schema>>? properties;
+  @_SchemaListConverter()
+  final List<Schema>? allOf;
+  @_SchemaListConverter()
+  final List<Schema>? anyOf;
+  @_SchemaListConverter()
+  final List<Schema>? oneOf;
+  @SchemaConverter()
+  final Schema? not;
+  @SchemaConverter()
+  final Schema? items;
+  @SchemaMapConverter()
+  final Map<String, Schema>? properties;
   final String? description;
   @JsonKey(name: 'nullable')
   final bool? isNullable;
@@ -93,7 +126,7 @@ class Schema {
 
   @override
   String toString() =>
-      'Schema{type: $type, format: $format, required: $required, '
+      'Schema{ref: $ref, type: $type, format: $format, required: $required, '
       'enumerated: $enumerated, allOf: $allOf, anyOf: $anyOf, oneOf: $oneOf, '
       'not: $not, items: $items, properties: $properties, description: '
       '$description, isNullable: $isNullable, discriminator: $discriminator, '
@@ -119,4 +152,49 @@ class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {
     if (types.length == 1) return types.first;
     return types;
   }
+}
+
+/// Converts a single schema from JSON, handling all schema representations.
+class SchemaConverter implements JsonConverter<Schema?, Object?> {
+  const SchemaConverter();
+
+  @override
+  Schema? fromJson(Object? json) {
+    if (json == null) return null;
+    return Schema.fromJson(json);
+  }
+
+  @override
+  Object? toJson(Schema? schema) => throw UnimplementedError();
+}
+
+/// Converts a list of schemas from JSON.
+class _SchemaListConverter
+    implements JsonConverter<List<Schema>?, List<dynamic>?> {
+  const _SchemaListConverter();
+
+  @override
+  List<Schema>? fromJson(List<dynamic>? json) {
+    if (json == null) return null;
+    return json.map(Schema.fromJson).toList();
+  }
+
+  @override
+  List<dynamic>? toJson(List<Schema>? schemas) => throw UnimplementedError();
+}
+
+/// Converts a map of schemas from JSON.
+class SchemaMapConverter
+    implements JsonConverter<Map<String, Schema>?, Map<String, dynamic>?> {
+  const SchemaMapConverter();
+
+  @override
+  Map<String, Schema>? fromJson(Map<String, dynamic>? json) {
+    if (json == null) return null;
+    return json.map((k, e) => MapEntry(k, Schema.fromJson(e)));
+  }
+
+  @override
+  Map<String, dynamic>? toJson(Map<String, Schema>? schemas) =>
+      throw UnimplementedError();
 }

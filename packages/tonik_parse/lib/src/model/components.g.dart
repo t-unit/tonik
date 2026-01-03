@@ -7,8 +7,8 @@ part of 'components.dart';
 // **************************************************************************
 
 Components _$ComponentsFromJson(Map<String, dynamic> json) => Components(
-  schemas: (json['schemas'] as Map<String, dynamic>?)?.map(
-    (k, e) => MapEntry(k, ReferenceWrapper<Schema>.fromJson(e)),
+  schemas: const SchemaMapConverter().fromJson(
+    json['schemas'] as Map<String, dynamic>?,
   ),
   responses: (json['responses'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, ReferenceWrapper<Response>.fromJson(e)),

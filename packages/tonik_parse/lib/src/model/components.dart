@@ -25,7 +25,8 @@ class Components {
   factory Components.fromJson(Map<String, dynamic> json) =>
       _$ComponentsFromJson(json);
 
-  final Map<String, ReferenceWrapper<Schema>>? schemas;
+  @SchemaMapConverter()
+  final Map<String, Schema>? schemas;
   final Map<String, ReferenceWrapper<Response>>? responses;
   final Map<String, ReferenceWrapper<Parameter>>? parameters;
   final Map<String, ReferenceWrapper<RequestBody>>? requestBodies;

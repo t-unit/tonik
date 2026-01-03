@@ -3,7 +3,6 @@ import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
 import 'package:tonik_parse/src/model/response.dart';
-import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/security_scheme.dart';
 import 'package:tonik_parse/src/model/server.dart';
 
@@ -12,25 +11,6 @@ sealed class ReferenceWrapper<T> {
 
   factory ReferenceWrapper.fromJson(Object? json) {
     const referenceKey = r'$ref';
-
-    if (json is bool) {
-      if (T == Schema) {
-        return InlinedObject(Schema.fromJson(json) as T);
-      }
-      throw FormatException(
-        'Boolean schemas are only supported for Schema types, found: $json',
-      );
-    }
-
-    if (json is String) {
-      if (T == Schema) {
-        final schemaMap = {'type': json};
-        return InlinedObject(Schema.fromJson(schemaMap) as T);
-      }
-      throw FormatException(
-        'Bare type strings are only supported for Schema types, found: $json',
-      );
-    }
 
     final map = json! as Map<String, dynamic>;
 
@@ -45,8 +25,6 @@ sealed class ReferenceWrapper<T> {
       return InlinedObject(Server.fromJson(map) as T);
     } else if (T == PathItem) {
       return InlinedObject(PathItem.fromJson(map) as T);
-    } else if (T == Schema) {
-      return InlinedObject(Schema.fromJson(map) as T);
     } else if (T == Parameter) {
       return InlinedObject(Parameter.fromJson(map) as T);
     } else if (T == RequestBody) {

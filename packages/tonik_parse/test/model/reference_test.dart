@@ -1,7 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
-import 'package:tonik_parse/src/model/schema.dart';
 
 void main() {
   group('Reference', () {
@@ -80,50 +79,6 @@ void main() {
         final ref = reference as Reference<Response>;
         expect(ref.ref, '#/components/responses/SimpleResponse');
         expect(ref.description, 'Override description');
-      });
-    });
-
-    group('Boolean schemas (OAS 3.1 / JSON Schema 2020-12)', () {
-      test('parses boolean true as Schema', () {
-        final reference = ReferenceWrapper<Schema>.fromJson(true);
-
-        expect(reference, isA<InlinedObject<Schema>>());
-        final inlined = reference as InlinedObject<Schema>;
-        expect(inlined.object, isA<Schema>());
-        expect(inlined.object.isBooleanSchema, true);
-      });
-
-      test('parses boolean false as Schema', () {
-        final reference = ReferenceWrapper<Schema>.fromJson(false);
-
-        expect(reference, isA<InlinedObject<Schema>>());
-        final inlined = reference as InlinedObject<Schema>;
-        expect(inlined.object, isA<Schema>());
-        expect(inlined.object.isBooleanSchema, false);
-      });
-
-      test('throws FormatException for boolean with non-Schema type', () {
-        expect(
-          () => ReferenceWrapper<Response>.fromJson(true),
-          throwsA(
-            isA<FormatException>().having(
-              (e) => e.message,
-              'message',
-              contains('Boolean schemas are only supported for Schema types'),
-            ),
-          ),
-        );
-
-        expect(
-          () => ReferenceWrapper<Response>.fromJson(false),
-          throwsA(
-            isA<FormatException>().having(
-              (e) => e.message,
-              'message',
-              contains('Boolean schemas are only supported for Schema types'),
-            ),
-          ),
-        );
       });
     });
   });

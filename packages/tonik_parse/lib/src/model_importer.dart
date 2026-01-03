@@ -2,14 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
-import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
 class ModelImporter {
   ModelImporter(OpenApiObject openApiObject)
     : _schemas = openApiObject.components?.schemas ?? {};
 
-  final Map<String, ReferenceWrapper<Schema>> _schemas;
+  final Map<String, Schema> _schemas;
   late Set<Model> models;
   final log = Logger('ModelImporter');
 
@@ -23,7 +22,7 @@ class ModelImporter {
 
     for (final MapEntry(key: name, value: schema) in _schemas.entries) {
       log.fine('Importing schema $name');
-      var model = _parseSchemaWrapper(name, schema, context);
+      var model = _resolveSchemaRef(name, schema, context);
 
       if (model is PrimitiveModel || model is AnyModel || model is NeverModel) {
         model = AliasModel(
@@ -33,10 +32,10 @@ class ModelImporter {
         );
       }
 
-      // Apply x-dart-name vendor extension to schema
-      if (schema is InlinedObject<Schema> && schema.object.xDartName != null) {
+      // Apply x-dart-name vendor extension to schema.
+      if (schema.xDartName != null) {
         if (model is NamedModel) {
-          model.nameOverride = schema.object.xDartName;
+          model.nameOverride = schema.xDartName;
         }
       }
 
@@ -47,8 +46,9 @@ class ModelImporter {
     }
   }
 
-  Model importSchema(ReferenceWrapper<Schema> schema, Context context) {
-    final model = _parseSchemaWrapper(null, schema, context);
+  /// Imports a schema from outside the components.schemas context.
+  Model importSchema(Schema schema, Context context) {
+    final model = _resolveSchemaRef(null, schema, context);
     log.fine('Importing schema $model@$context');
 
     if (model is! PrimitiveModel &&
@@ -62,46 +62,41 @@ class ModelImporter {
     return model;
   }
 
-  Model _parseSchemaWrapper(
-    String? name,
-    ReferenceWrapper<Schema> schema,
-    Context context,
-  ) {
-    switch (schema) {
-      case Reference():
-        if (!schema.ref.startsWith('#/components/schemas/')) {
-          throw UnimplementedError(
-            'Only local schema references are supported, '
-            'found ${schema.ref} for $name',
-          );
-        }
-
-        final refName = schema.ref.split('/').last;
-        final ref = _schemas[refName];
-
-        if (ref == null) {
-          throw ArgumentError('Schema $ref not found for $name');
-        }
-
-        var model =
-            models.firstWhereOrNull(
-              (model) => model is NamedModel && model.name == refName,
-            ) ??
-            _parseSchemaWrapper(refName, ref, rootContext);
-
-        if (name != null) {
-          model = AliasModel(
-            name: name,
-            model: model,
-            context: context,
-          );
-        }
-
-        return model;
-
-      case InlinedObject<Schema>():
-        return _parseSchema(name, schema.object, context);
+  /// Resolves a schema that may have a $ref field.
+  Model _resolveSchemaRef(String? name, Schema schema, Context context) {
+    if (schema.ref != null) {
+      return _resolveReference(name, schema.ref!, context);
     }
+    return _parseSchema(name, schema, context);
+  }
+
+  /// Resolves a $ref string to a model.
+  Model _resolveReference(String? name, String ref, Context context) {
+    if (!ref.startsWith('#/components/schemas/')) {
+      throw UnimplementedError(
+        'Only local schema references are supported, '
+        'found $ref for $name',
+      );
+    }
+
+    final refName = ref.split('/').last;
+    final refSchema = _schemas[refName];
+
+    if (refSchema == null) {
+      throw ArgumentError('Schema $ref not found for $name');
+    }
+
+    var model =
+        models.firstWhereOrNull(
+          (model) => model is NamedModel && model.name == refName,
+        ) ??
+        _resolveSchemaRef(refName, refSchema, rootContext);
+
+    if (name != null) {
+      model = AliasModel(name: name, model: model, context: context);
+    }
+
+    return model;
   }
 
   Model _parseSchema(String? name, Schema schema, Context context) {
@@ -205,6 +200,7 @@ class ModelImporter {
   ) {
     final models = types.map((type) {
       final singleTypeSchema = Schema(
+        ref: null,
         type: [type],
         format: schema.format,
         required: schema.required,
@@ -248,7 +244,7 @@ class ModelImporter {
     }
 
     final modelContext = context.push('array');
-    final content = _parseSchemaWrapper(null, items, modelContext);
+    final content = _resolveSchemaRef(null, items, modelContext);
     return ListModel(
       content: content,
       context: context,
@@ -261,7 +257,7 @@ class ModelImporter {
     final modelContext = context.push(name ?? 'allOf');
     final models = schema.allOf!
         .map(
-          (allOfSchema) => _parseSchemaWrapper(null, allOfSchema, modelContext),
+          (allOfSchema) => _resolveSchemaRef(null, allOfSchema, modelContext),
         )
         .toList();
 
@@ -299,7 +295,7 @@ class ModelImporter {
           schema: schema,
           innerSchema: oneOfSchema,
         ),
-        model: _parseSchemaWrapper(null, oneOfSchema, modelContext),
+        model: _resolveSchemaRef(null, oneOfSchema, modelContext),
       ),
     );
 
@@ -325,7 +321,7 @@ class ModelImporter {
           schema: schema,
           innerSchema: anyOfSchema,
         ),
-        model: _parseSchemaWrapper(null, anyOfSchema, modelContext),
+        model: _resolveSchemaRef(null, anyOfSchema, modelContext),
       ),
     );
     final anyOfModel = AnyOfModel(
@@ -344,11 +340,10 @@ class ModelImporter {
 
   String? _getDiscriminatorValue({
     required Schema schema,
-    required ReferenceWrapper<Schema> innerSchema,
+    required Schema innerSchema,
   }) {
-    if (innerSchema is Reference &&
-        schema.discriminator?.propertyName != null) {
-      final ref = (innerSchema as Reference).ref;
+    if (innerSchema.ref != null && schema.discriminator?.propertyName != null) {
+      final ref = innerSchema.ref!;
       final discriminatorEntry = schema.discriminator?.mapping?.entries
           .firstWhereOrNull((entry) => entry.value == ref);
       return discriminatorEntry?.key ?? ref.split('/').last;
@@ -385,26 +380,15 @@ class ModelImporter {
 
     for (final MapEntry(key: propertyName, value: propertySchema)
         in schemaProperties.entries) {
-      bool isNullable;
-      bool isDeprecated;
-      String? description;
-      String? nameOverride;
-      if (propertySchema is InlinedObject<Schema>) {
-        final schema = propertySchema.object;
-        isNullable = schema.isNullable ?? schema.type.contains('null');
-        isDeprecated = schema.isDeprecated ?? false;
-        description = schema.description;
-        nameOverride = schema.xDartName;
-      } else {
-        isNullable = false;
-        isDeprecated = false;
-        description = null;
-        nameOverride = null;
-      }
+      final isNullable =
+          propertySchema.isNullable ?? propertySchema.type.contains('null');
+      final isDeprecated = propertySchema.isDeprecated ?? false;
+      final description = propertySchema.description;
+      final nameOverride = propertySchema.xDartName;
 
       final property = Property(
         name: propertyName,
-        model: _parseSchemaWrapper(
+        model: _resolveSchemaRef(
           null,
           propertySchema,
           context.pushAll([name, propertyName].whereType<String>()),
@@ -415,7 +399,7 @@ class ModelImporter {
         description: description,
       );
 
-      // Apply x-dart-name vendor extension to property
+      // Apply x-dart-name vendor extension to property.
       if (nameOverride != null) {
         property.nameOverride = nameOverride;
       }
@@ -462,12 +446,7 @@ class ModelImporter {
         nameOverride = xDartEnum[i];
       }
 
-      enumValues.add(
-        EnumEntry<T>(
-          value: value,
-          nameOverride: nameOverride,
-        ),
-      );
+      enumValues.add(EnumEntry<T>(value: value, nameOverride: nameOverride));
     }
 
     final model = EnumModel<T>(
