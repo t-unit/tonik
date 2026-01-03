@@ -1268,6 +1268,7 @@ class AllOfGenerator {
                   refer(prop.normalizedName).property('toForm').call([], {
                     'explode': refer('explode'),
                     'allowEmpty': refer('allowEmpty'),
+                    'useQueryComponent': refer('useQueryComponent'),
                   }),
                 )
                 .statement,
@@ -2191,7 +2192,10 @@ class AllOfGenerator {
         bodyCode.add(
           refer(simpleProp.normalizedName)
               .property('uriEncode')
-              .call([], {'allowEmpty': refer('allowEmpty')})
+              .call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+              })
               .returned
               .statement,
         );
@@ -2203,7 +2207,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             Parameter(
               (b) => b
                 ..name = 'allowEmpty'
@@ -2211,7 +2215,14 @@ class AllOfGenerator {
                 ..named = true
                 ..required = true,
             ),
-          )
+            Parameter(
+              (b) => b
+                ..name = 'useQueryComponent'
+                ..type = refer('bool', 'dart:core')
+                ..named = true
+                ..defaultTo = literalBool(false).code,
+            ),
+          ])
           ..lambda = false
           ..body = Block.of(bodyCode),
       );
@@ -2227,7 +2238,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             Parameter(
               (b) => b
                 ..name = 'allowEmpty'
@@ -2235,7 +2246,14 @@ class AllOfGenerator {
                 ..named = true
                 ..required = true,
             ),
-          )
+            Parameter(
+              (b) => b
+                ..name = 'useQueryComponent'
+                ..type = refer('bool', 'dart:core')
+                ..named = true
+                ..defaultTo = literalBool(false).code,
+            ),
+          ])
           ..lambda = false
           ..body = generateEncodingExceptionExpression(
             'Cannot uriEncode $className: contains complex types',
@@ -2248,7 +2266,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.add(
+          ..optionalParameters.addAll([
             Parameter(
               (b) => b
                 ..name = 'allowEmpty'
@@ -2256,7 +2274,14 @@ class AllOfGenerator {
                 ..named = true
                 ..required = true,
             ),
-          )
+            Parameter(
+              (b) => b
+                ..name = 'useQueryComponent'
+                ..type = refer('bool', 'dart:core')
+                ..named = true
+                ..defaultTo = literalBool(false).code,
+            ),
+          ])
           ..lambda = true
           ..body = literalString('').code,
       );
@@ -2275,6 +2300,7 @@ class AllOfGenerator {
             .assign(
               refer(prop.normalizedName).property('uriEncode').call([], {
                 'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
               }),
             )
             .statement,
@@ -2299,7 +2325,7 @@ class AllOfGenerator {
       (b) => b
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.add(
+        ..optionalParameters.addAll([
           Parameter(
             (b) => b
               ..name = 'allowEmpty'
@@ -2307,7 +2333,14 @@ class AllOfGenerator {
               ..named = true
               ..required = true,
           ),
-        )
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..defaultTo = literalBool(false).code,
+          ),
+        ])
         ..lambda = false
         ..body = Block.of(valueCollectionCode),
     );

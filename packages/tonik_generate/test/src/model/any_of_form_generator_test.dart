@@ -542,13 +542,18 @@ void main() {
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final values = <String>{};
           if (int != null) {
-            final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+            final intForm = int!.toForm(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
             values.add(intForm);
           }
           if (string != null) {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
             );
             values.add(stringForm);
           }
@@ -682,7 +687,7 @@ void main() {
           for (final m in mapValues) { 
             map.addAll(m); 
           }
-          if (discriminatorValue != null) { 
+          if (discriminatorValue != null) {
             map.putIfAbsent('type', () => discriminatorValue);
           }
           return map.toForm(
@@ -742,6 +747,7 @@ void main() {
             final stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
             );
             values.add(stringForm);
           }
@@ -892,7 +898,11 @@ void main() {
               switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
                 values.add(
-                  innerChoice!.toForm(explode: explode, allowEmpty: allowEmpty),
+                  innerChoice!.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
                 );
                 break;
                 case EncodingShape.complex:
@@ -911,6 +921,7 @@ void main() {
               final stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
               );
               values.add(stringForm);
             }
@@ -992,7 +1003,11 @@ void main() {
             switch (innerAnyOf!.currentEncodingShape) {
               case EncodingShape.simple:
                 values.add(
-                  innerAnyOf!.toForm(explode: explode, allowEmpty: allowEmpty),
+                  innerAnyOf!.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
                 );
                 break;
               case EncodingShape.complex:
@@ -1055,13 +1070,18 @@ void main() {
               mapValues.add(myClassForm);
             }
             if (int != null) {
-              final intForm = int!.toForm(explode: explode, allowEmpty: allowEmpty);
+              final intForm = int!.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
               values.add(intForm);
             }
             if (string != null) {
               final stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
               );
               values.add(stringForm);
             }

@@ -106,6 +106,12 @@ melos:
         dart pub get
         dart test --concurrency=1
 
+    test-integration-type-arrays:
+      run: |
+        cd integration_test/type_arrays/type_arrays_test
+        dart pub get
+        dart test --concurrency=1
+
     test-integration-all:
       run: |
         melos run test-integration-petstore
@@ -119,3 +125,4 @@ melos:
         melos run test-integration-binary-models
         melos run test-integration-form-urlencoded
         melos run test-integration-boolean-schemas
+        melos run test-integration-type-arrays

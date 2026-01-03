@@ -481,9 +481,17 @@ void main() {
             );
           }
           final values = <String>{};
-          final intForm = int.toForm(explode: explode, allowEmpty: allowEmpty);
+          final intForm = int.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           values.add(intForm);
-          final choiceForm = choice.toForm(explode: explode, allowEmpty: allowEmpty);
+          final choiceForm = choice.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           values.add(choiceForm);
           if (values.length > 1) {
             throw EncodingException(
@@ -633,14 +641,20 @@ void main() {
           final flexibleAForm = flexibleA.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
           );
           values.add(flexibleAForm);
           final flexibleBForm = flexibleB.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
           );
           values.add(flexibleBForm);
-          final stringForm = string.toForm(explode: explode, allowEmpty: allowEmpty);
+          final stringForm = string.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           values.add(stringForm);
           if (values.length > 1) {
             throw EncodingException(
@@ -737,16 +751,26 @@ void main() {
           final flexibleValueForm = flexibleValue.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
           );
           values.add(flexibleValueForm);
           final bigDecimalForm = bigDecimal.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
           );
           values.add(bigDecimalForm);
-          final choiceForm = choice.toForm(explode: explode, allowEmpty: allowEmpty);
+          final choiceForm = choice.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           values.add(choiceForm);
-          final stringForm = string.toForm(explode: explode, allowEmpty: allowEmpty);
+          final stringForm = string.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           values.add(stringForm);
           if (values.length > 1) {
             throw EncodingException(
@@ -892,9 +916,14 @@ void main() {
           final flexibleValueForm = flexibleValue.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
           );
           values.add(flexibleValueForm);
-          final intForm = int.toForm(explode: explode, allowEmpty: allowEmpty);
+          final intForm = int.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           values.add(intForm);
           if (values.length > 1) {
             throw EncodingException(

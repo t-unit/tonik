@@ -21,6 +21,7 @@
 /integration_test/binary_models/binary_models_api
 /integration_test/form_urlencoded/form_urlencoded_api
 /integration_test/boolean_schemas/boolean_schemas_api
+/integration_test/type_arrays/type_arrays_api
 
 # Dependencies
 /pubspec.lock

@@ -52,8 +52,8 @@ void main() {
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
-            ResultError(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
-            ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
+            ResultError(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
+            ResultSuccess(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
           };
         }
       ''';
@@ -103,11 +103,15 @@ void main() {
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
-            ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
+            ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
             ResponseUser(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
               'type': 'user',
-            }.toForm(explode: explode, allowEmpty: allowEmpty),
+            }.toForm(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            ),
           };
         }
       ''';
@@ -401,7 +405,7 @@ void main() {
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           return switch (this) {
-            OuterInner(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, ),
+            OuterInner(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
           };
         }
       ''';
@@ -459,8 +463,12 @@ void main() {
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
                   'type': 'inner',
-                }.toForm(explode: explode, allowEmpty: allowEmpty)
-              : value.toForm(explode: explode, allowEmpty: allowEmpty),
+                }.toForm(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                )
+              : value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
           };
         }
       ''';
@@ -547,14 +555,22 @@ void main() {
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
                   'type': 'a',
-                }.toForm(explode: explode, allowEmpty: allowEmpty)
-              : value.toForm(explode: explode, allowEmpty: allowEmpty),
+                }.toForm(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                )
+              : value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
             OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
                   'type': 'b',
-                }.toForm(explode: explode, allowEmpty: allowEmpty)
-              : value.toForm(explode: explode, allowEmpty: allowEmpty),
+                }.toForm(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                )
+              : value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
           };
         }
       ''';

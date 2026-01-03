@@ -1801,4 +1801,104 @@ void main() {
       }
     });
   });
+
+  group('uriEncode', () {
+    test('generates uriEncode method with useQueryComponent parameter', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final uriEncodeMethod = generatedClass.methods.firstWhere(
+        (m) => m.name == 'uriEncode',
+      );
+
+      expect(uriEncodeMethod.optionalParameters, hasLength(2));
+
+      final allowEmptyParam = uriEncodeMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = uriEncodeMethod.optionalParameters
+          .firstWhere((p) => p.name == 'useQueryComponent');
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
+    });
+  });
+
+  group('toForm', () {
+    test('generates toForm method with useQueryComponent parameter', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      final toFormMethod = klass.methods.firstWhere(
+        (m) => m.name == 'toForm',
+      );
+
+      expect(toFormMethod.optionalParameters.length, 3);
+
+      final explodeParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'explode',
+      );
+      expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(explodeParam.named, isTrue);
+      expect(explodeParam.required, isTrue);
+
+      final allowEmptyParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'useQueryComponent',
+      );
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
+    });
+  });
 }

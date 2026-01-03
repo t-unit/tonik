@@ -104,3 +104,9 @@ jobs:
           cd integration_test/query_parameters/query_parameters_test
           dart pub get
           dart test --concurrency=1
+
+      - name: Run type arrays integration tests
+        run: |
+          cd integration_test/type_arrays/type_arrays_test
+          dart pub get
+          dart test --concurrency=1

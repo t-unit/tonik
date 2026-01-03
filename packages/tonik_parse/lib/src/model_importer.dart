@@ -229,13 +229,16 @@ class ModelImporter {
       );
     });
 
-    return OneOfModel(
+    final oneOfModel = OneOfModel(
       models: models.toSet(),
       name: name,
       context: context,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
     );
+
+    _addModelToSet(oneOfModel);
+    return oneOfModel;
   }
 
   ListModel _parseArray(String? name, Schema schema, Context context) {

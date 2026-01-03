@@ -293,7 +293,8 @@ class AnyOfGenerator {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.$toMethodName( '
-          'explode: explode, allowEmpty: allowEmpty);',
+          'explode: explode, allowEmpty: allowEmpty'
+          '${isForm ? ', useQueryComponent: useQueryComponent' : ''});',
         ),
       );
       if (needsValues) {
@@ -364,7 +365,8 @@ class AnyOfGenerator {
         codes.add(
           Code(
             'values.add($fieldName!.$toMethodName('
-            'explode: explode, allowEmpty: allowEmpty));',
+            'explode: explode, allowEmpty: allowEmpty'
+            '${isForm ? ', useQueryComponent: useQueryComponent' : ''}));',
           ),
         );
       }
@@ -2002,7 +2004,7 @@ class AnyOfGenerator {
           ..add(Code('if ($name != null) {'))
           ..add(
             Code(
-              'return $name!.uriEncode(allowEmpty: allowEmpty);',
+              '''return $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);''',
             ),
           )
           ..add(const Code('}'));
@@ -2019,7 +2021,7 @@ class AnyOfGenerator {
       (b) => b
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.add(
+        ..optionalParameters.addAll([
           Parameter(
             (b) => b
               ..name = 'allowEmpty'
@@ -2027,7 +2029,14 @@ class AnyOfGenerator {
               ..named = true
               ..required = true,
           ),
-        )
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..defaultTo = literalBool(false).code,
+          ),
+        ])
         ..lambda = false
         ..body = Block.of(body),
     );
