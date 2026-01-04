@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -24,31 +25,40 @@ class TypedefGenerator {
       _generateFile(generateListTypedef(model));
 
   @visibleForTesting
-  TypeDef generateAliasTypedef(AliasModel model) =>
-      _generateTypedefFromModel(model, model.model);
-
-  @visibleForTesting
-  TypeDef generateListTypedef(ListModel model) =>
-      _generateTypedefFromModel(model, model);
-
-  TypeDef _generateTypedefFromModel(Model model, Model definition) {
-    final isNullable = switch (model) {
-      AliasModel(isNullable: final nullable) => nullable,
-      ListModel(isNullable: final nullable) => nullable,
-      AllOfModel(isNullable: final nullable) => nullable,
-      OneOfModel(isNullable: final nullable) => nullable,
-      AnyOfModel(isNullable: final nullable) => nullable,
-      ClassModel(isNullable: final nullable) => nullable,
-      EnumModel(isNullable: final nullable) => nullable,
-      NeverModel() => false,
-      AnyModel() => true,
-      PrimitiveModel() => false,
-      NamedModel() => false,
-      CompositeModel() => false,
-    };
+  TypeDef generateAliasTypedef(AliasModel model) {
+    final isNullable = model.isNullable;
 
     final baseType = typeReference(
-      definition,
+      model.model,
+      nameManager,
+      package,
+      isNullableOverride: isNullable,
+    );
+
+    return TypeDef(
+      (b) {
+        b
+          ..name = nameManager.modelName(model)
+          ..definition = baseType
+          ..docs.addAll(formatDocComment(model.description));
+
+        if (model.isDeprecated) {
+          b.annotations.add(
+            refer('Deprecated', 'dart:core').call([
+              literalString('This typedef is deprecated.'),
+            ]),
+          );
+        }
+      },
+    );
+  }
+
+  @visibleForTesting
+  TypeDef generateListTypedef(ListModel model) {
+    final isNullable = model.isNullable;
+
+    final baseType = typeReference(
+      model,
       nameManager,
       package,
       isNullableOverride: isNullable,

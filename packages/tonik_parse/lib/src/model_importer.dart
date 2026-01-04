@@ -65,13 +65,116 @@ class ModelImporter {
   /// Resolves a schema that may have a $ref field.
   Model _resolveSchemaRef(String? name, Schema schema, Context context) {
     if (schema.ref != null) {
-      return _resolveReference(name, schema.ref!, context);
+      return _resolveReference(name, schema, context);
     }
     return _parseSchema(name, schema, context);
   }
 
-  /// Resolves a $ref string to a model.
-  Model _resolveReference(String? name, String ref, Context context) {
+  Model _resolveSchemaRefForProperty(Schema schema, Context context) {
+    if (schema.ref != null) {
+      if (_hasStructuralSiblings(schema)) {
+        return _mergeRefWithStructuralSiblingsForProperty(schema, context);
+      }
+      return _resolveReferenceForProperty(schema.ref!, context);
+    }
+    return _parseSchema(null, schema, context);
+  }
+
+  Model _mergeRefWithStructuralSiblingsForProperty(
+    Schema schema,
+    Context context,
+  ) {
+    final ref = schema.ref!;
+
+    if (!ref.startsWith('#/components/schemas/')) {
+      throw UnimplementedError(
+        'Only local schema references are supported, found $ref',
+      );
+    }
+
+    final refName = ref.split('/').last;
+    final refSchema = _schemas[refName];
+
+    if (refSchema == null) {
+      throw ArgumentError('Schema $ref not found');
+    }
+
+    final refModel =
+        models.firstWhereOrNull(
+          (model) => model is NamedModel && model.name == refName,
+        ) ??
+        _resolveSchemaRef(refName, refSchema, rootContext);
+
+    final modelContext = context.push('allOf');
+    final modelsToMerge = <Model>[refModel];
+
+    if (schema.allOf != null) {
+      for (final allOfSchema in schema.allOf!) {
+        modelsToMerge.add(_resolveSchemaRef(null, allOfSchema, modelContext));
+      }
+    }
+
+    if (schema.properties != null) {
+      final inlineClass = _parseClassModel(null, schema, modelContext);
+      modelsToMerge.add(inlineClass);
+    }
+
+    if (schema.oneOf != null) {
+      final oneOfModel = _parseOneOf(null, schema, modelContext);
+      modelsToMerge.add(oneOfModel);
+    }
+
+    if (schema.anyOf != null) {
+      final anyOfModel = _parseAnyOf(null, schema, modelContext);
+      modelsToMerge.add(anyOfModel);
+    }
+
+    final allOfModel = AllOfModel(
+      models: modelsToMerge.toSet(),
+      context: modelContext,
+      isDeprecated: false,
+    );
+
+    _addModelToSet(allOfModel);
+    return allOfModel;
+  }
+
+  Model _resolveReferenceForProperty(String ref, Context context) {
+    if (!ref.startsWith('#/components/schemas/')) {
+      throw UnimplementedError(
+        'Only local schema references are supported, found $ref',
+      );
+    }
+
+    final refName = ref.split('/').last;
+    final refSchema = _schemas[refName];
+
+    if (refSchema == null) {
+      throw ArgumentError('Schema $ref not found');
+    }
+
+    return models.firstWhereOrNull(
+          (model) => model is NamedModel && model.name == refName,
+        ) ??
+        _resolveSchemaRef(refName, refSchema, rootContext);
+  }
+
+  bool _hasAnnotationSiblings(Schema schema) {
+    return schema.description != null ||
+        (schema.isDeprecated ?? false) ||
+        schema.type.contains('null');
+  }
+
+  bool _hasStructuralSiblings(Schema schema) {
+    return schema.properties != null ||
+        schema.allOf != null ||
+        schema.oneOf != null ||
+        schema.anyOf != null;
+  }
+
+  Model _resolveReference(String? name, Schema schema, Context context) {
+    final ref = schema.ref!;
+
     if (!ref.startsWith('#/components/schemas/')) {
       throw UnimplementedError(
         'Only local schema references are supported, '
@@ -80,23 +183,89 @@ class ModelImporter {
     }
 
     final refName = ref.split('/').last;
+
+    if (name == refName) {
+      throw ArgumentError(
+        'Schema $name has a direct self-reference which is not supported',
+      );
+    }
+
     final refSchema = _schemas[refName];
 
     if (refSchema == null) {
       throw ArgumentError('Schema $ref not found for $name');
     }
 
-    var model =
+    final refModel =
         models.firstWhereOrNull(
           (model) => model is NamedModel && model.name == refName,
         ) ??
         _resolveSchemaRef(refName, refSchema, rootContext);
 
-    if (name != null) {
-      model = AliasModel(name: name, model: model, context: context);
+    if (_hasStructuralSiblings(schema)) {
+      return _mergeRefWithStructuralSiblings(
+        name,
+        refModel,
+        schema,
+        context,
+      );
     }
 
-    return model;
+    if (name != null || _hasAnnotationSiblings(schema)) {
+      return AliasModel(
+        name: name,
+        model: refModel,
+        context: context,
+        description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
+        isNullable: schema.type.contains('null'),
+      );
+    }
+
+    return refModel;
+  }
+
+  AllOfModel _mergeRefWithStructuralSiblings(
+    String? name,
+    Model refModel,
+    Schema schema,
+    Context context,
+  ) {
+    final modelContext = context.push(name ?? 'allOf');
+    final modelsToMerge = <Model>[refModel];
+
+    if (schema.allOf != null) {
+      for (final allOfSchema in schema.allOf!) {
+        modelsToMerge.add(_resolveSchemaRef(null, allOfSchema, modelContext));
+      }
+    }
+
+    if (schema.properties != null) {
+      final inlineClass = _parseClassModel(null, schema, modelContext);
+      modelsToMerge.add(inlineClass);
+    }
+
+    if (schema.oneOf != null) {
+      final oneOfModel = _parseOneOf(null, schema, modelContext);
+      modelsToMerge.add(oneOfModel);
+    }
+
+    if (schema.anyOf != null) {
+      final anyOfModel = _parseAnyOf(null, schema, modelContext);
+      modelsToMerge.add(anyOfModel);
+    }
+
+    final allOfModel = AllOfModel(
+      name: name,
+      models: modelsToMerge.toSet(),
+      context: modelContext,
+      description: schema.description,
+      isDeprecated: schema.isDeprecated ?? false,
+      isNullable: schema.type.contains('null'),
+    );
+
+    _addModelToSet(allOfModel);
+    return allOfModel;
   }
 
   Model _parseSchema(String? name, Schema schema, Context context) {
@@ -388,8 +557,7 @@ class ModelImporter {
 
       final property = Property(
         name: propertyName,
-        model: _resolveSchemaRef(
-          null,
+        model: _resolveSchemaRefForProperty(
           propertySchema,
           context.pushAll([name, propertyName].whereType<String>()),
         ),

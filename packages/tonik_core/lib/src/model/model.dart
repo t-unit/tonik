@@ -58,18 +58,22 @@ mixin CompositeModel on Model {
 
 class AliasModel extends Model with NamedModel {
   AliasModel({
-    required this.name,
     required this.model,
     required super.context,
+    this.name,
     this.nameOverride,
+    this.description,
+    this.isDeprecated = false,
     this.isNullable = false,
   });
 
   @override
-  final String name;
+  final String? name;
   @override
   String? nameOverride;
   Model model;
+  String? description;
+  bool isDeprecated;
   bool isNullable;
 
   Model get resolved => switch (model) {
@@ -82,7 +86,8 @@ class AliasModel extends Model with NamedModel {
 
   @override
   String toString() =>
-      'AliasModel{name: $name, nameOverride: $nameOverride, model: $model}';
+      'AliasModel{name: $name, nameOverride: $nameOverride, model: $model, '
+      'description: $description, isDeprecated: $isDeprecated}';
 }
 
 class ListModel extends Model with NamedModel {

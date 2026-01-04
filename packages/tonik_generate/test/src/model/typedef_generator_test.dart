@@ -641,5 +641,105 @@ void main() {
         );
       });
     });
+
+    group('description and deprecated', () {
+      test('generates typedef with description', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+          description: 'A unique identifier for a user.',
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// A unique identifier for a user.\ntypedef UserId = String;',
+        );
+      });
+
+      test('generates typedef with multiline description', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+          description: 'A unique identifier for a user.\nUsed across the API.',
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// A unique identifier for a user.\n'
+          '/// Used across the API.\n'
+          'typedef UserId = String;',
+        );
+      });
+
+      test('generates typedef with deprecated annotation', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+          isDeprecated: true,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          "@Deprecated('This typedef is deprecated.') typedef UserId = String;",
+        );
+      });
+
+      test('generates typedef with both description and deprecated', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+          description: 'A unique identifier for a user.',
+          isDeprecated: true,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// A unique identifier for a user.\n'
+          "@Deprecated('This typedef is deprecated.') typedef UserId = String;",
+        );
+      });
+
+      test('generates typedef without description when null', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef UserId = String;',
+        );
+      });
+
+      test('generates typedef without deprecated when false', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef UserId = String;',
+        );
+      });
+    });
   });
 }
