@@ -96,10 +96,10 @@ void main() {
 
       final klass = generator.generateClass(model);
 
-      expect(klass.implements.length, 1);
+      expect(klass.implements.length, 2);
       expect(
-        klass.implements.first.accept(emitter).toString(),
-        'ParameterEncodable',
+        klass.implements.map((e) => e.accept(emitter).toString()).toSet(),
+        {'ParameterEncodable', 'UriEncodable'},
       );
     });
 

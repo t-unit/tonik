@@ -163,6 +163,9 @@ class AllOfGenerator {
           ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
           ..implements.add(
             refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          )
+          ..implements.add(
+            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
           );
 
         if (model.isDeprecated) {
@@ -2205,6 +2208,7 @@ class AllOfGenerator {
 
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll([
@@ -2236,6 +2240,7 @@ class AllOfGenerator {
     if (model.cannotBeSimplyEncoded || hasComplexProperties) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll([
@@ -2264,6 +2269,7 @@ class AllOfGenerator {
     if (normalizedProperties.isEmpty) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
           ..optionalParameters.addAll([
@@ -2323,6 +2329,7 @@ class AllOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll([

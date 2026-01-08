@@ -123,7 +123,7 @@ class PathGenerator {
           param.normalizedName,
           param.parameter,
         );
-        pathPartExpressions.add(CodeExpression(Code(valueExpression)));
+        pathPartExpressions.add(valueExpression);
       } else if (param.parameter.encoding == PathParameterEncoding.matrix) {
         final model = param.parameter.model;
         if (model is ListModel && model.content is ListModel) {

@@ -378,7 +378,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)).toList().toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList().toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(

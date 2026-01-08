@@ -24,6 +24,17 @@ Expression buildUriEncodeExpression(
         'useQueryComponent': ?useQueryComponent,
       },
     ),
+    AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
+      refer(
+        'encodeAnyToUri',
+        'package:tonik_util/tonik_util.dart',
+      ).call(
+        [valueExpression],
+        {
+          'allowEmpty': allowEmpty,
+          'useQueryComponent': ?useQueryComponent,
+        },
+      ),
     ListModel(:final content) => _buildListUriEncodeExpression(
       valueExpression,
       content,
@@ -79,6 +90,40 @@ Expression _buildListUriEncodeExpression(
                   allowEmpty: allowEmpty,
                   useQueryComponent: useQueryComponent,
                 ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('uriEncode')
+          .call(
+            [],
+            {
+              'allowEmpty': allowEmpty,
+              'useQueryComponent': ?useQueryComponent,
+            },
+          ),
+    AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body =
+                    refer(
+                          'encodeAnyToUri',
+                          'package:tonik_util/tonik_util.dart',
+                        )
+                        .call(
+                          [refer('e')],
+                          {
+                            'allowEmpty': allowEmpty,
+                            'useQueryComponent': ?useQueryComponent,
+                          },
+                        )
+                        .code,
             ).closure,
           ])
           .property('toList')

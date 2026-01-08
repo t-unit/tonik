@@ -42,7 +42,43 @@ List<Code> buildToFormQueryParameterCode(
   }
 
   if (model is ListModel) {
-    final contentShape = model.content.encodingShape;
+    final contentModel = model.content is AliasModel
+        ? (model.content as AliasModel).resolved
+        : model.content;
+    final contentShape = contentModel.encodingShape;
+
+    if (explode) {
+      return _buildExplodedListCode(
+        parameterName,
+        parameter,
+        contentModel,
+        contentShape,
+        allowEmpty: allowEmpty,
+      );
+    }
+
+    if (contentModel is AnyModel ||
+        contentModel is AllOfModel ||
+        contentModel is OneOfModel ||
+        contentModel is AnyOfModel) {
+      return [
+        const Code('entries.add(('),
+        Code("name: r'${parameter.rawName}', "),
+        const Code('value: '),
+        refer(parameterName).code,
+        const Code('.map((e) => '),
+        refer('encodeAnyToUri', 'package:tonik_util/tonik_util.dart')
+            .call(
+              [refer('e')],
+              {
+                'allowEmpty': literalBool(allowEmpty),
+              },
+            )
+            .code,
+        const Code(').toList().toForm('),
+        Code('explode: $explode, allowEmpty: $allowEmpty),),);'),
+      ];
+    }
 
     if (contentShape == EncodingShape.complex) {
       return [
@@ -184,6 +220,16 @@ String? _handleListExpression(
       return '.map($elementMapBody).toList().toForm($paramString)';
     }(),
 
+    AnyModel() => () {
+      final suffix = _getFormSerializationSuffix(
+        contentModel,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+      final elementMapBody = '(e) => e$suffix';
+      return '.map($elementMapBody).toList().toForm($paramString)';
+    }(),
+
     AliasModel() => _handleListExpression(
       contentModel.model,
       explode: explode,
@@ -194,4 +240,66 @@ String? _handleListExpression(
       'Unsupported list content type for form encoding: $contentModel',
     ),
   };
+}
+
+/// Generates code for exploded list parameters (explode=true).
+List<Code> _buildExplodedListCode(
+  String parameterName,
+  QueryParameterObject parameter,
+  Model contentModel,
+  EncodingShape contentShape, {
+  required bool allowEmpty,
+}) {
+  final rawName = parameter.rawName;
+
+  if (contentShape == EncodingShape.complex) {
+    return [
+      Code('if ($parameterName.isNotEmpty) {'),
+      generateEncodingExceptionExpression(
+        'Form encoding only supports lists of simple types',
+      ).statement,
+      const Code('}'),
+    ];
+  }
+
+  if (contentModel is AnyModel ||
+      contentModel is AllOfModel ||
+      contentModel is OneOfModel ||
+      contentModel is AnyOfModel) {
+    return [
+      Code('entries.addAll($parameterName.map((e) => ('),
+      Code("name: r'$rawName', "),
+      const Code('value: '),
+      refer(
+        'encodeAnyToUri',
+        'package:tonik_util/tonik_util.dart',
+      ).call([refer('e')], {'allowEmpty': literalBool(allowEmpty)}).code,
+      const Code(',),),);'),
+    ];
+  }
+
+  if (contentShape == EncodingShape.mixed) {
+    return [
+      Code('for (final item in $parameterName) {'),
+      const Code('if (item.currentEncodingShape != '),
+      refer('EncodingShape', 'package:tonik_util/tonik_util.dart').code,
+      const Code('.simple) {'),
+      generateEncodingExceptionExpression(
+        'Form encoding only supports lists of simple types',
+      ).statement,
+      const Code('}'),
+      const Code('}'),
+      Code('entries.addAll($parameterName.map((e) => ('),
+      Code("name: r'$rawName', "),
+      Code(
+        'value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);',
+      ),
+    ];
+  }
+
+  return [
+    Code('entries.addAll($parameterName.map((e) => ('),
+    Code("name: r'$rawName', "),
+    Code('value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);'),
+  ];
 }

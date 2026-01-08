@@ -217,7 +217,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toLabel(explode: false, allowEmpty: false), ];
+          return [r'users', ids.toLabel(explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -493,7 +493,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String userId, required String type, required List<String> roles, }) {
-          return [r'users', userId.toSimple(explode: false, allowEmpty: false, ), type.toLabel(explode: false, allowEmpty: false), roles.toMatrix('roles', explode: false, allowEmpty: false, ), ];
+          return [r'users', userId.toSimple(explode: false, allowEmpty: false, ), type.toLabel(explode: false, allowEmpty: false, ), roles.toMatrix('roles', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -611,7 +611,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required AnonymousModel role, required AnonymousModel2 filter, required OneOfValue id, }) {
-          return [r'users', role.toSimple(explode: false, allowEmpty: false, ), r'filter', filter.toMatrix('filter', explode: true, allowEmpty: false, ), r'id', id.toLabel(explode: false, allowEmpty: false), ];
+          return [r'users', role.toSimple(explode: false, allowEmpty: false, ), r'filter', filter.toMatrix('filter', explode: true, allowEmpty: false, ), r'id', id.toLabel(explode: false, allowEmpty: false, ), ];
         }
       ''';
 

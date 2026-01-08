@@ -1,13 +1,18 @@
+import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
 
 void main() {
   late Context context;
+  late DartEmitter emitter;
 
   setUp(() {
     context = Context.initial();
+    emitter = DartEmitter(useNullSafetySyntax: true);
   });
+
+  String emit(Expression expr) => expr.accept(emitter).toString();
 
   group('buildToLabelPathParameterExpression', () {
     test('generates toLabel expression for primitive path parameter', () {
@@ -24,8 +29,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('userId', parameter),
-        'userId.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('userId', parameter)),
+        'userId.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -49,8 +54,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('ids', parameter),
-          'ids.toLabel(explode: false, allowEmpty: false)',
+          emit(buildToLabelPathParameterExpression('ids', parameter)),
+          'ids.toLabel(explode: false, allowEmpty: false, )',
         );
       },
     );
@@ -74,8 +79,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('ids', parameter),
-          'ids.toLabel(explode: true, allowEmpty: false)',
+          emit(buildToLabelPathParameterExpression('ids', parameter)),
+          'ids.toLabel(explode: true, allowEmpty: false, )',
         );
       },
     );
@@ -94,8 +99,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('filter', parameter),
-        'filter?.toLabel(explode: false, allowEmpty: true)',
+        emit(buildToLabelPathParameterExpression('filter', parameter)),
+        'filter.toLabel(explode: false, allowEmpty: true, )',
       );
     });
 
@@ -122,8 +127,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('status', parameter),
-        'status.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('status', parameter)),
+        'status.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -141,8 +146,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('id', parameter),
-        'id.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('id', parameter)),
+        'id.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -160,8 +165,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('price', parameter),
-        'price.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('price', parameter)),
+        'price.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -179,8 +184,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('enabled', parameter),
-        'enabled.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('enabled', parameter)),
+        'enabled.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -198,8 +203,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('timestamp', parameter),
-        'timestamp.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('timestamp', parameter)),
+        'timestamp.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -237,8 +242,8 @@ void main() {
         context: context,
       );
       expect(
-        buildToLabelPathParameterExpression('filter', parameter),
-        'filter.toLabel(explode: false, allowEmpty: false)',
+        emit(buildToLabelPathParameterExpression('filter', parameter)),
+        'filter.toLabel(explode: false, allowEmpty: false, )',
       );
     });
 
@@ -262,8 +267,13 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('ids', explodeTrueParameter),
-          'ids.toLabel(explode: true, allowEmpty: false)',
+          emit(
+            buildToLabelPathParameterExpression(
+              'ids',
+              explodeTrueParameter,
+            ),
+          ),
+          'ids.toLabel(explode: true, allowEmpty: false, )',
         );
       },
     );
@@ -298,8 +308,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('statuses', parameter),
-          '''statuses.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('statuses', parameter)),
+          '''statuses.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -324,8 +334,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('ids', parameter),
-          '''ids.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('ids', parameter)),
+          '''ids.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -359,8 +369,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('statuses', parameter),
-          '''statuses?.map((e) => e.uriEncode(allowEmpty: true)).toList().toLabel(explode: true, allowEmpty: true, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('statuses', parameter)),
+          '''statuses.map((e) => e.uriEncode(allowEmpty: true)).toList().toLabel(explode: true, allowEmpty: true, alreadyEncoded: true, )''',
         );
       },
     );
@@ -385,8 +395,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('prices', parameter),
-          '''prices.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('prices', parameter)),
+          '''prices.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -411,8 +421,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('flags', parameter),
-          '''flags.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('flags', parameter)),
+          '''flags.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -437,15 +447,15 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('timestamps', parameter),
-          '''timestamps.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('timestamps', parameter)),
+          '''timestamps.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
 
     test(
       'generates toLabel expression for array of OneOf '
-      '(maps to uriEncode first)',
+      '(maps to encodeAnyToUri)',
       () {
         final parameter = PathParameterObject(
           name: 'values',
@@ -477,15 +487,15 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('values', parameter),
-          '''values.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('values', parameter)),
+          '''values.map((e) => encodeAnyToUri(e, allowEmpty: false, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
 
     test(
       'generates toLabel expression for array of AnyOf '
-      '(maps to uriEncode first)',
+      '(maps to encodeAnyToUri)',
       () {
         final parameter = PathParameterObject(
           name: 'values',
@@ -517,8 +527,8 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('values', parameter),
-          '''values.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('values', parameter)),
+          '''values.map((e) => encodeAnyToUri(e, allowEmpty: false, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );
@@ -543,8 +553,34 @@ void main() {
           context: context,
         );
         expect(
-          buildToLabelPathParameterExpression('amounts', parameter),
-          '''amounts.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true)''',
+          emit(buildToLabelPathParameterExpression('amounts', parameter)),
+          '''amounts.map((e) => e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+        );
+      },
+    );
+
+    test(
+      'generates toLabel expression for array of AnyModel '
+      '(maps to encodeAnyToUri)',
+      () {
+        final parameter = PathParameterObject(
+          name: 'anyValues',
+          rawName: 'anyValues',
+          description: 'Any values parameter',
+          model: ListModel(
+            context: context,
+            content: AnyModel(context: context),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(buildToLabelPathParameterExpression('anyValues', parameter)),
+          '''anyValues.map((e) => encodeAnyToUri(e, allowEmpty: false, )).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
         );
       },
     );

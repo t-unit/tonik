@@ -186,26 +186,29 @@ void main() {
     );
   });
 
-  test('generates sealed class implementing ParameterEncodable', () {
-    final model = OneOfModel(
-      isDeprecated: false,
-      name: 'Value',
-      models: {
-        (discriminatorValue: null, model: StringModel(context: context)),
-        (discriminatorValue: null, model: IntegerModel(context: context)),
-      },
-      context: context,
-    );
+  test(
+    'generates sealed class implementing ParameterEncodable & UriEncodable',
+    () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
 
-    final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
 
-    expect(baseClass.implements.length, 1);
-    expect(
-      baseClass.implements.first.accept(emitter).toString(),
-      'ParameterEncodable',
-    );
-  });
+      expect(baseClass.implements.length, 2);
+      expect(
+        baseClass.implements.map((e) => e.accept(emitter).toString()).toSet(),
+        {'ParameterEncodable', 'UriEncodable'},
+      );
+    },
+  );
 
   test('generates mixed encoding shape getter for mixed oneOf', () {
     final classA = ClassModel(

@@ -86,6 +86,16 @@ abstract interface class JsonEncodable {
   Object? toJson();
 }
 
+/// Marker interface for types that support URI encoding.
+abstract interface class UriEncodable {
+  /// URI encodes this value.
+  ///
+  /// When [allowEmpty] is false, empty values throw an exception.
+  /// When [useQueryComponent] is true, uses '+' for spaces
+  /// (application/x-www-form-urlencoded encoding).
+  String uriEncode({required bool allowEmpty, bool useQueryComponent});
+}
+
 /// Combined interface for types that support all standard parameter
 /// encoding styles.
 abstract interface class ParameterEncodable

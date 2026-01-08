@@ -88,7 +88,7 @@ void main() {
       );
     });
 
-    test('generates class implementing ParameterEncodable', () {
+    test('generates class implementing ParameterEncodable & UriEncodable', () {
       final model = AllOfModel(
         isDeprecated: false,
         name: 'Combined',
@@ -105,10 +105,12 @@ void main() {
 
       final combinedClass = generator.generateClass(model);
 
-      expect(combinedClass.implements.length, 1);
+      expect(combinedClass.implements.length, 2);
       expect(
-        combinedClass.implements.first.accept(emitter).toString(),
-        'ParameterEncodable',
+        combinedClass.implements
+            .map((e) => e.accept(emitter).toString())
+            .toSet(),
+        {'ParameterEncodable', 'UriEncodable'},
       );
     });
 

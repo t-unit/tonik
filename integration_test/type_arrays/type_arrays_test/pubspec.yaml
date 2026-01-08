@@ -8,11 +8,15 @@ environment:
 
 dependencies:
   dio: ^5.4.0
+  path: ^1.9.1
   test: ^1.24.0
   tonik_util:
     path: ../../../packages/tonik_util
   type_arrays_api:
     path: ../type_arrays_api
+
+dev_dependencies:
+  very_good_analysis: ^10.0.0
 
 dependency_overrides:
   tonik_util:

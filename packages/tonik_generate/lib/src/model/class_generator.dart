@@ -699,13 +699,13 @@ if ($name != null) {
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
         );
-        final emitter = DartEmitter(useNullSafetySyntax: true);
-        final encodeStr = encodeExpr.accept(emitter).toString();
+
+        final assignmentExpr = refer(
+          'result',
+        ).index(literalString(propertyName, raw: true)).assign(encodeExpr);
 
         if (isRequired && !isNullable) {
-          propertyAssignments.add(
-            Code("result[r'$propertyName'] = $encodeStr;"),
-          );
+          propertyAssignments.add(assignmentExpr.statement);
         } else {
           methodBody
             ..add(
@@ -718,14 +718,17 @@ if ($name != null) {
             )
             ..add(const Code('}'));
 
-          propertyAssignments.add(
-            Code('''
-if ($name != null) {
-  result[r'$propertyName'] = $encodeStr;
+          propertyAssignments
+            ..add(
+              Code('if ($name != null) {'),
+            )
+            ..add(assignmentExpr.statement)
+            ..add(
+              Code('''
 } else if (allowEmpty) {
   result[r'$propertyName'] = '';
 }'''),
-          );
+            );
         }
       }
     }

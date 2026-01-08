@@ -73,10 +73,7 @@ Expression _buildListLabelExpression(
     DecimalModel() ||
     UriModel() ||
     DateModel() ||
-    EnumModel() ||
-    AllOfModel() ||
-    OneOfModel() ||
-    AnyOfModel() =>
+    EnumModel() =>
       valueExpression
           .property('map')
           .call([
@@ -107,6 +104,32 @@ Expression _buildListLabelExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer(
+                  'encodeAnyToUri',
+                  'package:tonik_util/tonik_util.dart',
+                ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
     ClassModel() || ListModel() => valueExpression.property('toLabel').call(
       [],
       {

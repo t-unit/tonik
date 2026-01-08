@@ -1162,13 +1162,11 @@ void main() {
       const expectedMethod = r'''
          String _queryParameters({required List<AnonymousModel> colors}) {
             final entries = <ParameterEntry>[];
-            entries.add((
-              name: r'colors',
-              value: colors
-                  .map((e) => e.toForm(explode: true, allowEmpty: false))
-                  .toList()
-                  .toForm(explode: true, allowEmpty: false),
-            ));
+            entries.addAll(
+              colors.map(
+                (e) => (name: r'colors', value: e.toForm(explode: true, allowEmpty: false)),
+              ),
+            );
             return entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
@@ -1247,10 +1245,6 @@ void main() {
                 'Form encoding only supports lists of simple types',
               );
             }
-            entries.add((
-              name: r'matrix',
-              value: <String>[].toForm(explode: true, allowEmpty: false),
-            ));
             return entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';

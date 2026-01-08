@@ -68,6 +68,28 @@ class TestEncodableModel implements ParameterEncodable {
   Object? toJson() => {'name': name, 'value': value};
 }
 
+/// A test enum implementing UriEncodable (simulating a generated enum).
+enum TestUriEncodableEnum implements UriEncodable {
+  value1('one'),
+  value2('two'),
+  valueWithSpace('has space')
+  ;
+
+  const TestUriEncodableEnum(this.rawValue);
+
+  final String rawValue;
+
+  @override
+  String uriEncode({
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(rawValue)
+        : Uri.encodeComponent(rawValue);
+  }
+}
+
 void main() {
   group('encodeAnyToMatrix', () {
     group('ParameterEncodable', () {
@@ -1096,6 +1118,208 @@ void main() {
       test('throws for unsupported type in Map value', () {
         expect(
           () => encodeAnyToJson({'key': Object()}),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+    });
+  });
+
+  group('encodeAnyToUri', () {
+    group('UriEncodable', () {
+      test('encodes simple enum value', () {
+        expect(
+          encodeAnyToUri(TestUriEncodableEnum.value1, allowEmpty: true),
+          'one',
+        );
+      });
+
+      test('encodes enum value with special characters', () {
+        expect(
+          encodeAnyToUri(TestUriEncodableEnum.valueWithSpace, allowEmpty: true),
+          'has%20space',
+        );
+      });
+
+      test('encodes with useQueryComponent=true', () {
+        expect(
+          encodeAnyToUri(
+            TestUriEncodableEnum.valueWithSpace,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'has+space',
+        );
+      });
+    });
+
+    group('String', () {
+      test('encodes simple string', () {
+        expect(
+          encodeAnyToUri('hello', allowEmpty: true),
+          'hello',
+        );
+      });
+
+      test('encodes string with spaces', () {
+        expect(
+          encodeAnyToUri('hello world', allowEmpty: true),
+          'hello%20world',
+        );
+      });
+
+      test('encodes special characters', () {
+        expect(
+          encodeAnyToUri('hello & world', allowEmpty: true),
+          'hello%20%26%20world',
+        );
+      });
+
+      test('encodes empty string with allowEmpty=true', () {
+        expect(
+          encodeAnyToUri('', allowEmpty: true),
+          '',
+        );
+      });
+
+      test('throws for empty string with allowEmpty=false', () {
+        expect(
+          () => encodeAnyToUri('', allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('uses query component encoding when requested', () {
+        expect(
+          encodeAnyToUri(
+            'hello world',
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello+world',
+        );
+      });
+    });
+
+    group('int', () {
+      test('encodes positive int', () {
+        expect(
+          encodeAnyToUri(42, allowEmpty: true),
+          '42',
+        );
+      });
+
+      test('encodes zero', () {
+        expect(
+          encodeAnyToUri(0, allowEmpty: true),
+          '0',
+        );
+      });
+
+      test('encodes negative int', () {
+        expect(
+          encodeAnyToUri(-42, allowEmpty: true),
+          '-42',
+        );
+      });
+    });
+
+    group('double', () {
+      test('encodes positive double', () {
+        expect(
+          encodeAnyToUri(3.14, allowEmpty: true),
+          '3.14',
+        );
+      });
+
+      test('encodes negative double', () {
+        expect(
+          encodeAnyToUri(-3.14, allowEmpty: true),
+          '-3.14',
+        );
+      });
+    });
+
+    group('bool', () {
+      test('encodes true', () {
+        expect(
+          encodeAnyToUri(true, allowEmpty: true),
+          'true',
+        );
+      });
+
+      test('encodes false', () {
+        expect(
+          encodeAnyToUri(false, allowEmpty: true),
+          'false',
+        );
+      });
+    });
+
+    group('DateTime', () {
+      test('encodes UTC DateTime', () {
+        final dt = DateTime.utc(2024, 1, 15, 10, 30);
+        expect(
+          encodeAnyToUri(dt, allowEmpty: true),
+          '2024-01-15T10%3A30%3A00.000Z',
+        );
+      });
+
+      test('encodes with query component', () {
+        final dt = DateTime.utc(2024, 1, 15, 10, 30);
+        expect(
+          encodeAnyToUri(dt, allowEmpty: true, useQueryComponent: true),
+          '2024-01-15T10%3A30%3A00.000Z',
+        );
+      });
+    });
+
+    group('Uri', () {
+      test('encodes Uri', () {
+        final uri = Uri.parse('https://example.com/path?query=value');
+        expect(
+          encodeAnyToUri(uri, allowEmpty: true),
+          'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+        );
+      });
+    });
+
+    group('BigDecimal', () {
+      test('encodes BigDecimal', () {
+        final bd = BigDecimal.parse('123.456');
+        expect(
+          encodeAnyToUri(bd, allowEmpty: true),
+          '123.456',
+        );
+      });
+    });
+
+    group('null', () {
+      test('returns empty string with allowEmpty=true', () {
+        expect(
+          encodeAnyToUri(null, allowEmpty: true),
+          '',
+        );
+      });
+
+      test('throws with allowEmpty=false', () {
+        expect(
+          () => encodeAnyToUri(null, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('unsupported types', () {
+      test('throws for unsupported type', () {
+        expect(
+          () => encodeAnyToUri(Object(), allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for List (not directly supported)', () {
+        expect(
+          () => encodeAnyToUri(['a', 'b'], allowEmpty: true),
           throwsA(isA<EncodingException>()),
         );
       });

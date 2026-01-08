@@ -2537,12 +2537,13 @@ void main() {
             .map((i) => i.accept(DartEmitter()).toString())
             .toList();
 
-        expect(implementedInterfaces, hasLength(5));
+        expect(implementedInterfaces, hasLength(6));
         expect(implementedInterfaces, contains('MatrixEncodable'));
         expect(implementedInterfaces, contains('LabelEncodable'));
         expect(implementedInterfaces, contains('SimpleEncodable'));
         expect(implementedInterfaces, contains('FormEncodable'));
         expect(implementedInterfaces, contains('JsonEncodable'));
+        expect(implementedInterfaces, contains('UriEncodable'));
         expect(implementedInterfaces, isNot(contains('DeepObjectEncodable')));
         expect(implementedInterfaces, isNot(contains('ParameterEncodable')));
       },

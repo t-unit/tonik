@@ -8,6 +8,7 @@ import 'package:tonik_util/src/encoding/label_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/matrix_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// Encodes any value to matrix-style. Used for AnyModel fields.
 ///
@@ -220,6 +221,75 @@ List<ParameterEntry> encodeAnyToDeepObject(
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to deepObject style. '
     'DeepObject only supports objects and Map<String, String>.',
+  );
+}
+
+/// Encodes any value to a URI-encoded string. Used for AnyModel fields.
+///
+/// Handles runtime type detection for values of unknown type.
+/// Generated models implementing [ParameterEncodable] encode themselves.
+/// Primitives use extension methods.
+String encodeAnyToUri(
+  Object? value, {
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
+  if (value == null) {
+    if (!allowEmpty) {
+      throw const EmptyValueException();
+    }
+    return '';
+  }
+  if (value is UriEncodable) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is String) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is int) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is double) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is bool) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is DateTime) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is Uri) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is BigDecimal) {
+    return value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  throw EncodingException(
+    'Cannot encode ${value.runtimeType} to URI',
   );
 }
 

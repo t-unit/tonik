@@ -98,6 +98,7 @@ class EnumGenerator {
             refer('SimpleEncodable', 'package:tonik_util/tonik_util.dart'),
             refer('FormEncodable', 'package:tonik_util/tonik_util.dart'),
             refer('JsonEncodable', 'package:tonik_util/tonik_util.dart'),
+            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
           ]);
 
         if (model.isDeprecated) {
@@ -549,6 +550,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
       return Method(
         (b) => b
           ..name = 'uriEncode'
+          ..annotations.add(refer('override', 'dart:core'))
           ..returns = refer('String', 'dart:core')
           ..lambda = true
           ..optionalParameters.addAll([
@@ -578,6 +580,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
     return Method(
       (b) => b
         ..name = 'uriEncode'
+        ..annotations.add(refer('override', 'dart:core'))
         ..returns = refer('String', 'dart:core')
         ..lambda = false
         ..optionalParameters.addAll([
