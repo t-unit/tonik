@@ -29,6 +29,7 @@ analyzer:
     unused_import: ignore
     prefer_is_empty: ignore
     unnecessary_nullable_for_final_variable_declarations: ignore
+    dead_code: ignore
 ''';
 
   analysisOptionsFile.writeAsStringSync(content);
