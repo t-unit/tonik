@@ -113,3 +113,66 @@ const arrayForm = ArrayForm(colors: ['red', 'green']);
 ```
 
 Map custom content types to form encoding in [configuration](configuration.md#content-type-mapping).
+
+### $ref with Siblings (OAS 3.1)
+
+OpenAPI 3.1 adopts JSON Schema 2020-12 behavior where `$ref` can have sibling keywords applied alongside the referenced schema. This differs from OAS 3.0 where `$ref` consumed the entire schema object.
+
+#### Annotation Siblings
+
+| Sibling | Effect |
+|---------|--------|
+| `description` | Overrides referenced schema's description |
+| `deprecated` | Adds `@Deprecated` annotation |
+
+```yaml
+LegacyPet:
+  $ref: '#/components/schemas/Pet'
+  deprecated: true
+  description: 'Use NewPet instead'
+```
+
+Generates an alias with deprecation and custom docs.
+
+#### Nullable References
+
+Make a referenced type nullable using the OAS 3.1 type array syntax:
+
+```yaml
+OptionalPet:
+  $ref: '#/components/schemas/Pet'
+  type: ['object', 'null']
+```
+
+Generates `Pet?` (nullable alias).
+
+#### Structural Siblings
+
+Add properties or compose with other schemas:
+
+```yaml
+# $ref + properties → merged class
+ExtendedPet:
+  $ref: '#/components/schemas/Pet'
+  properties:
+    nickname:
+      type: string
+
+# $ref + allOf → combined allOf
+EnhancedPet:
+  $ref: '#/components/schemas/Pet'
+  allOf:
+    - $ref: '#/components/schemas/Trackable'
+```
+
+Both patterns generate `AllOfModel` compositions that merge the referenced schema with additional structure.
+
+#### Summary
+
+| Pattern | Generated Type |
+|---------|----------------|
+| `$ref` only | Direct reference (existing behavior) |
+| `$ref` + `description`/`deprecated` | `AliasModel` with metadata |
+| `$ref` + `type: [T, null]` | Nullable alias |
+| `$ref` + `properties` | `AllOfModel` (ref + inline class) |
+| `$ref` + `allOf`/`oneOf`/`anyOf` | `AllOfModel` with nested composition |
