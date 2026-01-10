@@ -19,6 +19,8 @@
 
 A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 
+Generate type-safe API client packages for Dart and Flutter. Tonik produces idiomatic code with sealed classes for `oneOf`, exhaustive pattern matching for responses, and full OpenAPI encoding support.
+
 ## Key Features
 
 ### Type-Safe Response Handling by Status Code and Content Type

@@ -1,5 +1,5 @@
 name: tonik
-description: A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
+description: Pure Dart OpenAPI 3.0/3.1 code generator. Creates type-safe API client packages for Dart and Flutter with sealed classes, pattern matching, and full encoding support.
 version: 0.3.0
 repository: https://github.com/t-unit/tonik
 resolution: workspace
@@ -9,10 +9,10 @@ executables:
 
 topics:
   - openapi
-  - codegeneration
-  - api
-  - rest
+  - codegen
   - swagger
+  - rest
+  - api-client
 
 platforms:
   android:
