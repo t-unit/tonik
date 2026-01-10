@@ -1998,6 +1998,7 @@ class AnyOfGenerator {
           ..add(
             generateEncodingExceptionExpression(
               'Cannot uriEncode $className: contains complex type',
+              raw: true,
             ).statement,
           )
           ..add(const Code('}'));
@@ -2017,6 +2018,7 @@ class AnyOfGenerator {
     body.add(
       generateEncodingExceptionExpression(
         'Cannot uriEncode $className: no value set',
+        raw: true,
       ).statement,
     );
 

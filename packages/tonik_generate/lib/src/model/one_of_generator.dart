@@ -1454,6 +1454,7 @@ class OneOfGenerator {
           ),
           generateEncodingExceptionExpression(
             'Cannot uriEncode $className: variant contains complex type',
+            raw: true,
           ).code,
           const Code(','),
         ]);

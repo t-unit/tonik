@@ -212,7 +212,7 @@ class ModelImporter {
     }
 
     if (name != null || _hasAnnotationSiblings(schema)) {
-      return AliasModel(
+      final aliasModel = AliasModel(
         name: name,
         model: refModel,
         context: context,
@@ -220,6 +220,13 @@ class ModelImporter {
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.type.contains('null'),
       );
+
+      if (name == null) {
+        _logModelAdded(aliasModel);
+        models.add(aliasModel);
+      }
+
+      return aliasModel;
     }
 
     return refModel;

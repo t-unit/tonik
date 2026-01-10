@@ -111,10 +111,13 @@ Expression _handleListExpression(
     return receiver;
   }
 
+  final isContentNullable =
+      contentModel is AliasModel && contentModel.isNullable;
+
   final innerExpr = _buildSerializationExpression(
     refer('e'),
     contentModel,
-    false,
+    isContentNullable,
   );
 
   final mapClosure = Method(

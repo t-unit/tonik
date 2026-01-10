@@ -2181,6 +2181,7 @@ class AllOfGenerator {
         const Code(') {'),
         generateEncodingExceptionExpression(
           'Cannot uriEncode $className: contains complex types',
+          raw: true,
         ).statement,
         const Code('}'),
       ];
@@ -2262,6 +2263,7 @@ class AllOfGenerator {
           ..lambda = false
           ..body = generateEncodingExceptionExpression(
             'Cannot uriEncode $className: contains complex types',
+            raw: true,
           ).statement,
       );
     }
