@@ -112,6 +112,18 @@ melos:
         dart pub get
         dart test --concurrency=1
 
+    test-integration-medama:
+      run: |
+        cd integration_test/medama/medama_test
+        dart pub get
+        dart test --concurrency=1
+
+    test-integration-inference:
+      run: |
+        cd integration_test/inference/inference_test
+        dart pub get
+        dart test --concurrency=1
+
     test-integration-all:
       run: |
         melos run test-integration-petstore
@@ -126,3 +138,5 @@ melos:
         melos run test-integration-form-urlencoded
         melos run test-integration-boolean-schemas
         melos run test-integration-type-arrays
+        melos run test-integration-medama
+        melos run test-integration-inference

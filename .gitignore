@@ -22,6 +22,8 @@
 /integration_test/form_urlencoded/form_urlencoded_api
 /integration_test/boolean_schemas/boolean_schemas_api
 /integration_test/type_arrays/type_arrays_api
+/integration_test/medama/medama_api
+/integration_test/inference/inference_api
 
 # Dependencies
 /pubspec.lock

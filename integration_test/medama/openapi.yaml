@@ -1,0 +1,2139 @@
+openapi: 3.1.1
+info:
+  title: Medama Analytics API
+  version: 0.5.3
+  description: |
+    This is the Medama Analytics OpenAPI 3.1 specification.
+  contact:
+    email: hello@ayuhito.com
+    name: Medama Analytics
+    url: https://medama.io/contact
+  license:
+    url: "https://github.com/medama-io/medama/blob/main/core/LICENSE"
+    name: Apache License 2.0
+servers:
+  - url: "http://localhost:8080"
+    description: Local Server
+tags:
+  - name: Authentication
+    description: Authentication
+  - name: Event
+    description: Page Events
+  - name: User
+    description: User Management
+  - name: Website
+    description: Website Management
+  - name: Stats
+    description: Statistics
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      description: Login to the service and retrieve a session token for authentication.
+      operationId: post-auth-login
+      requestBody:
+        description: Login details.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthLogin"
+        required: true
+      responses:
+        "200":
+          description: Success
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Set the cookie for the session.
+              required: true
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout
+      description: Logout of the service and destroy the session token.
+      operationId: post-auth-logout
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+      responses:
+        "204":
+          description: Success
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Destroy the cookie for the session.
+              required: true
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /event/hit:
+    post:
+      tags:
+        - Event
+      summary: Send Hit Event
+      description: Send a hit event to register a user view or interaction.
+      operationId: post-event-hit
+      parameters:
+        - name: User-Agent
+          in: header
+          schema:
+            type: string
+          description: Used to infer user browser, OS and device.
+        - name: Accept-Language
+          in: header
+          description: Used to infer user language.
+          schema:
+            type: string
+      requestBody:
+        description: Hit event metadata.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventHit"
+        required: true
+      responses:
+        "204":
+          description: OK.
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /event/ping:
+    get:
+      tags:
+        - Event
+      summary: Ping
+      description: Ping endpoint to determine if the user is unique or not.
+      operationId: get-event-ping
+      parameters:
+        - name: If-Modified-Since
+          in: header
+          description: If this exists, then user exists in cache and is not a unique user.
+          schema:
+            type: string
+        - name: u
+          in: query
+          description: Optional query parameter that is the current host and pathname of the page.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          headers:
+            Last-Modified:
+              schema:
+                type: string
+              description: This is date of the current day from midnight, incremented by each page view by unique user.
+              required: true
+            Cache-Control:
+              schema:
+                type: string
+              description: This is set to 1 day to prevent the user from being counted as a unique user again.
+              required: true
+          content:
+            text/plain:
+              schema:
+                description: This is set to 0 if the user is a unique user, otherwise 1.
+                type: string
+                example: "0"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /user:
+    get:
+      tags:
+        - User
+      security:
+        - CookieAuth: []
+      summary: Get User Info
+      description: Retrieve the information of the user with the matching user ID.
+      operationId: get-user
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+      responses:
+        "200":
+          description: User Found
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGet"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      tags:
+        - User
+      security:
+        - CookieAuth: []
+      summary: Update User Info
+      description: Update a user account's details.
+      operationId: patch-user
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+      requestBody:
+        description: User details to update.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserPatch"
+        required: true
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserGet"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - User
+      security:
+        - CookieAuth: []
+      summary: Delete User
+      description: Delete a user account.
+      operationId: delete-user
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+      responses:
+        "204":
+          description: Success No Content
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /user/usage:
+    get:
+      tags:
+        - User
+      security:
+        - CookieAuth: []
+      summary: Get Resource Usage
+      description: Get the current CPU, memory and disk usage of the server.
+      operationId: get-user-usage
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserUsageGet"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /websites:
+    get:
+      tags:
+        - Website
+      security:
+        - CookieAuth: []
+      summary: List Websites
+      description: Get a list of all websites from the user.
+      operationId: get-websites
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Summary"
+      responses:
+        "200":
+          description: Returns a list of websites.
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WebsiteGet"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - Website
+      security:
+        - CookieAuth: []
+      summary: Add Website
+      description: Add a new website.
+      operationId: post-websites
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebsiteCreate"
+        required: true
+      responses:
+        "201":
+          description: Created
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebsiteGet"
+          links:
+            GetWebsite:
+              operationId: get-websites-id
+              parameters:
+                hostname: $response.body#/hostname
+            PatchWebsite:
+              operationId: patch-websites-id
+              parameters:
+                hostname: $response.body#/hostname
+            DeleteWebsite:
+              operationId: delete-websites-id
+              parameters:
+                hostname: $response.body#/hostname
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/websites/{hostname}":
+    get:
+      tags:
+        - Website
+      security:
+        - CookieAuth: []
+      summary: Get Website
+      description: Get website details for an individual website.
+      operationId: get-websites-id
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebsiteGet"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      tags:
+        - Website
+      security:
+        - CookieAuth: []
+      summary: Update Website
+      description: Update a website's information.
+      operationId: patch-websites-id
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+      requestBody:
+        description: Website details to update.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebsitePatch"
+        required: true
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebsiteGet"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - Website
+      security:
+        - CookieAuth: []
+      summary: Delete Website
+      description: Delete a website.
+      operationId: delete-websites-id
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+      responses:
+        "204":
+          description: Success No Content
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/summary":
+    get:
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Stat Summary
+      description: Get a summary of the website's stats.
+      operationId: get-website-id-summary
+      parameters:
+        - in: query
+          name: previous
+          description: Retrieve the data from the previous period as well. This is useful when comparing data from the previous period to the current period. Requires the start and end period parameters to be set.
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: interval
+          description: The interval to group the data by. This can be set to minute, hour, day, week or month. This will return an interval property if set.
+          schema:
+            type: string
+            enum:
+              - minute
+              - hour
+              - day
+              - week
+              - month
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsSummary"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/pages":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Page Stats
+      description: Get a list of pages and their stats.
+      operationId: get-website-id-pages
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsPages"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/time":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Time Stats
+      description: Get a list of pages and their time stats.
+      operationId: get-website-id-time
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsTime"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/referrers":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Referrer Stats
+      description: Get a list of referrers and their stats.
+      operationId: get-website-id-referrers
+      parameters:
+        - in: query
+          name: grouped
+          description: Whether to return the grouped aggregation name or only URLs.
+          schema:
+            type: boolean
+            default: true
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsReferrers"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/sources":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get UTM Source Stats
+      description: Get a list of UTM sources and their stats.
+      operationId: get-website-id-sources
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsUTMSources"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/mediums":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get UTM Medium Stats
+      description: Get a list of UTM mediums and their stats.
+      operationId: get-website-id-mediums
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsUTMMediums"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/campaigns":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get UTM Campaign Stats
+      description: Get a list of UTM campaigns and their stats.
+      operationId: get-website-id-campaigns
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsUTMCampaigns"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/browsers":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Browser Stats
+      description: Get a list of browsers and their stats.
+      operationId: get-website-id-browsers
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsBrowsers"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/os":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get OS Stats
+      description: Get a list of OS and their stats.
+      operationId: get-website-id-os
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsOS"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/devices":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Device Stats
+      description: Get a list of devices and their stats.
+      operationId: get-website-id-device
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsDevices"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/countries":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Country Stats
+      description: Get a list of countries and their stats.
+      operationId: get-website-id-country
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsCountries"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/languages":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Language Stats
+      description: Get a list of languages and their stats.
+      operationId: get-website-id-language
+      parameters:
+        - in: query
+          name: locale
+          description: Whether to return the language name or the language dialect/locale.
+          schema:
+            type: boolean
+            default: false
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/Summary"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsLanguages"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  "/website/{hostname}/properties":
+    "get":
+      tags:
+        - Stats
+      security:
+        - CookieAuth: []
+      summary: Get Property Stats
+      description: Get a list of custom properties and their stats. If a property name is provided, it will return the stats for that property instead.
+      operationId: get-website-id-properties
+      parameters:
+        - $ref: "#/components/parameters/SessionAuth"
+        - $ref: "#/components/parameters/Hostname"
+        - $ref: "#/components/parameters/PeriodStart"
+        - $ref: "#/components/parameters/PeriodEnd"
+        - $ref: "#/components/parameters/Path"
+        - $ref: "#/components/parameters/Referrer"
+        - $ref: "#/components/parameters/UTMSource"
+        - $ref: "#/components/parameters/UTMMedium"
+        - $ref: "#/components/parameters/UTMCampaign"
+        - $ref: "#/components/parameters/Browser"
+        - $ref: "#/components/parameters/OS"
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Country"
+        - $ref: "#/components/parameters/Language"
+        - $ref: "#/components/parameters/PropertyName"
+        - $ref: "#/components/parameters/PropertyValue"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Api-Commit:
+              $ref: "#/components/headers/X-Api-Commit"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsProperties"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorisedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+components:
+  securitySchemes:
+    CookieAuth:
+      name: _me_sess
+      in: cookie
+      type: apiKey
+      description: Session token for authentication.
+  headers:
+    X-Api-Commit:
+      description: A custom header used to identify the commit of the API. This can be used to force reload the client if the API has been updated.
+      schema:
+        type: string
+        example: "97dd2ae"
+  parameters:
+    # Authentication
+    SessionAuth:
+      name: _me_sess
+      in: cookie
+      description: Session token for authentication.
+      required: true
+      schema:
+        type: string
+        example: _me_sess=token; Path=/; HttpOnly; SameSite=Lax; Secure
+    Hostname:
+      name: hostname
+      in: path
+      description: Hostname for the website.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 253 # FQDN limit
+        format: hostname
+    Summary:
+      name: summary
+      in: query
+      description: Return a summary of the stats.
+      required: false
+      schema:
+        type: boolean
+        default: false
+    # Filters
+    Path:
+      name: path
+      in: query
+      description: Path of the page.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    Referrer:
+      name: referrer
+      in: query
+      description: Referrer URL of the page hit.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    UTMSource:
+      name: utm_source
+      in: query
+      description: UTM source of the page hit.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    UTMMedium:
+      name: utm_medium
+      in: query
+      description: UTM medium of the page hit.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    UTMCampaign:
+      name: utm_campaign
+      in: query
+      description: UTM campaign of the page hit.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    Browser:
+      name: browser
+      in: query
+      description: Browser name.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    OS:
+      name: os
+      in: query
+      description: Operating system name.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    Device:
+      name: device
+      in: query
+      description: Device type.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    Country:
+      name: country
+      in: query
+      description: Country name.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    Language:
+      name: language
+      in: query
+      description: Language code.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    PropertyName:
+      name: prop_name
+      in: query
+      description: Name of the property.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    PropertyValue:
+      name: prop_value
+      in: query
+      description: Value of the property.
+      required: false
+      style: deepObject
+      explode: true
+      allowReserved: true
+      schema:
+        $ref: "#/components/schemas/FilterString"
+    PeriodStart:
+      name: start
+      in: query
+      description: Period start date using date-time notation in RFC3339 format, for example, (2017-07-21T17:32:28Z).
+      required: false
+      schema:
+        type: string
+        format: date-time
+    PeriodEnd:
+      name: end
+      in: query
+      description: Period end date using fdate-time notation in RFC3339 format, for example, (2017-07-21T17:32:28Z).
+      required: false
+      schema:
+        type: string
+        format: date-time
+    Limit:
+      name: limit
+      in: query
+      description: Limit the number of results.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
+    Offset:
+      name: offset
+      in: query
+      description: Offset the results paired with the limit parameter.
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 5000
+  responses:
+    BadRequestError:
+      description: 400 Bad Request.
+      headers:
+        X-Api-Commit:
+          $ref: "#/components/headers/X-Api-Commit"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    default: 400
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+            required:
+              - error
+    UnauthorisedError:
+      description: 401 Unauthorised.
+      headers:
+        X-Api-Commit:
+          $ref: "#/components/headers/X-Api-Commit"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    default: 401
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+            required:
+              - error
+    ForbiddenError:
+      description: 403 Forbidden.
+      headers:
+        X-Api-Commit:
+          $ref: "#/components/headers/X-Api-Commit"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    default: 403
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+            required:
+              - error
+    NotFoundError:
+      description: 404 Not Found.
+      headers:
+        X-Api-Commit:
+          $ref: "#/components/headers/X-Api-Commit"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    default: 404
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+
+            required:
+              - error
+    ConflictError:
+      description: 409 Conflict Found.
+      headers:
+        X-Api-Commit:
+          $ref: "#/components/headers/X-Api-Commit"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    default: 409
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+            required:
+              - error
+    InternalServerError:
+      description: 500 Unexpected Internal Server Error.
+      headers:
+        X-Api-Commit:
+          $ref: "#/components/headers/X-Api-Commit"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                additionalProperties: false
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    default: 500
+                  message:
+                    type: string
+                required:
+                  - code
+                  - message
+            required:
+              - error
+  schemas:
+    AuthLogin:
+      type: object
+      title: AuthLogin
+      description: Request body for logging in.
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 48
+        password:
+          type: string
+          minLength: 5
+          maxLength: 128
+          format: password
+      required:
+        - username
+        - password
+    EventLoad:
+      title: EventLoad
+      description: Page view load event.
+      type: object
+      properties:
+        b:
+          type: string
+          description: Beacon ID generated for each user to link multiple events on the same page together.
+        u:
+          type: string
+          description: Page URL including query parameters.
+          format: uri
+        r:
+          type: string
+          description: Referrer URL.
+        p:
+          type: boolean
+          description: If the user is a unique user or not.
+        q:
+          type: boolean
+          description: If the user has visited this page before or not.
+        t:
+          type: string
+          description: Timezone of the user.
+        d:
+          type: object
+          description: Custom event properties.
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: integer
+              - type: boolean
+      required:
+        - b
+        - u
+        - p
+        - q
+    EventUnload:
+      title: EventUnload
+      description: Page view unload event.
+      type: object
+      properties:
+        b:
+          type: string
+          description: Beacon ID generated for each user to link multiple events on the same page together.
+        m:
+          type: integer
+          description: Time spent on page in milliseconds.
+          minimum: 0
+          exclusiveMinimum: true
+      required:
+        - b
+        - m
+    EventCustom:
+      title: EventCustom
+      description: Event with custom properties.
+      type: object
+      properties:
+        b:
+          type: string
+          description: Optional Beacon ID generated for each user to link multiple events on the same page together.
+        g:
+          type: string
+          description: Group name of events. Currently, only the hostname is supported.
+        d:
+          type: object
+          description: Custom event properties.
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: integer
+              - type: boolean
+      required:
+        - g
+        - d
+    EventHit:
+      title: EventHit
+      description: Website hit event.
+      oneOf:
+        - $ref: "#/components/schemas/EventLoad"
+        - $ref: "#/components/schemas/EventUnload"
+        - $ref: "#/components/schemas/EventCustom"
+      discriminator:
+        propertyName: e
+        mapping:
+          load: "#/components/schemas/EventLoad"
+          unload: "#/components/schemas/EventUnload"
+          custom: "#/components/schemas/EventCustom"
+    FilterString:
+      type: object
+      properties:
+        eq:
+          type: string
+          description: Equal to.
+        neq:
+          type: string
+          description: Not equal to.
+        contains:
+          type: string
+          description: Contains.
+        not_contains:
+          type: string
+          description: Does not contain.
+        starts_with:
+          type: string
+          description: Starts with.
+        not_starts_with:
+          type: string
+          description: Does not start with.
+        ends_with:
+          type: string
+          description: Ends with.
+        not_ends_with:
+          type: string
+          description: Does not end with.
+        in:
+          type: string
+          description: In.
+        not_in:
+          type: string
+          description: Not in.
+    UserSettings:
+      type: object
+      title: UserSettings
+      description: Response body for getting user settings.
+      properties:
+        language:
+          type: string
+          enum: [en]
+          default: en
+        script_type:
+          type: array
+          items:
+            type: string
+            enum:
+              - default
+              - click-events
+              - page-events
+          uniqueItems: true
+        blockAbusiveIPs:
+          type: boolean
+          description: Block known abusive IP addresses.
+        blockTorExitNodes:
+          type: boolean
+          description: Block traffic from Tor exit nodes.
+        blockedIPs:
+          type: array
+          description: List of manually blocked IP addresses.
+          items:
+            type: string
+            format: ipv4
+          uniqueItems: true
+    UserGet:
+      type: object
+      title: UserGet
+      description: Response body for getting a user.
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 120
+        settings:
+          $ref: "#/components/schemas/UserSettings"
+        dateCreated:
+          type: integer
+          format: int64
+        dateUpdated:
+          type: integer
+          format: int64
+      required:
+        - username
+        - settings
+        - dateCreated
+        - dateUpdated
+    UserUsageGet:
+      type: object
+      title: UserUsageGet
+      description: Response body for getting CPU, memory and disk usage of the server.
+      properties:
+        cpu:
+          type: object
+          properties:
+            usage:
+              type: number
+              format: float
+            cores:
+              type: integer
+            threads:
+              type: integer
+          required:
+            - usage
+            - cores
+            - threads
+        memory:
+          type: object
+          properties:
+            used:
+              type: integer
+              format: int64
+            total:
+              type: integer
+              format: int64
+          required:
+            - used
+            - total
+        disk:
+          type: object
+          properties:
+            used:
+              type: integer
+              format: int64
+            total:
+              type: integer
+              format: int64
+          required:
+            - used
+            - total
+      required:
+        - cpu
+        - memory
+        - disk
+    UserPatch:
+      type: object
+      title: UserPatch
+      description: Request body for updating a user.
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 120
+        password:
+          type: string
+          minLength: 5
+          maxLength: 128
+          format: password
+        settings:
+          $ref: "#/components/schemas/UserSettings"
+    WebsiteGet:
+      type: object
+      title: WebsiteGet
+      description: Response body for getting a website.
+      properties:
+        hostname:
+          type: string
+          minLength: 1
+          maxLength: 253 # FQDN limit
+          format: hostname
+        summary:
+          type: object
+          properties:
+            visitors:
+              type: integer
+          required:
+            - visitors
+      required:
+        - hostname
+    WebsiteCreate:
+      type: object
+      title: WebsiteCreate
+      description: Request body for creating a website.
+      properties:
+        hostname:
+          type: string
+          minLength: 1
+          maxLength: 253 # FQDN limit
+          format: hostname
+      required:
+        - hostname
+    WebsitePatch:
+      type: object
+      title: WebsitePatch
+      description: Request body for updating a website.
+      properties:
+        hostname:
+          type: string
+          minLength: 1
+          maxLength: 253 # FQDN limit
+          format: hostname
+    StatsSummary:
+      type: object
+      title: StatsSummary
+      properties:
+        current:
+          type: object
+          properties:
+            visitors:
+              type: integer
+            pageviews:
+              type: integer
+            bounce_percentage:
+              type: number
+              format: float
+            duration:
+              type: integer
+          required:
+            - visitors
+            - pageviews
+            - bounce_percentage
+            - duration
+        previous:
+          type: object
+          properties:
+            visitors:
+              type: integer
+            pageviews:
+              type: integer
+            bounce_percentage:
+              type: number
+              format: float
+            duration:
+              type: integer
+          required:
+            - visitors
+            - pageviews
+            - bounce_percentage
+            - duration
+        interval:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              visitors:
+                type: integer
+              pageviews:
+                type: integer
+              bounce_percentage:
+                type: number
+                format: float
+              duration:
+                type: integer
+            required:
+              - date
+      required:
+        - current
+    StatsPages:
+      type: array
+      title: StatsPages
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+            description: Pathname of the page.
+          visitors:
+            type: integer
+            description: Number of unique visitors for given page.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors for given page relative to all visitors.
+            format: float
+          pageviews:
+            type: integer
+            description: Number of page views.
+          pageviews_percentage:
+            type: number
+            description: Percentage of page views relative to all pages.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page in milliseconds.
+        required:
+          - path
+          - visitors
+          - visitors_percentage
+    StatsTime:
+      type: array
+      title: StatsTime
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+            description: Pathname of the page.
+          visitors:
+            type: integer
+            description: Number of unique visitors for given page.
+          duration:
+            type: integer
+            description: Median time spent on page in milliseconds.
+          duration_upper_quartile:
+            type: integer
+            description: Total time spent on page in milliseconds for the upper quartile (75%).
+          duration_lower_quartile:
+            type: integer
+            description: Total time spent on page in milliseconds for the lower quartile (25%).
+          duration_percentage:
+            type: number
+            description: Percentage of time contributing to the total time spent on the website relative to all pages.
+            format: float
+        required:
+          - path
+          - duration
+          - duration_percentage
+    StatsReferrers:
+      type: array
+      title: StatsReferrers
+      items:
+        type: object
+        properties:
+          referrer:
+            type: string
+            description: Referrer URL.
+          visitors:
+            type: integer
+            description: Number of unique visitors from referrer.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from referrer relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from referrer.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from referrer in milliseconds.
+        required:
+          - referrer
+          - visitors
+          - visitors_percentage
+    StatsUTMSources:
+      type: array
+      title: StatsUTMSources
+      items:
+        type: object
+        properties:
+          source:
+            type: string
+            description: UTM source.
+          visitors:
+            type: integer
+            description: Number of unique visitors from UTM source.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from UTM source relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from UTM source.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from UTM source in milliseconds.
+        required:
+          - source
+          - visitors
+          - visitors_percentage
+    StatsUTMMediums:
+      type: array
+      title: StatsUTMMediums
+      items:
+        type: object
+        properties:
+          medium:
+            type: string
+            description: UTM medium.
+          visitors:
+            type: integer
+            description: Number of unique visitors from UTM medium.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from UTM medium relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from UTM medium.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from UTM medium in milliseconds.
+        required:
+          - medium
+          - visitors
+          - visitors_percentage
+    StatsUTMCampaigns:
+      type: array
+      title: StatsUTMCampaigns
+      items:
+        type: object
+        properties:
+          campaign:
+            type: string
+            description: UTM campaign.
+          visitors:
+            type: integer
+            description: Number of unique visitors from UTM campaign.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from UTM campaign relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from UTM campaign.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from UTM campaign in milliseconds.
+        required:
+          - campaign
+          - visitors
+          - visitors_percentage
+    StatsBrowsers:
+      type: array
+      title: StatsBrowsers
+      items:
+        type: object
+        properties:
+          browser:
+            type: string
+            description: Browser name.
+          visitors:
+            type: integer
+            description: Number of unique visitors from browser.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from browser relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from browser.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from browser in milliseconds.
+        required:
+          - browser
+          - visitors
+          - visitors_percentage
+    StatsOS:
+      type: array
+      title: StatsOS
+      items:
+        type: object
+        properties:
+          os:
+            type: string
+            description: OS name.
+          visitors:
+            type: integer
+            description: Number of unique visitors from OS.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from OS relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from OS.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from OS in milliseconds.
+        required:
+          - os
+          - visitors
+          - visitors_percentage
+    StatsDevices:
+      type: array
+      title: StatsDevices
+      items:
+        type: object
+        properties:
+          device:
+            type: string
+            description: Device name.
+          visitors:
+            type: integer
+            description: Number of unique visitors from device.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from device relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from device.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from device in milliseconds.
+        required:
+          - device
+          - visitors
+          - visitors_percentage
+    StatsCountries:
+      type: array
+      title: StatsCountries
+      items:
+        type: object
+        properties:
+          country:
+            type: string
+            description: Country name.
+          visitors:
+            type: integer
+            description: Number of unique visitors from country.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors from country relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage from country.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from country in milliseconds.
+        required:
+          - country
+          - visitors
+          - visitors_percentage
+    StatsLanguages:
+      type: array
+      title: StatsLanguages
+      description: List of languages and their stats.
+      items:
+        type: object
+        properties:
+          language:
+            type: string
+            description: Language name.
+            example: English
+          visitors:
+            type: integer
+            description: Number of unique visitors for language.
+          visitors_percentage:
+            type: number
+            description: Percentage of unique visitors for language relative to all visitors.
+            format: float
+          bounce_percentage:
+            type: number
+            description: Bounce rate percentage for language.
+            format: float
+          duration:
+            type: integer
+            description: Total time spent on page from language in milliseconds.
+        required:
+          - language
+          - visitors
+          - visitors_percentage
+    StatsProperties:
+      type: array
+      title: StatsProperties
+      description: List of custom properties and their stats.
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Custom property name.
+          value:
+            type: string
+            description: Custom property value.
+          events:
+            type: integer
+            description: Number of events for custom property.
+          events_percentage:
+            type: number
+            description: Percentage of events for custom property relative to all events.
+            format: float
+        required:
+          - events
+          - events_percentage

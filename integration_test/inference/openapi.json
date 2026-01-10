@@ -1,0 +1,2155 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Inference Server",
+        "summary": "Server that handles app-ui requests",
+        "description": "\nThe inference service handles requests using the query service and OpenAI.\n",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/v1/infer/send_message": {
+            "post": {
+                "summary": "Send Message Proto Route",
+                "description": "Handles a chat message sent within a session.",
+                "operationId": "send_message_proto_route_api_v1_infer_send_message_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendMessageRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChatMessageEnvelope"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/infer/list_connectors": {
+            "get": {
+                "summary": "List Connectors Proto Route",
+                "description": "Lists connectors ('sources' in app-ui such as 'deductive' and 'git').",
+                "operationId": "list_connectors_proto_route_api_v1_infer_list_connectors_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "additionalProperties": true,
+                                        "type": "object"
+                                    },
+                                    "type": "array",
+                                    "title": "Response List Connectors Proto Route Api V1 Infer List Connectors Get"
+                                },
+                                "example": {
+                                    "connectors": [
+                                        {
+                                            "connector_name": "Deductive AI",
+                                            "connector_type": "DEDUCTIVE_NATIVE"
+                                        },
+                                        {
+                                            "connector_name": "prometheus",
+                                            "connector_type": "PROMETHEUS,"
+                                        },
+                                        {
+                                            "connector_name": "some_github_repo",
+                                            "connector_type": "GITHUB"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/infer/send_message": {
+            "post": {
+                "summary": "Send Message Proto Route",
+                "description": "Handles a chat message sent within a session.",
+                "operationId": "send_message_proto_route_api_v2_infer_send_message_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendMessageRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChatMessageEnvelope"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/github/repositories": {
+            "post": {
+                "summary": "Get Github Repositories Proto Route",
+                "description": "Fetch GitHub repositories for a specified customer.\n\nArgs:\n    request: GithubRepositoriesRequest containing customer information\n\nReturns:\n    List of GithubRepository objects containing repository information\n\nRaises:\n    HTTPException: If the GitHub API request fails",
+                "operationId": "get_github_repositories_proto_route_api_v1_github_repositories_post",
+                "x-dart-name": "getGithubRepositories",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GithubRepositoriesRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Github Repositories Proto Route Api V1 Github Repositories Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/github/release": {
+            "post": {
+                "summary": "Get Github Release Proto Route",
+                "description": "Fetch GitHub releases for a specified repository.\n\nArgs:\n    request: GithubReleaseRequest containing owner and repo information\n\nReturns:\n    List of GithubRelease objects containing release information\n\nRaises:\n    HTTPException: If the GitHub API request fails",
+                "operationId": "get_github_release_proto_route_api_v1_github_release_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GithubReleaseRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/GithubRelease"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Github Release Proto Route Api V1 Github Release Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/github/pr": {
+            "post": {
+                "summary": "Get Pr Route",
+                "operationId": "get_pr_route_api_v1_github_pr_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GithubPRRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/GithubPR"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Pr Route Api V1 Github Pr Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/github/branch/list": {
+            "post": {
+                "summary": "Get Branches Route",
+                "operationId": "get_branches_route_api_v1_github_branch_list_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GithubGetBranchesRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/GithubBranch"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Branches Route Api V1 Github Branch List Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/newrelic/alert": {
+            "post": {
+                "summary": "Get Alert Route",
+                "operationId": "get_alert_route_api_v1_newrelic_alert_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetAlertRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Alert Route Api V1 Newrelic Alert Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/datadog/alert": {
+            "post": {
+                "summary": "Get Datadog Alert Route",
+                "operationId": "get_datadog_alert_route_api_v1_datadog_alert_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetDatadogAlertRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Datadog Alert Route Api V1 Datadog Alert Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/infer/supported_models": {
+            "get": {
+                "summary": "Get Supported Models",
+                "description": "Returns a list of supported models.",
+                "operationId": "get_supported_models_api_v1_infer_supported_models_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Supported Models Api V1 Infer Supported Models Get"
+                                },
+                                "example": {
+                                    "models": [
+                                        "gpt-4o",
+                                        "claude-3.7-sonnet"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ArtifactMapping": {
+                "properties": {
+                    "GUID": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "type": "string",
+                        "title": "Simplerefid"
+                    },
+                    "sourceType": {
+                        "type": "string",
+                        "const": "artifact",
+                        "title": "Sourcetype",
+                        "default": "artifact"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "GUID",
+                    "simpleRefID"
+                ],
+                "title": "ArtifactMapping",
+                "description": "An artifact mapping."
+            },
+            "ChatMessage": {
+                "properties": {
+                    "GUID": {
+                        "type": "string",
+                        "title": "Guid",
+                        "default": ""
+                    },
+                    "text": {
+                        "type": "string",
+                        "title": "Text",
+                        "default": ""
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "ChatMessage",
+                "description": "A chat message."
+            },
+            "ChatMessageBody": {
+                "properties": {
+                    "body": {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    "confidence": {
+                        "type": "number",
+                        "title": "Confidence",
+                        "default": 0.0
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "text",
+                        "title": "Element Type",
+                        "default": "text"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "body"
+                ],
+                "title": "ChatMessageBody",
+                "description": "A chat message body."
+            },
+            "ChatMessageEnvelope": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/EndOfMessageEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ProgressEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ChatMessageBody"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TimelineEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SourceEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Followup"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SuggestedFixesEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/LearningsEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/EndOfTaskEnvelope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/InterruptionMessage"
+                    },
+                    {
+                        "$ref": "#/components/schemas/InvestigationLogBook"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TaskStateChange"
+                    }
+                ],
+                "title": "ChatMessageEnvelope",
+                "discriminator": {
+                    "propertyName": "element_type",
+                    "mapping": {
+                        "end-of-message": "#/components/schemas/EndOfMessageEnvelope",
+                        "end-of-task": "#/components/schemas/EndOfTaskEnvelope",
+                        "followup": "#/components/schemas/Followup",
+                        "interruption": "#/components/schemas/InterruptionMessage",
+                        "investigation-log-book": "#/components/schemas/InvestigationLogBook",
+                        "learnings": "#/components/schemas/LearningsEnvelope",
+                        "progress": "#/components/schemas/ProgressEnvelope",
+                        "sources": "#/components/schemas/SourceEnvelope",
+                        "suggested-fixes": "#/components/schemas/SuggestedFixesEnvelope",
+                        "task-state-change": "#/components/schemas/TaskStateChange",
+                        "text": "#/components/schemas/ChatMessageBody",
+                        "timeline": "#/components/schemas/TimelineEnvelope"
+                    }
+                }
+            },
+            "CodeQuery": {
+                "properties": {
+                    "fileName": {
+                        "type": "string",
+                        "title": "Filename"
+                    },
+                    "connector": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/Connector"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "repository": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Repository"
+                    },
+                    "orgName": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Orgname"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "fileName"
+                ],
+                "title": "CodeQuery"
+            },
+            "CodeSource": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "guid": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Simplerefid"
+                    },
+                    "query": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/CodeQuery"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "content": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Content"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "type",
+                    "guid"
+                ],
+                "title": "CodeSource"
+            },
+            "Connector": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/ConnectorType"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "type"
+                ],
+                "title": "Connector",
+                "description": "Respresents a single connector source."
+            },
+            "ConnectorType": {
+                "type": "string",
+                "enum": [
+                    "UNKNOWN",
+                    "PROMETHEUS",
+                    "GITHUB",
+                    "DEDUCTIVE_NATIVE",
+                    "ELASTIC",
+                    "CLICKHOUSE",
+                    "DATADOG",
+                    "NEWRELIC"
+                ],
+                "title": "ConnectorType",
+                "description": "Enum representing different types of connectors."
+            },
+            "ElasticQueryMessage": {
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "title": "Query"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "query"
+                ],
+                "title": "ElasticQueryMessage"
+            },
+            "EndOfMessageEnvelope": {
+                "properties": {
+                    "endOfMessage": {
+                        "type": "boolean",
+                        "const": true,
+                        "title": "Endofmessage",
+                        "default": true
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "end-of-message",
+                        "title": "Element Type",
+                        "default": "end-of-message"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "EndOfMessageEnvelope",
+                "description": "Signals that the current message stream is complete."
+            },
+            "EndOfTaskEnvelope": {
+                "properties": {
+                    "endOfTask": {
+                        "type": "boolean",
+                        "const": true,
+                        "title": "Endoftask",
+                        "default": true
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "end-of-task",
+                        "title": "Element Type",
+                        "default": "end-of-task"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "EndOfTaskEnvelope",
+                "description": "A end of task envelope."
+            },
+            "FileSource": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "guid": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Simplerefid"
+                    },
+                    "filePath": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Filepath"
+                    },
+                    "ext": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SupportedFileExtension"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "type",
+                    "guid"
+                ],
+                "title": "FileSource"
+            },
+            "FilterType": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "title": "Key"
+                    },
+                    "operator": {
+                        "type": "string",
+                        "title": "Operator"
+                    },
+                    "value": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Value"
+                    },
+                    "values": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Values",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "key",
+                    "operator"
+                ],
+                "title": "FilterType"
+            },
+            "Followup": {
+                "properties": {
+                    "GUID": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "followup": {
+                        "$ref": "#/components/schemas/FollowupQuestions"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "followup",
+                        "title": "Element Type",
+                        "default": "followup"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "GUID",
+                    "followup"
+                ],
+                "title": "Followup",
+                "description": "A message with followup questions."
+            },
+            "FollowupQuestions": {
+                "properties": {
+                    "followupQuestions": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Followupquestions"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "followupQuestions"
+                ],
+                "title": "FollowupQuestions",
+                "description": "A list of followup questions."
+            },
+            "FollowupSelection": {
+                "properties": {
+                    "followup_src_id": {
+                        "type": "string",
+                        "title": "Followup Src Id"
+                    },
+                    "choice_id": {
+                        "type": "integer",
+                        "title": "Choice Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "followup_src_id",
+                    "choice_id"
+                ],
+                "title": "FollowupSelection"
+            },
+            "GetAlertRequest": {
+                "properties": {
+                    "connector_name": {
+                        "type": "string",
+                        "title": "Connector Name"
+                    },
+                    "violation_id": {
+                        "type": "string",
+                        "title": "Violation Id"
+                    },
+                    "account_id": {
+                        "type": "string",
+                        "title": "Account Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "connector_name",
+                    "violation_id",
+                    "account_id"
+                ],
+                "title": "GetAlertRequest"
+            },
+            "GetDatadogAlertRequest": {
+                "properties": {
+                    "connector_name": {
+                        "type": "string",
+                        "title": "Connector Name"
+                    },
+                    "link": {
+                        "type": "string",
+                        "title": "Link"
+                    },
+                    "monitor_id": {
+                        "type": "string",
+                        "title": "Monitor Id"
+                    },
+                    "host": {
+                        "type": "string",
+                        "title": "Host"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "connector_name",
+                    "link",
+                    "monitor_id",
+                    "host"
+                ],
+                "title": "GetDatadogAlertRequest"
+            },
+            "GithubBranch": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "repository": {
+                        "type": "string",
+                        "title": "Repository"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "title": "Owner"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "repository",
+                    "owner"
+                ],
+                "title": "GithubBranch"
+            },
+            "GithubConnectorParams": {
+                "properties": {
+                    "appId": {
+                        "type": "integer",
+                        "title": "Appid"
+                    },
+                    "installationId": {
+                        "type": "integer",
+                        "title": "Installationid"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "repositories": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Repositories"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "appId",
+                    "installationId",
+                    "username",
+                    "repositories"
+                ],
+                "title": "GithubConnectorParams"
+            },
+            "GithubGetBranchesRequest": {
+                "properties": {
+                    "repositories": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Repositories"
+                    },
+                    "query": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Query"
+                    }
+                },
+                "type": "object",
+                "title": "GithubGetBranchesRequest"
+            },
+            "GithubPR": {
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "title": "Url"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "number": {
+                        "type": "integer",
+                        "title": "Number"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "title": "Created At"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "title": "Updated At"
+                    },
+                    "closed_at": {
+                        "type": "string",
+                        "title": "Closed At"
+                    },
+                    "merged_at": {
+                        "type": "string",
+                        "title": "Merged At"
+                    },
+                    "author": {
+                        "type": "string",
+                        "title": "Author"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "url",
+                    "title",
+                    "number",
+                    "state",
+                    "created_at",
+                    "updated_at",
+                    "closed_at",
+                    "merged_at",
+                    "author"
+                ],
+                "title": "GithubPR"
+            },
+            "GithubPRRequest": {
+                "properties": {
+                    "commit_sha": {
+                        "type": "string",
+                        "title": "Commit Sha"
+                    },
+                    "customer_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Customer Id"
+                    },
+                    "repository": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Repository"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "commit_sha"
+                ],
+                "title": "GithubPRRequest"
+            },
+            "GithubRelease": {
+                "properties": {
+                    "tag_name": {
+                        "type": "string",
+                        "title": "Tag Name"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "body": {
+                        "type": "string",
+                        "title": "Body"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "title": "Created At"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "title": "Published At"
+                    },
+                    "html_url": {
+                        "type": "string",
+                        "title": "Html Url"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "tag_name",
+                    "name",
+                    "body",
+                    "created_at",
+                    "published_at",
+                    "html_url"
+                ],
+                "title": "GithubRelease"
+            },
+            "GithubReleaseRequest": {
+                "properties": {
+                    "repo": {
+                        "type": "string",
+                        "title": "Repo"
+                    },
+                    "latest_only": {
+                        "type": "boolean",
+                        "title": "Latest Only",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "repo"
+                ],
+                "title": "GithubReleaseRequest"
+            },
+            "GithubRepositoriesRequest": {
+                "properties": {},
+                "type": "object",
+                "title": "GithubRepositoriesRequest"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "ImageSource": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "guid": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Simplerefid"
+                    },
+                    "b64_encoding": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "B64 Encoding"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "type",
+                    "guid"
+                ],
+                "title": "ImageSource"
+            },
+            "InterruptionMessage": {
+                "properties": {
+                    "requestFollowup": {
+                        "type": "boolean",
+                        "const": true,
+                        "title": "Requestfollowup",
+                        "default": true
+                    },
+                    "body": {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "interruption",
+                        "title": "Element Type",
+                        "default": "interruption"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "body"
+                ],
+                "title": "InterruptionMessage",
+                "description": "A interruption message."
+            },
+            "InvestigationLogBook": {
+                "properties": {
+                    "investigationLogBook": {
+                        "type": "string",
+                        "title": "Investigationlogbook"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "investigation-log-book",
+                        "title": "Element Type",
+                        "default": "investigation-log-book"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "investigationLogBook"
+                ],
+                "title": "InvestigationLogBook",
+                "description": "A investigation log book."
+            },
+            "LearningsEnvelope": {
+                "properties": {
+                    "learnings": {
+                        "type": "string",
+                        "title": "Learnings"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "learnings",
+                        "title": "Element Type",
+                        "default": "learnings"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "learnings"
+                ],
+                "title": "LearningsEnvelope",
+                "description": "A learnings envelope."
+            },
+            "LogSource": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "guid": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Simplerefid"
+                    },
+                    "query": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/LogsQueryMessage"
+                            },
+                            {
+                                "$ref": "#/components/schemas/PassthroughQueryMessage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Query"
+                    },
+                    "content": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Content"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "type",
+                    "guid"
+                ],
+                "title": "LogSource"
+            },
+            "LogsQueryMessage": {
+                "properties": {
+                    "connector": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/Connector"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "query": {
+                        "type": "string",
+                        "title": "Query"
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "title": "Starttime"
+                    },
+                    "endTime": {
+                        "type": "string",
+                        "title": "Endtime"
+                    },
+                    "offset": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Offset"
+                    },
+                    "limit": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Limit"
+                    },
+                    "namespace": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Namespace"
+                    },
+                    "filters": {
+                        "items": {
+                            "$ref": "#/components/schemas/FilterType"
+                        },
+                        "type": "array",
+                        "title": "Filters"
+                    },
+                    "rollup": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/RollupType"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "groupBy": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Groupby"
+                    },
+                    "isRegex": {
+                        "type": "boolean",
+                        "title": "Isregex",
+                        "default": false
+                    },
+                    "nextPage": {
+                        "type": "boolean",
+                        "title": "Nextpage",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "query",
+                    "startTime",
+                    "endTime"
+                ],
+                "title": "LogsQueryMessage"
+            },
+            "PassthroughQueryMessage": {
+                "properties": {
+                    "connector": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/Connector"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "prometheus_query": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/PrometheusQueryMessage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "elastic_query": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/ElasticQueryMessage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "type": "object",
+                "title": "PassthroughQueryMessage"
+            },
+            "ProgressEnvelope": {
+                "properties": {
+                    "progress": {
+                        "items": {
+                            "$ref": "#/components/schemas/ProgressMessage"
+                        },
+                        "type": "array",
+                        "title": "Progress"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "progress",
+                        "title": "Element Type",
+                        "default": "progress"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "progress"
+                ],
+                "title": "ProgressEnvelope",
+                "description": "A chunk carrying one or more progress updates."
+            },
+            "ProgressMessage": {
+                "properties": {
+                    "GUID": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "GUID",
+                    "message"
+                ],
+                "title": "ProgressMessage",
+                "description": "Single progress update emitted by an executor/tool."
+            },
+            "PrometheusQueryMessage": {
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "minLength": 1,
+                        "title": "Query"
+                    },
+                    "start": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Start"
+                    },
+                    "end": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "End"
+                    },
+                    "step": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]*[smhdwy]$",
+                        "title": "Step"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "query",
+                    "start",
+                    "end",
+                    "step"
+                ],
+                "title": "PrometheusQueryMessage"
+            },
+            "ReasoningMode": {
+                "type": "string",
+                "enum": [
+                    "copilot",
+                    "investigate"
+                ],
+                "title": "ReasoningMode"
+            },
+            "RollupType": {
+                "properties": {
+                    "aggregator": {
+                        "type": "string",
+                        "title": "Aggregator"
+                    },
+                    "value": {
+                        "type": "integer",
+                        "title": "Value"
+                    },
+                    "unit": {
+                        "type": "string",
+                        "title": "Unit"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "aggregator",
+                    "value",
+                    "unit"
+                ],
+                "title": "RollupType"
+            },
+            "SendMessageRequest": {
+                "properties": {
+                    "chat_session_id": {
+                        "type": "string",
+                        "title": "Chat Session Id"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "message_id": {
+                        "type": "string",
+                        "title": "Message Id"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "custom_context": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Custom Context"
+                    },
+                    "reply_to_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Reply To Id"
+                    },
+                    "followup_selection": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/FollowupSelection"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "start_time": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Start Time"
+                    },
+                    "end_time": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "End Time"
+                    },
+                    "user_intent": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/UserIntent"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "connectors": {
+                        "items": {
+                            "$ref": "#/components/schemas/Connector"
+                        },
+                        "type": "array",
+                        "title": "Connectors",
+                        "default": []
+                    },
+                    "sources": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/LogSource"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/CodeSource"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/TextSource-Input"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/ImageSource"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/FileSource"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Sources",
+                        "default": []
+                    },
+                    "githubConnectorParams": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/GithubConnectorParams"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "interruption_reply": {
+                        "type": "boolean",
+                        "title": "Interruption Reply",
+                        "default": false
+                    },
+                    "user_specified_llm": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SupportedLLM"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "user_apc_action": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/UserApcAction"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "reasoning_mode": {
+                        "$ref": "#/components/schemas/ReasoningMode",
+                        "default": "copilot"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "chat_session_id",
+                    "user_id",
+                    "message_id",
+                    "message"
+                ],
+                "title": "SendMessageRequest"
+            },
+            "SourceArtifactItem": {
+                "properties": {
+                    "artifact": {
+                        "$ref": "#/components/schemas/ArtifactMapping"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "artifact"
+                ],
+                "title": "SourceArtifactItem"
+            },
+            "SourceEnvelope": {
+                "properties": {
+                    "sources": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/SourceUrlItem"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/SourceTextItem"
+                                },
+                                {
+                                    "$ref": "#/components/schemas/SourceArtifactItem"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Sources"
+                    },
+                    "confidence": {
+                        "type": "number",
+                        "title": "Confidence",
+                        "default": 0.0
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "sources",
+                        "title": "Element Type",
+                        "default": "sources"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "sources"
+                ],
+                "title": "SourceEnvelope",
+                "description": "A source."
+            },
+            "SourceTextItem": {
+                "properties": {
+                    "text": {
+                        "$ref": "#/components/schemas/TextSource-Output"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "text"
+                ],
+                "title": "SourceTextItem"
+            },
+            "SourceUrlItem": {
+                "properties": {
+                    "url": {
+                        "$ref": "#/components/schemas/UrlSource"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "title": "SourceUrlItem"
+            },
+            "SuggestedFixesEnvelope": {
+                "properties": {
+                    "suggested-fixes": {
+                        "type": "string",
+                        "title": "Suggested-Fixes"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "suggested-fixes",
+                        "title": "Element Type",
+                        "default": "suggested-fixes"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "suggested-fixes"
+                ],
+                "title": "SuggestedFixesEnvelope",
+                "description": "A suggested fixes envelope."
+            },
+            "SupportedFileExtension": {
+                "type": "string",
+                "enum": [
+                    "unknown"
+                ],
+                "title": "SupportedFileExtension"
+            },
+            "SupportedLLM": {
+                "type": "string",
+                "enum": [
+                    "gpt-4o",
+                    "gpt-4o-mini",
+                    "gpt-4.1",
+                    "gpt-4.1-mini",
+                    "gpt-4.1-nano",
+                    "o1",
+                    "o1-pro",
+                    "o3",
+                    "o1-mini",
+                    "o3-mini",
+                    "o4-mini",
+                    "ollama:llama2",
+                    "ollama:orca-mini",
+                    "ollama:mistral",
+                    "llama-3.3-70b-versatile",
+                    "llama-3.1-8b-instant",
+                    "qwen-qwq-32b",
+                    "meta-llama/llama-4-scout-17b-16e-instruct",
+                    "meta-llama/llama-4-maverick-17b-128e-instruct",
+                    "qwen-2.5-coder-32b",
+                    "claude-3-7-sonnet-latest",
+                    "claude-3-5-haiku-latest",
+                    "claude-3-5-sonnet-latest",
+                    "claude-3-opus-latest",
+                    "claude-3-haiku-latest",
+                    "gemini-2.5-pro-preview-03-25",
+                    "gemini-2.0-flash",
+                    "gemini-2.0-flash-lite",
+                    "gemini-2.0-pro-exp-02-05",
+                    "gemini-2.0-flash-thinking-exp-01-21",
+                    "fake"
+                ],
+                "title": "SupportedLLM"
+            },
+            "TaskStateChange": {
+                "properties": {
+                    "taskId": {
+                        "type": "string",
+                        "title": "Taskid"
+                    },
+                    "taskState": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "running",
+                            "completed",
+                            "unsuccessful"
+                        ],
+                        "title": "Taskstate"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "task-state-change",
+                        "title": "Element Type",
+                        "default": "task-state-change"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "taskId",
+                    "taskState"
+                ],
+                "title": "TaskStateChange",
+                "description": "A task state change."
+            },
+            "TextSource-Input": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "guid": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Simplerefid"
+                    },
+                    "fileName": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Filename"
+                    },
+                    "content": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Content"
+                    },
+                    "contentType": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Contenttype"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "type",
+                    "guid"
+                ],
+                "title": "TextSource"
+            },
+            "TextSource-Output": {
+                "properties": {
+                    "GUID": {
+                        "type": "string",
+                        "title": "Guid"
+                    },
+                    "simpleRefID": {
+                        "type": "string",
+                        "title": "Simplerefid"
+                    },
+                    "parentRefID": {
+                        "type": "string",
+                        "title": "Parentrefid"
+                    },
+                    "text": {
+                        "type": "string",
+                        "title": "Text"
+                    },
+                    "sourceType": {
+                        "type": "string",
+                        "const": "text",
+                        "title": "Sourcetype",
+                        "default": "text"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "GUID",
+                    "simpleRefID",
+                    "parentRefID",
+                    "text"
+                ],
+                "title": "TextSource",
+                "description": "A text source."
+            },
+            "TimelineEnvelope": {
+                "properties": {
+                    "timeline": {
+                        "$ref": "#/components/schemas/TimelineResponse"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "const": "timeline",
+                        "title": "Element Type",
+                        "default": "timeline"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "timeline"
+                ],
+                "title": "TimelineEnvelope",
+                "description": "A timeline envelope."
+            },
+            "TimelineEvent": {
+                "properties": {
+                    "timestamp": {
+                        "type": "string",
+                        "title": "Timestamp"
+                    },
+                    "event_description": {
+                        "type": "string",
+                        "title": "Event Description"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "timestamp",
+                    "event_description"
+                ],
+                "title": "TimelineEvent",
+                "description": "A timeline event."
+            },
+            "TimelineResponse": {
+                "properties": {
+                    "events": {
+                        "items": {
+                            "$ref": "#/components/schemas/TimelineEvent"
+                        },
+                        "type": "array",
+                        "title": "Events"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "TimelineResponse",
+                "description": "A timeline response."
+            },
+            "UrlSource": {
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "title": "Url"
+                    },
+                    "sourceType": {
+                        "type": "string",
+                        "const": "url",
+                        "title": "Sourcetype",
+                        "default": "url"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "title": "UrlSource",
+                "description": "A URL source."
+            },
+            "UserApcAction": {
+                "properties": {
+                    "cli_cmd": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cli Cmd"
+                    }
+                },
+                "type": "object",
+                "title": "UserApcAction"
+            },
+            "UserIntent": {
+                "type": "string",
+                "enum": [
+                    "UNKNOWN",
+                    "SEARCH_METRICS",
+                    "SEARCH_CODE",
+                    "SEARCH_LOGS",
+                    "SEARCH_HYBRID",
+                    "DIRECT_ANSWER"
+                ],
+                "title": "UserIntent"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}

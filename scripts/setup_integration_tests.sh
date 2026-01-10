@@ -105,6 +105,8 @@ rm -rf binary_models/binary_models_api
 rm -rf form_urlencoded/form_urlencoded_api
 rm -rf boolean_schemas/boolean_schemas_api
 rm -rf type_arrays/type_arrays_api
+rm -rf medama/medama_api
+rm -rf inference/inference_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml
@@ -174,6 +176,14 @@ dart run ../packages/tonik/bin/tonik.dart -p type_arrays_api -s type_arrays/open
 add_dependency_overrides_recursive "type_arrays/type_arrays_api"
 cd type_arrays/type_arrays_api && dart pub get && cd ../..
 
+dart run ../packages/tonik/bin/tonik.dart -p medama_api -s medama/openapi.yaml -o medama
+add_dependency_overrides_recursive "medama/medama_api"
+cd medama/medama_api && dart pub get && cd ../..
+
+dart run ../packages/tonik/bin/tonik.dart -p inference_api -s inference/openapi.json -o inference
+add_dependency_overrides_recursive "inference/inference_api"
+cd inference/inference_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
@@ -207,5 +217,7 @@ restore_test_package_overrides "binary_models/binary_models_test/pubspec.yaml" "
 restore_test_package_overrides "form_urlencoded/form_urlencoded_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "boolean_schemas/boolean_schemas_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "type_arrays/type_arrays_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "medama/medama_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "inference/inference_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"

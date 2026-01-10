@@ -110,3 +110,15 @@ jobs:
           cd integration_test/type_arrays/type_arrays_test
           dart pub get
           dart test --concurrency=1
+
+      - name: Run medama integration tests
+        run: |
+          cd integration_test/medama/medama_test
+          dart pub get
+          dart test --concurrency=1
+
+      - name: Run inference integration tests
+        run: |
+          cd integration_test/inference/inference_test
+          dart pub get
+          dart test --concurrency=1
