@@ -40,6 +40,14 @@ Expression buildFormParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() =>
+      refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
+        [valueExpression],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        },
+      ),
     _ => throw UnimplementedError(
       'Unsupported model type for form encoding: $model',
     ),

@@ -23,6 +23,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -38,6 +39,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -56,6 +58,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -73,6 +76,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -87,6 +91,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -101,6 +106,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -116,6 +122,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -135,6 +142,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -152,10 +160,12 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
             (
               normalizedName: 'age',
               typeRef: TypeReference((b) => b..symbol = 'int'),
+              skipCast: false,
             ),
           ],
         );
@@ -180,6 +190,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -208,6 +219,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -222,6 +234,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -238,6 +251,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -256,6 +270,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -274,6 +289,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -290,6 +306,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -308,6 +325,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -329,6 +347,7 @@ void main() {
             (
               normalizedName: 'name',
               typeRef: TypeReference((b) => b..symbol = 'String'),
+              skipCast: false,
             ),
           ],
         );
@@ -347,6 +366,71 @@ void main() {
           collapseWhitespace(expectedCallMethod),
         );
       });
+
+      test('call method skips cast when skipCast is true', () {
+        final result = generateCopyWith(
+          className: 'TestClass',
+          properties: [
+            (
+              normalizedName: 'anyValue',
+              typeRef: TypeReference(
+                (b) => b
+                  ..symbol = 'AnyValue'
+                  ..isNullable = true,
+              ),
+              skipCast: true, // Skip cast for AnyModel properties
+            ),
+          ],
+        );
+
+        final callMethod = result!.implClass.methods.firstWhere(
+          (m) => m.name == 'call',
+        );
+        const expectedCallMethod = r'''
+          @override
+          $Res call({Object? anyValue = _sentinel}) {
+            return (TestClass(anyValue: identical(anyValue, _sentinel, ) ? this.anyValue : anyValue) as $Res);
+          }
+        ''';
+        expect(
+          collapseWhitespace(callMethod.accept(emitter).toString()),
+          collapseWhitespace(expectedCallMethod),
+        );
+      });
+
+      test(
+        'call method skips cast for Object? type regardless of skipCast',
+        () {
+          final result = generateCopyWith(
+            className: 'TestClass',
+            properties: [
+              (
+                normalizedName: 'value',
+                typeRef: TypeReference(
+                  (b) => b
+                    ..symbol = 'Object'
+                    ..isNullable = true,
+                ),
+                skipCast: false,
+              ),
+            ],
+          );
+
+          final callMethod = result!.implClass.methods.firstWhere(
+            (m) => m.name == 'call',
+          );
+          const expectedCallMethod = r'''
+          @override
+          $Res call({Object? value = _sentinel}) {
+            return (TestClass(value: identical(value, _sentinel, ) ? this.value : value) as $Res);
+          }
+        ''';
+          expect(
+            collapseWhitespace(callMethod.accept(emitter).toString()),
+            collapseWhitespace(expectedCallMethod),
+          );
+        },
+      );
     });
 
     group('complex types', () {
@@ -361,6 +445,7 @@ void main() {
                   ..symbol = 'List'
                   ..types.add(refer('String')),
               ),
+              skipCast: false,
             ),
           ],
         );
@@ -398,6 +483,7 @@ void main() {
                   ..symbol = 'int'
                   ..isNullable = true,
               ),
+              skipCast: false,
             ),
           ],
         );

@@ -839,7 +839,7 @@ Map<String, String> parameterProperties({
     useQueryComponent: useQueryComponent,
   );
   if (count != null) {
-    result[r'count'] = count.uriEncode(
+    result[r'count'] = count!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );

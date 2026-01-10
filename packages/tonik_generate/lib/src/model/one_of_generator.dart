@@ -10,10 +10,14 @@ import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -79,10 +83,12 @@ class OneOfGenerator {
     final actualClassName = className ?? nameManager.modelName(model);
 
     final variantNames = _generateVariantNames(model, actualClassName);
-    final baseClass =
-        _generateBaseClass(model, actualClassName, variantNames);
-    final subClasses =
-        _generateSubClasses(model, actualClassName, variantNames);
+    final baseClass = _generateBaseClass(model, actualClassName, variantNames);
+    final subClasses = _generateSubClasses(
+      model,
+      actualClassName,
+      variantNames,
+    );
 
     return [baseClass, ...subClasses];
   }
@@ -117,7 +123,13 @@ class OneOfGenerator {
           ..name = className
           ..sealed = true
           ..docs.addAll(formatDocComment(model.description))
-          ..annotations.add(refer('immutable', 'package:meta/meta.dart'));
+          ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
+          ..implements.add(
+            refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          )
+          ..implements.add(
+            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -150,6 +162,7 @@ class OneOfGenerator {
             _generateUriEncodeMethod(className, model, variantNames),
             Method(
               (b) => b
+                ..annotations.add(refer('override', 'dart:core'))
                 ..name = 'toJson'
                 ..returns = refer('Object?', 'dart:core')
                 ..body = _generateToJsonBody(
@@ -248,39 +261,41 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    final cases = model.models
-        .toSortedList()
-        .map((discriminatedModel) {
-          final variantName = variantNames[discriminatedModel]!;
+    final caseCodes = <Code>[];
+    final sortedModels = model.models.toSortedList();
+    for (var i = 0; i < sortedModels.length; i++) {
+      final discriminatedModel = sortedModels[i];
+      final variantName = variantNames[discriminatedModel]!;
 
-          final property = Property(
-            name: 'value',
-            model: discriminatedModel.model,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          );
-          final jsonValue = buildToJsonPropertyExpression('value', property);
-          final discriminatorValue =
-              discriminatedModel.discriminatorValue != null
-              ? "'${discriminatedModel.discriminatorValue}'"
-              : 'null';
+      final property = Property(
+        name: 'value',
+        model: discriminatedModel.model,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final jsonValueExpr = buildToJsonPropertyExpression('value', property);
+      final discriminatorValue = discriminatedModel.discriminatorValue != null
+          ? "'${discriminatedModel.discriminatorValue}'"
+          : 'null';
 
-          return '$variantName(:final value) => '
-              '($jsonValue, $discriminatorValue)';
-        })
-        .join(',\n');
+      caseCodes
+        ..add(Code('$variantName(:final value) => ('))
+        ..add(jsonValueExpr.code)
+        ..add(Code(', $discriminatorValue)'));
+      if (i < sortedModels.length - 1) {
+        caseCodes.add(const Code(',\n'));
+      }
+    }
 
-    final blocks = [
-      Code.scope((allocate) {
-        final dynamicRef = refer('dynamic', 'dart:core');
-        final stringNullableRef = refer('String?', 'dart:core');
-
-        return 'final (${allocate(dynamicRef)} json, '
-            '${allocate(stringNullableRef)} discriminator) = switch (this) {\n'
-            '$cases\n'
-            '};';
-      }),
+    final blocks = <Code>[
+      const Code('final ('),
+      refer('dynamic', 'dart:core').code,
+      const Code(' json, '),
+      refer('String?', 'dart:core').code,
+      const Code(' discriminator) = switch (this) {\n'),
+      ...caseCodes,
+      const Code('\n};'),
     ];
 
     if (model.discriminator != null) {
@@ -405,24 +420,42 @@ class OneOfGenerator {
     for (final m in model.models.toSortedList().where(
       (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
     )) {
-      final modelName = nameManager.modelName(m.model);
+      final modelType = m.model;
+      final modelName = nameManager.modelName(modelType);
       final variantName = variantNames[m]!;
 
-      blocks.addAll([
-        const Code('try {'),
-        refer(variantName)
-            .call([
-              refer(
-                modelName,
-                package,
-              ).property('fromJson').call([refer('json')]),
-            ])
-            .returned
-            .statement,
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch(_) {}'),
-      ]);
+      if (modelType is ListModel) {
+        final decodeExpr = buildFromJsonValueExpression(
+          'json',
+          model: modelType,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+        );
+        blocks.addAll([
+          const Code('try {'),
+          refer(variantName).call([decodeExpr]).returned.statement,
+          const Code('} on '),
+          refer('Object', 'dart:core').code,
+          const Code(' catch(_) {}'),
+        ]);
+      } else {
+        blocks.addAll([
+          const Code('try {'),
+          refer(variantName)
+              .call([
+                refer(
+                  modelName,
+                  package,
+                ).property('fromJson').call([refer('json')]),
+              ])
+              .returned
+              .statement,
+          const Code('} on '),
+          refer('Object', 'dart:core').code,
+          const Code(' catch(_) {}'),
+        ]);
+      }
     }
 
     blocks.add(
@@ -514,6 +547,23 @@ class OneOfGenerator {
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
         );
+      } else if (modelType is ListModel && modelType.hasSimpleContent) {
+        // Lists with simple content can be decoded directly
+        final decodeExpr = buildSimpleValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          explode: refer('explode'),
+        );
+        tryBody.add(
+          refer(variantName).call([decodeExpr]).returned.statement,
+        );
+      } else if (modelType is ListModel) {
+        // Lists with complex content are not supported for simple encoding
+        continue;
       } else {
         final innerFromSimple =
             refer(
@@ -643,6 +693,23 @@ class OneOfGenerator {
           explode: refer('explode'),
         );
         tryBody.add(refer(variantName).call([decodeExpr]).returned.statement);
+      } else if (modelType is ListModel && modelType.hasSimpleContent) {
+        // Lists with simple content can be decoded directly
+        final decodeExpr = buildFromFormValueExpression(
+          refer('value'),
+          model: modelType,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          explode: refer('explode'),
+        );
+        tryBody.add(
+          refer(variantName).call([decodeExpr]).returned.statement,
+        );
+      } else if (modelType is ListModel) {
+        // Lists with complex content are not supported for form encoding
+        continue;
       } else {
         final innerFromForm =
             refer(
@@ -753,6 +820,37 @@ class OneOfGenerator {
             ),
           ]);
         }
+      } else if (m.model is ListModel &&
+          (m.model as ListModel).hasSimpleContent) {
+        // Lists with simple content can be encoded using helper
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          buildSimpleParameterExpression(
+            refer('value'),
+            m.model as ListModel,
+            explode: refer('explode'),
+            allowEmpty: refer('allowEmpty'),
+          ).code,
+          const Code(','),
+        ]);
+      } else if (m.model is ListModel) {
+        // Lists with complex content cannot be encoded
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .code,
+          const Code(','),
+        ]);
       } else {
         caseCodes.addAll([
           Code.scope(
@@ -775,6 +873,7 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -816,10 +915,14 @@ class OneOfGenerator {
             const Code(','),
             Code("'${model.discriminator}': '$discriminatorValue',"),
             const Code('}'),
-            const Code('.toForm(explode: explode, allowEmpty: allowEmpty) : '),
+            const Code(
+              '.toForm(explode: explode, allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent) : ',
+            ),
             refer('value').property('toForm').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
+              'useQueryComponent': refer('useQueryComponent'),
             }).code,
             const Code(','),
           ]);
@@ -838,10 +941,42 @@ class OneOfGenerator {
             const Code('}'),
             const Code(
               '.toForm(explode: '
-              'explode, allowEmpty: allowEmpty),',
+              'explode, allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent),',
             ),
           ]);
         }
+      } else if (m.model is ListModel &&
+          (m.model as ListModel).hasSimpleContent) {
+        // Lists with simple content can be encoded using helper
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          buildFormParameterExpression(
+            refer('value'),
+            m.model as ListModel,
+            explode: refer('explode'),
+            allowEmpty: refer('allowEmpty'),
+          ).code,
+          const Code(','),
+        ]);
+      } else if (m.model is ListModel) {
+        // Lists with complex content cannot be encoded
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .code,
+          const Code(','),
+        ]);
       } else {
         caseCodes.addAll([
           Code.scope(
@@ -850,6 +985,7 @@ class OneOfGenerator {
           refer('value').property('toForm').call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
+            'useQueryComponent': refer('useQueryComponent'),
           }).code,
           const Code(','),
         ]);
@@ -864,9 +1000,10 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = body,
     );
@@ -889,6 +1026,7 @@ class OneOfGenerator {
     for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
+      final isList = m.model is ListModel;
 
       if (isSimple) {
         caseCodes.addAll([
@@ -897,6 +1035,16 @@ class OneOfGenerator {
             'EncodingShape',
             'package:tonik_util/tonik_util.dart',
           ).property('simple').code,
+          const Code(','),
+        ]);
+      } else if (isList) {
+        // Lists always have complex encoding shape
+        caseCodes.addAll([
+          Code('$variantName() => '),
+          refer(
+            'EncodingShape',
+            'package:tonik_util/tonik_util.dart',
+          ).property('complex').code,
           const Code(','),
         ]);
       } else {
@@ -1015,26 +1163,36 @@ class OneOfGenerator {
           ]);
         }
       } else {
-        caseCodes.add(Code('$variantName(:final value) => '));
-        if (discriminatorValue != null) {
-          caseCodes.addAll([
-            const Code('{'),
-            const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-              'allowLists': refer('allowLists'),
-            }).code,
-            const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
-            const Code('}'),
-          ]);
+        if (m.model is ListModel) {
+          caseCodes
+            ..add(Code('$variantName() => '))
+            ..add(
+              generateEncodingExceptionExpression(
+                'Lists are not supported in parameterProperties',
+              ).code,
+            );
         } else {
-          caseCodes.add(
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-              'allowLists': refer('allowLists'),
-            }).code,
-          );
+          caseCodes.add(Code('$variantName(:final value) => '));
+          if (discriminatorValue != null) {
+            caseCodes.addAll([
+              const Code('{'),
+              const Code('...'),
+              refer('value').property('parameterProperties').call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'allowLists': refer('allowLists'),
+              }).code,
+              const Code(','),
+              Code("'${model.discriminator}': '$discriminatorValue',"),
+              const Code('}'),
+            ]);
+          } else {
+            caseCodes.add(
+              refer('value').property('parameterProperties').call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'allowLists': refer('allowLists'),
+              }).code,
+            );
+          }
         }
       }
       caseCodes.add(const Code(','));
@@ -1120,6 +1278,37 @@ class OneOfGenerator {
             ),
           ]);
         }
+      } else if (m.model is ListModel &&
+          (m.model as ListModel).hasSimpleContent) {
+        // Lists with simple content can be encoded using helper
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          ),
+          buildLabelParameterExpression(
+            refer('value'),
+            m.model as ListModel,
+            explode: refer('explode'),
+            allowEmpty: refer('allowEmpty'),
+          ).code,
+          const Code(','),
+        ]);
+      } else if (m.model is ListModel) {
+        // Lists with complex content cannot be encoded
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .code,
+          const Code(','),
+        ]);
       } else {
         caseCodes.addAll([
           Code.scope(
@@ -1142,6 +1331,7 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toLabel'
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
@@ -1183,6 +1373,7 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toMatrix'
         ..returns = refer('String', 'dart:core')
         ..requiredParameters.add(
@@ -1201,6 +1392,7 @@ class OneOfGenerator {
   Method _generateToDeepObjectMethod() {
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toDeepObject'
         ..returns = TypeReference(
           (b) => b
@@ -1262,6 +1454,7 @@ class OneOfGenerator {
           ),
           generateEncodingExceptionExpression(
             'Cannot uriEncode $className: variant contains complex type',
+            raw: true,
           ).code,
           const Code(','),
         ]);
@@ -1273,6 +1466,7 @@ class OneOfGenerator {
           ),
           refer('value').property('uriEncode').call([], {
             'allowEmpty': refer('allowEmpty'),
+            'useQueryComponent': refer('useQueryComponent'),
           }).code,
           const Code(','),
         ]);
@@ -1287,9 +1481,10 @@ class OneOfGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.add(
+        ..optionalParameters.addAll([
           Parameter(
             (b) => b
               ..name = 'allowEmpty'
@@ -1297,7 +1492,14 @@ class OneOfGenerator {
               ..named = true
               ..required = true,
           ),
-        )
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..defaultTo = literalBool(false).code,
+          ),
+        ])
         ..lambda = false
         ..body = body,
     );

@@ -13,6 +13,10 @@ sealed class RequestHeader {
 
   final Context context;
 
+  /// The description of the header.
+  /// For aliases, this may override the referenced header's description.
+  String? get description;
+
   RequestHeaderObject resolve({String? name, String? nameOverride}) {
     switch (this) {
       case final RequestHeaderObject header:
@@ -44,13 +48,19 @@ class RequestHeaderAlias extends RequestHeader {
     required this.name,
     required this.header,
     required super.context,
+    this.description,
   });
 
   final String name;
   final RequestHeader header;
 
   @override
-  String toString() => 'RequestHeaderAlias{name: $name, header: $header}';
+  final String? description;
+
+  @override
+  String toString() =>
+      'RequestHeaderAlias{name: $name, header: $header, '
+      'description: $description}';
 
   @override
   bool operator ==(Object other) =>
@@ -59,10 +69,11 @@ class RequestHeaderAlias extends RequestHeader {
           runtimeType == other.runtimeType &&
           name == other.name &&
           header == other.header &&
+          description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, header);
+  int get hashCode => Object.hash(name, header, description);
 }
 
 class RequestHeaderObject extends RequestHeader {
@@ -86,6 +97,8 @@ class RequestHeaderObject extends RequestHeader {
   final String rawName;
 
   String? nameOverride;
+
+  @override
   String? description;
   bool isRequired;
   bool isDeprecated;

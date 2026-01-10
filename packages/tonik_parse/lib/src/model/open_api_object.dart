@@ -3,6 +3,7 @@ import 'package:tonik_parse/src/model/components.dart';
 import 'package:tonik_parse/src/model/external_documentation.dart';
 import 'package:tonik_parse/src/model/info.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
+import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/server.dart';
 import 'package:tonik_parse/src/model/tag.dart';
 
@@ -12,6 +13,7 @@ part 'open_api_object.g.dart';
 @JsonSerializable(createToJson: false)
 class OpenApiObject {
   OpenApiObject({
+    required this.openapi,
     required this.info,
     required this.servers,
     required this.paths,
@@ -23,17 +25,19 @@ class OpenApiObject {
   factory OpenApiObject.fromJson(Map<String, dynamic> json) =>
       _$OpenApiObjectFromJson(json);
 
+  final String openapi;
   final Info info;
   final List<Server>? servers;
-  final Map<String, PathItem> paths;
+  final Map<String, ReferenceWrapper<PathItem>> paths;
   final Components? components;
   final List<Tag>? tags;
   final ExternalDocumentation? externalDocs;
 
-  // We ignore openapi and security properties.
+  // We ignore security properties.
 
   @override
   String toString() =>
-      'OpenApiObject{info: $info, servers: $servers, paths: $paths, '
-      'components: $components, tags: $tags, externalDocs: $externalDocs}';
+      'OpenApiObject{openapi: $openapi, info: $info, servers: $servers, '
+      'paths: $paths, components: $components, tags: $tags, '
+      'externalDocs: $externalDocs}';
 }

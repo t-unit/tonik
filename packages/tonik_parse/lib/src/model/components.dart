@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
+import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
 import 'package:tonik_parse/src/model/response.dart';
@@ -18,17 +19,20 @@ class Components {
     required this.requestBodies,
     required this.headers,
     required this.securitySchemes,
+    required this.pathItems,
   });
 
   factory Components.fromJson(Map<String, dynamic> json) =>
       _$ComponentsFromJson(json);
 
-  final Map<String, ReferenceWrapper<Schema>>? schemas;
+  @SchemaMapConverter()
+  final Map<String, Schema>? schemas;
   final Map<String, ReferenceWrapper<Response>>? responses;
   final Map<String, ReferenceWrapper<Parameter>>? parameters;
   final Map<String, ReferenceWrapper<RequestBody>>? requestBodies;
   final Map<String, ReferenceWrapper<Header>>? headers;
   final Map<String, ReferenceWrapper<SecurityScheme>>? securitySchemes;
+  final Map<String, ReferenceWrapper<PathItem>>? pathItems;
 
   // We ignore the examples, links and callbacks properties.
 
@@ -36,5 +40,6 @@ class Components {
   String toString() =>
       'Components{schemas: $schemas, responses: $responses, '
       'parameters: $parameters, requestBodies: $requestBodies, '
-      'headers: $headers, securitySchemes: $securitySchemes}';
+      'headers: $headers, securitySchemes: $securitySchemes, '
+      'pathItems: $pathItems}';
 }

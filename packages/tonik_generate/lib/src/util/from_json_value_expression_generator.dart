@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Creates a Dart expression that correctly deserializes a JSON value
@@ -107,6 +108,17 @@ Expression buildFromJsonValueExpression(
         contextProperty: contextProperty,
         isNullable: isNullable,
       );
+    case NeverModel():
+      final throwExpr = generateJsonDecodingExceptionExpression(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+      return isNullable
+          ? refer(
+              value,
+            ).equalTo(literalNull).conditional(literalNull, throwExpr)
+          : throwExpr;
+    case AnyModel():
+      return refer(value);
     case NamedModel() || CompositeModel():
       throw UnimplementedError('$model is not supported');
   }
@@ -212,6 +224,11 @@ Expression _buildListFromJsonExpression(
                 .call([mapFunction])
                 .property('toList')
                 .call([]);
+
+    case NeverModel():
+      return generateJsonDecodingExceptionExpression(
+        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      );
 
     default:
       final typeArg = typeReference(content, nameManager, package ?? '');

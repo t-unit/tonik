@@ -186,6 +186,30 @@ void main() {
     );
   });
 
+  test(
+    'generates sealed class implementing ParameterEncodable & UriEncodable',
+    () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      expect(baseClass.implements.length, 2);
+      expect(
+        baseClass.implements.map((e) => e.accept(emitter).toString()).toSet(),
+        {'ParameterEncodable', 'UriEncodable'},
+      );
+    },
+  );
+
   test('generates mixed encoding shape getter for mixed oneOf', () {
     final classA = ClassModel(
       isDeprecated: false,
@@ -1286,6 +1310,396 @@ void main() {
 
       // Verify no typedef is generated.
       expect(result.code, isNot(contains('typedef')));
+    });
+  });
+
+  test('encoding methods have @override annotation', () {
+    final model = OneOfModel(
+      isDeprecated: false,
+      name: 'TestOneOf',
+      models: {
+        (discriminatorValue: null, model: StringModel(context: context)),
+        (discriminatorValue: null, model: IntegerModel(context: context)),
+      },
+      context: context,
+    );
+
+    final classes = generator.generateClasses(model);
+    final baseClass = classes.firstWhere((c) => c.name == 'TestOneOf');
+
+    final encodingMethods = [
+      'toSimple',
+      'toForm',
+      'toLabel',
+      'toMatrix',
+      'toDeepObject',
+      'toJson',
+    ];
+
+    for (final methodName in encodingMethods) {
+      final method = baseClass.methods.firstWhere(
+        (m) => m.name == methodName,
+        orElse: () => throw StateError('Method $methodName not found'),
+      );
+
+      expect(
+        method.annotations.any(
+          (a) => a.accept(emitter).toString().contains('override'),
+        ),
+        isTrue,
+        reason: '$methodName should have @override annotation',
+      );
+    }
+  });
+
+  group('uriEncode', () {
+    test('generates uriEncode method with useQueryComponent parameter', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrNumber',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'StringOrNumber');
+      final uriEncodeMethod = baseClass.methods.firstWhere(
+        (m) => m.name == 'uriEncode',
+      );
+
+      expect(uriEncodeMethod.optionalParameters, hasLength(2));
+
+      final allowEmptyParam = uriEncodeMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = uriEncodeMethod.optionalParameters
+          .firstWhere((p) => p.name == 'useQueryComponent');
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
+    });
+  });
+
+  group('toForm', () {
+    test('generates toForm method with useQueryComponent parameter', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final toFormMethod = baseClass.methods.firstWhere(
+        (m) => m.name == 'toForm',
+      );
+
+      expect(toFormMethod.optionalParameters.length, 3);
+
+      final explodeParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'explode',
+      );
+      expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(explodeParam.named, isTrue);
+      expect(explodeParam.required, isTrue);
+
+      final allowEmptyParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'useQueryComponent',
+      );
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
+    });
+  });
+
+  group('ListModel handling', () {
+    test('currentEncodingShape returns complex for ListModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            EncodingShape get currentEncodingShape {
+              return switch (this) {
+                ValueInt() => EncodingShape.simple,
+                ValueList() => EncodingShape.complex,
+              };
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('fromSimple uses decode helpers for ListModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromSimple(String? value, {required bool explode}) {
+              try {
+                return ValueList(value.decodeSimpleStringList(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              try {
+                return ValueString(value.decodeSimpleString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw SimpleDecodingException('Invalid simple value for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('fromForm uses decode helpers for ListModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromForm(String? value, {required bool explode}) {
+              try {
+                return ValueList(value.decodeFormStringList(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              try {
+                return ValueString(value.decodeFormString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw SimpleDecodingException('Invalid form value for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('fromJson uses decode helpers for ListModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is String) {
+                return ValueString(json);
+              }
+              try {
+                return ValueList(json.decodeJsonList<String>(context: r'Value'));
+              } on Object catch (_) {}
+              throw JsonDecodingException('Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('excludes ListModel with complex content from simple encoding', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: ClassModel(
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              context: context,
+            ),
+          ),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromSimple(String? value, {required bool explode}) {
+              try {
+                return ValueString(value.decodeSimpleString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw SimpleDecodingException('Invalid simple value for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('parameterProperties throws exception for ListModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            Map<String, String> parameterProperties({
+              bool allowEmpty = true,
+              bool allowLists = true,
+            }) {
+              return switch (this) {
+                ValueList() => throw EncodingException(
+                  'Lists are not supported in parameterProperties',
+                ),
+                ValueString() => throw EncodingException(
+                  r'parameterProperties not supported for Value: cannot determine properties at runtime',
+                ),
+              };
+            }
+          '''),
+        ),
+      );
     });
   });
 }

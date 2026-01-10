@@ -155,7 +155,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toSimple(explode: false, allowEmpty: false), ];
+          return [r'users', ids.toSimple(explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -217,7 +217,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<String> ids}) {
-          return [r'users', ids.toLabel(explode: false, allowEmpty: false), ];
+          return [r'users', ids.toLabel(explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -342,7 +342,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required AnonymousModel filter}) {
-          return [r'users', filter.toSimple(explode: true, allowEmpty: false), ];
+          return [r'users', filter.toSimple(explode: true, allowEmpty: false, ), ];
         }
       ''';
 
@@ -405,7 +405,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required AnonymousModel filter}) {
-          return [r'users', filter.toSimple(explode: true, allowEmpty: true), ];
+          return [r'users', filter.toSimple(explode: true, allowEmpty: true, ), ];
         }
       ''';
 
@@ -493,7 +493,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String userId, required String type, required List<String> roles, }) {
-          return [r'users', userId.toSimple(explode: false, allowEmpty: false), type.toLabel(explode: false, allowEmpty: false), roles.toMatrix('roles', explode: false, allowEmpty: false, ), ];
+          return [r'users', userId.toSimple(explode: false, allowEmpty: false, ), type.toLabel(explode: false, allowEmpty: false, ), roles.toMatrix('roles', explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -611,7 +611,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required AnonymousModel role, required AnonymousModel2 filter, required OneOfValue id, }) {
-          return [r'users', role.toSimple(explode: false, allowEmpty: false), r'filter', filter.toMatrix('filter', explode: true, allowEmpty: false, ), r'id', id.toLabel(explode: false, allowEmpty: false), ];
+          return [r'users', role.toSimple(explode: false, allowEmpty: false, ), r'filter', filter.toMatrix('filter', explode: true, allowEmpty: false, ), r'id', id.toLabel(explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -685,7 +685,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String animalId, required String id, }) {
-          return [r'images', id.toSimple(explode: false, allowEmpty: false), r'animals', animalId.toSimple(explode: false, allowEmpty: false), r'thumbs', ];
+          return [r'images', id.toSimple(explode: false, allowEmpty: false, ), r'animals', animalId.toSimple(explode: false, allowEmpty: false, ), r'thumbs', ];
         }
       ''';
 
@@ -745,7 +745,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required String user}) {
-          return [r'users', user.toSimple(explode: false, allowEmpty: false), r'permissions', user.toSimple(explode: false, allowEmpty: false), ];
+          return [r'users', user.toSimple(explode: false, allowEmpty: false, ), r'permissions', user.toSimple(explode: false, allowEmpty: false, ), ];
         }
       ''';
 
@@ -817,7 +817,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> colors}) {
-          return [r'data', colors.map((e) => e.toSimple(explode: true, allowEmpty: false)) .toList().toSimple(explode: true, allowEmpty: false), ];
+          return [r'data', colors.map((e) => e.toSimple(explode: true, allowEmpty: false, )).toList().toSimple(explode: true, allowEmpty: false, ), ];
         }
       ''';
 
@@ -1309,7 +1309,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required int integer, required String string, required bool boolean, }) {
-          return [r'primitive', integer.toSimple(explode: false, allowEmpty: false), string.toSimple(explode: false, allowEmpty: false), boolean.toSimple(explode: false, allowEmpty: false), ];
+          return [r'primitive', integer.toSimple(explode: false, allowEmpty: false, ), string.toSimple(explode: false, allowEmpty: false, ), boolean.toSimple(explode: false, allowEmpty: false, ), ];
         }
       ''';
 

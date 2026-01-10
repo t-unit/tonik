@@ -88,6 +88,32 @@ void main() {
       );
     });
 
+    test('generates class implementing ParameterEncodable & UriEncodable', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            name: 'Base',
+            properties: const [],
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      expect(combinedClass.implements.length, 2);
+      expect(
+        combinedClass.implements
+            .map((e) => e.accept(emitter).toString())
+            .toSet(),
+        {'ParameterEncodable', 'UriEncodable'},
+      );
+    });
+
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = AllOfModel(
@@ -1736,6 +1762,145 @@ void main() {
 
       // Verify no typedef is generated.
       expect(result.code, isNot(contains('typedef')));
+    });
+
+    test('encoding methods have @override annotation', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+
+      final encodingMethods = [
+        'toJson',
+        'toSimple',
+        'toForm',
+        'toLabel',
+        'toMatrix',
+        'toDeepObject',
+      ];
+      for (final methodName in encodingMethods) {
+        final method = combinedClass.methods.firstWhere(
+          (m) => m.name == methodName,
+          orElse: () => throw StateError('Method $methodName not found'),
+        );
+        expect(
+          method.annotations,
+          hasLength(1),
+          reason: '$methodName should have @override annotation',
+        );
+        expect(
+          method.annotations.first.accept(emitter).toString(),
+          'override',
+          reason: '$methodName should have @override annotation',
+        );
+      }
+    });
+  });
+
+  group('uriEncode', () {
+    test('generates uriEncode method with useQueryComponent parameter', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final uriEncodeMethod = generatedClass.methods.firstWhere(
+        (m) => m.name == 'uriEncode',
+      );
+
+      expect(uriEncodeMethod.optionalParameters, hasLength(2));
+
+      final allowEmptyParam = uriEncodeMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = uriEncodeMethod.optionalParameters
+          .firstWhere((p) => p.name == 'useQueryComponent');
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
+    });
+  });
+
+  group('toForm', () {
+    test('generates toForm method with useQueryComponent parameter', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          StringModel(context: context),
+          IntegerModel(context: context),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      final toFormMethod = klass.methods.firstWhere(
+        (m) => m.name == 'toForm',
+      );
+
+      expect(toFormMethod.optionalParameters.length, 3);
+
+      final explodeParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'explode',
+      );
+      expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(explodeParam.named, isTrue);
+      expect(explodeParam.required, isTrue);
+
+      final allowEmptyParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'useQueryComponent',
+      );
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
     });
   });
 }

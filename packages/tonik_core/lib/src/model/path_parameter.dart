@@ -21,6 +21,10 @@ sealed class PathParameter {
 
   final Context context;
 
+  /// The description of the parameter.
+  /// For aliases, this may override the referenced parameter's description.
+  String? get description;
+
   PathParameterObject resolve({String? name, String? nameOverride}) {
     switch (this) {
       case final PathParameterObject param:
@@ -52,13 +56,19 @@ class PathParameterAlias extends PathParameter {
     required this.name,
     required this.parameter,
     required super.context,
+    this.description,
   });
 
   final String name;
   final PathParameter parameter;
 
   @override
-  String toString() => 'PathParameterAlias{name: $name, parameter: $parameter}';
+  final String? description;
+
+  @override
+  String toString() =>
+      'PathParameterAlias{name: $name, parameter: $parameter, '
+      'description: $description}';
 
   @override
   bool operator ==(Object other) =>
@@ -67,10 +77,11 @@ class PathParameterAlias extends PathParameter {
           runtimeType == other.runtimeType &&
           name == other.name &&
           parameter == other.parameter &&
+          description == other.description &&
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, parameter);
+  int get hashCode => Object.hash(name, parameter, description);
 }
 
 class PathParameterObject extends PathParameter {
@@ -92,6 +103,8 @@ class PathParameterObject extends PathParameter {
   final String rawName;
 
   String? nameOverride;
+
+  @override
   String? description;
   bool isRequired;
   bool isDeprecated;

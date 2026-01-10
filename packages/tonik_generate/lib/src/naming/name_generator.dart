@@ -104,10 +104,11 @@ class NameGenerator {
   /// - AllOfModel → 'allOf'
   /// - ClassModel with name 'User' → 'User'
   /// - ClassModel without name → 'class'
-  /// - Model with alias → uses alias name
+  /// - Model with alias → uses alias name or recurses to wrapped model
   String _generateDiscriminatorName(Model model) {
     return switch (model) {
-      AliasModel() => _sanitizeName(model.name),
+      AliasModel(:final name?) => _sanitizeName(name),
+      AliasModel(:final model) => _generateDiscriminatorName(model),
       StringModel() => 'string',
       IntegerModel() => 'int',
       BooleanModel() => 'bool',

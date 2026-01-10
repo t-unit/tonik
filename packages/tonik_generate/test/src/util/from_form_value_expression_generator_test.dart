@@ -567,5 +567,44 @@ void main() {
         );
       });
     });
+
+    group('NeverModel', () {
+      test('generates throw for required NeverModel', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['neverField']"),
+          model: NeverModel(context: context),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'neverField',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          """throw  FormatDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
+        );
+      });
+
+      test('generates null check before throw for optional NeverModel', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['neverField']"),
+          model: NeverModel(context: context),
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'neverField',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+
+        expect(
+          code,
+          """values['neverField'] == null ? null : throw  FormatDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
+        );
+      });
+    });
   });
 }

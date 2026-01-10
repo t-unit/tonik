@@ -270,5 +270,46 @@ void main() {
         expect(alias.bodyCount, 1);
       });
     });
+
+    group('description override', () {
+      test('ResponseAlias stores description override', () {
+        final referencedResponse = ResponseObject(
+          name: 'original',
+          context: context,
+          headers: const {},
+          description: 'Original description',
+          bodies: const {},
+        );
+
+        final alias = ResponseAlias(
+          name: 'aliased',
+          context: context,
+          response: referencedResponse,
+          description: 'Overridden description',
+        );
+
+        expect(alias.description, 'Overridden description');
+        expect(alias.resolved.description, 'Original description');
+      });
+
+      test('ResponseAlias description is null when not overridden', () {
+        final referencedResponse = ResponseObject(
+          name: 'original',
+          context: context,
+          headers: const {},
+          description: 'Original description',
+          bodies: const {},
+        );
+
+        final alias = ResponseAlias(
+          name: 'aliased',
+          context: context,
+          response: referencedResponse,
+        );
+
+        expect(alias.description, isNull);
+        expect(alias.resolved.description, 'Original description');
+      });
+    });
   });
 }

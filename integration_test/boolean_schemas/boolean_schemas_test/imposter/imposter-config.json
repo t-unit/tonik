@@ -1,0 +1,7 @@
+{
+  "plugin": "openapi",
+  "specFile": "../../openapi.yaml",
+  "response": {
+    "scriptFile": "response.groovy"
+  }
+}

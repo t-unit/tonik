@@ -1,0 +1,246 @@
+openapi: 3.1.0
+info:
+  title: Defs Test API
+  version: "1.0.0"
+  description: |
+    A test API to exercise all $defs usage patterns in OpenAPI 3.1.
+tags:
+  - name: Orders
+    description: Order management
+  - name: Users
+    description: User management
+  - name: Products
+    description: Product catalog
+paths:
+  /orders:
+    post:
+      operationId: createOrder
+      tags:
+        - Orders
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{id}/items:
+    get:
+      operationId: getOrderItems
+      tags:
+        - Orders
+      summary: Get order items
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order/$defs/LineItem'
+  /users:
+    post:
+      operationId: createUser
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTypes/$defs/CreateUserRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTypes/$defs/UserResponse'
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags:
+        - Users
+      summary: Get user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTypes/$defs/UserResponse'
+components:
+  schemas:
+    Order:
+      type: object
+      description: An order with line items
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/Order/$defs/OrderStatus'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order/$defs/LineItem'
+        totals:
+          $ref: '#/components/schemas/Order/$defs/OrderTotals'
+      required:
+        - id
+        - status
+        - items
+      $defs:
+        OrderStatus:
+          type: string
+          description: Status of the order
+          enum:
+            - pending
+            - confirmed
+            - shipped
+            - delivered
+            - cancelled
+        LineItem:
+          type: object
+          description: A line item in an order
+          properties:
+            product_id:
+              type: string
+            quantity:
+              type: integer
+              minimum: 1
+            unit_price:
+              $ref: '#/components/schemas/Order/$defs/Money'
+          required:
+            - product_id
+            - quantity
+            - unit_price
+        Money:
+          type: object
+          description: Monetary amount
+          properties:
+            amount:
+              type: number
+            currency:
+              type: string
+              pattern: '^[A-Z]{3}$'
+          required:
+            - amount
+            - currency
+        OrderTotals:
+          type: object
+          description: Order totals
+          properties:
+            subtotal:
+              $ref: '#/components/schemas/Order/$defs/Money'
+            tax:
+              $ref: '#/components/schemas/Order/$defs/Money'
+            total:
+              $ref: '#/components/schemas/Order/$defs/Money'
+    UserTypes:
+      description: User-related type definitions
+      $defs:
+        CreateUserRequest:
+          type: object
+          description: Request to create a user
+          properties:
+            email:
+              type: string
+              format: email
+            name:
+              type: string
+            profile:
+              $ref: '#/components/schemas/UserTypes/$defs/UserProfile'
+          required:
+            - email
+            - name
+        UserResponse:
+          type: object
+          description: User response
+          properties:
+            id:
+              type: string
+              format: uuid
+            email:
+              type: string
+              format: email
+            name:
+              type: string
+            profile:
+              $ref: '#/components/schemas/UserTypes/$defs/UserProfile'
+            created_at:
+              type: string
+              format: date-time
+          required:
+            - id
+            - email
+            - name
+        UserProfile:
+          type: object
+          description: User profile information
+          properties:
+            bio:
+              type: string
+            avatar_url:
+              type: string
+              format: uri
+            settings:
+              $ref: '#/components/schemas/UserTypes/$defs/UserSettings'
+        UserSettings:
+          type: object
+          description: User settings
+          properties:
+            theme:
+              type: string
+              enum:
+                - light
+                - dark
+                - system
+            notifications_enabled:
+              type: boolean
+    Report:
+      type: object
+      description: A report that references both $defs and component schemas
+      properties:
+        id:
+          type: string
+        order_summary:
+          $ref: '#/components/schemas/Order'
+        metadata:
+          $ref: '#/components/schemas/Report/$defs/ReportMetadata'
+      $defs:
+        ReportMetadata:
+          type: object
+          properties:
+            generated_at:
+              type: string
+              format: date-time
+            format:
+              $ref: '#/components/schemas/Report/$defs/ReportFormat'
+        ReportFormat:
+          type: string
+          enum:
+            - pdf
+            - csv
+            - json

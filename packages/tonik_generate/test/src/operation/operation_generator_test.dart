@@ -50,9 +50,9 @@ void main() {
 
         const expectedMethod = r'''
 Future<TonikResult<void>> call() async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -150,9 +150,9 @@ Future<TonikResult<void>> call() async {
 
         const expectedMethod = r'''
 Future<TonikResult<void>> call({required String myHeader}) async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -255,9 +255,9 @@ Future<TonikResult<void>> call({required String myHeader}) async {
 
         const expectedMethod = r'''
 Future<TonikResult<void>> call({required int petId}) async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
     final _$pathResult = _path(petId: petId);
@@ -361,9 +361,9 @@ Future<TonikResult<void>> call({required int petId}) async {
 
         const expectedMethod = r'''
 Future<TonikResult<void>> call() async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -476,9 +476,9 @@ Future<TonikResult<void>> call() async {
 
         const expectedMethod = r'''
 Future<TonikResult<void>> call({required String filter, String? sort}) async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -863,9 +863,9 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
 
         const expectedMethod = r'''
 Future<TonikResult<String>> call() async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -957,9 +957,9 @@ Future<TonikResult<String>> call() async {
         );
         const expectedMethod = r'''
 Future<TonikResult<void>> call() async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -1068,9 +1068,9 @@ Future<TonikResult<void>> call() async {
 
           const expectedMethod = r'''
 Future<TonikResult<List<ActivePet>>> call() async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);
@@ -1160,9 +1160,9 @@ Future<TonikResult<List<ActivePet>>> call() async {
 
         const expectedMethod = r'''
 Future<TonikResult<void>> call() async {
-  final Uri _$uri;
-  final Object? _$data;
-  final Options _$options;
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
 
   try {
     final _$baseUri = Uri.parse(_dio.options.baseUrl);

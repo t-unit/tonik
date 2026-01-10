@@ -1,5 +1,12 @@
 import 'package:code_builder/code_builder.dart';
 
+/// A property for copyWith generation.
+typedef CopyWithProperty = ({
+  String normalizedName,
+  TypeReference typeRef,
+  bool skipCast,
+});
+
 /// Generates freezed-like copyWith infrastructure for a class.
 ///
 /// This generates:
@@ -8,7 +15,7 @@ import 'package:code_builder/code_builder.dart';
 /// - An implementation class (`_<ClassName>CopyWith`)
 CopyWithResult? generateCopyWith({
   required String className,
-  required List<({String normalizedName, TypeReference typeRef})> properties,
+  required List<CopyWithProperty> properties,
 }) {
   if (properties.isEmpty) {
     return null;
@@ -79,7 +86,7 @@ Class _generateCopyWithInterface(
   String className,
   String interfaceClassName,
   String implClassName,
-  List<({String normalizedName, TypeReference typeRef})> properties,
+  List<CopyWithProperty> properties,
 ) {
   // Generate call method parameters
   final callParams = properties.map(
@@ -140,7 +147,7 @@ Class _generateCopyWithImpl(
   String className,
   String interfaceClassName,
   String implClassName,
-  List<({String normalizedName, TypeReference typeRef})> properties,
+  List<CopyWithProperty> properties,
 ) {
   // Generate call method parameters using Object? with sentinel default
   final callParams = properties.map(
@@ -221,7 +228,7 @@ Class _generateCopyWithImpl(
 
 Code _buildCallMethodBody(
   String className,
-  List<({String normalizedName, TypeReference typeRef})> properties,
+  List<CopyWithProperty> properties,
 ) {
   if (properties.isEmpty) {
     return refer(className).call([]).asA(refer(r'$Res')).returned.statement;
@@ -235,11 +242,19 @@ Code _buildCallMethodBody(
     // we cast back to the original type to pass to the constructor.
     final originalType = prop.typeRef;
 
+    final isObjectNullable =
+        originalType.symbol == 'Object' && (originalType.isNullable ?? false);
+    final shouldSkipCast = prop.skipCast || isObjectNullable;
+
+    final valueExpression = shouldSkipCast
+        ? refer(name)
+        : refer(name).asA(originalType);
+
     namedArgs[name] = refer('identical', 'dart:core')
         .call([refer(name), refer('_sentinel')])
         .conditional(
           refer('this').property(name),
-          refer(name).asA(originalType),
+          valueExpression,
         );
   }
 

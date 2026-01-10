@@ -91,7 +91,15 @@ class EnumGenerator {
       (b) {
         b
           ..name = actualEnumName
-          ..docs.addAll(formatDocComment(model.description));
+          ..docs.addAll(formatDocComment(model.description))
+          ..implements.addAll([
+            refer('MatrixEncodable', 'package:tonik_util/tonik_util.dart'),
+            refer('LabelEncodable', 'package:tonik_util/tonik_util.dart'),
+            refer('SimpleEncodable', 'package:tonik_util/tonik_util.dart'),
+            refer('FormEncodable', 'package:tonik_util/tonik_util.dart'),
+            refer('JsonEncodable', 'package:tonik_util/tonik_util.dart'),
+            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
+          ]);
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -334,7 +342,8 @@ class EnumGenerator {
         )
         ..body = Block.of([
           Code.scope((a) => 'if (value is! ${a(typeReference)}) {'),
-          generateDecodingExceptionExpression(typeErrorMessage).statement,
+          generateDecodingExceptionExpression(typeErrorMessage, raw: true)
+              .statement,
           const Code('}'),
           refer('values')
               .property('firstWhere')
@@ -363,6 +372,7 @@ class EnumGenerator {
                               mb
                                 ..body = generateDecodingExceptionExpression(
                                   valueErrorMessage,
+                                  raw: true,
                                 ).code,
                         ).closure,
                 },
@@ -381,6 +391,7 @@ class EnumGenerator {
     if (!hasFallback) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toJson'
           ..returns = refer(T.toString(), 'dart:core')
           ..lambda = true
@@ -390,6 +401,7 @@ class EnumGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toJson'
         ..returns = refer(T.toString(), 'dart:core')
         ..lambda = false
@@ -413,6 +425,7 @@ class EnumGenerator {
     if (!hasFallback) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..lambda = true
@@ -425,6 +438,7 @@ class EnumGenerator {
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
         ..lambda = false
@@ -453,10 +467,11 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
     if (!hasFallback) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toForm'
           ..returns = refer('String', 'dart:core')
           ..lambda = true
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildFormEncodingParameters())
           ..body = const Code(
             'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
           ),
@@ -465,10 +480,11 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
         ..returns = refer('String', 'dart:core')
         ..lambda = false
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildFormEncodingParameters())
         ..body = Block.of([
           Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
           generateEncodingExceptionExpression(
@@ -493,6 +509,7 @@ return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
     if (!hasFallback) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toLabel'
           ..returns = refer('String', 'dart:core')
           ..lambda = true
@@ -505,6 +522,7 @@ return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toLabel'
         ..returns = refer('String', 'dart:core')
         ..lambda = false
@@ -534,6 +552,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
       return Method(
         (b) => b
           ..name = 'uriEncode'
+          ..annotations.add(refer('override', 'dart:core'))
           ..returns = refer('String', 'dart:core')
           ..lambda = true
           ..optionalParameters.addAll([
@@ -563,6 +582,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
     return Method(
       (b) => b
         ..name = 'uriEncode'
+        ..annotations.add(refer('override', 'dart:core'))
         ..returns = refer('String', 'dart:core')
         ..lambda = false
         ..optionalParameters.addAll([
@@ -605,6 +625,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
     if (!hasFallback) {
       return Method(
         (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toMatrix'
           ..returns = refer('String', 'dart:core')
           ..lambda = true
@@ -624,6 +645,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
 
     return Method(
       (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toMatrix'
         ..returns = refer('String', 'dart:core')
         ..lambda = false

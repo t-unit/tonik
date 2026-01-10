@@ -90,20 +90,23 @@ class ResponseGenerator {
   ) {
     return generateCopyWith(
       className: className,
-      properties: properties
-          .map(
-            (prop) => (
-              normalizedName: prop.normalizedName,
-              typeRef: typeReference(
-                prop.property.model,
-                nameManager,
-                package,
-                isNullableOverride:
-                    prop.property.isNullable || !prop.property.isRequired,
-              ),
+      properties: properties.map(
+        (prop) {
+          final model = prop.property.model;
+          final resolvedModel = model is AliasModel ? model.resolved : model;
+          return (
+            normalizedName: prop.normalizedName,
+            typeRef: typeReference(
+              prop.property.model,
+              nameManager,
+              package,
+              isNullableOverride:
+                  prop.property.isNullable || !prop.property.isRequired,
             ),
-          )
-          .toList(),
+            skipCast: resolvedModel is AnyModel,
+          );
+        },
+      ).toList(),
     );
   }
 

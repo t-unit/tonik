@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'security_scheme.g.dart';
 
-enum SecuritySchemeType { apiKey, http, oauth2, openIdConnect }
+enum SecuritySchemeType { apiKey, http, mutualTLS, oauth2, openIdConnect }
 
 enum ApiKeyLocation { query, header, cookie }
 

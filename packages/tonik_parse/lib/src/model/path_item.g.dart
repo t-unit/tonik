@@ -7,7 +7,6 @@ part of 'path_item.dart';
 // **************************************************************************
 
 PathItem _$PathItemFromJson(Map<String, dynamic> json) => PathItem(
-  ref: json['ref'] as String?,
   summary: json['summary'] as String?,
   description: json['description'] as String?,
   get: json['get'] == null

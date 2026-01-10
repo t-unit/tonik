@@ -46,10 +46,31 @@ Expression buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() => _buildAnyModelMatrixExpression(
+      valueExpression,
+      paramName: paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for matrix encoding: $model',
     ),
   };
+}
+
+Expression _buildAnyModelMatrixExpression(
+  Expression valueExpression, {
+  required Expression paramName,
+  required Expression explode,
+  required Expression allowEmpty,
+}) {
+  return refer('encodeAnyToMatrix', 'package:tonik_util/tonik_util.dart').call(
+    [valueExpression, paramName],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
 }
 
 Expression _buildListMatrixExpression(
@@ -78,10 +99,7 @@ Expression _buildListMatrixExpression(
     DecimalModel() ||
     UriModel() ||
     DateModel() ||
-    EnumModel() ||
-    AllOfModel() ||
-    OneOfModel() ||
-    AnyOfModel() =>
+    EnumModel() =>
       valueExpression
           .property('map')
           .call([
@@ -114,6 +132,38 @@ Expression _buildListMatrixExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body =
+                    refer(
+                          'encodeAnyToUri',
+                          'package:tonik_util/tonik_util.dart',
+                        )
+                        .call(
+                          [refer('e')],
+                          {'allowEmpty': allowEmpty},
+                        )
+                        .code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
     ClassModel() || ListModel() =>
       valueExpression
           .property('toMatrix')

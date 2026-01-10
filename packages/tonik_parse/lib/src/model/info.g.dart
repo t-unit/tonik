@@ -8,6 +8,7 @@ part of 'info.dart';
 
 Info _$InfoFromJson(Map<String, dynamic> json) => Info(
   title: json['title'] as String,
+  summary: json['summary'] as String?,
   description: json['description'] as String?,
   version: json['version'] as String,
   contact: json['contact'] == null

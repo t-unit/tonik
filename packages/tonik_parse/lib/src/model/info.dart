@@ -8,6 +8,7 @@ part 'info.g.dart';
 class Info {
   Info({
     required this.title,
+    required this.summary,
     required this.description,
     required this.version,
     required this.contact,
@@ -18,6 +19,7 @@ class Info {
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
 
   final String title;
+  final String? summary;
   final String? description;
   final String version;
   final Contact? contact;
@@ -26,6 +28,7 @@ class Info {
 
   @override
   String toString() =>
-      'Info{title: $title, description: $description, version: $version, '
-      'contact: $contact, license: $license, termsOfService: $termsOfService}';
+      'Info{title: $title, summary: $summary, description: $description, '
+      'version: $version, contact: $contact, license: $license, '
+      'termsOfService: $termsOfService}';
 }

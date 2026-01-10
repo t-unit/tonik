@@ -357,5 +357,29 @@ void main() {
         ),
       );
     });
+
+    test('generates encodeAnyToDeepObject call for AnyModel', () {
+      final parameter = createParameter(
+        name: 'data',
+        rawName: 'data',
+        model: AnyModel(context: context),
+        explode: true,
+        allowEmpty: false,
+      );
+
+      final result = buildToDeepObjectQueryParameterCode(
+        'data',
+        parameter,
+      );
+
+      final code = result.accept(emitter).toString();
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          "encodeAnyToDeepObject(data, r'data', "
+          'explode: true, allowEmpty: false, )',
+        ),
+      );
+    });
   });
 }

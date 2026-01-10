@@ -392,7 +392,28 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates encodeAnyToMatrix call for AnyModel', () {
+      final model = AnyModel(context: context);
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = encodeAnyToMatrix(value, paramName, explode: explode, allowEmpty: allowEmpty);
       ''';
 
       expect(

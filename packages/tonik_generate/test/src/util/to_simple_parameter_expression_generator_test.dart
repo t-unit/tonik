@@ -378,7 +378,27 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)).toList().toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList().toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates encodeAnyToSimple call for AnyModel', () {
+      final model = AnyModel(context: context);
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = encodeAnyToSimple(value, explode: explode, allowEmpty: allowEmpty);
       ''';
 
       expect(

@@ -1,8 +1,17 @@
+import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 
 void main() {
+  late DartEmitter emitter;
+
+  setUp(() {
+    emitter = DartEmitter(useNullSafetySyntax: true);
+  });
+
+  String emit(Expression expr) => expr.accept(emitter).toString();
+
   group('buildToFormPropertyExpression', () {
     late Context context;
 
@@ -22,8 +31,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('name', property);
         expect(
-          result,
-          'name.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'name.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -38,8 +47,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('name', property);
         expect(
-          result,
-          'name?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'name?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -54,8 +63,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('count', property);
         expect(
-          result,
-          'count.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'count.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -70,8 +79,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('count', property);
         expect(
-          result,
-          'count?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'count?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -86,8 +95,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('price', property);
         expect(
-          result,
-          'price.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'price.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -102,8 +111,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('price', property);
         expect(
-          result,
-          'price?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'price?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -118,8 +127,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('value', property);
         expect(
-          result,
-          'value.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'value.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -134,8 +143,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('active', property);
         expect(
-          result,
-          'active.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'active.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -150,8 +159,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('active', property);
         expect(
-          result,
-          'active?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'active?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -166,8 +175,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('timestamp', property);
         expect(
-          result,
-          'timestamp.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'timestamp.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -182,8 +191,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('timestamp', property);
         expect(
-          result,
-          'timestamp?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'timestamp?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -198,8 +207,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('date', property);
         expect(
-          result,
-          'date.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'date.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -214,8 +223,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('date', property);
         expect(
-          result,
-          'date?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'date?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -230,8 +239,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('amount', property);
         expect(
-          result,
-          'amount.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'amount.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -246,8 +255,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('amount', property);
         expect(
-          result,
-          'amount?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'amount?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -262,8 +271,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('url', property);
         expect(
-          result,
-          'url.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'url.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -278,8 +287,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('url', property);
         expect(
-          result,
-          'url?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'url?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
     });
@@ -298,9 +307,9 @@ void main() {
 
           final result = buildToFormPropertyExpression('name', property);
           expect(
-            result,
+            emit(result),
             equals(
-              "name?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+              "name?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
             ),
           );
         },
@@ -319,9 +328,9 @@ void main() {
 
           final result = buildToFormPropertyExpression('count', property);
           expect(
-            result,
+            emit(result),
             equals(
-              "count?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+              "count?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
             ),
           );
         },
@@ -340,9 +349,9 @@ void main() {
 
           final result = buildToFormPropertyExpression('price', property);
           expect(
-            result,
+            emit(result),
             equals(
-              "price?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+              "price?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
             ),
           );
         },
@@ -361,9 +370,9 @@ void main() {
 
           final result = buildToFormPropertyExpression('active', property);
           expect(
-            result,
+            emit(result),
             equals(
-              "active?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+              '''active?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? '\'''',
             ),
           );
         },
@@ -382,10 +391,10 @@ void main() {
 
           final result = buildToFormPropertyExpression('timestamp', property);
           expect(
-            result,
+            emit(result),
             equals(
               'timestamp?.toForm(explode: explode, '
-              "allowEmpty: allowEmpty) ?? ''",
+              "allowEmpty: allowEmpty, ) ?? ''",
             ),
           );
         },
@@ -402,9 +411,9 @@ void main() {
 
         final result = buildToFormPropertyExpression('date', property);
         expect(
-          result,
+          emit(result),
           equals(
-            "date?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+            "date?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
           ),
         );
       });
@@ -422,9 +431,9 @@ void main() {
 
           final result = buildToFormPropertyExpression('amount', property);
           expect(
-            result,
+            emit(result),
             equals(
-              "amount?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+              '''amount?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? '\'''',
             ),
           );
         },
@@ -441,16 +450,16 @@ void main() {
 
         final result = buildToFormPropertyExpression('url', property);
         expect(
-          result,
+          emit(result),
           equals(
-            "url?.toForm(explode: explode, allowEmpty: allowEmpty) ?? ''",
+            "url?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
           ),
         );
       });
     });
 
     group('complex types', () {
-      test('throws for ListModel', () {
+      test('generates correct expression for ListModel', () {
         final property = Property(
           name: 'items',
           model: ListModel(
@@ -462,13 +471,14 @@ void main() {
           isDeprecated: false,
         );
 
+        final result = buildToFormPropertyExpression('items', property);
         expect(
-          () => buildToFormPropertyExpression('items', property),
-          throwsA(isA<UnsupportedError>()),
+          emit(result),
+          'items.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
-      test('throws for ClassModel', () {
+      test('generates correct expression for ClassModel', () {
         final property = Property(
           name: 'nested',
           model: ClassModel(
@@ -482,13 +492,14 @@ void main() {
           isDeprecated: false,
         );
 
+        final result = buildToFormPropertyExpression('nested', property);
         expect(
-          () => buildToFormPropertyExpression('nested', property),
-          throwsA(isA<UnsupportedError>()),
+          emit(result),
+          'nested.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
-      test('throws for EnumModel', () {
+      test('generates correct expression for EnumModel', () {
         final property = Property(
           name: 'status',
           model: EnumModel<String>(
@@ -506,9 +517,10 @@ void main() {
           isDeprecated: false,
         );
 
+        final result = buildToFormPropertyExpression('status', property);
         expect(
-          () => buildToFormPropertyExpression('status', property),
-          throwsA(isA<UnsupportedError>()),
+          emit(result),
+          'status.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
     });
@@ -529,8 +541,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('userId', property);
         expect(
-          result,
-          'userId.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'userId.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -549,12 +561,12 @@ void main() {
 
         final result = buildToFormPropertyExpression('userId', property);
         expect(
-          result,
-          'userId?.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'userId?.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
-      test('throws for AliasModel wrapping complex type', () {
+      test('handles AliasModel wrapping complex type', () {
         final property = Property(
           name: 'users',
           model: AliasModel(
@@ -570,9 +582,10 @@ void main() {
           isDeprecated: false,
         );
 
+        final result = buildToFormPropertyExpression('users', property);
         expect(
-          () => buildToFormPropertyExpression('users', property),
-          throwsA(isA<UnsupportedError>()),
+          emit(result),
+          'users.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
     });
@@ -589,8 +602,8 @@ void main() {
 
         final result = buildToFormPropertyExpression('name', property);
         expect(
-          result,
-          'name.toForm(explode: explode, allowEmpty: allowEmpty)',
+          emit(result),
+          'name.toForm(explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
@@ -609,9 +622,9 @@ void main() {
           useQueryComponent: true,
         );
         expect(
-          result,
+          emit(result),
           'name.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true)',
+          'useQueryComponent: true, )',
         );
       });
 
@@ -630,9 +643,9 @@ void main() {
           useQueryComponent: true,
         );
         expect(
-          result,
+          emit(result),
           'name?.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true)',
+          'useQueryComponent: true, )',
         );
       });
 
@@ -653,9 +666,9 @@ void main() {
             useQueryComponent: true,
           );
           expect(
-            result,
+            emit(result),
             'name?.toForm(explode: explode, allowEmpty: allowEmpty, '
-            "useQueryComponent: true) ?? ''",
+            "useQueryComponent: true, ) ?? ''",
           );
         },
       );
@@ -675,9 +688,9 @@ void main() {
           useQueryComponent: true,
         );
         expect(
-          result,
+          emit(result),
           'count.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true)',
+          'useQueryComponent: true, )',
         );
       });
 
@@ -696,9 +709,9 @@ void main() {
           useQueryComponent: true,
         );
         expect(
-          result,
+          emit(result),
           'timestamp.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true)',
+          'useQueryComponent: true, )',
         );
       });
 
@@ -722,9 +735,9 @@ void main() {
           useQueryComponent: true,
         );
         expect(
-          result,
+          emit(result),
           'userId.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true)',
+          'useQueryComponent: true, )',
         );
       });
     });

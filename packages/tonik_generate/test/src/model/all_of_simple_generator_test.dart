@@ -106,7 +106,7 @@ void main() {
             .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(listSimple);
           final list2Simple = list2
-            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
+            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty))
             .toList()
             .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
           values.add(list2Simple);

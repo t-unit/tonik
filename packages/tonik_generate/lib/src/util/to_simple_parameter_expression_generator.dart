@@ -40,6 +40,14 @@ Expression buildSimpleParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() =>
+      refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
+        [valueExpression],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        },
+      ),
     _ => throw UnimplementedError(
       'Unsupported model type for simple encoding: $model',
     ),
@@ -68,10 +76,7 @@ Expression _buildListSimpleExpression(
     DecimalModel() ||
     UriModel() ||
     DateModel() ||
-    EnumModel() ||
-    AllOfModel() ||
-    OneOfModel() ||
-    AnyOfModel() =>
+    EnumModel() =>
       valueExpression
           .property('map')
           .call([
@@ -105,6 +110,32 @@ Expression _buildListSimpleExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
+      valueExpression
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer(
+                  'encodeAnyToUri',
+                  'package:tonik_util/tonik_util.dart',
+                ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
     ClassModel() || ListModel() => valueExpression.property('toSimple').call(
       [],
       {

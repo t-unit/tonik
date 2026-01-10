@@ -156,5 +156,63 @@ void main() {
       expect(resolved.name, 'secondAliasName');
       expect(resolved.rawName, 'originalRawName');
     });
+
+    group('description override', () {
+      test('QueryParameterAlias stores description override', () {
+        final context = Context.initial();
+        final model = StringModel(context: context);
+
+        final originalParam = QueryParameterObject(
+          name: 'originalName',
+          rawName: 'originalRawName',
+          description: 'Original description',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: model,
+          encoding: QueryParameterEncoding.form,
+          context: context,
+        );
+
+        final alias = QueryParameterAlias(
+          name: 'aliasName',
+          parameter: originalParam,
+          context: context,
+          description: 'Overridden description',
+        );
+
+        expect(alias.description, 'Overridden description');
+        expect(alias.resolve().description, 'Original description');
+      });
+
+      test('QueryParameterAlias description is null when not overridden', () {
+        final context = Context.initial();
+        final model = StringModel(context: context);
+
+        final originalParam = QueryParameterObject(
+          name: 'originalName',
+          rawName: 'originalRawName',
+          description: 'Original description',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: model,
+          encoding: QueryParameterEncoding.form,
+          context: context,
+        );
+
+        final alias = QueryParameterAlias(
+          name: 'aliasName',
+          parameter: originalParam,
+          context: context,
+        );
+
+        expect(alias.description, isNull);
+      });
+    });
   });
 }

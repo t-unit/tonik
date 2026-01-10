@@ -83,6 +83,26 @@ void main() {
       expect(ctorParams.every((p) => p.toThis), isTrue);
     });
 
+    test('generates AnyOf class implementing ParameterEncodable', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexibleModel',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      expect(klass.implements.length, 2);
+      expect(
+        klass.implements.map((e) => e.accept(emitter).toString()).toSet(),
+        {'ParameterEncodable', 'UriEncodable'},
+      );
+    });
+
     group('doc comments', () {
       test('generates class with doc comment from description', () {
         final model = AnyOfModel(
@@ -603,6 +623,7 @@ void main() {
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
         const expectedMethod = '''
+@override
 String toSimple({required bool explode, required bool allowEmpty}) {
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
@@ -693,13 +714,19 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         );
         expect(toFormMethod.name, 'toForm');
         expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toFormMethod.optionalParameters.length, 2);
+        expect(toFormMethod.optionalParameters.length, 3);
         expect(
           toFormMethod.optionalParameters.any((p) => p.name == 'explode'),
           isTrue,
         );
         expect(
           toFormMethod.optionalParameters.any((p) => p.name == 'allowEmpty'),
+          isTrue,
+        );
+        expect(
+          toFormMethod.optionalParameters.any(
+            (p) => p.name == 'useQueryComponent',
+          ),
           isTrue,
         );
 
@@ -709,7 +736,12 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         final generated = format(toFormMethod.accept(emitter).toString());
 
         const expectedMethod = '''
-String toForm({required bool explode, required bool allowEmpty}) {
+@override
+String toForm({
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
   final mapValues = <Map<String, String>>[];
   String? discriminatorValue;
   if (company != null) {
@@ -772,6 +804,7 @@ String toForm({required bool explode, required bool allowEmpty}) {
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
         const expectedMethod = '''
+@override
 String toSimple({required bool explode, required bool allowEmpty}) {
   final values = <String>{};
   if (int != null) {
@@ -844,6 +877,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
         const expectedMethod = '''
+@override
 String toSimple({required bool explode, required bool allowEmpty}) {
   final values = <String>{};
   final mapValues = <Map<String, String>>[];
@@ -2056,6 +2090,145 @@ Map<String, String> parameterProperties({
 
       // Verify no typedef is generated.
       expect(result.code, isNot(contains('typedef')));
+    });
+
+    test('encoding methods have @override annotation', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexibleModel',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      final encodingMethods = [
+        'toJson',
+        'toSimple',
+        'toForm',
+        'toLabel',
+        'toMatrix',
+        'toDeepObject',
+      ];
+      for (final methodName in encodingMethods) {
+        final method = klass.methods.firstWhere(
+          (m) => m.name == methodName,
+          orElse: () => throw StateError('Method $methodName not found'),
+        );
+        expect(
+          method.annotations,
+          hasLength(1),
+          reason: '$methodName should have @override annotation',
+        );
+        expect(
+          method.annotations.first.accept(emitter).toString(),
+          'override',
+          reason: '$methodName should have @override annotation',
+        );
+      }
+    });
+  });
+
+  group('uriEncode', () {
+    test('generates uriEncode method with useQueryComponent parameter', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'StringAndNumber',
+        models: {
+          (discriminatorValue: 'string', model: StringModel(context: context)),
+          (discriminatorValue: 'number', model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final uriEncodeMethod = generatedClass.methods.firstWhere(
+        (m) => m.name == 'uriEncode',
+      );
+
+      expect(uriEncodeMethod.optionalParameters, hasLength(2));
+
+      final allowEmptyParam = uriEncodeMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = uriEncodeMethod.optionalParameters
+          .firstWhere((p) => p.name == 'useQueryComponent');
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
+    });
+  });
+
+  group('toForm', () {
+    test('generates toForm method with useQueryComponent parameter', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+
+      final toFormMethod = klass.methods.firstWhere(
+        (m) => m.name == 'toForm',
+      );
+
+      expect(toFormMethod.optionalParameters.length, 3);
+
+      final explodeParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'explode',
+      );
+      expect(explodeParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(explodeParam.named, isTrue);
+      expect(explodeParam.required, isTrue);
+
+      final allowEmptyParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowEmpty',
+      );
+      expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
+      expect(allowEmptyParam.named, isTrue);
+      expect(allowEmptyParam.required, isTrue);
+
+      final useQueryComponentParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'useQueryComponent',
+      );
+      expect(
+        useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+        'bool',
+      );
+      expect(useQueryComponentParam.named, isTrue);
+      expect(useQueryComponentParam.required, isFalse);
+      expect(
+        useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+        'false',
+      );
     });
   });
 }

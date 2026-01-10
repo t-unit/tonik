@@ -37,6 +37,9 @@ extension StableModelKey on Model {
       DateTimeModel() => 'DateTimeModel',
       DecimalModel() => 'DecimalModel',
       UriModel() => 'UriModel',
+      BinaryModel() => 'BinaryModel',
+      AnyModel() => 'AnyModel',
+      NeverModel() => 'NeverModel',
       _ => throw UnimplementedError(
         'stableKey not implemented for $runtimeType',
       ),

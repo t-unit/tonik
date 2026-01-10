@@ -90,6 +90,18 @@ TypeReference typeReference(
         )
         ..isNullable = isNullableOverride,
     ),
+    NeverModel _ => TypeReference(
+      (b) => b
+        ..symbol = 'Never'
+        ..url = 'dart:core'
+        ..isNullable = isNullableOverride,
+    ),
+    AnyModel _ => TypeReference(
+      (b) => b
+        ..symbol = 'Object'
+        ..url = 'dart:core'
+        ..isNullable = true,
+    ),
     final CompositeModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)
@@ -174,6 +186,19 @@ Parameter buildStringParameter(
 List<Parameter> buildEncodingParameters() => [
   buildBoolParameter('explode', required: true),
   buildBoolParameter('allowEmpty', required: true),
+];
+
+/// Returns a list of encoding parameters for form encoding, which includes
+/// explode, allowEmpty, and useQueryComponent (optional with default false).
+List<Parameter> buildFormEncodingParameters() => [
+  ...buildEncodingParameters(),
+  Parameter(
+    (b) => b
+      ..name = 'useQueryComponent'
+      ..type = refer('bool', 'dart:core')
+      ..named = true
+      ..defaultTo = literalFalse.code,
+  ),
 ];
 
 /// Returns a LiteralMapExpression for an empty [Map<String, String>] literal.

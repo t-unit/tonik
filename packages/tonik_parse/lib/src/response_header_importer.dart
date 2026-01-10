@@ -89,6 +89,7 @@ class ResponseHeaderImporter {
           name: name,
           header: existing,
           context: context,
+          description: wrapper.description,
         );
 
       case InlinedObject<Header>():

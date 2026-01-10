@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 /// Creates a Dart expression that correctly deserializes a form-encoded value
 /// to its Dart representation.
@@ -126,8 +127,21 @@ Expression buildFromFormValueExpression(
       explode: explode,
     ),
 
+    NeverModel() => _buildNeverModelExpression(value, isRequired),
+
+    AnyModel() => value,
+
     _ => throw UnimplementedError('Unsupported model type: $model'),
   };
+}
+
+Expression _buildNeverModelExpression(Expression value, bool isRequired) {
+  final throwExpr = generateFormatDecodingExceptionExpression(
+    'Cannot decode NeverModel - this type does not permit any value.',
+  );
+  return isRequired
+      ? throwExpr
+      : value.equalTo(literalNull).conditional(literalNull, throwExpr);
 }
 
 Expression _buildFromFormExpression(
@@ -274,6 +288,10 @@ Expression _buildListFromFormExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
+    NeverModel() => generateFormatDecodingExceptionExpression(
+      'Cannot decode List<NeverModel> - this type does not permit any value.',
+    ),
+    AnyModel() => listDecode,
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$content is not supported'),
   };

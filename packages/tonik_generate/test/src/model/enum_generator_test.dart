@@ -578,10 +578,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Color, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Color, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Color for value: $value'), );
+            orElse: () => throw JsonDecodingException(r'No matching Color for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -615,10 +615,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! int) {
-            throw JsonDecodingException('Expected int for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected int for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
+            orElse: () => throw JsonDecodingException(r'No matching Status for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -651,10 +651,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
+            orElse: () => throw JsonDecodingException(r'No matching Status for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -947,7 +947,6 @@ void main() {
         );
         expect(toSimple.lambda, isTrue);
       });
-
     });
 
     group('fromForm factory constructor', () {
@@ -1128,7 +1127,7 @@ void main() {
         );
 
         expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toForm.optionalParameters, hasLength(2));
+        expect(toForm.optionalParameters, hasLength(3));
 
         final explodeParam = toForm.optionalParameters.firstWhere(
           (p) => p.name == 'explode',
@@ -1143,6 +1142,20 @@ void main() {
         expect(allowEmptyParam.type?.accept(DartEmitter()).toString(), 'bool');
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
+
+        final useQueryComponentParam = toForm.optionalParameters.firstWhere(
+          (p) => p.name == 'useQueryComponent',
+        );
+        expect(
+          useQueryComponentParam.type?.accept(DartEmitter()).toString(),
+          'bool',
+        );
+        expect(useQueryComponentParam.named, isTrue);
+        expect(useQueryComponentParam.required, isFalse);
+        expect(
+          useQueryComponentParam.defaultTo?.accept(DartEmitter()).toString(),
+          'false',
+        );
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -1171,7 +1184,7 @@ void main() {
         );
 
         expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toForm.optionalParameters, hasLength(2));
+        expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -1199,7 +1212,7 @@ void main() {
         );
 
         expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toForm.optionalParameters, hasLength(2));
+        expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -1228,7 +1241,7 @@ void main() {
         );
 
         expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toForm.optionalParameters, hasLength(2));
+        expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -1237,7 +1250,6 @@ void main() {
         );
         expect(toForm.lambda, isTrue);
       });
-
     });
 
     group('toLabel method generation', () {
@@ -1338,7 +1350,6 @@ void main() {
           'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
-
     });
 
     group('toMatrix method generation', () {
@@ -1506,7 +1517,6 @@ void main() {
         );
         expect(toMatrix.lambda, isTrue);
       });
-
     });
 
     group('uriEncode method generation', () {
@@ -1647,7 +1657,6 @@ void main() {
         );
         expect(uriEncode.lambda, isTrue);
       });
-
     });
 
     group('fallback/unknown case', () {
@@ -1714,7 +1723,7 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
             orElse: () => Status.unknown,
@@ -1755,7 +1764,7 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! int) {
-            throw JsonDecodingException('Expected int for Code, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected int for Code, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
             orElse: () => Code.unknown,
@@ -1847,7 +1856,7 @@ void main() {
 
         expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
         expect(toForm.lambda, isFalse);
-        expect(toForm.optionalParameters, hasLength(2));
+        expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
@@ -2040,10 +2049,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'),
+            orElse: () => throw JsonDecodingException(r'No matching Status for value: $value'),
           );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
@@ -2177,7 +2186,7 @@ void main() {
           final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
           const expectedBody = r'''
             if (value is! String) {
-              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+              throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
             }
             return values.firstWhere((e) => e.rawValue == value,
               orElse: () => Status.fallback,
@@ -2232,7 +2241,7 @@ void main() {
           final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
           const expectedBody = r'''
             if (value is! String) {
-              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+              throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
             }
             return values.firstWhere((e) => e.rawValue == value,
               orElse: () => Status.fallbackUnknown,
@@ -2505,6 +2514,78 @@ void main() {
           expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
         },
       );
+    });
+
+    test(
+      'generates enum implementing encoding interfaces '
+      'except DeepObjectEncodable',
+      () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Color',
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        final implementedInterfaces = generated.enumValue.implements
+            .map((i) => i.accept(DartEmitter()).toString())
+            .toList();
+
+        expect(implementedInterfaces, hasLength(6));
+        expect(implementedInterfaces, contains('MatrixEncodable'));
+        expect(implementedInterfaces, contains('LabelEncodable'));
+        expect(implementedInterfaces, contains('SimpleEncodable'));
+        expect(implementedInterfaces, contains('FormEncodable'));
+        expect(implementedInterfaces, contains('JsonEncodable'));
+        expect(implementedInterfaces, contains('UriEncodable'));
+        expect(implementedInterfaces, isNot(contains('DeepObjectEncodable')));
+        expect(implementedInterfaces, isNot(contains('ParameterEncodable')));
+      },
+    );
+
+    test('encoding methods have @override annotation', () {
+      final model = EnumModel<String>(
+        isDeprecated: false,
+        name: 'Color',
+        values: {
+          const EnumEntry(value: 'red'),
+          const EnumEntry(value: 'green'),
+        },
+        isNullable: false,
+        context: Context.initial().push('test'),
+      );
+
+      final generated = generator.generateEnum(model, 'Color');
+
+      final encodingMethods = [
+        'toJson',
+        'toSimple',
+        'toForm',
+        'toLabel',
+        'toMatrix',
+      ];
+      for (final methodName in encodingMethods) {
+        final method = generated.enumValue.methods.firstWhere(
+          (m) => m.name == methodName,
+          orElse: () => throw StateError('Method $methodName not found'),
+        );
+        expect(
+          method.annotations,
+          hasLength(1),
+          reason: '$methodName should have @override annotation',
+        );
+        expect(
+          method.annotations.first.accept(DartEmitter()).toString(),
+          'override',
+          reason: '$methodName should have @override annotation',
+        );
+      }
     });
   });
 }

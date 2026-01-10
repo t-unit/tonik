@@ -1,0 +1,23 @@
+name: ref_siblings_test
+description: Integration tests for $ref siblings support (OAS 3.1).
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  dio: ^5.8.0
+  path: ^1.9.1
+  ref_siblings_api:
+    path: ../ref_siblings_api
+  tonik_util: ^0.1.0
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^10.0.0
+
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

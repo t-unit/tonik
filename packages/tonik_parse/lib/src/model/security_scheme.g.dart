@@ -23,6 +23,7 @@ SecurityScheme _$SecuritySchemeFromJson(Map<String, dynamic> json) =>
 const _$SecuritySchemeTypeEnumMap = {
   SecuritySchemeType.apiKey: 'apiKey',
   SecuritySchemeType.http: 'http',
+  SecuritySchemeType.mutualTLS: 'mutualTLS',
   SecuritySchemeType.oauth2: 'oauth2',
   SecuritySchemeType.openIdConnect: 'openIdConnect',
 };
@@ -42,14 +43,10 @@ OAuth2Flows _$OAuth2FlowsFromJson(Map<String, dynamic> json) => OAuth2Flows(
       : OAuth2Flow.fromJson(json['password'] as Map<String, dynamic>),
   clientCredentials: json['clientCredentials'] == null
       ? null
-      : OAuth2Flow.fromJson(
-          json['clientCredentials'] as Map<String, dynamic>,
-        ),
+      : OAuth2Flow.fromJson(json['clientCredentials'] as Map<String, dynamic>),
   authorizationCode: json['authorizationCode'] == null
       ? null
-      : OAuth2Flow.fromJson(
-          json['authorizationCode'] as Map<String, dynamic>,
-        ),
+      : OAuth2Flow.fromJson(json['authorizationCode'] as Map<String, dynamic>),
 );
 
 OAuth2Flow _$OAuth2FlowFromJson(Map<String, dynamic> json) => OAuth2Flow(

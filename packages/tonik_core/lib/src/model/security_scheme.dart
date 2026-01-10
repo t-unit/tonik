@@ -18,6 +18,7 @@ sealed class SecurityScheme {
 enum SecuritySchemeType {
   apiKey,
   http,
+  mutualTLS,
   oauth2,
   openIdConnect,
 }
@@ -84,6 +85,17 @@ class OpenIdConnectSecurityScheme extends SecurityScheme {
   String toString() =>
       'OpenIdConnectSecurityScheme{type: $type, description: $description, '
       'openIdConnectUrl: $openIdConnectUrl}';
+}
+
+class MutualTlsSecurityScheme extends SecurityScheme {
+  const MutualTlsSecurityScheme({
+    required super.type,
+    required super.description,
+  });
+
+  @override
+  String toString() =>
+      'MutualTlsSecurityScheme{type: $type, description: $description}';
 }
 
 @immutable

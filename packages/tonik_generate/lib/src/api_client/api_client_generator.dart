@@ -4,6 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
@@ -133,6 +134,12 @@ class ApiClientGenerator {
       }
     }
 
+    // Add parameter descriptions to documentation
+    final paramDocs = _generateParameterDocs(operation, nameManager);
+    if (paramDocs.isNotEmpty) {
+      docs.addAll(paramDocs);
+    }
+
     return Method(
       (b) {
         b
@@ -223,8 +230,118 @@ class ApiClientGenerator {
             : '';
         lines.add('/// - OpenID Connect$description');
         lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
+
+      case MutualTlsSecurityScheme():
+        final description = (scheme.description?.isNotEmpty ?? false)
+            ? ': ${scheme.description}'
+            : '';
+        lines.add('/// - Mutual TLS$description');
     }
 
     return lines;
+  }
+
+  /// Generates documentation for operation parameters.
+  ///
+  /// For alias parameters, uses the override description if present,
+  /// otherwise falls back to the resolved parameter's description.
+  List<String> _generateParameterDocs(
+    Operation operation,
+    NameManager nameManager,
+  ) {
+    final docs = <String>[];
+
+    final normalizedParams = normalizeRequestParameters(
+      pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
+      queryParameters: operation.queryParameters
+          .map((p) => p.resolve())
+          .toSet(),
+      headers: operation.headers.map((p) => p.resolve()).toSet(),
+    );
+
+    final paramDescriptionsByOriginalName = <String, String>{};
+
+    for (final param in operation.pathParameters) {
+      final description = _getPathParameterDescription(param);
+      if (description != null && description.isNotEmpty) {
+        final resolvedParam = param.resolve();
+        final name = resolvedParam.name;
+        if (name != null) {
+          paramDescriptionsByOriginalName[name] = description;
+        }
+      }
+    }
+
+    for (final param in operation.queryParameters) {
+      final description = _getQueryParameterDescription(param);
+      if (description != null && description.isNotEmpty) {
+        final resolvedParam = param.resolve();
+        final name = resolvedParam.name;
+        if (name != null) {
+          paramDescriptionsByOriginalName[name] = description;
+        }
+      }
+    }
+
+    for (final param in operation.headers) {
+      final description = _getHeaderDescription(param);
+      if (description != null && description.isNotEmpty) {
+        final resolvedParam = param.resolve();
+        final name = resolvedParam.name;
+        if (name != null) {
+          paramDescriptionsByOriginalName[name] = description;
+        }
+      }
+    }
+
+    for (final pathParam in normalizedParams.pathParameters) {
+      final description =
+          paramDescriptionsByOriginalName[pathParam.parameter.name];
+      if (description != null && description.isNotEmpty) {
+        docs.add('/// [${pathParam.normalizedName}] $description');
+      }
+    }
+
+    for (final queryParam in normalizedParams.queryParameters) {
+      final description =
+          paramDescriptionsByOriginalName[queryParam.parameter.name];
+      if (description != null && description.isNotEmpty) {
+        docs.add('/// [${queryParam.normalizedName}] $description');
+      }
+    }
+
+    for (final headerParam in normalizedParams.headers) {
+      final description =
+          paramDescriptionsByOriginalName[headerParam.parameter.name];
+      if (description != null && description.isNotEmpty) {
+        docs.add('/// [${headerParam.normalizedName}] $description');
+      }
+    }
+
+    return docs;
+  }
+
+  String? _getPathParameterDescription(PathParameter param) {
+    return switch (param) {
+      PathParameterAlias(:final description, :final parameter) =>
+        description ?? _getPathParameterDescription(parameter),
+      PathParameterObject(:final description) => description,
+    };
+  }
+
+  String? _getQueryParameterDescription(QueryParameter param) {
+    return switch (param) {
+      QueryParameterAlias(:final description, :final parameter) =>
+        description ?? _getQueryParameterDescription(parameter),
+      QueryParameterObject(:final description) => description,
+    };
+  }
+
+  String? _getHeaderDescription(RequestHeader param) {
+    return switch (param) {
+      RequestHeaderAlias(:final description, :final header) =>
+        description ?? _getHeaderDescription(header),
+      RequestHeaderObject(:final description) => description,
+    };
   }
 }

@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/encoding.dart';
-import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
 part 'media_type.g.dart';
@@ -12,7 +11,8 @@ class MediaType {
   factory MediaType.fromJson(Map<String, dynamic> json) =>
       _$MediaTypeFromJson(json);
 
-  final ReferenceWrapper<Schema>? schema;
+  @SchemaConverter()
+  final Schema? schema;
   final Map<String, Encoding>? encoding;
 
   // We ignore the example and examples properties.

@@ -20,6 +20,12 @@
 /integration_test/petstore_config/petstore_deprecation_api
 /integration_test/binary_models/binary_models_api
 /integration_test/form_urlencoded/form_urlencoded_api
+/integration_test/boolean_schemas/boolean_schemas_api
+/integration_test/type_arrays/type_arrays_api
+/integration_test/medama/medama_api
+/integration_test/inference/inference_api
+/integration_test/ref_siblings/ref_siblings_api
+/integration_test/defs/defs_api
 
 # Dependencies
 /pubspec.lock
