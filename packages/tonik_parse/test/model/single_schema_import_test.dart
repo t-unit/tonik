@@ -41,6 +41,7 @@ void main() {
           uniqueItems: false,
           xDartName: null,
           xDartEnum: null,
+      defs: null,
         ),
       },
       responses: {},
@@ -72,6 +73,7 @@ void main() {
     uniqueItems: false,
     xDartName: null,
     xDartEnum: null,
+      defs: null,
   );
 
   final inlineClass = Schema(
@@ -93,6 +95,7 @@ void main() {
     uniqueItems: false,
     xDartName: null,
     xDartEnum: null,
+      defs: null,
   );
 
   final inlineUri = Schema(
@@ -114,6 +117,7 @@ void main() {
     uniqueItems: false,
     xDartName: null,
     xDartEnum: null,
+      defs: null,
   );
 
   final inlineUrl = Schema(
@@ -135,6 +139,7 @@ void main() {
     uniqueItems: false,
     xDartName: null,
     xDartEnum: null,
+      defs: null,
   );
 
   final reference = Schema(
@@ -156,6 +161,7 @@ void main() {
     uniqueItems: null,
     xDartName: null,
     xDartEnum: null,
+      defs: null,
   );
 
   late ModelImporter importer;

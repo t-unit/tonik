@@ -9,6 +9,8 @@ class ModelImporter {
     : _schemas = openApiObject.components?.schemas ?? {};
 
   final Map<String, Schema> _schemas;
+  final Map<String, Schema> _defs = {};
+
   late Set<Model> models;
   final log = Logger('ModelImporter');
 
@@ -17,6 +19,7 @@ class ModelImporter {
 
   void import() {
     models = <Model>{};
+    _collectAllDefs();
 
     final context = rootContext;
 
@@ -140,6 +143,10 @@ class ModelImporter {
   }
 
   Model _resolveReferenceForProperty(String ref, Context context) {
+    if (ref.contains(r'/$defs/')) {
+      return _resolveDefsReferenceForProperty(ref, context);
+    }
+
     if (!ref.startsWith('#/components/schemas/')) {
       throw UnimplementedError(
         'Only local schema references are supported, found $ref',
@@ -159,6 +166,60 @@ class ModelImporter {
         _resolveSchemaRef(refName, refSchema, rootContext);
   }
 
+  Model _resolveDefsReferenceForProperty(String ref, Context context) {
+    final defSchema = _defs[ref];
+    if (defSchema == null) {
+      throw ArgumentError('\$defs reference $ref not found');
+    }
+
+    final defName = ref.split('/').last;
+    final defsContext = _contextFromDefsPath(ref);
+
+    return _resolveSchemaRef(defName, defSchema, defsContext);
+  }
+
+  Model _resolveDefsReference(String? name, Schema schema, Context context) {
+    final ref = schema.ref!;
+    final defSchema = _defs[ref];
+
+    if (defSchema == null) {
+      throw ArgumentError('\$defs reference $ref not found for $name');
+    }
+
+    final defName = ref.split('/').last;
+    final defsContext = _contextFromDefsPath(ref);
+    final refModel = _resolveSchemaRef(defName, defSchema, defsContext);
+
+    if (_hasStructuralSiblings(schema)) {
+      return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
+    }
+
+    if (name != null || _hasAnnotationSiblings(schema)) {
+      final aliasModel = AliasModel(
+        name: name,
+        model: refModel,
+        context: context,
+        description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
+        isNullable: schema.type.contains('null'),
+      );
+
+      if (name == null) {
+        _logModelAdded(aliasModel);
+        models.add(aliasModel);
+      }
+
+      return aliasModel;
+    }
+
+    return refModel;
+  }
+
+  Context _contextFromDefsPath(String ref) {
+    final parts = ref.substring(2).split('/'); // Remove '#/' prefix.
+    return Context.initial().pushAll(parts);
+  }
+
   bool _hasAnnotationSiblings(Schema schema) {
     return schema.description != null ||
         (schema.isDeprecated ?? false) ||
@@ -174,6 +235,10 @@ class ModelImporter {
 
   Model _resolveReference(String? name, Schema schema, Context context) {
     final ref = schema.ref!;
+
+    if (ref.contains(r'/$defs/')) {
+      return _resolveDefsReference(name, schema, context);
+    }
 
     if (!ref.startsWith('#/components/schemas/')) {
       throw UnimplementedError(
@@ -394,6 +459,7 @@ class ModelImporter {
         uniqueItems: schema.uniqueItems,
         xDartName: schema.xDartName,
         xDartEnum: schema.xDartEnum,
+        defs: schema.defs,
       );
       return (
         discriminatorValue: null,
@@ -646,5 +712,58 @@ class ModelImporter {
         ? model.name
         : '${model.context}->${model.runtimeType}';
     log.fine('Adding model $name');
+  }
+
+  void _collectAllDefs() {
+    for (final entry in _schemas.entries) {
+      final path = '#/components/schemas/${entry.key}';
+      _collectDefs(entry.value, path);
+    }
+  }
+
+  /// Recursively collects $defs from a schema and its nested schemas.
+  void _collectDefs(Schema schema, String currentPath) {
+    if (schema.defs != null) {
+      for (final defEntry in schema.defs!.entries) {
+        final defPath = '$currentPath/\$defs/${defEntry.key}';
+        _defs[defPath] = defEntry.value;
+        _collectDefs(defEntry.value, defPath);
+      }
+    }
+
+    if (schema.properties != null) {
+      for (final propEntry in schema.properties!.entries) {
+        _collectDefs(
+          propEntry.value,
+          '$currentPath/properties/${propEntry.key}',
+        );
+      }
+    }
+
+    if (schema.items != null) {
+      _collectDefs(schema.items!, '$currentPath/items');
+    }
+
+    if (schema.allOf != null) {
+      for (var i = 0; i < schema.allOf!.length; i++) {
+        _collectDefs(schema.allOf![i], '$currentPath/allOf/$i');
+      }
+    }
+
+    if (schema.anyOf != null) {
+      for (var i = 0; i < schema.anyOf!.length; i++) {
+        _collectDefs(schema.anyOf![i], '$currentPath/anyOf/$i');
+      }
+    }
+
+    if (schema.oneOf != null) {
+      for (var i = 0; i < schema.oneOf!.length; i++) {
+        _collectDefs(schema.oneOf![i], '$currentPath/oneOf/$i');
+      }
+    }
+
+    if (schema.not != null) {
+      _collectDefs(schema.not!, '$currentPath/not');
+    }
   }
 }

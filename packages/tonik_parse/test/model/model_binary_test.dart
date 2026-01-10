@@ -52,6 +52,7 @@ void main() {
       uniqueItems: false,
       xDartName: null,
       xDartEnum: null,
+      defs: null,
     );
 
     final inlineByte = Schema(
@@ -73,6 +74,7 @@ void main() {
       uniqueItems: false,
       xDartName: null,
       xDartEnum: null,
+      defs: null,
     );
 
     late ModelImporter importer;
@@ -149,6 +151,7 @@ void main() {
             uniqueItems: false,
             xDartName: null,
             xDartEnum: null,
+      defs: null,
           ),
           'Base64Data': Schema(
             ref: null,
@@ -169,6 +172,7 @@ void main() {
             uniqueItems: false,
             xDartName: null,
             xDartEnum: null,
+      defs: null,
           ),
         },
         responses: {},

@@ -578,10 +578,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Color, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Color, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Color for value: $value'), );
+            orElse: () => throw JsonDecodingException(r'No matching Color for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -615,10 +615,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! int) {
-            throw JsonDecodingException('Expected int for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected int for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
+            orElse: () => throw JsonDecodingException(r'No matching Status for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -651,10 +651,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
+            orElse: () => throw JsonDecodingException(r'No matching Status for value: $value'), );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -1723,7 +1723,7 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
             orElse: () => Status.unknown,
@@ -1764,7 +1764,7 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! int) {
-            throw JsonDecodingException('Expected int for Code, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected int for Code, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
             orElse: () => Code.unknown,
@@ -2049,10 +2049,10 @@ void main() {
         final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = r'''
           if (value is! String) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+            throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
           }
           return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'),
+            orElse: () => throw JsonDecodingException(r'No matching Status for value: $value'),
           );
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
@@ -2186,7 +2186,7 @@ void main() {
           final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
           const expectedBody = r'''
             if (value is! String) {
-              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+              throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
             }
             return values.firstWhere((e) => e.rawValue == value,
               orElse: () => Status.fallback,
@@ -2241,7 +2241,7 @@ void main() {
           final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
           const expectedBody = r'''
             if (value is! String) {
-              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+              throw JsonDecodingException(r'Expected String for Status, got ${value.runtimeType}');
             }
             return values.firstWhere((e) => e.rawValue == value,
               orElse: () => Status.fallbackUnknown,

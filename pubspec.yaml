@@ -130,6 +130,12 @@ melos:
         dart pub get
         dart test --concurrency=1
 
+    test-integration-defs:
+      run: |
+        cd integration_test/defs/defs_test
+        dart pub get
+        dart test --concurrency=1
+
     test-integration-all:
       run: |
         melos run test-integration-petstore
@@ -146,4 +152,5 @@ melos:
         melos run test-integration-type-arrays
         melos run test-integration-medama
         melos run test-integration-inference
-        melos run test-integration-ref-siblings
+        melos run test-integration-ref-siblings        
+        melos run test-integration-defs

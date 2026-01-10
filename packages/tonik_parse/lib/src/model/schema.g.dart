@@ -33,4 +33,7 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   xDartEnum: (json['x-dart-enum'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
+  defs: const SchemaMapConverter().fromJson(
+    json[r'$defs'] as Map<String, dynamic>?,
+  ),
 );

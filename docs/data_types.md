@@ -176,3 +176,85 @@ Both patterns generate `AllOfModel` compositions that merge the referenced schem
 | `$ref` + `type: [T, null]` | Nullable alias |
 | `$ref` + `properties` | `AllOfModel` (ref + inline class) |
 | `$ref` + `allOf`/`oneOf`/`anyOf` | `AllOfModel` with nested composition |
+
+### `$defs` Local Definitions (OAS 3.1)
+
+OpenAPI 3.1's alignment with JSON Schema 2020-12 allows `$defs` for local schema definitions within any schema. This enables grouping related types without polluting the global `components/schemas` namespace.
+
+#### Basic Usage
+
+```yaml
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          $ref: '#/components/schemas/Order/$defs/OrderStatus'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order/$defs/LineItem'
+      $defs:
+        OrderStatus:
+          type: string
+          enum: [pending, confirmed, shipped]
+        LineItem:
+          type: object
+          properties:
+            productId:
+              type: string
+            quantity:
+              type: integer
+```
+
+Generates `Order`, `OrderStatus`, and `LineItem` as separate Dart types.
+
+#### Namespace Schemas
+
+Use `$defs` without a parent type to create logical groupings:
+
+```yaml
+components:
+  schemas:
+    UserTypes:
+      description: User-related type definitions
+      $defs:
+        CreateUserRequest:
+          type: object
+          properties:
+            email: { type: string }
+            name: { type: string }
+        UserResponse:
+          type: object
+          properties:
+            id: { type: string }
+            email: { type: string }
+```
+
+Reference via `$ref: '#/components/schemas/UserTypes/$defs/CreateUserRequest'`.
+
+#### Cross-Schema References
+
+`$defs` schemas can reference other component schemas and vice versa:
+
+```yaml
+Report:
+  type: object
+  properties:
+    order:
+      $ref: '#/components/schemas/Order'
+    metadata:
+      $ref: '#/components/schemas/Report/$defs/ReportMetadata'
+  $defs:
+    ReportMetadata:
+      type: object
+      properties:
+        format:
+          $ref: '#/components/schemas/Report/$defs/ReportFormat'
+    ReportFormat:
+      type: string
+      enum: [pdf, csv, json]
+```

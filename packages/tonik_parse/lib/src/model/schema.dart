@@ -24,6 +24,7 @@ class Schema {
     required this.uniqueItems,
     required this.xDartName,
     required this.xDartEnum,
+    required this.defs,
     this.isBooleanSchema,
   });
 
@@ -48,6 +49,7 @@ class Schema {
         uniqueItems: null,
         xDartName: null,
         xDartEnum: null,
+        defs: null,
         isBooleanSchema: json,
       );
     }
@@ -73,6 +75,7 @@ class Schema {
         uniqueItems: null,
         xDartName: null,
         xDartEnum: null,
+        defs: null,
       );
     }
 
@@ -110,6 +113,9 @@ class Schema {
   final String? xDartName;
   @JsonKey(name: 'x-dart-enum')
   final List<String>? xDartEnum;
+  @JsonKey(name: r'$defs')
+  @SchemaMapConverter()
+  final Map<String, Schema>? defs;
 
   /// Indicates if this schema is a boolean schema (true/false).
   ///

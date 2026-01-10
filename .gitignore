@@ -25,6 +25,7 @@
 /integration_test/medama/medama_api
 /integration_test/inference/inference_api
 /integration_test/ref_siblings/ref_siblings_api
+/integration_test/defs/defs_api
 
 # Dependencies
 /pubspec.lock

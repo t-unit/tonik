@@ -108,6 +108,7 @@ rm -rf type_arrays/type_arrays_api
 rm -rf medama/medama_api
 rm -rf inference/inference_api
 rm -rf ref_siblings/ref_siblings_api
+rm -rf defs/defs_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml
@@ -189,6 +190,10 @@ dart run ../packages/tonik/bin/tonik.dart -p ref_siblings_api -s ref_siblings/op
 add_dependency_overrides_recursive "ref_siblings/ref_siblings_api"
 cd ref_siblings/ref_siblings_api && dart pub get && cd ../..
 
+dart run ../packages/tonik/bin/tonik.dart -p defs_api -s defs/openapi.yaml -o defs
+add_dependency_overrides_recursive "defs/defs_api"
+cd defs/defs_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
@@ -225,5 +230,6 @@ restore_test_package_overrides "type_arrays/type_arrays_test/pubspec.yaml" "../.
 restore_test_package_overrides "medama/medama_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "inference/inference_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "ref_siblings/ref_siblings_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "defs/defs_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"
