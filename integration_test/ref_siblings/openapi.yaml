@@ -1,0 +1,844 @@
+openapi: 3.1.0
+info:
+  title: Ref Siblings Test API
+  description: >
+    OpenAPI 3.1 specification testing JSON Schema $ref with sibling keywords.
+    Per JSON Schema 2020-12, $ref can have sibling keywords that are applied
+    alongside the referenced schema (unlike OAS Reference Objects which only
+    allow summary/description siblings).
+  version: 1.0.0
+  contact:
+    name: Tonik Test Suite
+    url: https://github.com/tonik
+    email: test@example.com
+
+servers:
+  - url: http://localhost:8295
+
+tags:
+  - name: annotation-siblings
+    description: Tests for $ref with annotation/metadata siblings (description, deprecated)
+  - name: nullable-siblings
+    description: Tests for $ref with type array containing null
+  - name: structural-siblings
+    description: Tests for $ref with structural siblings (properties, allOf, oneOf, anyOf)
+  - name: combined-siblings
+    description: Tests for $ref with multiple sibling types combined
+  - name: nested-siblings
+    description: Tests for nested $ref with siblings
+
+paths:
+  /health:
+    get:
+      operationId: health
+      tags:
+        - annotation-siblings
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  # ============================================================================
+  # ANNOTATION SIBLINGS - $ref + description/deprecated
+  # ============================================================================
+
+  /annotation/described-pet:
+    post:
+      operationId: createDescribedPet
+      tags:
+        - annotation-siblings
+      summary: Test $ref + description sibling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DescribedPetAlias'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescribedPetAlias'
+
+  /annotation/deprecated-user:
+    post:
+      operationId: createDeprecatedUser
+      tags:
+        - annotation-siblings
+      summary: Test $ref + deprecated sibling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LegacyUser'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegacyUser'
+
+  /annotation/described-deprecated:
+    post:
+      operationId: createDescribedDeprecatedItem
+      tags:
+        - annotation-siblings
+      summary: Test $ref + description + deprecated siblings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OldItem'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OldItem'
+
+  # ============================================================================
+  # NULLABLE SIBLINGS - $ref + type: ['...', 'null']
+  # ============================================================================
+
+  /nullable/optional-pet:
+    post:
+      operationId: createOptionalPet
+      tags:
+        - nullable-siblings
+      summary: Test $ref + type array with null (OAS 3.1 nullable)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainerWithOptionalPet'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerWithOptionalPet'
+
+  /nullable/described-optional:
+    post:
+      operationId: createDescribedOptionalPet
+      tags:
+        - nullable-siblings
+      summary: Test $ref + type null + description
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainerWithDescribedOptionalPet'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerWithDescribedOptionalPet'
+
+  # ============================================================================
+  # STRUCTURAL SIBLINGS - $ref + properties
+  # ============================================================================
+
+  /structural/extended-pet:
+    post:
+      operationId: createExtendedPet
+      tags:
+        - structural-siblings
+      summary: Test $ref + properties sibling (adds fields)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtendedPet'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedPet'
+
+  /structural/extended-with-required:
+    post:
+      operationId: createExtendedWithRequired
+      tags:
+        - structural-siblings
+      summary: Test $ref + properties + required sibling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtendedWithRequired'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedWithRequired'
+
+  # ============================================================================
+  # STRUCTURAL SIBLINGS - $ref + allOf
+  # ============================================================================
+
+  /structural/merged-entity:
+    post:
+      operationId: createMergedEntity
+      tags:
+        - structural-siblings
+      summary: Test $ref + allOf sibling (prepends ref to allOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MergedEntity'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MergedEntity'
+
+  /structural/triple-merge:
+    post:
+      operationId: createTripleMerge
+      tags:
+        - structural-siblings
+      summary: Test $ref + allOf with multiple members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripleMerge'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripleMerge'
+
+  # ============================================================================
+  # STRUCTURAL SIBLINGS - $ref + oneOf
+  # ============================================================================
+
+  /structural/specific-pet:
+    post:
+      operationId: createSpecificPet
+      tags:
+        - structural-siblings
+      summary: Test $ref + oneOf sibling (intersection with union)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecificPet'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpecificPet'
+
+  /structural/discriminated-pet:
+    post:
+      operationId: createDiscriminatedPet
+      tags:
+        - structural-siblings
+      summary: Test $ref + oneOf + discriminator sibling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscriminatedPet'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscriminatedPet'
+
+  # ============================================================================
+  # STRUCTURAL SIBLINGS - $ref + anyOf
+  # ============================================================================
+
+  /structural/flexible-value:
+    post:
+      operationId: createFlexibleValue
+      tags:
+        - structural-siblings
+      summary: Test $ref + anyOf sibling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlexibleValue'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlexibleValue'
+
+  # ============================================================================
+  # COMBINED SIBLINGS - Multiple sibling types together
+  # ============================================================================
+
+  /combined/nullable-extended:
+    post:
+      operationId: createNullableExtended
+      tags:
+        - combined-siblings
+      summary: Test $ref + properties + type null (nullable extended object)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainerWithNullableExtended'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerWithNullableExtended'
+
+  /combined/described-extended:
+    post:
+      operationId: createDescribedExtended
+      tags:
+        - combined-siblings
+      summary: Test $ref + properties + description
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DescribedExtendedPet'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescribedExtendedPet'
+
+  /combined/full-combination:
+    post:
+      operationId: createFullCombination
+      tags:
+        - combined-siblings
+      summary: Test $ref + properties + allOf + description + deprecated
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FullCombination'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullCombination'
+
+  # ============================================================================
+  # NESTED SIBLINGS - $ref in properties/arrays with siblings
+  # ============================================================================
+
+  /nested/property-refs:
+    post:
+      operationId: createPropertyRefs
+      tags:
+        - nested-siblings
+      summary: Test object with properties that use $ref + siblings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectWithRefSiblingProperties'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectWithRefSiblingProperties'
+
+  /nested/array-items:
+    post:
+      operationId: createArrayItems
+      tags:
+        - nested-siblings
+      summary: Test array with items using $ref + siblings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArrayWithRefSiblingItems'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayWithRefSiblingItems'
+
+  /nested/deep-nesting:
+    post:
+      operationId: createDeepNesting
+      tags:
+        - nested-siblings
+      summary: Test deeply nested $ref with siblings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeepNesting'
+      responses:
+        '200':
+          description: Echo response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeepNesting'
+
+components:
+  schemas:
+    # ==========================================================================
+    # BASE SCHEMAS (no siblings, just targets for $ref)
+    # ==========================================================================
+
+    Pet:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+      required:
+        - name
+
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+      required:
+        - username
+        - email
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+      required:
+        - id
+        - title
+
+    NamedEntity:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    TimestampedEntity:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AuditedEntity:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        modifiedBy:
+          type: string
+
+    Animal:
+      type: object
+      properties:
+        petType:
+          type: string
+        weight:
+          type: number
+      required:
+        - petType
+
+    Dog:
+      type: object
+      properties:
+        petType:
+          type: string
+        breed:
+          type: string
+        barkVolume:
+          type: integer
+      required:
+        - petType
+        - breed
+
+    Cat:
+      type: object
+      properties:
+        petType:
+          type: string
+        color:
+          type: string
+        indoorOnly:
+          type: boolean
+      required:
+        - petType
+        - color
+
+    BaseValue:
+      type: object
+      properties:
+        valueType:
+          type: string
+      required:
+        - valueType
+
+    StringValue:
+      type: object
+      properties:
+        valueType:
+          type: string
+        stringData:
+          type: string
+      required:
+        - valueType
+        - stringData
+
+    NumberValue:
+      type: object
+      properties:
+        valueType:
+          type: string
+        numberData:
+          type: number
+      required:
+        - valueType
+        - numberData
+
+    # ==========================================================================
+    # ANNOTATION SIBLINGS - $ref + description/deprecated
+    # ==========================================================================
+
+    # $ref + description
+    DescribedPetAlias:
+      $ref: '#/components/schemas/Pet'
+      description: A pet with extra documentation added via $ref sibling
+
+    # $ref + deprecated
+    LegacyUser:
+      $ref: '#/components/schemas/User'
+      deprecated: true
+
+    # $ref + description + deprecated
+    OldItem:
+      $ref: '#/components/schemas/Item'
+      deprecated: true
+      description: >
+        Deprecated item alias. Use NewItem instead.
+        This will be removed in version 2.0.
+
+    # ==========================================================================
+    # NULLABLE SIBLINGS - $ref + type: ['object', 'null']
+    # ==========================================================================
+
+    # $ref + type array with null (OAS 3.1 nullable style)
+    OptionalPet:
+      $ref: '#/components/schemas/Pet'
+      type:
+        - object
+        - 'null'
+
+    # Container to test nullable ref in property
+    ContainerWithOptionalPet:
+      type: object
+      properties:
+        requiredPet:
+          $ref: '#/components/schemas/Pet'
+        optionalPet:
+          $ref: '#/components/schemas/OptionalPet'
+      required:
+        - requiredPet
+
+    # $ref + type null + description
+    DescribedOptionalPet:
+      $ref: '#/components/schemas/Pet'
+      type:
+        - object
+        - 'null'
+      description: An optional pet that may be null
+
+    ContainerWithDescribedOptionalPet:
+      type: object
+      properties:
+        pet:
+          $ref: '#/components/schemas/DescribedOptionalPet'
+
+    # ==========================================================================
+    # STRUCTURAL SIBLINGS - $ref + properties
+    # ==========================================================================
+
+    # $ref + properties (adds fields to referenced schema)
+    ExtendedPet:
+      $ref: '#/components/schemas/Pet'
+      properties:
+        nickname:
+          type: string
+        vaccinated:
+          type: boolean
+
+    # $ref + properties + required
+    ExtendedWithRequired:
+      $ref: '#/components/schemas/Pet'
+      properties:
+        microchipId:
+          type: string
+        registrationDate:
+          type: string
+          format: date
+      required:
+        - microchipId
+
+    # ==========================================================================
+    # STRUCTURAL SIBLINGS - $ref + allOf
+    # ==========================================================================
+
+    # $ref + allOf (ref target prepended to allOf list)
+    MergedEntity:
+      $ref: '#/components/schemas/NamedEntity'
+      allOf:
+        - $ref: '#/components/schemas/TimestampedEntity'
+
+    # $ref + allOf with multiple members
+    TripleMerge:
+      $ref: '#/components/schemas/NamedEntity'
+      allOf:
+        - $ref: '#/components/schemas/TimestampedEntity'
+        - $ref: '#/components/schemas/AuditedEntity'
+
+    # $ref + allOf with inline schema
+    MergedWithInline:
+      $ref: '#/components/schemas/NamedEntity'
+      allOf:
+        - type: object
+          properties:
+            inlineField:
+              type: string
+
+    # ==========================================================================
+    # STRUCTURAL SIBLINGS - $ref + oneOf
+    # ==========================================================================
+
+    # $ref + oneOf (intersection: must be Animal AND (Dog OR Cat))
+    SpecificPet:
+      $ref: '#/components/schemas/Animal'
+      oneOf:
+        - $ref: '#/components/schemas/Dog'
+        - $ref: '#/components/schemas/Cat'
+
+    # $ref + oneOf + discriminator
+    DiscriminatedPet:
+      $ref: '#/components/schemas/Animal'
+      oneOf:
+        - $ref: '#/components/schemas/Dog'
+        - $ref: '#/components/schemas/Cat'
+      discriminator:
+        propertyName: petType
+        mapping:
+          dog: '#/components/schemas/Dog'
+          cat: '#/components/schemas/Cat'
+
+    # ==========================================================================
+    # STRUCTURAL SIBLINGS - $ref + anyOf
+    # ==========================================================================
+
+    # $ref + anyOf
+    FlexibleValue:
+      $ref: '#/components/schemas/BaseValue'
+      anyOf:
+        - $ref: '#/components/schemas/StringValue'
+        - $ref: '#/components/schemas/NumberValue'
+
+    # ==========================================================================
+    # COMBINED SIBLINGS - Multiple sibling types together
+    # ==========================================================================
+
+    # $ref + properties + type null (nullable extended)
+    NullableExtendedPet:
+      $ref: '#/components/schemas/Pet'
+      type:
+        - object
+        - 'null'
+      properties:
+        optionalTag:
+          type: string
+
+    ContainerWithNullableExtended:
+      type: object
+      properties:
+        pet:
+          $ref: '#/components/schemas/NullableExtendedPet'
+
+    # $ref + properties + description
+    DescribedExtendedPet:
+      $ref: '#/components/schemas/Pet'
+      description: An extended pet with additional tag field
+      properties:
+        tag:
+          type: string
+
+    # $ref + properties + allOf + description + deprecated (kitchen sink)
+    FullCombination:
+      $ref: '#/components/schemas/NamedEntity'
+      description: A fully combined schema with all sibling types
+      deprecated: true
+      properties:
+        extraField:
+          type: string
+      allOf:
+        - $ref: '#/components/schemas/TimestampedEntity'
+
+    # ==========================================================================
+    # NESTED SIBLINGS - $ref with siblings in various contexts
+    # ==========================================================================
+
+    # Object with properties that use $ref + siblings inline
+    ObjectWithRefSiblingProperties:
+      type: object
+      properties:
+        # Property with $ref + description
+        describedPet:
+          $ref: '#/components/schemas/Pet'
+          description: A described pet property
+        # Property with $ref + nullable
+        nullablePet:
+          $ref: '#/components/schemas/Pet'
+          type:
+            - object
+            - 'null'
+        # Property with $ref + properties
+        extendedPet:
+          $ref: '#/components/schemas/Pet'
+          properties:
+            extraProp:
+              type: string
+        # Property with $ref + deprecated
+        deprecatedPet:
+          $ref: '#/components/schemas/Pet'
+          deprecated: true
+      required:
+        - describedPet
+
+    # Array with items using $ref + siblings
+    ArrayWithRefSiblingItems:
+      type: object
+      properties:
+        # Array of nullable pets
+        nullablePets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pet'
+            type:
+              - object
+              - 'null'
+        # Array of extended pets
+        extendedPets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pet'
+            properties:
+              arrayIndex:
+                type: integer
+
+    # Deeply nested $ref with siblings
+    DeepNesting:
+      type: object
+      properties:
+        level1:
+          $ref: '#/components/schemas/Pet'
+          properties:
+            level2:
+              $ref: '#/components/schemas/User'
+              properties:
+                level3:
+                  $ref: '#/components/schemas/Item'
+                  description: Deeply nested item
+
+    # ==========================================================================
+    # EDGE CASES
+    # ==========================================================================
+
+    # $ref to schema that itself has $ref with siblings
+    ChainedRefA:
+      $ref: '#/components/schemas/Pet'
+      properties:
+        chainField:
+          type: string
+
+    ChainedRefB:
+      $ref: '#/components/schemas/ChainedRefA'
+      description: Reference to a schema that already has $ref siblings
+
+    # Self-referential with siblings (tree structure)
+    TreeNode:
+      type: object
+      properties:
+        value:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreeNode'
+            description: Child node in the tree
