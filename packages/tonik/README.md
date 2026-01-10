@@ -17,86 +17,139 @@
 
 # Tonik
 
-A Dart code generator for OpenAPI specifications that produces complete, ready-to-use client code. Tonik handles the tricky parts other generators miss: `oneOf`/`anyOf`/`allOf` composition, multiple response content types or status codes, integer enums, schema names that clash with Dart built-ins (like `Error` or `List`), and proper encoding for all OpenAPI parameter styles.
+A Dart code generator for OpenAPI 3.0 and 3.1 specifications.
 
-**Supported versions:** OpenAPI 3.0 (full), 3.1 (partial/planned), 3.2 (partial/planned)
+## Key Features
 
+### Type-Safe Response Handling by Status Code and Content Type
 
-## Motivation
-There are already numerous projects available to generate Dart code from OpenAPI documents. But all lack certain, most often critical features. They might not support integer enums, composable data types (oneOf, anyOf, allOf), fail if you use existing class names in Dart or dependencies (e.g. `Response` of dio) or handle only success responses. 
+Tonik generates distinct types for each response defined in your spec. When an endpoint returns different schemas for 200, 400, and 404—you get separate, strongly-typed classes for each:
 
-This package aims to overcome these shortcomings.
+```dart
+final response = await petApi.updatePet(body: pet);
 
-Special thanks goes out to [felixwoestmann](https://github.com/felixwoestmann), as this project would not have been possible without him.
+switch (response) {
+  case TonikSuccess(:final value):
+    switch (value) {
+      case UpdatePetResponse200(:final body):
+        print('Updated: ${body.name}');
+      case UpdatePetResponse400():
+        print('Invalid input');
+      case UpdatePetResponse404():
+        print('Pet not found');
+    }
+  case TonikError(:final error):
+    print('Network error: $error');
+}
+```
 
-## Features and Documentation
+Different content types (JSON, url encode, plain text) on the same status code? Each gets its own typed accessor.
 
-- [Features Overview](https://github.com/t-unit/tonik/blob/main/docs/features.md)
-- [Configuration](https://github.com/t-unit/tonik/blob/main/docs/configuration.md)
-- [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md)
-- [Composite Data Type](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md)
-- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md)
-- [Uri Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md)
+### Composition with Sealed Classes
 
-## Quick-Start Guide
+`oneOf`, `anyOf`, and `allOf` generate idiomatic Dart code:
 
-### Installation
+- **`oneOf`** → Sealed class with exhaustive pattern matching
+- **`anyOf`** → Class with nullable fields for each alternative
+- **`allOf`** → Merged class combining all member schemas
 
-Activate the tonik CLI via:
+```dart
+// oneOf with discriminator → sealed class
+final result = switch (searchResult) {
+  SearchResultUser(:final value) => 'User: ${value.name}',
+  SearchResultProduct(:final value) => 'Product: ${value.title}',
+};
+```
+
+### No Name Conflicts
+
+Use `Error`, `Response`, `List`, or any Dart built-in as schema names. Tonik uses scoped code emission to properly qualify all type references—no naming collisions with `dart:core` or Dio.
+
+### Integer and String Enums
+
+Both work out of the box, with optional unknown-value handling for forward compatibility:
+
+```yaml
+status:
+  type: integer
+  enum: [0, 1, 2]
+  x-dart-enum: [pending, active, closed]
+```
+
+### All Parameter Encoding Styles
+
+Path, query, and header parameters support all OpenAPI styles: `simple`, `label`, `matrix`, `form`, `spaceDelimited`, `pipeDelimited`, and `deepObject`.
+
+### Pure Dart
+
+Install with `dart pub global activate tonik` and run. No JVM, no Docker, no external dependencies.
+
+## Documentation
+
+- [Features Overview](https://github.com/t-unit/tonik/blob/main/docs/features.md) – Complete feature reference
+- [Configuration](https://github.com/t-unit/tonik/blob/main/docs/configuration.md) – `tonik.yaml` options, name overrides, filtering
+- [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md) – OpenAPI to Dart type mappings
+- [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md) – `oneOf`, `anyOf`, `allOf` usage
+- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Interceptor patterns for auth
+- [URI Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md) – Dart URI class constraints
+
+## Quick Start
+
+### Install
+
 ```bash
 dart pub global activate tonik
 ```
 
-### Client Code Generation
-
-To generate client code you need the path to your OpenAPI specification file ready and define a name for the client package. 
-
-The package name should be snake_case following the official [guidelines](https://dart.dev/tools/pub/pubspec#name).
-The supplied API specification file can be written in json or yaml.
+### Generate
 
 ```bash
-tonik --package-name=my_api_client --spec=path/to/openapi.[yaml|json]
+tonik --package-name=my_api --spec=openapi.yaml
 ```
 
-Fore more information on how to configure the code generation see [configuration]([https:](https://github.com/t-unit/tonik/blob/main/docs/configuration.md)).
+### Use
 
-### Usage of Generated Code
-
-Add the generated package as a dependency to your project.
+Add the generated package to your project:
 
 ```bash
-dart pub add "my_client_api:{path: path/to/package}"
+dart pub add my_api:{'path':'./my_api'}
 ```
 
-Tonik generates an `Api` class per tag defined in the specification.
-To use the generated client, simply import it and create an instance.
-
-Here we define a custom server URL (servers defined in the specification file are also available). Afterward we  perform a network call. Finally, we check if the request was successful or failed.
+Then import and use:
 
 ```dart
-import 'package:my_api_client/my_api_client.dart';
+import 'package:my_api/my_api.dart';
 
-final api = PetApi(
-  CustomServer(baseUrl: 'https://api.example.com'),
-);
+final api = PetApi(CustomServer(baseUrl: 'https://api.example.com'));
 
-// Make API calls with type-safe responses
 final response = await api.getPetById(petId: 1);
 switch (response) {
-  case TonikSuccess<GetPetByIdResponse>(:final value):
-    print('Server response: $value');
-  case TonikError():
-    print('Network error occurred');
+  case TonikSuccess(:final value):
+    print('Pet: ${value.body.name}');
+  case TonikError(:final error):
+    print('Failed: $error');
 }
 ```
 
-Take a look at the [pet store integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart). Furthermore check [features](https://github.com/t-unit/tonik/blob/main/docs/features.md) for more information.
+See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/integration_test/petstore/petstore_test/test/pet_test.dart) for more examples.
 
-## Changelog
+## Feature Summary
 
-For a full list of changes of each release, refer to [release notes](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+| Category | What's Supported |
+|----------|------------------|
+| **Responses** | Multiple status codes, multiple content types, response headers, `default` and range codes (`2XX`) |
+| **Composition** | `oneOf` (sealed classes), `anyOf`, `allOf`, discriminators, nested composition |
+| **Types** | Integer/string enums, `date`, `date-time` with timezone, `decimal`/`BigDecimal`, `uri`, `binary` |
+| **Parameters** | Path, query, header; all encoding styles (`form`, `simple`, `label`, `matrix`, `deepObject`, etc.) |
+| **Request Bodies** | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` |
+| **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping |
+| **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays |
 
+## Acknowledgments
 
-## Roadmap
+Special thanks to [felixwoestmann](https://github.com/felixwoestmann), without whom this project would not exist.
 
-See [roadmap](https://github.com/t-unit/tonik/blob/main/docs/roadmap.md)
+## Links
+
+- [Changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md)
+- [Roadmap](https://github.com/t-unit/tonik/blob/main/docs/roadmap.md)

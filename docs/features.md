@@ -2,9 +2,21 @@
 
 Tonik is a Dart code generator for OpenAPI 3 specifications. This document provides a comprehensive overview of supported features.
 
+## At a Glance
+
+| Capability | What Tonik Does |
+|------------|-----------------|
+| **Multiple response types** | Generates distinct classes per status code (200, 400, 404) and content type—use pattern matching to handle each |
+| **Type composition** | `oneOf` → sealed classes, `anyOf` → nullable fields, `allOf` → merged classes |
+| **No name conflicts** | Schema names like `Error`, `Response`, `List` work without collisions |
+| **Integer enums** | Full support, with optional unknown-value handling |
+| **All encoding styles** | `simple`, `label`, `matrix`, `form`, `deepObject`, `spaceDelimited`, `pipeDelimited` |
+| **Pure Dart** | No Java, no Docker, no external tooling |
+
 ## Table of Contents
 
 - [Tonik Features Overview](#tonik-features-overview)
+  - [At a Glance](#at-a-glance)
   - [Table of Contents](#table-of-contents)
   - [How Generated Code Works](#how-generated-code-works)
     - [Architecture Overview](#architecture-overview)
