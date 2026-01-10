@@ -484,20 +484,23 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listString=test,test2',
+        'listString=test&listString=test2',
       );
     });
 
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormListExplode(
-        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
+        listOneOfPrimitive: [
+          const OneOfPrimitiveString('test'),
+          const OneOfPrimitiveString('test2'),
+        ],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listOneOfPrimitive=test',
+        'listOneOfPrimitive=test&listOneOfPrimitive=test2',
       );
     });
 

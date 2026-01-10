@@ -93,22 +93,34 @@ void main() {
       expect(success.response.statusCode, 200);
     });
 
-    test('getPathLabelAnyExplode with object value', () async {
+    test('getPathLabelAnyExplode with object value should fail', () async {
       final api = buildApi();
       final result = await api.getPathLabelAnyExplode(
         anyValue: {'key': 'value'},
       );
-      final success =
-          result as TonikSuccess<PathLabelAnyExplodeAnyValueGet200BodyModel>;
-      expect(success.response.statusCode, 200);
+      // Complex objects cannot be encoded for path parameters due to lack
+      // of reflection in Dart
+      expect(
+        result,
+        isA<TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>>(),
+      );
+      final error =
+          result as TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>;
+      expect(error.type, TonikErrorType.encoding);
     });
 
-    test('getPathLabelAnyExplode with array value', () async {
+    test('getPathLabelAnyExplode with array value should fail', () async {
       final api = buildApi();
       final result = await api.getPathLabelAnyExplode(anyValue: ['a', 'b']);
-      final success =
-          result as TonikSuccess<PathLabelAnyExplodeAnyValueGet200BodyModel>;
-      expect(success.response.statusCode, 200);
+      // Complex arrays cannot be encoded for path parameters due to lack
+      // of reflection in Dart
+      expect(
+        result,
+        isA<TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>>(),
+      );
+      final error =
+          result as TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>;
+      expect(error.type, TonikErrorType.encoding);
     });
   });
 

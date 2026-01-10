@@ -281,7 +281,7 @@ void main() {
     test('default', () async {
       final petApi = buildPetApi(responseStatus: '321');
 
-      final pet = await petApi.findPetsByTags(tags: ['']);
+      final pet = await petApi.findPetsByTags(tags: ['tag1']);
       final success = pet as TonikSuccess<FindPetsByTagsResponse>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<FindPetsByTagsResponseDefault>());

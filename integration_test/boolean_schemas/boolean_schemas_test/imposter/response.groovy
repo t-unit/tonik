@@ -67,7 +67,11 @@ if (context.request.path.endsWith('/echo')) {
            context.request.path.contains('/path/any-explode/') ||
            context.request.path.contains('/path/label/any') ||
            context.request.path.contains('/path/matrix/any') ||
-           context.request.path.contains('/path/never/')) {
+           context.request.path.contains('/path/never/') ||
+           context.request.path.contains('/path/list-any/') ||
+           context.request.path.contains('/path/list-any-explode/') ||
+           context.request.path.contains('/path/label/list-any') ||
+           context.request.path.contains('/path/matrix/list-any')) {
     // Extract path parameter and return it
     def pathValue = context.request.path.split('/').last()
     response.withHeader('Content-Type', 'application/json')
@@ -75,18 +79,45 @@ if (context.request.path.endsWith('/echo')) {
 } else if (context.request.path == '/query/any' || 
            context.request.path == '/query/any-no-explode' ||
            context.request.path == '/query/space-delimited/any' ||
+           context.request.path == '/query/space-delimited/any-explode' ||
            context.request.path == '/query/pipe-delimited/any' ||
+           context.request.path == '/query/pipe-delimited/any-explode' ||
            context.request.path == '/query/deep-object/any' ||
            context.request.path == '/query/never') {
     // Extract query parameter and return it
-    def queryValue = context.request.queryParams['anyValue'] ?: context.request.queryParams['neverValue'] ?: ''
+    def queryValue = context.request.queryParams['anyValue'] ?: 
+                     context.request.queryParams['neverValue'] ?: ''
+    response.withHeader('Content-Type', 'application/json')
+          .withContent(JsonOutput.toJson([received: queryValue]))
+} else if (context.request.path == '/query/list-any') {
+    // For explode=true, values come as repeated query params
+    // Parse from the raw query string
+    def rawUri = context.request.uri ?: ''
+    def queryPart = rawUri.contains('?') ? rawUri.substring(rawUri.indexOf('?') + 1) : ''
+    def values = []
+    queryPart.split('&').each { param ->
+        if (param.startsWith('anyValues=')) {
+            values.add(URLDecoder.decode(param.substring('anyValues='.length()), 'UTF-8'))
+        }
+    }
+    response.withHeader('Content-Type', 'application/json')
+          .withContent(JsonOutput.toJson([received: values]))
+} else if (context.request.path == '/query/list-any-no-explode' ||
+           context.request.path == '/query/space-delimited/list-any' ||
+           context.request.path == '/query/pipe-delimited/list-any') {
+    // For explode=false, value is comma-separated string
+    def queryValue = context.request.queryParams['anyValues'] ?: ''
     response.withHeader('Content-Type', 'application/json')
           .withContent(JsonOutput.toJson([received: queryValue]))
 } else if (context.request.path == '/header/any' || 
            context.request.path == '/header/any-explode' ||
-           context.request.path == '/header/never') {
+           context.request.path == '/header/never' ||
+           context.request.path == '/header/list-any' ||
+           context.request.path == '/header/list-any-explode') {
     // Extract header value and return it
-    def headerValue = context.request.headers['X-Any-Value'] ?: context.request.headers['X-Never-Value'] ?: ''
+    def headerValue = context.request.headers['X-Any-Value'] ?: 
+                      context.request.headers['X-Any-Values'] ?: 
+                      context.request.headers['X-Never-Value'] ?: ''
     response.withHeader('Content-Type', 'application/json')
           .withContent(JsonOutput.toJson([received: headerValue]))
 } else if (context.request.path.startsWith('/combined/')) {
@@ -100,6 +131,19 @@ if (context.request.path.endsWith('/echo')) {
               queryValue: queryValue,
               headerValue: headerValue
           ]))
+} else if (context.request.path == '/query/object-with-list-any' ||
+           context.request.path == '/query/deep-object/object-with-list-any') {
+    // Extract object query parameters and return them
+    def receivedParams = [:]
+    context.request.queryParams.each { key, value ->
+        receivedParams[key] = value
+    }
+    response.withHeader('Content-Type', 'application/json')
+          .withContent(JsonOutput.toJson([received: receivedParams]))
+} else if (context.request.path == '/form/list-any') {
+    // Echo back form data status
+    response.withHeader('Content-Type', 'application/json')
+          .withContent(JsonOutput.toJson([status: 'ok']))
 } else {
     // For all other cases, use default behavior
     response.usingDefaultBehaviour()

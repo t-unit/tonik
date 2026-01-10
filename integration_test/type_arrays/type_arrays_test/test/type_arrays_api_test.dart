@@ -51,7 +51,7 @@ void main() {
     test('requiredStringOrNumber: string variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('hello'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(42),
@@ -71,8 +71,10 @@ void main() {
 
       // Verify response decoding
       final output = success.value;
-      expect(output.requiredStringOrNumber,
-          isA<SimpleTypeArraysRequiredStringOrNumberOneOfModelString>());
+      expect(
+        output.requiredStringOrNumber,
+        isA<SimpleTypeArraysRequiredStringOrNumberOneOfModelString>(),
+      );
       expect(
         (output.requiredStringOrNumber
                 as SimpleTypeArraysRequiredStringOrNumberOneOfModelString)
@@ -84,7 +86,7 @@ void main() {
     test('requiredStringOrNumber: number variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelNumber(99.5),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -100,8 +102,10 @@ void main() {
       expect(requestData['requiredStringOrNumber'], 99.5);
 
       final output = success.value;
-      expect(output.requiredStringOrNumber,
-          isA<SimpleTypeArraysRequiredStringOrNumberOneOfModelNumber>());
+      expect(
+        output.requiredStringOrNumber,
+        isA<SimpleTypeArraysRequiredStringOrNumberOneOfModelNumber>(),
+      );
       expect(
         (output.requiredStringOrNumber
                 as SimpleTypeArraysRequiredStringOrNumberOneOfModelNumber)
@@ -113,7 +117,7 @@ void main() {
     test('requiredIntOrBool: integer variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(42),
@@ -129,19 +133,22 @@ void main() {
       expect(requestData['requiredIntOrBool'], 42);
 
       final output = success.value;
-      expect(output.requiredIntOrBool,
-          isA<SimpleTypeArraysRequiredIntOrBoolOneOfModelInt>());
       expect(
-          (output.requiredIntOrBool
-                  as SimpleTypeArraysRequiredIntOrBoolOneOfModelInt)
-              .value,
-          42);
+        output.requiredIntOrBool,
+        isA<SimpleTypeArraysRequiredIntOrBoolOneOfModelInt>(),
+      );
+      expect(
+        (output.requiredIntOrBool
+                as SimpleTypeArraysRequiredIntOrBoolOneOfModelInt)
+            .value,
+        42,
+      );
     });
 
     test('requiredIntOrBool: boolean variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool:
@@ -158,19 +165,22 @@ void main() {
       expect(requestData['requiredIntOrBool'], false);
 
       final output = success.value;
-      expect(output.requiredIntOrBool,
-          isA<SimpleTypeArraysRequiredIntOrBoolOneOfModelBool>());
       expect(
-          (output.requiredIntOrBool
-                  as SimpleTypeArraysRequiredIntOrBoolOneOfModelBool)
-              .value,
-          false);
+        output.requiredIntOrBool,
+        isA<SimpleTypeArraysRequiredIntOrBoolOneOfModelBool>(),
+      );
+      expect(
+        (output.requiredIntOrBool
+                as SimpleTypeArraysRequiredIntOrBoolOneOfModelBool)
+            .value,
+        false,
+      );
     });
 
     test('optionalStringOrInt: string variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -188,19 +198,22 @@ void main() {
       expect(requestData['optionalStringOrInt'], 'optional');
 
       final output = success.value;
-      expect(output.optionalStringOrInt,
-          isA<SimpleTypeArraysOptionalStringOrIntOneOfModelString>());
       expect(
-          (output.optionalStringOrInt
-                  as SimpleTypeArraysOptionalStringOrIntOneOfModelString)
-              .value,
-          'optional');
+        output.optionalStringOrInt,
+        isA<SimpleTypeArraysOptionalStringOrIntOneOfModelString>(),
+      );
+      expect(
+        (output.optionalStringOrInt!
+                as SimpleTypeArraysOptionalStringOrIntOneOfModelString)
+            .value,
+        'optional',
+      );
     });
 
     test('optionalStringOrInt: integer variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -218,19 +231,22 @@ void main() {
       expect(requestData['optionalStringOrInt'], 123);
 
       final output = success.value;
-      expect(output.optionalStringOrInt,
-          isA<SimpleTypeArraysOptionalStringOrIntOneOfModelInt>());
       expect(
-          (output.optionalStringOrInt
-                  as SimpleTypeArraysOptionalStringOrIntOneOfModelInt)
-              .value,
-          123);
+        output.optionalStringOrInt,
+        isA<SimpleTypeArraysOptionalStringOrIntOneOfModelInt>(),
+      );
+      expect(
+        (output.optionalStringOrInt!
+                as SimpleTypeArraysOptionalStringOrIntOneOfModelInt)
+            .value,
+        123,
+      );
     });
 
     test('threeTypes: string variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -248,17 +264,20 @@ void main() {
 
       final output = success.value;
       expect(
-          output.threeTypes, isA<SimpleTypeArraysThreeTypesOneOfModelString>());
+        output.threeTypes,
+        isA<SimpleTypeArraysThreeTypesOneOfModelString>(),
+      );
       expect(
-          (output.threeTypes as SimpleTypeArraysThreeTypesOneOfModelString)
-              .value,
-          'three');
+        (output.threeTypes! as SimpleTypeArraysThreeTypesOneOfModelString)
+            .value,
+        'three',
+      );
     });
 
     test('threeTypes: number variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -276,17 +295,20 @@ void main() {
 
       final output = success.value;
       expect(
-          output.threeTypes, isA<SimpleTypeArraysThreeTypesOneOfModelNumber>());
+        output.threeTypes,
+        isA<SimpleTypeArraysThreeTypesOneOfModelNumber>(),
+      );
       expect(
-          (output.threeTypes as SimpleTypeArraysThreeTypesOneOfModelNumber)
-              .value,
-          456.789);
+        (output.threeTypes! as SimpleTypeArraysThreeTypesOneOfModelNumber)
+            .value,
+        456.789,
+      );
     });
 
     test('threeTypes: boolean variant', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -304,16 +326,19 @@ void main() {
 
       final output = success.value;
       expect(
-          output.threeTypes, isA<SimpleTypeArraysThreeTypesOneOfModelBool>());
+        output.threeTypes,
+        isA<SimpleTypeArraysThreeTypesOneOfModelBool>(),
+      );
       expect(
-          (output.threeTypes as SimpleTypeArraysThreeTypesOneOfModelBool).value,
-          true);
+        (output.threeTypes! as SimpleTypeArraysThreeTypesOneOfModelBool).value,
+        true,
+      );
     });
 
     test('all optional fields omitted', () async {
       final api = buildApi();
 
-      final input = const SimpleTypeArrays(
+      const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
@@ -335,14 +360,15 @@ void main() {
     test('all fields populated with non-null values', () async {
       final api = buildApi();
 
-      final input = const NullableTypeArrays(
+      const input = NullableTypeArrays(
         requiredNullable: 'required-value',
         nullableString: 'string-value',
         nullableNumber: 3.14,
         nullableBoolean: true,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-                'mixed-string'),
+          'mixed-string',
+        ),
         nullableMultiType:
             NullableTypeArraysNullableMultiTypeOneOfModelInt(777),
       );
@@ -368,21 +394,26 @@ void main() {
       expect(output.nullableString, 'string-value');
       expect(output.nullableNumber, 3.14);
       expect(output.nullableBoolean, true);
-      expect(output.nullableStringOrNumber,
-          isA<NullableTypeArraysNullableStringOrNumberOneOfModelString>());
       expect(
-        (output.nullableStringOrNumber
+        output.nullableStringOrNumber,
+        isA<NullableTypeArraysNullableStringOrNumberOneOfModelString>(),
+      );
+      expect(
+        (output.nullableStringOrNumber!
                 as NullableTypeArraysNullableStringOrNumberOneOfModelString)
             .value,
         'mixed-string',
       );
-      expect(output.nullableMultiType,
-          isA<NullableTypeArraysNullableMultiTypeOneOfModelInt>());
       expect(
-          (output.nullableMultiType
-                  as NullableTypeArraysNullableMultiTypeOneOfModelInt)
-              .value,
-          777);
+        output.nullableMultiType,
+        isA<NullableTypeArraysNullableMultiTypeOneOfModelInt>(),
+      );
+      expect(
+        (output.nullableMultiType!
+                as NullableTypeArraysNullableMultiTypeOneOfModelInt)
+            .value,
+        777,
+      );
     });
 
     test('all fields null', () async {
@@ -390,11 +421,6 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableString: null,
-        nullableNumber: null,
-        nullableBoolean: null,
-        nullableStringOrNumber: null,
-        nullableMultiType: null,
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -429,7 +455,8 @@ void main() {
         requiredNullable: null,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-                'test-string'),
+          'test-string',
+        ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -442,10 +469,12 @@ void main() {
       expect(requestData['nullableStringOrNumber'], 'test-string');
 
       final output = success.value;
-      expect(output.nullableStringOrNumber,
-          isA<NullableTypeArraysNullableStringOrNumberOneOfModelString>());
       expect(
-        (output.nullableStringOrNumber
+        output.nullableStringOrNumber,
+        isA<NullableTypeArraysNullableStringOrNumberOneOfModelString>(),
+      );
+      expect(
+        (output.nullableStringOrNumber!
                 as NullableTypeArraysNullableStringOrNumberOneOfModelString)
             .value,
         'test-string',
@@ -471,10 +500,12 @@ void main() {
       expect(requestData['nullableStringOrNumber'], 42.5);
 
       final output = success.value;
-      expect(output.nullableStringOrNumber,
-          isA<NullableTypeArraysNullableStringOrNumberOneOfModelNumber>());
       expect(
-        (output.nullableStringOrNumber
+        output.nullableStringOrNumber,
+        isA<NullableTypeArraysNullableStringOrNumberOneOfModelNumber>(),
+      );
+      expect(
+        (output.nullableStringOrNumber!
                 as NullableTypeArraysNullableStringOrNumberOneOfModelNumber)
             .value,
         42.5,
@@ -500,13 +531,16 @@ void main() {
       expect(requestData['nullableMultiType'], 'multi-string');
 
       final output = success.value;
-      expect(output.nullableMultiType,
-          isA<NullableTypeArraysNullableMultiTypeOneOfModelString>());
       expect(
-          (output.nullableMultiType
-                  as NullableTypeArraysNullableMultiTypeOneOfModelString)
-              .value,
-          'multi-string');
+        output.nullableMultiType,
+        isA<NullableTypeArraysNullableMultiTypeOneOfModelString>(),
+      );
+      expect(
+        (output.nullableMultiType!
+                as NullableTypeArraysNullableMultiTypeOneOfModelString)
+            .value,
+        'multi-string',
+      );
     });
 
     test('nullableMultiType: integer variant', () async {
@@ -528,13 +562,16 @@ void main() {
       expect(requestData['nullableMultiType'], 999);
 
       final output = success.value;
-      expect(output.nullableMultiType,
-          isA<NullableTypeArraysNullableMultiTypeOneOfModelInt>());
       expect(
-          (output.nullableMultiType
-                  as NullableTypeArraysNullableMultiTypeOneOfModelInt)
-              .value,
-          999);
+        output.nullableMultiType,
+        isA<NullableTypeArraysNullableMultiTypeOneOfModelInt>(),
+      );
+      expect(
+        (output.nullableMultiType!
+                as NullableTypeArraysNullableMultiTypeOneOfModelInt)
+            .value,
+        999,
+      );
     });
 
     test('nullableMultiType: boolean variant', () async {
@@ -556,13 +593,16 @@ void main() {
       expect(requestData['nullableMultiType'], false);
 
       final output = success.value;
-      expect(output.nullableMultiType,
-          isA<NullableTypeArraysNullableMultiTypeOneOfModelBool>());
       expect(
-          (output.nullableMultiType
-                  as NullableTypeArraysNullableMultiTypeOneOfModelBool)
-              .value,
-          false);
+        output.nullableMultiType,
+        isA<NullableTypeArraysNullableMultiTypeOneOfModelBool>(),
+      );
+      expect(
+        (output.nullableMultiType!
+                as NullableTypeArraysNullableMultiTypeOneOfModelBool)
+            .value,
+        false,
+      );
     });
   });
 
@@ -592,7 +632,8 @@ void main() {
       const input = CompositionWithTypeArrays(
         simpleTypeArray:
             CompositionWithTypeArraysSimpleTypeArrayOneOfModelString(
-                'simple-string'),
+          'simple-string',
+        ),
         nullableTypeArray:
             CompositionWithTypeArraysNullableTypeArrayOneOfModelInt(123),
       );
@@ -611,21 +652,26 @@ void main() {
 
       // Verify response decoding
       final output = success.value;
-      expect(output.simpleTypeArray,
-          isA<CompositionWithTypeArraysSimpleTypeArrayOneOfModelString>());
       expect(
-        (output.simpleTypeArray
+        output.simpleTypeArray,
+        isA<CompositionWithTypeArraysSimpleTypeArrayOneOfModelString>(),
+      );
+      expect(
+        (output.simpleTypeArray!
                 as CompositionWithTypeArraysSimpleTypeArrayOneOfModelString)
             .value,
         'simple-string',
       );
-      expect(output.nullableTypeArray,
-          isA<CompositionWithTypeArraysNullableTypeArrayOneOfModelInt>());
       expect(
-          (output.nullableTypeArray
-                  as CompositionWithTypeArraysNullableTypeArrayOneOfModelInt)
-              .value,
-          123);
+        output.nullableTypeArray,
+        isA<CompositionWithTypeArraysNullableTypeArrayOneOfModelInt>(),
+      );
+      expect(
+        (output.nullableTypeArray!
+                as CompositionWithTypeArraysNullableTypeArrayOneOfModelInt)
+            .value,
+        123,
+      );
     });
 
     test('with number variants', () async {
@@ -649,20 +695,26 @@ void main() {
       expect(requestData['nullableTypeArray'], true);
 
       final output = success.value;
-      expect(output.simpleTypeArray,
-          isA<CompositionWithTypeArraysSimpleTypeArrayOneOfModelNumber>());
       expect(
-          (output.simpleTypeArray
-                  as CompositionWithTypeArraysSimpleTypeArrayOneOfModelNumber)
-              .value,
-          99.99);
-      expect(output.nullableTypeArray,
-          isA<CompositionWithTypeArraysNullableTypeArrayOneOfModelBool>());
+        output.simpleTypeArray,
+        isA<CompositionWithTypeArraysSimpleTypeArrayOneOfModelNumber>(),
+      );
       expect(
-          (output.nullableTypeArray
-                  as CompositionWithTypeArraysNullableTypeArrayOneOfModelBool)
-              .value,
-          true);
+        (output.simpleTypeArray!
+                as CompositionWithTypeArraysSimpleTypeArrayOneOfModelNumber)
+            .value,
+        99.99,
+      );
+      expect(
+        output.nullableTypeArray,
+        isA<CompositionWithTypeArraysNullableTypeArrayOneOfModelBool>(),
+      );
+      expect(
+        (output.nullableTypeArray!
+                as CompositionWithTypeArraysNullableTypeArrayOneOfModelBool)
+            .value,
+        true,
+      );
     });
 
     test('with null nullable type array', () async {
@@ -671,7 +723,6 @@ void main() {
       const input = CompositionWithTypeArrays(
         simpleTypeArray:
             CompositionWithTypeArraysSimpleTypeArrayOneOfModelString('test'),
-        nullableTypeArray: null,
       );
 
       final result = await api.testComposition(body: input);
@@ -711,11 +762,13 @@ void main() {
       // Verify response decoding
       final output = success.value;
       expect(
-          output.allPrimitives, isA<EdgeCasesAllPrimitivesOneOfModelString>());
+        output.allPrimitives,
+        isA<EdgeCasesAllPrimitivesOneOfModelString>(),
+      );
       expect(
-          (output.allPrimitives as EdgeCasesAllPrimitivesOneOfModelString)
-              .value,
-          'all-string');
+        (output.allPrimitives! as EdgeCasesAllPrimitivesOneOfModelString).value,
+        'all-string',
+      );
     });
 
     test('allPrimitives: integer variant', () async {
@@ -738,8 +791,9 @@ void main() {
       final output = success.value;
       expect(output.allPrimitives, isA<EdgeCasesAllPrimitivesOneOfModelInt>());
       expect(
-          (output.allPrimitives as EdgeCasesAllPrimitivesOneOfModelInt).value,
-          42);
+        (output.allPrimitives! as EdgeCasesAllPrimitivesOneOfModelInt).value,
+        42,
+      );
     });
 
     test('allPrimitives: number variant', () async {
@@ -761,11 +815,13 @@ void main() {
 
       final output = success.value;
       expect(
-          output.allPrimitives, isA<EdgeCasesAllPrimitivesOneOfModelNumber>());
+        output.allPrimitives,
+        isA<EdgeCasesAllPrimitivesOneOfModelNumber>(),
+      );
       expect(
-          (output.allPrimitives as EdgeCasesAllPrimitivesOneOfModelNumber)
-              .value,
-          3.14);
+        (output.allPrimitives! as EdgeCasesAllPrimitivesOneOfModelNumber).value,
+        3.14,
+      );
     });
 
     test('allPrimitives: boolean variant', () async {
@@ -788,8 +844,9 @@ void main() {
       final output = success.value;
       expect(output.allPrimitives, isA<EdgeCasesAllPrimitivesOneOfModelBool>());
       expect(
-          (output.allPrimitives as EdgeCasesAllPrimitivesOneOfModelBool).value,
-          true);
+        (output.allPrimitives! as EdgeCasesAllPrimitivesOneOfModelBool).value,
+        true,
+      );
     });
 
     test('allPrimitivesNullable: string variant', () async {
@@ -812,13 +869,16 @@ void main() {
       expect(requestData['allPrimitivesNullable'], 'nullable-string');
 
       final output = success.value;
-      expect(output.allPrimitivesNullable,
-          isA<EdgeCasesAllPrimitivesNullableOneOfModelString>());
       expect(
-          (output.allPrimitivesNullable
-                  as EdgeCasesAllPrimitivesNullableOneOfModelString)
-              .value,
-          'nullable-string');
+        output.allPrimitivesNullable,
+        isA<EdgeCasesAllPrimitivesNullableOneOfModelString>(),
+      );
+      expect(
+        (output.allPrimitivesNullable!
+                as EdgeCasesAllPrimitivesNullableOneOfModelString)
+            .value,
+        'nullable-string',
+      );
     });
 
     test('allPrimitivesNullable: integer variant', () async {
@@ -840,13 +900,16 @@ void main() {
       expect(requestData['allPrimitivesNullable'], 123);
 
       final output = success.value;
-      expect(output.allPrimitivesNullable,
-          isA<EdgeCasesAllPrimitivesNullableOneOfModelInt>());
       expect(
-          (output.allPrimitivesNullable
-                  as EdgeCasesAllPrimitivesNullableOneOfModelInt)
-              .value,
-          123);
+        output.allPrimitivesNullable,
+        isA<EdgeCasesAllPrimitivesNullableOneOfModelInt>(),
+      );
+      expect(
+        (output.allPrimitivesNullable!
+                as EdgeCasesAllPrimitivesNullableOneOfModelInt)
+            .value,
+        123,
+      );
     });
 
     test('allPrimitivesNullable: number variant', () async {
@@ -869,13 +932,16 @@ void main() {
       expect(requestData['allPrimitivesNullable'], 99.99);
 
       final output = success.value;
-      expect(output.allPrimitivesNullable,
-          isA<EdgeCasesAllPrimitivesNullableOneOfModelNumber>());
       expect(
-          (output.allPrimitivesNullable
-                  as EdgeCasesAllPrimitivesNullableOneOfModelNumber)
-              .value,
-          99.99);
+        output.allPrimitivesNullable,
+        isA<EdgeCasesAllPrimitivesNullableOneOfModelNumber>(),
+      );
+      expect(
+        (output.allPrimitivesNullable!
+                as EdgeCasesAllPrimitivesNullableOneOfModelNumber)
+            .value,
+        99.99,
+      );
     });
 
     test('allPrimitivesNullable: boolean variant', () async {
@@ -898,13 +964,16 @@ void main() {
       expect(requestData['allPrimitivesNullable'], false);
 
       final output = success.value;
-      expect(output.allPrimitivesNullable,
-          isA<EdgeCasesAllPrimitivesNullableOneOfModelBool>());
       expect(
-          (output.allPrimitivesNullable
-                  as EdgeCasesAllPrimitivesNullableOneOfModelBool)
-              .value,
-          false);
+        output.allPrimitivesNullable,
+        isA<EdgeCasesAllPrimitivesNullableOneOfModelBool>(),
+      );
+      expect(
+        (output.allPrimitivesNullable!
+                as EdgeCasesAllPrimitivesNullableOneOfModelBool)
+            .value,
+        false,
+      );
     });
 
     test('allPrimitivesNullable: null variant', () async {
@@ -912,7 +981,6 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable: null,
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 
@@ -947,12 +1015,15 @@ void main() {
       expect(requestData['integerAndNumber'], 456);
 
       final output = success.value;
-      expect(output.integerAndNumber,
-          isA<EdgeCasesIntegerAndNumberOneOfModelInt>());
       expect(
-          (output.integerAndNumber as EdgeCasesIntegerAndNumberOneOfModelInt)
-              .value,
-          456);
+        output.integerAndNumber,
+        isA<EdgeCasesIntegerAndNumberOneOfModelInt>(),
+      );
+      expect(
+        (output.integerAndNumber! as EdgeCasesIntegerAndNumberOneOfModelInt)
+            .value,
+        456,
+      );
     });
 
     test('integerAndNumber: number variant', () async {
@@ -973,12 +1044,15 @@ void main() {
       expect(requestData['integerAndNumber'], 3.14159);
 
       final output = success.value;
-      expect(output.integerAndNumber,
-          isA<EdgeCasesIntegerAndNumberOneOfModelNumber>());
       expect(
-          (output.integerAndNumber as EdgeCasesIntegerAndNumberOneOfModelNumber)
-              .value,
-          3.14159);
+        output.integerAndNumber,
+        isA<EdgeCasesIntegerAndNumberOneOfModelNumber>(),
+      );
+      expect(
+        (output.integerAndNumber! as EdgeCasesIntegerAndNumberOneOfModelNumber)
+            .value,
+        3.14159,
+      );
     });
 
     test('all optional fields omitted', () async {

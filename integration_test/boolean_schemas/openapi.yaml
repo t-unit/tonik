@@ -332,6 +332,30 @@ paths:
                   received:
                     type: string
 
+  /query/space-delimited/any-explode:
+    get:
+      operationId: getQuerySpaceDelimitedAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter with spaceDelimited style and explode
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: spaceDelimited
+          explode: true
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
   /query/pipe-delimited/any:
     get:
       operationId: getQueryPipeDelimitedAny
@@ -344,6 +368,30 @@ paths:
           required: true
           style: pipeDelimited
           explode: false
+          schema: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/pipe-delimited/any-explode:
+    get:
+      operationId: getQueryPipeDelimitedAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test any value in query parameter with pipeDelimited style and explode
+      parameters:
+        - name: anyValue
+          in: query
+          required: true
+          style: pipeDelimited
+          explode: true
           schema: true
       responses:
         '200':
@@ -640,6 +688,393 @@ paths:
                   status:
                     type: string
 
+  /query/list-any:
+    get:
+      operationId: getQueryListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in query parameter (form style)
+      parameters:
+        - name: anyValues
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: array
+                    items:
+                      type: string
+
+  /query/list-any-no-explode:
+    get:
+      operationId: getQueryListAnyNoExplode
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in query parameter (form style, no explode)
+      parameters:
+        - name: anyValues
+          in: query
+          required: true
+          style: form
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/space-delimited/list-any:
+    get:
+      operationId: getQuerySpaceDelimitedListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values with spaceDelimited style
+      parameters:
+        - name: anyValues
+          in: query
+          required: true
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/pipe-delimited/list-any:
+    get:
+      operationId: getQueryPipeDelimitedListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values with pipeDelimited style
+      parameters:
+        - name: anyValues
+          in: query
+          required: true
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/list-any/{anyValues}:
+    get:
+      operationId: getPathListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in path parameter (simple style)
+      parameters:
+        - name: anyValues
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/list-any-explode/{anyValues}:
+    get:
+      operationId: getPathListAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in path parameter (simple style, explode)
+      parameters:
+        - name: anyValues
+          in: path
+          required: true
+          style: simple
+          explode: true
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/label/list-any/{anyValues}:
+    get:
+      operationId: getPathLabelListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in path parameter (label style)
+      parameters:
+        - name: anyValues
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/label/list-any-explode/{anyValues}:
+    get:
+      operationId: getPathLabelListAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in path parameter (label style, explode)
+      parameters:
+        - name: anyValues
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/matrix/list-any/{anyValues}:
+    get:
+      operationId: getPathMatrixListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in path parameter (matrix style)
+      parameters:
+        - name: anyValues
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /path/matrix/list-any-explode/{anyValues}:
+    get:
+      operationId: getPathMatrixListAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in path parameter (matrix style, explode)
+      parameters:
+        - name: anyValues
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /header/list-any:
+    get:
+      operationId: getHeaderListAny
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in header parameter
+      parameters:
+        - name: X-Any-Values
+          in: header
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /header/list-any-explode:
+    get:
+      operationId: getHeaderListAnyExplode
+      tags:
+        - boolean-schemas
+      summary: Test list of any values in header parameter (explode)
+      parameters:
+        - name: X-Any-Values
+          in: header
+          required: true
+          style: simple
+          explode: true
+          schema:
+            type: array
+            items: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: string
+
+  /query/object-with-list-any:
+    get:
+      operationId: getQueryObjectWithListAny
+      tags:
+        - boolean-schemas
+      summary: Test object with list of any values in query parameter
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ObjectWithListAny'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: object
+
+  /query/deep-object/object-with-list-any:
+    get:
+      operationId: getQueryDeepObjectWithListAny
+      tags:
+        - boolean-schemas
+      summary: Test object with list of any values with deepObject style
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          schema:
+            $ref: '#/components/schemas/ObjectWithListAny'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: object
+
+  /form/list-any:
+    post:
+      operationId: postFormListAny
+      tags:
+        - boolean-schemas
+      summary: Post form-urlencoded body with list of any values
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FormWithListAny'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
 components:
   schemas:
     AnyValue: true
@@ -708,3 +1143,32 @@ components:
           type: string
         headerValue:
           type: string
+
+    ObjectWithListAny:
+      type: object
+      required:
+        - name
+        - anyItems
+      properties:
+        name:
+          type: string
+        anyItems:
+          type: array
+          items: true
+        optionalAnyItems:
+          type: array
+          items: true
+
+    FormWithListAny:
+      type: object
+      required:
+        - name
+        - anyItems
+      properties:
+        name:
+          type: string
+        anyItems:
+          type: array
+          items: true
+        count:
+          type: integer
