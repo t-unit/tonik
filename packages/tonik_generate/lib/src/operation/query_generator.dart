@@ -61,7 +61,7 @@ class QueryGenerator {
     return Method(
       (b) => b
         ..name = '_queryParameters'
-        ..returns = refer('String', 'dart:core')
+        ..returns = refer('String?', 'dart:core')
         ..optionalParameters.addAll(parameters)
         ..lambda = false
         ..body = Block.of(body),
@@ -135,19 +135,24 @@ class QueryGenerator {
   }
 
   Code _generateReturnStatement() {
-    return refer('entries')
-        .property('map')
-        .call([
-          Method(
-            (b) => b
-              ..lambda = true
-              ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-              ..body = const Code(r"'${e.name}=${e.value}'"),
-          ).closure,
-        ])
-        .property('join')
-        .call([literalString('&')])
-        .returned
-        .statement;
+    return Block.of([
+      const Code('if (entries.isEmpty) {'),
+      const Code('  return null;'),
+      const Code('}'),
+      refer('entries')
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..lambda = true
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                ..body = const Code(r"'${e.name}=${e.value}'"),
+            ).closure,
+          ])
+          .property('join')
+          .call([literalString('&')])
+          .returned
+          .statement,
+    ]);
   }
 }
