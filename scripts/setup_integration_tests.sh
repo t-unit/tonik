@@ -21,6 +21,14 @@ if [[ $(echo "$JAVA_VERSION" | cut -d. -f1) -lt 11 ]]; then
     exit 1
 fi
 
+# Compile Tonik to native executable for faster generation
+# Native compilation eliminates Dart JIT overhead, resulting in 7-8x faster generation
+# (e.g., ~4s -> ~0.5s for typical specs)
+echo "Compiling Tonik to native executable..."
+TONIK_BINARY="$REPO_ROOT/.dart_tool/tonik_compiled"
+dart compile exe "$REPO_ROOT/packages/tonik/bin/tonik.dart" -o "$TONIK_BINARY"
+echo "Tonik compiled successfully: $TONIK_BINARY"
+
 # Change to integration test directory
 cd "$INTEGRATION_TEST_DIR"
 echo "Working directory: $(pwd)"
@@ -111,86 +119,87 @@ rm -rf ref_siblings/ref_siblings_api
 rm -rf defs/defs_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
-dart run ../packages/tonik/bin/tonik.dart --config petstore/tonik.yaml
+# Using compiled binary for much faster generation
+$TONIK_BINARY --config petstore/tonik.yaml
 add_dependency_overrides_recursive "petstore/petstore_api"
 cd petstore/petstore_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p petstore_api -s petstore_config/openapi.yaml -o petstore_config
+$TONIK_BINARY -p petstore_api -s petstore_config/openapi.yaml -o petstore_config
 add_dependency_overrides_recursive "petstore_config/petstore_api"
 cd petstore_config/petstore_api && dart pub get && cd ../..
 
 # Generate petstore_config with filtering configuration
-dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_filtering.yaml
+$TONIK_BINARY --config petstore_config/tonik_filtering.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_filtering_api"
 cd petstore_config/petstore_filtering_api && dart pub get && cd ../..
 
 # Generate petstore_config with overrides configuration
-dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_overrides.yaml
+$TONIK_BINARY --config petstore_config/tonik_overrides.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_overrides_api"
 cd petstore_config/petstore_overrides_api && dart pub get && cd ../..
 
 # Generate petstore_config with deprecation configuration
-dart run ../packages/tonik/bin/tonik.dart --config petstore_config/tonik_deprecation.yaml
+$TONIK_BINARY --config petstore_config/tonik_deprecation.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_deprecation_api"
 cd petstore_config/petstore_deprecation_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming
+$TONIK_BINARY -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming
 add_dependency_overrides_recursive "music_streaming/music_streaming_api"
 cd music_streaming/music_streaming_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p gov_api -s gov/openapi.yaml -o gov
+$TONIK_BINARY -p gov_api -s gov/openapi.yaml -o gov
 add_dependency_overrides_recursive "gov/gov_api"
 cd gov/gov_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding
+$TONIK_BINARY -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding
 add_dependency_overrides_recursive "simple_encoding/simple_encoding_api"
 cd simple_encoding/simple_encoding_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod
+$TONIK_BINARY -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod
 add_dependency_overrides_recursive "fastify_type_provider_zod/fastify_type_provider_zod_api"
 cd fastify_type_provider_zod/fastify_type_provider_zod_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p composition_api -s composition/openapi.yaml -o composition
+$TONIK_BINARY -p composition_api -s composition/openapi.yaml -o composition
 add_dependency_overrides_recursive "composition/composition_api"
 cd composition/composition_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters
+$TONIK_BINARY -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters
 add_dependency_overrides_recursive "query_parameters/query_parameters_api"
 cd query_parameters/query_parameters_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding
+$TONIK_BINARY -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding
 add_dependency_overrides_recursive "path_encoding/path_encoding_api"
 cd path_encoding/path_encoding_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p binary_models_api -s binary_models/openapi.yaml -o binary_models
+$TONIK_BINARY -p binary_models_api -s binary_models/openapi.yaml -o binary_models
 add_dependency_overrides_recursive "binary_models/binary_models_api"
 cd binary_models/binary_models_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart --config form_urlencoded/tonik_custom.yaml
+$TONIK_BINARY --config form_urlencoded/tonik_custom.yaml
 add_dependency_overrides_recursive "form_urlencoded/form_urlencoded_api"
 cd form_urlencoded/form_urlencoded_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p boolean_schemas_api -s boolean_schemas/openapi.yaml -o boolean_schemas
+$TONIK_BINARY -p boolean_schemas_api -s boolean_schemas/openapi.yaml -o boolean_schemas
 add_dependency_overrides_recursive "boolean_schemas/boolean_schemas_api"
 cd boolean_schemas/boolean_schemas_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p type_arrays_api -s type_arrays/openapi.yaml -o type_arrays
+$TONIK_BINARY -p type_arrays_api -s type_arrays/openapi.yaml -o type_arrays
 add_dependency_overrides_recursive "type_arrays/type_arrays_api"
 cd type_arrays/type_arrays_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p medama_api -s medama/openapi.yaml -o medama
+$TONIK_BINARY -p medama_api -s medama/openapi.yaml -o medama
 add_dependency_overrides_recursive "medama/medama_api"
 cd medama/medama_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p inference_api -s inference/openapi.json -o inference
+$TONIK_BINARY -p inference_api -s inference/openapi.json -o inference
 add_dependency_overrides_recursive "inference/inference_api"
 cd inference/inference_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p ref_siblings_api -s ref_siblings/openapi.yaml -o ref_siblings
+$TONIK_BINARY -p ref_siblings_api -s ref_siblings/openapi.yaml -o ref_siblings
 add_dependency_overrides_recursive "ref_siblings/ref_siblings_api"
 cd ref_siblings/ref_siblings_api && dart pub get && cd ../..
 
-dart run ../packages/tonik/bin/tonik.dart -p defs_api -s defs/openapi.yaml -o defs
+$TONIK_BINARY -p defs_api -s defs/openapi.yaml -o defs
 add_dependency_overrides_recursive "defs/defs_api"
 cd defs/defs_api && dart pub get && cd ../..
 
