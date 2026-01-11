@@ -117,6 +117,7 @@ rm -rf medama/medama_api
 rm -rf inference/inference_api
 rm -rf ref_siblings/ref_siblings_api
 rm -rf defs/defs_api
+rm -rf server_variables/server_variables_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
@@ -203,6 +204,10 @@ $TONIK_BINARY -p defs_api -s defs/openapi.yaml -o defs
 add_dependency_overrides_recursive "defs/defs_api"
 cd defs/defs_api && dart pub get && cd ../..
 
+$TONIK_BINARY -p server_variables_api -s server_variables/openapi.yaml -o server_variables
+add_dependency_overrides_recursive "server_variables/server_variables_api"
+cd server_variables/server_variables_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
@@ -240,5 +245,6 @@ restore_test_package_overrides "medama/medama_test/pubspec.yaml" "../../../packa
 restore_test_package_overrides "inference/inference_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "ref_siblings/ref_siblings_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "defs/defs_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "server_variables/server_variables_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"

@@ -572,4 +572,18 @@ class NameGenerator {
       customName: _makeUniqueWithNumericSuffix('CustomServer'),
     );
   }
+
+  /// Generates a unique enum name for a server variable.
+  ///
+  /// The name is derived from the server name (already generated) combined
+  /// with the variable name.
+  String generateServerVariableEnumName(
+    String serverName,
+    ServerVariable variable,
+  ) {
+    final variablePart = _sanitizeName(variable.name);
+    final baseName = '$serverName$variablePart';
+
+    return _makeUnique(baseName, '');
+  }
 }

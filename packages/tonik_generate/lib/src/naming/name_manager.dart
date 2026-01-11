@@ -29,6 +29,9 @@ class NameManager {
   requestBodyNameCache = {};
 
   @visibleForTesting
+  final Map<(String, String), String> serverVariableEnumNames = {};
+
+  @visibleForTesting
   final Map<
     Operation,
     (String baseName, Map<ResponseStatus, String> subclassNames)
@@ -261,6 +264,19 @@ class NameManager {
     serverNamesCache[cacheKey] = result;
 
     return result;
+  }
+
+  /// Gets a cached or generates a new unique enum name for a server variable.
+  ///
+  /// The enum name is derived from the server name combined with the variable
+  /// name, ensuring uniqueness across the entire API.
+  ///
+  /// [serverName] should be the already-generated name from [serverNames].
+  String serverVariableEnumName(String serverName, ServerVariable variable) {
+    final cacheKey = (serverName, variable.name);
+    return serverVariableEnumNames.putIfAbsent(cacheKey, () {
+      return generator.generateServerVariableEnumName(serverName, variable);
+    });
   }
 
   void _logModelName(String name, Model model) {

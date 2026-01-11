@@ -1,0 +1,20 @@
+name: server_variables_test
+description: Tests for server variable URL templating.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  server_variables_api:
+    path: ../server_variables_api
+  tonik_util: ^0.1.0
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^10.0.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

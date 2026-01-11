@@ -136,6 +136,12 @@ melos:
         dart pub get
         dart test --concurrency=1
 
+    test-integration-server-variables:
+      run: |
+        cd integration_test/server_variables/server_variables_test
+        dart pub get
+        dart test --concurrency=1
+
     test-integration-all:
       run: |
         melos run test-integration-petstore
@@ -154,3 +160,4 @@ melos:
         melos run test-integration-inference
         melos run test-integration-ref-siblings        
         melos run test-integration-defs
+        melos run test-integration-server-variables

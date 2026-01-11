@@ -11,7 +11,6 @@
   - `contentEncoding`, `contentMediaType`, `contentSchema` for binary content
   - `prefixItems` for tuple validation
   - `dependentRequired` / `dependentSchemas`
-- Server Templating support 
 - Default values
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
