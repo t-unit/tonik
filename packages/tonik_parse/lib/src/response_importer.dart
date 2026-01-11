@@ -126,11 +126,36 @@ class ResponseImporter {
                   contentType: contentType,
                 ),
               );
-            }
-          }
+            } else {
+              final model = switch (contentType) {
+                core.ContentType.bytes => core.BinaryModel(
+                  context: context.push('body'),
+                ),
+                core.ContentType.json => core.AnyModel(
+                  context: context.push('body'),
+                ),
+                core.ContentType.text => core.StringModel(
+                  context: context.push('body'),
+                ),
+                core.ContentType.form => () {
+                  log.warning(
+                    'No schema found for form content type $rawContentType. '
+                    'Treating as binary data.',
+                  );
+                  return core.BinaryModel(
+                    context: context.push('body'),
+                  );
+                }(),
+              };
 
-          if (bodies.isEmpty && mediaTypes.isNotEmpty) {
-            log.warning('No schema found for response $name.');
+              bodies.add(
+                core.ResponseBody(
+                  model: model,
+                  rawContentType: rawContentType,
+                  contentType: contentType,
+                ),
+              );
+            }
           }
 
           response = core.ResponseObject(

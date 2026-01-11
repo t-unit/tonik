@@ -117,9 +117,31 @@ class RequestBodyImporter {
               ),
             );
           } else {
-            log.warning(
-              'No schema found for request body $name. '
-              'Ignoring request body content for $rawContentType',
+            final model = switch (contentType) {
+              core.ContentType.bytes => core.BinaryModel(
+                context: context.push('body'),
+              ),
+              core.ContentType.json => core.AnyModel(
+                context: context.push('body'),
+              ),
+              core.ContentType.text => core.StringModel(
+                context: context.push('body'),
+              ),
+              core.ContentType.form => () {
+                log.warning(
+                  'No schema found for form content type $rawContentType. '
+                  'Treating as binary data.',
+                );
+                return core.BinaryModel(context: context.push('body'));
+              }(),
+            };
+
+            content.add(
+              core.RequestContent(
+                model: model,
+                rawContentType: rawContentType,
+                contentType: contentType,
+              ),
             );
           }
         }

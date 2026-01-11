@@ -646,4 +646,198 @@ void main() {
       },
     );
   });
+
+  group('OAS 3.1 empty schema support', () {
+    test('infers BinaryModel for application/octet-stream without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'BinaryResponse': {
+              'description': 'Binary content without explicit schema',
+              'content': {
+                'application/octet-stream': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final binaryResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'BinaryResponse',
+      );
+
+      expect(binaryResponse, isNotNull);
+      expect(binaryResponse, isA<ResponseObject>());
+      expect((binaryResponse as ResponseObject?)?.bodies, hasLength(1));
+
+      final body = binaryResponse?.bodies.first;
+      expect(body?.model, isA<BinaryModel>());
+      expect(body?.rawContentType, 'application/octet-stream');
+      expect(body?.contentType, ContentType.bytes);
+    });
+
+    test('infers BinaryModel for image/jpeg without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'ImageResponse': {
+              'description': 'Image content without explicit schema',
+              'content': {
+                'image/jpeg': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final imageResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'ImageResponse',
+      );
+
+      expect(imageResponse, isNotNull);
+      expect(imageResponse, isA<ResponseObject>());
+      expect((imageResponse as ResponseObject?)?.bodies, hasLength(1));
+
+      final body = imageResponse?.bodies.first;
+      expect(body?.model, isA<BinaryModel>());
+      expect(body?.rawContentType, 'image/jpeg');
+      expect(body?.contentType, ContentType.bytes);
+    });
+
+    test('infers AnyModel for application/json without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'JsonResponse': {
+              'description': 'JSON content without explicit schema',
+              'content': {
+                'application/json': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final jsonResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'JsonResponse',
+      );
+
+      expect(jsonResponse, isNotNull);
+      expect(jsonResponse, isA<ResponseObject>());
+      expect((jsonResponse as ResponseObject?)?.bodies, hasLength(1));
+
+      final body = jsonResponse?.bodies.first;
+      expect(body?.model, isA<AnyModel>());
+      expect(body?.rawContentType, 'application/json');
+      expect(body?.contentType, ContentType.json);
+    });
+
+    test('infers StringModel for text/plain without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'TextResponse': {
+              'description': 'Text content without explicit schema',
+              'content': {
+                'text/plain': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final textResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'TextResponse',
+      );
+
+      expect(textResponse, isNotNull);
+      expect(textResponse, isA<ResponseObject>());
+      expect((textResponse as ResponseObject?)?.bodies, hasLength(1));
+
+      final body = textResponse?.bodies.first;
+      expect(body?.model, isA<StringModel>());
+      expect(body?.rawContentType, 'text/plain');
+      expect(body?.contentType, ContentType.text);
+    });
+
+    test('infers BinaryModel for form without schema with warning', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'FormResponse': {
+              'description': 'Form content without explicit schema',
+              'content': {
+                'application/x-www-form-urlencoded': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final formResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'FormResponse',
+      );
+
+      expect(formResponse, isNotNull);
+      expect(formResponse, isA<ResponseObject>());
+      expect((formResponse as ResponseObject?)?.bodies, hasLength(1));
+
+      final body = formResponse?.bodies.first;
+      expect(body?.model, isA<BinaryModel>());
+      expect(body?.rawContentType, 'application/x-www-form-urlencoded');
+      expect(body?.contentType, ContentType.form);
+    });
+
+    test('infers BinaryModel for audio type without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'responses': {
+            'AudioResponse': {
+              'description': 'Audio content without explicit schema',
+              'content': {
+                'audio/mpeg': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final audioResponse = api.responses.firstWhereOrNull(
+        (r) => r.name == 'AudioResponse',
+      );
+
+      expect(audioResponse, isNotNull);
+      expect(audioResponse, isA<ResponseObject>());
+      expect((audioResponse as ResponseObject?)?.bodies, hasLength(1));
+
+      final body = audioResponse?.bodies.first;
+      expect(body?.model, isA<BinaryModel>());
+      expect(body?.rawContentType, 'audio/mpeg');
+      expect(body?.contentType, ContentType.bytes);
+    });
+  });
 }

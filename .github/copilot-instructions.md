@@ -33,7 +33,14 @@ Keep suggestions tightly scoped to the codebase: prefer edits under `packages/*`
   - Java 11+ (used to run Imposter JAR for mock HTTP servers)
   - Network access to download `imposter.jar` (the script caches the jar in the `integration_test` folder)
 
-When changing generated code shapes, update the corresponding integration tests in `integration_test/*/*/test` to document expected usage. The integration harness also adds `dependency_overrides` for local `packages/tonik_util` when generating sample packages — keep that behavior in mind if refactoring APIs.
+**⚠️ CRITICAL WORKFLOW**: When changing generated code shapes or any code generation logic:
+1. Make your changes to `packages/tonik_*`
+2. **ALWAYS run** `./scripts/setup_integration_tests.sh` (or `melos run generate-integration-tests`)
+3. **NEVER** manually run the generator for individual integration tests
+4. Update test expectations in `integration_test/*/*/test` if needed
+5. Run integration tests to verify: `melos run test-integration-[name]`
+
+The integration harness adds `dependency_overrides` for local `packages/tonik_util` when generating sample packages — keep that behavior in mind if refactoring APIs.
 
 ### Conventions & patterns specific to this repo
 - Generator behavior: the CLI produces a package per OpenAPI tag. The generated client classes follow the pattern `XxxApi` (e.g., `PetApi`). See examples in `integration_test/*/*/test` to learn returned response discriminated union shape (`TonikSuccess<T>` / `TonikError`).
@@ -74,12 +81,14 @@ Files present (authoritative):
 - `.cursor/rules/ask-and-wait.mdc`
 - `.cursor/rules/code-organization.mdc`
 - `.cursor/rules/fvm-usage.mdc`
+- `.cursor/rules/integration-test-regeneration.mdc` ⚠️ **CRITICAL - Read this first when working with integration tests**
 - `.cursor/rules/matchers.mdc`
 - `.cursor/rules/test-driven-development.mdc`
 - `.cursor/rules/working-with-code-builder.mdc`
 
 Action for AI agents:
 - Read the files in `.cursor/rules/` before making changes. Treat them as authoritative behavior and style guidance for interactive sessions.
+- **CRITICAL**: When making changes to code generation, ALWAYS use `./scripts/setup_integration_tests.sh` to regenerate integration tests. NEVER manually regenerate individual tests. This is non-negotiable.
 - When producing edits or tests, prefer the patterns and workflows described in those rules (e.g., project layout, test matchers, FVM usage, and code-builder patterns).
 - If a rule is ambiguous or conflicts with other repository guidance, ask the human maintainer (use the "ask-and-wait" pattern).
 

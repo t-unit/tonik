@@ -25,6 +25,8 @@ class Schema {
     required this.xDartName,
     required this.xDartEnum,
     required this.defs,
+    required this.contentEncoding,
+    required this.contentMediaType,
     this.isBooleanSchema,
   });
 
@@ -50,6 +52,8 @@ class Schema {
         xDartName: null,
         xDartEnum: null,
         defs: null,
+        contentEncoding: null,
+        contentMediaType: null,
         isBooleanSchema: json,
       );
     }
@@ -76,6 +80,8 @@ class Schema {
         xDartName: null,
         xDartEnum: null,
         defs: null,
+        contentEncoding: null,
+        contentMediaType: null,
       );
     }
 
@@ -116,6 +122,10 @@ class Schema {
   @JsonKey(name: r'$defs')
   @SchemaMapConverter()
   final Map<String, Schema>? defs;
+  @JsonKey(name: 'contentEncoding')
+  final String? contentEncoding;
+  @JsonKey(name: 'contentMediaType')
+  final String? contentMediaType;
 
   /// Indicates if this schema is a boolean schema (true/false).
   ///
@@ -138,6 +148,7 @@ class Schema {
       '$description, isNullable: $isNullable, discriminator: $discriminator, '
       'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems, '
       'xDartName: $xDartName, xDartEnum: $xDartEnum, '
+      'contentEncoding: $contentEncoding, contentMediaType: $contentMediaType, '
       'isBooleanSchema: $isBooleanSchema}';
 }
 

@@ -34,9 +34,7 @@ void main() {
       test('request path includes hostname parameter', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdSummary(
-          hostname: 'example.com'
-        );
+        final response = await api.getWebsiteIdSummary(hostname: 'example.com');
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(
@@ -48,9 +46,7 @@ void main() {
       test('request method is GET', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdSummary(
-          hostname: 'example.com'
-        );
+        final response = await api.getWebsiteIdSummary(hostname: 'example.com');
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -59,9 +55,7 @@ void main() {
       test('request has no body', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdSummary(
-          hostname: 'example.com'
-        );
+        final response = await api.getWebsiteIdSummary(hostname: 'example.com');
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(success.response.requestOptions.data, isNull);

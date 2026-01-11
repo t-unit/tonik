@@ -36,4 +36,6 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   defs: const SchemaMapConverter().fromJson(
     json[r'$defs'] as Map<String, dynamic>?,
   ),
+  contentEncoding: json['contentEncoding'] as String?,
+  contentMediaType: json['contentMediaType'] as String?,
 );
