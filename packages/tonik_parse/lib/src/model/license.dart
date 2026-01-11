@@ -4,11 +4,7 @@ part 'license.g.dart';
 
 @JsonSerializable(createToJson: false)
 class License {
-  License({
-    required this.name,
-    required this.identifier,
-    required this.url,
-  });
+  License({required this.name, required this.identifier, required this.url});
 
   factory License.fromJson(Map<String, dynamic> json) =>
       _$LicenseFromJson(json);

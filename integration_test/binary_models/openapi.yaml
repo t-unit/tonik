@@ -1,4 +1,4 @@
-openapi: 3.0.4
+openapi: 3.1.0
 info:
   title: Binary Models API
   description: |-
@@ -208,6 +208,104 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /content-encoded/data:
+    post:
+      tags:
+        - contentEncoded
+      summary: Upload data with contentEncoding base64 field
+      description: Uploads data with contentEncoding:base64 field (OAS 3.1)
+      operationId: uploadContentEncodedData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentEncodedData'
+      responses:
+        '201':
+          description: Data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadContentEncodedDataSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - contentEncoded
+      summary: Get data with contentEncoding base64 field
+      description: Returns data with contentEncoding:base64 field (OAS 3.1)
+      operationId: getContentEncodedData
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentEncodedData'
+        '404':
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /oas31/raw-binary:
+    get:
+      tags:
+        - files
+      summary: Download raw binary (OAS 3.1 empty schema)
+      description: Downloads binary data using OAS 3.1 empty schema pattern
+      operationId: getRawBinary
+      responses:
+        '200':
+          description: Binary data downloaded successfully (no explicit schema)
+          content:
+            application/octet-stream: {}
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - files
+      summary: Upload raw binary (OAS 3.1 empty schema)
+      description: Uploads binary data using OAS 3.1 empty schema pattern
+      operationId: uploadRawBinary
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: {}
+      responses:
+        '201':
+          description: Binary data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+  /oas31/image:
+    get:
+      tags:
+        - images
+      summary: Download image (OAS 3.1 empty schema)
+      description: Downloads an image using OAS 3.1 empty schema pattern
+      operationId: getImageOas31
+      responses:
+        '200':
+          description: Image downloaded successfully (no explicit schema)
+          content:
+            image/png: {}
 components:
   schemas:
     Error:
@@ -299,6 +397,32 @@ components:
           type: string
           description: Optional description
     UploadBase64DataSuccess:
+      type: object
+      required:
+        - id
+        - message
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+    ContentEncodedData:
+      type: object
+      required:
+        - name
+        - encodedData
+      properties:
+        name:
+          type: string
+          description: Name of the data
+        encodedData:
+          type: string
+          contentEncoding: base64
+          description: Base64 encoded binary data (OAS 3.1 contentEncoding)
+        description:
+          type: string
+          description: Optional description
+    UploadContentEncodedDataSuccess:
       type: object
       required:
         - id

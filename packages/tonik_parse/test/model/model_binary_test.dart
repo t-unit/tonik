@@ -53,6 +53,8 @@ void main() {
       xDartName: null,
       xDartEnum: null,
       defs: null,
+      contentEncoding: null,
+      contentMediaType: null,
     );
 
     final inlineByte = Schema(
@@ -75,6 +77,32 @@ void main() {
       xDartName: null,
       xDartEnum: null,
       defs: null,
+      contentEncoding: null,
+      contentMediaType: null,
+    );
+
+    final inlineContentEncodingBase64 = Schema(
+      ref: null,
+      type: ['string'],
+      format: null,
+      required: [],
+      enumerated: null,
+      allOf: null,
+      anyOf: null,
+      oneOf: null,
+      not: null,
+      items: null,
+      properties: {},
+      description: '',
+      isNullable: false,
+      discriminator: null,
+      isDeprecated: false,
+      uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
+      defs: null,
+      contentEncoding: 'base64',
+      contentMediaType: null,
     );
 
     late ModelImporter importer;
@@ -101,6 +129,16 @@ void main() {
       expect(result.context.path, ['components', 'schemas']);
     });
 
+    test('returns StringModel for contentEncoding: base64', () {
+      final context = Context.initial().pushAll(['components', 'schemas']);
+
+      final result =
+          importer.importSchema(inlineContentEncodingBase64, context);
+
+      expect(result, isA<StringModel>());
+      expect(result.context.path, ['components', 'schemas']);
+    });
+
     test('does not add inline binary schema to models', () {
       final context = Context.initial().pushAll(['components', 'schemas']);
 
@@ -112,6 +150,14 @@ void main() {
       final context = Context.initial().pushAll(['components', 'schemas']);
 
       final result = importer.importSchema(inlineByte, context);
+      expect(importer.models.contains(result), isFalse);
+    });
+
+    test('does not add inline contentEncoding:base64 schema to models', () {
+      final context = Context.initial().pushAll(['components', 'schemas']);
+
+      final result =
+          importer.importSchema(inlineContentEncodingBase64, context);
       expect(importer.models.contains(result), isFalse);
     });
   });
@@ -151,7 +197,9 @@ void main() {
             uniqueItems: false,
             xDartName: null,
             xDartEnum: null,
-      defs: null,
+            defs: null,
+            contentEncoding: null,
+            contentMediaType: null,
           ),
           'Base64Data': Schema(
             ref: null,
@@ -172,7 +220,9 @@ void main() {
             uniqueItems: false,
             xDartName: null,
             xDartEnum: null,
-      defs: null,
+            defs: null,
+            contentEncoding: null,
+            contentMediaType: null,
           ),
         },
         responses: {},

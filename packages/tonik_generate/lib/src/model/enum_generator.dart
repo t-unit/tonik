@@ -342,8 +342,10 @@ class EnumGenerator {
         )
         ..body = Block.of([
           Code.scope((a) => 'if (value is! ${a(typeReference)}) {'),
-          generateDecodingExceptionExpression(typeErrorMessage, raw: true)
-              .statement,
+          generateDecodingExceptionExpression(
+            typeErrorMessage,
+            raw: true,
+          ).statement,
           const Code('}'),
           refer('values')
               .property('firstWhere')

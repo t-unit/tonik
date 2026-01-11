@@ -578,4 +578,204 @@ void main() {
       },
     );
   });
+
+  group('OAS 3.1 empty schema support', () {
+    test('infers BinaryModel for application/octet-stream without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'BinaryBody': {
+              'description': 'Binary content without explicit schema',
+              'required': true,
+              'content': {
+                'application/octet-stream': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final binaryBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'BinaryBody',
+      );
+
+      expect(binaryBody, isNotNull);
+      expect(binaryBody, isA<RequestBodyObject>());
+      expect((binaryBody as RequestBodyObject?)?.content, hasLength(1));
+
+      final content = binaryBody?.content.first;
+      expect(content?.model, isA<BinaryModel>());
+      expect(content?.rawContentType, 'application/octet-stream');
+      expect(content?.contentType, ContentType.bytes);
+    });
+
+    test('infers BinaryModel for image/png without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'ImageBody': {
+              'description': 'Image content without explicit schema',
+              'required': true,
+              'content': {
+                'image/png': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final imageBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'ImageBody',
+      );
+
+      expect(imageBody, isNotNull);
+      expect(imageBody, isA<RequestBodyObject>());
+      expect((imageBody as RequestBodyObject?)?.content, hasLength(1));
+
+      final content = imageBody?.content.first;
+      expect(content?.model, isA<BinaryModel>());
+      expect(content?.rawContentType, 'image/png');
+      expect(content?.contentType, ContentType.bytes);
+    });
+
+    test('infers AnyModel for application/json without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'JsonBody': {
+              'description': 'JSON content without explicit schema',
+              'required': true,
+              'content': {
+                'application/json': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final jsonBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'JsonBody',
+      );
+
+      expect(jsonBody, isNotNull);
+      expect(jsonBody, isA<RequestBodyObject>());
+      expect((jsonBody as RequestBodyObject?)?.content, hasLength(1));
+
+      final content = jsonBody?.content.first;
+      expect(content?.model, isA<AnyModel>());
+      expect(content?.rawContentType, 'application/json');
+      expect(content?.contentType, ContentType.json);
+    });
+
+    test('infers StringModel for text/plain without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'TextBody': {
+              'description': 'Text content without explicit schema',
+              'required': true,
+              'content': {
+                'text/plain': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final textBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'TextBody',
+      );
+
+      expect(textBody, isNotNull);
+      expect(textBody, isA<RequestBodyObject>());
+      expect((textBody as RequestBodyObject?)?.content, hasLength(1));
+
+      final content = textBody?.content.first;
+      expect(content?.model, isA<StringModel>());
+      expect(content?.rawContentType, 'text/plain');
+      expect(content?.contentType, ContentType.text);
+    });
+
+    test('infers BinaryModel for form without schema with warning', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'FormBody': {
+              'description': 'Form content without explicit schema',
+              'required': true,
+              'content': {
+                'application/x-www-form-urlencoded': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final formBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'FormBody',
+      );
+
+      expect(formBody, isNotNull);
+      expect(formBody, isA<RequestBodyObject>());
+      expect((formBody as RequestBodyObject?)?.content, hasLength(1));
+
+      final content = formBody?.content.first;
+      expect(content?.model, isA<BinaryModel>());
+      expect(content?.rawContentType, 'application/x-www-form-urlencoded');
+      expect(content?.contentType, ContentType.form);
+    });
+
+    test('infers BinaryModel for unknown content type without schema', () {
+      final fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'UnknownBody': {
+              'description': 'Unknown content type without explicit schema',
+              'required': true,
+              'content': {
+                'application/x-custom-unknown': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContent);
+      final unknownBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'UnknownBody',
+      );
+
+      expect(unknownBody, isNotNull);
+      expect(unknownBody, isA<RequestBodyObject>());
+      expect((unknownBody as RequestBodyObject?)?.content, hasLength(1));
+
+      final content = unknownBody?.content.first;
+      expect(content?.model, isA<BinaryModel>());
+      expect(content?.rawContentType, 'application/x-custom-unknown');
+      expect(content?.contentType, ContentType.bytes);
+    });
+  });
 }
