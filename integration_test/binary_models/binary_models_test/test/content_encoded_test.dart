@@ -89,7 +89,7 @@ void main() {
     });
 
     test(
-      'contentEncoding:base64 behaves identically to format:byte (both are String)',
+      'contentEncoding:base64 behaves identically to format:byte',
       () {
         final binaryData = Uint8List.fromList([1, 2, 3, 4, 5]);
         final base64String = base64.encode(binaryData);
