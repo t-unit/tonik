@@ -11,6 +11,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 | **No name conflicts** | Schema names like `Error`, `Response`, `List` work without collisions |
 | **Integer enums** | Full support, with optional unknown-value handling |
 | **All encoding styles** | `simple`, `label`, `matrix`, `form`, `deepObject`, `spaceDelimited`, `pipeDelimited` |
+| **Server variables** | URL templating with enum constraints and runtime substitution |
 | **Pure Dart** | No Java, no Docker, no external tooling |
 
 ## Table of Contents
@@ -36,6 +37,8 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
     - [Content Types](#content-types)
   - [Responses](#responses)
   - [Operations](#operations)
+  - [Servers](#servers)
+    - [Server Variables](#server-variables)
   - [Tonik-Specific Features](#tonik-specific-features)
     - [Vendor Extensions](#vendor-extensions)
     - [Configuration](#configuration)
@@ -234,6 +237,37 @@ See [Data Types](data_types.md#form-url-encoded-bodies) for examples.
 | Operation-level `security` | ✅ (documented in comments) |
 
 **Security:** Tonik documents security requirements but does not generate authentication code. Use `ServerConfig` interceptors. See [Authentication Guide](authentication.md).
+
+---
+
+## Servers
+
+Tonik generates typed server classes from OpenAPI `servers` definitions, with full support for URL templating via server variables.
+
+| Feature | Status |
+|---------|--------|
+| Multiple servers | ✅ |
+| Server descriptions | ✅ (preserved in docs) |
+| Server variables | ✅ |
+| Variable defaults | ✅ |
+| Variable enum constraints | ✅ (generates Dart enums) |
+| Unconstrained variables | ✅ (String parameters) |
+
+### Server Variables
+
+Variables with `enum` constraints generate typed Dart enums. Unconstrained variables become `String` parameters with defaults.
+
+```dart
+// Switch regions at runtime
+final api = PetApi(
+  server: RegionalServer(region: RegionalServerRegion.euCentral),
+);
+
+// Or use a custom URL
+final api = PetApi(
+  server: CustomServer(baseUrl: 'http://localhost:3000'),
+);
+```
 
 ---
 

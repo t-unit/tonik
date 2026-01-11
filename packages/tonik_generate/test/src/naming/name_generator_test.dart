@@ -1120,9 +1120,9 @@ void main() {
       test('generates names based on subdomain differences', () {
         final generator = NameGenerator();
         final servers = [
-          const Server(url: 'https://api.example.com', description: null),
-          const Server(url: 'https://staging.example.com', description: null),
-          const Server(url: 'https://dev.example.com', description: null),
+          const Server(url: 'https://api.example.com'),
+          const Server(url: 'https://staging.example.com'),
+          const Server(url: 'https://dev.example.com'),
         ];
 
         final result = generator.generateServerNames(servers);
@@ -1138,12 +1138,11 @@ void main() {
       test('generates names based on multi-level subdomain differences', () {
         final generator = NameGenerator();
         final servers = [
-          const Server(url: 'https://api.dev.example.com', description: null),
+          const Server(url: 'https://api.dev.example.com'),
           const Server(
             url: 'https://api.staging.example.com',
-            description: null,
           ),
-          const Server(url: 'https://api.prod.example.com', description: null),
+          const Server(url: 'https://api.prod.example.com'),
         ];
 
         final result = generator.generateServerNames(servers);
@@ -1161,9 +1160,9 @@ void main() {
         () {
           final generator = NameGenerator();
           final servers = [
-            const Server(url: 'https://api.example.com', description: null),
-            const Server(url: 'https://api.acme.com', description: null),
-            const Server(url: 'https://api.test.com', description: null),
+            const Server(url: 'https://api.example.com'),
+            const Server(url: 'https://api.acme.com'),
+            const Server(url: 'https://api.test.com'),
           ];
 
           final result = generator.generateServerNames(servers);
@@ -1181,9 +1180,9 @@ void main() {
           'domains and subdomains', () {
         final generator = NameGenerator();
         final servers = [
-          const Server(url: 'https://api.example.com/v1', description: null),
-          const Server(url: 'https://api.example.com/v2', description: null),
-          const Server(url: 'https://api.example.com/beta', description: null),
+          const Server(url: 'https://api.example.com/v1'),
+          const Server(url: 'https://api.example.com/v2'),
+          const Server(url: 'https://api.example.com/beta'),
         ];
 
         final result = generator.generateServerNames(servers);
@@ -1240,13 +1239,12 @@ void main() {
       test('uses default names on invalid URLs', () {
         final generator = NameGenerator();
         final servers = [
-          const Server(url: 'This is not a URI', description: null),
+          const Server(url: 'This is not a URI'),
           const Server(
             url: 'https://staging.example.com/v1',
-            description: null,
           ),
-          const Server(url: 'https://api.acme.com/v1', description: null),
-          const Server(url: 'https://api.example.com/v2', description: null),
+          const Server(url: 'https://api.acme.com/v1'),
+          const Server(url: 'https://api.example.com/v2'),
         ];
 
         final result = generator.generateServerNames(servers);

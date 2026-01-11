@@ -725,9 +725,9 @@ void main() {
 
     test('caches and returns the same result for identical server lists', () {
       final servers = [
-        const Server(url: 'https://api.example.com', description: null),
-        const Server(url: 'https://staging.example.com', description: null),
-        const Server(url: 'https://dev.example.com', description: null),
+        const Server(url: 'https://api.example.com'),
+        const Server(url: 'https://staging.example.com'),
+        const Server(url: 'https://dev.example.com'),
       ];
 
       // First call should generate names
@@ -735,9 +735,9 @@ void main() {
 
       // Generate a new identical list to test content equality
       final identicalContentServers = [
-        const Server(url: 'https://api.example.com', description: null),
-        const Server(url: 'https://staging.example.com', description: null),
-        const Server(url: 'https://dev.example.com', description: null),
+        const Server(url: 'https://api.example.com'),
+        const Server(url: 'https://staging.example.com'),
+        const Server(url: 'https://dev.example.com'),
       ];
 
       // Identity should be different but content equal
@@ -768,8 +768,8 @@ void main() {
 
     test('primes names for a list of servers', () {
       final servers = [
-        const Server(url: 'https://api.example.com', description: null),
-        const Server(url: 'https://staging.example.com', description: null),
+        const Server(url: 'https://api.example.com'),
+        const Server(url: 'https://staging.example.com'),
       ];
 
       // Prime the name manager

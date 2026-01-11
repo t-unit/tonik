@@ -1,0 +1,91 @@
+openapi: '3.1.0'
+info:
+  title: Server Variables Test API
+  description: Tests server URL templating with variables
+  version: 1.0.0
+servers:
+  # Static server (no variables) for baseline
+  - url: https://production.example.com/api/v1
+    description: Production server (static)
+
+  # Server with enum-constrained region variable
+  - url: https://{region}.example.com/api/v1
+    description: Regional server with constrained regions
+    variables:
+      region:
+        default: us-east
+        enum:
+          - us-east
+          - us-west
+          - eu-central
+          - ap-southeast
+        description: The regional datacenter
+
+  # Server with unconstrained string variable
+  - url: https://{environment}.staging.example.com/api/v1
+    description: Environment server with open variable
+    variables:
+      environment:
+        default: dev
+        description: The environment name (any string allowed)
+
+  # Server with multiple variables (mixed enum and string)
+  - url: https://{tenant}.{region}.example.com:{port}/api/v1
+    description: Multi-tenant server with multiple variables
+    variables:
+      tenant:
+        default: default
+        description: Tenant identifier
+      region:
+        default: us-east
+        enum:
+          - us-east
+          - us-west
+          - eu-central
+        description: Regional datacenter
+      port:
+        default: '443'
+        enum:
+          - '443'
+          - '8443'
+        description: Server port
+
+tags:
+  - name: health
+    description: Health check operations
+
+paths:
+  /health:
+    get:
+      tags:
+        - health
+      summary: Health check
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum:
+            - healthy
+            - degraded
+            - unhealthy
+        timestamp:
+          type: string
+          format: date-time
+        server:
+          type: string
+          description: The server that responded
