@@ -132,8 +132,10 @@ void main() {
     test('returns StringModel for contentEncoding: base64', () {
       final context = Context.initial().pushAll(['components', 'schemas']);
 
-      final result =
-          importer.importSchema(inlineContentEncodingBase64, context);
+      final result = importer.importSchema(
+        inlineContentEncodingBase64,
+        context,
+      );
 
       expect(result, isA<StringModel>());
       expect(result.context.path, ['components', 'schemas']);
@@ -156,8 +158,10 @@ void main() {
     test('does not add inline contentEncoding:base64 schema to models', () {
       final context = Context.initial().pushAll(['components', 'schemas']);
 
-      final result =
-          importer.importSchema(inlineContentEncodingBase64, context);
+      final result = importer.importSchema(
+        inlineContentEncodingBase64,
+        context,
+      );
       expect(importer.models.contains(result), isFalse);
     });
   });

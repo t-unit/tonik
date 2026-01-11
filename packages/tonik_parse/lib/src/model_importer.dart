@@ -390,7 +390,8 @@ class ModelImporter {
       'string' when schema.format == 'uri' || schema.format == 'url' =>
         UriModel(context: context),
       'string' when schema.format == 'binary' => BinaryModel(context: context),
-      'string' when schema.format == 'byte' || schema.contentEncoding == 'base64' => 
+      'string'
+          when schema.format == 'byte' || schema.contentEncoding == 'base64' =>
         StringModel(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,
