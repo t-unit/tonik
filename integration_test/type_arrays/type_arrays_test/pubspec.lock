@@ -343,7 +343,7 @@ packages:
       path: "../../../packages/tonik_util"
       relative: true
     source: path
-    version: "0.3.0"
+    version: "0.4.0"
   type_arrays_api:
     dependency: "direct main"
     description:

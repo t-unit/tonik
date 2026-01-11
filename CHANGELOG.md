@@ -3,6 +3,81 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-01-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.4.0`](#tonik_util---v040)
+ - [`tonik_core` - `v0.4.0`](#tonik_core---v040)
+ - [`tonik_parse` - `v0.4.0`](#tonik_parse---v040)
+ - [`tonik_generate` - `v0.4.0`](#tonik_generate---v040)
+ - [`tonik` - `v0.4.0`](#tonik---v040)
+
+---
+
+#### `tonik_util` - `v0.4.0`
+
+ - **FIX**: handle boolean schemas in lists correclty.
+ - **FEAT**: better support for boolean models.
+
+#### `tonik_core` - `v0.4.0`
+
+ - **FEAT**: server templating.
+ - **FEAT**: ref sibling handling for 3.1.
+ - **FEAT**: prase boolean schemas.
+ - **FEAT**: support mutualTLS for 3.1.
+ - **FEAT**: support description overrides for 3.1.
+ - **FEAT**: additional metadata fields for 3.1.
+
+#### `tonik_parse` - `v0.4.0`
+
+ - **REFACTOR**: parse all fields for schema references.
+ - **FIX**: inline models with ref siblings where not generated in all cases.
+ - **FIX**: proper handling of lists with type arrays.
+ - **FEAT**: server templating.
+ - **FEAT**: improved encoding detection with OAS 3.1.
+ - **FEAT**: support defs for OAS 3.1.
+ - **FEAT**: ref sibling handling for 3.1.
+ - **FEAT**: prase boolean schemas.
+ - **FEAT**: support mutualTLS for 3.1.
+ - **FEAT**: inform user about version of spec.
+ - **FEAT**: support description overrides for 3.1.
+ - **FEAT**: additional metadata fields for 3.1.
+ - **FEAT**: support 3.1 feature of path items in components.
+
+#### `tonik_generate` - `v0.4.0`
+
+ - **FIX**: ignroe warnings in generated code.
+ - **FIX**: inline models with ref siblings where not generated in all cases.
+ - **FIX**: don’t add trailing ? if there are no query parameters.
+ - **FIX**: handle boolean schemas in lists correclty.
+ - **FIX**: proper handling of lists with type arrays.
+ - **FIX**: changelog link missing for tonik.
+ - **FEAT**: server templating.
+ - **FEAT**: improved encoding detection with OAS 3.1.
+ - **FEAT**: support defs for OAS 3.1.
+ - **FEAT**: ref sibling handling for 3.1.
+ - **FEAT**: better support for boolean models.
+ - **FEAT**: basic handling of boolean schemas.
+ - **FEAT**: support mutualTLS for 3.1.
+ - **FEAT**: better OAS 3 doc strings.
+ - **FEAT**: support description overrides for 3.1.
+ - **FEAT**: additional metadata fields for 3.1.
+
+#### `tonik` - `v0.4.0`
+
+ - **FIX**: wrong links to changelog.
+ - **FEAT**: better readme and documentation.
+
+
 ## 2025-12-23
 
 ### Changes

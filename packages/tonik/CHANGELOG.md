@@ -1,3 +1,11 @@
+## 0.4.0
+
+ - **FIX**: wrong links to changelog.
+ - **FEAT**: better readme and documentation.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.3.0
 
  - **FIX**: allow text and binary in config.

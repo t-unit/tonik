@@ -1,3 +1,22 @@
+## 0.4.0
+
+ - **FIX**: ignroe warnings in generated code.
+ - **FIX**: inline models with ref siblings where not generated in all cases.
+ - **FIX**: don’t add trailing ? if there are no query parameters.
+ - **FIX**: handle boolean schemas in lists correclty.
+ - **FIX**: proper handling of lists with type arrays.
+ - **FIX**: changelog link missing for tonik.
+ - **FEAT**: server templating.
+ - **FEAT**: improved encoding detection with OAS 3.1.
+ - **FEAT**: support defs for OAS 3.1.
+ - **FEAT**: ref sibling handling for 3.1.
+ - **FEAT**: better support for boolean models.
+ - **FEAT**: basic handling of boolean schemas.
+ - **FEAT**: support mutualTLS for 3.1.
+ - **FEAT**: better OAS 3 doc strings.
+ - **FEAT**: support description overrides for 3.1.
+ - **FEAT**: additional metadata fields for 3.1.
+
 ## 0.3.0
 
  - **FIX**: remove lints as dependency.

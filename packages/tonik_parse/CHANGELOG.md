@@ -1,3 +1,19 @@
+## 0.4.0
+
+ - **REFACTOR**: parse all fields for schema references.
+ - **FIX**: inline models with ref siblings where not generated in all cases.
+ - **FIX**: proper handling of lists with type arrays.
+ - **FEAT**: server templating.
+ - **FEAT**: improved encoding detection with OAS 3.1.
+ - **FEAT**: support defs for OAS 3.1.
+ - **FEAT**: ref sibling handling for 3.1.
+ - **FEAT**: prase boolean schemas.
+ - **FEAT**: support mutualTLS for 3.1.
+ - **FEAT**: inform user about version of spec.
+ - **FEAT**: support description overrides for 3.1.
+ - **FEAT**: additional metadata fields for 3.1.
+ - **FEAT**: support 3.1 feature of path items in components.
+
 ## 0.3.0
 
  - **FEAT**: better support for nullable schemas.

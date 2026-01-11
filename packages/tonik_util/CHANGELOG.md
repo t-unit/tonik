@@ -1,3 +1,8 @@
+## 0.4.0
+
+ - **FIX**: handle boolean schemas in lists correclty.
+ - **FEAT**: better support for boolean models.
+
 ## 0.3.0
 
  - **FIX**: remove lints as dependency.

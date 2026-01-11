@@ -1,3 +1,12 @@
+## 0.4.0
+
+ - **FEAT**: server templating.
+ - **FEAT**: ref sibling handling for 3.1.
+ - **FEAT**: prase boolean schemas.
+ - **FEAT**: support mutualTLS for 3.1.
+ - **FEAT**: support description overrides for 3.1.
+ - **FEAT**: additional metadata fields for 3.1.
+
 ## 0.3.0
 
  - **FEAT**: better support for nullable schemas.
