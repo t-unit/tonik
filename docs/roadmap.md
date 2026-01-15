@@ -8,7 +8,6 @@
 - Advanced OpenAPI 3.1 features:
   - Support for `if/then/else` schemas (via custom encoding/decoding checks)
   - Support for `const` schemas
-  - `contentEncoding`, `contentMediaType`, `contentSchema` for binary content
   - `prefixItems` for tuple validation
   - `dependentRequired` / `dependentSchemas`
 - Default values

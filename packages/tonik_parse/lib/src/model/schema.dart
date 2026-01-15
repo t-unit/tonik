@@ -27,6 +27,7 @@ class Schema {
     required this.defs,
     required this.contentEncoding,
     required this.contentMediaType,
+    required this.contentSchema,
     this.isBooleanSchema,
   });
 
@@ -54,6 +55,7 @@ class Schema {
         defs: null,
         contentEncoding: null,
         contentMediaType: null,
+        contentSchema: null,
         isBooleanSchema: json,
       );
     }
@@ -82,6 +84,7 @@ class Schema {
         defs: null,
         contentEncoding: null,
         contentMediaType: null,
+        contentSchema: null,
       );
     }
 
@@ -126,6 +129,9 @@ class Schema {
   final String? contentEncoding;
   @JsonKey(name: 'contentMediaType')
   final String? contentMediaType;
+  @SchemaConverter()
+  @JsonKey(name: 'contentSchema')
+  final Schema? contentSchema;
 
   /// Indicates if this schema is a boolean schema (true/false).
   ///
@@ -149,7 +155,7 @@ class Schema {
       'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems, '
       'xDartName: $xDartName, xDartEnum: $xDartEnum, '
       'contentEncoding: $contentEncoding, contentMediaType: $contentMediaType, '
-      'isBooleanSchema: $isBooleanSchema}';
+      'contentSchema: $contentSchema, isBooleanSchema: $isBooleanSchema}';
 }
 
 class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {

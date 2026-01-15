@@ -1,0 +1,10 @@
+# Configuration for binary_models integration test
+# Tests contentMediaType mapping to Dart types
+
+contentMediaTypes:
+  # Map image/png to binary (List<int>)
+  "image/png": binary
+  # Map text/plain to text (String)
+  "text/plain": text
+  # Note: application/x-custom-unknown is NOT configured
+  # to test fallback behavior (should default to binary/List<int>)

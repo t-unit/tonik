@@ -172,7 +172,7 @@ $TONIK_BINARY -p path_encoding_api -s path_encoding/openapi.yaml -o path_encodin
 add_dependency_overrides_recursive "path_encoding/path_encoding_api"
 cd path_encoding/path_encoding_api && dart pub get && cd ../..
 
-$TONIK_BINARY -p binary_models_api -s binary_models/openapi.yaml -o binary_models
+$TONIK_BINARY --config binary_models/tonik.yaml -p binary_models_api -s binary_models/openapi.yaml -o binary_models
 add_dependency_overrides_recursive "binary_models/binary_models_api"
 cd binary_models/binary_models_api && dart pub get && cd ../..
 

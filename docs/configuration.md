@@ -57,6 +57,11 @@ contentTypes:
   "application/vnd.api+json": json
   "application/hal+json": json
 
+contentMediaTypes:
+  # Map schema contentMediaType to Dart types for content-encoded strings
+  "image/png": binary    # List<int>
+  "text/plain": text     # String
+
 filter:
   # Only generate code for specific parts of the spec
   includeTags:
@@ -245,6 +250,34 @@ contentTypes:
 ```
 
 Supported targets: `json`, `form`, `text`, `binary`.
+
+## Schema Content Media Type Mapping
+
+OpenAPI 3.1 allows schemas with `contentEncoding` (e.g., `base64`) and `contentMediaType` to represent encoded binary content within JSON structures. Use `contentMediaTypes` to control how these schemas map to Dart types:
+
+```yaml
+contentMediaTypes:
+  "image/png": binary    # → List<int>
+  "image/jpeg": binary   # → List<int>
+  "text/plain": text     # → String
+  "application/pdf": binary
+```
+
+Supported targets:
+- `binary` - Generates `List<int>` (raw bytes)
+- `text` - Generates `String` (keeps encoded string as-is)
+
+**Fallback behavior:** When a schema has `contentEncoding` but its `contentMediaType` is not in the config map, Tonik defaults to `List<int>` (binary).
+
+**Example OpenAPI schema:**
+```yaml
+ProfileImage:
+  type: string
+  contentEncoding: base64
+  contentMediaType: image/png
+```
+
+With `"image/png": binary` in config, this generates a property typed as `List<int>`. Without config, it also defaults to `List<int>`.
 
 ## Filtering
 

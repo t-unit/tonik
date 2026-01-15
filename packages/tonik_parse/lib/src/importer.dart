@@ -14,12 +14,19 @@ import 'package:tonik_parse/src/security_scheme_importer.dart';
 import 'package:tonik_parse/src/server_importer.dart';
 
 class Importer {
-  Importer({this.contentTypes = const {}});
+  Importer({this.contentTypes = const {}, this.contentMediaTypes = const {}});
 
   /// Maps media type strings to ContentType for parsing request/response bodies.
   /// Default includes 'application/json' only. Add custom JSON-like media types
   /// (e.g., 'application/hal+json': ContentType.json) via configuration.
   final Map<String, core.ContentType> contentTypes;
+
+  /// Maps contentMediaType values to SchemaContentType for content-encoded
+  /// string schemas. When a schema has contentEncoding set, this config
+  /// determines whether it generates StringModel (text) or BinaryModel
+  /// (binary).
+  /// If no match found, defaults to BinaryModel.
+  final Map<String, core.SchemaContentType> contentMediaTypes;
 
   static final _log = Logger('Importer');
 
@@ -29,7 +36,10 @@ class Importer {
     // Detect and log OpenAPI version (permissive, no validation)
     _detectAndLogVersion(openApiObject.openapi);
 
-    final modelImporter = ModelImporter(openApiObject);
+    final modelImporter = ModelImporter(
+      openApiObject,
+      contentMediaTypes: contentMediaTypes,
+    );
     final securitySchemeImporter = SecuritySchemeImporter(openApiObject);
     final responseHeaderImporter = ResponseHeaderImporter(
       openApiObject: openApiObject,
