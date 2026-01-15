@@ -18,6 +18,8 @@ tags:
     description: Image operations
   - name: mixed
     description: Mixed content operations
+  - name: contentMediaType
+    description: contentMediaType with config mapping operations
 paths:
   /files/{id}:
     get:
@@ -306,6 +308,141 @@ paths:
           description: Image downloaded successfully (no explicit schema)
           content:
             image/png: {}
+  /content-media-type/image:
+    post:
+      tags:
+        - contentMediaType
+      summary: Upload data with contentMediaType image/png (configured as binary)
+      description: Tests contentMediaType with config mapping to binary
+      operationId: uploadContentMediaTypeImage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageEncodedData'
+      responses:
+        '201':
+          description: Data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+    get:
+      tags:
+        - contentMediaType
+      summary: Get data with contentMediaType image/png (configured as binary)
+      description: Returns data with contentMediaType mapped to binary via config
+      operationId: getContentMediaTypeImage
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageEncodedData'
+        '404':
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /content-media-type/text:
+    post:
+      tags:
+        - contentMediaType
+      summary: Upload data with contentMediaType text/plain (configured as text)
+      description: Tests contentMediaType with config mapping to text (String)
+      operationId: uploadContentMediaTypeText
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextEncodedData'
+      responses:
+        '201':
+          description: Data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+    get:
+      tags:
+        - contentMediaType
+      summary: Get data with contentMediaType text/plain (configured as text)
+      description: Returns data with contentMediaType mapped to text via config
+      operationId: getContentMediaTypeText
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TextEncodedData'
+        '404':
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /content-media-type/unconfigured:
+    post:
+      tags:
+        - contentMediaType
+      summary: Upload data with unconfigured contentMediaType (fallback to binary)
+      description: Tests contentMediaType fallback when not in config
+      operationId: uploadContentMediaTypeUnconfigured
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnconfiguredEncodedData'
+      responses:
+        '201':
+          description: Data uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+    get:
+      tags:
+        - contentMediaType
+      summary: Get data with unconfigured contentMediaType (fallback to binary)
+      description: Returns data with unconfigured contentMediaType (fallback)
+      operationId: getContentMediaTypeUnconfigured
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnconfiguredEncodedData'
+        '404':
+          description: Data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Error:
@@ -418,7 +555,8 @@ components:
         encodedData:
           type: string
           contentEncoding: base64
-          description: Base64 encoded binary data (OAS 3.1 contentEncoding)
+          contentMediaType: text/plain
+          description: Base64 encoded binary data (OAS 3.1 contentEncoding) - configured as text
         description:
           type: string
           description: Optional description
@@ -432,3 +570,54 @@ components:
           type: string
         message:
           type: string
+    ImageEncodedData:
+      type: object
+      description: Data with contentMediaType image/png (configured as binary)
+      required:
+        - name
+        - imageData
+      properties:
+        name:
+          type: string
+          description: Name of the image
+        imageData:
+          type: string
+          contentEncoding: base64
+          contentMediaType: image/png
+          description: Base64 encoded image data (maps to binary via config)
+        description:
+          type: string
+          description: Optional description
+    TextEncodedData:
+      type: object
+      description: Data with contentMediaType text/plain (configured as text -> String)
+      required:
+        - name
+        - textData
+      properties:
+        name:
+          type: string
+          description: Name of the text
+        textData:
+          type: string
+          contentEncoding: base64
+          contentMediaType: text/plain
+          description: Base64 encoded text data (maps to String via config)
+        description:
+          type: string
+          description: Optional description
+    UnconfiguredEncodedData:
+      type: object
+      description: Data with unconfigured contentMediaType (fallback to binary)
+      required:
+        - name
+        - data
+      properties:
+        name:
+          type: string
+          description: Name of the data
+        data:
+          type: string
+          contentEncoding: base64
+          contentMediaType: application/x-custom-unknown
+          description: Base64 encoded data with unknown media type (fallback to binary)

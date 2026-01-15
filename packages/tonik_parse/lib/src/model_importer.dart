@@ -5,10 +5,14 @@ import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
 class ModelImporter {
-  ModelImporter(OpenApiObject openApiObject)
-    : _schemas = openApiObject.components?.schemas ?? {};
+  ModelImporter(
+    OpenApiObject openApiObject, {
+    Map<String, SchemaContentType> contentMediaTypes = const {},
+  }) : _schemas = openApiObject.components?.schemas ?? {},
+       _contentMediaTypes = contentMediaTypes;
 
   final Map<String, Schema> _schemas;
+  final Map<String, SchemaContentType> _contentMediaTypes;
   final Map<String, Schema> _defs = {};
 
   late Set<Model> models;
@@ -390,9 +394,9 @@ class ModelImporter {
       'string' when schema.format == 'uri' || schema.format == 'url' =>
         UriModel(context: context),
       'string' when schema.format == 'binary' => BinaryModel(context: context),
-      'string'
-          when schema.format == 'byte' || schema.contentEncoding == 'base64' =>
-        StringModel(context: context),
+      'string' when schema.contentEncoding != null =>
+        _resolveContentEncodedModel(schema, context),
+      'string' when schema.format == 'byte' => StringModel(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,
         schema.enumerated!,
@@ -435,6 +439,18 @@ class ModelImporter {
     return model;
   }
 
+  Model _resolveContentEncodedModel(Schema schema, Context context) {
+    final mediaType = schema.contentMediaType;
+    if (mediaType != null && _contentMediaTypes.containsKey(mediaType)) {
+      return switch (_contentMediaTypes[mediaType]!) {
+        .text => StringModel(context: context),
+        .binary => BinaryModel(context: context),
+      };
+    }
+
+    return BinaryModel(context: context);
+  }
+
   OneOfModel _parseMultiType(
     List<String> types,
     Schema schema,
@@ -465,6 +481,7 @@ class ModelImporter {
         defs: schema.defs,
         contentEncoding: schema.contentEncoding,
         contentMediaType: schema.contentMediaType,
+        contentSchema: schema.contentSchema,
       );
       return (
         discriminatorValue: null,

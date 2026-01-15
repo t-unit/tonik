@@ -423,6 +423,71 @@ contentTypes:
         }
       });
 
+      test('loads contentMediaTypes configuration', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+contentMediaTypes:
+  "image/png": binary
+  "image/jpeg": binary
+  "text/csv": text
+  "application/octet-stream": binary
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.contentMediaTypes, hasLength(4));
+        expect(
+          config.contentMediaTypes['image/png'],
+          SchemaContentType.binary,
+        );
+        expect(
+          config.contentMediaTypes['image/jpeg'],
+          SchemaContentType.binary,
+        );
+        expect(
+          config.contentMediaTypes['text/csv'],
+          SchemaContentType.text,
+        );
+        expect(
+          config.contentMediaTypes['application/octet-stream'],
+          SchemaContentType.binary,
+        );
+      });
+
+      test('throws meaningful error when contentMediaTypes is not a map', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+contentMediaTypes: not_a_map
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('"contentMediaTypes" must be a map'),
+            ),
+          ),
+        );
+      });
+
+      test('throws meaningful error for invalid contentMediaTypes value', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+contentMediaTypes:
+  "image/png": invalid
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('Invalid schema content type'),
+            ),
+          ),
+        );
+      });
+
       test('throws meaningful error when schemas override is not a map', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
 nameOverrides:

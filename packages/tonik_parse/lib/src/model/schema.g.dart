@@ -38,4 +38,5 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   ),
   contentEncoding: json['contentEncoding'] as String?,
   contentMediaType: json['contentMediaType'] as String?,
+  contentSchema: const SchemaConverter().fromJson(json['contentSchema']),
 );

@@ -49,6 +49,7 @@ extension ConfigLoader on CliConfig {
       logLevel: _parseLogLevel(yaml['logLevel']),
       nameOverrides: _parseNameOverrides(yaml['nameOverrides']),
       contentTypes: _parseContentTypes(yaml['contentTypes']),
+      contentMediaTypes: _parseContentMediaTypes(yaml['contentMediaTypes']),
       filter: _parseFilter(yaml['filter']),
       deprecated: _parseDeprecated(yaml['deprecated']),
       enums: _parseEnums(yaml['enums']),
@@ -134,6 +135,43 @@ extension ConfigLoader on CliConfig {
       _ => throw ConfigLoaderException(
         'Invalid content type for "$key": $stringValue. '
         'Must be one of: json, text, bytes, form',
+      ),
+    };
+  }
+
+  static Map<String, SchemaContentType> _parseContentMediaTypes(dynamic value) {
+    if (value == null) {
+      return const {};
+    }
+    if (value is! YamlMap) {
+      throw ConfigLoaderException(
+        'Invalid config: "contentMediaTypes" must be a map',
+      );
+    }
+
+    return Map.fromEntries(
+      value.entries.map((e) {
+        final key = e.key.toString();
+        final schemaContentType = _parseSchemaContentType(e.value, key);
+        return MapEntry(key, schemaContentType);
+      }),
+    );
+  }
+
+  static SchemaContentType _parseSchemaContentType(dynamic value, String key) {
+    if (value == null) {
+      throw ConfigLoaderException(
+        'Invalid config: contentMediaTypes["$key"] cannot be null',
+      );
+    }
+
+    final stringValue = value.toString();
+    return switch (stringValue) {
+      'binary' => SchemaContentType.binary,
+      'text' => SchemaContentType.text,
+      _ => throw ConfigLoaderException(
+        'Invalid schema content type for "$key": $stringValue. '
+        'Must be one of: binary, text',
       ),
     };
   }
@@ -267,6 +305,7 @@ extension ConfigLoader on CliConfig {
       logLevel: logLevel ?? this.logLevel,
       nameOverrides: nameOverrides,
       contentTypes: contentTypes,
+      contentMediaTypes: contentMediaTypes,
       filter: filter,
       deprecated: this.deprecated,
       enums: enums,

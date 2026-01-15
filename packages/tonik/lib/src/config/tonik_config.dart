@@ -16,6 +16,7 @@ class CliConfig {
     this.logLevel,
     this.nameOverrides = const NameOverridesConfig(),
     this.contentTypes = const {},
+    this.contentMediaTypes = const {},
     this.filter = const FilterConfig(),
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
@@ -37,6 +38,9 @@ class CliConfig {
   /// Custom content type mappings: `contentType -> serializationFormat`.
   final Map<String, ContentType> contentTypes;
 
+  /// Schema-level contentMediaType mappings for encoded content.
+  final Map<String, SchemaContentType> contentMediaTypes;
+
   final FilterConfig filter;
 
   final DeprecatedConfig deprecated;
@@ -46,19 +50,23 @@ class CliConfig {
   TonikConfig toTonikConfig() => TonikConfig(
     nameOverrides: nameOverrides,
     contentTypes: contentTypes,
+    contentMediaTypes: contentMediaTypes,
     filter: filter,
     deprecated: deprecated,
     enums: enums,
   );
 
-  static const _mapEquality = MapEquality<String, ContentType>();
+  static const _contentTypeEquality = MapEquality<String, ContentType>();
+  static const _schemaContentTypeEquality =
+      MapEquality<String, SchemaContentType>();
 
   @override
   String toString() =>
       'CliConfig{spec: $spec, outputDir: $outputDir, '
       'packageName: $packageName, logLevel: $logLevel, '
       'nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
-      'filter: $filter, deprecated: $deprecated, enums: $enums}';
+      'contentMediaTypes: $contentMediaTypes, filter: $filter, '
+      'deprecated: $deprecated, enums: $enums}';
 
   @override
   bool operator ==(Object other) =>
@@ -70,7 +78,11 @@ class CliConfig {
           packageName == other.packageName &&
           logLevel == other.logLevel &&
           nameOverrides == other.nameOverrides &&
-          _mapEquality.equals(contentTypes, other.contentTypes) &&
+          _contentTypeEquality.equals(contentTypes, other.contentTypes) &&
+          _schemaContentTypeEquality.equals(
+            contentMediaTypes,
+            other.contentMediaTypes,
+          ) &&
           filter == other.filter &&
           deprecated == other.deprecated &&
           enums == other.enums;
@@ -82,7 +94,8 @@ class CliConfig {
     packageName,
     logLevel,
     nameOverrides,
-    _mapEquality.hash(contentTypes),
+    _contentTypeEquality.hash(contentTypes),
+    _schemaContentTypeEquality.hash(contentMediaTypes),
     filter,
     deprecated,
     enums,

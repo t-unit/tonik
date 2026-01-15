@@ -13,6 +13,7 @@ This document provides information about how Tonik is mapping data types in Open
 | `string` | `uri`, `url` | `Uri` | `dart:core` | URI/URL parsing and validation |
 | `string` | `binary` | `List<int>` | `dart:core` | See [Binary Data](#binary-data) |
 | `string` | `byte` | `String` | `dart:core` | Base64 encoded data (kept as string) |
+| `string` | (with `contentEncoding`) | `List<int>` or `String` | `dart:core` | See [Content-Encoded Strings](#content-encoded-strings) |
 | `string` | `enum` | `enum` | Generated | Custom enum type |
 | `string` | (default) | `String` | `dart:core` | Standard string type |
 | `number` | `float`, `double` | `double` | `dart:core` | 64-bit floating point |
@@ -98,6 +99,29 @@ await filesApi.uploadFile(id: 'my-file', body: fileData);
 final result = await api.getMessage();
 final text = (result as TonikSuccess).value.body; // String
 ```
+
+### Content-Encoded Strings
+
+OpenAPI 3.1 supports `contentEncoding` and `contentMediaType` for string schemas that contain encoded binary data (e.g., base64-encoded images embedded in JSON).
+
+```yaml
+ProfileImage:
+  type: string
+  contentEncoding: base64
+  contentMediaType: image/png
+```
+
+Tonik maps these schemas based on configuration:
+
+| Config `contentMediaTypes` | Dart Type | Description |
+|----------------------------|-----------|-------------|
+| `"image/png": binary` | `List<int>` | Decoded binary data |
+| `"text/plain": text` | `String` | Keeps encoded string as-is |
+| (no match) | `List<int>` | Default fallback |
+
+Configure via [contentMediaTypes](configuration.md#schema-content-media-type-mapping) in `tonik.yaml`.
+
+> **Note:** Tonik does not perform base64 encoding/decoding automatically. When mapped to `List<int>`, you receive the raw bytes after decoding happens at the transport layer. When mapped to `String`, you receive the base64-encoded string directly.
 
 ### Form URL-Encoded Bodies
 
