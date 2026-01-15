@@ -77,7 +77,9 @@ void main() {
       // Serialize to JSON
       final json = imageEncodedData.toJson()! as Map<String, dynamic>;
 
-      // In JSON, the List<int> is UTF-8 decoded to string (not base64)
+      // The schema has contentEncoding: base64, but this test uses ASCII-compatible
+      // bytes that are valid UTF-8 to demonstrate the bidirectional conversion.
+      // In this test, List<int> is decoded as UTF-8 string in JSON for simplicity.
       expect(json['imageData'], isA<String>());
       expect(json['imageData'], equals('Hello'));
     });
