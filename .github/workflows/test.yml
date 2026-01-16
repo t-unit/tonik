@@ -25,13 +25,14 @@ jobs:
       - name: Install dependencies
         run: |
           dart pub global activate melos
+          dart pub global activate coverage
           melos bootstrap
 
       - name: Setup integration test
         run: ./scripts/setup_integration_tests.sh
 
-      - name: Run tests
-        run: melos run test 
+      - name: Run tests with coverage
+        run: melos run test:coverage 
 
       - name: Run petstore integration tests
         run: |
@@ -140,3 +141,53 @@ jobs:
           cd integration_test/server_variables/server_variables_test
           dart pub get
           dart test --concurrency=1
+      - name: Merge coverage reports
+        if: matrix.sdk == 'stable'
+        run: |
+          dart pub global run coverage:format_coverage \
+            --lcov \
+            --in=packages/tonik/coverage \
+            --out=coverage/tonik.lcov.info \
+            --report-on=lib \
+            --check-ignore || true
+          
+          dart pub global run coverage:format_coverage \
+            --lcov \
+            --in=packages/tonik_core/coverage \
+            --out=coverage/tonik_core.lcov.info \
+            --report-on=lib \
+            --check-ignore || true
+          
+          dart pub global run coverage:format_coverage \
+            --lcov \
+            --in=packages/tonik_generate/coverage \
+            --out=coverage/tonik_generate.lcov.info \
+            --report-on=lib \
+            --check-ignore || true
+          
+          dart pub global run coverage:format_coverage \
+            --lcov \
+            --in=packages/tonik_parse/coverage \
+            --out=coverage/tonik_parse.lcov.info \
+            --report-on=lib \
+            --check-ignore || true
+          
+          dart pub global run coverage:format_coverage \
+            --lcov \
+            --in=packages/tonik_util/coverage \
+            --out=coverage/tonik_util.lcov.info \
+            --report-on=lib \
+            --check-ignore || true
+          
+          # Merge all coverage files
+          mkdir -p coverage
+          find . -name "*.lcov.info" -exec cat {} \; > coverage/lcov.info
+
+      - name: Upload coverage to Codecov
+        if: matrix.sdk == 'stable'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
