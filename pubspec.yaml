@@ -32,7 +32,7 @@ melos:
         concurrency: 1
 
     test:coverage:
-      run: dart test --coverage=coverage && dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
+      run: dart test --coverage=coverage
       exec:
         concurrency: 1
         
