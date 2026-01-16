@@ -214,7 +214,7 @@ class AllOfNormalizer {
         _updateRequestHeaderModel(header.header, cache);
       case RequestHeaderObject():
         final transformed = cache[header.model];
-        if (transformed != null) {
+        if (transformed != null && transformed != header.model) {
           header.model = transformed;
         }
     }
@@ -229,7 +229,7 @@ class AllOfNormalizer {
         _updateQueryParameterModel(param.parameter, cache);
       case QueryParameterObject():
         final transformed = cache[param.model];
-        if (transformed != null) {
+        if (transformed != null && transformed != param.model) {
           param.model = transformed;
         }
     }
@@ -244,7 +244,7 @@ class AllOfNormalizer {
         _updatePathParameterModel(param.parameter, cache);
       case PathParameterObject():
         final transformed = cache[param.model];
-        if (transformed != null) {
+        if (transformed != null && transformed != param.model) {
           param.model = transformed;
         }
     }
