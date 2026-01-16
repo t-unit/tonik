@@ -69,9 +69,8 @@ class ResponseHeaderAlias extends ResponseHeader {
   int get hashCode => Object.hash(name, header, description);
 }
 
-@immutable
 class ResponseHeaderObject extends ResponseHeader {
-  const ResponseHeaderObject({
+  ResponseHeaderObject({
     required super.name,
     required super.context,
     required this.description,
@@ -85,41 +84,15 @@ class ResponseHeaderObject extends ResponseHeader {
   @override
   final String? description;
 
-  final bool explode;
-  final Model model;
-  final bool isRequired;
-  final bool isDeprecated;
-  final ResponseHeaderEncoding encoding;
+  bool explode;
+  Model model;
+  bool isRequired;
+  bool isDeprecated;
+  ResponseHeaderEncoding encoding;
 
   @override
   String toString() =>
       'HeaderObject{name: $name, description: $description, '
       'explode: $explode, model: $model, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, encoding: $encoding, context: $context}';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ResponseHeaderObject &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          description == other.description &&
-          explode == other.explode &&
-          model == other.model &&
-          isRequired == other.isRequired &&
-          isDeprecated == other.isDeprecated &&
-          encoding == other.encoding &&
-          context == other.context;
-
-  @override
-  int get hashCode => Object.hash(
-    name,
-    description,
-    explode,
-    model,
-    isRequired,
-    isDeprecated,
-    encoding,
-    context,
-  );
 }

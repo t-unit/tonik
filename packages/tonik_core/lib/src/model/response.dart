@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-@immutable
 sealed class Response {
   const Response({required this.name, required this.context});
 
@@ -128,29 +127,16 @@ class ResponseObject extends Response {
       'description: $description, bodies: $bodies)';
 }
 
-@immutable
 class ResponseBody {
-  const ResponseBody({
+  ResponseBody({
     required this.model,
     required this.rawContentType,
     required this.contentType,
   });
 
-  final Model model;
-  final String rawContentType;
-  final ContentType contentType;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! ResponseBody) return false;
-    return model == other.model &&
-        rawContentType == other.rawContentType &&
-        contentType == other.contentType;
-  }
-
-  @override
-  int get hashCode => Object.hash(model, rawContentType);
+  Model model;
+  String rawContentType;
+  ContentType contentType;
 
   @override
   String toString() => 'ResponseBody(model: $model, contentType: $contentType)';

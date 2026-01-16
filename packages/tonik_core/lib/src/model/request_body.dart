@@ -115,30 +115,16 @@ class RequestBodyObject extends RequestBody {
       'isRequired: $isRequired, content: $content)';
 }
 
-@immutable
 class RequestContent {
-  const RequestContent({
+  RequestContent({
     required this.model,
     required this.contentType,
     required this.rawContentType,
   });
 
-  final Model model;
-  final ContentType contentType;
-  final String rawContentType;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! RequestContent) return false;
-
-    return model == other.model &&
-        contentType == other.contentType &&
-        rawContentType == other.rawContentType;
-  }
-
-  @override
-  int get hashCode => Object.hash(model, contentType, rawContentType);
+  Model model;
+  ContentType contentType;
+  String rawContentType;
 
   @override
   String toString() =>

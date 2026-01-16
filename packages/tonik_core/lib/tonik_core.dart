@@ -24,6 +24,7 @@ export 'src/model/security_scheme.dart';
 export 'src/model/server.dart';
 export 'src/model/server_variable.dart';
 export 'src/model/tag.dart';
+export 'src/transformer/allof_normalizer.dart';
 export 'src/transformer/config_transformer.dart';
 export 'src/transformer/content_type_normalizer.dart';
 export 'src/util/context.dart';
