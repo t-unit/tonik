@@ -30,7 +30,7 @@ OpenAPI 3.1 allows `schema: true` (accepts any value) and `schema: false` (accep
 | Schema | Dart Type | Use Case |
 |--------|-----------|----------|
 | `true` | `Object?` | Flexible fields accepting any JSON |
-| `false` | `Never` | Unreachable fields (always null) |
+| `false` | `Never` | Unreachable fields |
 
 #### Encoding (sending requests)
 
@@ -40,11 +40,9 @@ Since `Object?` has no static type, Tonik checks the runtime type and encodes ac
 |------------|-----------|-------------------|----------------------|
 | Primitives (`String`, `int`, `double`, `bool`) | ✅ | ✅ | ✅ (via `toString()`) |
 | `DateTime`, `Uri`, `BigDecimal` | ✅ | ✅ | ✅ (via `toString()`) |
-| `List`, `Map` | ✅ recursive | ❌ throws | ✅ (via `toString()`) |
-| Generated models (`JsonEncodable` / `ParameterEncodable`) | ✅ | ✅ | ✅ (via `toString()`) |
+| `List`, `Map` | ✅ recursive | ❌ throws | ❌ throws |
+| Generated models (`JsonEncodable` / `ParameterEncodable`) | ✅ | ✅ | ✅ |
 | `Map<String, String>` with `deepObject` style | — | ✅ | — |
-
-Form-urlencoded bodies encode boolean schema fields using `toString()`, which works for any value but loses type information for complex structures.
 
 #### Decoding (parsing responses)
 
@@ -79,25 +77,81 @@ Tonik supports binary and plain text content types for request/response bodies:
 | `application/octet-stream`, `image/*` | `List<int>` | Raw binary data (files, images) |
 | `text/plain`, `text/html` | `String` | Plain text content |
 
-For `format: binary` fields nested in JSON objects, Tonik auto UTF-8 encodes/decodes.
-For `format: byte`, Tonik keeps the base64-encoded string as-is.
+Standard content types are handled automatically. Custom content types (e.g., `application/pdf`, `text/csv`) must be mapped in [configuration](configuration.md#content-type-mapping).
 
-**Example: Binary file download/upload**
-```dart
-// Download
-final result = await filesApi.getFile(id: 'my-file');
-final bytes = (result as TonikSuccess).value.body; // List<int>
-
-// Upload
-final fileData = await File('photo.png').readAsBytes();
-await filesApi.uploadFile(id: 'my-file', body: fileData);
+**Binary file download/upload**
+```yaml
+/files/{id}:
+  get:
+    responses:
+      '200':
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
 ```
 
-**Example: Plain text**
 ```dart
-// text/plain bodies are typed as String
+final result = await filesApi.getFile(id: 'my-file');
+final bytes = (result as TonikSuccess).value.body; // List<int>
+```
+
+**Plain text bodies**
+```yaml
+/message:
+  get:
+    responses:
+      '200':
+        content:
+          text/plain:
+            schema:
+              type: string
+              format: byte
+```
+
+```dart
 final result = await api.getMessage();
 final text = (result as TonikSuccess).value.body; // String
+```
+
+**Binary fields in JSON objects**
+
+For `format: binary` fields nested in JSON, Tonik auto UTF-8 encodes/decodes.
+For `format: byte`, Tonik keeps the base64-encoded string as-is.
+
+```yaml
+FileMetadata:
+  type: object
+  properties:
+    fileName:
+      type: string
+    thumbnail:
+      type: string
+      format: binary  # → List<int> (UTF-8 encoded for JSON transport)
+    
+Base64Data:
+  type: object
+  properties:
+    name:
+      type: string
+    encodedData:
+      type: string
+      format: byte  # → String (kept as base64)
+```
+
+```dart
+final metadata = FileMetadata(
+  fileName: 'image.png',
+  thumbnail: [0xFF, 0xD8, 0xFF],  // raw bytes
+);
+// JSON wire format: {"fileName":"image.png","thumbnail":"<utf8-encoded>"}
+
+final base64 = Base64Data(
+  name: 'doc',
+  encodedData: 'SGVsbG8=',  // already base64
+);
+// JSON wire format: {"name":"doc","encodedData":"SGVsbG8="}
 ```
 
 ### Content-Encoded Strings
@@ -175,7 +229,7 @@ Generates `Pet?` (nullable alias).
 Add properties or compose with other schemas:
 
 ```yaml
-# $ref + properties → merged class
+# $ref + properties → composition class
 ExtendedPet:
   $ref: '#/components/schemas/Pet'
   properties:
@@ -189,7 +243,7 @@ EnhancedPet:
     - $ref: '#/components/schemas/Trackable'
 ```
 
-Both patterns generate `AllOfModel` compositions that merge the referenced schema with additional structure.
+Both patterns generate `AllOfModel` compositions with a field per member schema. JSON encoding merges all fields into a single flat object.
 
 #### Summary
 

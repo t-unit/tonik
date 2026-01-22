@@ -1,6 +1,6 @@
 # Composite Data Types
 
-OpenAPI's composition keywords (`oneOf`, `anyOf`, `allOf`) let you describe complex type relationships. Tonik generates idiomatic Dart code for each pattern using sealed classes and nullable fields. This guide shows what gets generated and how to use it.
+OpenAPI's composition keywords (`oneOf`, `anyOf`, `allOf`) let you describe complex type relationships. Tonik generates idiomatic Dart code for each pattern: sealed classes for `oneOf`, nullable fields for `anyOf`, and composition classes for `allOf`. This guide shows what gets generated and how to use it.
 
 For primitive type mappings, see [Data Types](data_types.md).
 
@@ -8,7 +8,7 @@ For primitive type mappings, see [Data Types](data_types.md).
 
 ## oneOf: Exactly One Of
 
-Use `oneOf` when a value must be **exactly one** of several types—like a tagged union or sum type.
+Use `oneOf` when a value must be **exactly one** of several types - like a tagged union or sum type.
 
 **What Tonik generates:** A sealed base class with a subclass for each variant. Pattern matching lets you handle each case safely.
 
@@ -57,6 +57,7 @@ final text = switch (roundtrip) {
 ```
 
 **Tips:**
+- Each variant subclass wraps the inner type in a `value` field (e.g., `ResultSuccess` holds a `Success`)
 - Construct via the variant subclass (`ResultSuccess(...)`), not the base `Result`
 - With a discriminator, the value is preserved on encode and used on decode to select the variant
 
@@ -68,7 +69,7 @@ final text = switch (roundtrip) {
 
 ## anyOf: Any Combination
 
-Use `anyOf` when a value could match **one or more** schemas—though typically you'll use just one.
+Use `anyOf` when a value could match **one or more** schemas - though typically you'll use just one.
 
 **What Tonik generates:** A single class with nullable fields for each alternative. Set the field(s) that apply.
 
@@ -106,11 +107,21 @@ final back2 = SearchKey.fromJson(json2);
 
 ---
 
-## allOf: Merge All
+## allOf: Compose Multiple Schemas
 
-Use `allOf` to **combine multiple schemas** into one—like mixing in traits or extending a base type.
+Use `allOf` to **combine multiple schemas** into one - like mixing in traits or extending a base type.
 
-**What Tonik generates:** A class with one field per member schema. JSON encoding merges all members into a single object.
+**What Tonik generates:** A composition class with one field per member schema:
+
+```dart
+class Entity {
+  const Entity({required this.base, required this.timestamps});
+  final Base base;
+  final Timestamps timestamps;
+}
+```
+
+JSON encoding merges all member fields into a single flat object; decoding parses the same JSON into each member.
 
 OAS input (example):
 ```yaml

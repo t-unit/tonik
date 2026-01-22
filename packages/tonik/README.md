@@ -54,17 +54,11 @@ Different content types (JSON, url encode, plain text) on the same status code? 
 
 `oneOf`, `anyOf`, and `allOf` generate idiomatic Dart code:
 
-- **`oneOf`** → Sealed class with exhaustive pattern matching
-- **`anyOf`** → Class with nullable fields for each alternative
-- **`allOf`** → Merged class combining all member schemas
+- **`oneOf`** - Sealed class with one subclass per variant
+- **`anyOf`** - Class with nullable fields for each alternative  
+- **`allOf`** - Class with a field for each member schema
 
-```dart
-// oneOf with discriminator → sealed class
-final result = switch (searchResult) {
-  SearchResultUser(:final value) => 'User: ${value.name}',
-  SearchResultProduct(:final value) => 'Product: ${value.title}',
-};
-```
+See [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md) for usage examples.
 
 ### No Name Conflicts
 
