@@ -49,6 +49,7 @@ void generateLibraryFile({
     buffer.writeln("export '$normalizedPath';");
   }
 
+  libraryFile.parent.createSync(recursive: true);
   libraryFile.writeAsStringSync(buffer.toString());
 }
 
