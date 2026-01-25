@@ -6,12 +6,8 @@ import 'package:tonik_generate/src/server/server_generator.dart';
 
 /// Generates server class files.
 class ServerFileGenerator {
-  /// Creates a new ServerFileGenerator.
-  const ServerFileGenerator({
-    required this.serverGenerator,
-  });
+  const ServerFileGenerator({required this.serverGenerator});
 
-  /// The generator used to generate server classes.
   final ServerGenerator serverGenerator;
 
   /// Writes server files to the specified output directory.
@@ -30,14 +26,11 @@ class ServerFileGenerator {
       'server',
     );
 
-    final serverDir = Directory(serverDirPath);
-    if (!serverDir.existsSync()) {
-      serverDir.createSync(recursive: true);
-    }
-
     final result = serverGenerator.generate(apiDocument.servers.toList());
 
     final filePath = path.join(serverDirPath, result.filename);
-    File(filePath).writeAsStringSync(result.code);
+    final file = File(filePath);
+    file.parent.createSync(recursive: true);
+    file.writeAsStringSync(result.code);
   }
 }
