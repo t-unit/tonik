@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
@@ -35,6 +36,13 @@ class ImposterServer {
         port.toString(),
       ],
     );
+
+    _process!.stdout.transform(const Utf8Decoder()).listen((data) {
+      print('Imposter stdout: $data');
+    });
+    _process!.stderr.transform(const Utf8Decoder()).listen((data) {
+      print('Imposter stderr: $data');
+    });
 
     // Wait for server to be ready
     await _waitForServer();
