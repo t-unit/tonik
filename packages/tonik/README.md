@@ -28,7 +28,7 @@ Generate type-safe API client packages for Dart and Flutter. Tonik produces idio
 
 ### Type-Safe Response Handling by Status Code and Content Type
 
-Tonik generates distinct types for each response defined in your spec. When an endpoint returns different schemas for 200, 400, and 404—you get separate, strongly-typed classes for each:
+Tonik generates distinct types for each response defined in your spec. When an endpoint returns different schemas for 200, 400, and 404 - you get separate, strongly-typed classes for each:
 
 ```dart
 final response = await petApi.updatePet(body: pet);
@@ -62,7 +62,7 @@ See [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/compos
 
 ### No Name Conflicts
 
-Use `Error`, `Response`, `List`, or any Dart built-in as schema names. Tonik uses scoped code emission to properly qualify all type references—no naming collisions with `dart:core` or Dio.
+Use `Error`, `Response`, `List`, or any Dart built-in as schema names. Tonik uses scoped code emission to properly qualify all type references - no naming collisions with `dart:core` or Dio.
 
 ### Integer and String Enums
 
@@ -85,7 +85,7 @@ Install with `dart pub global activate tonik` and run. No JVM, no Docker, no ext
 
 ### Universal Platform Support
 
-Generated packages are pure Dart with no platform dependencies. Use them in Flutter apps targeting iOS, Android, web, desktop, or in server-side Dart—the same generated code works everywhere.
+Generated packages are pure Dart with no platform dependencies. Use them in Flutter apps targeting iOS, Android, web, desktop, or in server-side Dart - the same generated code works everywhere.
 
 ## Documentation
 
