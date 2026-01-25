@@ -9,8 +9,9 @@ void generateLibraryFile({
   required String package,
 }) {
   final packageDir = path.join(outputDirectory, package);
-  final libraryFile = File(path.join(packageDir, 'lib', '$package.dart'));
-  final srcDir = Directory(path.join(packageDir, 'lib', 'src'));
+  final libDir = Directory(path.join(packageDir, 'lib'));
+  final libraryFile = File(path.join(libDir.path, '$package.dart'));
+  final srcDir = Directory(path.join(libDir.path, 'src'));
 
   final srcFiles = <String>[];
   if (srcDir.existsSync()) {
@@ -49,7 +50,9 @@ void generateLibraryFile({
     buffer.writeln("export '$normalizedPath';");
   }
 
-  libraryFile.parent.createSync(recursive: true);
+  if (!libDir.existsSync()) {
+    libDir.createSync(recursive: true);
+  }
   libraryFile.writeAsStringSync(buffer.toString());
 }
 
