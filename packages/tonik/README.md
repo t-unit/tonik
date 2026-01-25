@@ -83,6 +83,10 @@ Path, query, and header parameters support all OpenAPI styles: `simple`, `label`
 
 Install with `dart pub global activate tonik` and run. No JVM, no Docker, no external dependencies.
 
+### Universal Platform Support
+
+Generated packages are pure Dart with no platform dependencies. Use them in Flutter apps targeting iOS, Android, web, desktop, or in server-side Dart—the same generated code works everywhere.
+
 ## Documentation
 
 - [Features Overview](https://github.com/t-unit/tonik/blob/main/docs/features.md) – Complete feature reference
