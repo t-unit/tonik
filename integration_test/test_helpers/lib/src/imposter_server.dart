@@ -5,13 +5,29 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
+/// Manages the lifecycle of an Imposter mock server for integration
+/// tests.
 class ImposterServer {
   ImposterServer({required this.port});
 
   Process? _process;
+
   final int port;
+
   final Completer<void> _readyCompleter = Completer<void>();
 
+  /// Starts the Imposter server and waits for it to be ready.
+  ///
+  /// This method:
+  /// 1. Locates the imposter.jar file (expected two directories up from
+  ///    current)
+  /// 2. Starts the Java process with OpenAPI and REST plugins
+  /// 3. Monitors stdout for the "Mock engine up and running" message
+  /// 4. Waits an additional 500ms for the OpenAPI plugin to fully
+  ///    initialize
+  /// 5. Verifies the server is responding to HTTP requests
+  ///
+  /// Throws an [Exception] if imposter.jar cannot be found.
   Future<void> start() async {
     final imposterJar = path.join(
       Directory.current.parent.parent.path,
@@ -59,8 +75,16 @@ class ImposterServer {
     await _waitForImposterReady();
   }
 
+  /// Waits for the Imposter server to be fully ready.
+  ///
+  /// This uses a two-phase approach to handle the race condition where
+  /// the server port is open but the OpenAPI plugin isn't fully initialized:
+  /// 1. Wait for the stdout "Mock engine up and running" message (up to 30s)
+  /// 2. Add a 500ms delay for OpenAPI plugin initialization
+  /// 3. Verify the server responds to HTTP requests (up to 5s)
+  ///
+  /// Returns `true` if the server is ready, `false` if timeout occurs.
   Future<bool> _waitForImposterReady({int timeoutSec = 30}) async {
-    // First, wait for the startup message in stdout
     try {
       await _readyCompleter.future.timeout(Duration(seconds: timeoutSec));
     } on TimeoutException {
@@ -94,6 +118,9 @@ class ImposterServer {
     return false;
   }
 
+  /// Stops the Imposter server process.
+  ///
+  /// Kills the process and waits for it to exit. Safe to call multiple times.
   Future<void> stop() async {
     if (_process != null) {
       _process!.kill();
@@ -103,6 +130,7 @@ class ImposterServer {
   }
 }
 
+/// Sets up an Imposter server for tests.
 Future<void> setupImposterServer(ImposterServer server) async {
   await server.start();
   addTearDown(() => server.stop());

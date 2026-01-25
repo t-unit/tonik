@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ class ImposterServer {
 
   Process? _process;
   final int port;
+  final Completer<void> _readyCompleter = Completer<void>();
 
   Future<void> start() async {
     final imposterJar = path.join(
@@ -44,6 +46,11 @@ class ImposterServer {
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {
       print('Imposter stdout: $data');
+      // Signal readiness when we see the startup message
+      if (data.contains('Mock engine up and running') &&
+          !_readyCompleter.isCompleted) {
+        _readyCompleter.complete();
+      }
     });
     _process!.stderr.transform(const Utf8Decoder()).listen((data) {
       print('Imposter stderr: $data');
@@ -52,8 +59,20 @@ class ImposterServer {
     await _waitForImposterReady();
   }
 
-  Future<bool> _waitForImposterReady({int timeoutSec = 10}) async {
-    final deadline = DateTime.now().add(Duration(seconds: timeoutSec));
+  Future<bool> _waitForImposterReady({int timeoutSec = 30}) async {
+    // First, wait for the startup message in stdout
+    try {
+      await _readyCompleter.future.timeout(Duration(seconds: timeoutSec));
+    } on TimeoutException {
+      print('Timeout waiting for Imposter startup message');
+      return false;
+    }
+
+    // Add a small delay to allow OpenAPI plugin to fully initialize
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    // Then verify the server is actually responding
+    final deadline = DateTime.now().add(const Duration(seconds: 5));
     final client = HttpClient();
 
     while (DateTime.now().isBefore(deadline)) {
@@ -61,13 +80,16 @@ class ImposterServer {
         final request = await client.getUrl(
           Uri.parse('http://localhost:$port'),
         );
-        await request.close();
+        final response = await request.close();
+        await response.drain<void>();
 
-        return true; // No exception means the server is ready.
+        return true; // Server is ready and responding
       } on SocketException catch (_) {
         // ignore
+      } on HttpException catch (_) {
+        // ignore
       }
-      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
     }
     return false;
   }

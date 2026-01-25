@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
-
-import 'test_helper.dart';
 
 void main() {
   const port = 8103;
@@ -272,20 +271,20 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
-          body: const UserPatch(username: 'newusername'),
+          body: const UserPatch(username: 'newUsername'),
         );
 
         final success = response as TonikSuccess<PatchUserResponse>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
-        expect(requestBody['username'], 'newusername');
+        expect(requestBody['username'], 'newUsername');
       });
 
       test('omits username when not provided', () async {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
-          body: const UserPatch(password: 'newpassword'),
+          body: const UserPatch(password: 'newPassword'),
         );
 
         final success = response as TonikSuccess<PatchUserResponse>;
@@ -547,7 +546,7 @@ void main() {
         final api = buildUserApi(responseStatus: '409');
 
         final response = await api.patchUser(
-          body: const UserPatch(username: 'existinguser'),
+          body: const UserPatch(username: 'existingUser'),
         );
 
         expect(response, isA<TonikSuccess<PatchUserResponse>>());

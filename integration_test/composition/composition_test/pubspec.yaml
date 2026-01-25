@@ -11,11 +11,12 @@ dependencies:
     path: ../composition_api
   dio: ^5.8.0
   path: ^1.9.1
-  tonik_util: ^0.1.0
+  tonik_util: ^0.4.1
 
 dev_dependencies:
   test: ^1.25.15
   very_good_analysis: ^10.0.0
+
 
 
 dependency_overrides:

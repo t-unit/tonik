@@ -11,11 +11,14 @@ dependencies:
   fastify_type_provider_zod_api:
     path: ../fastify_type_provider_zod_api
   path: ^1.9.1
-  tonik_util: ^0.1.0
+  tonik_util: ^0.4.1
 
 dev_dependencies:
   test: ^1.25.15
+  test_helpers:
+    path: ../../test_helpers
   very_good_analysis: ^10.0.0
+
 
 
 dependency_overrides:

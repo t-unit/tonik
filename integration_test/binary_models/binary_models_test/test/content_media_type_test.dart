@@ -3,9 +3,8 @@ import 'dart:typed_data';
 import 'package:binary_models_api/binary_models_api.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
-
-import 'test_helper.dart';
 
 void main() {
   const port = 8083;
@@ -16,10 +15,6 @@ void main() {
   setUpAll(() async {
     imposterServer = ImposterServer(port: port);
     await setupImposterServer(imposterServer);
-  });
-
-  tearDownAll(() async {
-    await teardownImposterServer(imposterServer);
   });
 
   ContentMediaTypeApi buildApi({required String responseStatus}) {

@@ -16,6 +16,8 @@ dependencies:
     path: ../type_arrays_api
 
 dev_dependencies:
+  test_helpers:
+    path: ../../test_helpers
   very_good_analysis: ^10.0.0
 
 dependency_overrides:
