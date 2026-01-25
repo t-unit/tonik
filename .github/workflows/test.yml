@@ -11,8 +11,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        sdk: [stable, beta]
+        include:
+          - os: ubuntu-latest
+            sdk: stable
+          - os: macos-latest
+            sdk: stable
+          - os: windows-latest
+            sdk: stable
+          - os: ubuntu-latest
+            sdk: beta
       fail-fast: false
 
     steps:
