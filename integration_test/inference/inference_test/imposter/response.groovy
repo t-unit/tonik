@@ -1,5 +1,6 @@
 // Get the response status from the request header
-def responseStatus = context.request.headers['X-Response-Status'] ?: '200'
+def headers = context.request.headers
+def responseStatus = headers['X-Response-Status'] ?: headers['x-response-status'] ?: '200'
 def statusCode = Integer.parseInt(responseStatus)
 def path = context.request.path
 def method = context.request.method

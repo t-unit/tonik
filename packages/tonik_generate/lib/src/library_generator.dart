@@ -9,8 +9,10 @@ void generateLibraryFile({
   required String package,
 }) {
   final packageDir = path.join(outputDirectory, package);
-  final libraryFile = File(path.join(packageDir, 'lib', '$package.dart'));
-  final srcDir = Directory(path.join(packageDir, 'lib', 'src'));
+  final libDirPath = path.join(packageDir, 'lib');
+  final libDir = Directory(libDirPath);
+  final libraryFile = File(path.join(libDirPath, '$package.dart'));
+  final srcDir = Directory(path.join(libDirPath, 'src'));
 
   final srcFiles = <String>[];
   if (srcDir.existsSync()) {
@@ -25,8 +27,6 @@ void generateLibraryFile({
           }),
     );
   }
-
-  srcFiles.sort();
 
   final docComments = _formatApiDocumentation(apiDocument);
 
@@ -45,10 +45,13 @@ void generateLibraryFile({
     ..writeln();
 
   for (final file in srcFiles) {
-    final normalizedPath = file.replaceAll(r'\\', '/');
+    final normalizedPath = file.replaceAll(r'\', '/');
     buffer.writeln("export '$normalizedPath';");
   }
 
+  if (!libDir.existsSync()) {
+    libDir.createSync(recursive: true);
+  }
   libraryFile.writeAsStringSync(buffer.toString());
 }
 

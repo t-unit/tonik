@@ -8,11 +8,19 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        sdk: [stable, beta]
-      fail-fast: false
+        include:
+          - os: ubuntu-latest
+            sdk: stable
+          - os: macos-latest
+            sdk: stable
+          - os: windows-latest
+            sdk: stable
+          - os: ubuntu-latest
+            sdk: beta
+      fail-fast: true
 
     steps:
       - uses: actions/checkout@v6
@@ -30,6 +38,7 @@ jobs:
 
       - name: Setup integration test
         run: ./scripts/setup_integration_tests.sh
+        shell: bash
 
       - name: Run tests with coverage
         run: melos run test:coverage 
@@ -142,7 +151,7 @@ jobs:
           dart pub get
           dart test --concurrency=1
       - name: Format and merge coverage reports
-        if: matrix.sdk == 'stable'
+        if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
         run: |
           # Ensure output directory exists before format_coverage writes files
           mkdir -p coverage
@@ -187,7 +196,7 @@ jobs:
           cat coverage/*.lcov.info > coverage/lcov.info 2>/dev/null || echo "No coverage files found"
 
       - name: Upload coverage to Codecov
-        if: matrix.sdk == 'stable'
+        if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v5
         with:
           files: ./coverage/lcov.info
