@@ -1,5 +1,6 @@
 // Get the response status from the request header
-def responseStatus = context.request.headers['X-Response-Status'] ?: '200'
+def headers = context.request.headers
+def responseStatus = headers['X-Response-Status'] ?: headers['x-response-status'] ?: '200'
 
 // Set the response status code and prepare the response
 def response = respond()
