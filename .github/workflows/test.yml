@@ -20,7 +20,7 @@ jobs:
             sdk: stable
           - os: ubuntu-latest
             sdk: beta
-      fail-fast: false
+      fail-fast: true
 
     steps:
       - uses: actions/checkout@v6
