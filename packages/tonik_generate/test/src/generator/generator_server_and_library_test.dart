@@ -53,18 +53,11 @@ void main() {
       );
 
       const packageName = 'test_package';
-
-      print('[TEST] ===== BEFORE GENERATOR =====');
-      print('[TEST] tempDir.path: ${tempDir.path}');
-      print('[TEST] packageName: $packageName');
-
       const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
       );
-
-      print('[TEST] ===== AFTER GENERATOR =====');
 
       final serverDir = path.join(
         tempDir.path,
@@ -73,86 +66,14 @@ void main() {
         'src',
         'server',
       );
+      expect(Directory(serverDir).existsSync(), isTrue);
+      expect(Directory(serverDir).listSync().length, 1);
 
-      print('[TEST] Checking serverDir: $serverDir');
-      final serverDirExists = Directory(serverDir).existsSync();
-      print('[TEST] serverDir exists: $serverDirExists');
-      expect(serverDirExists, isTrue);
-
-      final serverFiles = Directory(serverDir).listSync();
-      print('[TEST] serverDir file count: ${serverFiles.length}');
-      for (final f in serverFiles) {
-        print('[TEST]   server file: ${f.path}');
-      }
-      expect(serverFiles.length, 1);
-
-      final libraryFilePath = path.join(
-        tempDir.path,
-        packageName,
-        'lib',
-        '$packageName.dart',
+      final libraryFile = File(
+        path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
       );
-      print('[TEST] ===== LIBRARY FILE CHECK =====');
-      print('[TEST] Constructed path: $libraryFilePath');
-
-      final libraryFile = File(libraryFilePath);
-      print('[TEST] File object path: ${libraryFile.path}');
-      print('[TEST] File object absolute.path: ${libraryFile.absolute.path}');
-
-      // Check multiple times to rule out timing issues
-      final exists1 = libraryFile.existsSync();
-      print('[TEST] libraryFile.existsSync() call 1: $exists1');
-
-      final exists2 = File(libraryFilePath).existsSync();
-      print('[TEST] new File(path).existsSync() call 2: $exists2');
-
-      final exists3 = libraryFile.existsSync();
-      print('[TEST] libraryFile.existsSync() call 3: $exists3');
-
-      print('[TEST] Listing lib directory:');
-      final libDir = Directory(path.join(tempDir.path, packageName, 'lib'));
-      print('[TEST] libDir path: ${libDir.path}');
-      print('[TEST] libDir exists: ${libDir.existsSync()}');
-
-      if (libDir.existsSync()) {
-        final entities = libDir.listSync();
-        print('[TEST] libDir entity count: ${entities.length}');
-        for (final entity in entities) {
-          print('[TEST]   - ${entity.path} (${entity.runtimeType})');
-          if (entity is File) {
-            print('[TEST]     absolute: ${entity.absolute.path}');
-            print('[TEST]     exists: ${entity.existsSync()}');
-            print('[TEST]     length: ${entity.lengthSync()} bytes');
-            print(
-              '[TEST]     matches libraryFile path: ${entity.path == libraryFile.path}',
-            );
-            print(
-              '[TEST]     matches libraryFile absolute: ${entity.absolute.path == libraryFile.absolute.path}',
-            );
-          }
-        }
-      } else {
-        print('[TEST] libDir does not exist!');
-      }
-
-      print('[TEST] ===== ABOUT TO ASSERT =====');
-      print('[TEST] Value to assert: $exists1');
       expect(libraryFile.existsSync(), isTrue);
-
-      print('[TEST] ===== AFTER FIRST EXPECT =====');
-      print('[TEST] File still exists: ${libraryFile.existsSync()}');
-
       final content = libraryFile.readAsStringSync();
-      print('[TEST] File content length: ${content.length}');
-      print('[TEST] File content (first 500 chars):');
-      print(content.substring(0, content.length > 500 ? 500 : content.length));
-      print('[TEST] File content (full):');
-      print(content);
-      print('[TEST] Contains "library;": ${content.contains('library;')}');
-      print(
-        '[TEST] Contains "export \'src/model/user.dart\';": ${content.contains("export 'src/model/user.dart';")}',
-      );
-
       expect(content.contains('library;'), isTrue);
       expect(content.contains("export 'src/model/user.dart';"), isTrue);
     });
