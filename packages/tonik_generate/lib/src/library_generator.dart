@@ -9,9 +9,23 @@ void generateLibraryFile({
   required String package,
 }) {
   final packageDir = path.join(outputDirectory, package);
-  final libDir = Directory(path.join(packageDir, 'lib'));
-  final libraryFile = File(path.join(libDir.path, '$package.dart'));
-  final srcDir = Directory(path.join(libDir.path, 'src'));
+  final libDirPath = path.join(packageDir, 'lib');
+  final libDir = Directory(libDirPath);
+  final libraryFile = File(path.join(libDirPath, '$package.dart'));
+  final srcDir = Directory(path.join(libDirPath, 'src'));
+
+  // DEBUG LOGGING - REMOVE AFTER WINDOWS FIX
+  print('[LibraryGenerator] outputDirectory: $outputDirectory');
+  print('[LibraryGenerator] package: $package');
+  print('[LibraryGenerator] packageDir: $packageDir');
+  print('[LibraryGenerator] libDirPath: $libDirPath');
+  print('[LibraryGenerator] libraryFile path: ${libraryFile.path}');
+  print(
+    '[LibraryGenerator] packageDir exists: ${Directory(packageDir).existsSync()}',
+  );
+  print(
+    '[LibraryGenerator] libDir exists before create: ${libDir.existsSync()}',
+  );
 
   final srcFiles = <String>[];
   if (srcDir.existsSync()) {
@@ -26,6 +40,8 @@ void generateLibraryFile({
           }),
     );
   }
+
+  print('[LibraryGenerator] Found ${srcFiles.length} source files');
 
   srcFiles.sort();
 
@@ -50,10 +66,43 @@ void generateLibraryFile({
     buffer.writeln("export '$normalizedPath';");
   }
 
+  print('[LibraryGenerator] About to create lib directory...');
   if (!libDir.existsSync()) {
+    print('[LibraryGenerator] lib directory does not exist, creating...');
     libDir.createSync(recursive: true);
+    print(
+      '[LibraryGenerator] Directory created, exists: ${libDir.existsSync()}',
+    );
+  } else {
+    print('[LibraryGenerator] lib directory already exists');
   }
-  libraryFile.writeAsStringSync(buffer.toString());
+
+  print('[LibraryGenerator] About to write file: ${libraryFile.path}');
+  print(
+    '[LibraryGenerator] File exists before write: ${libraryFile.existsSync()}',
+  );
+  try {
+    libraryFile.writeAsStringSync(buffer.toString());
+    print('[LibraryGenerator] File written successfully');
+    print(
+      '[LibraryGenerator] File exists after write: ${libraryFile.existsSync()}',
+    );
+    print('[LibraryGenerator] File length: ${libraryFile.lengthSync()} bytes');
+  } catch (e, stackTrace) {
+    print('[LibraryGenerator] ERROR writing file: $e');
+    print('[LibraryGenerator] Stack trace: $stackTrace');
+    rethrow;
+  }
+
+  // List contents of lib directory
+  if (libDir.existsSync()) {
+    print('[LibraryGenerator] Contents of lib directory:');
+    for (final entity in libDir.listSync()) {
+      print(
+        '[LibraryGenerator]   - ${entity.path} (${entity.statSync().type})',
+      );
+    }
+  }
 }
 
 List<String> _formatApiDocumentation(ApiDocument apiDocument) {
