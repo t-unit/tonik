@@ -1,3 +1,8 @@
+## 0.4.1
+
+ - **FEAT**: normaliz allOf with single model to aliases.
+ - **FEAT**: better handle contentEncoding.
+
 ## 0.4.0
 
  - **FEAT**: server templating.

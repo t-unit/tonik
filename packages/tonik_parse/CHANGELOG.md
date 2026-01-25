@@ -1,3 +1,7 @@
+## 0.4.1
+
+ - **FEAT**: better handle contentEncoding.
+
 ## 0.4.0
 
  - **REFACTOR**: parse all fields for schema references.

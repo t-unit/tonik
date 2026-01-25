@@ -1,3 +1,11 @@
+## 0.4.1
+
+ - **FEAT**: improve documentation.
+ - **FEAT**: better handle contentEncoding.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.4.0
 
  - **FIX**: wrong links to changelog.

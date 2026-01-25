@@ -1,3 +1,5 @@
+## 0.4.1
+
 ## 0.4.0
 
  - **FIX**: handle boolean schemas in lists correclty.

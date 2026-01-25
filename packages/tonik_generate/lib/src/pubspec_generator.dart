@@ -27,7 +27,7 @@ dependencies:
   collection: ^1.17.0
   dio: ^5.8.0+1
   meta: ^1.16.0
-  tonik_util: ^0.4.0
+  tonik_util: ^0.4.1
 
 dev_dependencies:
   lints: ^6.0.0

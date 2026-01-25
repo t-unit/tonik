@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-01-25
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.4.1`](#tonik_util---v041)
+ - [`tonik_core` - `v0.4.1`](#tonik_core---v041)
+ - [`tonik_parse` - `v0.4.1`](#tonik_parse---v041)
+ - [`tonik_generate` - `v0.4.1`](#tonik_generate---v041)
+ - [`tonik` - `v0.4.1`](#tonik---v041)
+
+---
+
+#### `tonik_util` - `v0.4.1`
+
+#### `tonik_core` - `v0.4.1`
+
+ - **FEAT**: normaliz allOf with single model to aliases.
+ - **FEAT**: better handle contentEncoding.
+
+#### `tonik_parse` - `v0.4.1`
+
+ - **FEAT**: better handle contentEncoding.
+
+#### `tonik_generate` - `v0.4.1`
+
+ - **FIX**: remove escaping in raw string.
+ - **FIX**: more defensive folder checks.
+ - **FIX**: more folder existing checks.
+ - **FIX**: improve folder exist tests.
+
+#### `tonik` - `v0.4.1`
+
+ - **FEAT**: improve documentation.
+ - **FEAT**: better handle contentEncoding.
+
+
 ## 2026-01-11
 
 ### Changes

@@ -1,3 +1,10 @@
+## 0.4.1
+
+ - **FIX**: remove escaping in raw string.
+ - **FIX**: more defensive folder checks.
+ - **FIX**: more folder existing checks.
+ - **FIX**: improve folder exist tests.
+
 ## 0.4.0
 
  - **FIX**: ignroe warnings in generated code.
