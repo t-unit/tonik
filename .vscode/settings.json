@@ -8,6 +8,7 @@
     "Behaviour",
     "Blub",
     "cbor",
+    "codegen",
     "codegeneration",
     "endpointcost",
     "fastify",

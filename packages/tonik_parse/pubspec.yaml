@@ -4,6 +4,14 @@ version: 0.4.0
 repository: https://github.com/t-unit/tonik
 resolution: workspace
 
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
 environment:
   sdk: '>=3.10.0 <4.0.0'
 
