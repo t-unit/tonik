@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:petstore_deprecation_api/petstore_deprecation_api.dart';
 import 'package:test/test.dart';
 
@@ -12,7 +13,7 @@ void main() {
       final files = operationDir
           .listSync()
           .whereType<File>()
-          .map((f) => f.path.split('/').last)
+          .map((f) => path.basename(f.path))
           .toList();
 
       // Verify deprecated operations are NOT generated
@@ -32,7 +33,7 @@ void main() {
         final files = operationDir
             .listSync()
             .whereType<File>()
-            .map((f) => f.path.split('/').last)
+            .map((f) => path.basename(f.path))
             .toList();
 
         expect(
@@ -48,7 +49,7 @@ void main() {
       final files = modelDir
           .listSync()
           .whereType<File>()
-          .map((f) => f.path.split('/').last)
+          .map((f) => path.basename(f.path))
           .toList();
 
       // Verify deprecated schema is NOT generated
@@ -111,7 +112,7 @@ void main() {
       final files = operationDir
           .listSync()
           .whereType<File>()
-          .map((f) => f.path.split('/').last)
+          .map((f) => path.basename(f.path))
           .toList();
 
       // Verify expected non-deprecated operations ARE generated
@@ -129,7 +130,7 @@ void main() {
       final files = modelDir
           .listSync()
           .whereType<File>()
-          .map((f) => f.path.split('/').last)
+          .map((f) => path.basename(f.path))
           .toList();
 
       // Verify non-deprecated models ARE generated
