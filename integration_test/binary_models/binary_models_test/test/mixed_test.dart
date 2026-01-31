@@ -8,14 +8,13 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8083;
-  const baseUrl = 'http://localhost:$port/api/v1';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}/api/v1';
   });
 
   MixedApi buildMixedApi({required String responseStatus}) {

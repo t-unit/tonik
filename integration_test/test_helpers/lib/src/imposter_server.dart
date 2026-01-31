@@ -8,13 +8,21 @@ import 'package:test/test.dart';
 /// Manages the lifecycle of an Imposter mock server for integration
 /// tests.
 class ImposterServer {
-  ImposterServer({required this.port});
+  ImposterServer();
 
   Process? _process;
 
-  final int port;
+  late final int port;
 
   final Completer<void> _readyCompleter = Completer<void>();
+
+  /// Finds an available port by binding to port 0 and immediately closing.
+  static Future<int> _findAvailablePort() async {
+    final serverSocket = await ServerSocket.bind('127.0.0.1', 0);
+    final port = serverSocket.port;
+    await serverSocket.close();
+    return port;
+  }
 
   /// Starts the Imposter server and waits for it to be ready.
   ///
@@ -29,6 +37,8 @@ class ImposterServer {
   ///
   /// Throws an [Exception] if imposter.jar cannot be found.
   Future<void> start() async {
+    port = await _findAvailablePort();
+
     final imposterJar = path.join(
       Directory.current.parent.parent.path,
       'imposter.jar',
@@ -56,7 +66,7 @@ class ImposterServer {
       ],
       environment: {
         ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'WARN',
+        'IMPOSTER_LOG_LEVEL': 'INFO',
       },
     );
 
@@ -131,7 +141,13 @@ class ImposterServer {
 }
 
 /// Sets up an Imposter server for tests.
-Future<void> setupImposterServer(ImposterServer server) async {
+///
+/// Finds an available port dynamically (safe for parallel execution).
+///
+/// Returns the [ImposterServer] instance with the actual port assigned.
+Future<ImposterServer> setupImposterServer() async {
+  final server = ImposterServer();
   await server.start();
   addTearDown(() => server.stop());
+  return server;
 }
