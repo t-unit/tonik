@@ -388,21 +388,61 @@ class OptionsGenerator {
     final paramName = cookie.normalizedName;
     final explode = cookie.parameter.explode;
 
-    if (model.encodingShape != EncodingShape.simple) {
+    if (model is ListModel) {
+      final contentModel = model.content is AliasModel
+          ? (model.content as AliasModel).resolved
+          : model.content;
+
+      if (contentModel is StringModel) {
+        final encodedValue = refer(paramName).property('toForm').call([], {
+          'explode': literalBool(explode),
+          'allowEmpty': literalBool(true),
+        });
+        bodyStatements.add(
+          refer('cookieParts').property('add').call([
+            literalString('$rawName=', raw: true).operatorAdd(encodedValue),
+          ]).statement,
+        );
+        return;
+      }
+
       bodyStatements.add(
-        generateEncodingExceptionExpression(
-          'Cookie parameters only support simple types (string, int, bool, '
-          'num). Complex types are not supported for cookie: $rawName',
-        ).statement,
+        refer('cookieParts').property('add').call([
+          literalString('$rawName=', raw: true).operatorAdd(
+            refer(paramName)
+                .property('map')
+                .call([
+                  Method(
+                    (b) => b
+                      ..lambda = true
+                      ..requiredParameters.add(
+                        Parameter((b) => b..name = 'e'),
+                      )
+                      ..body = refer('e').property('toForm').call([], {
+                        'explode': literalBool(explode),
+                        'allowEmpty': literalBool(true),
+                      }).code,
+                  ).closure,
+                ])
+                .property('toList')
+                .call([])
+                .property('toForm')
+                .call([], {
+                  'explode': literalBool(explode),
+                  'allowEmpty': literalBool(true),
+                  'alreadyEncoded': literalBool(true),
+                }),
+          ),
+        ]).statement,
       );
       return;
     }
 
+    // For non-list types, use toForm directly.
     final encodedValue = refer(paramName).property('toForm').call([], {
       'explode': literalBool(explode),
-      'allowEmpty': literalBool(false),
+      'allowEmpty': literalBool(true),
     });
-
     bodyStatements.add(
       refer('cookieParts').property('add').call([
         literalString('$rawName=', raw: true).operatorAdd(encodedValue),

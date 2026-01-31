@@ -453,62 +453,121 @@ void main() {
     });
   });
 
-  group('unsupported complex types', () {
-    test('array cookie returns encoding error', () async {
+  group('array cookies', () {
+    test('array of strings cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testArrayCookie(tags: ['a', 'b', 'c']);
 
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
-      expect(error.error, isA<EncodingException>());
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'tags=a,b,c');
     });
 
-    test('object cookie returns encoding error', () async {
+    test('array of strings with special characters', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testArrayCookie(
+        tags: ['hello world', 'a=b', 'special&chars'],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      // Values should be URL-encoded.
+      expect(
+        getCookieHeader(response),
+        'tags=hello%20world,a%3Db,special%26chars',
+      );
+    });
+
+    test('empty array cookie', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testArrayCookie(tags: []);
+
+      expect(response, isA<TonikSuccess<void>>());
+      // Empty array should result in empty value.
+      expect(getCookieHeader(response), 'tags=');
+    });
+
+    test('array of integers cookie', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testArrayIntegerCookie(ids: [1, 2, 3, 100]);
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'ids=1,2,3,100');
+    });
+
+    test('single element array cookie', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testArrayIntegerCookie(ids: [42]);
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'ids=42');
+    });
+  });
+
+  group('object cookies', () {
+    test('flat object cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testObjectCookie(
         user: const UserObject(id: 1, name: 'John'),
       );
 
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
-      expect(error.error, isA<EncodingException>());
+      expect(response, isA<TonikSuccess<void>>());
+      // Object encoded as key,value,key,value (form style, explode: false).
+      expect(getCookieHeader(response), 'user=id,1,name,John');
     });
 
-    test(
-      'oneOf cookie encodes successfully when variant is primitive',
-      () async {
-        final api = buildCookiesApi(responseStatus: '204');
-        final response = await api.testOneOfCookie(
-          identifier: const OneOfIdentifierString('test-value'),
-        );
+    test('object cookie with special characters in values', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testObjectCookie(
+        user: const UserObject(id: 42, name: 'John Doe'),
+      );
 
-        // oneOf with primitive variants can encode successfully.
-        expect(response, isA<TonikSuccess<void>>());
-        final cookie = getCookieHeader(response);
-        expect(cookie, isNotNull);
-        expect(cookie, contains('identifier='));
-      },
-    );
+      expect(response, isA<TonikSuccess<void>>());
+      // Special characters in values should be URL-encoded.
+      expect(getCookieHeader(response), 'user=id,42,name,John%20Doe');
+    });
+  });
 
-    test(
-      'anyOf cookie encodes successfully when variant is primitive',
-      () async {
-        final api = buildCookiesApi(responseStatus: '204');
-        final response = await api.testAnyOfCookie(
-          value: const AnyOfValue(string: 'test-value'),
-        );
+  group('composition cookies', () {
+    test('oneOf cookie with string variant', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testOneOfCookie(
+        identifier: const OneOfIdentifierString('test-value'),
+      );
 
-        // anyOf with primitive variants can encode successfully.
-        expect(response, isA<TonikSuccess<void>>());
-        final cookie = getCookieHeader(response);
-        expect(cookie, isNotNull);
-        expect(cookie, contains('value='));
-      },
-    );
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'identifier=test-value');
+    });
 
-    test('allOf cookie returns encoding error', () async {
+    test('oneOf cookie with integer variant', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testOneOfCookie(
+        identifier: const OneOfIdentifierInt(12345),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'identifier=12345');
+    });
+
+    test('anyOf cookie with string variant', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAnyOfCookie(
+        value: const AnyOfValue(string: 'test-value'),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'value=test-value');
+    });
+
+    test('anyOf cookie with integer variant', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAnyOfCookie(
+        value: const AnyOfValue(int: 42),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'value=42');
+    });
+
+    test('allOf cookie encodes successfully', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAllOfCookie(
         entity: const AllOfEntity(
@@ -517,12 +576,13 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
-      expect(error.error, isA<EncodingException>());
+      expect(response, isA<TonikSuccess<void>>());
+      // AllOf encodes all properties from all schemas.
+      expect(getCookieHeader(response), 'entity=id,1,name,Test');
     });
+  });
 
+  group('nested object cookies', () {
     test('nested object cookie returns encoding error', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testNestedObjectCookie(
@@ -531,6 +591,7 @@ void main() {
         ),
       );
 
+      // Nested objects are not supported in form encoding.
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);

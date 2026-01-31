@@ -286,14 +286,14 @@ void main() {
         collapseWhitespace(methodString),
         contains(
           collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(
-              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: false),
-            );
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
-            }
-          '''),
+              final cookieParts = <String>[];
+              cookieParts.add(
+                r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+              );
+              if (cookieParts.isNotEmpty) {
+                headers[r'Cookie'] = cookieParts.join('; ');
+              }
+            '''),
         ),
       );
     });
@@ -374,17 +374,17 @@ void main() {
         collapseWhitespace(methodString),
         contains(
           collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(
-              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: false),
-            );
-            cookieParts.add(
-              r'user_id=' + userId.toForm(explode: false, allowEmpty: false),
-            );
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
-            }
-          '''),
+              final cookieParts = <String>[];
+              cookieParts.add(
+                r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+              );
+              cookieParts.add(
+                r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
+              );
+              if (cookieParts.isNotEmpty) {
+                headers[r'Cookie'] = cookieParts.join('; ');
+              }
+            '''),
         ),
       );
     });
@@ -445,7 +445,7 @@ void main() {
             if (optionalSession != null) {
               cookieParts.add(
                 r'optional_session=' +
-                    optionalSession.toForm(explode: false, allowEmpty: false),
+                    optionalSession.toForm(explode: false, allowEmpty: true),
               );
             }
             if (cookieParts.isNotEmpty) {
@@ -509,10 +509,497 @@ void main() {
         contains(
           collapseWhitespace('''
             final cookieParts = <String>[];
-            cookieParts.add(r'page=' + pageNum.toForm(explode: false, allowEmpty: false));
+            cookieParts.add(r'page=' + pageNum.toForm(explode: false, allowEmpty: true));
             if (cookieParts.isNotEmpty) {
               headers[r'Cookie'] = cookieParts.join('; ');
             }
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for array cookie parameter', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'tags',
+            rawName: 'tags',
+            description: 'Tags list',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: ListModel(
+              context: context,
+              content: StringModel(context: context),
+            ),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'tags', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Check method has required List<String> parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'tags',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'List<String>');
+
+      // Check method body generates cookie with list encoding.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            final cookieParts = <String>[];
+            cookieParts.add(r'tags=' + tags.toForm(explode: false, allowEmpty: true));
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for object cookie parameter', () {
+      final classModel = ClassModel(
+        name: 'UserObject',
+        context: context,
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+      );
+
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'user',
+            rawName: 'user',
+            description: 'User object',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: classModel,
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'user', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Check method has required UserObject parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'user',
+      );
+      expect(param.required, isTrue);
+
+      // Check method body generates cookie with object encoding.
+      final methodString = method.accept(emitter).toString();
+      expect(
+        collapseWhitespace(methodString),
+        contains("cookieParts.add(r'user=' + user.toForm("),
+      );
+    });
+
+    test('generates Cookie header for oneOf cookie parameter', () {
+      final oneOfModel = OneOfModel(
+        name: 'OneOfIdentifier',
+        context: context,
+        isDeprecated: false,
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'identifier',
+            rawName: 'identifier',
+            description: 'OneOf identifier',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: oneOfModel,
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'identifier', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Check method body generates cookie with oneOf encoding.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            cookieParts.add(
+              r'identifier=' + identifier.toForm(explode: false, allowEmpty: true),
+            );
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for anyOf cookie parameter', () {
+      final anyOfModel = AnyOfModel(
+        name: 'AnyOfValue',
+        context: context,
+        isDeprecated: false,
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'value',
+            rawName: 'value',
+            description: 'AnyOf value',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: anyOfModel,
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'value', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Check method body generates cookie with anyOf encoding.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            cookieParts.add(r'value=' + value.toForm(explode: false, allowEmpty: true));
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for allOf cookie parameter', () {
+      final allOfModel = AllOfModel(
+        name: 'AllOfEntity',
+        context: context,
+        isDeprecated: false,
+        models: {
+          ClassModel(
+            name: 'EntityId',
+            context: context,
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+          ),
+          ClassModel(
+            name: 'EntityName',
+            context: context,
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'entity',
+            rawName: 'entity',
+            description: 'AllOf entity',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: allOfModel,
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'entity', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Check method body generates cookie with allOf encoding.
+      final methodString = method.accept(emitter).toString();
+      expect(
+        collapseWhitespace(methodString),
+        contains("cookieParts.add(r'entity=' + entity.toForm("),
+      );
+    });
+
+    test('generates encoding exception for nested object cookie parameter', () {
+      final nestedClassModel = ClassModel(
+        name: 'NestedProfile',
+        context: context,
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'user',
+            model: ClassModel(
+              name: 'UserObject',
+              context: context,
+              isDeprecated: false,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+      );
+
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'profile',
+            rawName: 'profile',
+            description: 'Nested profile',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: nestedClassModel,
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'profile', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Nested object cookie still generates toForm - error is thrown
+      // at runtime.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains('profile.toForm(explode: false, allowEmpty: true)'),
+      );
+    });
+
+    test('generates Cookie header for array of integers cookie parameter', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {
+          CookieParameterObject(
+            name: 'ids',
+            rawName: 'ids',
+            description: 'Integer IDs list',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: ListModel(
+              context: context,
+              content: IntegerModel(context: context),
+            ),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          ),
+        },
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final cookies = operation.cookieParameters
+          .map((p) => p.resolve())
+          .map((p) => (normalizedName: 'ids', parameter: p))
+          .toList();
+
+      final method = optionsGenerator.generateOptionsMethod(
+        operation,
+        [],
+        cookies,
+      );
+
+      // Check method has required List<int> parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'ids',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'List<int>');
+
+      // Check method body generates cookie with list encoding using mapping.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            cookieParts.add(
+              r'ids=' +
+                  ids
+                      .map((e) => e.toForm(explode: false, allowEmpty: true))
+                      .toList()
+                      .toForm(explode: false, allowEmpty: true, alreadyEncoded: true),
+            );
           '''),
         ),
       );

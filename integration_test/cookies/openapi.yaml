@@ -447,8 +447,8 @@ paths:
       operationId: testArrayCookie
       tags:
         - cookies
-      summary: Test array cookie (unsupported)
-      description: Demonstrates that array cookies are not supported
+      summary: Test array cookie
+      description: Demonstrates array cookies with form encoding
       parameters:
         - name: tags
           in: cookie
@@ -463,14 +463,36 @@ paths:
         '204':
           description: No content
 
+  # Array of integers cookie
+  /array-integer-cookie:
+    get:
+      operationId: testArrayIntegerCookie
+      tags:
+        - cookies
+      summary: Test array of integers cookie
+      description: Demonstrates integer array cookies with form encoding
+      parameters:
+        - name: ids
+          in: cookie
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
   # Object cookie
   /object-cookie:
     get:
       operationId: testObjectCookie
       tags:
         - cookies
-      summary: Test object cookie (unsupported)
-      description: Demonstrates that object cookies are not supported
+      summary: Test object cookie
+      description: Demonstrates flat object cookies with form encoding
       parameters:
         - name: user
           in: cookie
@@ -489,8 +511,8 @@ paths:
       operationId: testOneOfCookie
       tags:
         - cookies
-      summary: Test oneOf cookie (unsupported)
-      description: Demonstrates that oneOf composition cookies are not supported
+      summary: Test oneOf cookie
+      description: Demonstrates oneOf composition cookies with form encoding
       parameters:
         - name: identifier
           in: cookie
@@ -509,8 +531,8 @@ paths:
       operationId: testAnyOfCookie
       tags:
         - cookies
-      summary: Test anyOf cookie (unsupported)
-      description: Demonstrates that anyOf composition cookies are not supported
+      summary: Test anyOf cookie
+      description: Demonstrates anyOf composition cookies with form encoding
       parameters:
         - name: value
           in: cookie
@@ -529,8 +551,8 @@ paths:
       operationId: testAllOfCookie
       tags:
         - cookies
-      summary: Test allOf cookie (unsupported)
-      description: Demonstrates that allOf composition cookies are not supported
+      summary: Test allOf cookie
+      description: Demonstrates allOf composition cookies with form encoding
       parameters:
         - name: entity
           in: cookie
@@ -550,7 +572,7 @@ paths:
       tags:
         - cookies
       summary: Test nested object cookie (unsupported)
-      description: Demonstrates that nested object cookies are not supported
+      description: Demonstrates that nested object cookies are not supported (form encoding limitation)
       parameters:
         - name: profile
           in: cookie
