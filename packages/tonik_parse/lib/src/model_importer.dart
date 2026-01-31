@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/model/discriminator.dart' as parse;
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
@@ -553,10 +554,15 @@ class ModelImporter {
 
   OneOfModel _parseOneOf(String? name, Schema schema, Context context) {
     final modelContext = context.push(name ?? 'oneOf');
-    final models = schema.oneOf!.map(
+    final alternatives = schema.oneOf!;
+
+    final effectiveDiscriminator =
+        schema.discriminator ?? _findInheritedDiscriminator(alternatives);
+
+    final models = alternatives.map(
       (oneOfSchema) => (
         discriminatorValue: _getDiscriminatorValue(
-          schema: schema,
+          discriminator: effectiveDiscriminator,
           innerSchema: oneOfSchema,
         ),
         model: _resolveSchemaRef(null, oneOfSchema, modelContext),
@@ -568,7 +574,7 @@ class ModelImporter {
       models: models.toSet(),
       context: context,
       name: name,
-      discriminator: schema.discriminator?.propertyName,
+      discriminator: effectiveDiscriminator?.propertyName,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
     );
@@ -579,10 +585,15 @@ class ModelImporter {
 
   AnyOfModel _parseAnyOf(String? name, Schema schema, Context context) {
     final modelContext = context.push(name ?? 'anyOf');
-    final models = schema.anyOf!.map(
+    final alternatives = schema.anyOf!;
+
+    final effectiveDiscriminator =
+        schema.discriminator ?? _findInheritedDiscriminator(alternatives);
+
+    final models = alternatives.map(
       (anyOfSchema) => (
         discriminatorValue: _getDiscriminatorValue(
-          schema: schema,
+          discriminator: effectiveDiscriminator,
           innerSchema: anyOfSchema,
         ),
         model: _resolveSchemaRef(null, anyOfSchema, modelContext),
@@ -593,7 +604,7 @@ class ModelImporter {
       models: models.toSet(),
       context: context,
       name: name,
-      discriminator: schema.discriminator?.propertyName,
+      discriminator: effectiveDiscriminator?.propertyName,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
     );
@@ -603,15 +614,77 @@ class ModelImporter {
   }
 
   String? _getDiscriminatorValue({
-    required Schema schema,
+    required parse.Discriminator? discriminator,
     required Schema innerSchema,
   }) {
-    if (innerSchema.ref != null && schema.discriminator?.propertyName != null) {
+    if (innerSchema.ref != null && discriminator?.propertyName != null) {
       final ref = innerSchema.ref!;
-      final discriminatorEntry = schema.discriminator?.mapping?.entries
+      final discriminatorEntry = discriminator?.mapping?.entries
           .firstWhereOrNull((entry) => entry.value == ref);
       return discriminatorEntry?.key ?? ref.split('/').last;
     }
+    return null;
+  }
+
+  /// Finds an inherited discriminator from a common parent schema.
+  ///
+  /// When a oneOf/anyOf has no direct discriminator, checks if all alternatives
+  /// inherit from a common parent with a discriminator via allOf.
+  /// Returns the parent's discriminator if found, null otherwise.
+  parse.Discriminator? _findInheritedDiscriminator(List<Schema> alternatives) {
+    if (alternatives.isEmpty) return null;
+
+    final parentDiscriminators = <parse.Discriminator>[];
+
+    for (final alternative in alternatives) {
+      final parentDiscriminator = _findDiscriminatorInAllOfChain(alternative);
+      if (parentDiscriminator == null) return null;
+
+      parentDiscriminators.add(parentDiscriminator);
+    }
+
+    final firstPropertyName = parentDiscriminators.first.propertyName;
+    final allSameProperty = parentDiscriminators.every(
+      (d) => d.propertyName == firstPropertyName,
+    );
+    if (!allSameProperty) return null;
+
+    return parentDiscriminators.first;
+  }
+
+  /// Walks an allOf chain to find a parent schema with a discriminator.
+  parse.Discriminator? _findDiscriminatorInAllOfChain(Schema schema) {
+    final resolvedSchema = _resolveSchemaToSchema(schema);
+    if (resolvedSchema == null) return null;
+
+    final allOf = resolvedSchema.allOf;
+    if (allOf == null || allOf.isEmpty) return null;
+
+    for (final member in allOf) {
+      final memberSchema = _resolveSchemaToSchema(member);
+      if (memberSchema == null) continue;
+
+      if (memberSchema.discriminator != null) {
+        return memberSchema.discriminator;
+      }
+    }
+
+    return null;
+  }
+
+  Schema? _resolveSchemaToSchema(Schema schema) {
+    if (schema.ref == null) return schema;
+
+    final ref = schema.ref!;
+
+    if (ref.startsWith('#/components/schemas/')) {
+      return _schemas[ref.split('/').last];
+    }
+
+    if (ref.contains(r'/$defs/')) {
+      return _defs[ref.split('/').last];
+    }
+
     return null;
   }
 
@@ -626,6 +699,7 @@ class ModelImporter {
       context: context,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
+      discriminator: schema.discriminator?.propertyName,
     );
 
     if (schema.not != null) {

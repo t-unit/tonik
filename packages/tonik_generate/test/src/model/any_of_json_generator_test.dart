@@ -208,8 +208,9 @@ void main() {
           for (final m in mapValues) {
             map.addAll(m);
           }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('disc', () => discriminatorValue);
+          final discValue = discriminatorValue;
+          if (discValue != null) {
+            map.putIfAbsent('disc', () => discValue);
           }
           return map;
         }
@@ -406,8 +407,9 @@ void main() {
           for (final m in mapValues) {
             map.addAll(m);
           }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('type', () => discriminatorValue);
+          final discValue = discriminatorValue;
+          if (discValue != null) {
+            map.putIfAbsent('type', () => discValue);
           }
           return map;
         }
@@ -505,8 +507,9 @@ void main() {
           for (final m in mapValues) {
             map.addAll(m);
           }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('disc', () => discriminatorValue);
+          final discValue = discriminatorValue;
+          if (discValue != null) {
+            map.putIfAbsent('disc', () => discValue);
           }
           return map;
         }

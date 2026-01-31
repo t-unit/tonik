@@ -65,6 +65,78 @@ final text = switch (roundtrip) {
 - Without a discriminator, overlapping shapes may cause ambiguous decoding
 - Discriminator values must be present and consistent in payloads
 
+### Inherited Discriminators
+
+When your `oneOf` references schemas that inherit from a common parent with a discriminator, Tonik automatically detects and uses that discriminator. This is common in polymorphic APIs where a base type defines the discriminator and child types extend it via `allOf`.
+
+OAS input (example):
+```yaml
+components:
+  schemas:
+    Pet:
+      type: object
+      required: [name, petType]
+      properties:
+        name: { type: string }
+        petType: { type: string }
+      discriminator:
+        propertyName: petType
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+    Cat:
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            meow: { type: string }
+    Dog:
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            bark: { type: string }
+    PetChoice:
+      oneOf:
+        - $ref: '#/components/schemas/Cat'
+        - $ref: '#/components/schemas/Dog'
+```
+
+**Example usage:**
+```dart
+// Cat is an allOf composition: Pet + CatModel
+// IMPORTANT: Set the discriminator value to match the variant you're using
+final cat = PetChoiceCat(
+  Cat(
+    pet: Pet(petType: 'cat', name: 'Whiskers'),  // Must be 'cat' for PetChoiceCat
+    catModel: CatModel(meow: 'purr'),
+  ),
+);
+
+// Encoding produces a flat JSON with all properties merged
+final json = cat.toJson();
+// => {"petType": "cat", "name": "Whiskers", "meow": "purr"}
+
+// Decoding uses the discriminator for fast O(1) dispatch
+final parsed = PetChoice.fromJson({'petType': 'cat', 'name': 'Whiskers', 'meow': 'purr'});
+// => PetChoiceCat(...)
+
+// Unknown discriminator values fall back to trying all variants
+final fallback = PetChoice.fromJson({'petType': 'unknown', 'name': 'X', 'meow': 'y'});
+// => PetChoiceCat(...) - first variant that successfully parses
+```
+
+> ⚠️ **Important:** When constructing a variant, you must set the discriminator property value to match the variant type. For example, when creating a `PetChoiceCat`, always use `petType: 'cat'`. Setting an incorrect value (e.g., `petType: 'dog'` inside a `PetChoiceCat`) will produce JSON that won't roundtrip correctly - decoding will dispatch to the wrong variant based on the discriminator value.
+
+**How it works:**
+- Tonik detects when `oneOf`/`anyOf` variants inherit from a parent with a discriminator via `allOf`
+- The discriminator property and mappings are inherited automatically
+- If a variant's schema name matches a mapping value, that mapping is used
+- On encode, the discriminator value from the inner type is preserved in the JSON output
+- On decode, the discriminator enables fast O(1) dispatch to the correct variant
+- If the discriminator value is unknown, all variants are tried as fallback
+- Missing discriminator property will cause a `DecodingException` (since it's required)
+
 ---
 
 ## anyOf: Any Combination

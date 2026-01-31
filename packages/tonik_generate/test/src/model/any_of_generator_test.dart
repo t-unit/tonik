@@ -641,8 +641,9 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   for (final m in mapValues) {
     map.addAll(m);
   }
-  if (discriminatorValue != null) {
-    map.putIfAbsent('type', () => discriminatorValue);
+  final discValue = discriminatorValue;
+  if (discValue != null) {
+    map.putIfAbsent('type', () => discValue);
   }
   return map.toSimple(
     explode: explode,
@@ -758,8 +759,9 @@ String toForm({
   for (final m in mapValues) {
     map.addAll(m);
   }
-  if (discriminatorValue != null) {
-    map.putIfAbsent('type', () => discriminatorValue);
+  final discValue = discriminatorValue;
+  if (discValue != null) {
+    map.putIfAbsent('type', () => discValue);
   }
   return map.toForm(
     explode: explode,
@@ -912,8 +914,9 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     for (final m in mapValues) {
       map.addAll(m);
     }
-    if (discriminatorValue != null) {
-      map.putIfAbsent('type', () => discriminatorValue);
+    final discValue = discriminatorValue;
+    if (discValue != null) {
+      map.putIfAbsent('type', () => discValue);
     }
     return map.toSimple(
       explode: explode,
@@ -1134,8 +1137,9 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
   for (final m in _$mapValues) {
     _$map.addAll(m);
   }
-  if (_$discriminatorValue != null) {
-    _$map.putIfAbsent('type', () => _$discriminatorValue);
+  final _$discValue = _$discriminatorValue;
+  if (_$discValue != null) {
+    _$map.putIfAbsent('type', () => _$discValue);
   }
   return _$map;
 }
@@ -1287,8 +1291,9 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
   for (final m in _$mapValues) {
     _$map.addAll(m);
   }
-  if (_$discriminatorValue != null) {
-    _$map.putIfAbsent('type', () => _$discriminatorValue);
+  final _$discValue = _$discriminatorValue;
+  if (_$discValue != null) {
+    _$map.putIfAbsent('type', () => _$discValue);
   }
   return _$map;
 }

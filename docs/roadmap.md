@@ -1,6 +1,5 @@
 # Roadmap
 
-- Discriminator support for allOf
 - Proper OpenAPI 3.2 support
   - [Sequential/streaming media types](https://spec.openapis.org/oas/v3.2.0.html#complete-vs-streaming-content)
 - Support for `additionalProperties`

@@ -729,9 +729,10 @@ class AnyOfGenerator {
     if (hasDiscriminator) {
       mergeBlocks.add(
         Code(
-          'if (discriminatorValue != null) { '
+          'final discValue = discriminatorValue; '
+          'if (discValue != null) { '
           "map.putIfAbsent('${model.discriminator}', "
-          '() => discriminatorValue); }',
+          '() => discValue); }',
         ),
       );
     }
@@ -857,9 +858,10 @@ class AnyOfGenerator {
     }
     if (hasDiscriminator) {
       mergeBlocks.addAll([
-        const Code('if (discriminatorValue != null) { '),
+        const Code('final discValue = discriminatorValue; '),
+        const Code('if (discValue != null) { '),
         Code("map.putIfAbsent('${model.discriminator}', () => "),
-        const Code('discriminatorValue'),
+        const Code('discValue'),
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1271,9 +1273,10 @@ class AnyOfGenerator {
 
     if (hasDiscriminator) {
       mergeBlocks.addAll([
-        const Code('if (discriminatorValue != null) { '),
+        const Code('final discValue = discriminatorValue; '),
+        const Code('if (discValue != null) { '),
         Code("map.putIfAbsent('${model.discriminator}', () => "),
-        const Code('discriminatorValue'),
+        const Code('discValue'),
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1477,9 +1480,10 @@ class AnyOfGenerator {
 
     if (hasDiscriminator) {
       mergeBlocks.addAll([
-        const Code(r'if (_$discriminatorValue != null) { '),
+        const Code(r'final _$discValue = _$discriminatorValue; '),
+        const Code(r'if (_$discValue != null) { '),
         Code("_\$map.putIfAbsent('${model.discriminator}', () => "),
-        const Code(r'_$discriminatorValue'),
+        const Code(r'_$discValue'),
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1691,9 +1695,10 @@ class AnyOfGenerator {
 
     if (hasDiscriminator) {
       mergeBlocks.addAll([
-        const Code('if (discriminatorValue != null) { '),
+        const Code('final discValue = discriminatorValue; '),
+        const Code('if (discValue != null) { '),
         Code("map.putIfAbsent('${model.discriminator}', () => "),
-        const Code('discriminatorValue'),
+        const Code('discValue'),
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1854,9 +1859,10 @@ class AnyOfGenerator {
 
     if (hasDiscriminator) {
       mergeBlocks.addAll([
-        const Code('if (discriminatorValue != null) { '),
+        const Code('final discValue = discriminatorValue; '),
+        const Code('if (discValue != null) { '),
         Code("map.putIfAbsent('${model.discriminator}', () => "),
-        const Code('discriminatorValue'),
+        const Code('discValue'),
         const Code(');'),
         const Code(' }'),
       ]);

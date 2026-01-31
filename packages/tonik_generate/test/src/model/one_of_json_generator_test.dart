@@ -209,6 +209,14 @@ void main() {
               return result;
             }
 
+            try {
+              return ResultError(Error.fromJson(json));
+            } on Object catch (_) {}
+
+            try {
+              return ResultSuccess(Success.fromJson(json));
+            } on Object catch (_) {}
+
             throw JsonDecodingException('Invalid JSON for Result');
           }''';
 
@@ -331,6 +339,10 @@ void main() {
             if (json is String) {
               return ResultString(json);
             }
+
+            try {
+              return ResultError(Error.fromJson(json));
+            } on Object catch (_) {}
 
             try {
               return ResultSuccess(Success.fromJson(json));

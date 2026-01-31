@@ -126,6 +126,8 @@ class ClassModel extends Model with NamedModel {
     this.nameOverride,
     this.description,
     this.isNullable = false,
+    this.discriminator,
+    this.discriminatedModels,
   });
 
   @override
@@ -137,6 +139,8 @@ class ClassModel extends Model with NamedModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  final String? discriminator;
+  Set<DiscriminatedModel>? discriminatedModels;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -145,7 +149,8 @@ class ClassModel extends Model with NamedModel {
   String toString() =>
       'ClassModel{name: $name, nameOverride: $nameOverride, '
       'properties: $properties, description: $description, '
-      'isDeprecated: $isDeprecated}';
+      'isDeprecated: $isDeprecated, discriminator: $discriminator, '
+      'discriminatedModels: $discriminatedModels}';
 }
 
 /// Represents an individual value within an enum, with optional name override.
