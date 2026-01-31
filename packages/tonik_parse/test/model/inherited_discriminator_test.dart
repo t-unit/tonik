@@ -216,7 +216,8 @@ void main() {
   });
 
   group(
-    'No inherited discriminator when not all alternatives share parent',
+    'No inherited discriminator when not all alternatives share '
+    'parent',
     () {
       const fileContent = {
         'openapi': '3.1.0',
@@ -264,7 +265,8 @@ void main() {
       };
 
       test(
-        'does not inherit discriminator when alternatives have different parents',
+        'does not inherit discriminator when alternatives have different '
+        'parents',
         () {
           final api = Importer().import(fileContent);
 
@@ -283,4 +285,173 @@ void main() {
       );
     },
   );
+
+  group(r'Inherited discriminator via allOf with $defs', () {
+    // Pattern where parent schema with discriminator is defined in $defs
+    // instead of components/schemas
+    const fileContent = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Wrapper': {
+            r'$defs': {
+              // Parent schema with discriminator defined in $defs
+              'Animal': {
+                'type': 'object',
+                'required': ['animalType'],
+                'properties': {
+                  'animalType': {'type': 'string'},
+                  'name': {'type': 'string'},
+                },
+                'discriminator': {
+                  'propertyName': 'animalType',
+                  'mapping': {
+                    'lion': r'#/components/schemas/Wrapper/$defs/Lion',
+                    'eagle': r'#/components/schemas/Wrapper/$defs/Eagle',
+                  },
+                },
+              },
+              // Child schema using allOf to inherit from Animal in $defs
+              'Lion': {
+                'allOf': [
+                  {r'$ref': r'#/components/schemas/Wrapper/$defs/Animal'},
+                  {
+                    'type': 'object',
+                    'properties': {
+                      'roarVolume': {'type': 'integer'},
+                    },
+                  },
+                ],
+              },
+              // Another child schema using allOf
+              'Eagle': {
+                'allOf': [
+                  {r'$ref': r'#/components/schemas/Wrapper/$defs/Animal'},
+                  {
+                    'type': 'object',
+                    'properties': {
+                      'wingspan': {'type': 'integer'},
+                    },
+                  },
+                ],
+              },
+            },
+            // oneOf that references children from $defs
+            'oneOf': [
+              {r'$ref': r'#/components/schemas/Wrapper/$defs/Lion'},
+              {r'$ref': r'#/components/schemas/Wrapper/$defs/Eagle'},
+            ],
+          },
+        },
+      },
+    };
+
+    test(r'oneOf inherits discriminator from parent in $defs', () {
+      final api = Importer().import(fileContent);
+
+      final wrapper = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'Wrapper',
+      );
+
+      expect(wrapper, isA<OneOfModel>());
+      expect((wrapper as OneOfModel).discriminator, 'animalType');
+    });
+
+    test(
+      r'alternatives have discriminator values from $defs parent mapping',
+      () {
+        final api = Importer().import(fileContent);
+
+        final wrapper =
+            api.models.firstWhere((m) => m is NamedModel && m.name == 'Wrapper')
+                as OneOfModel;
+
+        expect(wrapper.models, hasLength(2));
+
+        final discriminatorValues = wrapper.models
+            .map((m) => m.discriminatorValue)
+            .toSet();
+
+        expect(discriminatorValues, containsAll(['lion', 'eagle']));
+      },
+    );
+  });
+
+  group(r'Inherited discriminator with $defs - no mapping', () {
+    // When no mapping is provided, schema names from $defs should be used
+    const fileContent = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Container': {
+            r'$defs': {
+              'Shape': {
+                'type': 'object',
+                'required': ['shapeType'],
+                'properties': {
+                  'shapeType': {'type': 'string'},
+                },
+                'discriminator': {
+                  'propertyName': 'shapeType',
+                  // No mapping - should use schema names
+                },
+              },
+              'Circle': {
+                'allOf': [
+                  {r'$ref': r'#/components/schemas/Container/$defs/Shape'},
+                  {
+                    'type': 'object',
+                    'properties': {
+                      'radius': {'type': 'number'},
+                    },
+                  },
+                ],
+              },
+              'Square': {
+                'allOf': [
+                  {r'$ref': r'#/components/schemas/Container/$defs/Shape'},
+                  {
+                    'type': 'object',
+                    'properties': {
+                      'side': {'type': 'number'},
+                    },
+                  },
+                ],
+              },
+            },
+            'oneOf': [
+              {r'$ref': r'#/components/schemas/Container/$defs/Circle'},
+              {r'$ref': r'#/components/schemas/Container/$defs/Square'},
+            ],
+          },
+        },
+      },
+    };
+
+    test(
+      'uses schema names as discriminator values when no mapping provided',
+      () {
+        final api = Importer().import(fileContent);
+
+        final container =
+            api.models.firstWhere(
+                  (m) => m is NamedModel && m.name == 'Container',
+                )
+                as OneOfModel;
+
+        expect(container.discriminator, 'shapeType');
+        expect(container.models, hasLength(2));
+
+        final discriminatorValues = container.models
+            .map((m) => m.discriminatorValue)
+            .toSet();
+
+        expect(discriminatorValues, containsAll(['Circle', 'Square']));
+      },
+    );
+  });
 }

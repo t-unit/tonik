@@ -677,12 +677,12 @@ class ModelImporter {
 
     final ref = schema.ref!;
 
-    if (ref.startsWith('#/components/schemas/')) {
-      return _schemas[ref.split('/').last];
+    if (ref.contains(r'/$defs/')) {
+      return _defs[ref];
     }
 
-    if (ref.contains(r'/$defs/')) {
-      return _defs[ref.split('/').last];
+    if (ref.startsWith('#/components/schemas/')) {
+      return _schemas[ref.split('/').last];
     }
 
     return null;
