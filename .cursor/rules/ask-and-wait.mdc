@@ -1,8 +1,0 @@
----
-description: Make sure prompts are understood.
-globs: 
-alwaysApply: true
----
-- Make sure prompt is clear.
-- Rather ask for feedback if unsure how something should be build.
-- Wait for user to confirm before switching from writing test to implementation.
