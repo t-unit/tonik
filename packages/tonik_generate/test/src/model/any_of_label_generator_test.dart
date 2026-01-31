@@ -140,8 +140,9 @@ void main() {
           for (final m in mapValues) {
             map.addAll(m);
           }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('type', () => discriminatorValue);
+          final discValue = discriminatorValue;
+          if (discValue != null) {
+            map.putIfAbsent('type', () => discValue);
           }
           return map.toLabel(
             explode: explode,
@@ -223,8 +224,9 @@ void main() {
             for (final m in mapValues) {
               map.addAll(m);
             }
-            if (discriminatorValue != null) {
-              map.putIfAbsent('type', () => discriminatorValue);
+            final discValue = discriminatorValue;
+            if (discValue != null) {
+              map.putIfAbsent('type', () => discValue);
             }
             return map.toLabel(
               explode: explode,
