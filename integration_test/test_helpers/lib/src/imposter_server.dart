@@ -66,12 +66,16 @@ class ImposterServer {
       ],
       environment: {
         ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'ERROR',
+        'IMPOSTER_LOG_LEVEL': 'INFO',
       },
     );
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {
-      print(data);
+      // Signal readiness when we see the startup message.
+      if (data.contains('Mock engine up and running') &&
+          !_readyCompleter.isCompleted) {
+        _readyCompleter.complete();
+      }
     });
     _process!.stderr.transform(const Utf8Decoder()).listen((data) {
       print(data);
