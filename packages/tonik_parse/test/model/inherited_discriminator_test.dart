@@ -215,69 +215,72 @@ void main() {
     );
   });
 
-  group('No inherited discriminator when not all alternatives share parent', () {
-    const fileContent = {
-      'openapi': '3.1.0',
-      'info': {'title': 'Test API', 'version': '1.0.0'},
-      'paths': <String, dynamic>{},
-      'components': {
-        'schemas': {
-          'Pet': {
-            'type': 'object',
-            'properties': {
-              'petType': {'type': 'string'},
-            },
-            'discriminator': {
-              'propertyName': 'petType',
-            },
-          },
-          'Cat': {
-            'allOf': [
-              {r'$ref': '#/components/schemas/Pet'},
-              {
-                'type': 'object',
-                'properties': {
-                  'meowVolume': {'type': 'integer'},
-                },
+  group(
+    'No inherited discriminator when not all alternatives share parent',
+    () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Pet': {
+              'type': 'object',
+              'properties': {
+                'petType': {'type': 'string'},
               },
-            ],
-          },
-          // Standalone schema that does NOT inherit from Pet
-          'Robot': {
-            'type': 'object',
-            'properties': {
-              'batteryLevel': {'type': 'integer'},
+              'discriminator': {
+                'propertyName': 'petType',
+              },
             },
-          },
-          // oneOf mixing an allOf child and a standalone - no inherited
-          // discriminator
-          'MixedChoice': {
-            'oneOf': [
-              {r'$ref': '#/components/schemas/Cat'},
-              {r'$ref': '#/components/schemas/Robot'},
-            ],
+            'Cat': {
+              'allOf': [
+                {r'$ref': '#/components/schemas/Pet'},
+                {
+                  'type': 'object',
+                  'properties': {
+                    'meowVolume': {'type': 'integer'},
+                  },
+                },
+              ],
+            },
+            // Standalone schema that does NOT inherit from Pet
+            'Robot': {
+              'type': 'object',
+              'properties': {
+                'batteryLevel': {'type': 'integer'},
+              },
+            },
+            // oneOf mixing an allOf child and a standalone - no inherited
+            // discriminator
+            'MixedChoice': {
+              'oneOf': [
+                {r'$ref': '#/components/schemas/Cat'},
+                {r'$ref': '#/components/schemas/Robot'},
+              ],
+            },
           },
         },
-      },
-    };
+      };
 
-    test(
-      'does not inherit discriminator when alternatives have different parents',
-      () {
-        final api = Importer().import(fileContent);
+      test(
+        'does not inherit discriminator when alternatives have different parents',
+        () {
+          final api = Importer().import(fileContent);
 
-        final mixedChoice = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'MixedChoice',
-        );
+          final mixedChoice = api.models.firstWhere(
+            (m) => m is NamedModel && m.name == 'MixedChoice',
+          );
 
-        expect(mixedChoice, isA<OneOfModel>());
-        expect((mixedChoice as OneOfModel).discriminator, isNull);
+          expect(mixedChoice, isA<OneOfModel>());
+          expect((mixedChoice as OneOfModel).discriminator, isNull);
 
-        // No discriminator values should be set
-        for (final model in mixedChoice.models) {
-          expect(model.discriminatorValue, isNull);
-        }
-      },
-    );
-  });
+          // No discriminator values should be set
+          for (final model in mixedChoice.models) {
+            expect(model.discriminatorValue, isNull);
+          }
+        },
+      );
+    },
+  );
 }
