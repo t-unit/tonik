@@ -61,101 +61,60 @@ jobs:
       - name: Run tests with coverage
         run: melos run test:coverage 
 
-      - name: Run petstore integration tests
+      - name: Run all integration tests
         run: |
-          cd integration_test/petstore/petstore_test
-          dart test --concurrency=1
-
-      - name: Run petstore config integration tests
-        run: |
-          cd integration_test/petstore_config/petstore_test
-          dart test --concurrency=1
-
-      - name: Run music streaming integration tests
-        run: |
-          cd integration_test/music_streaming/music_streaming_test
-          dart test --concurrency=1
-
-      - name: Run gov integration tests
-        run: |
-          cd integration_test/gov/gov_test
-          dart test --concurrency=1
-
-      - name: Run simple encoding integration tests
-        run: |
-          cd integration_test/simple_encoding/simple_encoding_test
-          dart test --concurrency=1
-
-      - name: Run fastify type provider zod integration tests
-        run: |
-          cd integration_test/fastify_type_provider_zod/fastify_type_provider_zod_test
-          dart test --concurrency=1
-
-      - name: Run composition integration tests
-        run: |
-          cd integration_test/composition/composition_test
-          dart test
-
-      - name: Run boolean schemas integration tests
-        run: |
-          cd integration_test/boolean_schemas/boolean_schemas_test
-          dart test --concurrency=1
-
-      - name: Run binary models integration tests
-        run: |
-          cd integration_test/binary_models/binary_models_test
-          dart test --concurrency=1
-
-      - name: Run form urlencoded integration tests
-        run: |
-          cd integration_test/form_urlencoded/form_urlencoded_test
-          dart test --concurrency=1
-
-      - name: Run path encoding integration tests
-        run: |
-          cd integration_test/path_encoding/path_encoding_test
-          dart test --concurrency=1
-
-      - name: Run query parameters integration tests
-        run: |
-          cd integration_test/query_parameters/query_parameters_test
-          dart test --concurrency=1
-
-      - name: Run type arrays integration tests
-        run: |
-          cd integration_test/type_arrays/type_arrays_test
-          dart test --concurrency=1
-
-      - name: Run medama integration tests
-        run: |
-          cd integration_test/medama/medama_test
-          dart test --concurrency=1
-
-      - name: Run inference integration tests
-        run: |
-          cd integration_test/inference/inference_test
-          dart test --concurrency=1
-
-      - name: Run ref siblings integration tests
-        run: |
-          cd integration_test/ref_siblings/ref_siblings_test
-          dart test --concurrency=1
-
-      - name: Run defs integration tests
-        run: |
-          cd integration_test/defs/defs_test
-          dart test --concurrency=1
-
-      - name: Run server variables integration tests
-        run: |
-          cd integration_test/server_variables/server_variables_test
-          dart test --concurrency=1
-
-      - name: Run cookies integration tests
-        run: |
-          cd integration_test/cookies/cookies_test
-          dart pub get
-          dart test --concurrency=1
+          cd integration_test
+          
+          # Run all integration tests in parallel
+          # Each test suite uses unique ports, so no conflicts
+          # Tests within a suite run sequentially (--concurrency=1)
+          
+          run_test() {
+            local test_dir="$1"
+            echo "Starting tests in $test_dir"
+            (cd "$test_dir" && dart test --concurrency=1)
+            local exit_code=$?
+            if [ $exit_code -ne 0 ]; then
+              echo "FAILED: $test_dir (exit code: $exit_code)"
+              return $exit_code
+            fi
+            echo "PASSED: $test_dir"
+            return 0
+          }
+          
+          # Launch all test suites in parallel
+          run_test petstore/petstore_test &
+          run_test petstore_config/petstore_test &
+          run_test music_streaming/music_streaming_test &
+          run_test gov/gov_test &
+          run_test simple_encoding/simple_encoding_test &
+          run_test fastify_type_provider_zod/fastify_type_provider_zod_test &
+          run_test composition/composition_test &
+          run_test boolean_schemas/boolean_schemas_test &
+          run_test binary_models/binary_models_test &
+          run_test form_urlencoded/form_urlencoded_test &
+          run_test path_encoding/path_encoding_test &
+          run_test query_parameters/query_parameters_test &
+          run_test type_arrays/type_arrays_test &
+          run_test medama/medama_test &
+          run_test inference/inference_test &
+          run_test ref_siblings/ref_siblings_test &
+          run_test defs/defs_test &
+          run_test server_variables/server_variables_test &
+          run_test cookies/cookies_test &
+          
+          # Wait for all background jobs and collect exit codes
+          failed=0
+          for job in $(jobs -p); do
+            wait $job || failed=1
+          done
+          
+          if [ $failed -ne 0 ]; then
+            echo "One or more test suites failed"
+            exit 1
+          fi
+          
+          echo "All integration tests passed"
 
       - name: Format and merge coverage reports
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'

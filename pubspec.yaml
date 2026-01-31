@@ -49,109 +49,91 @@ melos:
     test-integration-petstore:
       run: |
         cd integration_test/petstore/petstore_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-music-streaming:
       run: |
         cd integration_test/music_streaming/music_streaming_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-gov:
       run: |
         cd integration_test/gov/gov_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-simple-encoding:
       run: |
         cd integration_test/simple_encoding/simple_encoding_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-fastify-type-provider-zod:
       run: |
         cd integration_test/fastify_type_provider_zod/fastify_type_provider_zod_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-composition:
       run: |
         cd integration_test/composition/composition_test
-        dart pub get
         dart test
 
     test-integration-query-parameters:
       run: |
         cd integration_test/query_parameters/query_parameters_test
-        dart pub get
         dart test
 
     test-integration-path-encoding:
       run: |
         cd integration_test/path_encoding/path_encoding_test
-        dart pub get
         dart test
 
     test-integration-binary-models:
       run: |
         cd integration_test/binary_models/binary_models_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-form-urlencoded:
       run: |
         cd integration_test/form_urlencoded/form_urlencoded_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-boolean-schemas:
       run: |
         cd integration_test/boolean_schemas/boolean_schemas_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-type-arrays:
       run: |
         cd integration_test/type_arrays/type_arrays_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-medama:
       run: |
         cd integration_test/medama/medama_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-inference:
       run: |
         cd integration_test/inference/inference_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-ref-siblings:
       run: |
         cd integration_test/ref_siblings/ref_siblings_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-defs:
       run: |
         cd integration_test/defs/defs_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-server-variables:
       run: |
         cd integration_test/server_variables/server_variables_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-cookies:
       run: |
         cd integration_test/cookies/cookies_test
-        dart pub get
         dart test --concurrency=1
 
     test-integration-all:

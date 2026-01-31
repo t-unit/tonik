@@ -56,7 +56,7 @@ class ImposterServer {
       ],
       environment: {
         ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'DEBUG',
+        'IMPOSTER_LOG_LEVEL': 'WARN',
       },
     );
 
