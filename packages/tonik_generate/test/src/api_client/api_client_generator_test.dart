@@ -49,6 +49,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -106,6 +107,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -170,6 +172,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -207,6 +210,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -246,6 +250,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -327,6 +332,7 @@ void main() {
             },
             responses: const {},
             securitySchemes: const {},
+            cookieParameters: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -407,6 +413,7 @@ void main() {
               ),
             },
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -469,6 +476,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             requestBody: RequestBodyObject(
               description: 'User data',
@@ -571,6 +579,7 @@ void main() {
             },
             responses: const {},
             securitySchemes: const {},
+            cookieParameters: const {},
           );
 
           generatedClass = generator.generateClass(
@@ -620,6 +629,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -650,6 +660,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -681,6 +692,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -718,6 +730,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -751,6 +764,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -818,6 +832,7 @@ void main() {
           },
           responses: const {},
           securitySchemes: const {},
+          cookieParameters: const {},
         );
 
         final generatedClass = generator.generateClass(
@@ -871,6 +886,7 @@ void main() {
           headers: const {},
           queryParameters: {aliasParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -904,6 +920,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );

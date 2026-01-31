@@ -17,6 +17,8 @@ class OptionsGenerator {
   Method generateOptionsMethod(
     Operation operation,
     List<({String normalizedName, RequestHeaderObject parameter})> headers,
+    List<({String normalizedName, CookieParameterObject parameter})>
+    cookieParameters,
   ) {
     final bodyStatements = <Code>[];
     final parameters = <Parameter>[];
@@ -27,16 +29,21 @@ class OptionsGenerator {
       bodyStatements,
       parameters,
     );
-    final headersData = _generateHeaders(
+    _generateHeaders(
       headers,
       bodyStatements,
       parameters,
       operation,
     );
+    _generateCookieHeader(
+      cookieParameters,
+      bodyStatements,
+      parameters,
+    );
 
     final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
       'method': literalString(methodString),
-      if (headersData != null) 'headers': refer('headers'),
+      'headers': refer('headers'),
       'contentType': ?contentType,
       'responseType': refer(
         'ResponseType',
@@ -130,7 +137,7 @@ class OptionsGenerator {
     return refer('contentType');
   }
 
-  Expression? _generateHeaders(
+  void _generateHeaders(
     List<({String normalizedName, RequestHeaderObject parameter})> headers,
     List<Code> bodyStatements,
     List<Parameter> parameters,
@@ -295,8 +302,112 @@ class OptionsGenerator {
         bodyStatements.add(headerAssignment);
       }
     }
+  }
 
-    return refer('headers');
+  /// Generates the Cookie header for cookie parameters.
+  ///
+  /// Cookies are encoded using form style (the only style valid for cookies
+  /// per OpenAPI 3.x) and concatenated as `name1=value1; name2=value2`.
+  void _generateCookieHeader(
+    List<({String normalizedName, CookieParameterObject parameter})>
+    cookieParameters,
+    List<Code> bodyStatements,
+    List<Parameter> parameters,
+  ) {
+    if (cookieParameters.isEmpty) {
+      return;
+    }
+
+    // Generate method parameters for each cookie.
+    for (final cookie in cookieParameters) {
+      final paramType = typeReference(
+        cookie.parameter.model,
+        nameManager,
+        package,
+        isNullableOverride: !cookie.parameter.isRequired,
+      );
+
+      parameters.add(
+        Parameter(
+          (b) => b
+            ..name = cookie.normalizedName
+            ..type = paramType
+            ..named = true
+            ..required = cookie.parameter.isRequired,
+        ),
+      );
+    }
+
+    final requiredCookies = cookieParameters
+        .where((c) => c.parameter.isRequired)
+        .toList();
+    final optionalCookies = cookieParameters
+        .where((c) => !c.parameter.isRequired)
+        .toList();
+
+    bodyStatements.add(
+      declareFinal('cookieParts')
+          .assign(
+            literalList(
+              [],
+              refer('String', 'dart:core'),
+            ),
+          )
+          .statement,
+    );
+
+    for (final cookie in requiredCookies) {
+      _addCookieEncodingStatement(cookie, bodyStatements);
+    }
+
+    for (final cookie in optionalCookies) {
+      bodyStatements.add(Code('if (${cookie.normalizedName} != null) {'));
+      _addCookieEncodingStatement(cookie, bodyStatements);
+      bodyStatements.add(const Code('}'));
+    }
+
+    bodyStatements
+      ..add(const Code('if (cookieParts.isNotEmpty) {'))
+      ..add(
+        refer('headers')
+            .index(literalString('Cookie', raw: true))
+            .assign(
+              refer('cookieParts').property('join').call([literalString('; ')]),
+            )
+            .statement,
+      )
+      ..add(const Code('}'));
+  }
+
+  void _addCookieEncodingStatement(
+    ({String normalizedName, CookieParameterObject parameter}) cookie,
+    List<Code> bodyStatements,
+  ) {
+    final model = cookie.parameter.model;
+    final rawName = cookie.parameter.rawName;
+    final paramName = cookie.normalizedName;
+    final explode = cookie.parameter.explode;
+
+    if (model.encodingShape != EncodingShape.simple) {
+      bodyStatements.add(
+        generateEncodingExceptionExpression(
+          'Cookie parameters only support simple types (string, int, bool, '
+          'num). Complex types are not supported for cookie: $rawName',
+        ).statement,
+      );
+      return;
+    }
+
+    final encodedValue = refer(paramName).property('toForm').call([], {
+      'explode': literalBool(explode),
+      'allowEmpty': literalBool(false),
+    });
+
+    bodyStatements.add(
+      refer('cookieParts').property('add').call([
+        literalString('$rawName=', raw: true).operatorAdd(encodedValue),
+      ]).statement,
+    );
   }
 
   Parameter _generateHeaderParameter(

@@ -47,6 +47,9 @@ List<Parameter> generateParameters({
     pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
     queryParameters: operation.queryParameters.map((p) => p.resolve()).toSet(),
     headers: operation.headers.map((p) => p.resolve()).toSet(),
+    cookieParameters: operation.cookieParameters
+        .map((p) => p.resolve())
+        .toSet(),
   );
 
   // Add path parameters
@@ -128,6 +131,36 @@ List<Parameter> generateParameters({
             ..required = headerParam.parameter.isRequired;
 
           if (headerParam.parameter.isDeprecated) {
+            b.annotations.add(
+              refer('Deprecated', 'dart:core').call([
+                literalString('This parameter is deprecated.'),
+              ]),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  // Add cookie parameters
+  for (final cookieParam in normalizedParams.cookieParameters) {
+    final parameterType = typeReference(
+      cookieParam.parameter.model,
+      nameManager,
+      package,
+      isNullableOverride: !cookieParam.parameter.isRequired,
+    );
+
+    parameters.add(
+      Parameter(
+        (b) {
+          b
+            ..name = cookieParam.normalizedName
+            ..type = parameterType
+            ..named = true
+            ..required = cookieParam.parameter.isRequired;
+
+          if (cookieParam.parameter.isDeprecated) {
             b.annotations.add(
               refer('Deprecated', 'dart:core').call([
                 literalString('This parameter is deprecated.'),

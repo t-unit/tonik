@@ -50,6 +50,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -111,6 +112,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -176,6 +178,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -227,6 +230,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -295,6 +299,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -375,6 +380,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -426,6 +432,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const RangeResponseStatus(min: 200, max: 299): ResponseObject(
             name: null,
@@ -477,6 +484,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const DefaultResponseStatus(): ResponseObject(
             name: null,
@@ -542,6 +550,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -638,6 +647,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -723,6 +733,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -862,6 +873,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): aliasedResponse,
@@ -951,6 +963,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
@@ -1030,6 +1043,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {const ExplicitResponseStatus(statusCode: 200): response},
       );
@@ -1096,6 +1110,7 @@ String _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {const ExplicitResponseStatus(statusCode: 200): response},
           securitySchemes: const {},
         );
@@ -1169,6 +1184,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): successResponse,
           const ExplicitResponseStatus(statusCode: 400): errorResponse,
@@ -1219,6 +1235,7 @@ String _parseResponse(Response<List<int>> response) {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const DefaultResponseStatus(): ResponseObject(
             name: null,
@@ -1259,6 +1276,7 @@ String _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -1304,6 +1322,7 @@ String _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1356,6 +1375,7 @@ String _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1409,6 +1429,7 @@ List<int> _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1464,6 +1485,7 @@ List<int> _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1536,6 +1558,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1609,6 +1632,7 @@ String _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1660,6 +1684,7 @@ FormData _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1711,6 +1736,7 @@ int _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1800,6 +1826,7 @@ DateTime _parseResponse(Response<List<int>> response) {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1892,6 +1919,7 @@ DateTime _parseResponse(Response<List<int>> response) {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: {
               const ExplicitResponseStatus(statusCode: 200): ResponseObject(
                 name: null,

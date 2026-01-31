@@ -50,6 +50,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -88,6 +89,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -137,6 +139,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -170,6 +173,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -229,6 +233,7 @@ void main() {
             ),
           },
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -283,6 +288,7 @@ void main() {
               context: testContext,
             ),
           },
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -337,6 +343,7 @@ void main() {
           },
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -392,6 +399,7 @@ void main() {
             ),
           },
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );

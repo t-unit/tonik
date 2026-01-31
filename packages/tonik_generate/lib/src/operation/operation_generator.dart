@@ -139,6 +139,7 @@ class OperationGenerator {
             _optionsGenerator.generateOptionsMethod(
               operation,
               normalizedParams.headers,
+              normalizedParams.cookieParameters,
             ),
             if (operation.responses.isNotEmpty)
               _parseGenerator.generateParseResponseMethod(operation),
@@ -164,6 +165,7 @@ class OperationGenerator {
     final pathArgs = <String, Expression>{};
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
+    final cookieArgs = <String, Expression>{};
     final dataArgs = <String, Expression>{};
 
     if (hasRequestBody) {
@@ -181,6 +183,12 @@ class OperationGenerator {
     for (final headerParam in normalizedParams.headers) {
       headerArgs[headerParam.normalizedName] = refer(
         headerParam.normalizedName,
+      );
+    }
+
+    for (final cookieParam in normalizedParams.cookieParameters) {
+      cookieArgs[cookieParam.normalizedName] = refer(
+        cookieParam.normalizedName,
       );
     }
 
@@ -207,6 +215,7 @@ class OperationGenerator {
         hasRequestBody,
         (operation.requestBody?.contentCount ?? 0) > 1,
         headerArgs,
+        cookieArgs,
         pathArgs,
         queryArgs,
       ),
@@ -299,6 +308,7 @@ class OperationGenerator {
     bool hasRequestBody,
     bool hasVariableContent,
     Map<String, Expression> headerArgs,
+    Map<String, Expression> cookieArgs,
     Map<String, Expression> pathArgs,
     Map<String, Expression> queryArgs,
   ) {
@@ -355,6 +365,7 @@ class OperationGenerator {
             .assign(
               refer('_options').call([], {
                 ...headerArgs,
+                ...cookieArgs,
                 if (hasVariableContent) 'body': refer('body'),
               }),
             )

@@ -326,7 +326,7 @@ void main() {
       test('request path is /auth/logout', () async {
         final api = buildAuthApi(responseStatus: '204');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         expect(
@@ -338,7 +338,7 @@ void main() {
       test('request method is POST', () async {
         final api = buildAuthApi(responseStatus: '204');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         expect(success.response.requestOptions.method, 'POST');
@@ -347,7 +347,7 @@ void main() {
       test('request has no body', () async {
         final api = buildAuthApi(responseStatus: '204');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -358,7 +358,7 @@ void main() {
       test('204 response is decoded as PostAuthLogoutResponse204', () async {
         final api = buildAuthApi(responseStatus: '204');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<PostAuthLogoutResponse>>());
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
@@ -369,7 +369,7 @@ void main() {
       test('204 response has no body content', () async {
         final api = buildAuthApi(responseStatus: '204');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         // 204 No Content should have empty body
@@ -382,7 +382,7 @@ void main() {
       test('401 response is decoded as PostAuthLogoutResponse401', () async {
         final api = buildAuthApi(responseStatus: '401');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<PostAuthLogoutResponse>>());
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
@@ -393,7 +393,7 @@ void main() {
       test('401 response body decodes error object', () async {
         final api = buildAuthApi(responseStatus: '401');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         final response401 = success.value as PostAuthLogoutResponse401;
@@ -411,7 +411,7 @@ void main() {
       test('500 response is decoded as PostAuthLogoutResponse500', () async {
         final api = buildAuthApi(responseStatus: '500');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<PostAuthLogoutResponse>>());
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
@@ -422,7 +422,7 @@ void main() {
       test('500 response body decodes error object', () async {
         final api = buildAuthApi(responseStatus: '500');
 
-        final response = await api.postAuthLogout();
+        final response = await api.postAuthLogout(meSess: 'test_session');
 
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         final response500 = success.value as PostAuthLogoutResponse500;

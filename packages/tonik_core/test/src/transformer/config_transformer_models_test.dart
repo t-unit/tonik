@@ -32,6 +32,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 

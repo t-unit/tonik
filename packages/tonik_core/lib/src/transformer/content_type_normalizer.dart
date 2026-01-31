@@ -69,6 +69,7 @@ class ContentTypeNormalizer {
           headers: operation.headers,
           queryParameters: operation.queryParameters,
           pathParameters: operation.pathParameters,
+          cookieParameters: operation.cookieParameters,
           responses: normalizedOperationResponses,
           securitySchemes: operation.securitySchemes,
           nameOverride: operation.nameOverride,
@@ -91,6 +92,7 @@ class ContentTypeNormalizer {
       responses: normalizedResponses,
       queryParameters: document.queryParameters,
       pathParameters: document.pathParameters,
+      cookieParameters: document.cookieParameters,
       requestBodies: normalizedRequestBodies,
     );
   }

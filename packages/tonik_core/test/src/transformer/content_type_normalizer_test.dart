@@ -49,6 +49,7 @@ void main() {
             responses: {response},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             requestBodies: const {},
           );
 
@@ -91,6 +92,7 @@ void main() {
             responses: {response},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             requestBodies: const {},
           );
 
@@ -136,6 +138,7 @@ void main() {
           responses: {response},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -181,6 +184,7 @@ void main() {
           responses: {response},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -223,6 +227,7 @@ void main() {
             responses: {response},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             requestBodies: const {},
           );
 
@@ -266,6 +271,7 @@ void main() {
           responses: {response},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -315,6 +321,7 @@ void main() {
           responses: {referencedResponse, aliasResponse},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -358,6 +365,7 @@ void main() {
             responses: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             requestBodies: {requestBody},
           );
 
@@ -398,6 +406,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: {requestBody},
         );
 
@@ -442,6 +451,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: {requestBody},
         );
 
@@ -487,6 +497,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: {requestBody},
         );
 
@@ -531,6 +542,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: {referencedBody, aliasBody},
         );
 
@@ -570,6 +582,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: {requestBody},
         );
 
@@ -601,6 +614,7 @@ void main() {
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -646,6 +660,7 @@ void main() {
           responses: {response},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 

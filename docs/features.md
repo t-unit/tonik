@@ -171,7 +171,7 @@ Validation constraints (`minimum`, `maximum`, `pattern`, `minLength`, etc.) are 
 | `in: path` | ✅ |
 | `in: query` | ✅ |
 | `in: header` | ✅ |
-| `in: cookie` | ❌ (roadmap) |
+| `in: cookie` | ✅ |
 
 ### Encoding Styles
 

@@ -33,7 +33,7 @@ void main() {
       test('request path is /websites', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         expect(
@@ -45,7 +45,7 @@ void main() {
       test('request method is GET', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -54,7 +54,7 @@ void main() {
       test('request has no body', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -65,7 +65,10 @@ void main() {
       test('summary=true query parameter is encoded correctly', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites(summary: true);
+        final response = await api.getWebsites(
+          meSess: 'test_session',
+          summary: true,
+        );
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final uri = success.response.requestOptions.uri;
@@ -75,7 +78,10 @@ void main() {
       test('summary=false query parameter is encoded correctly', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites(summary: false);
+        final response = await api.getWebsites(
+          meSess: 'test_session',
+          summary: false,
+        );
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final uri = success.response.requestOptions.uri;
@@ -85,7 +91,7 @@ void main() {
       test('summary is omitted when not provided', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final uri = success.response.requestOptions.uri;
@@ -97,7 +103,7 @@ void main() {
       test('200 response is decoded as GetWebsitesResponse200', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetWebsitesResponse>>());
         final success = response as TonikSuccess<GetWebsitesResponse>;
@@ -108,7 +114,7 @@ void main() {
       test('200 response decodes X-Api-Commit header', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final response200 = success.value as GetWebsitesResponse200;
@@ -118,7 +124,7 @@ void main() {
       test('200 response body decodes as list of WebsiteGet', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final response200 = success.value as GetWebsitesResponse200;
@@ -128,7 +134,7 @@ void main() {
       test('200 response decodes website hostname field', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final response200 = success.value as GetWebsitesResponse200;
@@ -142,7 +148,7 @@ void main() {
       test('400 response is decoded as GetWebsitesResponse400', () async {
         final api = buildWebsiteApi(responseStatus: '400');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetWebsitesResponse>>());
         final success = response as TonikSuccess<GetWebsitesResponse>;
@@ -153,7 +159,7 @@ void main() {
       test('400 response body decodes error object', () async {
         final api = buildWebsiteApi(responseStatus: '400');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final response400 = success.value as GetWebsitesResponse400;
@@ -169,7 +175,7 @@ void main() {
       test('401 response is decoded as GetWebsitesResponse401', () async {
         final api = buildWebsiteApi(responseStatus: '401');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetWebsitesResponse>>());
         final success = response as TonikSuccess<GetWebsitesResponse>;
@@ -180,7 +186,7 @@ void main() {
       test('404 response is decoded as GetWebsitesResponse404', () async {
         final api = buildWebsiteApi(responseStatus: '404');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetWebsitesResponse>>());
         final success = response as TonikSuccess<GetWebsitesResponse>;
@@ -191,7 +197,7 @@ void main() {
       test('500 response is decoded as GetWebsitesResponse500', () async {
         final api = buildWebsiteApi(responseStatus: '500');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetWebsitesResponse>>());
         final success = response as TonikSuccess<GetWebsitesResponse>;
@@ -202,7 +208,7 @@ void main() {
       test('500 response body decodes error object', () async {
         final api = buildWebsiteApi(responseStatus: '500');
 
-        final response = await api.getWebsites();
+        final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final response500 = success.value as GetWebsitesResponse500;
@@ -470,7 +476,10 @@ void main() {
       test('request path includes hostname parameter', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
@@ -482,7 +491,10 @@ void main() {
       test('request method is GET', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -491,7 +503,10 @@ void main() {
       test('request has no body', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -502,7 +517,10 @@ void main() {
       test('hostname with subdomain is encoded correctly', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'app.example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'app.example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
@@ -514,7 +532,10 @@ void main() {
       test('hostname with port is encoded correctly', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'localhost:8080');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'localhost:8080',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
@@ -526,7 +547,10 @@ void main() {
       test('hostname with hyphens is encoded correctly', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'my-cool-app.io');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'my-cool-app.io',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
@@ -540,7 +564,10 @@ void main() {
       test('200 response is decoded as GetWebsitesIdResponse200', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<GetWebsitesIdResponse>>());
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
@@ -551,7 +578,10 @@ void main() {
       test('200 response decodes X-Api-Commit header', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         final response200 = success.value as GetWebsitesIdResponse200;
@@ -561,7 +591,10 @@ void main() {
       test('200 response body decodes WebsiteGet', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         final response200 = success.value as GetWebsitesIdResponse200;
@@ -571,7 +604,10 @@ void main() {
       test('200 response decodes website hostname', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         final response200 = success.value as GetWebsitesIdResponse200;
@@ -581,7 +617,10 @@ void main() {
       test('200 response decodes optional summary field', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         final response200 = success.value as GetWebsitesIdResponse200;
@@ -596,7 +635,10 @@ void main() {
       test('400 response is decoded as GetWebsitesIdResponse400', () async {
         final api = buildWebsiteApi(responseStatus: '400');
 
-        final response = await api.getWebsitesId(hostname: 'invalid');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'invalid',
+        );
 
         expect(response, isA<TonikSuccess<GetWebsitesIdResponse>>());
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
@@ -607,7 +649,10 @@ void main() {
       test('401 response is decoded as GetWebsitesIdResponse401', () async {
         final api = buildWebsiteApi(responseStatus: '401');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<GetWebsitesIdResponse>>());
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
@@ -618,7 +663,10 @@ void main() {
       test('404 response is decoded as GetWebsitesIdResponse404', () async {
         final api = buildWebsiteApi(responseStatus: '404');
 
-        final response = await api.getWebsitesId(hostname: 'unknown.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'unknown.com',
+        );
 
         expect(response, isA<TonikSuccess<GetWebsitesIdResponse>>());
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
@@ -629,7 +677,10 @@ void main() {
       test('404 response body decodes error object', () async {
         final api = buildWebsiteApi(responseStatus: '404');
 
-        final response = await api.getWebsitesId(hostname: 'unknown.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'unknown.com',
+        );
 
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         final response404 = success.value as GetWebsitesIdResponse404;
@@ -642,7 +693,10 @@ void main() {
       test('500 response is decoded as GetWebsitesIdResponse500', () async {
         final api = buildWebsiteApi(responseStatus: '500');
 
-        final response = await api.getWebsitesId(hostname: 'example.com');
+        final response = await api.getWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<GetWebsitesIdResponse>>());
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
@@ -658,6 +712,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -673,6 +728,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -685,6 +741,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -702,6 +759,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'updated-hostname.com'),
         );
@@ -716,6 +774,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(),
         );
@@ -732,6 +791,7 @@ void main() {
           final api = buildWebsiteApi(responseStatus: '200');
 
           final response = await api.patchWebsitesId(
+            meSess: 'test_session',
             hostname: 'example.com',
             body: const WebsitePatch(hostname: 'my-new-app.io'),
           );
@@ -749,6 +809,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -763,6 +824,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -776,6 +838,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -791,6 +854,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '400');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: ''),
         );
@@ -805,6 +869,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '401');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -819,6 +884,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '403');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -833,6 +899,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '404');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'unknown.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -847,6 +914,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '500');
 
         final response = await api.patchWebsitesId(
+          meSess: 'test_session',
           hostname: 'example.com',
           body: const WebsitePatch(hostname: 'new.com'),
         );
@@ -864,7 +932,10 @@ void main() {
       test('request path includes hostname parameter', () async {
         final api = buildWebsiteApi(responseStatus: '204');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(
@@ -876,7 +947,10 @@ void main() {
       test('request method is DELETE', () async {
         final api = buildWebsiteApi(responseStatus: '204');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(success.response.requestOptions.method, 'DELETE');
@@ -885,7 +959,10 @@ void main() {
       test('request has no body', () async {
         final api = buildWebsiteApi(responseStatus: '204');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -897,6 +974,7 @@ void main() {
         final api = buildWebsiteApi(responseStatus: '204');
 
         final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
           hostname: 'api.example.com',
         );
 
@@ -910,7 +988,10 @@ void main() {
       test('hostname with port is encoded correctly', () async {
         final api = buildWebsiteApi(responseStatus: '204');
 
-        final response = await api.deleteWebsitesId(hostname: 'localhost:3000');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'localhost:3000',
+        );
 
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(
@@ -924,7 +1005,10 @@ void main() {
       test('204 response is decoded as DeleteWebsitesIdResponse204', () async {
         final api = buildWebsiteApi(responseStatus: '204');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<DeleteWebsitesIdResponse>>());
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
@@ -935,7 +1019,10 @@ void main() {
       test('204 response has no body content', () async {
         final api = buildWebsiteApi(responseStatus: '204');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         final responseData = success.response.data as List<int>?;
@@ -947,7 +1034,10 @@ void main() {
       test('400 response is decoded as DeleteWebsitesIdResponse400', () async {
         final api = buildWebsiteApi(responseStatus: '400');
 
-        final response = await api.deleteWebsitesId(hostname: 'invalid');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'invalid',
+        );
 
         expect(response, isA<TonikSuccess<DeleteWebsitesIdResponse>>());
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
@@ -958,7 +1048,10 @@ void main() {
       test('401 response is decoded as DeleteWebsitesIdResponse401', () async {
         final api = buildWebsiteApi(responseStatus: '401');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<DeleteWebsitesIdResponse>>());
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
@@ -969,7 +1062,10 @@ void main() {
       test('403 response is decoded as DeleteWebsitesIdResponse403', () async {
         final api = buildWebsiteApi(responseStatus: '403');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<DeleteWebsitesIdResponse>>());
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
@@ -980,7 +1076,10 @@ void main() {
       test('404 response is decoded as DeleteWebsitesIdResponse404', () async {
         final api = buildWebsiteApi(responseStatus: '404');
 
-        final response = await api.deleteWebsitesId(hostname: 'unknown.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'unknown.com',
+        );
 
         expect(response, isA<TonikSuccess<DeleteWebsitesIdResponse>>());
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
@@ -991,7 +1090,10 @@ void main() {
       test('500 response is decoded as DeleteWebsitesIdResponse500', () async {
         final api = buildWebsiteApi(responseStatus: '500');
 
-        final response = await api.deleteWebsitesId(hostname: 'example.com');
+        final response = await api.deleteWebsitesId(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         expect(response, isA<TonikSuccess<DeleteWebsitesIdResponse>>());
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;

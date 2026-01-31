@@ -43,6 +43,7 @@ void main() {
         responses: const <Response>{},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
       generator.writeFiles(
@@ -83,6 +84,7 @@ void main() {
         responses: {response},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
@@ -135,6 +137,7 @@ void main() {
         responses: {response},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
@@ -181,6 +184,7 @@ void main() {
         responses: {response},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 

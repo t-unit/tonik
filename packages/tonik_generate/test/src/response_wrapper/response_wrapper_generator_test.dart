@@ -68,6 +68,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );
@@ -135,6 +136,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );
@@ -197,6 +199,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );
@@ -229,6 +232,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );
@@ -276,6 +280,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );
@@ -324,6 +329,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: responses,
           securitySchemes: const {},
         );
@@ -386,6 +392,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );
@@ -511,6 +518,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: responses,
           securitySchemes: const {},
         );
@@ -588,6 +596,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: responses,
         securitySchemes: const {},
       );

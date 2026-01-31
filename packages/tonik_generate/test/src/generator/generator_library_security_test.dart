@@ -50,6 +50,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {
               ApiKeySecurityScheme(
@@ -69,6 +70,7 @@ void main() {
         responses: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
@@ -129,6 +131,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {
               OAuth2SecurityScheme(
@@ -152,6 +155,7 @@ void main() {
         responses: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
@@ -208,6 +212,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {
               MutualTlsSecurityScheme(
@@ -220,6 +225,7 @@ void main() {
         responses: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
@@ -275,6 +281,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           ),
@@ -282,6 +289,7 @@ void main() {
         responses: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
@@ -332,6 +340,7 @@ void main() {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {
               ApiKeySecurityScheme(
@@ -351,6 +360,7 @@ void main() {
         responses: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 

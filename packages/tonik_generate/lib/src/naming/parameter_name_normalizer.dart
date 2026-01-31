@@ -4,6 +4,7 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 const _pathSuffix = 'Path';
 const _querySuffix = 'Query';
 const _headerSuffix = 'Header';
+const _cookieSuffix = 'Cookie';
 
 /// Result of normalizing request parameters.
 class NormalizedRequestParameters {
@@ -11,6 +12,7 @@ class NormalizedRequestParameters {
     required this.pathParameters,
     required this.queryParameters,
     required this.headers,
+    required this.cookieParameters,
   });
 
   final List<({String normalizedName, PathParameterObject parameter})>
@@ -18,15 +20,19 @@ class NormalizedRequestParameters {
   final List<({String normalizedName, QueryParameterObject parameter})>
   queryParameters;
   final List<({String normalizedName, RequestHeaderObject parameter})> headers;
+  final List<({String normalizedName, CookieParameterObject parameter})>
+  cookieParameters;
 
   @override
   String toString() {
     return 'NormalizedRequestParameters(pathParameters: $pathParameters, '
-        'queryParameters: $queryParameters, headers: $headers)';
+        'queryParameters: $queryParameters, headers: $headers, '
+        'cookieParameters: $cookieParameters)';
   }
 }
 
-/// Normalizes request parameters from path, query, and header parameters.
+/// Normalizes request parameters from path, query, header, and
+/// cookie parameters.
 ///
 /// Makes sure names are not duplicated across parameter types.
 /// Adds appropriate type suffixes if needed.
@@ -35,15 +41,17 @@ NormalizedRequestParameters normalizeRequestParameters({
   required Set<PathParameterObject> pathParameters,
   required Set<QueryParameterObject> queryParameters,
   required Set<RequestHeaderObject> headers,
+  Set<CookieParameterObject> cookieParameters = const {},
 }) {
   final normalizedPathParams = _normalizePathParameters(pathParameters);
   final normalizedQueryParams = _normalizeQueryParameters(queryParameters);
   final normalizedHeaders = _normalizeHeaderParameters(headers);
+  final normalizedCookies = _normalizeCookieParameters(cookieParameters);
 
-  // Track which parameter types contain each name
+  // Track which parameter types contain each name.
   final nameInTypes = <String, Set<String>>{};
 
-  // Count occurrences per type
+  // Count occurrences per type.
   for (final item in normalizedPathParams) {
     final lowerName = item.normalizedName.toLowerCase();
     nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('path');
@@ -57,6 +65,11 @@ NormalizedRequestParameters normalizeRequestParameters({
   for (final item in normalizedHeaders) {
     final lowerName = item.normalizedName.toLowerCase();
     nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('header');
+  }
+
+  for (final item in normalizedCookies) {
+    final lowerName = item.normalizedName.toLowerCase();
+    nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('cookie');
   }
 
   // Add suffixes to all parameters with duplicate names across types
@@ -94,14 +107,29 @@ NormalizedRequestParameters normalizeRequestParameters({
     return item;
   }).toList();
 
+  final resolvedCookieParams = normalizedCookies
+      .map<({String normalizedName, CookieParameterObject parameter})>((item) {
+        final lowerName = item.normalizedName.toLowerCase();
+        if (nameInTypes[lowerName]!.length > 1) {
+          return (
+            normalizedName: '${item.normalizedName}$_cookieSuffix',
+            parameter: item.parameter,
+          );
+        }
+        return item;
+      })
+      .toList();
+
   final uniquePathParams = _ensureUniquenessInGroup(resolvedPathParams);
   final uniqueQueryParams = _ensureUniquenessInGroup(resolvedQueryParams);
   final uniqueHeaderParams = _ensureUniquenessInGroup(resolvedHeaderParams);
+  final uniqueCookieParams = _ensureUniquenessInGroup(resolvedCookieParams);
 
   return NormalizedRequestParameters(
     pathParameters: uniquePathParams,
     queryParameters: uniqueQueryParams,
     headers: uniqueHeaderParams,
+    cookieParameters: uniqueCookieParams,
   );
 }
 
@@ -173,6 +201,22 @@ _normalizeHeaderParameters(Set<RequestHeaderObject> parameters) {
           normalizedName: param.nameOverride != null
               ? _normalizeName(param.nameOverride!)
               : _normalizeHeaderName(param.rawName),
+          parameter: param,
+        ),
+      )
+      .toList();
+}
+
+/// Normalizes cookie parameter names.
+/// Uses nameOverride if set, otherwise normalizes from rawName.
+List<({String normalizedName, CookieParameterObject parameter})>
+_normalizeCookieParameters(Set<CookieParameterObject> parameters) {
+  return parameters
+      .map(
+        (param) => (
+          normalizedName: param.nameOverride != null
+              ? _normalizeName(param.nameOverride!)
+              : _normalizeName(param.rawName),
           parameter: param,
         ),
       )

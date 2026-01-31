@@ -19,6 +19,7 @@ class RequestParameterImporter {
   late Set<core.RequestHeader> headers;
   late Set<core.QueryParameter> queryParameters;
   late Set<core.PathParameter> pathParameters;
+  late Set<core.CookieParameter> cookieParameters;
 
   static core.Context get rootContext =>
       core.Context.initial().pushAll(['components', 'parameters']);
@@ -27,6 +28,7 @@ class RequestParameterImporter {
     headers = {};
     queryParameters = {};
     pathParameters = {};
+    cookieParameters = {};
     final parameterMap = openApiObject.components?.parameters ?? {};
 
     for (final entry in parameterMap.entries) {
@@ -45,6 +47,8 @@ class RequestParameterImporter {
         queryParameters.add(query);
       } else if (imported case final core.PathParameter path) {
         pathParameters.add(path);
+      } else if (imported case final core.CookieParameter cookie) {
+        cookieParameters.add(cookie);
       }
     }
   }
@@ -53,6 +57,7 @@ class RequestParameterImporter {
     Set<core.RequestHeader> headers,
     Set<core.QueryParameter> queryParameters,
     Set<core.PathParameter> pathParameters,
+    Set<core.CookieParameter> cookieParameters,
   )
   importOperationParameters(
     List<ReferenceWrapper<Parameter>> parameters,
@@ -61,6 +66,7 @@ class RequestParameterImporter {
     final localHeaders = <core.RequestHeader>{};
     final localQueryParameters = <core.QueryParameter>{};
     final localPathParameters = <core.PathParameter>{};
+    final localCookieParameters = <core.CookieParameter>{};
 
     for (final wrapper in parameters) {
       final imported = _importParameter(
@@ -90,10 +96,22 @@ class RequestParameterImporter {
         } else if (path is core.PathParameterAlias) {
           localPathParameters.add(path.parameter);
         }
+      } else if (imported case final core.CookieParameter cookie) {
+        if (cookie is core.CookieParameterObject) {
+          cookieParameters.add(cookie);
+          localCookieParameters.add(cookie);
+        } else if (cookie is core.CookieParameterAlias) {
+          localCookieParameters.add(cookie.parameter);
+        }
       }
     }
 
-    return (localHeaders, localQueryParameters, localPathParameters);
+    return (
+      localHeaders,
+      localQueryParameters,
+      localPathParameters,
+      localCookieParameters,
+    );
   }
 
   dynamic _importParameter({
@@ -186,11 +204,26 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.cookie:
-              log.warning(
-                'Cookie parameters are not supported: $name. '
-                'Ignoring this parameter!',
+              // Check if we already imported this cookie parameter.
+              final existing = cookieParameters.firstWhere(
+                (c) =>
+                    (c is core.CookieParameterAlias && c.name == refName) ||
+                    (c is core.CookieParameterObject && c.name == refName),
+                orElse: () =>
+                    _importParameter(
+                          name: refName,
+                          wrapper: refParameter,
+                          context: context,
+                        )
+                        as core.CookieParameter,
               );
-              return null;
+
+              return core.CookieParameterAlias(
+                name: name ?? refName,
+                parameter: existing,
+                context: context,
+                description: wrapper.description,
+              );
           }
         }
 
@@ -268,11 +301,22 @@ class RequestParameterImporter {
             return pathParam;
 
           case ParameterLocation.cookie:
-            log.warning(
-              'Cookie parameters are not supported: $name. '
-              'Ignoring this parameter',
+            final cookieParam = core.CookieParameterObject(
+              name: name,
+              rawName: parameter.name,
+              description: parameter.description,
+              encoding: _cookieEncoding(parameter.style),
+              explode: parameter.explode ?? false,
+              model: model,
+              isRequired: parameter.isRequired ?? false,
+              isDeprecated: parameter.isDeprecated ?? false,
+              context: context,
             );
-            return null;
+            // Apply x-dart-name vendor extension.
+            if (parameter.xDartName != null) {
+              cookieParam.nameOverride = parameter.xDartName;
+            }
+            return cookieParam;
         }
     }
   }
@@ -329,5 +373,15 @@ class RequestParameterImporter {
           'Supported styles are: simple, label, matrix.',
         );
     }
+  }
+
+  core.CookieParameterEncoding _cookieEncoding(SerializationStyle? style) {
+    if (style != null && style != SerializationStyle.form) {
+      throw ArgumentError(
+        'Invalid encoding style for cookie parameter: $style. '
+        'Cookie parameters only support "form" style.',
+      );
+    }
+    return core.CookieParameterEncoding.form;
   }
 }
