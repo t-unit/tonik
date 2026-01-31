@@ -189,8 +189,9 @@ void main() {
           for (final m in mapValues) {
             map.addAll(m);
           }
-          if (discriminatorValue != null) {
-            map.putIfAbsent('type', () => discriminatorValue);
+          final discValue = discriminatorValue;
+          if (discValue != null) {
+            map.putIfAbsent('type', () => discValue);
           }
           return map.toMatrix(
             paramName,
@@ -283,8 +284,9 @@ void main() {
             for (final m in mapValues) {
               map.addAll(m);
             }
-            if (discriminatorValue != null) {
-              map.putIfAbsent('type', () => discriminatorValue);
+            final discValue = discriminatorValue;
+            if (discValue != null) {
+              map.putIfAbsent('type', () => discValue);
             }
             return map.toMatrix(
               paramName,

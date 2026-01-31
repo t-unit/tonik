@@ -417,8 +417,9 @@ class OneOfGenerator {
       ]);
     }
 
+    // Fallback: try all non-primitive variants when discriminator doesn't match
     for (final m in model.models.toSortedList().where(
-      (m) => m.model is! PrimitiveModel && m.discriminatorValue == null,
+      (m) => m.model is! PrimitiveModel,
     )) {
       final modelType = m.model;
       final modelName = nameManager.modelName(modelType);

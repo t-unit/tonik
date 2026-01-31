@@ -597,4 +597,98 @@ components:
       allOf:
         - type: integer
         - type: number
+
+    # =========================================================================
+    # Discriminator inheritance via allOf
+    # =========================================================================
+    # These schemas test the pattern where a parent object has a discriminator,
+    # child schemas inherit from the parent via allOf, and a oneOf/anyOf
+    # references the children. The oneOf/anyOf should inherit the discriminator.
+
+    # Parent schema with discriminator
+    Pet:
+      type: object
+      required:
+        - name
+        - petType
+      properties:
+        name:
+          type: string
+        petType:
+          type: string
+      discriminator:
+        propertyName: petType
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+
+    # Child that inherits from Pet via allOf
+    Cat:
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            meow:
+              type: string
+              description: The sound a cat makes
+
+    # Another child that inherits from Pet via allOf
+    Dog:
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          properties:
+            bark:
+              type: string
+              description: The sound a dog makes
+
+    # oneOf that should inherit discriminator from Pet
+    # No direct discriminator here - it should be inherited
+    PetChoice:
+      oneOf:
+        - $ref: '#/components/schemas/Cat'
+        - $ref: '#/components/schemas/Dog'
+
+    # anyOf that should inherit discriminator from Pet
+    PetAnyChoice:
+      anyOf:
+        - $ref: '#/components/schemas/Cat'
+        - $ref: '#/components/schemas/Dog'
+
+    # Parent without explicit mapping (discriminator values should be inferred)
+    Vehicle:
+      type: object
+      required:
+        - brand
+        - vehicleType
+      properties:
+        brand:
+          type: string
+        vehicleType:
+          type: string
+      discriminator:
+        propertyName: vehicleType
+
+    # Children without explicit mapping in parent
+    Bike:
+      allOf:
+        - $ref: '#/components/schemas/Vehicle'
+        - type: object
+          properties:
+            gears:
+              type: integer
+
+    Truck:
+      allOf:
+        - $ref: '#/components/schemas/Vehicle'
+        - type: object
+          properties:
+            capacity:
+              type: integer
+
+    # oneOf with inferred discriminator values
+    VehicleChoice:
+      oneOf:
+        - $ref: '#/components/schemas/Bike'
+        - $ref: '#/components/schemas/Truck'
              

@@ -270,8 +270,9 @@ void main() {
 
           final map = <String, String>{};
           for (final m in mapValues) { map.addAll(m); }
-          if (discriminatorValue != null) { 
-            map.putIfAbsent('disc', () => discriminatorValue);
+          final discValue = discriminatorValue;
+          if (discValue != null) { 
+            map.putIfAbsent('disc', () => discValue);
           }
           return map.toSimple(
             explode: explode, 
@@ -490,8 +491,9 @@ void main() {
             for (final m in mapValues) { 
               map.addAll(m); 
             }
-            if (discriminatorValue != null) { 
-              map.putIfAbsent('disc', () => discriminatorValue);
+            final discValue = discriminatorValue;
+            if (discValue != null) { 
+              map.putIfAbsent('disc', () => discValue);
             }
             return map.toSimple(
               explode: explode, 
