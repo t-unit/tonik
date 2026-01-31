@@ -1,7 +1,12 @@
 # Roadmap
 
 - Proper OpenAPI 3.2 support
-  - [Sequential/streaming media types](https://spec.openapis.org/oas/v3.2.0.html#complete-vs-streaming-content)
+  - [Sequential/streaming media types](https://spec.openapis.org/oas/v3.2.0.html#complete-vs-streaming-content) (`itemSchema` for JSON Lines, NDJSON, SSE, `json-seq`)
+  - `in: "querystring"` parameter location (entire query string as single parameter)
+  - `query` HTTP method on Path Item Object (IETF draft `QUERY` method)
+  - `additionalOperations` map for non-standard HTTP methods (e.g., `COPY`, `MOVE`)
+  - Reusable `mediaTypes` in Components Object
+  - `prefixEncoding` / `itemEncoding` for positional multipart encoding
 - Support for `additionalProperties`
 - Advanced OpenAPI 3.1 features:
   - Support for `if/then/else` schemas (via custom encoding/decoding checks)
