@@ -33,7 +33,10 @@ void main() {
       test('request path includes hostname parameter', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdSummary(hostname: 'example.com');
+        final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(
@@ -45,7 +48,10 @@ void main() {
       test('request method is GET', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdSummary(hostname: 'example.com');
+        final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -54,7 +60,10 @@ void main() {
       test('request has no body', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdSummary(hostname: 'example.com');
+        final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -66,6 +75,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
           previous: true,
         );
@@ -79,6 +89,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
           previous: false,
         );
@@ -92,6 +103,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
           interval: WebsiteHostnameSummaryParametersModel.day,
         );
@@ -106,6 +118,7 @@ void main() {
         final startDate = DateTime.utc(2024, 1, 15, 10, 30);
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
           start: startDate,
         );
@@ -120,6 +133,7 @@ void main() {
         final endDate = DateTime.utc(2024, 1, 20, 15, 45);
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
           end: endDate,
         );
@@ -133,6 +147,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -152,6 +167,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdSummary(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -166,6 +182,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -178,6 +195,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -190,6 +208,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -206,6 +225,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdSummary(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -220,6 +240,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '400');
 
         final response = await api.getWebsiteIdSummary(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -240,6 +261,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdSummary(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -256,6 +278,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdSummary(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -272,6 +295,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdSummary(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -289,7 +313,10 @@ void main() {
       test('request path includes hostname parameter', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdPages(hostname: 'example.com');
+        final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsiteIdPagesResponse>;
         expect(
@@ -301,7 +328,10 @@ void main() {
       test('request method is GET', () async {
         final api = buildStatsApi(responseStatus: '200');
 
-        final response = await api.getWebsiteIdPages(hostname: 'example.com');
+        final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
+          hostname: 'example.com',
+        );
 
         final success = response as TonikSuccess<GetWebsiteIdPagesResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -311,6 +341,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -324,6 +355,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
           summary: true,
         );
@@ -337,6 +369,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
           limit: 50,
         );
@@ -350,6 +383,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
           offset: 10,
         );
@@ -365,6 +399,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -378,6 +413,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -390,6 +426,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -404,6 +441,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '400');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -417,6 +455,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '401');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -430,6 +469,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '404');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -443,6 +483,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '500');
 
         final response = await api.getWebsiteIdPages(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -460,6 +501,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -474,6 +516,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -485,6 +528,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -498,6 +542,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -511,6 +556,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -523,6 +569,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -537,6 +584,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '400');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -550,6 +598,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '401');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -563,6 +612,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '404');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -576,6 +626,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '500');
 
         final response = await api.getWebsiteIdTime(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -593,6 +644,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdReferrers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -607,6 +659,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdReferrers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -618,6 +671,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdReferrers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -631,6 +685,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdReferrers(
+          meSess: 'test_session',
           hostname: 'example.com',
           grouped: true,
         );
@@ -648,6 +703,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdReferrers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -663,6 +719,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdReferrers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -675,6 +732,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdReferrers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -691,6 +749,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdReferrers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -708,6 +767,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdReferrers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -725,6 +785,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdReferrers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -742,6 +803,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdReferrers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -759,6 +821,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdReferrers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -778,6 +841,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSources(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -792,6 +856,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSources(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -803,6 +868,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSources(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -818,6 +884,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdSources(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -832,6 +899,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSources(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -844,6 +912,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSources(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -860,6 +929,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdSources(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -876,6 +946,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdSources(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -892,6 +963,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdSources(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -908,6 +980,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdSources(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -924,6 +997,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdSources(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -942,6 +1016,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdMediums(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -956,6 +1031,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdMediums(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -967,6 +1043,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdMediums(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -982,6 +1059,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdMediums(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -996,6 +1074,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdMediums(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1008,6 +1087,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdMediums(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1024,6 +1104,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdMediums(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1040,6 +1121,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdMediums(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1056,6 +1138,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdMediums(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1072,6 +1155,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdMediums(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1088,6 +1172,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdMediums(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1106,6 +1191,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCampaigns(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1120,6 +1206,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCampaigns(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1131,6 +1218,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCampaigns(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1146,6 +1234,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdCampaigns(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1161,6 +1250,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCampaigns(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1173,6 +1263,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCampaigns(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1189,6 +1280,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdCampaigns(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1206,6 +1298,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdCampaigns(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1223,6 +1316,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdCampaigns(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1240,6 +1334,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdCampaigns(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1257,6 +1352,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdCampaigns(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1276,6 +1372,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdBrowsers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1290,6 +1387,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdBrowsers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1301,6 +1399,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdBrowsers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1316,6 +1415,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdBrowsers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1331,6 +1431,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdBrowsers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1343,6 +1444,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdBrowsers(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1359,6 +1461,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdBrowsers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1376,6 +1479,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdBrowsers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1393,6 +1497,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdBrowsers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1410,6 +1515,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdBrowsers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1427,6 +1533,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdBrowsers(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1446,6 +1553,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1460,6 +1568,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1471,6 +1580,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1484,6 +1594,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1497,6 +1608,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1509,6 +1621,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1523,6 +1636,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '400');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1536,6 +1650,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '401');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1549,6 +1664,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '403');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1562,6 +1678,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '404');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1575,6 +1692,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '500');
 
         final response = await api.getWebsiteIdOs(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1592,6 +1710,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdDevice(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1606,6 +1725,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdDevice(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1617,6 +1737,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdDevice(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1632,6 +1753,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdDevice(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1646,6 +1768,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdDevice(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1658,6 +1781,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdDevice(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1674,6 +1798,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdDevice(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1690,6 +1815,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdDevice(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1706,6 +1832,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdDevice(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1722,6 +1849,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdDevice(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1738,6 +1866,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdDevice(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1756,6 +1885,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCountry(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1770,6 +1900,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCountry(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1781,6 +1912,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCountry(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1796,6 +1928,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdCountry(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1810,6 +1943,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCountry(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1822,6 +1956,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdCountry(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1838,6 +1973,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdCountry(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1854,6 +1990,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdCountry(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1870,6 +2007,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdCountry(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1886,6 +2024,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdCountry(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1902,6 +2041,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdCountry(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1920,6 +2060,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdLanguage(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1934,6 +2075,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdLanguage(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1945,6 +2087,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdLanguage(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -1958,6 +2101,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdLanguage(
+          meSess: 'test_session',
           hostname: 'example.com',
           locale: true,
         );
@@ -1975,6 +2119,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdLanguage(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -1990,6 +2135,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdLanguage(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2002,6 +2148,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdLanguage(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2018,6 +2165,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdLanguage(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2035,6 +2183,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdLanguage(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2052,6 +2201,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdLanguage(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2069,6 +2219,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdLanguage(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2086,6 +2237,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdLanguage(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2105,6 +2257,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdProperties(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2120,6 +2273,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdProperties(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2132,6 +2286,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdProperties(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2148,6 +2303,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '200');
 
           final response = await api.getWebsiteIdProperties(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2163,6 +2319,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdProperties(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2176,6 +2333,7 @@ void main() {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdProperties(
+          meSess: 'test_session',
           hostname: 'example.com',
         );
 
@@ -2193,6 +2351,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '400');
 
           final response = await api.getWebsiteIdProperties(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2210,6 +2369,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '401');
 
           final response = await api.getWebsiteIdProperties(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2227,6 +2387,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '403');
 
           final response = await api.getWebsiteIdProperties(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2244,6 +2405,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '404');
 
           final response = await api.getWebsiteIdProperties(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 
@@ -2261,6 +2423,7 @@ void main() {
           final api = buildStatsApi(responseStatus: '500');
 
           final response = await api.getWebsiteIdProperties(
+            meSess: 'test_session',
             hostname: 'example.com',
           );
 

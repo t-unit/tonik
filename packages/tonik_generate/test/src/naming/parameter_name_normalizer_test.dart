@@ -23,6 +23,7 @@ void main() {
     test('normalizes query parameters', () {
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {
           createQueryParameter('sort_by'),
           createQueryParameter('filter'),
@@ -39,6 +40,7 @@ void main() {
     test('normalizes header parameters and removes x- prefix', () {
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {},
         headers: {
           createHeader('x-api-key'),
@@ -129,6 +131,7 @@ void main() {
 
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {param},
         headers: {},
       );
@@ -146,6 +149,7 @@ void main() {
 
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {},
         headers: {header},
       );
@@ -164,6 +168,7 @@ void main() {
 
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {param},
         headers: {},
       );
@@ -178,6 +183,7 @@ void main() {
 
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {param1, param2},
         headers: {},
       );
@@ -211,12 +217,132 @@ void main() {
 
       final result = normalizeRequestParameters(
         pathParameters: {},
+        cookieParameters: {},
         queryParameters: {param},
         headers: {},
       );
 
       expect(result.queryParameters.first.normalizedName, 'sortBy');
     });
+
+    test('uses nameOverride for cookie parameters', () {
+      final cookie = createCookieParameter('session_id')
+        ..nameOverride = 'mySession';
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {},
+        cookieParameters: {cookie},
+      );
+
+      expect(result.cookieParameters.first.normalizedName, 'mySession');
+      expect(
+        result.cookieParameters.first.parameter.rawName,
+        'session_id',
+        reason: 'Original raw name should be preserved for Cookie header',
+      );
+    });
+
+    test(
+      'applies type suffixes to nameOverride duplicates including cookies',
+      () {
+        final path = createPathParameter('id')..nameOverride = 'identifier';
+        final query = createQueryParameter('id')..nameOverride = 'identifier';
+        final header = createHeader('id')..nameOverride = 'identifier';
+        final cookie = createCookieParameter('id')..nameOverride = 'identifier';
+
+        final result = normalizeRequestParameters(
+          pathParameters: {path},
+          queryParameters: {query},
+          headers: {header},
+          cookieParameters: {cookie},
+        );
+
+        expect(result.pathParameters.first.normalizedName, 'identifierPath');
+        expect(result.queryParameters.first.normalizedName, 'identifierQuery');
+        expect(result.headers.first.normalizedName, 'identifierHeader');
+        expect(
+          result.cookieParameters.first.normalizedName,
+          'identifierCookie',
+        );
+      },
+    );
+  });
+
+  group('cookie parameter normalization', () {
+    test('normalizes cookie parameter names', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {},
+        cookieParameters: {
+          createCookieParameter('session_id'),
+          createCookieParameter('user-token'),
+        },
+      );
+
+      expect(result.cookieParameters.map((r) => r.normalizedName).toList(), [
+        'sessionId',
+        'userToken',
+      ]);
+    });
+
+    test('handles Dart keywords in cookie names', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {},
+        cookieParameters: {createCookieParameter('class')},
+      );
+
+      expect(result.cookieParameters.map((r) => r.normalizedName).toList(), [
+        r'$class',
+      ]);
+    });
+
+    test('preserves cookie parameter metadata', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {},
+        cookieParameters: {
+          createCookieParameter(
+            'session',
+            isRequired: true,
+            isDeprecated: true,
+          ),
+        },
+      );
+
+      expect(result.cookieParameters.first.parameter.isRequired, isTrue);
+      expect(result.cookieParameters.first.parameter.isDeprecated, isTrue);
+    });
+
+    test(
+      'makes duplicates unique across parameter types including cookies',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {createPathParameter('id')},
+          queryParameters: {createQueryParameter('id')},
+          headers: {createHeader('id')},
+          cookieParameters: {createCookieParameter('id')},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+          'idPath',
+        ]);
+        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+          'idQuery',
+        ]);
+        expect(result.headers.map((r) => r.normalizedName).toList(), [
+          'idHeader',
+        ]);
+        expect(result.cookieParameters.map((r) => r.normalizedName).toList(), [
+          'idCookie',
+        ]);
+      },
+    );
   });
 }
 
@@ -277,6 +403,25 @@ RequestHeaderObject createHeader(
     explode: false,
     model: StringModel(context: context),
     encoding: HeaderParameterEncoding.simple,
+    context: context,
+  );
+}
+
+CookieParameterObject createCookieParameter(
+  String name, {
+  bool isRequired = false,
+  bool isDeprecated = false,
+}) {
+  final context = Context.initial();
+  return CookieParameterObject(
+    name: null,
+    rawName: name,
+    description: null,
+    isRequired: isRequired,
+    isDeprecated: isDeprecated,
+    explode: false,
+    model: StringModel(context: context),
+    encoding: CookieParameterEncoding.form,
     context: context,
   );
 }

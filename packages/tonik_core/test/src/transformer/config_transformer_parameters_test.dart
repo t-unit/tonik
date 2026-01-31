@@ -48,6 +48,7 @@ void main() {
           headers: const {},
           queryParameters: {petIdParam, limitParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -63,6 +64,7 @@ void main() {
           responses: const {},
           queryParameters: {petIdParam, limitParam},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 

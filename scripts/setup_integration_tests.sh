@@ -118,6 +118,7 @@ rm -rf inference/inference_api
 rm -rf ref_siblings/ref_siblings_api
 rm -rf defs/defs_api
 rm -rf server_variables/server_variables_api
+rm -rf cookies/cookies_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
@@ -208,6 +209,10 @@ $TONIK_BINARY -p server_variables_api -s server_variables/openapi.yaml -o server
 add_dependency_overrides_recursive "server_variables/server_variables_api"
 cd server_variables/server_variables_api && dart pub get && cd ../..
 
+$TONIK_BINARY -p cookies_api -s cookies/openapi.yaml -o cookies
+add_dependency_overrides_recursive "cookies/cookies_api"
+cd cookies/cookies_api && dart pub get && cd ../..
+
 # Download Imposter JAR only if it doesn't exist
 if [ ! -f imposter.jar ]; then
     echo "Downloading Imposter JAR..."
@@ -246,5 +251,6 @@ restore_test_package_overrides "inference/inference_test/pubspec.yaml" "../../..
 restore_test_package_overrides "ref_siblings/ref_siblings_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "defs/defs_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "server_variables/server_variables_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "cookies/cookies_test/pubspec.yaml" "../../../packages/tonik_util"
 
 echo "Setup completed successfully!"

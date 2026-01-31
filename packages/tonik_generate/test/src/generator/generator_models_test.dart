@@ -92,6 +92,7 @@ void main() {
           responses: const <Response>{},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 

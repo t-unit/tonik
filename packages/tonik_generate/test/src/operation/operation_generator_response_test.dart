@@ -38,6 +38,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -72,6 +73,7 @@ void main() {
         pathParameters: [],
         queryParameters: [],
         headers: [],
+        cookieParameters: [],
       );
       final method = generator.generateCallMethod(operation, normalizedParams);
       expect(
@@ -93,6 +95,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 204): ResponseObject(
@@ -108,6 +111,7 @@ void main() {
         pathParameters: [],
         queryParameters: [],
         headers: [],
+        cookieParameters: [],
       );
       final method = generator.generateCallMethod(operation, normalizedParams);
       expect(
@@ -129,6 +133,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -161,6 +166,7 @@ void main() {
         pathParameters: [],
         queryParameters: [],
         headers: [],
+        cookieParameters: [],
       );
       final method = generator.generateCallMethod(operation, normalizedParams);
       expect(
@@ -182,6 +188,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -203,6 +210,7 @@ void main() {
         pathParameters: [],
         queryParameters: [],
         headers: [],
+        cookieParameters: [],
       );
       final method = generator.generateCallMethod(
         operation,

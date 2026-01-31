@@ -33,7 +33,7 @@ void main() {
       test('request path is /user', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         expect(
@@ -45,7 +45,7 @@ void main() {
       test('request method is GET', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -54,7 +54,7 @@ void main() {
       test('request has no body', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -65,7 +65,7 @@ void main() {
       test('200 response is decoded as GetUserResponse200', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserResponse>>());
         final success = response as TonikSuccess<GetUserResponse>;
@@ -76,7 +76,7 @@ void main() {
       test('200 response decodes X-Api-Commit header', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response200 = success.value as GetUserResponse200;
@@ -86,7 +86,7 @@ void main() {
       test('200 response body decodes UserGet', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response200 = success.value as GetUserResponse200;
@@ -96,7 +96,7 @@ void main() {
       test('200 response decodes username field', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response200 = success.value as GetUserResponse200;
@@ -106,7 +106,7 @@ void main() {
       test('200 response decodes settings field', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response200 = success.value as GetUserResponse200;
@@ -116,7 +116,7 @@ void main() {
       test('200 response decodes dateCreated as integer', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response200 = success.value as GetUserResponse200;
@@ -126,7 +126,7 @@ void main() {
       test('200 response decodes dateUpdated as integer', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response200 = success.value as GetUserResponse200;
@@ -138,7 +138,7 @@ void main() {
       test('400 response is decoded as GetUserResponse400', () async {
         final api = buildUserApi(responseStatus: '400');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserResponse>>());
         final success = response as TonikSuccess<GetUserResponse>;
@@ -149,7 +149,7 @@ void main() {
       test('400 response body decodes error object', () async {
         final api = buildUserApi(responseStatus: '400');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response400 = success.value as GetUserResponse400;
@@ -165,7 +165,7 @@ void main() {
       test('401 response is decoded as GetUserResponse401', () async {
         final api = buildUserApi(responseStatus: '401');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserResponse>>());
         final success = response as TonikSuccess<GetUserResponse>;
@@ -176,7 +176,7 @@ void main() {
       test('401 response body decodes error object', () async {
         final api = buildUserApi(responseStatus: '401');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response401 = success.value as GetUserResponse401;
@@ -187,7 +187,7 @@ void main() {
       test('404 response is decoded as GetUserResponse404', () async {
         final api = buildUserApi(responseStatus: '404');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserResponse>>());
         final success = response as TonikSuccess<GetUserResponse>;
@@ -198,7 +198,7 @@ void main() {
       test('500 response is decoded as GetUserResponse500', () async {
         final api = buildUserApi(responseStatus: '500');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserResponse>>());
         final success = response as TonikSuccess<GetUserResponse>;
@@ -209,7 +209,7 @@ void main() {
       test('500 response body decodes error object', () async {
         final api = buildUserApi(responseStatus: '500');
 
-        final response = await api.getUser();
+        final response = await api.getUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserResponse>;
         final response500 = success.value as GetUserResponse500;
@@ -230,6 +230,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -244,6 +245,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -255,6 +257,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -271,6 +274,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'newUsername'),
         );
 
@@ -284,6 +288,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(password: 'newPassword'),
         );
 
@@ -297,6 +302,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(password: 'secureP@ss123!'),
         );
 
@@ -310,6 +316,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -323,6 +330,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(
             settings: UserSettings(
               language: UserSettingsLanguageModel.en,
@@ -342,6 +350,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(
             settings: UserSettings(language: UserSettingsLanguageModel.en),
           ),
@@ -358,6 +367,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(
             settings: UserSettings(blockAbusiveIPs: true),
           ),
@@ -374,6 +384,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(
             settings: UserSettings(blockTorExitNodes: false),
           ),
@@ -390,6 +401,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(
             username: 'fullUpdate',
             password: 'fullPassword!',
@@ -409,6 +421,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'user+test_123'),
         );
 
@@ -422,6 +435,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(password: r'p@$$w0rd!#%&*<>"'),
         );
 
@@ -437,6 +451,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -450,6 +465,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -462,6 +478,7 @@ void main() {
         final api = buildUserApi(responseStatus: '200');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -476,6 +493,7 @@ void main() {
         final api = buildUserApi(responseStatus: '400');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'x'),
         );
 
@@ -489,6 +507,7 @@ void main() {
         final api = buildUserApi(responseStatus: '400');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'x'),
         );
 
@@ -507,6 +526,7 @@ void main() {
         final api = buildUserApi(responseStatus: '401');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -520,6 +540,7 @@ void main() {
         final api = buildUserApi(responseStatus: '403');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -533,6 +554,7 @@ void main() {
         final api = buildUserApi(responseStatus: '404');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -546,6 +568,7 @@ void main() {
         final api = buildUserApi(responseStatus: '409');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'existingUser'),
         );
 
@@ -559,6 +582,7 @@ void main() {
         final api = buildUserApi(responseStatus: '500');
 
         final response = await api.patchUser(
+          meSess: 'test_session',
           body: const UserPatch(username: 'test'),
         );
 
@@ -575,7 +599,7 @@ void main() {
       test('request path is /user', () async {
         final api = buildUserApi(responseStatus: '204');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<DeleteUserResponse>;
         expect(
@@ -587,7 +611,7 @@ void main() {
       test('request method is DELETE', () async {
         final api = buildUserApi(responseStatus: '204');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<DeleteUserResponse>;
         expect(success.response.requestOptions.method, 'DELETE');
@@ -596,7 +620,7 @@ void main() {
       test('request has no body', () async {
         final api = buildUserApi(responseStatus: '204');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<DeleteUserResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -607,7 +631,7 @@ void main() {
       test('204 response is decoded as DeleteUserResponse204', () async {
         final api = buildUserApi(responseStatus: '204');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<DeleteUserResponse>>());
         final success = response as TonikSuccess<DeleteUserResponse>;
@@ -618,7 +642,7 @@ void main() {
       test('204 response has no body content', () async {
         final api = buildUserApi(responseStatus: '204');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         final success = response as TonikSuccess<DeleteUserResponse>;
         final responseData = success.response.data as List<int>?;
@@ -630,7 +654,7 @@ void main() {
       test('400 response is decoded as DeleteUserResponse400', () async {
         final api = buildUserApi(responseStatus: '400');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<DeleteUserResponse>>());
         final success = response as TonikSuccess<DeleteUserResponse>;
@@ -641,7 +665,7 @@ void main() {
       test('401 response is decoded as DeleteUserResponse401', () async {
         final api = buildUserApi(responseStatus: '401');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<DeleteUserResponse>>());
         final success = response as TonikSuccess<DeleteUserResponse>;
@@ -652,7 +676,7 @@ void main() {
       test('403 response is decoded as DeleteUserResponse403', () async {
         final api = buildUserApi(responseStatus: '403');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<DeleteUserResponse>>());
         final success = response as TonikSuccess<DeleteUserResponse>;
@@ -663,7 +687,7 @@ void main() {
       test('404 response is decoded as DeleteUserResponse404', () async {
         final api = buildUserApi(responseStatus: '404');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<DeleteUserResponse>>());
         final success = response as TonikSuccess<DeleteUserResponse>;
@@ -674,7 +698,7 @@ void main() {
       test('500 response is decoded as DeleteUserResponse500', () async {
         final api = buildUserApi(responseStatus: '500');
 
-        final response = await api.deleteUser();
+        final response = await api.deleteUser(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<DeleteUserResponse>>());
         final success = response as TonikSuccess<DeleteUserResponse>;
@@ -689,7 +713,7 @@ void main() {
       test('request path is /user/usage', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         expect(
@@ -701,7 +725,7 @@ void main() {
       test('request method is GET', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         expect(success.response.requestOptions.method, 'GET');
@@ -710,7 +734,7 @@ void main() {
       test('request has no body', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         expect(success.response.requestOptions.data, isNull);
@@ -721,7 +745,7 @@ void main() {
       test('200 response is decoded as GetUserUsageResponse200', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserUsageResponse>>());
         final success = response as TonikSuccess<GetUserUsageResponse>;
@@ -732,7 +756,7 @@ void main() {
       test('200 response decodes X-Api-Commit header', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response200 = success.value as GetUserUsageResponse200;
@@ -742,7 +766,7 @@ void main() {
       test('200 response body decodes UserUsageGet', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response200 = success.value as GetUserUsageResponse200;
@@ -752,7 +776,7 @@ void main() {
       test('200 response decodes cpu field', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response200 = success.value as GetUserUsageResponse200;
@@ -762,7 +786,7 @@ void main() {
       test('200 response decodes memory field', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response200 = success.value as GetUserUsageResponse200;
@@ -772,7 +796,7 @@ void main() {
       test('200 response decodes disk field', () async {
         final api = buildUserApi(responseStatus: '200');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response200 = success.value as GetUserUsageResponse200;
@@ -784,7 +808,7 @@ void main() {
       test('401 response is decoded as GetUserUsageResponse401', () async {
         final api = buildUserApi(responseStatus: '401');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserUsageResponse>>());
         final success = response as TonikSuccess<GetUserUsageResponse>;
@@ -795,7 +819,7 @@ void main() {
       test('401 response body decodes error object', () async {
         final api = buildUserApi(responseStatus: '401');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response401 = success.value as GetUserUsageResponse401;
@@ -806,7 +830,7 @@ void main() {
       test('500 response is decoded as GetUserUsageResponse500', () async {
         final api = buildUserApi(responseStatus: '500');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         expect(response, isA<TonikSuccess<GetUserUsageResponse>>());
         final success = response as TonikSuccess<GetUserUsageResponse>;
@@ -817,7 +841,7 @@ void main() {
       test('500 response body decodes error object', () async {
         final api = buildUserApi(responseStatus: '500');
 
-        final response = await api.getUserUsage();
+        final response = await api.getUserUsage(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetUserUsageResponse>;
         final response500 = success.value as GetUserUsageResponse500;

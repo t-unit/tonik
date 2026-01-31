@@ -42,6 +42,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -58,7 +59,7 @@ void main() {
           );
         }
       ''';
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), contains('Options'));
@@ -85,6 +86,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -101,7 +103,7 @@ void main() {
           );
         }
       ''';
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), contains('Options'));
@@ -128,6 +130,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -144,7 +147,7 @@ void main() {
           );
         }
       ''';
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), contains('Options'));
@@ -171,6 +174,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -187,7 +191,7 @@ void main() {
           );
         }
       ''';
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), contains('Options'));
@@ -227,6 +231,7 @@ void main() {
         headers: {requestHeader},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -250,7 +255,7 @@ void main() {
           <({String normalizedName, RequestHeaderObject parameter})>[
             (normalizedName: 'xMyHeader', parameter: requestHeader),
           ];
-      final method = generator.generateOptionsMethod(operation, headers);
+      final method = generator.generateOptionsMethod(operation, headers, []);
 
       expect(method, isA<Method>());
       expect(method.returns?.accept(emitter).toString(), 'Options');
@@ -348,6 +353,7 @@ void main() {
         },
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -393,7 +399,7 @@ void main() {
           }
         ''';
 
-      final method = generator.generateOptionsMethod(operation, headers);
+      final method = generator.generateOptionsMethod(operation, headers, []);
 
       expect(method, isA<Method>());
       expect(method.optionalParameters, hasLength(4));
@@ -438,6 +444,7 @@ void main() {
         headers: {requestHeader},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -460,7 +467,7 @@ void main() {
           <({String normalizedName, RequestHeaderObject parameter})>[
             (normalizedName: 'xMyHeader', parameter: requestHeader),
           ];
-      final method = generator.generateOptionsMethod(operation, headers);
+      final method = generator.generateOptionsMethod(operation, headers, []);
 
       expect(method, isA<Method>());
       expect(
@@ -508,6 +515,7 @@ void main() {
         headers: {headerParam},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -534,7 +542,7 @@ void main() {
             (normalizedName: 'xColors', parameter: headerParam),
           ];
 
-      final method = generator.generateOptionsMethod(operation, headers);
+      final method = generator.generateOptionsMethod(operation, headers, []);
 
       expect(method, isA<Method>());
       expect(method.optionalParameters.first.named, isTrue);
@@ -582,6 +590,7 @@ void main() {
         headers: {headerParam},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -605,7 +614,7 @@ void main() {
             (normalizedName: 'xMatrix', parameter: headerParam),
           ];
 
-      final method = generator.generateOptionsMethod(operation, headers);
+      final method = generator.generateOptionsMethod(operation, headers, []);
 
       expect(method, isA<Method>());
       expect(method.optionalParameters.first.named, isTrue);
@@ -629,6 +638,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -646,7 +656,7 @@ void main() {
           }
         ''';
 
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -683,6 +693,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
@@ -702,7 +713,7 @@ void main() {
           }
         ''';
 
-        final method = generator.generateOptionsMethod(operation, []);
+        final method = generator.generateOptionsMethod(operation, [], []);
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
@@ -745,6 +756,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
@@ -768,7 +780,7 @@ void main() {
           }
         ''';
 
-        final method = generator.generateOptionsMethod(operation, []);
+        final method = generator.generateOptionsMethod(operation, [], []);
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
@@ -790,6 +802,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -826,7 +839,7 @@ void main() {
         }
       ''';
 
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -847,6 +860,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -872,7 +886,7 @@ void main() {
         }
       ''';
 
-      final method = generator.generateOptionsMethod(operation, []);
+      final method = generator.generateOptionsMethod(operation, [], []);
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -905,6 +919,7 @@ void main() {
         headers: {requestHeader},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): ResponseObject(
             name: null,
@@ -938,7 +953,7 @@ void main() {
 
       final method = generator.generateOptionsMethod(operation, [
         (normalizedName: 'accept', parameter: requestHeader),
-      ]);
+      ], []);
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -973,6 +988,7 @@ void main() {
           headers: {requestHeader},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: null,
@@ -1015,7 +1031,7 @@ void main() {
 
         final method = generator.generateOptionsMethod(operation, [
           (normalizedName: 'accept', parameter: requestHeader),
-        ]);
+        ], []);
         final methodString = format(method.accept(emitter).toString());
         expect(
           collapseWhitespace(methodString),
@@ -1023,5 +1039,270 @@ void main() {
         );
       },
     );
+  });
+
+  group('cookie header generation', () {
+    test('generates Cookie header for required cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'sessionId',
+        rawName: 'session_id',
+        description: 'Session identifier',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withCookie',
+        context: context,
+        summary: 'With cookie',
+        description: 'Operation with cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'sessionId', parameter: cookieParam),
+      ]);
+
+      // Check method has required String parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'sessionId',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'String');
+
+      // Check method body generates cookie header correctly.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            final cookieParts = <String>[];
+            cookieParts.add(
+              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+            );
+            if (cookieParts.isNotEmpty) {
+              headers[r'Cookie'] = cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for optional cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'trackingId',
+        rawName: 'tracking_id',
+        description: 'Tracking identifier',
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withOptionalCookie',
+        context: context,
+        summary: 'With optional cookie',
+        description: 'Operation with optional cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'trackingId', parameter: cookieParam),
+      ]);
+
+      // Check method has optional nullable String parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'trackingId',
+      );
+      expect(param.required, isFalse);
+      expect(param.type?.accept(emitter).toString(), 'String?');
+
+      // Check method body checks null before adding cookie.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            final cookieParts = <String>[];
+            if (trackingId != null) {
+              cookieParts.add(
+                r'tracking_id=' +
+                    trackingId.toForm(explode: false, allowEmpty: true),
+              );
+            }
+            if (cookieParts.isNotEmpty) {
+              headers[r'Cookie'] = cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for multiple cookies', () {
+      final cookie1 = CookieParameterObject(
+        name: 'sessionId',
+        rawName: 'session_id',
+        description: 'Session',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final cookie2 = CookieParameterObject(
+        name: 'userId',
+        rawName: 'user_id',
+        description: 'User',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withMultipleCookies',
+        context: context,
+        summary: 'With multiple cookies',
+        description: 'Operation with multiple cookies',
+        tags: const {},
+        isDeprecated: false,
+        path: '/cookies',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookie1, cookie2},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'sessionId', parameter: cookie1),
+        (normalizedName: 'userId', parameter: cookie2),
+      ]);
+
+      // Check method has both required parameters.
+      expect(method.optionalParameters, hasLength(2));
+
+      final sessionParam = method.optionalParameters.firstWhere(
+        (p) => p.name == 'sessionId',
+      );
+      expect(sessionParam.required, isTrue);
+      expect(sessionParam.type?.accept(emitter).toString(), 'String');
+
+      final userParam = method.optionalParameters.firstWhere(
+        (p) => p.name == 'userId',
+      );
+      expect(userParam.required, isTrue);
+      expect(userParam.type?.accept(emitter).toString(), 'String');
+
+      // Check method body generates multiple cookie parts.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            final cookieParts = <String>[];
+            cookieParts.add(
+              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+            );
+            cookieParts.add(
+              r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
+            );
+            if (cookieParts.isNotEmpty) {
+              headers[r'Cookie'] = cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header with integer cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'pageNum',
+        rawName: 'page_num',
+        description: 'Page number',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: IntegerModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withIntCookie',
+        context: context,
+        summary: 'With int cookie',
+        description: 'Operation with int cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/int-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'pageNum', parameter: cookieParam),
+      ]);
+
+      // Check method has required int parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'pageNum',
+      );
+      expect(param.required, isTrue);
+      expect(param.type?.accept(emitter).toString(), 'int');
+
+      // Check method body generates cookie with int encoding.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            final cookieParts = <String>[];
+            cookieParts.add(
+              r'page_num=' + pageNum.toForm(explode: false, allowEmpty: true),
+            );
+            if (cookieParts.isNotEmpty) {
+              headers[r'Cookie'] = cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
   });
 }

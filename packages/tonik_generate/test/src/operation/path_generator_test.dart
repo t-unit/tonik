@@ -36,6 +36,7 @@ void main() {
       headers: const {},
       queryParameters: const {},
       pathParameters: const {},
+      cookieParameters: const {},
       responses: const {},
       securitySchemes: const {},
     );
@@ -94,6 +95,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     final pathParameters =
@@ -151,6 +153,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -213,6 +216,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -275,6 +279,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -338,6 +343,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -401,6 +407,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -489,6 +496,7 @@ void main() {
       pathParameters: {simpleParam, labelParam, matrixParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -607,6 +615,7 @@ void main() {
       pathParameters: {enumParam, classParam, oneOfParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -681,6 +690,7 @@ void main() {
       pathParameters: {animalIdParam, idParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -741,6 +751,7 @@ void main() {
       pathParameters: {userParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -813,6 +824,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -882,6 +894,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -949,6 +962,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -1013,6 +1027,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -1085,6 +1100,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -1153,6 +1169,7 @@ void main() {
         pathParameters: {pathParam},
         responses: const {},
         securitySchemes: const {},
+        cookieParameters: const {},
       );
 
       const expectedMethod = '''
@@ -1219,6 +1236,7 @@ void main() {
       pathParameters: {pathParam},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''
@@ -1305,6 +1323,7 @@ void main() {
       pathParameters: {param1, param2, param3},
       responses: const {},
       securitySchemes: const {},
+      cookieParameters: const {},
     );
 
     const expectedMethod = '''

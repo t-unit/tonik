@@ -56,6 +56,7 @@ void main() {
         headers: const {},
         queryParameters: {petIdParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -71,6 +72,7 @@ void main() {
         responses: const {},
         queryParameters: {petIdParam},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 

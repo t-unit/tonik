@@ -95,6 +95,7 @@ void main() {
         responses: {multiBodyResponse, headersResponse},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: {multiBodyRequest},
       );
 

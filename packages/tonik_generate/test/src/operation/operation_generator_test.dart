@@ -44,6 +44,7 @@ void main() {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -92,6 +93,7 @@ Future<TonikResult<void>> call() async {
 
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
+          cookieParameters: [],
           queryParameters: [],
           headers: [],
         );
@@ -144,6 +146,7 @@ Future<TonikResult<void>> call() async {
           headers: {requestHeader},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -192,6 +195,7 @@ Future<TonikResult<void>> call({required String myHeader}) async {
 
         final normalizedParams = NormalizedRequestParameters(
           pathParameters: const [],
+          cookieParameters: const [],
           queryParameters: const [],
           headers: [(normalizedName: 'myHeader', parameter: requestHeader)],
         );
@@ -251,6 +255,7 @@ Future<TonikResult<void>> call({required String myHeader}) async {
           },
           responses: const {},
           securitySchemes: const {},
+          cookieParameters: const {},
         );
 
         const expectedMethod = r'''
@@ -312,6 +317,7 @@ Future<TonikResult<void>> call({required int petId}) async {
           ],
           queryParameters: [],
           headers: [],
+          cookieParameters: [],
         );
 
         final method = generator.generateCallMethod(
@@ -355,6 +361,7 @@ Future<TonikResult<void>> call({required int petId}) async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -403,6 +410,7 @@ Future<TonikResult<void>> call() async {
 
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
+          cookieParameters: [],
           queryParameters: [],
           headers: [],
         );
@@ -470,6 +478,7 @@ Future<TonikResult<void>> call() async {
           headers: const {},
           queryParameters: {queryParam1, queryParam2},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -519,6 +528,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
 
         final normalizedParams = NormalizedRequestParameters(
           pathParameters: const [],
+          cookieParameters: const [],
           queryParameters: [
             (normalizedName: 'filter', parameter: queryParam1),
             (normalizedName: 'sort', parameter: queryParam2),
@@ -574,12 +584,14 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
 
           const normalizedParams = NormalizedRequestParameters(
             pathParameters: [],
+            cookieParameters: [],
             queryParameters: [],
             headers: [],
           );
@@ -623,6 +635,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
@@ -630,6 +643,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
 
           const normalizedParams = NormalizedRequestParameters(
             pathParameters: [],
+            cookieParameters: [],
             queryParameters: [],
             headers: [],
           );
@@ -681,6 +695,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
@@ -688,6 +703,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
 
           const normalizedParams = NormalizedRequestParameters(
             pathParameters: [],
+            cookieParameters: [],
             queryParameters: [],
             headers: [],
           );
@@ -777,12 +793,14 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             responses: const {},
             requestBody: requestBody,
             securitySchemes: const {},
+            cookieParameters: const {},
           );
 
           final normalizedParams = NormalizedRequestParameters(
             pathParameters: [(normalizedName: 'body', parameter: pathParam)],
             queryParameters: [(normalizedName: 'body', parameter: queryParam)],
             headers: [(normalizedName: 'body', parameter: headerParam)],
+            cookieParameters: [],
           );
 
           final method = generator.generateCallMethod(
@@ -832,6 +850,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -852,6 +871,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
 
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
+          cookieParameters: [],
           queryParameters: [],
           headers: [],
         );
@@ -935,6 +955,7 @@ Future<TonikResult<String>> call() async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           securitySchemes: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 204): ResponseObject(
@@ -948,6 +969,7 @@ Future<TonikResult<String>> call() async {
         );
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
+          cookieParameters: [],
           queryParameters: [],
           headers: [],
         );
@@ -1029,6 +1051,7 @@ Future<TonikResult<void>> call() async {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             securitySchemes: const {},
             responses: {
               const ExplicitResponseStatus(statusCode: 200): ResponseObject(
@@ -1057,6 +1080,7 @@ Future<TonikResult<void>> call() async {
 
           const normalizedParams = NormalizedRequestParameters(
             pathParameters: [],
+            cookieParameters: [],
             queryParameters: [],
             headers: [],
           );
@@ -1143,12 +1167,14 @@ Future<TonikResult<List<ActivePet>>> call() async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {}, // Empty responses map
           securitySchemes: const {},
         );
 
         const normalizedParams = NormalizedRequestParameters(
           pathParameters: [],
+          cookieParameters: [],
           queryParameters: [],
           headers: [],
         );
@@ -1222,6 +1248,7 @@ Future<TonikResult<void>> call() async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -1284,6 +1311,7 @@ Future<TonikResult<void>> call() async {
           headers: const {},
           queryParameters: {queryParam},
           pathParameters: {pathParam},
+          cookieParameters: const {},
           responses: const {},
           requestBody: requestBody,
           securitySchemes: const {},
@@ -1372,6 +1400,7 @@ Future<TonikResult<void>> call() async {
           pathParameters: {pathParam},
           responses: const {},
           securitySchemes: const {},
+          cookieParameters: const {},
         );
 
         final result = generator.generateCallableOperation(operation);
@@ -1407,6 +1436,7 @@ Future<TonikResult<void>> call() async {
             headers: const {},
             queryParameters: const {},
             pathParameters: const {},
+            cookieParameters: const {},
             responses: const {},
             securitySchemes: const {},
           );
@@ -1434,6 +1464,7 @@ Future<TonikResult<void>> call() async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {}, // Empty responses map
           securitySchemes: const {},
         );
@@ -1463,6 +1494,7 @@ Future<TonikResult<void>> call() async {
           headers: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: {
             const ExplicitResponseStatus(statusCode: 200): ResponseObject(
               name: 'Success',
@@ -1522,6 +1554,7 @@ Future<TonikResult<void>> call() async {
           headers: const {},
           queryParameters: {queryParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );

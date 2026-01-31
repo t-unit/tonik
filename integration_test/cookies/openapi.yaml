@@ -1,0 +1,647 @@
+openapi: 3.0.4
+info:
+  title: Cookie Parameters API
+  description: OpenAPI specification showcasing cookie parameters
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: cookies
+    description: Operations demonstrating cookie parameters
+
+paths:
+  # Simple primitive cookie parameters
+  /simple-string:
+    get:
+      operationId: testSimpleStringCookie
+      tags:
+        - cookies
+      summary: Test simple string cookie parameter
+      description: Demonstrates a basic string cookie
+      parameters:
+        - name: sessionId
+          in: cookie
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  /simple-integer:
+    get:
+      operationId: testSimpleIntegerCookie
+      tags:
+        - cookies
+      summary: Test simple integer cookie parameter
+      description: Demonstrates an integer cookie
+      parameters:
+        - name: userId
+          in: cookie
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  /simple-boolean:
+    get:
+      operationId: testSimpleBooleanCookie
+      tags:
+        - cookies
+      summary: Test simple boolean cookie parameter
+      description: Demonstrates a boolean cookie
+      parameters:
+        - name: rememberMe
+          in: cookie
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  /simple-number:
+    get:
+      operationId: testSimpleNumberCookie
+      tags:
+        - cookies
+      summary: Test simple number cookie parameter
+      description: Demonstrates a number cookie
+      parameters:
+        - name: score
+          in: cookie
+          required: true
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Optional cookie parameters
+  /optional-cookie:
+    get:
+      operationId: testOptionalCookie
+      tags:
+        - cookies
+      summary: Test optional cookie parameter
+      description: Demonstrates optional cookie parameters
+      parameters:
+        - name: trackingId
+          in: cookie
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Multiple cookies
+  /multiple-cookies:
+    get:
+      operationId: testMultipleCookies
+      tags:
+        - cookies
+      summary: Test multiple cookie parameters
+      description: Demonstrates multiple cookies sent together
+      parameters:
+        - name: sessionId
+          in: cookie
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: cookie
+          required: true
+          schema:
+            type: integer
+        - name: preferences
+          in: cookie
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Mixed required and optional cookies
+  /mixed-cookies:
+    get:
+      operationId: testMixedCookies
+      tags:
+        - cookies
+      summary: Test mixed required and optional cookies
+      description: Demonstrates a combination of required and optional cookies
+      parameters:
+        - name: authToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+        - name: csrfToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: cookie
+          required: false
+          schema:
+            type: string
+        - name: darkMode
+          in: cookie
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Deprecated cookie
+  /deprecated-cookie:
+    get:
+      operationId: testDeprecatedCookie
+      tags:
+        - cookies
+      summary: Test deprecated cookie parameter
+      description: Demonstrates a deprecated cookie parameter
+      parameters:
+        - name: oldSessionId
+          in: cookie
+          required: false
+          deprecated: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie with enum
+  /enum-cookie:
+    get:
+      operationId: testEnumCookie
+      tags:
+        - cookies
+      summary: Test cookie with enum value
+      description: Demonstrates a cookie parameter with an enum schema
+      parameters:
+        - name: theme
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/ThemeEnum'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookies with other parameter types (combined)
+  /combined-params:
+    get:
+      operationId: testCombinedParams
+      tags:
+        - cookies
+      summary: Test cookies with other parameter types
+      description: Demonstrates cookies combined with path, query, and header parameters
+      parameters:
+        - name: sessionId
+          in: cookie
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: X-Request-Id
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  /combined-params/{id}:
+    get:
+      operationId: testCombinedParamsWithPath
+      tags:
+        - cookies
+      summary: Test cookies with path parameter
+      description: Demonstrates cookies combined with path parameters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: authToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Date and datetime cookies
+  /datetime-cookie:
+    get:
+      operationId: testDateTimeCookie
+      tags:
+        - cookies
+      summary: Test datetime cookie
+      description: Demonstrates date-time format cookie
+      parameters:
+        - name: lastVisit
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  /date-cookie:
+    get:
+      operationId: testDateCookie
+      tags:
+        - cookies
+      summary: Test date cookie
+      description: Demonstrates date format cookie
+      parameters:
+        - name: birthDate
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # URI cookie
+  /uri-cookie:
+    get:
+      operationId: testUriCookie
+      tags:
+        - cookies
+      summary: Test URI cookie
+      description: Demonstrates URI format cookie
+      parameters:
+        - name: returnUrl
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Decimal cookie
+  /decimal-cookie:
+    get:
+      operationId: testDecimalCookie
+      tags:
+        - cookies
+      summary: Test decimal cookie
+      description: Demonstrates decimal format cookie
+      parameters:
+        - name: amount
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: decimal
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Nullable cookie
+  /nullable-cookie:
+    get:
+      operationId: testNullableCookie
+      tags:
+        - cookies
+      summary: Test nullable cookie
+      description: Demonstrates nullable cookie parameter
+      parameters:
+        - name: optionalValue
+          in: cookie
+          required: false
+          schema:
+            type: string
+            nullable: true
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie reference (using $ref)
+  /ref-cookie:
+    get:
+      operationId: testRefCookie
+      tags:
+        - cookies
+      summary: Test cookie using $ref
+      description: Demonstrates cookie parameter using component reference
+      parameters:
+        - $ref: '#/components/parameters/SessionCookie'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # All primitive types in one request
+  /all-primitives:
+    get:
+      operationId: testAllPrimitiveCookies
+      tags:
+        - cookies
+      summary: Test all primitive types as cookies
+      description: Demonstrates all supported primitive types as cookies
+      parameters:
+        - name: stringVal
+          in: cookie
+          required: true
+          schema:
+            type: string
+        - name: intVal
+          in: cookie
+          required: true
+          schema:
+            type: integer
+        - name: boolVal
+          in: cookie
+          required: true
+          schema:
+            type: boolean
+        - name: numVal
+          in: cookie
+          required: true
+          schema:
+            type: number
+        - name: dateVal
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: datetimeVal
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Array cookie
+  /array-cookie:
+    get:
+      operationId: testArrayCookie
+      tags:
+        - cookies
+      summary: Test array cookie
+      description: Demonstrates array cookies with form encoding
+      parameters:
+        - name: tags
+          in: cookie
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Array of integers cookie
+  /array-integer-cookie:
+    get:
+      operationId: testArrayIntegerCookie
+      tags:
+        - cookies
+      summary: Test array of integers cookie
+      description: Demonstrates integer array cookies with form encoding
+      parameters:
+        - name: ids
+          in: cookie
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Object cookie
+  /object-cookie:
+    get:
+      operationId: testObjectCookie
+      tags:
+        - cookies
+      summary: Test object cookie
+      description: Demonstrates flat object cookies with form encoding
+      parameters:
+        - name: user
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserObject'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # OneOf cookie
+  /oneof-cookie:
+    get:
+      operationId: testOneOfCookie
+      tags:
+        - cookies
+      summary: Test oneOf cookie
+      description: Demonstrates oneOf composition cookies with form encoding
+      parameters:
+        - name: identifier
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/OneOfIdentifier'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # AnyOf cookie
+  /anyof-cookie:
+    get:
+      operationId: testAnyOfCookie
+      tags:
+        - cookies
+      summary: Test anyOf cookie
+      description: Demonstrates anyOf composition cookies with form encoding
+      parameters:
+        - name: value
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/AnyOfValue'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # AllOf cookie
+  /allof-cookie:
+    get:
+      operationId: testAllOfCookie
+      tags:
+        - cookies
+      summary: Test allOf cookie
+      description: Demonstrates allOf composition cookies with form encoding
+      parameters:
+        - name: entity
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/AllOfEntity'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Nested object cookie
+  /nested-object-cookie:
+    get:
+      operationId: testNestedObjectCookie
+      tags:
+        - cookies
+      summary: Test nested object cookie (unsupported)
+      description: Demonstrates that nested object cookies are not supported (form encoding limitation)
+      parameters:
+        - name: profile
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/NestedProfile'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+components:
+  schemas:
+    ThemeEnum:
+      type: string
+      enum:
+        - light
+        - dark
+        - system
+
+    UserObject:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    OneOfIdentifier:
+      oneOf:
+        - type: string
+        - type: integer
+
+    AnyOfValue:
+      anyOf:
+        - type: string
+        - type: integer
+
+    AllOfEntity:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+        - type: object
+          properties:
+            name:
+              type: string
+
+    NestedProfile:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserObject'
+        settings:
+          type: object
+          properties:
+            theme:
+              type: string
+
+  parameters:
+    SessionCookie:
+      name: session
+      in: cookie
+      required: true
+      description: Session cookie for authentication
+      schema:
+        type: string
