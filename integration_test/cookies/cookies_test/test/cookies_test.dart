@@ -510,8 +510,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      // Object encoded as key,value,key,value (form style, explode: false).
-      expect(getCookieHeader(response), 'user=id,1,name,John');
+      expect(getCookieHeader(response), 'user=id=1&name=John');
     });
 
     test('object cookie with special characters in values', () async {
@@ -521,8 +520,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      // Special characters in values should be URL-encoded.
-      expect(getCookieHeader(response), 'user=id,42,name,John%20Doe');
+      expect(getCookieHeader(response), 'user=id=42&name=John%20Doe');
     });
   });
 
@@ -577,8 +575,8 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      // AllOf encodes all properties from all schemas.
-      expect(getCookieHeader(response), 'entity=id,1,name,Test');
+      // AllOf encodes all properties (form style, explode: true).
+      expect(getCookieHeader(response), 'entity=id=1&name=Test');
     });
   });
 

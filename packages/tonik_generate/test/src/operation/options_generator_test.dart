@@ -1091,7 +1091,7 @@ void main() {
           collapseWhitespace('''
             final cookieParts = <String>[];
             cookieParts.add(
-              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: false),
+              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
             );
             if (cookieParts.isNotEmpty) {
               headers[r'Cookie'] = cookieParts.join('; ');
@@ -1152,7 +1152,7 @@ void main() {
             if (trackingId != null) {
               cookieParts.add(
                 r'tracking_id=' +
-                    trackingId.toForm(explode: false, allowEmpty: false),
+                    trackingId.toForm(explode: false, allowEmpty: true),
               );
             }
             if (cookieParts.isNotEmpty) {
@@ -1233,10 +1233,10 @@ void main() {
           collapseWhitespace('''
             final cookieParts = <String>[];
             cookieParts.add(
-              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: false),
+              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
             );
             cookieParts.add(
-              r'user_id=' + userId.toForm(explode: false, allowEmpty: false),
+              r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
             );
             if (cookieParts.isNotEmpty) {
               headers[r'Cookie'] = cookieParts.join('; ');
@@ -1295,7 +1295,7 @@ void main() {
           collapseWhitespace('''
             final cookieParts = <String>[];
             cookieParts.add(
-              r'page_num=' + pageNum.toForm(explode: false, allowEmpty: false),
+              r'page_num=' + pageNum.toForm(explode: false, allowEmpty: true),
             );
             if (cookieParts.isNotEmpty) {
               headers[r'Cookie'] = cookieParts.join('; ');

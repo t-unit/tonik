@@ -306,7 +306,7 @@ class RequestParameterImporter {
               rawName: parameter.name,
               description: parameter.description,
               encoding: _cookieEncoding(parameter.style),
-              explode: parameter.explode ?? false,
+              explode: parameter.explode ?? true,
               model: model,
               isRequired: parameter.isRequired ?? false,
               isDeprecated: parameter.isDeprecated ?? false,

@@ -34,6 +34,12 @@ void main() {
             'explode': true,
             'schema': {'type': 'string'},
           },
+          'noExplodeCookie': {
+            'name': 'no_explode_cookie',
+            'in': 'cookie',
+            'explode': false,
+            'schema': {'type': 'string'},
+          },
           'integerCookie': {
             'name': 'page_num',
             'in': 'cookie',
@@ -65,19 +71,21 @@ void main() {
       expect(parameter.description, 'Session identifier');
       expect(parameter.isRequired, isTrue);
       expect(parameter.isDeprecated, isFalse);
-      expect(parameter.explode, isFalse);
+      // Per OAS 3.0.4 §4.7.12.2.2: form style defaults to explode: true.
+      expect(parameter.explode, isTrue);
       expect(parameter.model, isA<StringModel>());
       expect(parameter.encoding, CookieParameterEncoding.form);
     });
 
-    test('imports optional cookie parameter with default explode false', () {
+    test('imports optional cookie parameter with default explode true', () {
       final parameter = cookieParameters
           .whereType<CookieParameterObject>()
           .firstWhere((p) => p.name == 'optionalCookie');
 
       expect(parameter.rawName, 'optional_cookie');
       expect(parameter.isRequired, isFalse);
-      expect(parameter.explode, isFalse);
+      // Per OAS 3.0.4 §4.7.12.2.2: form style defaults to explode: true.
+      expect(parameter.explode, isTrue);
       expect(parameter.encoding, CookieParameterEncoding.form);
     });
 
@@ -90,13 +98,22 @@ void main() {
       expect(parameter.isDeprecated, isTrue);
     });
 
-    test('imports cookie parameter with explode: true', () {
+    test('imports cookie parameter with explicit explode: true', () {
       final parameter = cookieParameters
           .whereType<CookieParameterObject>()
           .firstWhere((p) => p.name == 'explodeCookie');
 
       expect(parameter.rawName, 'explode_cookie');
       expect(parameter.explode, isTrue);
+    });
+
+    test('imports cookie parameter with explicit explode: false', () {
+      final parameter = cookieParameters
+          .whereType<CookieParameterObject>()
+          .firstWhere((p) => p.name == 'noExplodeCookie');
+
+      expect(parameter.rawName, 'no_explode_cookie');
+      expect(parameter.explode, isFalse);
     });
 
     test('imports integer cookie parameter', () {
