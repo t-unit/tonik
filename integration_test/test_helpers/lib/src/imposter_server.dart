@@ -66,20 +66,15 @@ class ImposterServer {
       ],
       environment: {
         ...Platform.environment,
-        'IMPOSTER_LOG_LEVEL': 'INFO',
+        'IMPOSTER_LOG_LEVEL': 'ERROR',
       },
     );
 
     _process!.stdout.transform(const Utf8Decoder()).listen((data) {
-      print('Imposter stdout: $data');
-      // Signal readiness when we see the startup message
-      if (data.contains('Mock engine up and running') &&
-          !_readyCompleter.isCompleted) {
-        _readyCompleter.complete();
-      }
+      print(data);
     });
     _process!.stderr.transform(const Utf8Decoder()).listen((data) {
-      print('Imposter stderr: $data');
+      print(data);
     });
 
     await _waitForImposterReady();
@@ -123,7 +118,7 @@ class ImposterServer {
       } on HttpException catch (_) {
         // ignore
       }
-      await Future<void>.delayed(const Duration(milliseconds: 200));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
     }
     return false;
   }
