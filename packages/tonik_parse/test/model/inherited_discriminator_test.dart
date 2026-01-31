@@ -138,17 +138,6 @@ void main() {
         expect(discriminatorValues, containsAll(['cat', 'dog']));
       },
     );
-
-    test('parent ClassModel stores discriminator property name', () {
-      final api = Importer().import(fileContent);
-
-      final pet = api.models.firstWhere(
-        (m) => m is NamedModel && m.name == 'Pet',
-      );
-
-      expect(pet, isA<ClassModel>());
-      expect((pet as ClassModel).discriminator, 'petType');
-    });
   });
 
   group('Inherited discriminator without explicit mapping', () {
@@ -226,9 +215,7 @@ void main() {
     );
   });
 
-  group(
-    'No inherited discriminator when not all alternatives share parent',
-    () {
+  group('No inherited discriminator when not all alternatives share parent', () {
     const fileContent = {
       'openapi': '3.1.0',
       'info': {'title': 'Test API', 'version': '1.0.0'},

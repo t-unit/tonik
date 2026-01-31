@@ -699,7 +699,6 @@ class ModelImporter {
       context: context,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
-      discriminator: schema.discriminator?.propertyName,
     );
 
     if (schema.not != null) {
