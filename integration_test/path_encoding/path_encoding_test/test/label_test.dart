@@ -5,14 +5,13 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8090;
-  const baseUrl = 'http://localhost:$port/v1';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}/v1';
   });
 
   LabelApi buildLabelApi() {

@@ -5,14 +5,13 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8103;
-  const baseUrl = 'http://localhost:$port';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
   UserApi buildUserApi({required String responseStatus}) {
@@ -38,7 +37,7 @@ void main() {
         final success = response as TonikSuccess<GetUserResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user',
+          '$baseUrl/user',
         );
       });
 
@@ -237,7 +236,7 @@ void main() {
         final success = response as TonikSuccess<PatchUserResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user',
+          '$baseUrl/user',
         );
       });
 
@@ -604,7 +603,7 @@ void main() {
         final success = response as TonikSuccess<DeleteUserResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user',
+          '$baseUrl/user',
         );
       });
 
@@ -718,7 +717,7 @@ void main() {
         final success = response as TonikSuccess<GetUserUsageResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user/usage',
+          '$baseUrl/user/usage',
         );
       });
 

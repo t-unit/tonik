@@ -7,14 +7,13 @@ import 'package:tonik_util/tonik_util.dart';
 typedef _R = HeadersRoundtripListsWithCompositionsGet200Response;
 
 void main() {
-  const port = 8085;
-  const baseUrl = 'http://localhost:$port/v1';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}/v1';
   });
 
   SimpleEncodingApi buildApi({required String responseStatus}) {

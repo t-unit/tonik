@@ -5,14 +5,13 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8101;
-  const baseUrl = 'http://localhost:$port';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
   AuthenticationApi buildAuthApi({required String responseStatus}) {
@@ -40,7 +39,7 @@ void main() {
         final success = response as TonikSuccess<PostAuthLoginResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8101/auth/login',
+          '$baseUrl/auth/login',
         );
       });
 
@@ -331,7 +330,7 @@ void main() {
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8101/auth/logout',
+          '$baseUrl/auth/logout',
         );
       });
 

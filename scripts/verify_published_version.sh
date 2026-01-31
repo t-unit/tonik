@@ -221,7 +221,7 @@ run_tests() {
     dart pub get
     
     # Run tests with concurrency=1 to avoid port conflicts with Imposter mock servers
-    if dart test --concurrency=1; then
+    if dart test; then
         print_success "$test_name tests passed"
         cd "$INTEGRATION_TEST_DIR"
         return 0

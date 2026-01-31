@@ -5,14 +5,13 @@ import 'package:tonik_util/tonik_util.dart';
 import 'package:type_arrays_api/type_arrays_api.dart';
 
 void main() {
-  const port = 8290;
-  const baseUrl = 'http://localhost:$port';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
   TypeArraysApi buildApi({String responseStatus = '200'}) {

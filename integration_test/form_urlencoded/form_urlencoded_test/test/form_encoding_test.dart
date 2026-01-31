@@ -4,15 +4,15 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8100;
   late ImposterServer imposterServer;
+  late String baseUrl;
   late FormApi api;
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
 
-    api = FormApi(CustomServer(baseUrl: 'http://localhost:$port'));
+    api = FormApi(CustomServer(baseUrl: baseUrl));
   });
 
   group('Simple form encoding', () {

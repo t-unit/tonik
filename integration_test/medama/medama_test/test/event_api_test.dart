@@ -5,14 +5,13 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8102;
-  const baseUrl = 'http://localhost:$port';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
   EventApi buildEventApi({required String responseStatus}) {
@@ -47,7 +46,7 @@ void main() {
         final success = response as TonikSuccess<PostEventHitResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8102/event/hit',
+          '$baseUrl/event/hit',
         );
       });
 
@@ -768,7 +767,7 @@ void main() {
         final success = response as TonikSuccess<GetEventPingResponse>;
         expect(
           success.response.requestOptions.path,
-          startsWith('http://localhost:8102/event/ping'),
+          startsWith('$baseUrl/event/ping'),
         );
       });
 

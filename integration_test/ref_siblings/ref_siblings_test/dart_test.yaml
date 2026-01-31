@@ -1,2 +1,1 @@
-# Enable verbose test output during development
-reporter: expanded
+concurrency: 1

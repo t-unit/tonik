@@ -5,14 +5,13 @@ import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  const port = 8093;
-  const baseUrl = 'http://localhost:$port';
-
   late ImposterServer imposterServer;
+  late String baseUrl;
+
 
   setUpAll(() async {
-    imposterServer = ImposterServer(port: port);
-    await setupImposterServer(imposterServer);
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
   });
 
   DefaultApi buildApi({required String responseStatus}) {
@@ -50,7 +49,7 @@ void main() {
                 >;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/infer/send_message',
+          '$baseUrl/api/v1/infer/send_message',
         );
       });
 
@@ -1096,7 +1095,7 @@ void main() {
                 >;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v2/infer/send_message',
+          '$baseUrl/api/v2/infer/send_message',
         );
       });
 
@@ -1228,7 +1227,7 @@ void main() {
                 >;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/infer/list_connectors',
+          '$baseUrl/api/v1/infer/list_connectors',
         );
       });
 
@@ -1299,7 +1298,7 @@ void main() {
         final success = response as TonikSuccess<List<String>>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/infer/supported_models',
+          '$baseUrl/api/v1/infer/supported_models',
         );
       });
 
@@ -1351,7 +1350,7 @@ void main() {
         final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/github/repositories',
+          '$baseUrl/api/v1/github/repositories',
         );
       });
 
@@ -1465,7 +1464,7 @@ void main() {
                 >;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/github/release',
+          '$baseUrl/api/v1/github/release',
         );
       });
 
@@ -1655,7 +1654,7 @@ void main() {
             response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/github/pr',
+          '$baseUrl/api/v1/github/pr',
         );
       });
 
@@ -1789,7 +1788,7 @@ void main() {
                 >;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/github/branch/list',
+          '$baseUrl/api/v1/github/branch/list',
         );
       });
 
@@ -1918,7 +1917,7 @@ void main() {
                 as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/newrelic/alert',
+          '$baseUrl/api/v1/newrelic/alert',
         );
       });
 
@@ -2153,7 +2152,7 @@ void main() {
                 >;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8093/api/v1/datadog/alert',
+          '$baseUrl/api/v1/datadog/alert',
         );
       });
 
