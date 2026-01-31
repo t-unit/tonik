@@ -11,6 +11,7 @@ class Operation {
     required this.headers,
     required this.queryParameters,
     required this.pathParameters,
+    required this.cookieParameters,
     required this.responses,
     required this.securitySchemes,
     this.operationId,
@@ -33,6 +34,7 @@ class Operation {
   Set<RequestHeader> headers;
   Set<QueryParameter> queryParameters;
   Set<PathParameter> pathParameters;
+  Set<CookieParameter> cookieParameters;
   RequestBody? requestBody;
   Map<ResponseStatus, Response> responses;
   Set<SecurityScheme> securitySchemes;

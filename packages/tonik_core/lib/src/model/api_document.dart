@@ -12,6 +12,7 @@ class ApiDocument {
     required this.responses,
     required this.queryParameters,
     required this.pathParameters,
+    required this.cookieParameters,
     required this.requestBodies,
     this.summary,
     this.description,
@@ -36,6 +37,7 @@ class ApiDocument {
   Set<RequestHeader> requestHeaders;
   Set<QueryParameter> queryParameters;
   Set<PathParameter> pathParameters;
+  Set<CookieParameter> cookieParameters;
 
   Set<Server> servers;
 
@@ -74,6 +76,7 @@ class ApiDocument {
       'externalDocs: $externalDocs, models: $models, '
       'responseHeaders: $responseHeaders, requestHeaders: $requestHeaders, '
       'servers: $servers, queryParameters: $queryParameters, '
-      'pathParameters: $pathParameters, operations: $operations, '
-      'responses: $responses, requestBodies: $requestBodies}';
+      'pathParameters: $pathParameters, cookieParameters: $cookieParameters, '
+      'operations: $operations, responses: $responses, '
+      'requestBodies: $requestBodies}';
 }

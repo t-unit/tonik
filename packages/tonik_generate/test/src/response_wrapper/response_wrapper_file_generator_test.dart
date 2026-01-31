@@ -40,6 +40,7 @@ void main() {
       headers: const {},
       queryParameters: const {},
       pathParameters: const {},
+      cookieParameters: const {},
       responses: {
         const ExplicitResponseStatus(statusCode: 200): ResponseObject(
           name: 'Success',
@@ -68,6 +69,7 @@ void main() {
       headers: const {},
       queryParameters: const {},
       pathParameters: const {},
+      cookieParameters: const {},
       responses: {
         const ExplicitResponseStatus(statusCode: 200): ResponseObject(
           name: 'Success',
@@ -110,6 +112,7 @@ void main() {
       responses: const {},
       queryParameters: const {},
       pathParameters: const {},
+      cookieParameters: const {},
       requestBodies: const {},
     );
   });

@@ -162,7 +162,7 @@ class OperationImporter {
     final operationParameters = operation.parameters ?? [];
     final allParameters = [...pathParameters, ...operationParameters];
 
-    final (headers, queryParams, pathParams) = parameterImporter
+    final (headers, queryParams, pathParams, cookieParams) = parameterImporter
         .importOperationParameters(allParameters, context.push('parameters'));
 
     final responses = _importResponses(operation.responses, methodContext);
@@ -188,6 +188,7 @@ class OperationImporter {
       headers: headers,
       queryParameters: queryParams,
       pathParameters: pathParams,
+      cookieParameters: cookieParams,
       responses: responses,
       requestBody: requestBody,
       securitySchemes: _importSecuritySchemes(operation.security),

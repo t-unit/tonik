@@ -42,6 +42,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -96,6 +97,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -149,6 +151,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -217,6 +220,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -283,6 +287,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -353,6 +358,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -454,6 +460,7 @@ void main() {
         headers: const {},
         queryParameters: {filterParam, tagsParam, sortParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -560,6 +567,7 @@ void main() {
         headers: const {},
         queryParameters: {filterParam, tagsParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -637,6 +645,7 @@ void main() {
         headers: const {},
         queryParameters: {filterParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -703,6 +712,7 @@ void main() {
         headers: const {},
         queryParameters: {filterParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -812,6 +822,7 @@ void main() {
         headers: const {},
         queryParameters: {stringParam, listParam, numberParam, boolParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -924,6 +935,7 @@ void main() {
         headers: const {},
         queryParameters: {classWithStringParam, classWithNumberParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1081,6 +1093,7 @@ void main() {
         headers: const {},
         queryParameters: {enumParam, oneOfParam, intListParam, enumListParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1191,6 +1204,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1267,6 +1281,7 @@ void main() {
         headers: const {},
         queryParameters: {queryParam},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1337,6 +1352,7 @@ void main() {
           headers: const {},
           queryParameters: {stringParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -1427,6 +1443,7 @@ void main() {
           headers: const {},
           queryParameters: {oneOfListParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -1526,6 +1543,7 @@ void main() {
           headers: const {},
           queryParameters: {oneOfListParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -1608,6 +1626,7 @@ void main() {
           headers: const {},
           queryParameters: {classListParam},
           pathParameters: const {},
+          cookieParameters: const {},
           responses: const {},
           securitySchemes: const {},
         );
@@ -1675,6 +1694,7 @@ void main() {
         headers: const {},
         queryParameters: {parameter},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1753,6 +1773,7 @@ void main() {
         headers: const {},
         queryParameters: {parameter},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1824,6 +1845,7 @@ void main() {
         headers: const {},
         queryParameters: {parameter},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1894,6 +1916,7 @@ void main() {
         headers: const {},
         queryParameters: {parameter},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -1959,6 +1982,7 @@ void main() {
         headers: const {},
         queryParameters: {parameter},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );

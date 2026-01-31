@@ -31,6 +31,7 @@ ApiDocument _createTestDocument() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       ),
@@ -41,6 +42,7 @@ ApiDocument _createTestDocument() {
     responses: const {},
     queryParameters: const {},
     pathParameters: const {},
+    cookieParameters: const {},
     requestBodies: const {},
   );
 }
@@ -283,6 +285,7 @@ nameOverrides:
               headers: const {},
               queryParameters: const {},
               pathParameters: const {},
+              cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
             ),
@@ -296,6 +299,7 @@ nameOverrides:
               headers: const {},
               queryParameters: const {},
               pathParameters: const {},
+              cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
             ),
@@ -306,6 +310,7 @@ nameOverrides:
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -356,6 +361,7 @@ nameOverrides:
               headers: const {},
               queryParameters: const {},
               pathParameters: const {},
+              cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
             ),
@@ -369,6 +375,7 @@ nameOverrides:
               headers: const {},
               queryParameters: const {},
               pathParameters: const {},
+              cookieParameters: const {},
               responses: const {},
               securitySchemes: const {},
             ),
@@ -379,6 +386,7 @@ nameOverrides:
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 
@@ -423,6 +431,7 @@ nameOverrides:
           responses: const {},
           queryParameters: const {},
           pathParameters: const {},
+          cookieParameters: const {},
           requestBodies: const {},
         );
 

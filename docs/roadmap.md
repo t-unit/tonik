@@ -16,7 +16,6 @@
 - Default values
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
-- Cookies
 - multipart/form-data
 
 ## Non-goals

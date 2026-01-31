@@ -18,6 +18,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -32,6 +33,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         responses: const {},
         securitySchemes: const {},
       );
@@ -47,6 +49,7 @@ void main() {
         responses: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 

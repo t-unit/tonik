@@ -95,6 +95,7 @@ class Importer {
       requestHeaders: parameterImporter.headers,
       queryParameters: parameterImporter.queryParameters,
       pathParameters: parameterImporter.pathParameters,
+      cookieParameters: parameterImporter.cookieParameters,
       requestBodies: requestBodyImporter.requestBodies,
     );
   }

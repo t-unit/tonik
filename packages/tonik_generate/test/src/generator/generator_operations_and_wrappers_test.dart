@@ -60,6 +60,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: {
           const ExplicitResponseStatus(statusCode: 200): successResponse,
@@ -79,6 +80,7 @@ void main() {
         headers: const {},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         securitySchemes: const {},
         responses: const {},
       );
@@ -95,6 +97,7 @@ void main() {
         responses: const <Response>{},
         queryParameters: const {},
         pathParameters: const {},
+        cookieParameters: const {},
         requestBodies: const {},
       );
 
