@@ -27,7 +27,7 @@ Packages with other changes:
 
 #### `tonik_core` - `v0.4.1`
 
- - **FEAT**: normaliz allOf with single model to aliases.
+ - **FEAT**: normalize allOf with single model to aliases.
  - **FEAT**: better handle contentEncoding.
 
 #### `tonik_parse` - `v0.4.1`
@@ -69,14 +69,14 @@ Packages with other changes:
 
 #### `tonik_util` - `v0.4.0`
 
- - **FIX**: handle boolean schemas in lists correclty.
+ - **FIX**: handle boolean schemas in lists correctly.
  - **FEAT**: better support for boolean models.
 
 #### `tonik_core` - `v0.4.0`
 
  - **FEAT**: server templating.
  - **FEAT**: ref sibling handling for 3.1.
- - **FEAT**: prase boolean schemas.
+ - **FEAT**: parse boolean schemas.
  - **FEAT**: support mutualTLS for 3.1.
  - **FEAT**: support description overrides for 3.1.
  - **FEAT**: additional metadata fields for 3.1.
@@ -84,13 +84,13 @@ Packages with other changes:
 #### `tonik_parse` - `v0.4.0`
 
  - **REFACTOR**: parse all fields for schema references.
- - **FIX**: inline models with ref siblings where not generated in all cases.
+ - **FIX**: inline models with ref siblings were not generated in all cases.
  - **FIX**: proper handling of lists with type arrays.
  - **FEAT**: server templating.
  - **FEAT**: improved encoding detection with OAS 3.1.
  - **FEAT**: support defs for OAS 3.1.
  - **FEAT**: ref sibling handling for 3.1.
- - **FEAT**: prase boolean schemas.
+ - **FEAT**: parse boolean schemas.
  - **FEAT**: support mutualTLS for 3.1.
  - **FEAT**: inform user about version of spec.
  - **FEAT**: support description overrides for 3.1.
@@ -99,10 +99,10 @@ Packages with other changes:
 
 #### `tonik_generate` - `v0.4.0`
 
- - **FIX**: ignroe warnings in generated code.
- - **FIX**: inline models with ref siblings where not generated in all cases.
+ - **FIX**: ignore warnings in generated code.
+ - **FIX**: inline models with ref siblings were not generated in all cases.
  - **FIX**: don’t add trailing ? if there are no query parameters.
- - **FIX**: handle boolean schemas in lists correclty.
+ - **FIX**: handle boolean schemas in lists correctly.
  - **FIX**: proper handling of lists with type arrays.
  - **FIX**: changelog link missing for tonik.
  - **FEAT**: server templating.
