@@ -1,4 +1,4 @@
-name: Tests
+name: Unit Tests
 
 on:
   push:
@@ -41,120 +41,14 @@ jobs:
             ${{ runner.os }}-dart-${{ matrix.sdk }}-
             ${{ runner.os }}-dart-
 
-      - name: Cache Imposter JAR
-        uses: actions/cache@v4
-        with:
-          path: integration_test/imposter.jar
-          key: imposter-4.6.8
-          restore-keys: imposter-
-
       - name: Install dependencies
         run: |
           dart pub global activate melos
           dart pub global activate coverage
           melos bootstrap
 
-      - name: Setup integration test
-        run: ./scripts/setup_integration_tests.sh
-        shell: bash
-
       - name: Run tests with coverage
         run: melos run coverage 
-
-      - name: Run petstore integration tests
-        run: |
-          cd integration_test/petstore/petstore_test
-          dart test --concurrency=4
-
-      - name: Run petstore config integration tests
-        run: |
-          cd integration_test/petstore_config/petstore_test
-          dart test --concurrency=4
-
-      - name: Run music streaming integration tests
-        run: |
-          cd integration_test/music_streaming/music_streaming_test
-          dart test --concurrency=4
-
-      - name: Run gov integration tests
-        run: |
-          cd integration_test/gov/gov_test
-          dart test --concurrency=4
-
-      - name: Run simple encoding integration tests
-        run: |
-          cd integration_test/simple_encoding/simple_encoding_test
-          dart test --concurrency=4
-
-      - name: Run fastify type provider zod integration tests
-        run: |
-          cd integration_test/fastify_type_provider_zod/fastify_type_provider_zod_test
-          dart test --concurrency=4
-
-      - name: Run composition integration tests
-        run: |
-          cd integration_test/composition/composition_test
-          dart test
-
-      - name: Run boolean schemas integration tests
-        run: |
-          cd integration_test/boolean_schemas/boolean_schemas_test
-          dart test --concurrency=4
-
-      - name: Run binary models integration tests
-        run: |
-          cd integration_test/binary_models/binary_models_test
-          dart test --concurrency=4
-
-      - name: Run form urlencoded integration tests
-        run: |
-          cd integration_test/form_urlencoded/form_urlencoded_test
-          dart test --concurrency=4
-
-      - name: Run path encoding integration tests
-        run: |
-          cd integration_test/path_encoding/path_encoding_test
-          dart test --concurrency=4
-
-      - name: Run query parameters integration tests
-        run: |
-          cd integration_test/query_parameters/query_parameters_test
-          dart test --concurrency=4
-
-      - name: Run type arrays integration tests
-        run: |
-          cd integration_test/type_arrays/type_arrays_test
-          dart test --concurrency=4
-
-      - name: Run medama integration tests
-        run: |
-          cd integration_test/medama/medama_test
-          dart test --concurrency=4
-
-      - name: Run inference integration tests
-        run: |
-          cd integration_test/inference/inference_test
-          dart test --concurrency=4
-
-      - name: Run ref siblings integration tests
-        run: |
-          cd integration_test/ref_siblings/ref_siblings_test
-          dart test --concurrency=4
-
-      - name: Run defs integration tests
-        run: |
-          cd integration_test/defs/defs_test
-          dart test
-
-      - name: Run server variables integration tests
-        run: |
-          cd integration_test/server_variables/server_variables_test
-          dart test
-
-      - name: Run cookies integration tests
-        run: |
-          cd integration_test/cookies/cookies_test
-          dart test --concurrency=4
 
       - name: Format and merge coverage reports
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
