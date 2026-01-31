@@ -27,6 +27,7 @@
 /integration_test/ref_siblings/ref_siblings_api
 /integration_test/defs/defs_api
 /integration_test/server_variables/server_variables_api
+/integration_test/cookies/cookies_api
 
 # Dependencies
 /pubspec.lock

@@ -83,11 +83,15 @@ class OperationGenerator {
         .map((p) => p.resolve())
         .toSet();
     final headerParams = operation.headers.map((p) => p.resolve()).toSet();
+    final cookieParams = operation.cookieParameters
+        .map((p) => p.resolve())
+        .toSet();
 
     final normalizedParams = normalizeRequestParameters(
       pathParameters: pathParams,
       queryParameters: queryParams,
       headers: headerParams,
+      cookieParameters: cookieParams,
     );
 
     return Class(

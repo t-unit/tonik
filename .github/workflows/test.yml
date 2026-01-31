@@ -150,6 +150,13 @@ jobs:
           cd integration_test/server_variables/server_variables_test
           dart pub get
           dart test --concurrency=1
+
+      - name: Run cookies integration tests
+        run: |
+          cd integration_test/cookies/cookies_test
+          dart pub get
+          dart test --concurrency=1
+
       - name: Format and merge coverage reports
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
         run: |

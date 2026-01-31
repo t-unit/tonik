@@ -1,0 +1,27 @@
+name: cookies_test
+description: Cookie parameters integration tests for Tonik
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  big_decimal: ^0.5.0
+  cookies_api:
+    path: ../cookies_api
+  dio: ^5.8.0
+  path: ^1.9.1
+  tonik_util: ^0.4.1
+
+dev_dependencies:
+  test: ^1.25.15
+  test_helpers:
+    path: ../../test_helpers
+  very_good_analysis: ^10.0.0
+
+
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util
