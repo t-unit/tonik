@@ -39,7 +39,7 @@ void main() {
         final success = response as TonikSuccess<PostAuthLoginResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8101/auth/login',
+          '$baseUrl/auth/login',
         );
       });
 
@@ -330,7 +330,7 @@ void main() {
         final success = response as TonikSuccess<PostAuthLogoutResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8101/auth/logout',
+          '$baseUrl/auth/logout',
         );
       });
 

@@ -46,7 +46,7 @@ void main() {
         final success = response as TonikSuccess<PostEventHitResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8102/event/hit',
+          '$baseUrl/event/hit',
         );
       });
 
@@ -767,7 +767,7 @@ void main() {
         final success = response as TonikSuccess<GetEventPingResponse>;
         expect(
           success.response.requestOptions.path,
-          startsWith('http://localhost:8102/event/ping'),
+          startsWith('$baseUrl/event/ping'),
         );
       });
 

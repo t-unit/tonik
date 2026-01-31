@@ -59,7 +59,7 @@ jobs:
         shell: bash
 
       - name: Run tests with coverage
-        run: melos run test:coverage 
+        run: melos run coverage 
 
       - name: Run petstore integration tests
         run: |

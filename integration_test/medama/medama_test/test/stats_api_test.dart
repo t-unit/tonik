@@ -40,7 +40,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/summary',
+          '$baseUrl/website/example.com/summary',
         );
       });
 
@@ -320,7 +320,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdPagesResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/pages',
+          '$baseUrl/website/example.com/pages',
         );
       });
 
@@ -507,7 +507,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdTimeResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/time',
+          '$baseUrl/website/example.com/time',
         );
       });
 
@@ -650,7 +650,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdReferrersResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/referrers',
+          '$baseUrl/website/example.com/referrers',
         );
       });
 
@@ -847,7 +847,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdSourcesResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/sources',
+          '$baseUrl/website/example.com/sources',
         );
       });
 
@@ -1022,7 +1022,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdMediumsResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/mediums',
+          '$baseUrl/website/example.com/mediums',
         );
       });
 
@@ -1197,7 +1197,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdCampaignsResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/campaigns',
+          '$baseUrl/website/example.com/campaigns',
         );
       });
 
@@ -1378,7 +1378,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdBrowsersResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/browsers',
+          '$baseUrl/website/example.com/browsers',
         );
       });
 
@@ -1559,7 +1559,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdOsResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/os',
+          '$baseUrl/website/example.com/os',
         );
       });
 
@@ -1716,7 +1716,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdDeviceResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/devices',
+          '$baseUrl/website/example.com/devices',
         );
       });
 
@@ -1891,7 +1891,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdCountryResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/countries',
+          '$baseUrl/website/example.com/countries',
         );
       });
 
@@ -2066,7 +2066,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsiteIdLanguageResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/languages',
+          '$baseUrl/website/example.com/languages',
         );
       });
 
@@ -2264,7 +2264,7 @@ void main() {
             response as TonikSuccess<GetWebsiteIdPropertiesResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8105/website/example.com/properties',
+          '$baseUrl/website/example.com/properties',
         );
       });
 

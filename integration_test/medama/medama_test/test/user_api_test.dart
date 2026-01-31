@@ -37,7 +37,7 @@ void main() {
         final success = response as TonikSuccess<GetUserResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user',
+          '$baseUrl/user',
         );
       });
 
@@ -236,7 +236,7 @@ void main() {
         final success = response as TonikSuccess<PatchUserResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user',
+          '$baseUrl/user',
         );
       });
 
@@ -603,7 +603,7 @@ void main() {
         final success = response as TonikSuccess<DeleteUserResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user',
+          '$baseUrl/user',
         );
       });
 
@@ -717,7 +717,7 @@ void main() {
         final success = response as TonikSuccess<GetUserUsageResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8103/user/usage',
+          '$baseUrl/user/usage',
         );
       });
 

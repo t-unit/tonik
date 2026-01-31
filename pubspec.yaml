@@ -26,11 +26,10 @@ dev_dependencies:
 
 melos:
   scripts:
-    test:
-      run: dart test
-
-    test:coverage:
-      run: dart test --coverage=coverage
+    coverage:
+      exec: dart test --coverage=coverage
+      packageFilters:
+        dirExists: test
         
     generate:
       run: flutter pub run build_runner build --delete-conflicting-outputs

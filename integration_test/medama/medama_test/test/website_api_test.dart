@@ -37,7 +37,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsitesResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites',
+          '$baseUrl/websites',
         );
       });
 
@@ -234,7 +234,7 @@ void main() {
         final success = response as TonikSuccess<PostWebsitesResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites',
+          '$baseUrl/websites',
         );
       });
 
@@ -483,7 +483,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/example.com',
+          '$baseUrl/websites/example.com',
         );
       });
 
@@ -524,7 +524,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/app.example.com',
+          '$baseUrl/websites/app.example.com',
         );
       });
 
@@ -539,7 +539,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/localhost%3A8080',
+          '$baseUrl/websites/localhost%3A8080',
         );
       });
 
@@ -554,7 +554,7 @@ void main() {
         final success = response as TonikSuccess<GetWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/my-cool-app.io',
+          '$baseUrl/websites/my-cool-app.io',
         );
       });
     });
@@ -719,7 +719,7 @@ void main() {
         final success = response as TonikSuccess<PatchWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/example.com',
+          '$baseUrl/websites/example.com',
         );
       });
 
@@ -939,7 +939,7 @@ void main() {
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/example.com',
+          '$baseUrl/websites/example.com',
         );
       });
 
@@ -980,7 +980,7 @@ void main() {
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/api.example.com',
+          '$baseUrl/websites/api.example.com',
         );
       });
 
@@ -995,7 +995,7 @@ void main() {
         final success = response as TonikSuccess<DeleteWebsitesIdResponse>;
         expect(
           success.response.requestOptions.path,
-          'http://localhost:8104/websites/localhost%3A3000',
+          '$baseUrl/websites/localhost%3A3000',
         );
       });
     });
