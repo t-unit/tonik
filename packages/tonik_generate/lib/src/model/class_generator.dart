@@ -249,6 +249,7 @@ class ClassGenerator {
         .where((p) => !p.isWriteOnly)
         .toList();
     final normalizedProperties = normalizeProperties(readProperties);
+    final allProperties = normalizeProperties(model.properties.toList());
     final writeOnlyRequiredNames = normalizeProperties(
       model.properties.where((p) => p.isWriteOnly && p.isRequired).toList(),
     ).map((p) => p.normalizedName).toList();
@@ -287,6 +288,7 @@ class ClassGenerator {
           normalizedProperties,
           canBeSimplyEncoded,
           model.properties.isNotEmpty,
+          allProperties,
           writeOnlyRequiredNames,
         ),
     );
@@ -297,16 +299,20 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> properties,
     bool canBeSimplyEncoded,
     bool hasAnyProperties,
+    List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
+        final constructorArgs = <String, Expression>{
+          for (final prop in allProperties) prop.normalizedName: literalNull,
+        };
+
         return Block.of([
-          generateSimpleDecodingExceptionExpression(
-            'Cannot decode $className from simple encoding: '
-            'all properties are writeOnly.',
-            raw: true,
-          ).statement,
+          refer(
+            className,
+            package,
+          ).call([], constructorArgs).returned.statement,
         ]);
       }
       return Block.of([Code('return $className();')]);
@@ -394,14 +400,19 @@ class ClassGenerator {
       model.properties.where((p) => !p.isWriteOnly).toList(),
     );
 
-    // If there are no readable properties, throw for writeOnly-only models.
+    // If there are no readable properties, return an empty model.
     if (normalizedProperties.isEmpty) {
       if (model.properties.isNotEmpty) {
+        final constructorArgs = <String, Expression>{
+          for (final prop in normalizeProperties(model.properties.toList()))
+            prop.normalizedName: literalNull,
+        };
+
         return Block.of([
-          generateJsonDecodingExceptionExpression(
-            'Cannot decode $className from JSON: all properties are writeOnly.',
-            raw: true,
-          ).statement,
+          refer(
+            className,
+            package,
+          ).call([], constructorArgs).returned.statement,
         ]);
       }
       return Block.of([Code('return $className();')]);
@@ -459,13 +470,28 @@ class ClassGenerator {
       model.properties.where((p) => !p.isReadOnly).toList(),
     );
 
+    final requiredWriteOnlyNonNullable = normalizedProperties
+        .where(
+          (p) =>
+              p.property.isWriteOnly &&
+              p.property.isRequired &&
+              !p.property.isNullable,
+        )
+        .toList();
+
     // Build the map entries, handling optional properties with if-blocks
     final mapEntries = <Code>[];
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
       final property = prop.property;
       final requiredInRequest = property.isRequired && !property.isReadOnly;
-      final valueExpr = buildToJsonPropertyExpression(name, property);
+      final forceNonNullReceiver =
+          property.isWriteOnly && requiredInRequest && !property.isNullable;
+      final valueExpr = buildToJsonPropertyExpression(
+        name,
+        property,
+        forceNonNullReceiver: forceNonNullReceiver,
+      );
 
       if (!requiredInRequest && !property.isNullable) {
         mapEntries
@@ -480,16 +506,44 @@ class ClassGenerator {
       }
     }
 
+    if (requiredWriteOnlyNonNullable.isEmpty) {
+      return Method(
+        (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
+          ..name = 'toJson'
+          ..returns = refer('Object?', 'dart:core')
+          ..lambda = true
+          ..body = Block.of([
+            const Code('{'),
+            ...mapEntries,
+            const Code('}'),
+          ]),
+      );
+    }
+
+    final nullChecks = <Code>[];
+    for (final prop in requiredWriteOnlyNonNullable) {
+      nullChecks
+        ..add(Code('if (${prop.normalizedName} == null) {'))
+        ..add(
+          generateEncodingExceptionExpression(
+            'Required property ${prop.property.name} is null.',
+            raw: true,
+          ).statement,
+        )
+        ..add(const Code('}'));
+    }
+
     return Method(
       (b) => b
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
-        ..lambda = true
         ..body = Block.of([
-          const Code('{'),
+          ...nullChecks,
+          const Code('return {'),
           ...mapEntries,
-          const Code('}'),
+          const Code('};'),
         ]),
     );
   }
@@ -1045,6 +1099,7 @@ if ($name != null) {
         .where((p) => !p.isWriteOnly)
         .toList();
     final normalizedProperties = normalizeProperties(readProperties);
+    final allProperties = normalizeProperties(model.properties.toList());
     final writeOnlyRequiredNames = normalizeProperties(
       model.properties.where((p) => p.isWriteOnly && p.isRequired).toList(),
     ).map((p) => p.normalizedName).toList();
@@ -1083,6 +1138,7 @@ if ($name != null) {
           normalizedProperties,
           canBeFormEncoded,
           model.properties.isNotEmpty,
+          allProperties,
           writeOnlyRequiredNames,
         ),
     );
@@ -1093,16 +1149,20 @@ if ($name != null) {
     List<({String normalizedName, Property property})> properties,
     bool canBeFormEncoded,
     bool hasAnyProperties,
+    List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
+        final constructorArgs = <String, Expression>{
+          for (final prop in allProperties) prop.normalizedName: literalNull,
+        };
+
         return Block.of([
-          generateFormatDecodingExceptionExpression(
-            'Cannot decode $className from form encoding: '
-            'all properties are writeOnly.',
-            raw: true,
-          ).statement,
+          refer(
+            className,
+            package,
+          ).call([], constructorArgs).returned.statement,
         ]);
       }
       return Block.of([Code('return $className();')]);

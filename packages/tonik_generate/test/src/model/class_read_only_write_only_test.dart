@@ -82,7 +82,27 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        Object? toJson() => {r'name': name, r'password': password};
+        return {r'name': name, r'password': password!};
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('toJson throws when required writeOnly is null', () {
+      final model = buildMixedModel(context);
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        Object? toJson() {
+          if (password == null) {
+            throw EncodingException(r'Required property password is null.');
+          }
+          return {r'name': name, r'password': password!};
+        }
       ''';
 
       expect(
@@ -157,7 +177,7 @@ void main() {
     });
 
     test(
-      'fromJson throws when all properties are writeOnly',
+      'fromJson returns empty model when all properties are writeOnly',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -188,9 +208,7 @@ void main() {
 
         const expectedMethod = '''
         factory WriteOnlyModel.fromJson(Object? json) {
-          throw JsonDecodingException(
-            r'Cannot decode WriteOnlyModel from JSON: all properties are writeOnly.',
-          );
+          return WriteOnlyModel(password: null, secret: null);
         }
       ''';
 
@@ -234,39 +252,40 @@ void main() {
       );
     });
 
-    test('fromSimple throws when all properties are writeOnly', () {
-      final model = ClassModel(
-        isDeprecated: false,
-        name: 'WriteOnlyModel',
-        properties: [
-          Property(
-            name: 'password',
-            model: StringModel(context: context),
-            isRequired: false,
-            isNullable: false,
-            isDeprecated: false,
-            isWriteOnly: true,
-          ),
-        ],
-        context: context,
-      );
+    test(
+      'fromSimple returns empty model when all properties are writeOnly',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'WriteOnlyModel',
+          properties: [
+            Property(
+              name: 'password',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              isWriteOnly: true,
+            ),
+          ],
+          context: context,
+        );
 
-      final generatedClass = generator.generateClass(model);
-      final classCode = format(generatedClass.accept(emitter).toString());
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+        const expectedMethod = '''
         factory WriteOnlyModel.fromSimple(String? value, {required bool explode}) {
-          throw SimpleDecodingException(
-            r'Cannot decode WriteOnlyModel from simple encoding: all properties are writeOnly.',
-          );
+          return WriteOnlyModel(password: null);
         }
       ''';
 
-      expect(
-        collapseWhitespace(classCode),
-        contains(collapseWhitespace(expectedMethod)),
-      );
-    });
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 
   group('readOnly/writeOnly fromForm', () {
@@ -301,7 +320,7 @@ void main() {
       );
     });
 
-    test('fromForm throws when all properties are writeOnly', () {
+    test('fromForm returns empty model when all properties are writeOnly', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'WriteOnlyModel',
@@ -323,9 +342,7 @@ void main() {
 
       const expectedMethod = '''
         factory WriteOnlyModel.fromForm(String? value, {required bool explode}) {
-          throw FormatDecodingException(
-            r'Cannot decode WriteOnlyModel from form encoding: all properties are writeOnly.',
-          );
+          return WriteOnlyModel(password: null);
         }
       ''';
 

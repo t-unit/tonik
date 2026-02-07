@@ -140,6 +140,15 @@ void main() {
       expect(json.containsKey('createdAt'), isFalse);
     });
 
+    test('toJson throws when required writeOnly is null', () {
+      const user = User(name: 'NoPassword', password: null);
+
+      expect(
+        () => user.toJson(),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
     test('fromJson parses only readable properties', () {
       final user = User.fromJson(const {
         'id': 7,
@@ -167,14 +176,25 @@ void main() {
       expect(json['password'], 'secret');
     });
 
-    test('fromJson throws when all properties are writeOnly', () {
-      expect(
-        () => Credentials.fromJson(const {
-          'username': 'admin',
-          'password': 'secret',
-        }),
-        throwsA(isA<JsonDecodingException>()),
-      );
+    test('fromJson accepts empty object for writeOnly-only model', () {
+      final credentials = Credentials.fromJson(const {});
+
+      expect(credentials.username, isNull);
+      expect(credentials.password, isNull);
+    });
+
+    test('fromSimple accepts empty object for writeOnly-only model', () {
+      final credentials = Credentials.fromSimple('', explode: true);
+
+      expect(credentials.username, isNull);
+      expect(credentials.password, isNull);
+    });
+
+    test('fromForm accepts empty object for writeOnly-only model', () {
+      final credentials = Credentials.fromForm('', explode: true);
+
+      expect(credentials.username, isNull);
+      expect(credentials.password, isNull);
     });
   });
 
