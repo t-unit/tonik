@@ -29,11 +29,11 @@ void main() {
   });
 
   /// Builds a User model with mixed readOnly/writeOnly properties
-  /// as they would appear after [ReadWriteOnlyNormalizer] has run:
-  /// - id (integer, readOnly, non-required)
+  /// as they would appear in the raw OpenAPI schema:
+  /// - id (integer, readOnly, required)
   /// - name (string, required)
-  /// - password (string, writeOnly, non-required)
-  /// - createdAt (string, readOnly, not required, nullable)
+  /// - password (string, writeOnly, required)
+  /// - createdAt (string, readOnly, required, nullable)
   ClassModel buildMixedModel(Context context) {
     return ClassModel(
       isDeprecated: false,
@@ -42,7 +42,7 @@ void main() {
         Property(
           name: 'id',
           model: IntegerModel(context: context),
-          isRequired: false,
+          isRequired: true,
           isNullable: false,
           isDeprecated: false,
           isReadOnly: true,
@@ -57,7 +57,7 @@ void main() {
         Property(
           name: 'password',
           model: StringModel(context: context),
-          isRequired: false,
+          isRequired: true,
           isNullable: false,
           isDeprecated: false,
           isWriteOnly: true,
@@ -65,7 +65,7 @@ void main() {
         Property(
           name: 'createdAt',
           model: StringModel(context: context),
-          isRequired: false,
+          isRequired: true,
           isNullable: true,
           isDeprecated: false,
           isReadOnly: true,
@@ -82,10 +82,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        Object? toJson() => {
-          r'name': name,
-          if (password != null) r'password': password,
-        };
+        Object? toJson() => {r'name': name, r'password': password};
       ''';
 
       expect(
@@ -143,11 +140,12 @@ void main() {
         factory User.fromJson(Object? json) {
           final map = json.decodeMap(context: r'User');
           return User(
-            id: map[r'id'].decodeJsonNullableInt(context: r'User.id'),
+            id: map[r'id'].decodeJsonInt(context: r'User.id'),
             name: map[r'name'].decodeJsonString(context: r'User.name'),
             createdAt: map[r'createdAt'].decodeJsonNullableString(
               context: r'User.createdAt',
             ),
+            password: null,
           );
         }
       ''';
@@ -159,7 +157,7 @@ void main() {
     });
 
     test(
-      'fromJson returns empty constructor when all properties are writeOnly',
+      'fromJson throws when all properties are writeOnly',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -190,7 +188,9 @@ void main() {
 
         const expectedMethod = '''
         factory WriteOnlyModel.fromJson(Object? json) {
-          return WriteOnlyModel();
+          throw JsonDecodingException(
+            r'Cannot decode WriteOnlyModel from JSON: all properties are writeOnly.',
+          );
         }
       ''';
 
@@ -218,11 +218,46 @@ void main() {
             context: r'User',
           );
           return User(
-            id: values[r'id'].decodeSimpleNullableInt(context: r'User.id'),
+            id: values[r'id'].decodeSimpleInt(context: r'User.id'),
             name: values[r'name'].decodeSimpleString(context: r'User.name'),
             createdAt: values[r'createdAt'].decodeSimpleNullableString(
               context: r'User.createdAt',
             ),
+            password: null,
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('fromSimple throws when all properties are writeOnly', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'WriteOnlyModel',
+        properties: [
+          Property(
+            name: 'password',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            isWriteOnly: true,
+          ),
+        ],
+        context: context,
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        factory WriteOnlyModel.fromSimple(String? value, {required bool explode}) {
+          throw SimpleDecodingException(
+            r'Cannot decode WriteOnlyModel from simple encoding: all properties are writeOnly.',
           );
         }
       ''';
@@ -250,11 +285,46 @@ void main() {
             context: r'User',
           );
           return User(
-            id: values[r'id'].decodeFormNullableInt(context: r'User.id'),
+            id: values[r'id'].decodeFormInt(context: r'User.id'),
             name: values[r'name'].decodeFormString(context: r'User.name'),
             createdAt: values[r'createdAt'].decodeFormNullableString(
               context: r'User.createdAt',
             ),
+            password: null,
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('fromForm throws when all properties are writeOnly', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'WriteOnlyModel',
+        properties: [
+          Property(
+            name: 'password',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            isWriteOnly: true,
+          ),
+        ],
+        context: context,
+      );
+
+      final generatedClass = generator.generateClass(model);
+      final classCode = format(generatedClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        factory WriteOnlyModel.fromForm(String? value, {required bool explode}) {
+          throw FormatDecodingException(
+            r'Cannot decode WriteOnlyModel from form encoding: all properties are writeOnly.',
           );
         }
       ''';
@@ -283,14 +353,13 @@ void main() {
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          if (password != null) {
-            result[r'password'] = password!.uriEncode(
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-            );
-          } else if (allowEmpty) {
-            result[r'password'] = '';
+          if (password == null) {
+            throw EncodingException(r'Required property password is null.');
           }
+          result[r'password'] = password!.uriEncode(
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
           return result;
         }
       ''';
@@ -461,6 +530,41 @@ void main() {
       expect(paramNames, contains('name'));
       expect(paramNames, contains('password'));
       expect(paramNames, contains('createdAt'));
+    });
+
+    test('constructor required flags respect request-only semantics', () {
+      final model = buildMixedModel(context);
+      final generatedClass = generator.generateClass(model);
+      final defaultConstructor = generatedClass.constructors.firstWhere(
+        (c) => c.name == null || c.name!.isEmpty,
+      );
+      final paramsByName = {
+        for (final param in defaultConstructor.optionalParameters)
+          param.name: param,
+      };
+
+      expect(paramsByName['name']?.required, isTrue);
+      expect(paramsByName['password']?.required, isTrue);
+      expect(paramsByName['id']?.required, isFalse);
+      expect(paramsByName['createdAt']?.required, isFalse);
+    });
+
+    test('readOnly required fields are nullable in the model', () {
+      final model = buildMixedModel(context);
+      final generatedClass = generator.generateClass(model);
+      final fieldsByName = {
+        for (final field in generatedClass.fields) field.name: field,
+      };
+
+      final idType = fieldsByName['id']?.type?.accept(emitter).toString();
+      final createdAtType =
+          fieldsByName['createdAt']?.type?.accept(emitter).toString();
+      final passwordType =
+          fieldsByName['password']?.type?.accept(emitter).toString();
+
+      expect(idType, equals('int?'));
+      expect(createdAtType, equals('String?'));
+      expect(passwordType, equals('String?'));
     });
   });
 

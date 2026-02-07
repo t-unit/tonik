@@ -130,12 +130,14 @@ void main() {
       expect(json['password'], 'hunter2');
     });
 
-    test('toJson omits writeOnly property when null', () {
-      const user = User(name: 'NoPassword');
+    test('toJson includes writeOnly property when set', () {
+      const user = User(name: 'NoPassword', password: 'secret');
       final json = user.toJson()! as Map;
 
       expect(json['name'], 'NoPassword');
-      expect(json.containsKey('password'), isFalse);
+      expect(json['password'], 'secret');
+      expect(json.containsKey('id'), isFalse);
+      expect(json.containsKey('createdAt'), isFalse);
     });
 
     test('fromJson parses only readable properties', () {
@@ -165,29 +167,14 @@ void main() {
       expect(json['password'], 'secret');
     });
 
-    test('toJson omits writeOnly properties when null', () {
-      const credentials = Credentials();
-      final json = credentials.toJson()! as Map;
-
-      expect(json, isEmpty);
-    });
-
-    test('fromJson produces empty model (all are writeOnly)', () {
-      final credentials = Credentials.fromJson(const {
-        'username': 'admin',
-        'password': 'secret',
-      });
-
-      // All properties are writeOnly so fromJson ignores them all.
-      expect(credentials, isA<Credentials>());
-      expect(credentials.username, isNull);
-      expect(credentials.password, isNull);
-    });
-
-    test('constructor allows omitting all writeOnly properties', () {
-      const credentials = Credentials();
-      expect(credentials.username, isNull);
-      expect(credentials.password, isNull);
+    test('fromJson throws when all properties are writeOnly', () {
+      expect(
+        () => Credentials.fromJson(const {
+          'username': 'admin',
+          'password': 'secret',
+        }),
+        throwsA(isA<JsonDecodingException>()),
+      );
     });
   });
 
@@ -256,14 +243,13 @@ void main() {
       expect(params['email'], 'test%40example.com');
     });
 
-    test('parameterProperties omits null writeOnly fields', () {
-      const user = User(name: 'Test');
+    test('parameterProperties includes writeOnly fields', () {
+      const user = User(name: 'Test', password: 'pass');
       final params = user.parameterProperties();
 
       expect(params.containsKey('name'), isTrue);
-      // password is null so it gets the allowEmpty fallback.
       expect(params.containsKey('password'), isTrue);
-      expect(params['password'], '');
+      expect(params['password'], 'pass');
     });
   });
 

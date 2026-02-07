@@ -53,6 +53,8 @@ Expression _buildSerializationExpression(
   bool isNullable, {
   bool forceNonNullReceiver = false,
 }) {
+  final directReceiver =
+      forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
       !forceNonNullReceiver &&
       (isNullable || (model is EnumModel && model.isNullable));
@@ -92,11 +94,11 @@ Expression _buildSerializationExpression(
       isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
     ),
-    PrimitiveModel() => receiver,
+    PrimitiveModel() => directReceiver,
     AnyModel() => refer(
       'encodeAnyToJson',
       'package:tonik_util/tonik_util.dart',
-    ).call([receiver]),
+    ).call([directReceiver]),
     _ => throw UnimplementedError('Unsupported model type: $model'),
   };
 }
@@ -108,7 +110,7 @@ Expression _handleListExpression(
   bool forceNonNullReceiver = false,
 }) {
   if (!_needsTransformation(contentModel)) {
-    return receiver;
+    return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
   final isContentNullable =

@@ -216,9 +216,6 @@ void main(List<String> arguments) {
     exit(1);
   }
 
-  const ReadWriteOnlyNormalizer().apply(apiDocument);
-  logger.fine('Applied readOnly/writeOnly normalization');
-
   try {
     const transformer = ConfigTransformer();
     apiDocument = transformer.apply(apiDocument, mergedConfig.toTonikConfig());

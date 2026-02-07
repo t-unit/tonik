@@ -117,8 +117,12 @@ class ClassGenerator {
 
     final sortedProperties = [...normalizedProperties]
       ..sort((a, b) {
-        if (a.property.isRequired != b.property.isRequired) {
-          return a.property.isRequired ? -1 : 1;
+        final aRequired =
+            a.property.isRequired && !a.property.isReadOnly;
+        final bRequired =
+            b.property.isRequired && !b.property.isReadOnly;
+        if (aRequired != bRequired) {
+          return aRequired ? -1 : 1;
         }
         return normalizedProperties.indexOf(a) -
             normalizedProperties.indexOf(b);
@@ -152,7 +156,9 @@ class ClassGenerator {
                     (b) => b
                       ..name = prop.normalizedName
                       ..named = true
-                      ..required = prop.property.isRequired
+                      ..required =
+                          prop.property.isRequired &&
+                          !prop.property.isReadOnly
                       ..toThis = true,
                   ),
                 ),
@@ -247,6 +253,11 @@ class ClassGenerator {
     final readProperties =
         model.properties.where((p) => !p.isWriteOnly).toList();
     final normalizedProperties = normalizeProperties(readProperties);
+    final writeOnlyRequiredNames = normalizeProperties(
+      model.properties
+          .where((p) => p.isWriteOnly && p.isRequired)
+          .toList(),
+    ).map((p) => p.normalizedName).toList();
 
     final canBeSimplyEncoded = readProperties.every((property) {
       final propertyModel = property.model;
@@ -281,6 +292,8 @@ class ClassGenerator {
           className,
           normalizedProperties,
           canBeSimplyEncoded,
+          model.properties.isNotEmpty,
+          writeOnlyRequiredNames,
         ),
     );
   }
@@ -289,8 +302,19 @@ class ClassGenerator {
     String className,
     List<({String normalizedName, Property property})> properties,
     bool canBeSimplyEncoded,
+    bool hasAnyProperties,
+    List<String> writeOnlyRequiredNames,
   ) {
     if (properties.isEmpty) {
+      if (hasAnyProperties) {
+        return Block.of([
+          generateSimpleDecodingExceptionExpression(
+            'Cannot decode $className from simple encoding: '
+            'all properties are writeOnly.',
+            raw: true,
+          ).statement,
+        ]);
+      }
       return Block.of([Code('return $className();')]);
     }
 
@@ -309,7 +333,8 @@ class ClassGenerator {
       final normalizedName = prop.normalizedName;
       final propertyName = prop.property.name;
       final modelType = prop.property.model;
-      final isRequired = prop.property.isRequired;
+      final isRequired =
+          prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
@@ -322,6 +347,10 @@ class ClassGenerator {
         contextProperty: propertyName,
         explode: refer('explode'),
       );
+    }
+
+    for (final name in writeOnlyRequiredNames) {
+      constructorArgs.putIfAbsent(name, () => literalNull);
     }
 
     // Build expectedKeys and listKeys sets
@@ -347,7 +376,7 @@ class ClassGenerator {
             }),
           )
           .statement,
-
+  
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
   }
@@ -374,8 +403,16 @@ class ClassGenerator {
           .toList(),
     );
 
-    // If there are no properties, just return the constructor call.
+    // If there are no readable properties, throw for writeOnly-only models.
     if (normalizedProperties.isEmpty) {
+      if (model.properties.isNotEmpty) {
+        return Block.of([
+          generateJsonDecodingExceptionExpression(
+            'Cannot decode $className from JSON: all properties are writeOnly.',
+            raw: true,
+          ).statement,
+        ]);
+      }
       return Block.of([Code('return $className();')]);
     }
 
@@ -389,6 +426,8 @@ class ClassGenerator {
       final property = prop.property;
       final normalizedName = prop.normalizedName;
       final jsonKey = property.name;
+      final requiredInResponse =
+          property.isRequired && !property.isWriteOnly;
 
       final valueExpr = buildFromJsonValueExpression(
         "map[r'$jsonKey']",
@@ -397,12 +436,25 @@ class ClassGenerator {
         package: package,
         contextClass: className,
         contextProperty: jsonKey,
-        isNullable: property.isNullable || !property.isRequired,
+        isNullable: property.isNullable || !requiredInResponse,
       ).code;
 
       propertyAssignments
         ..add(Code('$normalizedName: '))
         ..add(valueExpr)
+        ..add(const Code(','));
+    }
+
+    final writeOnlyRequiredProperties = normalizeProperties(
+      model.properties
+          .where((p) => p.isWriteOnly && p.isRequired)
+          .toList(),
+    );
+
+    for (final prop in writeOnlyRequiredProperties) {
+      propertyAssignments
+        ..add(Code('${prop.normalizedName}: '))
+        ..add(literalNull.code)
         ..add(const Code(','));
     }
 
@@ -426,9 +478,11 @@ class ClassGenerator {
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
       final property = prop.property;
+      final requiredInRequest =
+          property.isRequired && !property.isReadOnly;
       final valueExpr = buildToJsonPropertyExpression(name, property);
 
-      if (!property.isRequired && !property.isNullable) {
+      if (!requiredInRequest && !property.isNullable) {
         mapEntries
           ..add(Code("if ($name != null) r'${property.name}': "))
           ..add(valueExpr.code)
@@ -479,7 +533,11 @@ class ClassGenerator {
       property.model,
       nameManager,
       package,
-      isNullableOverride: property.isNullable || !property.isRequired,
+      isNullableOverride:
+          property.isNullable ||
+          !property.isRequired ||
+          property.isReadOnly ||
+          property.isWriteOnly,
     );
   }
 
@@ -587,8 +645,10 @@ class ClassGenerator {
     for (final prop in properties) {
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
-      final isRequired = prop.property.isRequired;
+      final isRequired =
+          prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable = prop.property.isNullable;
+      final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
       final resolvedModel = model is AliasModel ? model.resolved : model;
 
@@ -604,13 +664,32 @@ class ClassGenerator {
       }
 
       if (isRequired && !isNullable) {
-        propertyAssignments.add(
-          Code(
-            "result[r'$propertyName'] = "
-            '$name.uriEncode(allowEmpty: allowEmpty, '
-            'useQueryComponent: useQueryComponent);',
-          ),
-        );
+        if (isFieldNullable) {
+          propertyAssignments
+            ..add(Code('if ($name == null) {'))
+            ..add(
+              generateEncodingExceptionExpression(
+                'Required property $propertyName is null.',
+                raw: true,
+              ).statement,
+            )
+            ..add(const Code('}'))
+            ..add(
+              Code(
+                "result[r'$propertyName'] = "
+                '$name!.uriEncode(allowEmpty: allowEmpty, '
+                'useQueryComponent: useQueryComponent);',
+              ),
+            );
+        } else {
+          propertyAssignments.add(
+            Code(
+              "result[r'$propertyName'] = "
+              '$name.uriEncode(allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent);',
+            ),
+          );
+        }
       } else if (isRequired && isNullable) {
         propertyAssignments.add(
           Code('''
@@ -661,7 +740,10 @@ if ($name != null) {
         .toList();
 
     final hasRequiredNonNullableLists = listProperties.any(
-      (p) => p.property.isRequired && !p.property.isNullable,
+      (p) =>
+          p.property.isRequired &&
+          !p.property.isReadOnly &&
+          !p.property.isNullable,
     );
 
     final methodBody = <Code>[];
@@ -682,18 +764,39 @@ if ($name != null) {
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
       final fieldModel = prop.property.model;
-      final isRequired = prop.property.isRequired;
+      final isRequired =
+          prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable = prop.property.isNullable;
+      final isFieldNullable = isNullable || prop.property.isWriteOnly;
 
       if (fieldModel.encodingShape == EncodingShape.simple) {
         if (isRequired && !isNullable) {
-          propertyAssignments.add(
-            Code(
-              "result[r'$propertyName'] = "
-              '$name.uriEncode(allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent);',
-            ),
-          );
+          if (isFieldNullable) {
+            propertyAssignments
+              ..add(Code('if ($name == null) {'))
+              ..add(
+                generateEncodingExceptionExpression(
+                  'Required property $propertyName is null.',
+                  raw: true,
+                ).statement,
+              )
+              ..add(const Code('}'))
+              ..add(
+                Code(
+                  "result[r'$propertyName'] = "
+                  '$name!.uriEncode(allowEmpty: allowEmpty, '
+                  'useQueryComponent: useQueryComponent);',
+                ),
+              );
+          } else {
+            propertyAssignments.add(
+              Code(
+                "result[r'$propertyName'] = "
+                '$name.uriEncode(allowEmpty: allowEmpty, '
+                'useQueryComponent: useQueryComponent);',
+              ),
+            );
+          }
         } else {
           propertyAssignments.add(
             Code('''
@@ -706,7 +809,7 @@ if ($name != null) {
         }
       } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         final valueRef = (isRequired && !isNullable)
-            ? refer(name)
+            ? (isFieldNullable ? refer(name).nullChecked : refer(name))
             : refer(name).nullChecked;
         final encodeExpr = buildUriEncodeExpression(
           valueRef,
@@ -720,6 +823,17 @@ if ($name != null) {
         ).index(literalString(propertyName, raw: true)).assign(encodeExpr);
 
         if (isRequired && !isNullable) {
+          if (isFieldNullable) {
+            propertyAssignments
+              ..add(Code('if ($name == null) {'))
+              ..add(
+                generateEncodingExceptionExpression(
+                  'Required property $propertyName is null.',
+                  raw: true,
+                ).statement,
+              )
+              ..add(const Code('}'));
+          }
           propertyAssignments.add(assignmentExpr.statement);
         } else {
           methodBody
@@ -790,8 +904,10 @@ if ($name != null) {
     for (final prop in properties) {
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
-      final isRequired = prop.property.isRequired;
+      final isRequired =
+          prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable = prop.property.isNullable;
+      final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
       final resolvedModel = model is AliasModel ? model.resolved : model;
 
@@ -815,13 +931,32 @@ if ($name != null) {
 
       if (model.encodingShape == .simple) {
         if (isRequired && !isNullable) {
-          propertyAssignments.add(
-            Code(
-              "result[r'$propertyName'] = "
-              '$name.uriEncode(allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent);',
-            ),
-          );
+          if (isFieldNullable) {
+            propertyAssignments
+              ..add(Code('if ($name == null) {'))
+              ..add(
+                generateEncodingExceptionExpression(
+                  'Required property $propertyName is null.',
+                  raw: true,
+                ).statement,
+              )
+              ..add(const Code('}'))
+              ..add(
+                Code(
+                  "result[r'$propertyName'] = "
+                  '$name!.uriEncode(allowEmpty: allowEmpty, '
+                  'useQueryComponent: useQueryComponent);',
+                ),
+              );
+          } else {
+            propertyAssignments.add(
+              Code(
+                "result[r'$propertyName'] = "
+                '$name.uriEncode(allowEmpty: allowEmpty, '
+                'useQueryComponent: useQueryComponent);',
+              ),
+            );
+          }
         } else if (isRequired && isNullable) {
           propertyAssignments.add(
             Code('''
@@ -927,6 +1062,11 @@ if ($name != null) {
     final readProperties =
         model.properties.where((p) => !p.isWriteOnly).toList();
     final normalizedProperties = normalizeProperties(readProperties);
+    final writeOnlyRequiredNames = normalizeProperties(
+      model.properties
+          .where((p) => p.isWriteOnly && p.isRequired)
+          .toList(),
+    ).map((p) => p.normalizedName).toList();
 
     final canBeFormEncoded = readProperties.every((property) {
       final propertyModel = property.model;
@@ -961,6 +1101,8 @@ if ($name != null) {
           className,
           normalizedProperties,
           canBeFormEncoded,
+          model.properties.isNotEmpty,
+          writeOnlyRequiredNames,
         ),
     );
   }
@@ -969,8 +1111,19 @@ if ($name != null) {
     String className,
     List<({String normalizedName, Property property})> properties,
     bool canBeFormEncoded,
+    bool hasAnyProperties,
+    List<String> writeOnlyRequiredNames,
   ) {
     if (properties.isEmpty) {
+      if (hasAnyProperties) {
+        return Block.of([
+          generateFormatDecodingExceptionExpression(
+            'Cannot decode $className from form encoding: '
+            'all properties are writeOnly.',
+            raw: true,
+          ).statement,
+        ]);
+      }
       return Block.of([Code('return $className();')]);
     }
 
@@ -988,7 +1141,8 @@ if ($name != null) {
       final normalizedName = prop.normalizedName;
       final propertyName = prop.property.name;
       final modelType = prop.property.model;
-      final isRequired = prop.property.isRequired;
+      final isRequired =
+          prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(
@@ -1001,6 +1155,10 @@ if ($name != null) {
         contextProperty: propertyName,
         explode: refer('explode'),
       );
+    }
+
+    for (final name in writeOnlyRequiredNames) {
+      constructorArgs.putIfAbsent(name, () => literalNull);
     }
 
     // Build expectedKeys and listKeys sets
