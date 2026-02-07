@@ -149,9 +149,7 @@ class Schema {
 
   // We ignore example, externalDocs, xml, default, title, multipleOf, maximum,
   // exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern,
-  // maxItems, minItems, maxProperties, minProperties, additionalProperties and
-  // externalDocs properties.
-
+  // maxItems, minItems, maxProperties, minProperties, additionalProperties.
   @override
   String toString() =>
       'Schema{ref: $ref, type: $type, format: $format, required: $required, '
