@@ -73,6 +73,7 @@ class ClassGenerator {
     final copyWithResult = _buildCopyWith(
       actualClassName,
       normalizedProperties,
+      model,
     );
 
     return [
@@ -113,12 +114,18 @@ class ClassGenerator {
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
-        _buildCopyWith(className, normalizedProperties)?.getter;
+        _buildCopyWith(className, normalizedProperties, model)?.getter;
 
     final sortedProperties = [...normalizedProperties]
       ..sort((a, b) {
-        final aRequired = a.property.isRequired && !a.property.isReadOnly;
-        final bRequired = b.property.isRequired && !b.property.isReadOnly;
+        final aRequired =
+            a.property.isRequired &&
+            !a.property.isReadOnly &&
+            !model.isReadOnly;
+        final bRequired =
+            b.property.isRequired &&
+            !b.property.isReadOnly &&
+            !model.isReadOnly;
         if (aRequired != bRequired) {
           return aRequired ? -1 : 1;
         }
@@ -155,7 +162,9 @@ class ClassGenerator {
                       ..name = prop.normalizedName
                       ..named = true
                       ..required =
-                          prop.property.isRequired && !prop.property.isReadOnly
+                          prop.property.isRequired &&
+                          !prop.property.isReadOnly &&
+                          !model.isReadOnly
                       ..toThis = true,
                   ),
                 ),
@@ -185,7 +194,11 @@ class ClassGenerator {
 
         b.fields.addAll(
           normalizedProperties.map(
-            (prop) => _generateField(prop.property, prop.normalizedName),
+            (prop) => _generateField(
+              prop.property,
+              prop.normalizedName,
+              classModel: model,
+            ),
           ),
         );
       },
@@ -195,16 +208,19 @@ class ClassGenerator {
   CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> properties,
+    ClassModel model,
   ) {
     return generateCopyWith(
       className: className,
       properties: properties.map(
         (prop) {
-          final model = prop.property.model;
-          final resolvedModel = model is AliasModel ? model.resolved : model;
+          final propModel = prop.property.model;
+          final resolvedModel = propModel is AliasModel
+              ? propModel.resolved
+              : propModel;
           return (
             normalizedName: prop.normalizedName,
-            typeRef: _getTypeReference(prop.property),
+            typeRef: _getSchemaAwareTypeReference(prop.property, model),
             skipCast: resolvedModel is AnyModel,
           );
         },
@@ -245,6 +261,30 @@ class ClassGenerator {
   }
 
   Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
+    // Schema-level writeOnly: decoding is never valid.
+    if (model.isWriteOnly) {
+      return Constructor(
+        (b) => b
+          ..factory = true
+          ..name = 'fromSimple'
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'value'
+                ..type = refer('String?', 'dart:core'),
+            ),
+          )
+          ..optionalParameters.add(
+            buildBoolParameter('explode', required: true),
+          )
+          ..lambda = true
+          ..body = generateSimpleDecodingExceptionExpression(
+            '$className is write-only and cannot be decoded.',
+            raw: true,
+          ).code,
+      );
+    }
+
     final readProperties = model.properties
         .where((p) => !p.isWriteOnly)
         .toList();
@@ -380,8 +420,10 @@ class ClassGenerator {
     ]);
   }
 
-  Constructor _buildFromJsonConstructor(String className, ClassModel model) =>
-      Constructor(
+  Constructor _buildFromJsonConstructor(String className, ClassModel model) {
+    // Schema-level writeOnly: decoding is never valid.
+    if (model.isWriteOnly) {
+      return Constructor(
         (b) => b
           ..factory = true
           ..name = 'fromJson'
@@ -392,8 +434,28 @@ class ClassGenerator {
                 ..type = refer('Object?', 'dart:core'),
             ),
           )
-          ..body = _buildFromJsonBody(className, model),
+          ..lambda = true
+          ..body = generateJsonDecodingExceptionExpression(
+            '$className is write-only and cannot be decoded.',
+            raw: true,
+          ).code,
       );
+    }
+
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromJson'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'json'
+              ..type = refer('Object?', 'dart:core'),
+          ),
+        )
+        ..body = _buildFromJsonBody(className, model),
+    );
+  }
 
   Code _buildFromJsonBody(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(
@@ -466,6 +528,23 @@ class ClassGenerator {
   }
 
   Method _buildToJsonMethod(ClassModel model) {
+    final className = nameManager.modelName(model);
+
+    // Schema-level readOnly: encoding is never valid.
+    if (model.isReadOnly) {
+      return Method(
+        (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
+          ..name = 'toJson'
+          ..returns = refer('Object?', 'dart:core')
+          ..lambda = true
+          ..body = generateEncodingExceptionExpression(
+            '$className is read-only and cannot be encoded.',
+            raw: true,
+          ).code,
+      );
+    }
+
     final normalizedProperties = normalizeProperties(
       model.properties.where((p) => !p.isReadOnly).toList(),
     );
@@ -548,12 +627,18 @@ class ClassGenerator {
     );
   }
 
-  Field _generateField(Property property, String normalizedName) {
+  Field _generateField(
+    Property property,
+    String normalizedName, {
+    ClassModel? classModel,
+  }) {
     final fieldBuilder = FieldBuilder()
       ..name = normalizedName
       ..docs.addAll(formatDocComment(property.description))
       ..modifier = FieldModifier.final$
-      ..type = _getTypeReference(property);
+      ..type = classModel != null
+          ? _getSchemaAwareTypeReference(property, classModel)
+          : _getTypeReference(property);
 
     if (property.isDeprecated) {
       fieldBuilder.annotations.add(
@@ -577,6 +662,24 @@ class ClassGenerator {
           !property.isRequired ||
           property.isReadOnly ||
           property.isWriteOnly,
+    );
+  }
+
+  /// Returns a type reference for a property, considering schema-level flags.
+  TypeReference _getSchemaAwareTypeReference(
+    Property property,
+    ClassModel model,
+  ) {
+    return typeReference(
+      property.model,
+      nameManager,
+      package,
+      isNullableOverride:
+          property.isNullable ||
+          !property.isRequired ||
+          property.isReadOnly ||
+          property.isWriteOnly ||
+          model.isReadOnly,
     );
   }
 
@@ -604,6 +707,21 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> properties,
   ) {
     final className = nameManager.modelName(model);
+
+    // Schema-level readOnly: encoding is never valid.
+    if (model.isReadOnly) {
+      return Method(
+        (b) => b
+          ..name = 'parameterProperties'
+          ..returns = buildMapStringStringType()
+          ..optionalParameters.addAll(_buildParameterPropertiesParameters())
+          ..lambda = true
+          ..body = generateEncodingExceptionExpression(
+            '$className is read-only and cannot be encoded.',
+            raw: true,
+          ).code,
+      );
+    }
 
     final hasOnlySimpleProperties = properties.every(
       (prop) => prop.property.model.encodingShape == EncodingShape.simple,
@@ -1095,6 +1213,30 @@ if ($name != null) {
   );
 
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
+    // Schema-level writeOnly: decoding is never valid.
+    if (model.isWriteOnly) {
+      return Constructor(
+        (b) => b
+          ..factory = true
+          ..name = 'fromForm'
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'value'
+                ..type = refer('String?', 'dart:core'),
+            ),
+          )
+          ..optionalParameters.add(
+            buildBoolParameter('explode', required: true),
+          )
+          ..lambda = true
+          ..body = generateFormatDecodingExceptionExpression(
+            '$className is write-only and cannot be decoded.',
+            raw: true,
+          ).code,
+      );
+    }
+
     final readProperties = model.properties
         .where((p) => !p.isWriteOnly)
         .toList();

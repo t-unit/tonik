@@ -175,3 +175,33 @@ components:
         action:
           type: string
           readOnly: true
+
+    # Schema-level readOnly (OAS 3.1): the entire schema is readOnly.
+    ServerStatus:
+      type: object
+      readOnly: true
+      required:
+        - uptime
+        - version
+      properties:
+        uptime:
+          type: integer
+        version:
+          type: string
+        region:
+          type: string
+
+    # Schema-level writeOnly (OAS 3.1): the entire schema is writeOnly.
+    PasswordChange:
+      type: object
+      writeOnly: true
+      required:
+        - newPassword
+        - confirmPassword
+      properties:
+        newPassword:
+          type: string
+        confirmPassword:
+          type: string
+        hint:
+          type: string

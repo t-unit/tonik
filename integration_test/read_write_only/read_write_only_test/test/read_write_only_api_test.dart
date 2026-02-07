@@ -344,4 +344,119 @@ void main() {
       expect(user.password, isNull);
     });
   });
+
+  group('ServerStatus model - schema-level readOnly', () {
+    test('constructor makes all properties optional', () {
+      const status = ServerStatus();
+      expect(status.uptime, isNull);
+      expect(status.version, isNull);
+      expect(status.region, isNull);
+    });
+
+    test('all fields are nullable', () {
+      const status = ServerStatus(uptime: 42, version: '1.0', region: 'us');
+      expect(status.uptime, 42);
+      expect(status.version, '1.0');
+      expect(status.region, 'us');
+    });
+
+    test('fromJson decodes all properties normally', () {
+      final status = ServerStatus.fromJson(const {
+        'uptime': 3600,
+        'version': '2.1.0',
+        'region': 'eu-west',
+      });
+      expect(status.uptime, 3600);
+      expect(status.version, '2.1.0');
+      expect(status.region, 'eu-west');
+    });
+
+    test('toJson throws EncodingException', () {
+      const status = ServerStatus(uptime: 1, version: '1.0');
+      expect(() => status.toJson(), throwsA(isA<EncodingException>()));
+    });
+
+    test('parameterProperties throws EncodingException', () {
+      const status = ServerStatus(uptime: 1, version: '1.0');
+      expect(
+        () => status.parameterProperties(),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('toSimple throws EncodingException', () {
+      const status = ServerStatus(uptime: 1, version: '1.0');
+      expect(
+        () => status.toSimple(explode: false, allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('fromSimple decodes normally', () {
+      final status = ServerStatus.fromSimple(
+        'uptime,100,version,3.0',
+        explode: false,
+      );
+      expect(status.uptime, 100);
+      expect(status.version, '3.0');
+    });
+  });
+
+  group('PasswordChange model - schema-level writeOnly', () {
+    test('constructor keeps required properties required', () {
+      const change = PasswordChange(
+        newPassword: 'abc',
+        confirmPassword: 'abc',
+      );
+      expect(change.newPassword, 'abc');
+      expect(change.confirmPassword, 'abc');
+      expect(change.hint, isNull);
+    });
+
+    test('toJson includes all properties', () {
+      const change = PasswordChange(
+        newPassword: 'new123',
+        confirmPassword: 'new123',
+        hint: 'my dog',
+      );
+      final json = change.toJson()! as Map;
+      expect(json['newPassword'], 'new123');
+      expect(json['confirmPassword'], 'new123');
+      expect(json['hint'], 'my dog');
+    });
+
+    test('fromJson throws JsonDecodingException', () {
+      expect(
+        () => PasswordChange.fromJson(const {
+          'newPassword': 'x',
+          'confirmPassword': 'x',
+        }),
+        throwsA(isA<JsonDecodingException>()),
+      );
+    });
+
+    test('fromSimple throws SimpleDecodingException', () {
+      expect(
+        () => PasswordChange.fromSimple('newPassword,x', explode: false),
+        throwsA(isA<SimpleDecodingException>()),
+      );
+    });
+
+    test('fromForm throws FormatDecodingException', () {
+      expect(
+        () => PasswordChange.fromForm('newPassword=x', explode: true),
+        throwsA(isA<FormatDecodingException>()),
+      );
+    });
+
+    test('parameterProperties works normally', () {
+      const change = PasswordChange(
+        newPassword: 'abc',
+        confirmPassword: 'def',
+      );
+      final params = change.parameterProperties();
+      expect(params['newPassword'], 'abc');
+      expect(params['confirmPassword'], 'def');
+    });
+  });
 }

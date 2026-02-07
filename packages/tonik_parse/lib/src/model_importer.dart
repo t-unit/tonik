@@ -405,6 +405,8 @@ class ModelImporter {
         context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
         xDartEnum: schema.xDartEnum,
       ),
       'string' => StringModel(context: context),
@@ -418,6 +420,8 @@ class ModelImporter {
         context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
         xDartEnum: schema.xDartEnum,
       ),
       'integer' => IntegerModel(context: context),
@@ -432,6 +436,8 @@ class ModelImporter {
         model: model,
         context: context,
         isNullable: schema.isNullable ?? hasNullType,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
       );
       _logModelAdded(model);
       models.add(model);
@@ -498,6 +504,8 @@ class ModelImporter {
       context: context,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
 
     _addModelToSet(oneOfModel);
@@ -517,6 +525,8 @@ class ModelImporter {
       context: context,
       name: name,
       isNullable: schema.isNullable ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
   }
 
@@ -535,6 +545,8 @@ class ModelImporter {
       name: name,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
 
     _addModelToSet(allOfModel);
@@ -579,6 +591,8 @@ class ModelImporter {
       discriminator: effectiveDiscriminator?.propertyName,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
 
     _addModelToSet(oneOfModel);
@@ -609,6 +623,8 @@ class ModelImporter {
       discriminator: effectiveDiscriminator?.propertyName,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
 
     _addModelToSet(anyOfModel);
@@ -701,6 +717,8 @@ class ModelImporter {
       context: context,
       description: schema.description,
       isNullable: schema.isNullable ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
 
     if (schema.not != null) {
@@ -759,6 +777,8 @@ class ModelImporter {
     Context context, {
     required String? description,
     required bool isDeprecated,
+    bool isReadOnly = false,
+    bool isWriteOnly = false,
     List<String>? xDartEnum,
   }) {
     log.fine('Parsing enum $name<$T> for $context with values $values');
@@ -798,6 +818,8 @@ class ModelImporter {
       context: context,
       name: name,
       description: description,
+      isReadOnly: isReadOnly,
+      isWriteOnly: isWriteOnly,
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
