@@ -1091,7 +1091,7 @@ class AnyOfGenerator {
     final validationCheck = _buildAllNullValidation(
       decodableProperties,
       'Invalid form value for $className: all variants failed to decode',
-      generateFormatDecodingExceptionExpression,
+      generateFormDecodingExceptionExpression,
       raw: true,
     );
 

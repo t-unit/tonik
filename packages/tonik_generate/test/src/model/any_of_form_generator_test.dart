@@ -291,7 +291,7 @@ void main() {
           }
 
           if (int == null && string == null) {
-            throw FormatDecodingException(
+            throw FormDecodingException(
               r'Invalid form value for Flexible: all variants failed to decode',
             );
           }
@@ -366,7 +366,7 @@ void main() {
           }
 
           if (a == null && b == null) {
-            throw FormatDecodingException(
+            throw FormDecodingException(
               r'Invalid form value for Choice: all variants failed to decode',
             );
           }
@@ -426,7 +426,7 @@ void main() {
           }
 
           if (user == null && string == null) {
-            throw FormatDecodingException(
+            throw FormDecodingException(
               r'Invalid form value for SearchKey: all variants failed to decode',
             );
           }
@@ -507,7 +507,7 @@ void main() {
         }
 
         if (string == null) {
-          throw FormatDecodingException(
+          throw FormDecodingException(
             r'Invalid form value for MixedAnyOf: all variants failed to decode',
           );
         }
@@ -830,7 +830,7 @@ void main() {
           }
 
           if (inner == null && string == null) {
-            throw FormatDecodingException(
+            throw FormDecodingException(
               r'Invalid form value for Outer: all variants failed to decode',
             );
           }

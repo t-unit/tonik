@@ -1230,7 +1230,7 @@ if ($name != null) {
             buildBoolParameter('explode', required: true),
           )
           ..lambda = true
-          ..body = generateFormatDecodingExceptionExpression(
+          ..body = generateFormDecodingExceptionExpression(
             '$className is write-only and cannot be decoded.',
             raw: true,
           ).code,
@@ -1312,7 +1312,7 @@ if ($name != null) {
 
     if (!canBeFormEncoded) {
       return Block.of([
-        generateFormatDecodingExceptionExpression(
+        generateFormDecodingExceptionExpression(
           'Form encoding not supported for $className: contains complex types',
           raw: true,
         ).statement,

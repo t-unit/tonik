@@ -47,13 +47,13 @@ Expression generateResponseDecodingExceptionExpression(
   );
 }
 
-/// Generates a throw expression for FormatDecodingException.
-Expression generateFormatDecodingExceptionExpression(
+/// Generates a throw expression for FormDecodingException.
+Expression generateFormDecodingExceptionExpression(
   String message, {
   bool raw = false,
 }) {
   return _generateExceptionExpression(
-    'FormatDecodingException',
+    'FormDecodingException',
     message,
     importUrl: 'package:tonik_util/tonik_util.dart',
     raw: raw,

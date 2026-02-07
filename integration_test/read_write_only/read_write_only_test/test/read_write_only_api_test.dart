@@ -442,10 +442,10 @@ void main() {
       );
     });
 
-    test('fromForm throws FormatDecodingException', () {
+    test('fromForm throws FormDecodingException', () {
       expect(
         () => PasswordChange.fromForm('newPassword=x', explode: true),
-        throwsA(isA<FormatDecodingException>()),
+        throwsA(isA<FormDecodingException>()),
       );
     });
 
@@ -457,6 +457,202 @@ void main() {
       final params = change.parameterProperties();
       expect(params['newPassword'], 'abc');
       expect(params['confirmPassword'], 'def');
+    });
+  });
+
+  group('ReadOnlyNotification (oneOf) - schema-level readOnly', () {
+    test('fromJson decodes email variant normally', () {
+      final notification = ReadOnlyNotification.fromJson(const {
+        'emailAddress': 'alice@example.com',
+        'subject': 'Hello',
+        'body': 'World',
+      });
+
+      expect(notification, isA<ReadOnlyNotificationNotificationEmail>());
+      final email =
+          (notification as ReadOnlyNotificationNotificationEmail).value;
+      expect(email.emailAddress, 'alice@example.com');
+      expect(email.subject, 'Hello');
+      expect(email.body, 'World');
+    });
+
+    test('fromJson decodes sms variant normally', () {
+      final notification = ReadOnlyNotification.fromJson(const {
+        'phoneNumber': '+1234567890',
+        'message': 'Hi there',
+      });
+
+      expect(notification, isA<ReadOnlyNotificationNotificationSms>());
+      final sms = (notification as ReadOnlyNotificationNotificationSms).value;
+      expect(sms.phoneNumber, '+1234567890');
+      expect(sms.message, 'Hi there');
+    });
+
+    test('fromSimple decodes normally', () {
+      final notification = ReadOnlyNotification.fromSimple(
+        'phoneNumber,%2B1234567890,message,Hi',
+        explode: false,
+      );
+      expect(notification, isA<ReadOnlyNotificationNotificationSms>());
+    });
+
+    test('fromForm decodes normally', () {
+      final notification = ReadOnlyNotification.fromForm(
+        'phoneNumber=%2B1234567890&message=Hi',
+        explode: true,
+      );
+      expect(notification, isA<ReadOnlyNotificationNotificationSms>());
+    });
+
+    test('toJson throws EncodingException', () {
+      final notification = ReadOnlyNotification.fromJson(const {
+        'emailAddress': 'test@example.com',
+        'subject': 'Test',
+      });
+
+      expect(
+        notification.toJson,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('parameterProperties throws EncodingException', () {
+      final notification = ReadOnlyNotification.fromJson(const {
+        'emailAddress': 'test@example.com',
+        'subject': 'Test',
+      });
+
+      expect(
+        notification.parameterProperties,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('currentEncodingShape throws EncodingException', () {
+      final notification = ReadOnlyNotification.fromJson(const {
+        'emailAddress': 'test@example.com',
+        'subject': 'Test',
+      });
+
+      expect(
+        () => notification.currentEncodingShape,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('uriEncode throws EncodingException', () {
+      final notification = ReadOnlyNotification.fromJson(const {
+        'emailAddress': 'test@example.com',
+        'subject': 'Test',
+      });
+
+      expect(
+        () => notification.uriEncode(allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test(
+      'GET /notifications/sent returns decoded readOnly notification',
+      () async {
+        final api = buildApi(responseStatus: '200');
+
+        final response = await api.getSentNotification();
+
+        final success = response as TonikSuccess<ReadOnlyNotification>;
+        final notification = success.value;
+
+        expect(notification, isA<ReadOnlyNotificationNotificationEmail>());
+        final email =
+            (notification as ReadOnlyNotificationNotificationEmail).value;
+        expect(email.emailAddress, 'alice@example.com');
+        expect(email.subject, 'Welcome');
+        expect(email.body, 'Hello!');
+      },
+    );
+  });
+
+  group('WriteOnlyNotification (oneOf) - schema-level writeOnly', () {
+    test('toJson encodes email variant normally', () {
+      const notification = WriteOnlyNotificationNotificationEmail(
+        NotificationEmail(
+          emailAddress: 'bob@example.com',
+          subject: 'Meeting',
+          body: 'Tomorrow at 10',
+        ),
+      );
+      final json = notification.toJson()! as Map;
+
+      expect(json['emailAddress'], 'bob@example.com');
+      expect(json['subject'], 'Meeting');
+      expect(json['body'], 'Tomorrow at 10');
+    });
+
+    test('toJson encodes sms variant normally', () {
+      const notification = WriteOnlyNotificationNotificationSms(
+        NotificationSms(
+          phoneNumber: '+1234567890',
+          message: 'Hello',
+        ),
+      );
+      final json = notification.toJson()! as Map;
+
+      expect(json['phoneNumber'], '+1234567890');
+      expect(json['message'], 'Hello');
+    });
+
+    test('fromJson throws JsonDecodingException', () {
+      expect(
+        () => WriteOnlyNotification.fromJson(const {
+          'emailAddress': 'test@example.com',
+          'subject': 'Test',
+        }),
+        throwsA(isA<JsonDecodingException>()),
+      );
+    });
+
+    test('fromSimple throws SimpleDecodingException', () {
+      expect(
+        () => WriteOnlyNotification.fromSimple(
+          'phoneNumber,%2B123,message,Hi',
+          explode: false,
+        ),
+        throwsA(isA<SimpleDecodingException>()),
+      );
+    });
+
+    test('fromForm throws FormDecodingException', () {
+      expect(
+        () => WriteOnlyNotification.fromForm(
+          'phoneNumber=%2B123&message=Hi',
+          explode: true,
+        ),
+        throwsA(isA<FormDecodingException>()),
+      );
+    });
+
+    test('POST /notifications/send sends writeOnly notification', () async {
+      final api = buildApi(responseStatus: '200');
+
+      final response = await api.sendNotification(
+        body: const WriteOnlyNotificationNotificationEmail(
+          NotificationEmail(
+            emailAddress: 'bob@example.com',
+            subject: 'Test',
+            body: 'Testing writeOnly oneOf',
+          ),
+        ),
+      );
+
+      final success =
+          response as TonikSuccess<NotificationsSendPost200BodyModel>;
+      final requestBody =
+          success.response.requestOptions.data as Map<String, dynamic>;
+
+      // Verify the request body contains the email notification data.
+      expect(requestBody['emailAddress'], 'bob@example.com');
+      expect(requestBody['subject'], 'Test');
+      expect(requestBody['body'], 'Testing writeOnly oneOf');
     });
   });
 }

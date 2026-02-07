@@ -50,6 +50,20 @@ if (path == '/users' && method == 'POST' && statusCode == 200) {
         .withHeader('Content-Type', 'application/json')
         .withContent('{"entryId":1,"timestamp":"2025-01-01T10:00:00Z","action":"login"}')
 
+// GET /notifications/sent: return a readOnly oneOf notification (email variant).
+} else if (path == '/notifications/sent' && method == 'GET' && statusCode == 200) {
+    respond()
+        .withStatusCode(statusCode)
+        .withHeader('Content-Type', 'application/json')
+        .withContent('{"emailAddress":"alice@example.com","subject":"Welcome","body":"Hello!"}')
+
+// POST /notifications/send: accept a writeOnly oneOf notification and echo status.
+} else if (path == '/notifications/send' && method == 'POST' && statusCode == 200) {
+    respond()
+        .withStatusCode(statusCode)
+        .withHeader('Content-Type', 'application/json')
+        .withContent('{"status":"accepted"}')
+
 } else if (method == 'POST' && statusCode == 200) {
     def requestBody = context.request.body
     respond()

@@ -320,7 +320,7 @@ void main() {
   });
 
   group('schema-level writeOnly fromForm', () {
-    test('fromForm throws FormatDecodingException when model has schema-level '
+    test('fromForm throws FormDecodingException when model has schema-level '
         'writeOnly', () {
       final model = buildSchemaWriteOnlyModel(context);
       final generatedClass = generator.generateClass(model);
@@ -328,7 +328,7 @@ void main() {
 
       const expectedMethod = '''
         factory PasswordReset.fromForm(String? value, {required bool explode}) =>
-          throw FormatDecodingException(
+          throw FormDecodingException(
             r'PasswordReset is write-only and cannot be decoded.',
           );
       ''';

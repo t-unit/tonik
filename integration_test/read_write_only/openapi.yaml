@@ -117,6 +117,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuditEntry'
 
+  /notifications/sent:
+    get:
+      operationId: getSentNotification
+      tags:
+        - read-write-only
+      summary: Get a sent notification (readOnly oneOf)
+      responses:
+        '200':
+          description: A sent notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlyNotification'
+
+  /notifications/send:
+    post:
+      operationId: sendNotification
+      tags:
+        - read-write-only
+      summary: Send a notification (writeOnly oneOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyNotification'
+      responses:
+        '200':
+          description: Notification accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
 components:
   schemas:
     User:
@@ -175,6 +212,45 @@ components:
         action:
           type: string
           readOnly: true
+
+    # Variant schemas for oneOf testing.
+    NotificationEmail:
+      type: object
+      required:
+        - emailAddress
+        - subject
+      properties:
+        emailAddress:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+
+    NotificationSms:
+      type: object
+      required:
+        - phoneNumber
+        - message
+      properties:
+        phoneNumber:
+          type: string
+        message:
+          type: string
+
+    # Schema-level readOnly oneOf: represents a notification the server sent.
+    ReadOnlyNotification:
+      readOnly: true
+      oneOf:
+        - $ref: '#/components/schemas/NotificationEmail'
+        - $ref: '#/components/schemas/NotificationSms'
+
+    # Schema-level writeOnly oneOf: represents a notification request from client.
+    WriteOnlyNotification:
+      writeOnly: true
+      oneOf:
+        - $ref: '#/components/schemas/NotificationEmail'
+        - $ref: '#/components/schemas/NotificationSms'
 
     # Schema-level readOnly (OAS 3.1): the entire schema is readOnly.
     ServerStatus:

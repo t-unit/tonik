@@ -867,7 +867,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
               String? value, {
               required bool explode,
             }) {
-              throw FormatDecodingException(
+              throw FormDecodingException(
                 r'Form encoding not supported for ModelWithComplexList: contains complex types',
               );
             }
