@@ -1,16 +1,14 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
+import 'package:tonik_generate/src/util/composite_guard_builders.dart';
+import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
-import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -32,53 +30,13 @@ class AllOfGenerator {
   final String package;
 
   ({String code, String filename}) generate(AllOfModel model) {
-    final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(
-        additionalImports: ['package:tonik_util/tonik_util.dart'],
-      ),
-      orderDirectives: true,
-      useNullSafetySyntax: true,
+    return generateCompositeLibrary(
+      model: model,
+      isNullable: model.isNullable,
+      nameManager: nameManager,
+      generateClasses: (actualClassName) =>
+          generateClasses(model, actualClassName),
     );
-
-    final publicClassName = nameManager.modelName(model);
-    final snakeCaseName = publicClassName.toSnakeCase();
-
-    // Generate unique name for nullable allOf with Raw prefix to allow
-    // using a typedef to express the nullable type.
-    final actualClassName = model.isNullable
-        ? nameManager.modelName(
-            AliasModel(
-              name: '\$Raw$publicClassName',
-              model: model,
-              context: model.context,
-            ),
-          )
-        : publicClassName;
-
-    final generatedClasses = generateClasses(model, actualClassName);
-
-    final library = Library((b) {
-      b.body.addAll(generatedClasses);
-
-      // Add typedef for nullable allOf.
-      if (model.isNullable) {
-        b.body.add(
-          TypeDef(
-            (b) => b
-              ..name = publicClassName
-              ..definition = refer('$actualClassName?'),
-          ),
-        );
-      }
-    });
-
-    final formatter = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    );
-
-    final code = formatter.formatWithHeader(library.accept(emitter).toString());
-
-    return (code: code, filename: '$snakeCaseName.dart');
   }
 
   /// Generates the main class and the copyWith infrastructure classes.
@@ -188,23 +146,25 @@ class AllOfGenerator {
           )
           ..constructors.addAll([
             if (model.isWriteOnly)
-              _buildWriteOnlyFromSimpleConstructor(actualClassName)
+              buildWriteOnlyFromSimpleConstructor(actualClassName)
             else
-              _buildFromSimpleConstructor(
-                actualClassName,
-                normalizedProperties,
-                model,
+              _buildFromValueConstructor(
+                isForm: false,
+                className: actualClassName,
+                normalizedProperties: normalizedProperties,
+                model: model,
               ),
             if (model.isWriteOnly)
-              _buildWriteOnlyFromFormConstructor(actualClassName)
+              buildWriteOnlyFromFormConstructor(actualClassName)
             else
-              _buildFromFormConstructor(
-                actualClassName,
-                normalizedProperties,
-                model,
+              _buildFromValueConstructor(
+                isForm: true,
+                className: actualClassName,
+                normalizedProperties: normalizedProperties,
+                model: model,
               ),
             if (model.isWriteOnly)
-              _buildWriteOnlyFromJsonConstructor(actualClassName)
+              buildWriteOnlyFromJsonConstructor(actualClassName)
             else
               _buildFromJsonConstructor(
                 actualClassName,
@@ -213,15 +173,15 @@ class AllOfGenerator {
           ])
           ..methods.addAll([
             if (model.isReadOnly)
-              _buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+              buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
             else
               _buildCurrentEncodingShapeGetter(model, normalizedProperties),
             if (model.isReadOnly)
-              _buildReadOnlyToJsonMethod(encodingExceptionBody)
+              buildReadOnlyToJsonMethod(encodingExceptionBody)
             else
               _buildToJsonMethod(actualClassName, model, normalizedProperties),
             if (model.isReadOnly)
-              _buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+              buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
             else
               _buildParameterPropertiesMethod(
                 actualClassName,
@@ -229,14 +189,14 @@ class AllOfGenerator {
                 model,
               ),
             if (model.isReadOnly)
-              _buildReadOnlyToSimpleMethod(encodingExceptionBody)
+              buildReadOnlyToSimpleMethod(encodingExceptionBody)
             else
               _buildToSimpleMethod(
                 normalizedProperties,
                 model,
               ),
             if (model.isReadOnly)
-              _buildReadOnlyToFormMethod(encodingExceptionBody)
+              buildReadOnlyToFormMethod(encodingExceptionBody)
             else
               _buildToFormMethod(
                 actualClassName,
@@ -244,7 +204,7 @@ class AllOfGenerator {
                 model,
               ),
             if (model.isReadOnly)
-              _buildReadOnlyToLabelMethod(encodingExceptionBody)
+              buildReadOnlyToLabelMethod(encodingExceptionBody)
             else
               _buildToLabelMethod(
                 actualClassName,
@@ -252,7 +212,7 @@ class AllOfGenerator {
                 model,
               ),
             if (model.isReadOnly)
-              _buildReadOnlyToMatrixMethod(encodingExceptionBody)
+              buildReadOnlyToMatrixMethod(encodingExceptionBody)
             else
               _buildToMatrixMethod(
                 actualClassName,
@@ -260,11 +220,11 @@ class AllOfGenerator {
                 model,
               ),
             if (model.isReadOnly)
-              _buildReadOnlyToDeepObjectMethod(encodingExceptionBody)
+              buildReadOnlyToDeepObjectMethod(encodingExceptionBody)
             else
-              _buildToDeepObjectMethod(),
+              buildToDeepObjectMethod(),
             if (model.isReadOnly)
-              _buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+              buildReadOnlyUriEncodeMethod(encodingExceptionBody)
             else
               _buildUriEncodeMethod(
                 actualClassName,
@@ -360,222 +320,6 @@ class AllOfGenerator {
             );
           }),
         ),
-    );
-  }
-
-  Method _buildReadOnlyCurrentEncodingShapeGetter(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..name = 'currentEncodingShape'
-        ..type = MethodType.getter
-        ..returns = refer(
-          'EncodingShape',
-          'package:tonik_util/tonik_util.dart',
-        )
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyToJsonMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toJson'
-        ..returns = refer('Object?', 'dart:core')
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyParameterPropertiesMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
-        ..optionalParameters.addAll([
-          buildBoolParameter('allowEmpty', defaultValue: true),
-          buildBoolParameter('allowLists', defaultValue: true),
-        ])
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyUriEncodeMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'uriEncode'
-        ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll([
-          Parameter(
-            (b) => b
-              ..name = 'allowEmpty'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = true,
-          ),
-          Parameter(
-            (b) => b
-              ..name = 'useQueryComponent'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..defaultTo = literalBool(false).code,
-          ),
-        ])
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Constructor _buildWriteOnlyFromJsonConstructor(String className) {
-    return Constructor(
-      (b) => b
-        ..factory = true
-        ..name = 'fromJson'
-        ..requiredParameters.add(
-          Parameter(
-            (p) => p
-              ..name = 'json'
-              ..type = refer('Object?', 'dart:core'),
-          ),
-        )
-        ..lambda = true
-        ..body = generateJsonDecodingExceptionExpression(
-          '$className is write-only and cannot be decoded.',
-          raw: true,
-        ).code,
-    );
-  }
-
-  Constructor _buildWriteOnlyFromSimpleConstructor(String className) {
-    return Constructor(
-      (b) => b
-        ..factory = true
-        ..name = 'fromSimple'
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'value'
-              ..type = refer('String?', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
-        ..lambda = true
-        ..body = generateSimpleDecodingExceptionExpression(
-          '$className is write-only and cannot be decoded.',
-          raw: true,
-        ).code,
-    );
-  }
-
-  Constructor _buildWriteOnlyFromFormConstructor(String className) {
-    return Constructor(
-      (b) => b
-        ..factory = true
-        ..name = 'fromForm'
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'value'
-              ..type = refer('String?', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
-        ..lambda = true
-        ..body = generateFormDecodingExceptionExpression(
-          '$className is write-only and cannot be decoded.',
-          raw: true,
-        ).code,
-    );
-  }
-
-  Method _buildReadOnlyToSimpleMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toSimple'
-        ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyToFormMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toForm'
-        ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildFormEncodingParameters())
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyToLabelMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toLabel'
-        ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyToMatrixMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toMatrix'
-        ..returns = refer('String', 'dart:core')
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'paramName'
-              ..type = refer('String', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..lambda = true
-        ..body = exceptionBody,
-    );
-  }
-
-  Method _buildReadOnlyToDeepObjectMethod(Code exceptionBody) {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toDeepObject'
-        ..returns = TypeReference(
-          (b) => b
-            ..symbol = 'List'
-            ..url = 'dart:core'
-            ..types.add(
-              refer(
-                'ParameterEntry',
-                'package:tonik_util/tonik_util.dart',
-              ),
-            ),
-        )
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'paramName'
-              ..type = refer('String', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..lambda = true
-        ..body = exceptionBody,
     );
   }
 
@@ -925,16 +669,21 @@ class AllOfGenerator {
     }
   }
 
-  Constructor _buildFromSimpleConstructor(
-    String className,
-    List<({String normalizedName, Property property})> normalizedProperties,
-    AllOfModel model,
-  ) {
+  /// Builds a fromSimple or fromForm factory constructor for allOf.
+  Constructor _buildFromValueConstructor({
+    required bool isForm,
+    required String className,
+    required List<({String normalizedName, Property property})>
+    normalizedProperties,
+    required AllOfModel model,
+  }) {
+    final constructorName = isForm ? 'fromForm' : 'fromSimple';
+
     if (normalizedProperties.isEmpty) {
       return Constructor(
         (b) => b
           ..factory = true
-          ..name = 'fromSimple'
+          ..name = constructorName
           ..requiredParameters.add(
             Parameter(
               (b) => b
@@ -949,79 +698,41 @@ class AllOfGenerator {
       );
     }
 
-    if (model.hasComplexTypes) {
-      final propertyAssignments = <MapEntry<String, Expression>>[];
-
-      for (final normalized in normalizedProperties) {
-        final name = normalized.normalizedName;
-        final modelType = normalized.property.model;
-
-        final expression = buildSimpleValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: !normalized.property.isNullable,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          contextProperty: name,
-          explode: refer('explode'),
-        );
-
-        propertyAssignments.add(MapEntry(name, expression));
-      }
-
-      return Constructor(
-        (b) => b
-          ..factory = true
-          ..name = 'fromSimple'
-          ..requiredParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'value'
-                ..type = refer('String?', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.add(
-            buildBoolParameter('explode', required: true),
-          )
-          ..body = refer(className, package)
-              .call([], {
-                for (final entry in propertyAssignments) entry.key: entry.value,
-              })
-              .returned
-              .statement,
-      );
-    }
-
-    // For primitive-only AllOf models, decode from single value to all models
     final propertyAssignments = <MapEntry<String, Expression>>[];
 
     for (final normalized in normalizedProperties) {
       final name = normalized.normalizedName;
       final modelType = normalized.property.model;
-      final isNullable = normalized.property.isNullable;
 
-      propertyAssignments.add(
-        MapEntry(
-          name,
-          buildSimpleValueExpression(
-            refer('value'),
-            model: modelType,
-            isRequired: !isNullable,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-            contextProperty: name,
-            explode: refer('explode'),
-          ),
-        ),
-      );
+      final expression = isForm
+          ? buildFromFormValueExpression(
+              refer('value'),
+              model: modelType,
+              isRequired: !normalized.property.isNullable,
+              nameManager: nameManager,
+              package: package,
+              contextClass: className,
+              contextProperty: name,
+              explode: refer('explode'),
+            )
+          : buildSimpleValueExpression(
+              refer('value'),
+              model: modelType,
+              isRequired: !normalized.property.isNullable,
+              nameManager: nameManager,
+              package: package,
+              contextClass: className,
+              contextProperty: name,
+              explode: refer('explode'),
+            );
+
+      propertyAssignments.add(MapEntry(name, expression));
     }
 
     return Constructor(
       (b) => b
         ..factory = true
-        ..name = 'fromSimple'
+        ..name = constructorName
         ..requiredParameters.add(
           Parameter(
             (b) => b
@@ -1368,121 +1079,6 @@ class AllOfGenerator {
               .returned
               .statement,
         ]),
-    );
-  }
-
-  Constructor _buildFromFormConstructor(
-    String className,
-    List<({String normalizedName, Property property})> normalizedProperties,
-    AllOfModel model,
-  ) {
-    if (normalizedProperties.isEmpty) {
-      return Constructor(
-        (b) => b
-          ..factory = true
-          ..name = 'fromForm'
-          ..requiredParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'value'
-                ..type = refer('String?', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.add(
-            buildBoolParameter('explode', required: true),
-          )
-          ..body = Code('return $className();'),
-      );
-    }
-
-    if (model.hasComplexTypes) {
-      final propertyAssignments = <MapEntry<String, Expression>>[];
-
-      for (final normalized in normalizedProperties) {
-        final name = normalized.normalizedName;
-        final modelType = normalized.property.model;
-
-        final expression = buildFromFormValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: !normalized.property.isNullable,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          contextProperty: name,
-          explode: refer('explode'),
-        );
-
-        propertyAssignments.add(MapEntry(name, expression));
-      }
-
-      return Constructor(
-        (b) => b
-          ..factory = true
-          ..name = 'fromForm'
-          ..requiredParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'value'
-                ..type = refer('String?', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.add(
-            buildBoolParameter('explode', required: true),
-          )
-          ..body = refer(className, package)
-              .call([], {
-                for (final entry in propertyAssignments) entry.key: entry.value,
-              })
-              .returned
-              .statement,
-      );
-    }
-
-    final propertyAssignments = <MapEntry<String, Expression>>[];
-
-    for (final normalized in normalizedProperties) {
-      final name = normalized.normalizedName;
-      final modelType = normalized.property.model;
-      final isNullable = normalized.property.isNullable;
-
-      propertyAssignments.add(
-        MapEntry(
-          name,
-          buildFromFormValueExpression(
-            refer('value'),
-            model: modelType,
-            isRequired: !isNullable,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-            contextProperty: name,
-            explode: refer('explode'),
-          ),
-        ),
-      );
-    }
-
-    return Constructor(
-      (b) => b
-        ..factory = true
-        ..name = 'fromForm'
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'value'
-              ..type = refer('String?', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
-        ..body = refer(className, package)
-            .call([], {
-              for (final entry in propertyAssignments) entry.key: entry.value,
-            })
-            .returned
-            .statement,
     );
   }
 
@@ -2378,51 +1974,6 @@ class AllOfGenerator {
         ..optionalParameters.addAll(buildEncodingParameters())
         ..lambda = false
         ..body = Block.of(valueCollectionCode),
-    );
-  }
-
-  Method _buildToDeepObjectMethod() {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toDeepObject'
-        ..returns = TypeReference(
-          (b) => b
-            ..symbol = 'List'
-            ..url = 'dart:core'
-            ..types.add(
-              refer(
-                'ParameterEntry',
-                'package:tonik_util/tonik_util.dart',
-              ),
-            ),
-        )
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'paramName'
-              ..type = refer('String', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..body = Block.of([
-          refer('parameterProperties')
-              .call([], {
-                'allowEmpty': refer('allowEmpty'),
-                'allowLists': literalBool(false),
-              })
-              .property('toDeepObject')
-              .call(
-                [refer('paramName')],
-                {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                },
-              )
-              .returned
-              .statement,
-        ]),
     );
   }
 
