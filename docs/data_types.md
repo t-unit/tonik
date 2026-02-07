@@ -225,7 +225,9 @@ User:
 | `parameterProperties()` | ❌ excluded | ✅ included |
 | `toSimple()` / `toForm()` / `toLabel()` / `toMatrix()` | ❌ excluded | ✅ included |
 
-Properties marked `readOnly` or `writeOnly` that are listed in the schema's `required` array are automatically made optional in the generated constructor. This is necessary because these properties will be absent in at least one serialization direction.
+Properties marked `readOnly` or `writeOnly` that are listed in the schema's `required` array are automatically made nullable in the generated constructor. This is necessary because these properties will be absent in at least one serialization direction.
+
+Tonik generates a single shared model for both request and response payloads. As a result, required `readOnly`/`writeOnly` properties are also widened to nullable Dart types so the model can be constructed from either direction. This is a deliberate tradeoff and does not change the underlying JSON Schema validity rules.
 
 ```dart
 // Constructor — id and password are optional despite being "required" in spec.
