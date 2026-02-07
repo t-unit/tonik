@@ -557,10 +557,12 @@ void main() {
       };
 
       final idType = fieldsByName['id']?.type?.accept(emitter).toString();
-      final createdAtType =
-          fieldsByName['createdAt']?.type?.accept(emitter).toString();
-      final passwordType =
-          fieldsByName['password']?.type?.accept(emitter).toString();
+      final createdAtType = fieldsByName['createdAt']?.type
+          ?.accept(emitter)
+          .toString();
+      final passwordType = fieldsByName['password']?.type
+          ?.accept(emitter)
+          .toString();
 
       expect(idType, equals('int?'));
       expect(createdAtType, equals('String?'));

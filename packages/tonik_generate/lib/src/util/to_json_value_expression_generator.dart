@@ -53,8 +53,7 @@ Expression _buildSerializationExpression(
   bool isNullable, {
   bool forceNonNullReceiver = false,
 }) {
-  final directReceiver =
-      forceNonNullReceiver ? receiver.nullChecked : receiver;
+  final directReceiver = forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
       !forceNonNullReceiver &&
       (isNullable || (model is EnumModel && model.isNullable));

@@ -117,10 +117,8 @@ class ClassGenerator {
 
     final sortedProperties = [...normalizedProperties]
       ..sort((a, b) {
-        final aRequired =
-            a.property.isRequired && !a.property.isReadOnly;
-        final bRequired =
-            b.property.isRequired && !b.property.isReadOnly;
+        final aRequired = a.property.isRequired && !a.property.isReadOnly;
+        final bRequired = b.property.isRequired && !b.property.isReadOnly;
         if (aRequired != bRequired) {
           return aRequired ? -1 : 1;
         }
@@ -157,8 +155,7 @@ class ClassGenerator {
                       ..name = prop.normalizedName
                       ..named = true
                       ..required =
-                          prop.property.isRequired &&
-                          !prop.property.isReadOnly
+                          prop.property.isRequired && !prop.property.isReadOnly
                       ..toThis = true,
                   ),
                 ),
@@ -177,9 +174,7 @@ class ClassGenerator {
           _buildCurrentEncodingShapeGetter(),
           _buildParameterPropertiesMethod(
             model,
-            normalizedProperties
-                .where((p) => !p.property.isReadOnly)
-                .toList(),
+            normalizedProperties.where((p) => !p.property.isReadOnly).toList(),
           ),
           _buildToSimpleMethod(),
           _buildToFormMethod(),
@@ -250,13 +245,12 @@ class ClassGenerator {
   }
 
   Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
-    final readProperties =
-        model.properties.where((p) => !p.isWriteOnly).toList();
+    final readProperties = model.properties
+        .where((p) => !p.isWriteOnly)
+        .toList();
     final normalizedProperties = normalizeProperties(readProperties);
     final writeOnlyRequiredNames = normalizeProperties(
-      model.properties
-          .where((p) => p.isWriteOnly && p.isRequired)
-          .toList(),
+      model.properties.where((p) => p.isWriteOnly && p.isRequired).toList(),
     ).map((p) => p.normalizedName).toList();
 
     final canBeSimplyEncoded = readProperties.every((property) {
@@ -333,8 +327,7 @@ class ClassGenerator {
       final normalizedName = prop.normalizedName;
       final propertyName = prop.property.name;
       final modelType = prop.property.model;
-      final isRequired =
-          prop.property.isRequired && !prop.property.isWriteOnly;
+      final isRequired = prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
@@ -376,7 +369,7 @@ class ClassGenerator {
             }),
           )
           .statement,
-  
+
       refer(className, package).call([], constructorArgs).returned.statement,
     ]);
   }
@@ -398,9 +391,7 @@ class ClassGenerator {
 
   Code _buildFromJsonBody(String className, ClassModel model) {
     final normalizedProperties = normalizeProperties(
-      model.properties
-          .where((p) => !p.isWriteOnly)
-          .toList(),
+      model.properties.where((p) => !p.isWriteOnly).toList(),
     );
 
     // If there are no readable properties, throw for writeOnly-only models.
@@ -426,8 +417,7 @@ class ClassGenerator {
       final property = prop.property;
       final normalizedName = prop.normalizedName;
       final jsonKey = property.name;
-      final requiredInResponse =
-          property.isRequired && !property.isWriteOnly;
+      final requiredInResponse = property.isRequired && !property.isWriteOnly;
 
       final valueExpr = buildFromJsonValueExpression(
         "map[r'$jsonKey']",
@@ -446,9 +436,7 @@ class ClassGenerator {
     }
 
     final writeOnlyRequiredProperties = normalizeProperties(
-      model.properties
-          .where((p) => p.isWriteOnly && p.isRequired)
-          .toList(),
+      model.properties.where((p) => p.isWriteOnly && p.isRequired).toList(),
     );
 
     for (final prop in writeOnlyRequiredProperties) {
@@ -468,9 +456,7 @@ class ClassGenerator {
 
   Method _buildToJsonMethod(ClassModel model) {
     final normalizedProperties = normalizeProperties(
-      model.properties
-          .where((p) => !p.isReadOnly)
-          .toList(),
+      model.properties.where((p) => !p.isReadOnly).toList(),
     );
 
     // Build the map entries, handling optional properties with if-blocks
@@ -478,8 +464,7 @@ class ClassGenerator {
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
       final property = prop.property;
-      final requiredInRequest =
-          property.isRequired && !property.isReadOnly;
+      final requiredInRequest = property.isRequired && !property.isReadOnly;
       final valueExpr = buildToJsonPropertyExpression(name, property);
 
       if (!requiredInRequest && !property.isNullable) {
@@ -645,8 +630,7 @@ class ClassGenerator {
     for (final prop in properties) {
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
-      final isRequired =
-          prop.property.isRequired && !prop.property.isReadOnly;
+      final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable = prop.property.isNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
@@ -764,8 +748,7 @@ if ($name != null) {
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
       final fieldModel = prop.property.model;
-      final isRequired =
-          prop.property.isRequired && !prop.property.isReadOnly;
+      final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable = prop.property.isNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
 
@@ -904,8 +887,7 @@ if ($name != null) {
     for (final prop in properties) {
       final name = prop.normalizedName;
       final propertyName = prop.property.name;
-      final isRequired =
-          prop.property.isRequired && !prop.property.isReadOnly;
+      final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable = prop.property.isNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
@@ -1059,13 +1041,12 @@ if ($name != null) {
   );
 
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
-    final readProperties =
-        model.properties.where((p) => !p.isWriteOnly).toList();
+    final readProperties = model.properties
+        .where((p) => !p.isWriteOnly)
+        .toList();
     final normalizedProperties = normalizeProperties(readProperties);
     final writeOnlyRequiredNames = normalizeProperties(
-      model.properties
-          .where((p) => p.isWriteOnly && p.isRequired)
-          .toList(),
+      model.properties.where((p) => p.isWriteOnly && p.isRequired).toList(),
     ).map((p) => p.normalizedName).toList();
 
     final canBeFormEncoded = readProperties.every((property) {
@@ -1141,8 +1122,7 @@ if ($name != null) {
       final normalizedName = prop.normalizedName;
       final propertyName = prop.property.name;
       final modelType = prop.property.model;
-      final isRequired =
-          prop.property.isRequired && !prop.property.isWriteOnly;
+      final isRequired = prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(

@@ -361,7 +361,7 @@ void main() {
         String? discriminatorValue;
 
         if (bool != null) {
-          final Object? boolJson = bool;
+          final Object? boolJson = bool!;
           if (boolJson is Map<String, Object?>) {
             mapValues.add(boolJson);
           } else {
@@ -369,7 +369,7 @@ void main() {
           }
         }
         if (int != null) {
-          final Object? intJson = int;
+          final Object? intJson = int!;
           if (intJson is Map<String, Object?>) {
             mapValues.add(intJson);
           } else {
@@ -377,7 +377,7 @@ void main() {
           }
         }
         if (string != null) {
-          final Object? stringJson = string;
+          final Object? stringJson = string!;
           if (stringJson is Map<String, Object?>) {
             mapValues.add(stringJson);
           } else {
@@ -467,7 +467,7 @@ void main() {
         String? discriminatorValue;
 
         if (string != null) {
-          final Object? stringJson = string;
+          final Object? stringJson = string!;
           if (stringJson is Map<String, Object?>) {
             mapValues.add(stringJson);
               discriminatorValue ??= r'str';
