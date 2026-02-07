@@ -103,6 +103,7 @@ class AllOfGenerator {
     final copyWithResult = _buildCopyWith(
       actualClassName,
       normalizedProperties,
+      model,
     );
 
     return [
@@ -153,7 +154,7 @@ class AllOfGenerator {
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
-        _buildCopyWith(actualClassName, normalizedProperties)?.getter;
+        _buildCopyWith(actualClassName, normalizedProperties, model)?.getter;
 
     return Class(
       (b) {
@@ -176,54 +177,100 @@ class AllOfGenerator {
           );
         }
 
+        final encodingExceptionBody = generateEncodingExceptionExpression(
+          '$actualClassName is read-only and cannot be encoded.',
+          raw: true,
+        ).code;
+
         b
-          ..constructors.add(_buildDefaultConstructor(normalizedProperties))
+          ..constructors.add(
+            _buildDefaultConstructor(normalizedProperties, model),
+          )
           ..constructors.addAll([
-            _buildFromSimpleConstructor(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildFromFormConstructor(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildFromJsonConstructor(actualClassName, normalizedProperties),
+            if (model.isWriteOnly)
+              _buildWriteOnlyFromSimpleConstructor(actualClassName)
+            else
+              _buildFromSimpleConstructor(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isWriteOnly)
+              _buildWriteOnlyFromFormConstructor(actualClassName)
+            else
+              _buildFromFormConstructor(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isWriteOnly)
+              _buildWriteOnlyFromJsonConstructor(actualClassName)
+            else
+              _buildFromJsonConstructor(
+                actualClassName,
+                normalizedProperties,
+              ),
           ])
           ..methods.addAll([
-            _buildCurrentEncodingShapeGetter(model, normalizedProperties),
-            _buildToJsonMethod(actualClassName, model, normalizedProperties),
-            _buildParameterPropertiesMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToSimpleMethod(
-              normalizedProperties,
-              model,
-            ),
-            _buildToFormMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToLabelMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToMatrixMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToDeepObjectMethod(),
-            _buildUriEncodeMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
+            if (model.isReadOnly)
+              _buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+            else
+              _buildCurrentEncodingShapeGetter(model, normalizedProperties),
+            if (model.isReadOnly)
+              _buildReadOnlyToJsonMethod(encodingExceptionBody)
+            else
+              _buildToJsonMethod(actualClassName, model, normalizedProperties),
+            if (model.isReadOnly)
+              _buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+            else
+              _buildParameterPropertiesMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              _buildReadOnlyToSimpleMethod(encodingExceptionBody)
+            else
+              _buildToSimpleMethod(
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              _buildReadOnlyToFormMethod(encodingExceptionBody)
+            else
+              _buildToFormMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              _buildReadOnlyToLabelMethod(encodingExceptionBody)
+            else
+              _buildToLabelMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              _buildReadOnlyToMatrixMethod(encodingExceptionBody)
+            else
+              _buildToMatrixMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              _buildReadOnlyToDeepObjectMethod(encodingExceptionBody)
+            else
+              _buildToDeepObjectMethod(),
+            if (model.isReadOnly)
+              _buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+            else
+              _buildUriEncodeMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
             generateEqualsMethod(
               className: actualClassName,
               properties: properties,
@@ -231,7 +278,7 @@ class AllOfGenerator {
             generateHashCodeMethod(properties: properties),
             ?effectiveCopyWithGetter,
           ])
-          ..fields.addAll(_buildFields(normalizedProperties));
+          ..fields.addAll(_buildFields(normalizedProperties, model));
       },
     );
   }
@@ -265,12 +312,14 @@ class AllOfGenerator {
 
   List<Field> _buildFields(
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     return normalizedProperties.map((normalized) {
       final typeRef = typeReference(
         normalized.property.model,
         nameManager,
         package,
+        isNullableOverride: model.isReadOnly,
       );
       return Field(
         (b) => b
@@ -295,6 +344,7 @@ class AllOfGenerator {
 
   Constructor _buildDefaultConstructor(
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     return Constructor(
       (b) => b
@@ -305,11 +355,227 @@ class AllOfGenerator {
               (b) => b
                 ..name = normalized.normalizedName
                 ..named = true
-                ..required = true
+                ..required = !model.isReadOnly
                 ..toThis = true,
             );
           }),
         ),
+    );
+  }
+
+  Method _buildReadOnlyCurrentEncodingShapeGetter(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = refer(
+          'EncodingShape',
+          'package:tonik_util/tonik_util.dart',
+        )
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyToJsonMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toJson'
+        ..returns = refer('Object?', 'dart:core')
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyParameterPropertiesMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll([
+          buildBoolParameter('allowEmpty', defaultValue: true),
+          buildBoolParameter('allowLists', defaultValue: true),
+        ])
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyUriEncodeMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'uriEncode'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll([
+          Parameter(
+            (b) => b
+              ..name = 'allowEmpty'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = true,
+          ),
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..defaultTo = literalBool(false).code,
+          ),
+        ])
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Constructor _buildWriteOnlyFromJsonConstructor(String className) {
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromJson'
+        ..requiredParameters.add(
+          Parameter(
+            (p) => p
+              ..name = 'json'
+              ..type = refer('Object?', 'dart:core'),
+          ),
+        )
+        ..lambda = true
+        ..body = generateJsonDecodingExceptionExpression(
+          '$className is write-only and cannot be decoded.',
+          raw: true,
+        ).code,
+    );
+  }
+
+  Constructor _buildWriteOnlyFromSimpleConstructor(String className) {
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromSimple'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..lambda = true
+        ..body = generateSimpleDecodingExceptionExpression(
+          '$className is write-only and cannot be decoded.',
+          raw: true,
+        ).code,
+    );
+  }
+
+  Constructor _buildWriteOnlyFromFormConstructor(String className) {
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromForm'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..lambda = true
+        ..body = generateFormDecodingExceptionExpression(
+          '$className is write-only and cannot be decoded.',
+          raw: true,
+        ).code,
+    );
+  }
+
+  Method _buildReadOnlyToSimpleMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toSimple'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyToFormMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toForm'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildFormEncodingParameters())
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyToLabelMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toLabel'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyToMatrixMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toMatrix'
+        ..returns = refer('String', 'dart:core')
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyToDeepObjectMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toDeepObject'
+        ..returns = TypeReference(
+          (b) => b
+            ..symbol = 'List'
+            ..url = 'dart:core'
+            ..types.add(
+              refer(
+                'ParameterEntry',
+                'package:tonik_util/tonik_util.dart',
+              ),
+            ),
+        )
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildEncodingParameters())
+        ..lambda = true
+        ..body = exceptionBody,
     );
   }
 
@@ -2358,6 +2624,7 @@ class AllOfGenerator {
   CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     return generateCopyWith(
       className: className,
@@ -2367,10 +2634,14 @@ class AllOfGenerator {
           nameManager,
           package,
           isNullableOverride:
-              normalized.property.isNullable || !normalized.property.isRequired,
+              normalized.property.isNullable ||
+              !normalized.property.isRequired ||
+              model.isReadOnly,
         );
-        final model = normalized.property.model;
-        final resolvedModel = model is AliasModel ? model.resolved : model;
+        final propModel = normalized.property.model;
+        final resolvedModel = propModel is AliasModel
+            ? propModel.resolved
+            : propModel;
         return (
           normalizedName: normalized.normalizedName,
           typeRef: typeRef,

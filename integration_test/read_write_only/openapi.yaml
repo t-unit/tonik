@@ -154,6 +154,43 @@ paths:
                   status:
                     type: string
 
+  /server-info:
+    get:
+      operationId: getServerInfo
+      tags:
+        - read-write-only
+      summary: Get server info (readOnly allOf)
+      responses:
+        '200':
+          description: Server info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlyServerInfo'
+
+  /bulk-command:
+    post:
+      operationId: sendBulkCommand
+      tags:
+        - read-write-only
+      summary: Send a bulk command (writeOnly allOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyBulkCommand'
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
 components:
   schemas:
     User:
@@ -280,4 +317,58 @@ components:
         confirmPassword:
           type: string
         hint:
+          type: string
+
+    # Schema-level readOnly allOf: server-only combined model.
+    ReadOnlyServerInfo:
+      readOnly: true
+      allOf:
+        - $ref: '#/components/schemas/ServerIdentity'
+        - $ref: '#/components/schemas/ServerMetrics'
+
+    ServerIdentity:
+      type: object
+      required:
+        - serverId
+        - region
+      properties:
+        serverId:
+          type: string
+        region:
+          type: string
+
+    ServerMetrics:
+      type: object
+      required:
+        - cpuUsage
+        - memoryUsage
+      properties:
+        cpuUsage:
+          type: number
+        memoryUsage:
+          type: number
+
+    # Schema-level writeOnly allOf: client-only combined model.
+    WriteOnlyBulkCommand:
+      writeOnly: true
+      allOf:
+        - $ref: '#/components/schemas/CommandAuth'
+        - $ref: '#/components/schemas/CommandBody'
+
+    CommandAuth:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+
+    CommandBody:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+        payload:
           type: string

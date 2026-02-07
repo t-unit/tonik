@@ -655,4 +655,151 @@ void main() {
       expect(requestBody['body'], 'Testing writeOnly oneOf');
     });
   });
+
+  group('ReadOnlyServerInfo (allOf) - schema-level readOnly', () {
+    test('fromJson decodes all constituent model fields', () {
+      final info = ReadOnlyServerInfo.fromJson(const {
+        'serverId': 'srv-001',
+        'region': 'us-east',
+        'cpuUsage': 42.5,
+        'memoryUsage': 75.0,
+      });
+
+      expect(info.serverIdentity?.serverId, 'srv-001');
+      expect(info.serverIdentity?.region, 'us-east');
+      expect(info.serverMetrics?.cpuUsage, 42.5);
+      expect(info.serverMetrics?.memoryUsage, 75.0);
+    });
+
+    test('constructor fields are optional when readOnly', () {
+      const info = ReadOnlyServerInfo();
+      expect(info.serverIdentity, isNull);
+      expect(info.serverMetrics, isNull);
+    });
+
+    test('toJson throws EncodingException', () {
+      const info = ReadOnlyServerInfo();
+      expect(() => info.toJson(), throwsA(isA<EncodingException>()));
+    });
+
+    test('parameterProperties throws EncodingException', () {
+      const info = ReadOnlyServerInfo();
+      expect(
+        () => info.parameterProperties(),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('currentEncodingShape throws EncodingException', () {
+      const info = ReadOnlyServerInfo();
+      expect(
+        () => info.currentEncodingShape,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('uriEncode throws EncodingException', () {
+      const info = ReadOnlyServerInfo();
+      expect(
+        () => info.uriEncode(allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('fromSimple decodes normally', () {
+      final info = ReadOnlyServerInfo.fromSimple(
+        'serverId,srv-002,region,eu-west,cpuUsage,10.0,memoryUsage,50.0',
+        explode: false,
+      );
+      expect(info.serverIdentity?.serverId, 'srv-002');
+      expect(info.serverIdentity?.region, 'eu-west');
+    });
+
+    test('GET /server-info returns decoded readOnly allOf', () async {
+      final api = buildApi(responseStatus: '200');
+
+      final response = await api.getServerInfo();
+
+      final success = response as TonikSuccess<ReadOnlyServerInfo>;
+      final info = success.value;
+
+      expect(info.serverIdentity?.serverId, 'srv-001');
+      expect(info.serverIdentity?.region, 'us-east');
+      expect(info.serverMetrics?.cpuUsage, 42.5);
+      expect(info.serverMetrics?.memoryUsage, 75.0);
+    });
+  });
+
+  group('WriteOnlyBulkCommand (allOf) - schema-level writeOnly', () {
+    test('toJson encodes all constituent model fields', () {
+      const command = WriteOnlyBulkCommand(
+        commandAuth: CommandAuth(token: 'abc123'),
+        commandBody: CommandBody(action: 'delete', payload: 'item-42'),
+      );
+      final json = command.toJson()! as Map;
+
+      expect(json['token'], 'abc123');
+      expect(json['action'], 'delete');
+      expect(json['payload'], 'item-42');
+    });
+
+    test('fromJson throws JsonDecodingException', () {
+      expect(
+        () => WriteOnlyBulkCommand.fromJson(const {
+          'token': 'abc',
+          'action': 'delete',
+        }),
+        throwsA(isA<JsonDecodingException>()),
+      );
+    });
+
+    test('fromSimple throws SimpleDecodingException', () {
+      expect(
+        () => WriteOnlyBulkCommand.fromSimple(
+          'token,abc,action,delete',
+          explode: false,
+        ),
+        throwsA(isA<SimpleDecodingException>()),
+      );
+    });
+
+    test('fromForm throws FormDecodingException', () {
+      expect(
+        () => WriteOnlyBulkCommand.fromForm(
+          'token=abc&action=delete',
+          explode: true,
+        ),
+        throwsA(isA<FormDecodingException>()),
+      );
+    });
+
+    test('parameterProperties works normally', () {
+      const command = WriteOnlyBulkCommand(
+        commandAuth: CommandAuth(token: 'abc123'),
+        commandBody: CommandBody(action: 'create'),
+      );
+      final params = command.parameterProperties();
+      expect(params['token'], 'abc123');
+      expect(params['action'], 'create');
+    });
+
+    test('POST /bulk-command sends writeOnly allOf command', () async {
+      final api = buildApi(responseStatus: '200');
+
+      final response = await api.sendBulkCommand(
+        body: const WriteOnlyBulkCommand(
+          commandAuth: CommandAuth(token: 'secret-token'),
+          commandBody: CommandBody(action: 'restart', payload: 'server-1'),
+        ),
+      );
+
+      final success = response as TonikSuccess<BulkCommandPost200BodyModel>;
+      final requestBody =
+          success.response.requestOptions.data as Map<String, dynamic>;
+
+      expect(requestBody['token'], 'secret-token');
+      expect(requestBody['action'], 'restart');
+      expect(requestBody['payload'], 'server-1');
+    });
+  });
 }
