@@ -192,6 +192,56 @@ const arrayForm = ArrayForm(colors: ['red', 'green']);
 
 Map custom content types to form encoding in [configuration](configuration.md#content-type-mapping).
 
+### readOnly / writeOnly Properties
+
+OpenAPI's `readOnly` and `writeOnly` keywords control which serialization direction a property participates in. Tonik enforces these at code-generation time.
+
+```yaml
+User:
+  type: object
+  required: [id, name, password]
+  properties:
+    id:
+      type: integer
+      readOnly: true      # server-generated, never sent in requests
+    name:
+      type: string
+    password:
+      type: string
+      writeOnly: true     # sent in requests, never returned in responses
+    createdAt:
+      type: string
+      readOnly: true
+```
+
+#### Generated behavior
+
+| Method | readOnly properties | writeOnly properties |
+|--------|--------------------|--------------------|
+| Constructor | ✅ included (optional) | ✅ included (optional) |
+| `toJson()` | ❌ excluded | ✅ included |
+| `fromJson()` | ✅ included | ❌ excluded |
+| `fromSimple()` / `fromForm()` | ✅ included | ❌ excluded |
+| `parameterProperties()` | ❌ excluded | ✅ included |
+| `toSimple()` / `toForm()` / `toLabel()` / `toMatrix()` | ❌ excluded | ✅ included |
+
+Properties marked `readOnly` or `writeOnly` that are listed in the schema's `required` array are automatically made nullable in the generated constructor. This is necessary because these properties will be absent in at least one serialization direction.
+
+Tonik generates a single shared model for both request and response payloads. As a result, required `readOnly`/`writeOnly` properties are also widened to nullable Dart types so the model can be constructed from either direction. This is a deliberate tradeoff and does not change the underlying JSON Schema validity rules.
+
+```dart
+// Constructor — id and password are optional despite being "required" in spec.
+const user = User(name: 'Alice', password: 'secret');
+
+// toJson excludes readOnly fields.
+user.toJson();  // {'name': 'Alice', 'password': 'secret'}
+
+// fromJson excludes writeOnly fields.
+final parsed = User.fromJson({'id': 1, 'name': 'Alice', 'password': 'ignored'});
+parsed.id;        // 1
+parsed.password;  // null
+```
+
 ### $ref with Siblings (OAS 3.1)
 
 OpenAPI 3.1 adopts JSON Schema 2020-12 behavior where `$ref` can have sibling keywords applied alongside the referenced schema. This differs from OAS 3.0 where `$ref` consumed the entire schema object.

@@ -122,4 +122,157 @@ void main() {
       expect(schema.contentMediaType, 'application/json');
     });
   });
+
+  group('Schema readOnly parsing', () {
+    test('parses readOnly: true from JSON', () {
+      final json = {
+        'type': 'string',
+        'readOnly': true,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isReadOnly, isTrue);
+    });
+
+    test('parses readOnly: false from JSON', () {
+      final json = {
+        'type': 'string',
+        'readOnly': false,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isReadOnly, isFalse);
+    });
+
+    test('defaults to null when readOnly is not present', () {
+      final json = {
+        'type': 'string',
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isReadOnly, isNull);
+    });
+
+    test('returns null for boolean schema', () {
+      final schema = Schema.fromJson(true);
+
+      expect(schema.isReadOnly, isNull);
+    });
+
+    test('returns null for bare string schema', () {
+      final schema = Schema.fromJson('string');
+
+      expect(schema.isReadOnly, isNull);
+    });
+  });
+
+  group('Schema writeOnly parsing', () {
+    test('parses writeOnly: true from JSON', () {
+      final json = {
+        'type': 'string',
+        'writeOnly': true,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isWriteOnly, isTrue);
+    });
+
+    test('parses writeOnly: false from JSON', () {
+      final json = {
+        'type': 'string',
+        'writeOnly': false,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isWriteOnly, isFalse);
+    });
+
+    test('defaults to null when writeOnly is not present', () {
+      final json = {
+        'type': 'string',
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isWriteOnly, isNull);
+    });
+
+    test('returns null for boolean schema', () {
+      final schema = Schema.fromJson(true);
+
+      expect(schema.isWriteOnly, isNull);
+    });
+
+    test('returns null for bare string schema', () {
+      final schema = Schema.fromJson('string');
+
+      expect(schema.isWriteOnly, isNull);
+    });
+  });
+
+  group('Schema readOnly and writeOnly together', () {
+    test('parses both readOnly and writeOnly from JSON', () {
+      final json = {
+        'type': 'string',
+        'readOnly': true,
+        'writeOnly': true,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isReadOnly, isTrue);
+      expect(schema.isWriteOnly, isTrue);
+    });
+
+    test('parses readOnly without writeOnly', () {
+      final json = {
+        'type': 'integer',
+        'readOnly': true,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isReadOnly, isTrue);
+      expect(schema.isWriteOnly, isNull);
+    });
+
+    test('parses writeOnly without readOnly', () {
+      final json = {
+        'type': 'string',
+        'writeOnly': true,
+      };
+
+      final schema = Schema.fromJson(json);
+
+      expect(schema.isReadOnly, isNull);
+      expect(schema.isWriteOnly, isTrue);
+    });
+
+    test('parses readOnly on object schema with properties', () {
+      final json = {
+        'type': 'object',
+        'properties': {
+          'id': {
+            'type': 'integer',
+            'readOnly': true,
+          },
+          'name': {
+            'type': 'string',
+          },
+        },
+      };
+
+      final schema = Schema.fromJson(json);
+      final idSchema = schema.properties!['id']!;
+      final nameSchema = schema.properties!['name']!;
+
+      expect(idSchema.isReadOnly, isTrue);
+      expect(nameSchema.isReadOnly, isNull);
+    });
+  });
 }

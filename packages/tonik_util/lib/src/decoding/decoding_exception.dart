@@ -66,9 +66,9 @@ class JsonDecodingException extends DecodingException {
 }
 
 /// Exception thrown when a value cannot be decoded using fromFormat.
-class FormatDecodingException extends DecodingException {
-  /// Creates a new [FormatDecodingException] with the specified [message].
-  const FormatDecodingException(super.message);
+class FormDecodingException extends DecodingException {
+  /// Creates a new [FormDecodingException] with the specified [message].
+  const FormDecodingException(super.message);
 }
 
 /// Exception thrown when a response body cannot be decoded due to

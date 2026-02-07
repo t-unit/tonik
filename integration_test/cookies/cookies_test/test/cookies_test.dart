@@ -9,7 +9,6 @@ void main() {
   late ImposterServer imposterServer;
   late String baseUrl;
 
-
   setUpAll(() async {
     imposterServer = await setupImposterServer();
     baseUrl = 'http://localhost:${imposterServer.port}/v1';

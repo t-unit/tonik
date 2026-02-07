@@ -1,16 +1,14 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
+import 'package:tonik_generate/src/util/composite_guard_builders.dart';
+import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
-import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -32,53 +30,13 @@ class AllOfGenerator {
   final String package;
 
   ({String code, String filename}) generate(AllOfModel model) {
-    final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(
-        additionalImports: ['package:tonik_util/tonik_util.dart'],
-      ),
-      orderDirectives: true,
-      useNullSafetySyntax: true,
+    return generateCompositeLibrary(
+      model: model,
+      isNullable: model.isNullable,
+      nameManager: nameManager,
+      generateClasses: (actualClassName) =>
+          generateClasses(model, actualClassName),
     );
-
-    final publicClassName = nameManager.modelName(model);
-    final snakeCaseName = publicClassName.toSnakeCase();
-
-    // Generate unique name for nullable allOf with Raw prefix to allow
-    // using a typedef to express the nullable type.
-    final actualClassName = model.isNullable
-        ? nameManager.modelName(
-            AliasModel(
-              name: '\$Raw$publicClassName',
-              model: model,
-              context: model.context,
-            ),
-          )
-        : publicClassName;
-
-    final generatedClasses = generateClasses(model, actualClassName);
-
-    final library = Library((b) {
-      b.body.addAll(generatedClasses);
-
-      // Add typedef for nullable allOf.
-      if (model.isNullable) {
-        b.body.add(
-          TypeDef(
-            (b) => b
-              ..name = publicClassName
-              ..definition = refer('$actualClassName?'),
-          ),
-        );
-      }
-    });
-
-    final formatter = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    );
-
-    final code = formatter.formatWithHeader(library.accept(emitter).toString());
-
-    return (code: code, filename: '$snakeCaseName.dart');
   }
 
   /// Generates the main class and the copyWith infrastructure classes.
@@ -103,6 +61,7 @@ class AllOfGenerator {
     final copyWithResult = _buildCopyWith(
       actualClassName,
       normalizedProperties,
+      model,
     );
 
     return [
@@ -153,7 +112,7 @@ class AllOfGenerator {
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
-        _buildCopyWith(actualClassName, normalizedProperties)?.getter;
+        _buildCopyWith(actualClassName, normalizedProperties, model)?.getter;
 
     return Class(
       (b) {
@@ -176,54 +135,102 @@ class AllOfGenerator {
           );
         }
 
+        final encodingExceptionBody = generateEncodingExceptionExpression(
+          '$actualClassName is read-only and cannot be encoded.',
+          raw: true,
+        ).code;
+
         b
-          ..constructors.add(_buildDefaultConstructor(normalizedProperties))
+          ..constructors.add(
+            _buildDefaultConstructor(normalizedProperties, model),
+          )
           ..constructors.addAll([
-            _buildFromSimpleConstructor(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildFromFormConstructor(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildFromJsonConstructor(actualClassName, normalizedProperties),
+            if (model.isWriteOnly)
+              buildWriteOnlyFromSimpleConstructor(actualClassName)
+            else
+              _buildFromValueConstructor(
+                isForm: false,
+                className: actualClassName,
+                normalizedProperties: normalizedProperties,
+                model: model,
+              ),
+            if (model.isWriteOnly)
+              buildWriteOnlyFromFormConstructor(actualClassName)
+            else
+              _buildFromValueConstructor(
+                isForm: true,
+                className: actualClassName,
+                normalizedProperties: normalizedProperties,
+                model: model,
+              ),
+            if (model.isWriteOnly)
+              buildWriteOnlyFromJsonConstructor(actualClassName)
+            else
+              _buildFromJsonConstructor(
+                actualClassName,
+                normalizedProperties,
+              ),
           ])
           ..methods.addAll([
-            _buildCurrentEncodingShapeGetter(model, normalizedProperties),
-            _buildToJsonMethod(actualClassName, model, normalizedProperties),
-            _buildParameterPropertiesMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToSimpleMethod(
-              normalizedProperties,
-              model,
-            ),
-            _buildToFormMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToLabelMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToMatrixMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
-            _buildToDeepObjectMethod(),
-            _buildUriEncodeMethod(
-              actualClassName,
-              normalizedProperties,
-              model,
-            ),
+            if (model.isReadOnly)
+              buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+            else
+              _buildCurrentEncodingShapeGetter(model, normalizedProperties),
+            if (model.isReadOnly)
+              buildReadOnlyToJsonMethod(encodingExceptionBody)
+            else
+              _buildToJsonMethod(actualClassName, model, normalizedProperties),
+            if (model.isReadOnly)
+              buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+            else
+              _buildParameterPropertiesMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              buildReadOnlyToSimpleMethod(encodingExceptionBody)
+            else
+              _buildToSimpleMethod(
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              buildReadOnlyToFormMethod(encodingExceptionBody)
+            else
+              _buildToFormMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              buildReadOnlyToLabelMethod(encodingExceptionBody)
+            else
+              _buildToLabelMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              buildReadOnlyToMatrixMethod(encodingExceptionBody)
+            else
+              _buildToMatrixMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
+            if (model.isReadOnly)
+              buildReadOnlyToDeepObjectMethod(encodingExceptionBody)
+            else
+              buildToDeepObjectMethod(),
+            if (model.isReadOnly)
+              buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+            else
+              _buildUriEncodeMethod(
+                actualClassName,
+                normalizedProperties,
+                model,
+              ),
             generateEqualsMethod(
               className: actualClassName,
               properties: properties,
@@ -231,7 +238,7 @@ class AllOfGenerator {
             generateHashCodeMethod(properties: properties),
             ?effectiveCopyWithGetter,
           ])
-          ..fields.addAll(_buildFields(normalizedProperties));
+          ..fields.addAll(_buildFields(normalizedProperties, model));
       },
     );
   }
@@ -265,12 +272,14 @@ class AllOfGenerator {
 
   List<Field> _buildFields(
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     return normalizedProperties.map((normalized) {
       final typeRef = typeReference(
         normalized.property.model,
         nameManager,
         package,
+        isNullableOverride: model.isReadOnly,
       );
       return Field(
         (b) => b
@@ -295,6 +304,7 @@ class AllOfGenerator {
 
   Constructor _buildDefaultConstructor(
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     return Constructor(
       (b) => b
@@ -305,7 +315,7 @@ class AllOfGenerator {
               (b) => b
                 ..name = normalized.normalizedName
                 ..named = true
-                ..required = true
+                ..required = !model.isReadOnly
                 ..toThis = true,
             );
           }),
@@ -659,16 +669,21 @@ class AllOfGenerator {
     }
   }
 
-  Constructor _buildFromSimpleConstructor(
-    String className,
-    List<({String normalizedName, Property property})> normalizedProperties,
-    AllOfModel model,
-  ) {
+  /// Builds a fromSimple or fromForm factory constructor for allOf.
+  Constructor _buildFromValueConstructor({
+    required bool isForm,
+    required String className,
+    required List<({String normalizedName, Property property})>
+    normalizedProperties,
+    required AllOfModel model,
+  }) {
+    final constructorName = isForm ? 'fromForm' : 'fromSimple';
+
     if (normalizedProperties.isEmpty) {
       return Constructor(
         (b) => b
           ..factory = true
-          ..name = 'fromSimple'
+          ..name = constructorName
           ..requiredParameters.add(
             Parameter(
               (b) => b
@@ -683,79 +698,41 @@ class AllOfGenerator {
       );
     }
 
-    if (model.hasComplexTypes) {
-      final propertyAssignments = <MapEntry<String, Expression>>[];
-
-      for (final normalized in normalizedProperties) {
-        final name = normalized.normalizedName;
-        final modelType = normalized.property.model;
-
-        final expression = buildSimpleValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: !normalized.property.isNullable,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          contextProperty: name,
-          explode: refer('explode'),
-        );
-
-        propertyAssignments.add(MapEntry(name, expression));
-      }
-
-      return Constructor(
-        (b) => b
-          ..factory = true
-          ..name = 'fromSimple'
-          ..requiredParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'value'
-                ..type = refer('String?', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.add(
-            buildBoolParameter('explode', required: true),
-          )
-          ..body = refer(className, package)
-              .call([], {
-                for (final entry in propertyAssignments) entry.key: entry.value,
-              })
-              .returned
-              .statement,
-      );
-    }
-
-    // For primitive-only AllOf models, decode from single value to all models
     final propertyAssignments = <MapEntry<String, Expression>>[];
 
     for (final normalized in normalizedProperties) {
       final name = normalized.normalizedName;
       final modelType = normalized.property.model;
-      final isNullable = normalized.property.isNullable;
 
-      propertyAssignments.add(
-        MapEntry(
-          name,
-          buildSimpleValueExpression(
-            refer('value'),
-            model: modelType,
-            isRequired: !isNullable,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-            contextProperty: name,
-            explode: refer('explode'),
-          ),
-        ),
-      );
+      final expression = isForm
+          ? buildFromFormValueExpression(
+              refer('value'),
+              model: modelType,
+              isRequired: !normalized.property.isNullable,
+              nameManager: nameManager,
+              package: package,
+              contextClass: className,
+              contextProperty: name,
+              explode: refer('explode'),
+            )
+          : buildSimpleValueExpression(
+              refer('value'),
+              model: modelType,
+              isRequired: !normalized.property.isNullable,
+              nameManager: nameManager,
+              package: package,
+              contextClass: className,
+              contextProperty: name,
+              explode: refer('explode'),
+            );
+
+      propertyAssignments.add(MapEntry(name, expression));
     }
 
     return Constructor(
       (b) => b
         ..factory = true
-        ..name = 'fromSimple'
+        ..name = constructorName
         ..requiredParameters.add(
           Parameter(
             (b) => b
@@ -1102,121 +1079,6 @@ class AllOfGenerator {
               .returned
               .statement,
         ]),
-    );
-  }
-
-  Constructor _buildFromFormConstructor(
-    String className,
-    List<({String normalizedName, Property property})> normalizedProperties,
-    AllOfModel model,
-  ) {
-    if (normalizedProperties.isEmpty) {
-      return Constructor(
-        (b) => b
-          ..factory = true
-          ..name = 'fromForm'
-          ..requiredParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'value'
-                ..type = refer('String?', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.add(
-            buildBoolParameter('explode', required: true),
-          )
-          ..body = Code('return $className();'),
-      );
-    }
-
-    if (model.hasComplexTypes) {
-      final propertyAssignments = <MapEntry<String, Expression>>[];
-
-      for (final normalized in normalizedProperties) {
-        final name = normalized.normalizedName;
-        final modelType = normalized.property.model;
-
-        final expression = buildFromFormValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: !normalized.property.isNullable,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          contextProperty: name,
-          explode: refer('explode'),
-        );
-
-        propertyAssignments.add(MapEntry(name, expression));
-      }
-
-      return Constructor(
-        (b) => b
-          ..factory = true
-          ..name = 'fromForm'
-          ..requiredParameters.add(
-            Parameter(
-              (b) => b
-                ..name = 'value'
-                ..type = refer('String?', 'dart:core'),
-            ),
-          )
-          ..optionalParameters.add(
-            buildBoolParameter('explode', required: true),
-          )
-          ..body = refer(className, package)
-              .call([], {
-                for (final entry in propertyAssignments) entry.key: entry.value,
-              })
-              .returned
-              .statement,
-      );
-    }
-
-    final propertyAssignments = <MapEntry<String, Expression>>[];
-
-    for (final normalized in normalizedProperties) {
-      final name = normalized.normalizedName;
-      final modelType = normalized.property.model;
-      final isNullable = normalized.property.isNullable;
-
-      propertyAssignments.add(
-        MapEntry(
-          name,
-          buildFromFormValueExpression(
-            refer('value'),
-            model: modelType,
-            isRequired: !isNullable,
-            nameManager: nameManager,
-            package: package,
-            contextClass: className,
-            contextProperty: name,
-            explode: refer('explode'),
-          ),
-        ),
-      );
-    }
-
-    return Constructor(
-      (b) => b
-        ..factory = true
-        ..name = 'fromForm'
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'value'
-              ..type = refer('String?', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
-        ..body = refer(className, package)
-            .call([], {
-              for (final entry in propertyAssignments) entry.key: entry.value,
-            })
-            .returned
-            .statement,
     );
   }
 
@@ -2115,51 +1977,6 @@ class AllOfGenerator {
     );
   }
 
-  Method _buildToDeepObjectMethod() {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toDeepObject'
-        ..returns = TypeReference(
-          (b) => b
-            ..symbol = 'List'
-            ..url = 'dart:core'
-            ..types.add(
-              refer(
-                'ParameterEntry',
-                'package:tonik_util/tonik_util.dart',
-              ),
-            ),
-        )
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'paramName'
-              ..type = refer('String', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..body = Block.of([
-          refer('parameterProperties')
-              .call([], {
-                'allowEmpty': refer('allowEmpty'),
-                'allowLists': literalBool(false),
-              })
-              .property('toDeepObject')
-              .call(
-                [refer('paramName')],
-                {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                },
-              )
-              .returned
-              .statement,
-        ]),
-    );
-  }
-
   Method _buildUriEncodeMethod(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
@@ -2358,6 +2175,7 @@ class AllOfGenerator {
   CopyWithResult? _buildCopyWith(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     return generateCopyWith(
       className: className,
@@ -2367,10 +2185,14 @@ class AllOfGenerator {
           nameManager,
           package,
           isNullableOverride:
-              normalized.property.isNullable || !normalized.property.isRequired,
+              normalized.property.isNullable ||
+              !normalized.property.isRequired ||
+              model.isReadOnly,
         );
-        final model = normalized.property.model;
-        final resolvedModel = model is AliasModel ? model.resolved : model;
+        final propModel = normalized.property.model;
+        final resolvedModel = propModel is AliasModel
+            ? propModel.resolved
+            : propModel;
         return (
           normalizedName: normalized.normalizedName,
           typeRef: typeRef,

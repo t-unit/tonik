@@ -65,6 +65,8 @@ class AliasModel extends Model with NamedModel {
     this.description,
     this.isDeprecated = false,
     this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   @override
@@ -75,6 +77,8 @@ class AliasModel extends Model with NamedModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
 
   Model get resolved => switch (model) {
     final AliasModel alias => alias.resolved,
@@ -97,6 +101,8 @@ class ListModel extends Model with NamedModel {
     this.name,
     this.nameOverride,
     this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   Model content;
@@ -106,6 +112,8 @@ class ListModel extends Model with NamedModel {
   @override
   String? nameOverride;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -126,6 +134,8 @@ class ClassModel extends Model with NamedModel {
     this.nameOverride,
     this.description,
     this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   @override
@@ -137,6 +147,8 @@ class ClassModel extends Model with NamedModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -183,6 +195,8 @@ class EnumModel<T> extends Model with NamedModel {
     this.nameOverride,
     this.description,
     this.fallbackValue,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   @override
@@ -197,6 +211,8 @@ class EnumModel<T> extends Model with NamedModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
 
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
@@ -217,6 +233,8 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     this.nameOverride,
     this.description,
     this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   @override
@@ -227,6 +245,8 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
   Set<Model> models;
 
   @override
@@ -250,6 +270,8 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
     this.description,
     this.discriminator,
     this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   @override
@@ -260,6 +282,8 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
   Set<DiscriminatedModel> models;
   String? discriminator;
 
@@ -283,6 +307,8 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
     this.description,
     this.discriminator,
     this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
   });
 
   @override
@@ -293,6 +319,8 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
   String? description;
   bool isDeprecated;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
   Set<DiscriminatedModel> models;
   String? discriminator;
 
@@ -410,6 +438,8 @@ class Property {
     required this.isRequired,
     required this.isNullable,
     required this.isDeprecated,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
     this.nameOverride,
     this.description,
   });
@@ -422,10 +452,13 @@ class Property {
   Model model;
   bool isRequired;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
 
   @override
   String toString() =>
       'Property{name: $name, nameOverride: $nameOverride, model: $model, '
       'isRequired: $isRequired, isNullable: $isNullable, '
-      'isDeprecated: $isDeprecated, description: $description}';
+      'isDeprecated: $isDeprecated, isReadOnly: $isReadOnly, '
+      'isWriteOnly: $isWriteOnly, description: $description}';
 }

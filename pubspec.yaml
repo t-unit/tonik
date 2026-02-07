@@ -129,6 +129,11 @@ melos:
         cd integration_test/cookies/cookies_test
         dart test
 
+    test-integration-read-write-only:
+      run: |
+        cd integration_test/read_write_only/read_write_only_test
+        dart test
+
     test-integration-all:
       run: |
         melos run test-integration-petstore
@@ -149,3 +154,4 @@ melos:
         melos run test-integration-defs
         melos run test-integration-server-variables
         melos run test-integration-cookies
+        melos run test-integration-read-write-only
