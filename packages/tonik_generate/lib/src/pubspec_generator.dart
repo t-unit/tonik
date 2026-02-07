@@ -23,7 +23,7 @@ environment:
   sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
-  big_decimal: ^0.5.0
+  big_decimal: ^0.7.0
   collection: ^1.17.0
   dio: ^5.8.0+1
   meta: ^1.16.0

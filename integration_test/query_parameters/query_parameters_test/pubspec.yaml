@@ -14,7 +14,7 @@ dependencies:
   tonik_util: ^0.4.1
 
 dev_dependencies:
-  big_decimal: ^0.5.0
+  big_decimal: ^0.7.0
   test: ^1.25.15
   test_helpers:
     path: ../../test_helpers
