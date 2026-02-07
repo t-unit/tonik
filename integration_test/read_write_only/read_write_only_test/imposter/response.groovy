@@ -71,6 +71,20 @@ if (path == '/users' && method == 'POST' && statusCode == 200) {
         .withHeader('Content-Type', 'application/json')
         .withContent('{"serverId":"srv-001","region":"us-east","cpuUsage":42.5,"memoryUsage":75.0}')
 
+// GET /sensor-reading: return a readOnly anyOf sensor reading (temperature variant).
+} else if (path == '/sensor-reading' && method == 'GET' && statusCode == 200) {
+    respond()
+        .withStatusCode(statusCode)
+        .withHeader('Content-Type', 'application/json')
+        .withContent('{"celsius":23.5,"sensorId":"temp-001"}')
+
+// POST /device-command: accept a writeOnly anyOf device command.
+} else if (path == '/device-command' && method == 'POST' && statusCode == 200) {
+    respond()
+        .withStatusCode(statusCode)
+        .withHeader('Content-Type', 'application/json')
+        .withContent('{"status":"accepted"}')
+
 // POST /bulk-command: accept a writeOnly allOf bulk command.
 } else if (path == '/bulk-command' && method == 'POST' && statusCode == 200) {
     respond()

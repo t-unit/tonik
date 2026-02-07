@@ -154,6 +154,43 @@ paths:
                   status:
                     type: string
 
+  /sensor-reading:
+    get:
+      operationId: getSensorReading
+      tags:
+        - read-write-only
+      summary: Get a sensor reading (readOnly anyOf)
+      responses:
+        '200':
+          description: A sensor reading
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlySensorReading'
+
+  /device-command:
+    post:
+      operationId: sendDeviceCommand
+      tags:
+        - read-write-only
+      summary: Send a device command (writeOnly anyOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyDeviceCommand'
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
   /server-info:
     get:
       operationId: getServerInfo
@@ -320,6 +357,61 @@ components:
           type: string
 
     # Schema-level readOnly allOf: server-only combined model.
+    TemperatureReading:
+      type: object
+      required:
+        - celsius
+        - sensorId
+      properties:
+        celsius:
+          type: number
+        sensorId:
+          type: string
+
+    HumidityReading:
+      type: object
+      required:
+        - percentage
+        - sensorId
+      properties:
+        percentage:
+          type: number
+        sensorId:
+          type: string
+
+    ReadOnlySensorReading:
+      readOnly: true
+      anyOf:
+        - $ref: '#/components/schemas/TemperatureReading'
+        - $ref: '#/components/schemas/HumidityReading'
+
+    RebootCommand:
+      type: object
+      required:
+        - deviceId
+      properties:
+        deviceId:
+          type: string
+        force:
+          type: boolean
+
+    UpdateFirmwareCommand:
+      type: object
+      required:
+        - deviceId
+        - firmwareUrl
+      properties:
+        deviceId:
+          type: string
+        firmwareUrl:
+          type: string
+
+    WriteOnlyDeviceCommand:
+      writeOnly: true
+      anyOf:
+        - $ref: '#/components/schemas/RebootCommand'
+        - $ref: '#/components/schemas/UpdateFirmwareCommand'
+
     ReadOnlyServerInfo:
       readOnly: true
       allOf:

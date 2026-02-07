@@ -205,17 +205,23 @@ class AnyOfGenerator {
         ),
     );
 
-    final fromJsonCtor = _buildFromJsonConstructor(actualClassName, normalized);
+    final fromJsonCtor = model.isWriteOnly
+        ? _buildWriteOnlyFromJsonConstructor(actualClassName)
+        : _buildFromJsonConstructor(actualClassName, normalized);
 
-    final fromSimpleCtor = _buildFromSimpleConstructor(
-      actualClassName,
-      normalized,
-    );
+    final fromSimpleCtor = model.isWriteOnly
+        ? _buildWriteOnlyFromSimpleConstructor(actualClassName)
+        : _buildFromSimpleConstructor(
+            actualClassName,
+            normalized,
+          );
 
-    final fromFormCtor = _buildFromFormConstructor(
-      actualClassName,
-      normalized,
-    );
+    final fromFormCtor = model.isWriteOnly
+        ? _buildWriteOnlyFromFormConstructor(actualClassName)
+        : _buildFromFormConstructor(
+            actualClassName,
+            normalized,
+          );
 
     final propsForEquality = normalized
         .map(
@@ -247,21 +253,52 @@ class AnyOfGenerator {
           );
         }
 
+        final encodingExceptionBody = generateEncodingExceptionExpression(
+          '$actualClassName is read-only and cannot be encoded.',
+          raw: true,
+        ).code;
+
         b
           ..constructors.add(defaultCtor)
           ..constructors.add(fromJsonCtor)
           ..constructors.add(fromSimpleCtor)
           ..constructors.add(fromFormCtor)
           ..methods.addAll([
-            _buildCurrentEncodingShapeGetter(actualClassName, normalized),
-            _buildToJsonMethod(actualClassName, model, normalized),
-            _buildParameterPropertiesMethod(actualClassName, model, normalized),
+            if (model.isReadOnly)
+              _buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+            else
+              _buildCurrentEncodingShapeGetter(actualClassName, normalized),
+            Method(
+              (b) => b
+                ..annotations.add(refer('override', 'dart:core'))
+                ..name = 'toJson'
+                ..returns = refer('Object?', 'dart:core')
+                ..body = model.isReadOnly
+                    ? encodingExceptionBody
+                    : _buildToJsonMethod(
+                        actualClassName,
+                        model,
+                        normalized,
+                      ).body
+                ..lambda = model.isReadOnly,
+            ),
+            if (model.isReadOnly)
+              _buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+            else
+              _buildParameterPropertiesMethod(
+                actualClassName,
+                model,
+                normalized,
+              ),
             _buildToSimpleMethod(actualClassName, model, normalized),
             _buildToFormMethod(actualClassName, model, normalized),
             _buildToLabelMethod(actualClassName, model, normalized),
             _buildToMatrixMethod(actualClassName, model, normalized),
             _buildToDeepObjectMethod(actualClassName, model, normalized),
-            _buildUriEncodeMethod(actualClassName, model, normalized),
+            if (model.isReadOnly)
+              _buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+            else
+              _buildUriEncodeMethod(actualClassName, model, normalized),
             generateEqualsMethod(
               className: actualClassName,
               properties: propsForEquality,
@@ -271,6 +308,127 @@ class AnyOfGenerator {
           ])
           ..fields.addAll(fields);
       },
+    );
+  }
+
+  Method _buildReadOnlyCurrentEncodingShapeGetter(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..name = 'currentEncodingShape'
+        ..type = MethodType.getter
+        ..returns = refer(
+          'EncodingShape',
+          'package:tonik_util/tonik_util.dart',
+        )
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyParameterPropertiesMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..name = 'parameterProperties'
+        ..returns = buildMapStringStringType()
+        ..optionalParameters.addAll([
+          buildBoolParameter('allowEmpty', defaultValue: true),
+          buildBoolParameter('allowLists', defaultValue: true),
+        ])
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Method _buildReadOnlyUriEncodeMethod(Code exceptionBody) {
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'uriEncode'
+        ..returns = refer('String', 'dart:core')
+        ..optionalParameters.addAll([
+          Parameter(
+            (b) => b
+              ..name = 'allowEmpty'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..required = true,
+          ),
+          Parameter(
+            (b) => b
+              ..name = 'useQueryComponent'
+              ..type = refer('bool', 'dart:core')
+              ..named = true
+              ..defaultTo = literalBool(false).code,
+          ),
+        ])
+        ..lambda = true
+        ..body = exceptionBody,
+    );
+  }
+
+  Constructor _buildWriteOnlyFromJsonConstructor(String className) {
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromJson'
+        ..requiredParameters.add(
+          Parameter(
+            (p) => p
+              ..name = 'json'
+              ..type = refer('Object?', 'dart:core'),
+          ),
+        )
+        ..lambda = true
+        ..body = generateJsonDecodingExceptionExpression(
+          '$className is write-only and cannot be decoded.',
+          raw: true,
+        ).code,
+    );
+  }
+
+  Constructor _buildWriteOnlyFromSimpleConstructor(String className) {
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromSimple'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..lambda = true
+        ..body = generateSimpleDecodingExceptionExpression(
+          '$className is write-only and cannot be decoded.',
+          raw: true,
+        ).code,
+    );
+  }
+
+  Constructor _buildWriteOnlyFromFormConstructor(String className) {
+    return Constructor(
+      (b) => b
+        ..factory = true
+        ..name = 'fromForm'
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'value'
+              ..type = refer('String?', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.add(
+          buildBoolParameter('explode', required: true),
+        )
+        ..lambda = true
+        ..body = generateFormDecodingExceptionExpression(
+          '$className is write-only and cannot be decoded.',
+          raw: true,
+        ).code,
     );
   }
 

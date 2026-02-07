@@ -802,4 +802,198 @@ void main() {
       expect(requestBody['payload'], 'server-1');
     });
   });
+
+  group('ReadOnlySensorReading (anyOf) - schema-level readOnly', () {
+    test('fromJson decodes temperature variant fields', () {
+      final reading = ReadOnlySensorReading.fromJson(const {
+        'celsius': 23.5,
+        'sensorId': 'temp-001',
+      });
+
+      expect(reading.temperatureReading, isNotNull);
+      expect(reading.temperatureReading?.celsius, 23.5);
+      expect(reading.temperatureReading?.sensorId, 'temp-001');
+    });
+
+    test('fromJson decodes humidity variant fields', () {
+      final reading = ReadOnlySensorReading.fromJson(const {
+        'percentage': 65.0,
+        'sensorId': 'hum-001',
+      });
+
+      expect(reading.humidityReading, isNotNull);
+      expect(reading.humidityReading?.percentage, 65.0);
+      expect(reading.humidityReading?.sensorId, 'hum-001');
+    });
+
+    test('fromSimple decodes normally', () {
+      final reading = ReadOnlySensorReading.fromSimple(
+        'celsius,23.5,sensorId,temp-001',
+        explode: false,
+      );
+      expect(reading.temperatureReading, isNotNull);
+    });
+
+    test('fromForm decodes normally', () {
+      final reading = ReadOnlySensorReading.fromForm(
+        'celsius=23.5&sensorId=temp-001',
+        explode: true,
+      );
+      expect(reading.temperatureReading, isNotNull);
+    });
+
+    test('toJson throws EncodingException', () {
+      final reading = ReadOnlySensorReading.fromJson(const {
+        'celsius': 23.5,
+        'sensorId': 'temp-001',
+      });
+
+      expect(
+        reading.toJson,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('parameterProperties throws EncodingException', () {
+      final reading = ReadOnlySensorReading.fromJson(const {
+        'celsius': 23.5,
+        'sensorId': 'temp-001',
+      });
+
+      expect(
+        reading.parameterProperties,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('currentEncodingShape throws EncodingException', () {
+      final reading = ReadOnlySensorReading.fromJson(const {
+        'celsius': 23.5,
+        'sensorId': 'temp-001',
+      });
+
+      expect(
+        () => reading.currentEncodingShape,
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('uriEncode throws EncodingException', () {
+      final reading = ReadOnlySensorReading.fromJson(const {
+        'celsius': 23.5,
+        'sensorId': 'temp-001',
+      });
+
+      expect(
+        () => reading.uriEncode(allowEmpty: true),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test(
+      'GET /sensor-reading returns decoded readOnly anyOf',
+      () async {
+        final api = buildApi(responseStatus: '200');
+
+        final response = await api.getSensorReading();
+
+        final success = response as TonikSuccess<ReadOnlySensorReading>;
+        final reading = success.value;
+
+        expect(reading.temperatureReading, isNotNull);
+        expect(reading.temperatureReading?.celsius, 23.5);
+        expect(reading.temperatureReading?.sensorId, 'temp-001');
+      },
+    );
+  });
+
+  group('WriteOnlyDeviceCommand (anyOf) - schema-level writeOnly', () {
+    test('toJson encodes reboot command fields normally', () {
+      const command = WriteOnlyDeviceCommand(
+        rebootCommand: RebootCommand(
+          deviceId: 'dev-001',
+          force: true,
+        ),
+      );
+      final json = command.toJson()! as Map;
+
+      expect(json['deviceId'], 'dev-001');
+      expect(json['force'], isTrue);
+    });
+
+    test('toJson encodes firmware update command fields normally', () {
+      const command = WriteOnlyDeviceCommand(
+        updateFirmwareCommand: UpdateFirmwareCommand(
+          deviceId: 'dev-002',
+          firmwareUrl: 'https://example.com/fw.bin',
+        ),
+      );
+      final json = command.toJson()! as Map;
+
+      expect(json['deviceId'], 'dev-002');
+      expect(json['firmwareUrl'], 'https://example.com/fw.bin');
+    });
+
+    test('fromJson throws JsonDecodingException', () {
+      expect(
+        () => WriteOnlyDeviceCommand.fromJson(const {
+          'deviceId': 'dev-001',
+          'force': true,
+        }),
+        throwsA(isA<JsonDecodingException>()),
+      );
+    });
+
+    test('fromSimple throws SimpleDecodingException', () {
+      expect(
+        () => WriteOnlyDeviceCommand.fromSimple(
+          'deviceId,dev-001,force,true',
+          explode: false,
+        ),
+        throwsA(isA<SimpleDecodingException>()),
+      );
+    });
+
+    test('fromForm throws FormDecodingException', () {
+      expect(
+        () => WriteOnlyDeviceCommand.fromForm(
+          'deviceId=dev-001&force=true',
+          explode: true,
+        ),
+        throwsA(isA<FormDecodingException>()),
+      );
+    });
+
+    test('parameterProperties works normally', () {
+      const command = WriteOnlyDeviceCommand(
+        rebootCommand: RebootCommand(
+          deviceId: 'dev-001',
+          force: true,
+        ),
+      );
+      final params = command.parameterProperties();
+      expect(params['deviceId'], 'dev-001');
+      expect(params['force'], 'true');
+    });
+
+    test('POST /device-command sends writeOnly anyOf command', () async {
+      final api = buildApi(responseStatus: '200');
+
+      final response = await api.sendDeviceCommand(
+        body: const WriteOnlyDeviceCommand(
+          rebootCommand: RebootCommand(
+            deviceId: 'dev-001',
+            force: true,
+          ),
+        ),
+      );
+
+      final success = response as TonikSuccess<DeviceCommandPost200BodyModel>;
+      final requestBody =
+          success.response.requestOptions.data as Map<String, dynamic>;
+
+      expect(requestBody['deviceId'], 'dev-001');
+      expect(requestBody['force'], isTrue);
+    });
+  });
 }
