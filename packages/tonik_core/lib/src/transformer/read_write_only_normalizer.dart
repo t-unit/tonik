@@ -6,9 +6,10 @@ import 'package:tonik_core/tonik_core.dart';
 ///
 /// Properties marked as readOnly or writeOnly are set to non-required,
 /// because they will be absent in at least one serialization direction:
-/// - writeOnly properties are excluded from deserialization (fromJson).
+/// - writeOnly properties are excluded from deserialization
+///   (fromJson, fromSimple, fromForm).
 /// - readOnly properties are excluded from serialization (toJson) and
-///   parameter encoding (fromSimple, fromForm).
+///   parameter serialization helpers (parameterProperties, toSimple, toForm).
 @immutable
 class ReadWriteOnlyNormalizer {
   const ReadWriteOnlyNormalizer();
