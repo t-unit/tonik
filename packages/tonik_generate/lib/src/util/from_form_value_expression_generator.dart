@@ -136,7 +136,7 @@ Expression buildFromFormValueExpression(
 }
 
 Expression _buildNeverModelExpression(Expression value, bool isRequired) {
-  final throwExpr = generateFormatDecodingExceptionExpression(
+  final throwExpr = generateFormDecodingExceptionExpression(
     'Cannot decode NeverModel - this type does not permit any value.',
   );
   return isRequired
@@ -288,7 +288,7 @@ Expression _buildListFromFormExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    NeverModel() => generateFormatDecodingExceptionExpression(
+    NeverModel() => generateFormDecodingExceptionExpression(
       'Cannot decode List<NeverModel> - this type does not permit any value.',
     ),
     AnyModel() => listDecode,

@@ -1,0 +1,466 @@
+openapi: 3.1.0
+info:
+  title: Read/Write Only Test API
+  description: >
+    OpenAPI specification testing readOnly and writeOnly property support.
+    Verifies that readOnly properties are excluded from request serialization
+    and writeOnly properties are excluded from response deserialization.
+  version: 1.0.0
+  contact:
+    name: Tonik Test Suite
+    url: https://github.com/tonik
+    email: test@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: read-write-only
+    description: Operations testing readOnly and writeOnly properties
+
+paths:
+  /health:
+    get:
+      operationId: health
+      tags:
+        - read-write-only
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /users:
+    post:
+      operationId: createUser
+      tags:
+        - read-write-only
+      summary: Create a user with mixed readOnly/writeOnly properties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      operationId: getUser
+      tags:
+        - read-write-only
+      summary: Get a user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /credentials:
+    post:
+      operationId: createCredentials
+      tags:
+        - read-write-only
+      summary: Create credentials (all writeOnly properties)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: Credentials created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+
+  /audit-entry:
+    post:
+      operationId: createAuditEntry
+      tags:
+        - read-write-only
+      summary: Create an audit entry (all readOnly properties)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditEntry'
+      responses:
+        '200':
+          description: Audit entry created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEntry'
+
+  /notifications/sent:
+    get:
+      operationId: getSentNotification
+      tags:
+        - read-write-only
+      summary: Get a sent notification (readOnly oneOf)
+      responses:
+        '200':
+          description: A sent notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlyNotification'
+
+  /notifications/send:
+    post:
+      operationId: sendNotification
+      tags:
+        - read-write-only
+      summary: Send a notification (writeOnly oneOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyNotification'
+      responses:
+        '200':
+          description: Notification accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /sensor-reading:
+    get:
+      operationId: getSensorReading
+      tags:
+        - read-write-only
+      summary: Get a sensor reading (readOnly anyOf)
+      responses:
+        '200':
+          description: A sensor reading
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlySensorReading'
+
+  /device-command:
+    post:
+      operationId: sendDeviceCommand
+      tags:
+        - read-write-only
+      summary: Send a device command (writeOnly anyOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyDeviceCommand'
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /server-info:
+    get:
+      operationId: getServerInfo
+      tags:
+        - read-write-only
+      summary: Get server info (readOnly allOf)
+      responses:
+        '200':
+          description: Server info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlyServerInfo'
+
+  /bulk-command:
+    post:
+      operationId: sendBulkCommand
+      tags:
+        - read-write-only
+      summary: Send a bulk command (writeOnly allOf)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyBulkCommand'
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - password
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: Server-generated user ID.
+        name:
+          type: string
+          description: User display name.
+        email:
+          type: string
+          description: Optional email address.
+        password:
+          type: string
+          writeOnly: true
+          description: User password, never returned in responses.
+        createdAt:
+          type: string
+          readOnly: true
+          description: Server-generated creation timestamp.
+
+    Credentials:
+      type: object
+      required:
+        - username
+        - password
+      description: All properties are writeOnly.
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+
+    AuditEntry:
+      type: object
+      required:
+        - entryId
+        - timestamp
+      description: All properties are readOnly.
+      properties:
+        entryId:
+          type: integer
+          readOnly: true
+        timestamp:
+          type: string
+          readOnly: true
+        action:
+          type: string
+          readOnly: true
+
+    # Variant schemas for oneOf testing.
+    NotificationEmail:
+      type: object
+      required:
+        - emailAddress
+        - subject
+      properties:
+        emailAddress:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+
+    NotificationSms:
+      type: object
+      required:
+        - phoneNumber
+        - message
+      properties:
+        phoneNumber:
+          type: string
+        message:
+          type: string
+
+    # Schema-level readOnly oneOf: represents a notification the server sent.
+    ReadOnlyNotification:
+      readOnly: true
+      oneOf:
+        - $ref: '#/components/schemas/NotificationEmail'
+        - $ref: '#/components/schemas/NotificationSms'
+
+    # Schema-level writeOnly oneOf: represents a notification request from client.
+    WriteOnlyNotification:
+      writeOnly: true
+      oneOf:
+        - $ref: '#/components/schemas/NotificationEmail'
+        - $ref: '#/components/schemas/NotificationSms'
+
+    # Schema-level readOnly (OAS 3.1): the entire schema is readOnly.
+    ServerStatus:
+      type: object
+      readOnly: true
+      required:
+        - uptime
+        - version
+      properties:
+        uptime:
+          type: integer
+        version:
+          type: string
+        region:
+          type: string
+
+    # Schema-level writeOnly (OAS 3.1): the entire schema is writeOnly.
+    PasswordChange:
+      type: object
+      writeOnly: true
+      required:
+        - newPassword
+        - confirmPassword
+      properties:
+        newPassword:
+          type: string
+        confirmPassword:
+          type: string
+        hint:
+          type: string
+
+    # Schema-level readOnly allOf: server-only combined model.
+    TemperatureReading:
+      type: object
+      required:
+        - celsius
+        - sensorId
+      properties:
+        celsius:
+          type: number
+        sensorId:
+          type: string
+
+    HumidityReading:
+      type: object
+      required:
+        - percentage
+        - sensorId
+      properties:
+        percentage:
+          type: number
+        sensorId:
+          type: string
+
+    ReadOnlySensorReading:
+      readOnly: true
+      anyOf:
+        - $ref: '#/components/schemas/TemperatureReading'
+        - $ref: '#/components/schemas/HumidityReading'
+
+    RebootCommand:
+      type: object
+      required:
+        - deviceId
+      properties:
+        deviceId:
+          type: string
+        force:
+          type: boolean
+
+    UpdateFirmwareCommand:
+      type: object
+      required:
+        - deviceId
+        - firmwareUrl
+      properties:
+        deviceId:
+          type: string
+        firmwareUrl:
+          type: string
+
+    WriteOnlyDeviceCommand:
+      writeOnly: true
+      anyOf:
+        - $ref: '#/components/schemas/RebootCommand'
+        - $ref: '#/components/schemas/UpdateFirmwareCommand'
+
+    ReadOnlyServerInfo:
+      readOnly: true
+      allOf:
+        - $ref: '#/components/schemas/ServerIdentity'
+        - $ref: '#/components/schemas/ServerMetrics'
+
+    ServerIdentity:
+      type: object
+      required:
+        - serverId
+        - region
+      properties:
+        serverId:
+          type: string
+        region:
+          type: string
+
+    ServerMetrics:
+      type: object
+      required:
+        - cpuUsage
+        - memoryUsage
+      properties:
+        cpuUsage:
+          type: number
+        memoryUsage:
+          type: number
+
+    # Schema-level writeOnly allOf: client-only combined model.
+    WriteOnlyBulkCommand:
+      writeOnly: true
+      allOf:
+        - $ref: '#/components/schemas/CommandAuth'
+        - $ref: '#/components/schemas/CommandBody'
+
+    CommandAuth:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+
+    CommandBody:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+        payload:
+          type: string

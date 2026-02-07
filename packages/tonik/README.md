@@ -145,6 +145,7 @@ See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/i
 | **Types** | Integer/string enums, `date`, `date-time` with timezone, `decimal`/`BigDecimal`, `uri`, `binary` |
 | **Parameters** | Path, query, header; all encoding styles (`form`, `simple`, `label`, `matrix`, `deepObject`, etc.) |
 | **Request Bodies** | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` |
+| **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas |
 | **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping |
 | **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays |
 

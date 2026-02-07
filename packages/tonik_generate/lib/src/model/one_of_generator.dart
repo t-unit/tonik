@@ -1,14 +1,12 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/composite_guard_builders.dart';
+import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -30,52 +28,13 @@ class OneOfGenerator {
   final String package;
 
   ({String code, String filename}) generate(OneOfModel model) {
-    final emitter = DartEmitter(
-      allocator: CorePrefixedAllocator(
-        additionalImports: ['package:tonik_util/tonik_util.dart'],
-      ),
-      orderDirectives: true,
-      useNullSafetySyntax: true,
+    return generateCompositeLibrary(
+      model: model,
+      isNullable: model.isNullable,
+      nameManager: nameManager,
+      generateClasses: (actualClassName) =>
+          generateClasses(model, actualClassName),
     );
-
-    final publicClassName = nameManager.modelName(model);
-    final snakeCaseName = publicClassName.toSnakeCase();
-
-    // Generate unique name for nullable oneOf with Raw prefix to allow
-    // using a typedef to express the nullable type.
-    final actualClassName = model.isNullable
-        ? nameManager.modelName(
-            AliasModel(
-              name: '\$Raw$publicClassName',
-              model: model,
-              context: model.context,
-            ),
-          )
-        : publicClassName;
-
-    final library = Library((b) {
-      final classes = generateClasses(model, actualClassName);
-      b.body.addAll(classes);
-
-      // Add typedef for nullable oneOf.
-      if (model.isNullable) {
-        b.body.add(
-          TypeDef(
-            (b) => b
-              ..name = publicClassName
-              ..definition = refer('$actualClassName?'),
-          ),
-        );
-      }
-    });
-
-    final formatter = DartFormatter(
-      languageVersion: DartFormatter.latestLanguageVersion,
-    );
-
-    final code = formatter.formatWithHeader(library.accept(emitter).toString());
-
-    return (code: code, filename: '$snakeCaseName.dart');
   }
 
   @visibleForTesting
@@ -139,58 +98,86 @@ class OneOfGenerator {
           );
         }
 
+        final encodingExceptionBody = generateEncodingExceptionExpression(
+          '$className is read-only and cannot be encoded.',
+          raw: true,
+        ).code;
+
         b
           ..constructors.add(Constructor((b) => b..constant = true))
           ..constructors.add(
-            _generateFromSimpleConstructor(className, model, variantNames),
+            model.isWriteOnly
+                ? buildWriteOnlyFromSimpleConstructor(className)
+                : _generateFromValueConstructor(
+                    isForm: false,
+                    className: className,
+                    model: model,
+                    variantNames: variantNames,
+                  ),
           )
           ..constructors.add(
-            _generateFromFormConstructor(className, model, variantNames),
+            model.isWriteOnly
+                ? buildWriteOnlyFromFormConstructor(className)
+                : _generateFromValueConstructor(
+                    isForm: true,
+                    className: className,
+                    model: model,
+                    variantNames: variantNames,
+                  ),
           )
           ..methods.addAll([
-            _generateCurrentEncodingShapeGetter(model, variantNames),
-            _generateParameterPropertiesMethod(
-              className,
-              model,
-              variantNames,
-            ),
+            if (model.isReadOnly)
+              buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+            else
+              _generateCurrentEncodingShapeGetter(model, variantNames),
+            if (model.isReadOnly)
+              buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+            else
+              _generateParameterPropertiesMethod(
+                className,
+                model,
+                variantNames,
+              ),
             _generateToSimpleMethod(className, model, variantNames),
             _generateToFormMethod(className, model, variantNames),
             _generateToLabelMethod(className, model, variantNames),
             _generateToMatrixMethod(className, model, variantNames),
-            _generateToDeepObjectMethod(),
-            _generateUriEncodeMethod(className, model, variantNames),
+            buildToDeepObjectMethod(),
+            if (model.isReadOnly)
+              buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+            else
+              _generateUriEncodeMethod(className, model, variantNames),
             Method(
               (b) => b
                 ..annotations.add(refer('override', 'dart:core'))
                 ..name = 'toJson'
                 ..returns = refer('Object?', 'dart:core')
-                ..body = _generateToJsonBody(
-                  className,
-                  model,
-                  variantNames,
-                )
-                ..lambda = false,
+                ..body = model.isReadOnly
+                    ? encodingExceptionBody
+                    : _generateToJsonBody(className, model, variantNames)
+                ..lambda = model.isReadOnly,
             ),
           ])
           ..constructors.add(
-            Constructor(
-              (b) => b
-                ..factory = true
-                ..name = 'fromJson'
-                ..requiredParameters.add(
-                  Parameter(
-                    (p) => p
-                      ..name = 'json'
-                      ..type = refer('Object?', 'dart:core'),
+            model.isWriteOnly
+                ? buildWriteOnlyFromJsonConstructor(className)
+                : Constructor(
+                    (b) => b
+                      ..factory = true
+                      ..name = 'fromJson'
+                      ..requiredParameters.add(
+                        Parameter(
+                          (p) => p
+                            ..name = 'json'
+                            ..type = refer('Object?', 'dart:core'),
+                        ),
+                      )
+                      ..body = _generateFromJsonBody(
+                        className,
+                        model,
+                        variantNames,
+                      ),
                   ),
-                )
-                ..body = _generateFromJsonBody(
-                  className,
-                  model,
-                  variantNames,
-                ),
-            ),
           );
       },
     );
@@ -468,11 +455,15 @@ class OneOfGenerator {
     return Block.of(blocks);
   }
 
-  Constructor _generateFromSimpleConstructor(
-    String className,
-    OneOfModel model,
-    Map<DiscriminatedModel, String> variantNames,
-  ) {
+  /// Builds a fromSimple or fromForm factory constructor for oneOf.
+  Constructor _generateFromValueConstructor({
+    required bool isForm,
+    required String className,
+    required OneOfModel model,
+    required Map<DiscriminatedModel, String> variantNames,
+  }) {
+    final constructorName = isForm ? 'fromForm' : 'fromSimple';
+    final encodingStyleName = isForm ? 'form' : 'simple';
     final bodyBlocks = <Code>[];
 
     if (model.discriminator != null) {
@@ -515,7 +506,7 @@ class OneOfGenerator {
                     nameManager.modelName(modelType),
                     package,
                   )
-                  .property('fromSimple')
+                  .property(constructorName)
                   .call(
                     [refer('value')],
                     {'explode': refer('explode')},
@@ -536,191 +527,61 @@ class OneOfGenerator {
       final tryBody = <Code>[];
 
       if (modelType is PrimitiveModel) {
-        final decodeExpr = buildSimpleValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          explode: refer('explode'),
-        );
-        tryBody.add(
-          refer(variantName).call([decodeExpr]).returned.statement,
-        );
-      } else if (modelType is ListModel && modelType.hasSimpleContent) {
-        // Lists with simple content can be decoded directly
-        final decodeExpr = buildSimpleValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          explode: refer('explode'),
-        );
-        tryBody.add(
-          refer(variantName).call([decodeExpr]).returned.statement,
-        );
-      } else if (modelType is ListModel) {
-        // Lists with complex content are not supported for simple encoding
-        continue;
-      } else {
-        final innerFromSimple =
-            refer(
-                  nameManager.modelName(modelType),
-                  package,
-                )
-                .property('fromSimple')
-                .call(
-                  [refer('value')],
-                  {'explode': refer('explode')},
-                );
-        tryBody.add(
-          refer(variantName).call([innerFromSimple]).returned.statement,
-        );
-      }
-
-      bodyBlocks.addAll([
-        const Code('try {'),
-        ...tryBody,
-        const Code('} on '),
-        refer('DecodingException', 'package:tonik_util/tonik_util.dart').code,
-        const Code(' catch (_) {} on '),
-        refer('FormatException', 'dart:core').code,
-        const Code(' catch (_) {}'),
-      ]);
-    }
-
-    bodyBlocks.add(
-      generateSimpleDecodingExceptionExpression(
-        'Invalid simple value for $className',
-      ).statement,
-    );
-
-    return Constructor(
-      (b) => b
-        ..factory = true
-        ..name = 'fromSimple'
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'value'
-              ..type = refer('String?', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.add(
-          buildBoolParameter('explode', required: true),
-        )
-        ..body = Block.of(bodyBlocks),
-    );
-  }
-
-  Constructor _generateFromFormConstructor(
-    String className,
-    OneOfModel model,
-    Map<DiscriminatedModel, String> variantNames,
-  ) {
-    final bodyBlocks = <Code>[];
-
-    if (model.discriminator != null) {
-      final hasDiscriminatedComplexTypes = model.models.any(
-        (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
-      );
-
-      if (hasDiscriminatedComplexTypes) {
-        bodyBlocks.addAll([
-          const Code('if (explode && value != null && value.isNotEmpty) {'),
-          const Code("final pairs = value.split(',');"),
-          refer('String?', 'dart:core').code,
-          const Code(' discriminator;'),
-          const Code('for (final pair in pairs) {'),
-          const Code("final parts = pair.split('=');"),
-          const Code('if (parts.length == 2) {'),
-          const Code('final key = '),
-          refer('Uri', 'dart:core').property('decodeComponent').call([
-            refer('parts').index(literalNum(0)),
-          ]).statement,
-          Code("if (key == '${model.discriminator}') {"),
-          const Code('discriminator = parts[1];'),
-          const Code('break;'),
-          const Code('}'),
-          const Code('}'),
-          const Code('}'),
-        ]);
-
-        for (final m in model.models.toSortedList().where(
-          (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
-        )) {
-          final variantName = variantNames[m]!;
-          final modelType = m.model;
-
-          bodyBlocks.addAll([
-            Code("if (discriminator == '${m.discriminatorValue}') {"),
-            const Code('return '),
-            refer(variantName).call([
-              refer(
-                    nameManager.modelName(modelType),
-                    package,
-                  )
-                  .property('fromForm')
-                  .call(
-                    [refer('value')],
-                    {'explode': refer('explode')},
-                  ),
-            ]).statement,
-            const Code('}'),
-          ]);
-        }
-
-        bodyBlocks.add(const Code('}'));
-      }
-    }
-
-    for (final m in model.models.toSortedList()) {
-      final variantName = variantNames[m]!;
-      final modelType = m.model;
-
-      final tryBody = <Code>[];
-
-      if (modelType is PrimitiveModel) {
-        final decodeExpr = buildFromFormValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          explode: refer('explode'),
-        );
+        final decodeExpr = isForm
+            ? buildFromFormValueExpression(
+                refer('value'),
+                model: modelType,
+                isRequired: true,
+                nameManager: nameManager,
+                package: package,
+                contextClass: className,
+                explode: refer('explode'),
+              )
+            : buildSimpleValueExpression(
+                refer('value'),
+                model: modelType,
+                isRequired: true,
+                nameManager: nameManager,
+                package: package,
+                contextClass: className,
+                explode: refer('explode'),
+              );
         tryBody.add(refer(variantName).call([decodeExpr]).returned.statement);
       } else if (modelType is ListModel && modelType.hasSimpleContent) {
-        // Lists with simple content can be decoded directly
-        final decodeExpr = buildFromFormValueExpression(
-          refer('value'),
-          model: modelType,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          explode: refer('explode'),
-        );
+        final decodeExpr = isForm
+            ? buildFromFormValueExpression(
+                refer('value'),
+                model: modelType,
+                isRequired: true,
+                nameManager: nameManager,
+                package: package,
+                contextClass: className,
+                explode: refer('explode'),
+              )
+            : buildSimpleValueExpression(
+                refer('value'),
+                model: modelType,
+                isRequired: true,
+                nameManager: nameManager,
+                package: package,
+                contextClass: className,
+                explode: refer('explode'),
+              );
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
         );
       } else if (modelType is ListModel) {
-        // Lists with complex content are not supported for form encoding
         continue;
       } else {
-        final innerFromForm =
+        final innerDecode =
             refer(
                   nameManager.modelName(modelType),
                   package,
                 )
-                .property('fromForm')
+                .property(constructorName)
                 .call([refer('value')], {'explode': refer('explode')});
         tryBody.add(
-          refer(variantName).call([innerFromForm]).returned.statement,
+          refer(variantName).call([innerDecode]).returned.statement,
         );
       }
 
@@ -737,14 +598,14 @@ class OneOfGenerator {
 
     bodyBlocks.add(
       generateSimpleDecodingExceptionExpression(
-        'Invalid form value for $className',
+        'Invalid $encodingStyleName value for $className',
       ).statement,
     );
 
     return Constructor(
       (b) => b
         ..factory = true
-        ..name = 'fromForm'
+        ..name = constructorName
         ..requiredParameters.add(
           Parameter(
             (b) => b
@@ -1387,51 +1248,6 @@ class OneOfGenerator {
         ..optionalParameters.addAll(buildEncodingParameters())
         ..lambda = false
         ..body = body,
-    );
-  }
-
-  Method _generateToDeepObjectMethod() {
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toDeepObject'
-        ..returns = TypeReference(
-          (b) => b
-            ..symbol = 'List'
-            ..url = 'dart:core'
-            ..types.add(
-              refer(
-                'ParameterEntry',
-                'package:tonik_util/tonik_util.dart',
-              ),
-            ),
-        )
-        ..requiredParameters.add(
-          Parameter(
-            (b) => b
-              ..name = 'paramName'
-              ..type = refer('String', 'dart:core'),
-          ),
-        )
-        ..optionalParameters.addAll(buildEncodingParameters())
-        ..body = Block.of([
-          refer('parameterProperties')
-              .call([], {
-                'allowEmpty': refer('allowEmpty'),
-                'allowLists': literalBool(false),
-              })
-              .property('toDeepObject')
-              .call(
-                [refer('paramName')],
-                {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                },
-              )
-              .returned
-              .statement,
-        ]),
     );
   }
 

@@ -11,6 +11,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 | **No name conflicts** | Schema names like `Error`, `Response`, `List` work without collisions |
 | **Integer enums** | Full support, with optional unknown-value handling |
 | **All encoding styles** | `simple`, `label`, `matrix`, `form`, `deepObject`, `spaceDelimited`, `pipeDelimited` |
+| **readOnly / writeOnly** | Properties excluded from the correct serialization direction automatically |
 | **Server variables** | URL templating with enum constraints and runtime substitution |
 | **Pure Dart** | No Java, no Docker, no external tooling |
 
@@ -155,6 +156,8 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 | Boolean schemas (`true`/`false`) | ✅ (OAS 3.1, see [Data Types](data_types.md#boolean-schemas-oas-31)) |
 | `$ref` with siblings | ✅ (OAS 3.1, see [Data Types](data_types.md#ref-with-siblings-oas-31)) |
 | `$defs` local definitions | ✅ (OAS 3.1) |
+| `readOnly` | ✅ (excluded from request serialization and parameter encoding) |
+| `writeOnly` | ✅ (excluded from response deserialization) |
 
 ### Not Supported
 

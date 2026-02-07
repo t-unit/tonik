@@ -147,6 +147,11 @@ jobs:
           cd integration_test/server_variables/server_variables_test
           dart test
 
+      - name: Run read write only integration tests
+        run: |
+          cd integration_test/read_write_only/read_write_only_test
+          dart test --concurrency=2
+
       - name: Run cookies integration tests
         run: |
           cd integration_test/cookies/cookies_test

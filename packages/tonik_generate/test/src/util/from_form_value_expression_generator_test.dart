@@ -583,7 +583,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          """throw  FormatDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
+          """throw  FormDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
         );
       });
 
@@ -602,7 +602,7 @@ void main() {
 
         expect(
           code,
-          """values['neverField'] == null ? null : throw  FormatDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
+          """values['neverField'] == null ? null : throw  FormDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
         );
       });
     });

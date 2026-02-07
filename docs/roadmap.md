@@ -7,16 +7,22 @@
   - `additionalOperations` map for non-standard HTTP methods (e.g., `COPY`, `MOVE`)
   - Reusable `mediaTypes` in Components Object
   - `prefixEncoding` / `itemEncoding` for positional multipart encoding
+  - `defaultMapping` on Discriminator for unknown discriminator values
+  - `deviceAuthorization` OAuth2 flow (RFC 8628)
+  - Tag enhancements (`summary`, `parent`, `kind` for hierarchies)
 - Support for `additionalProperties`
 - Advanced OpenAPI 3.1 features:
   - Support for `if/then/else` schemas (via custom encoding/decoding checks)
   - Support for `const` schemas
   - `prefixItems` for tuple validation
   - `dependentRequired` / `dependentSchemas`
+  - `patternProperties` for regex-matched property schemas
+  - `propertyNames` for property name validation
 - Default values
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
 - multipart/form-data
+- Example values generation from `example`/`examples`
 
 ## Non-goals
 
@@ -25,6 +31,7 @@
 - `minLength`, `maxLength`, `pattern`
 - `minItems`, `maxItems`, `uniqueItems`
 - `minProperties`, `maxProperties`
+- `contains`, `minContains`, `maxContains`
 
 **Encoding & Content:**
 - `allowReserved` support for query parameters - Dart's `Uri` class always percent-encodes reserved characters per RFC 3986 (see [URI Encoding Limitations](uri_encoding_limitations.md))
@@ -42,3 +49,5 @@
 **Other:**
 - Direct security/authentication code generation - authentication must be handled through ServerConfig interceptors (see [Authentication Guide](authentication.md))
 - Code generation for [webhooks](https://spec.openapis.org/oas/v3.1.0.html#oasWebhooks) - server→client callbacks, not relevant for client libs
+- Callback Objects - server→client callbacks, same as webhooks
+- Link Objects - HATEOAS navigation metadata, rarely used in practice
