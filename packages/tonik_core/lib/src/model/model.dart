@@ -410,6 +410,8 @@ class Property {
     required this.isRequired,
     required this.isNullable,
     required this.isDeprecated,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
     this.nameOverride,
     this.description,
   });
@@ -422,10 +424,13 @@ class Property {
   Model model;
   bool isRequired;
   bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
 
   @override
   String toString() =>
       'Property{name: $name, nameOverride: $nameOverride, model: $model, '
       'isRequired: $isRequired, isNullable: $isNullable, '
-      'isDeprecated: $isDeprecated, description: $description}';
+      'isDeprecated: $isDeprecated, isReadOnly: $isReadOnly, '
+      'isWriteOnly: $isWriteOnly, description: $description}';
 }

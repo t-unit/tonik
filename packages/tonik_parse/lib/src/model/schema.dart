@@ -28,6 +28,8 @@ class Schema {
     required this.contentEncoding,
     required this.contentMediaType,
     required this.contentSchema,
+    this.isReadOnly,
+    this.isWriteOnly,
     this.isBooleanSchema,
   });
 
@@ -132,6 +134,10 @@ class Schema {
   @SchemaConverter()
   @JsonKey(name: 'contentSchema')
   final Schema? contentSchema;
+  @JsonKey(name: 'readOnly')
+  final bool? isReadOnly;
+  @JsonKey(name: 'writeOnly')
+  final bool? isWriteOnly;
 
   /// Indicates if this schema is a boolean schema (true/false).
   ///
@@ -141,10 +147,10 @@ class Schema {
   @JsonKey(includeFromJson: false)
   final bool? isBooleanSchema;
 
-  // We ignore example, externalDocs, xml, writeOnly, readOnly, default, title,
-  // multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum,
-  // maxLength, minLength, pattern, maxItems, minItems, maxProperties,
-  // minProperties additionalProperties and externalDocs properties.
+  // We ignore example, externalDocs, xml, default, title, multipleOf, maximum,
+  // exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern,
+  // maxItems, minItems, maxProperties, minProperties, additionalProperties and
+  // externalDocs properties.
 
   @override
   String toString() =>
@@ -155,7 +161,8 @@ class Schema {
       'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems, '
       'xDartName: $xDartName, xDartEnum: $xDartEnum, '
       'contentEncoding: $contentEncoding, contentMediaType: $contentMediaType, '
-      'contentSchema: $contentSchema, isBooleanSchema: $isBooleanSchema}';
+      'contentSchema: $contentSchema, isReadOnly: $isReadOnly, '
+      'isWriteOnly: $isWriteOnly, isBooleanSchema: $isBooleanSchema}';
 }
 
 class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {

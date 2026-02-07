@@ -169,7 +169,12 @@ class ClassGenerator {
           _buildEqualsMethod(className, normalizedProperties),
           _buildHashCodeMethod(normalizedProperties),
           _buildCurrentEncodingShapeGetter(),
-          _buildParameterPropertiesMethod(model, normalizedProperties),
+          _buildParameterPropertiesMethod(
+            model,
+            normalizedProperties
+                .where((p) => !p.property.isReadOnly)
+                .toList(),
+          ),
           _buildToSimpleMethod(),
           _buildToFormMethod(),
           _buildToLabelMethod(),
@@ -239,9 +244,11 @@ class ClassGenerator {
   }
 
   Constructor _buildFromSimpleConstructor(String className, ClassModel model) {
-    final normalizedProperties = normalizeProperties(model.properties.toList());
+    final readProperties =
+        model.properties.where((p) => !p.isWriteOnly).toList();
+    final normalizedProperties = normalizeProperties(readProperties);
 
-    final canBeSimplyEncoded = model.properties.every((property) {
+    final canBeSimplyEncoded = readProperties.every((property) {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
 
@@ -361,9 +368,13 @@ class ClassGenerator {
       );
 
   Code _buildFromJsonBody(String className, ClassModel model) {
-    final normalizedProperties = normalizeProperties(model.properties.toList());
+    final normalizedProperties = normalizeProperties(
+      model.properties
+          .where((p) => !p.isWriteOnly)
+          .toList(),
+    );
 
-    // If there are no properties, just return the constructor call
+    // If there are no properties, just return the constructor call.
     if (normalizedProperties.isEmpty) {
       return Block.of([Code('return $className();')]);
     }
@@ -404,7 +415,11 @@ class ClassGenerator {
   }
 
   Method _buildToJsonMethod(ClassModel model) {
-    final normalizedProperties = normalizeProperties(model.properties.toList());
+    final normalizedProperties = normalizeProperties(
+      model.properties
+          .where((p) => !p.isReadOnly)
+          .toList(),
+    );
 
     // Build the map entries, handling optional properties with if-blocks
     final mapEntries = <Code>[];
@@ -909,9 +924,11 @@ if ($name != null) {
   );
 
   Constructor _buildFromFormConstructor(String className, ClassModel model) {
-    final normalizedProperties = normalizeProperties(model.properties.toList());
+    final readProperties =
+        model.properties.where((p) => !p.isWriteOnly).toList();
+    final normalizedProperties = normalizeProperties(readProperties);
 
-    final canBeFormEncoded = model.properties.every((property) {
+    final canBeFormEncoded = readProperties.every((property) {
       final propertyModel = property.model;
       final shape = propertyModel.encodingShape;
 

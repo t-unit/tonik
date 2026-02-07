@@ -1,0 +1,177 @@
+openapi: 3.1.0
+info:
+  title: Read/Write Only Test API
+  description: >
+    OpenAPI specification testing readOnly and writeOnly property support.
+    Verifies that readOnly properties are excluded from request serialization
+    and writeOnly properties are excluded from response deserialization.
+  version: 1.0.0
+  contact:
+    name: Tonik Test Suite
+    url: https://github.com/tonik
+    email: test@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: read-write-only
+    description: Operations testing readOnly and writeOnly properties
+
+paths:
+  /health:
+    get:
+      operationId: health
+      tags:
+        - read-write-only
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /users:
+    post:
+      operationId: createUser
+      tags:
+        - read-write-only
+      summary: Create a user with mixed readOnly/writeOnly properties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      operationId: getUser
+      tags:
+        - read-write-only
+      summary: Get a user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /credentials:
+    post:
+      operationId: createCredentials
+      tags:
+        - read-write-only
+      summary: Create credentials (all writeOnly properties)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: Credentials created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credentials'
+
+  /audit-entry:
+    post:
+      operationId: createAuditEntry
+      tags:
+        - read-write-only
+      summary: Create an audit entry (all readOnly properties)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditEntry'
+      responses:
+        '200':
+          description: Audit entry created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEntry'
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - password
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: Server-generated user ID.
+        name:
+          type: string
+          description: User display name.
+        email:
+          type: string
+          description: Optional email address.
+        password:
+          type: string
+          writeOnly: true
+          description: User password, never returned in responses.
+        createdAt:
+          type: string
+          readOnly: true
+          description: Server-generated creation timestamp.
+
+    Credentials:
+      type: object
+      required:
+        - username
+        - password
+      description: All properties are writeOnly.
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+
+    AuditEntry:
+      type: object
+      required:
+        - entryId
+        - timestamp
+      description: All properties are readOnly.
+      properties:
+        entryId:
+          type: integer
+          readOnly: true
+        timestamp:
+          type: string
+          readOnly: true
+        action:
+          type: string
+          readOnly: true

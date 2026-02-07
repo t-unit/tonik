@@ -483,6 +483,8 @@ class ModelImporter {
         contentEncoding: schema.contentEncoding,
         contentMediaType: schema.contentMediaType,
         contentSchema: schema.contentSchema,
+        isReadOnly: schema.isReadOnly,
+        isWriteOnly: schema.isWriteOnly,
       );
       return (
         discriminatorValue: null,
@@ -720,6 +722,8 @@ class ModelImporter {
       final isNullable =
           propertySchema.isNullable ?? propertySchema.type.contains('null');
       final isDeprecated = propertySchema.isDeprecated ?? false;
+      final isReadOnly = propertySchema.isReadOnly ?? false;
+      final isWriteOnly = propertySchema.isWriteOnly ?? false;
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
@@ -732,6 +736,8 @@ class ModelImporter {
         isRequired: schema.required?.contains(propertyName) ?? false,
         isNullable: isNullable,
         isDeprecated: isDeprecated,
+        isReadOnly: isReadOnly,
+        isWriteOnly: isWriteOnly,
         description: description,
       );
 
