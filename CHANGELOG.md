@@ -36,7 +36,7 @@ Packages with other changes:
 
 #### `tonik_parse` - `v0.5.0`
 
- - **FIX**: proper default vlaue for explode in cookies.
+ - **FIX**: proper default value for explode in cookies.
  - **FIX**: broken def handling for inline schemas.
  - **FEAT**: handle schema level read and write only.
  - **FEAT**: support read and write only properties.
@@ -45,7 +45,7 @@ Packages with other changes:
 
 #### `tonik_generate` - `v0.5.0`
 
- - **FIX**: proper default vlaue for explode in cookies.
+ - **FIX**: proper default value for explode in cookies.
  - **FEAT**: read and write only for any of.
  - **FEAT**: read and writ only for all of generator.
  - **FEAT**: read and write only for oneOf.
