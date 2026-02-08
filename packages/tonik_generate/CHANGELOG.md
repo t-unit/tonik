@@ -1,3 +1,17 @@
+## 0.5.0
+
+ - **FIX**: proper default vlaue for explode in cookies.
+ - **FEAT**: read and write only for any of.
+ - **FEAT**: read and writ only for all of generator.
+ - **FEAT**: read and write only for oneOf.
+ - **FEAT**: handle schema level read and write only.
+ - **FEAT**: further read/write only improvements.
+ - **FEAT**: improve read/write only handling.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: allow more complex data in cookies.
+ - **FEAT**: basic support for cookies.
+ - **FEAT**: nested discriminator support (allOf).
+
 ## 0.4.1
 
  - **FIX**: remove escaping in raw string.

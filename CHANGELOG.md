@@ -3,6 +3,67 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-02-08
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.5.0`](#tonik_util---v050)
+ - [`tonik_core` - `v0.5.0`](#tonik_core---v050)
+ - [`tonik_parse` - `v0.5.0`](#tonik_parse---v050)
+ - [`tonik_generate` - `v0.5.0`](#tonik_generate---v050)
+ - [`tonik` - `v0.5.0`](#tonik---v050)
+
+---
+
+#### `tonik_util` - `v0.5.0`
+
+ - **FEAT**: read and write only for oneOf.
+
+#### `tonik_core` - `v0.5.0`
+
+ - **FEAT**: handle schema level read and write only.
+ - **FEAT**: improve read/write only handling.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: basic support for cookies.
+
+#### `tonik_parse` - `v0.5.0`
+
+ - **FIX**: proper default vlaue for explode in cookies.
+ - **FIX**: broken def handling for inline schemas.
+ - **FEAT**: handle schema level read and write only.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: basic support for cookies.
+ - **FEAT**: nested discriminator support (allOf).
+
+#### `tonik_generate` - `v0.5.0`
+
+ - **FIX**: proper default vlaue for explode in cookies.
+ - **FEAT**: read and write only for any of.
+ - **FEAT**: read and writ only for all of generator.
+ - **FEAT**: read and write only for oneOf.
+ - **FEAT**: handle schema level read and write only.
+ - **FEAT**: further read/write only improvements.
+ - **FEAT**: improve read/write only handling.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: allow more complex data in cookies.
+ - **FEAT**: basic support for cookies.
+ - **FEAT**: nested discriminator support (allOf).
+
+#### `tonik` - `v0.5.0`
+
+ - **FEAT**: improve read/write only handling.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: basic support for cookies.
+
+
 ## 2026-01-25
 
 ### Changes

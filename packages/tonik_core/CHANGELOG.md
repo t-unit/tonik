@@ -1,3 +1,10 @@
+## 0.5.0
+
+ - **FEAT**: handle schema level read and write only.
+ - **FEAT**: improve read/write only handling.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: basic support for cookies.
+
 ## 0.4.1
 
  - **FEAT**: normaliz allOf with single model to aliases.

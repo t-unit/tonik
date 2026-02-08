@@ -1,3 +1,12 @@
+## 0.5.0
+
+ - **FIX**: proper default vlaue for explode in cookies.
+ - **FIX**: broken def handling for inline schemas.
+ - **FEAT**: handle schema level read and write only.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: basic support for cookies.
+ - **FEAT**: nested discriminator support (allOf).
+
 ## 0.4.1
 
  - **FEAT**: better handle contentEncoding.

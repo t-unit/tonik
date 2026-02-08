@@ -1,3 +1,12 @@
+## 0.5.0
+
+ - **FEAT**: improve read/write only handling.
+ - **FEAT**: support read and write only properties.
+ - **FEAT**: basic support for cookies.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.4.1
 
  - **FEAT**: improve documentation.
