@@ -37,10 +37,10 @@ packages:
     dependency: transitive
     description:
       name: big_decimal
-      sha256: "301158ec5a646d1e1a0ca7a97fbfab7be18a8df700adb7f7cb9c4149e75c8f0c"
+      sha256: "6413818091e80c907bb73bae383418db5c148fd7fd283e56197bfeeeb212d5bd"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.0"
+    version: "0.7.0"
   boolean_selector:
     dependency: transitive
     description:
