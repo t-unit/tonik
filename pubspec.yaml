@@ -26,6 +26,16 @@ dev_dependencies:
 
 melos:
   scripts:
+    test:
+      run: |
+        set -e
+        (cd packages/tonik_util && fvm dart test)
+        (cd packages/tonik_core && fvm dart test)
+        (cd packages/tonik_parse && fvm dart test)
+        (cd packages/tonik_generate && fvm dart test)
+        (cd packages/tonik && fvm dart test)
+        melos run test-integration-all
+
     coverage:
       exec: dart test --coverage=coverage
       packageFilters:
@@ -136,6 +146,7 @@ melos:
 
     test-integration-all:
       run: |
+        set -e
         melos run test-integration-petstore
         melos run test-integration-music-streaming
         melos run test-integration-gov
@@ -150,7 +161,7 @@ melos:
         melos run test-integration-type-arrays
         melos run test-integration-medama
         melos run test-integration-inference
-        melos run test-integration-ref-siblings        
+        melos run test-integration-ref-siblings
         melos run test-integration-defs
         melos run test-integration-server-variables
         melos run test-integration-cookies
