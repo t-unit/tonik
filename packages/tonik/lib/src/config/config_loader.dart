@@ -132,9 +132,10 @@ extension ConfigLoader on CliConfig {
       'text' => ContentType.text,
       'bytes' => ContentType.bytes,
       'form' => ContentType.form,
+      'multipart' => ContentType.multipart,
       _ => throw ConfigLoaderException(
         'Invalid content type for "$key": $stringValue. '
-        'Must be one of: json, text, bytes, form',
+        'Must be one of: json, text, bytes, form, multipart',
       ),
     };
   }
