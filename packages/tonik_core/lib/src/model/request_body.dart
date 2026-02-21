@@ -120,11 +120,16 @@ class RequestContent {
     required this.model,
     required this.contentType,
     required this.rawContentType,
+    this.encoding,
   });
 
   Model model;
   ContentType contentType;
   String rawContentType;
+
+  /// Per-property encoding metadata for multipart/form-data requests.
+  /// Null for all non-multipart content types.
+  Map<String, MultipartPropertyEncoding>? encoding;
 
   @override
   String toString() =>

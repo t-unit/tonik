@@ -208,6 +208,7 @@ class ContentTypeNormalizer {
       model: normalizedModel,
       contentType: content.contentType,
       rawContentType: content.rawContentType,
+      encoding: content.encoding,
     );
   }
 

@@ -3,4 +3,5 @@ enum ContentType {
   text,
   bytes,
   form,
+  multipart,
 }

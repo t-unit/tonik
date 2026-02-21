@@ -77,6 +77,10 @@ class DataGenerator {
               ).code,
             );
             switchCases.add(const Code(','));
+          case .multipart:
+            throw UnimplementedError(
+              'Multipart request body serialization is not yet supported.',
+            );
         }
       }
 
@@ -140,6 +144,10 @@ class DataGenerator {
         bodyCode
           ..add(formExpr.code)
           ..add(const Code(';'));
+      case ContentType.multipart:
+        throw UnimplementedError(
+          'Multipart request body serialization is not yet supported.',
+        );
     }
 
     return Method(

@@ -1,20 +1,25 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/content_type_resolver.dart';
+import 'package:tonik_parse/src/model/encoding.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
+import 'package:tonik_parse/src/model/serialization_style.dart';
 import 'package:tonik_parse/src/model_importer.dart';
+import 'package:tonik_parse/src/response_header_importer.dart';
 
 class RequestBodyImporter {
   RequestBodyImporter({
     required this.openApiObject,
     required this.modelImporter,
     required this.contentTypes,
+    required this.responseHeaderImporter,
   });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
+  final ResponseHeaderImporter responseHeaderImporter;
   final log = Logger('RequestBodyImporter');
 
   final Map<String, core.ContentType> contentTypes;
@@ -103,6 +108,13 @@ class RequestBodyImporter {
             log: log,
           );
 
+          // Extract multipart encoding if present
+          final encoding = contentType == core.ContentType.multipart &&
+                  mediaType.encoding != null &&
+                  mediaType.encoding!.isNotEmpty
+              ? _importEncoding(mediaType.encoding!, context)
+              : null;
+
           if (mediaType.schema != null) {
             final model = modelImporter.importSchema(
               mediaType.schema!,
@@ -114,6 +126,7 @@ class RequestBodyImporter {
                 model: model,
                 rawContentType: rawContentType,
                 contentType: contentType,
+                encoding: encoding,
               ),
             );
           } else {
@@ -127,10 +140,10 @@ class RequestBodyImporter {
               core.ContentType.text => core.StringModel(
                 context: context.push('body'),
               ),
-              core.ContentType.form => () {
+              core.ContentType.form || core.ContentType.multipart => () {
                 log.warning(
-                  'No schema found for form content type $rawContentType. '
-                  'Treating as binary data.',
+                  'No schema found for ${contentType.name} content type '
+                  '$rawContentType. Treating as binary data.',
                 );
                 return core.BinaryModel(context: context.push('body'));
               }(),
@@ -141,6 +154,7 @@ class RequestBodyImporter {
                 model: model,
                 rawContentType: rawContentType,
                 contentType: contentType,
+                encoding: encoding,
               ),
             );
           }
@@ -156,5 +170,53 @@ class RequestBodyImporter {
         requestBodies.add(bodyObject);
         return bodyObject;
     }
+  }
+
+  Map<String, core.MultipartPropertyEncoding> _importEncoding(
+    Map<String, Encoding> encodingMap,
+    core.Context context,
+  ) {
+    final result = <String, core.MultipartPropertyEncoding>{};
+    for (final entry in encodingMap.entries) {
+      final propertyName = entry.key;
+      final encoding = entry.value;
+
+      Map<String, core.ResponseHeader>? headers;
+      if (encoding.headers != null && encoding.headers!.isNotEmpty) {
+        headers = {};
+        for (final headerEntry in encoding.headers!.entries) {
+          final headerName = headerEntry.key;
+          final headerWrapper = headerEntry.value;
+          headers[headerName] = responseHeaderImporter.importInlineHeader(
+            wrapper: headerWrapper,
+            context: context.pushAll(['encoding', propertyName, headerName]),
+          );
+        }
+      }
+
+      result[propertyName] = core.MultipartPropertyEncoding(
+        contentType: encoding.contentType,
+        headers: headers,
+        style: _mapSerializationStyle(encoding.style),
+        explode: encoding.explode,
+        allowReserved: encoding.allowReserved,
+      );
+    }
+    return result;
+  }
+
+  static core.MultipartEncodingStyle? _mapSerializationStyle(
+    SerializationStyle? style,
+  ) {
+    if (style == null) return null;
+    return switch (style) {
+      SerializationStyle.form => core.MultipartEncodingStyle.form,
+      SerializationStyle.spaceDelimited =>
+        core.MultipartEncodingStyle.spaceDelimited,
+      SerializationStyle.pipeDelimited =>
+        core.MultipartEncodingStyle.pipeDelimited,
+      SerializationStyle.deepObject => core.MultipartEncodingStyle.deepObject,
+      _ => null,
+    };
   }
 }

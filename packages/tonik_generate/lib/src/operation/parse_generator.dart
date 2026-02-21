@@ -165,6 +165,9 @@ class ParseGenerator {
       ContentType.text => _createTextBodyDecode(),
       ContentType.bytes => _createBytesBodyDecode(),
       ContentType.form => _createFormBodyDecode(responseBody),
+      ContentType.multipart => throw UnimplementedError(
+        'Multipart response body decoding is not yet supported.',
+      ),
     };
   }
 

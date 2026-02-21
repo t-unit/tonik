@@ -6,6 +6,7 @@ import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart' as parse;
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/request_body_importer.dart';
+import 'package:tonik_parse/src/response_header_importer.dart';
 import 'package:tonik_parse/tonik_parse.dart';
 
 void main() {
@@ -337,10 +338,15 @@ void main() {
     final openApiObject = parse.OpenApiObject.fromJson(fileContent);
     final modelImporter = ModelImporter(openApiObject)..import();
 
+    final responseHeaderImporter = ResponseHeaderImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+    )..import();
     final importer = RequestBodyImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
       contentTypes: {},
+      responseHeaderImporter: responseHeaderImporter,
     )..import();
 
     final imported = importer.importRequestBody(
@@ -776,6 +782,285 @@ void main() {
       expect(content?.model, isA<BinaryModel>());
       expect(content?.rawContentType, 'application/x-custom-unknown');
       expect(content?.contentType, ContentType.bytes);
+    });
+  });
+
+  group('content type resolution', () {
+    test('resolves multipart/form-data to ContentType.multipart', () {
+      final fileContentWithMultipart = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'MultipartBody': {
+              'description': 'A multipart request body',
+              'required': true,
+              'content': {
+                'multipart/form-data': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'file': {'type': 'string', 'format': 'binary'},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithMultipart);
+      final multipartBody = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'MultipartBody',
+      );
+
+      expect(multipartBody, isNotNull);
+      expect(multipartBody, isA<RequestBodyObject>());
+      expect((multipartBody as RequestBodyObject?)?.content, hasLength(1));
+      final content = multipartBody?.content.first;
+      expect(content?.contentType, ContentType.multipart);
+      expect(content?.rawContentType, 'multipart/form-data');
+    });
+  });
+
+  group('multipart/form-data support', () {
+    test('imports multipart/form-data request body with schema', () {
+      final fileContentWithMultipart = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'FileUpload': {
+              'description': 'Upload a file',
+              'required': true,
+              'content': {
+                'multipart/form-data': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'file': {'type': 'string', 'format': 'binary'},
+                      'description': {'type': 'string'},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithMultipart);
+      final body = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'FileUpload',
+      );
+
+      expect(body, isNotNull);
+      expect(body, isA<RequestBodyObject>());
+      final bodyObj = body! as RequestBodyObject;
+      expect(bodyObj.content, hasLength(1));
+
+      final content = bodyObj.content.first;
+      expect(content.contentType, ContentType.multipart);
+      expect(content.model, isA<ClassModel>());
+    });
+
+    test('imports multipart/form-data with encoding', () {
+      final fileContentWithEncoding = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'EncodedUpload': {
+              'description': 'Upload with encoding',
+              'required': true,
+              'content': {
+                'multipart/form-data': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'id': {'type': 'string'},
+                      'address': {
+                        'type': 'object',
+                        'properties': {
+                          'street': {'type': 'string'},
+                        },
+                      },
+                      'profileImage': {
+                        'type': 'string',
+                        'format': 'binary',
+                      },
+                    },
+                  },
+                  'encoding': {
+                    'id': {
+                      'contentType': 'text/plain',
+                      'style': 'form',
+                      'explode': true,
+                      'allowReserved': false,
+                    },
+                    'address': {
+                      'contentType': 'application/json',
+                      'style': 'deepObject',
+                      'explode': true,
+                    },
+                    'profileImage': {
+                      'contentType': 'image/png',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithEncoding);
+      final body = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'EncodedUpload',
+      )! as RequestBodyObject;
+
+      final content = body.content.first;
+      expect(content.encoding, isNotNull);
+      expect(content.encoding, hasLength(3));
+
+      final idEncoding = content.encoding!['id']!;
+      expect(idEncoding.contentType, 'text/plain');
+      expect(idEncoding.style, MultipartEncodingStyle.form);
+      expect(idEncoding.explode, isTrue);
+      expect(idEncoding.allowReserved, isFalse);
+
+      final addressEncoding = content.encoding!['address']!;
+      expect(addressEncoding.contentType, 'application/json');
+      expect(addressEncoding.style, MultipartEncodingStyle.deepObject);
+      expect(addressEncoding.explode, isTrue);
+      expect(addressEncoding.allowReserved, isNull);
+
+      final imageEncoding = content.encoding!['profileImage']!;
+      expect(imageEncoding.contentType, 'image/png');
+      expect(imageEncoding.style, isNull);
+      expect(imageEncoding.explode, isNull);
+    });
+
+    test('imports multipart/form-data with encoding headers', () {
+      final fileContentWithHeaders = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'headers': {
+            'X-Custom': {
+              'description': 'A custom header',
+              'schema': {'type': 'string'},
+            },
+          },
+          'requestBodies': {
+            'HeaderUpload': {
+              'description': 'Upload with encoding headers',
+              'required': true,
+              'content': {
+                'multipart/form-data': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'file': {'type': 'string', 'format': 'binary'},
+                    },
+                  },
+                  'encoding': {
+                    'file': {
+                      'contentType': 'application/octet-stream',
+                      'headers': {
+                        'X-Custom': {
+                          r'$ref': '#/components/headers/X-Custom',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentWithHeaders);
+      final body = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'HeaderUpload',
+      )! as RequestBodyObject;
+
+      final content = body.content.first;
+      expect(content.encoding, isNotNull);
+
+      final fileEncoding = content.encoding!['file']!;
+      expect(fileEncoding.headers, isNotNull);
+      expect(fileEncoding.headers, hasLength(1));
+      expect(fileEncoding.headers!['X-Custom'], isA<ResponseHeaderObject>());
+    });
+
+    test('imports multipart/form-data without encoding', () {
+      final fileContentNoEncoding = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'SimpleMultipart': {
+              'description': 'Simple multipart',
+              'required': true,
+              'content': {
+                'multipart/form-data': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'name': {'type': 'string'},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentNoEncoding);
+      final body = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'SimpleMultipart',
+      )! as RequestBodyObject;
+
+      final content = body.content.first;
+      expect(content.contentType, ContentType.multipart);
+      expect(content.encoding, isNull);
+    });
+
+    test('infers BinaryModel for multipart/form-data without schema', () {
+      final fileContentNoSchema = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'NoSchemaMultipart': {
+              'description': 'Multipart without schema',
+              'required': true,
+              'content': {
+                'multipart/form-data': <String, dynamic>{},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(fileContentNoSchema);
+      final body = api.requestBodies.firstWhereOrNull(
+        (r) => r.name == 'NoSchemaMultipart',
+      )! as RequestBodyObject;
+
+      final content = body.content.first;
+      expect(content.model, isA<BinaryModel>());
+      expect(content.contentType, ContentType.multipart);
     });
   });
 }
