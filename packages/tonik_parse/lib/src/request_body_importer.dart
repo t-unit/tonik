@@ -109,17 +109,25 @@ class RequestBodyImporter {
           );
 
           // Extract multipart encoding if present
-          final encoding = contentType == core.ContentType.multipart &&
-                  mediaType.encoding != null &&
-                  mediaType.encoding!.isNotEmpty
-              ? _importEncoding(mediaType.encoding!, context)
-              : null;
+          final explicitEncoding =
+              contentType == core.ContentType.multipart &&
+                      mediaType.encoding != null &&
+                      mediaType.encoding!.isNotEmpty
+                  ? _importEncoding(mediaType.encoding!, context)
+                  : null;
 
           if (mediaType.schema != null) {
             final model = modelImporter.importSchema(
               mediaType.schema!,
               context.push('body'),
             );
+
+            final encoding = contentType == core.ContentType.multipart
+                ? _populateMultipartDefaults(
+                    model: model,
+                    explicitEncoding: explicitEncoding,
+                  )
+                : null;
 
             content.add(
               core.RequestContent(
@@ -154,7 +162,6 @@ class RequestBodyImporter {
                 model: model,
                 rawContentType: rawContentType,
                 contentType: contentType,
-                encoding: encoding,
               ),
             );
           }
@@ -170,6 +177,67 @@ class RequestBodyImporter {
         requestBodies.add(bodyObject);
         return bodyObject;
     }
+  }
+
+  Map<String, core.MultipartPropertyEncoding>? _populateMultipartDefaults({
+    required core.Model model,
+    required Map<String, core.MultipartPropertyEncoding>? explicitEncoding,
+  }) {
+    // Resolve through aliases to find the underlying model
+    final resolved =
+        model is core.AliasModel ? model.resolved : model;
+
+    // Only populate per-property defaults for ClassModel
+    if (resolved is! core.ClassModel) return null;
+
+    final isOas30 = openApiObject.openapi.startsWith('3.0');
+    final propertyNames =
+        resolved.properties.map((p) => p.name).toSet();
+
+    // Warn about encoding keys that don't match any property
+    if (explicitEncoding != null) {
+      for (final key in explicitEncoding.keys) {
+        if (!propertyNames.contains(key)) {
+          log.warning(
+            'Encoding key "$key" does not match any property '
+            'on the multipart schema. Ignoring.',
+          );
+        }
+      }
+    }
+
+    final result = <String, core.MultipartPropertyEncoding>{};
+
+    for (final property in resolved.properties) {
+      final existing = explicitEncoding?[property.name];
+      final defaultContentType =
+          _resolveDefaultContentType(property.model);
+
+      result[property.name] = core.MultipartPropertyEncoding(
+        contentType: existing?.contentType ?? defaultContentType,
+        headers: existing?.headers,
+        style: isOas30
+            ? core.MultipartEncodingStyle.form
+            : existing?.style ?? core.MultipartEncodingStyle.form,
+        explode: isOas30 || (existing?.explode ?? true),
+        allowReserved: !isOas30 && (existing?.allowReserved ?? false),
+      );
+    }
+
+    return result;
+  }
+
+  static String _resolveDefaultContentType(core.Model model) {
+    return switch (model) {
+      core.AliasModel() => _resolveDefaultContentType(model.resolved),
+      core.ListModel() => _resolveDefaultContentType(model.content),
+      core.ClassModel() => 'application/json',
+      core.AllOfModel() => 'application/json',
+      core.OneOfModel() => 'application/json',
+      core.AnyOfModel() => 'application/json',
+      core.BinaryModel() => 'application/octet-stream',
+      _ => 'text/plain',
+    };
   }
 
   Map<String, core.MultipartPropertyEncoding> _importEncoding(
