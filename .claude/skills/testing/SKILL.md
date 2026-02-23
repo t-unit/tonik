@@ -29,7 +29,10 @@ user-invocable: false
 ## String Testing Guidelines
 
 - When testing generated code strings:
-  - Format the entire method/constructor body with `DartFormatter` first.
-  - Use `contains(collapseWhitespace(...))` for testing complete code blocks.
-  - Acceptable: Testing patterns in a formatted complete method body.
-  - NOT acceptable: Testing individual lines without formatting the complete context.
+  - **ALWAYS test full method/function bodies**, never fragments or individual lines.
+  - Format both expected and actual with `DartFormatter` before comparing.
+  - Compare using `collapseWhitespace(actual) == collapseWhitespace(expected)` for full body equality.
+  - When a generator returns `List<Code>` (statements), wrap them in a `Method` to produce a complete formattable body, then test the full body.
+  - When a generator returns an `Expression`, wrap it in a complete method context before comparing.
+  - **NEVER use bare `contains()` for generated code** — always use full body comparison or `contains(collapseWhitespace(...))` on a formatted complete body.
+  - **NEVER test code fragments** (e.g., checking if output "contains 'FormData()'" or "contains '.toJson()'"). Always assert on the complete expected output.

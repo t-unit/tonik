@@ -28,14 +28,6 @@ Document known multipart limitations:
 - Multipart response body decoding is not supported — generated code throws `ResponseDecodingException` at runtime.
 - `additionalProperties` / map-type schemas are not supported globally (not multipart-specific).
 
-### Modify: `CHANGELOG.md`
-
-Add entry for the multipart feature under the next release version. Include:
-- Feature: `multipart/form-data` request body serialization.
-- Supported property types: strings, primitives, enums, binary files, complex objects (JSON-encoded), arrays.
-- OAS 3.0 and 3.1 version-aware encoding normalization.
-- Known limitations summary (link to docs).
-
 ## Verification
 
 Review documentation for accuracy and completeness. No automated tests.

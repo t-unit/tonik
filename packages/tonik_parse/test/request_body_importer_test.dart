@@ -872,10 +872,12 @@ void main() {
       expect(content.encoding, hasLength(2));
 
       final fileEncoding = content.encoding!['file']!;
-      expect(fileEncoding.contentType, 'application/octet-stream');
+      expect(fileEncoding.contentType, ContentType.bytes);
+      expect(fileEncoding.rawContentType, 'application/octet-stream');
 
       final descriptionEncoding = content.encoding!['description']!;
-      expect(descriptionEncoding.contentType, 'text/plain');
+      expect(descriptionEncoding.contentType, ContentType.text);
+      expect(descriptionEncoding.rawContentType, 'text/plain');
     });
 
     test('imports multipart/form-data with encoding', () {
@@ -939,19 +941,21 @@ void main() {
       expect(content.encoding, hasLength(3));
 
       final idEncoding = content.encoding!['id']!;
-      expect(idEncoding.contentType, 'text/plain');
+      expect(idEncoding.contentType, ContentType.text);
+      expect(idEncoding.rawContentType, 'text/plain');
       expect(idEncoding.style, MultipartEncodingStyle.form);
       expect(idEncoding.explode, isTrue);
       expect(idEncoding.allowReserved, isFalse);
 
       final addressEncoding = content.encoding!['address']!;
-      expect(addressEncoding.contentType, 'application/json');
+      expect(addressEncoding.contentType, ContentType.json);
+      expect(addressEncoding.rawContentType, 'application/json');
       expect(addressEncoding.style, MultipartEncodingStyle.deepObject);
       expect(addressEncoding.explode, isTrue);
       expect(addressEncoding.allowReserved, isFalse);
 
       final imageEncoding = content.encoding!['profileImage']!;
-      expect(imageEncoding.contentType, 'image/png');
+      expect(imageEncoding.rawContentType, 'image/png');
       expect(imageEncoding.style, MultipartEncodingStyle.form);
       expect(imageEncoding.explode, isTrue);
     });
@@ -1006,7 +1010,8 @@ void main() {
       expect(content.encoding, isNotNull);
 
       final fileEncoding = content.encoding!['file']!;
-      expect(fileEncoding.contentType, 'application/octet-stream');
+      expect(fileEncoding.contentType, ContentType.bytes);
+      expect(fileEncoding.rawContentType, 'application/octet-stream');
       expect(fileEncoding.style, MultipartEncodingStyle.form);
       expect(fileEncoding.explode, isTrue);
       expect(fileEncoding.allowReserved, isFalse);
@@ -1051,7 +1056,8 @@ void main() {
       expect(content.encoding, hasLength(1));
 
       final nameEncoding = content.encoding!['name']!;
-      expect(nameEncoding.contentType, 'text/plain');
+      expect(nameEncoding.contentType, ContentType.text);
+      expect(nameEncoding.rawContentType, 'text/plain');
       expect(nameEncoding.style, MultipartEncodingStyle.form);
       expect(nameEncoding.explode, isTrue);
       expect(nameEncoding.allowReserved, isFalse);
@@ -1114,7 +1120,8 @@ void main() {
         expect(content.encoding, hasLength(1));
 
         final encoding = content.encoding!['name']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
         expect(encoding.style, MultipartEncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isFalse);
@@ -1128,7 +1135,8 @@ void main() {
         );
 
         final encoding = content.encoding!['count']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
         expect(encoding.style, MultipartEncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isFalse);
@@ -1142,7 +1150,8 @@ void main() {
         );
 
         final encoding = content.encoding!['active']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
       });
 
       test('binary property gets application/octet-stream default', () {
@@ -1153,7 +1162,8 @@ void main() {
         );
 
         final encoding = content.encoding!['file']!;
-        expect(encoding.contentType, 'application/octet-stream');
+        expect(encoding.contentType, ContentType.bytes);
+        expect(encoding.rawContentType, 'application/octet-stream');
         expect(encoding.style, MultipartEncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isFalse);
@@ -1172,10 +1182,14 @@ void main() {
         );
 
         final encoding = content.encoding!['address']!;
-        expect(encoding.contentType, 'application/json');
+        expect(encoding.contentType, ContentType.json);
+        expect(encoding.rawContentType, 'application/json');
       });
 
-      test('AnyModel property gets text/plain default', () {
+      test('AnyModel property gets application/octet-stream default', () {
+        // AnyModel is created from boolean schemas (true/false), which are
+        // OAS 3.1 only (JSON Schema 2020-12). In OAS 3.0, {} becomes a
+        // ClassModel, not AnyModel, so AnyModel in 3.0 is unreachable.
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1188,7 +1202,8 @@ void main() {
         );
 
         final encoding = content.encoding!['data']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.bytes);
+        expect(encoding.rawContentType, 'application/octet-stream');
       });
 
       test('array of objects gets application/json default', () {
@@ -1207,7 +1222,8 @@ void main() {
         );
 
         final encoding = content.encoding!['items']!;
-        expect(encoding.contentType, 'application/json');
+        expect(encoding.contentType, ContentType.json);
+        expect(encoding.rawContentType, 'application/json');
       });
 
       test('array of strings gets text/plain default', () {
@@ -1221,7 +1237,8 @@ void main() {
         );
 
         final encoding = content.encoding!['tags']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
       });
 
       test('nested array of strings gets text/plain default (recursive)', () {
@@ -1238,10 +1255,12 @@ void main() {
         );
 
         final encoding = content.encoding!['matrix']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
       });
 
-      test('array of AnyModel gets text/plain default', () {
+      test('array of AnyModel gets application/octet-stream default', () {
+        // See AnyModel test above — AnyModel is OAS 3.1 only.
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1257,7 +1276,8 @@ void main() {
         );
 
         final encoding = content.encoding!['values']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.bytes);
+        expect(encoding.rawContentType, 'application/octet-stream');
       });
 
       test('AliasModel wrapping string gets text/plain default', () {
@@ -1273,7 +1293,8 @@ void main() {
         );
 
         final encoding = content.encoding!['label']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
       });
 
       test('enum property gets text/plain default', () {
@@ -1287,7 +1308,8 @@ void main() {
         );
 
         final encoding = content.encoding!['status']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
       });
 
       test('explicit encoding (OAS 3.1) preserves values and fills defaults',
@@ -1312,7 +1334,9 @@ void main() {
         );
 
         final encoding = content.encoding!['data']!;
-        expect(encoding.contentType, 'application/xml');
+        // application/xml doesn't map to a known ContentType, so it falls
+        // back to null (or whatever resolveContentType returns)
+        expect(encoding.rawContentType, 'application/xml');
         expect(encoding.style, MultipartEncodingStyle.deepObject);
         // Defaults filled for nulls
         expect(encoding.explode, isTrue);
@@ -1346,7 +1370,7 @@ void main() {
 
         final encoding = content.encoding!['data']!;
         // contentType is preserved (not affected by version)
-        expect(encoding.contentType, 'application/xml');
+        expect(encoding.rawContentType, 'application/xml');
         // style/explode/allowReserved forced to defaults for OAS 3.0
         expect(encoding.style, MultipartEncodingStyle.form);
         expect(encoding.explode, isTrue);
@@ -1381,7 +1405,14 @@ void main() {
 
         expect(content.encoding, hasLength(1));
         expect(content.encoding!['password'], isNotNull);
-        expect(content.encoding!['password']!.contentType, 'text/plain');
+        expect(
+          content.encoding!['password']!.contentType,
+          ContentType.text,
+        );
+        expect(
+          content.encoding!['password']!.rawContentType,
+          'text/plain',
+        );
       });
 
       test('format: byte string property gets text/plain (not binary)', () {
@@ -1392,7 +1423,8 @@ void main() {
         );
 
         final encoding = content.encoding!['encoded']!;
-        expect(encoding.contentType, 'text/plain');
+        expect(encoding.contentType, ContentType.text);
+        expect(encoding.rawContentType, 'text/plain');
       });
 
       test('form-urlencoded body does not get default encoding populated', () {
@@ -1479,15 +1511,15 @@ void main() {
         );
 
         expect(content.encoding, hasLength(4));
-        expect(content.encoding!['name']!.contentType, 'text/plain');
-        expect(content.encoding!['age']!.contentType, 'text/plain');
+        expect(content.encoding!['name']!.contentType, ContentType.text);
+        expect(content.encoding!['age']!.contentType, ContentType.text);
         expect(
           content.encoding!['photo']!.contentType,
-          'application/octet-stream',
+          ContentType.bytes,
         );
         expect(
           content.encoding!['metadata']!.contentType,
-          'application/json',
+          ContentType.json,
         );
       });
 

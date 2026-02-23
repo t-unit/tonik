@@ -16,14 +16,18 @@ enum MultipartEncodingStyle {
 class MultipartPropertyEncoding {
   const MultipartPropertyEncoding({
     this.contentType,
+    this.rawContentType,
     this.headers,
     this.style,
     this.explode,
     this.allowReserved,
   });
 
-  /// Content type override for this property's part.
-  final String? contentType;
+  /// Typed content type for this property's part.
+  final ContentType? contentType;
+
+  /// Raw content type string for this property's part (e.g. 'application/json').
+  final String? rawContentType;
 
   /// Per-part headers, resolved from encoding header refs.
   final Map<String, ResponseHeader>? headers;
@@ -43,18 +47,26 @@ class MultipartPropertyEncoding {
       other is MultipartPropertyEncoding &&
           runtimeType == other.runtimeType &&
           contentType == other.contentType &&
+          rawContentType == other.rawContentType &&
           headers == other.headers &&
           style == other.style &&
           explode == other.explode &&
           allowReserved == other.allowReserved;
 
   @override
-  int get hashCode =>
-      Object.hash(contentType, headers, style, explode, allowReserved);
+  int get hashCode => Object.hash(
+        contentType,
+        rawContentType,
+        headers,
+        style,
+        explode,
+        allowReserved,
+      );
 
   @override
   String toString() =>
       'MultipartPropertyEncoding(contentType: $contentType, '
+      'rawContentType: $rawContentType, '
       'headers: $headers, style: $style, explode: $explode, '
       'allowReserved: $allowReserved)';
 }

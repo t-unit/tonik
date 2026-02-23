@@ -716,5 +716,189 @@ void main() {
         );
       });
     });
+
+    group('multipart request bodies', () {
+      test('generates _data method for single-content multipart with string '
+          'properties', () {
+        final userModel = ClassModel(
+          name: 'CreateUserForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'nickname',
+              model: StringModel(context: testContext),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final operation = Operation(
+          operationId: 'createUser',
+          path: '/users',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'createUser',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: userModel,
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                encoding: {
+                  'name': const MultipartPropertyEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    style: MultipartEncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
+                  ),
+                  'nickname': const MultipartPropertyEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    style: MultipartEncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
+                  ),
+                },
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+          Object? _data({required CreateUserForm body}) {
+            final formData = FormData();
+            formData.fields.add(MapEntry('name', body.name));
+            if (body.nickname != null) {
+              formData.fields.add(MapEntry('nickname', body.nickname!));
+            }
+            return formData;
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates _data method for multi-content including multipart',
+          () {
+        final jsonModel = ClassModel(
+          name: 'JsonPayload',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'value',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final formModel = ClassModel(
+          name: 'FormPayload',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final operation = Operation(
+          operationId: 'createItem',
+          path: '/items',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'createItem',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: jsonModel,
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+              RequestContent(
+                model: formModel,
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                encoding: {
+                  'name': const MultipartPropertyEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    style: MultipartEncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
+                  ),
+                },
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+          Object? _data({required CreateItem body}) {
+            return switch (body) {
+              final CreateItemJson value => value.value.toJson(),
+              final CreateItemFormData value => () {
+                final formData = FormData();
+                formData.fields.add(MapEntry('name', value.value.name));
+                return formData;
+              }(),
+            };
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
   });
 }

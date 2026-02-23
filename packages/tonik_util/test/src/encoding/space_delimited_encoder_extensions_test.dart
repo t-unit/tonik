@@ -70,6 +70,31 @@ void main() {
         },
       );
 
+      test(
+        'uses literal space delimiter when percentEncodeDelimiter is false',
+        () {
+          final result = ['red', 'green', 'blue'].toSpaceDelimited(
+            explode: false,
+            allowEmpty: true,
+            alreadyEncoded: true,
+            percentEncodeDelimiter: false,
+          );
+          expect(result, ['red green blue']);
+        },
+      );
+
+      test(
+        'uses percent-encoded delimiter by default when alreadyEncoded is true',
+        () {
+          final result = ['red', 'green', 'blue'].toSpaceDelimited(
+            explode: false,
+            allowEmpty: true,
+            alreadyEncoded: true,
+          );
+          expect(result, ['red%20green%20blue']);
+        },
+      );
+
       test('encodes non-ASCII characters', () {
         final result = ['café', '你好'].toSpaceDelimited(
           explode: false,

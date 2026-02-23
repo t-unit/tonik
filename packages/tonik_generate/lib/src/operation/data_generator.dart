@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating data method for operations.
@@ -46,41 +47,52 @@ class DataGenerator {
 
         switchCases
           ..add(const Code('final '))
-          ..add(refer(variantName, package).code)
-          ..add(const Code(' value => value.'));
+          ..add(refer(variantName, package).code);
 
         switch (c.contentType) {
           case .text || .bytes:
-            switchCases.add(const Code('value,'));
+            switchCases.add(const Code(' value => value.value,'));
           case .json:
-            switchCases.add(
-              buildToJsonPropertyExpression(
-                'value',
-                Property(
-                  name: 'value',
-                  model: c.model,
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ).code,
-            );
-            switchCases.add(const Code(','));
+            switchCases
+              ..add(const Code(' value => value.'))
+              ..add(
+                buildToJsonPropertyExpression(
+                  'value',
+                  Property(
+                    name: 'value',
+                    model: c.model,
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ).code,
+              )
+              ..add(const Code(','));
           case .form:
-            switchCases.add(
-              buildToFormValueExpression(
-                'value',
-                c.model,
-                useQueryComponent: true,
-                explodeLiteral: true,
-                allowEmptyLiteral: true,
-              ).code,
-            );
-            switchCases.add(const Code(','));
+            switchCases
+              ..add(const Code(' value => value.'))
+              ..add(
+                buildToFormValueExpression(
+                  'value',
+                  c.model,
+                  useQueryComponent: true,
+                  explodeLiteral: true,
+                  allowEmptyLiteral: true,
+                ).code,
+              )
+              ..add(const Code(','));
           case .multipart:
-            throw UnimplementedError(
-              'Multipart request body serialization is not yet supported.',
-            );
+            switchCases
+              ..add(const Code(' value => '))
+              ..add(
+                buildMultipartBodyExpression(
+                  c,
+                  'value.value',
+                  nameManager,
+                  package,
+                ).code,
+              )
+              ..add(const Code(','));
         }
       }
 
@@ -145,9 +157,17 @@ class DataGenerator {
           ..add(formExpr.code)
           ..add(const Code(';'));
       case ContentType.multipart:
-        throw UnimplementedError(
-          'Multipart request body serialization is not yet supported.',
-        );
+        bodyCode
+          ..clear()
+          ..addAll(
+            buildMultipartBodyStatements(
+              content.first,
+              'body',
+              nameManager,
+              package,
+            ),
+          )
+          ..add(refer('formData').returned.statement);
     }
 
     return Method(

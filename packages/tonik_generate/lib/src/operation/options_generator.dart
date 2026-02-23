@@ -85,7 +85,11 @@ class OptionsGenerator {
     }
 
     if (requestBody!.contentCount == 1) {
-      return literalString(requestBody.resolvedContent.first.rawContentType);
+      final singleContent = requestBody.resolvedContent.first;
+      if (singleContent.contentType == ContentType.multipart) {
+        return literalNull;
+      }
+      return literalString(singleContent.rawContentType);
     }
 
     final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
@@ -110,7 +114,10 @@ class OptionsGenerator {
       final caseCode = [
         refer(className, package).code,
         const Code(' _ => '),
-        literalString(content.rawContentType).code,
+        if (content.contentType == ContentType.multipart)
+          literalNull.code
+        else
+          literalString(content.rawContentType).code,
         const Code(',\n'),
       ];
       cases.addAll(caseCode);

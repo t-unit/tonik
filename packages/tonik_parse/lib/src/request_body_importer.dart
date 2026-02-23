@@ -212,9 +212,12 @@ class RequestBodyImporter {
       final existing = explicitEncoding?[property.name];
       final defaultContentType =
           _resolveDefaultContentType(property.model);
+      final defaultRawContentType =
+          _resolveDefaultRawContentType(property.model);
 
       result[property.name] = core.MultipartPropertyEncoding(
         contentType: existing?.contentType ?? defaultContentType,
+        rawContentType: existing?.rawContentType ?? defaultRawContentType,
         headers: existing?.headers,
         style: isOas30
             ? core.MultipartEncodingStyle.form
@@ -227,15 +230,30 @@ class RequestBodyImporter {
     return result;
   }
 
-  static String _resolveDefaultContentType(core.Model model) {
+  static core.ContentType _resolveDefaultContentType(core.Model model) {
     return switch (model) {
       core.AliasModel() => _resolveDefaultContentType(model.resolved),
       core.ListModel() => _resolveDefaultContentType(model.content),
+      core.ClassModel() => core.ContentType.json,
+      core.AllOfModel() => core.ContentType.json,
+      core.OneOfModel() => core.ContentType.json,
+      core.AnyOfModel() => core.ContentType.json,
+      core.BinaryModel() => core.ContentType.bytes,
+      core.AnyModel() => core.ContentType.bytes,
+      _ => core.ContentType.text,
+    };
+  }
+
+  static String _resolveDefaultRawContentType(core.Model model) {
+    return switch (model) {
+      core.AliasModel() => _resolveDefaultRawContentType(model.resolved),
+      core.ListModel() => _resolveDefaultRawContentType(model.content),
       core.ClassModel() => 'application/json',
       core.AllOfModel() => 'application/json',
       core.OneOfModel() => 'application/json',
       core.AnyOfModel() => 'application/json',
       core.BinaryModel() => 'application/octet-stream',
+      core.AnyModel() => 'application/octet-stream',
       _ => 'text/plain',
     };
   }
@@ -262,8 +280,17 @@ class RequestBodyImporter {
         }
       }
 
+      final resolvedContentType = encoding.contentType != null
+          ? resolveContentType(
+              encoding.contentType!,
+              contentTypes: contentTypes,
+              log: log,
+            )
+          : null;
+
       result[propertyName] = core.MultipartPropertyEncoding(
-        contentType: encoding.contentType,
+        contentType: resolvedContentType,
+        rawContentType: encoding.contentType,
         headers: headers,
         style: _mapSerializationStyle(encoding.style),
         explode: encoding.explode,
