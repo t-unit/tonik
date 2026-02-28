@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/operation/data_generator.dart';
+import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 import 'package:tonik_generate/src/operation/options_generator.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
@@ -360,9 +361,23 @@ class OperationGenerator {
             .statement,
         refer(r'_$data')
             .assign(
-              refer(
-                '_data',
-              ).call([], {if (hasRequestBody) 'body': refer('body')}),
+              refer('_data').call([], {
+                if (hasRequestBody) 'body': refer('body'),
+                if (hasRequestBody)
+                  ...() {
+                    final args = <String, Expression>{};
+                    for (final c
+                        in operation.requestBody!.resolvedContent) {
+                      if (c.contentType == ContentType.multipart) {
+                        for (final info
+                            in extractMultipartHeaderParamInfo(c)) {
+                          args[info.name] = refer(info.name);
+                        }
+                      }
+                    }
+                    return args;
+                  }(),
+              }),
             )
             .statement,
         refer(r'_$options')

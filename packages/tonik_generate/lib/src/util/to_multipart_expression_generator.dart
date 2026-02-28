@@ -1,8 +1,10 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Builds FormData construction statements for single-content multipart bodies.
 ///
@@ -85,14 +87,13 @@ List<Code> _buildMultipartFields(
 
   // FormData construction.
   statements.add(
-    declareFinal('formData')
-        .assign(refer('FormData', 'package:dio/dio.dart').call([]))
-        .statement,
+    declareFinal(
+      'formData',
+    ).assign(refer('FormData', 'package:dio/dio.dart').call([])).statement,
   );
 
   // Filter out readOnly properties.
-  final writeProperties =
-      model.properties.where((p) => !p.isReadOnly).toList();
+  final writeProperties = model.properties.where((p) => !p.isReadOnly).toList();
 
   final normalizedProps = normalizeProperties(writeProperties);
 
@@ -136,15 +137,39 @@ Code? _buildFieldCode(
   final propertyEncoding = encoding?[rawName];
   final contentType = propertyEncoding?.contentType;
 
+  // Build per-part header statements and variable name (if any).
+  final headerResult = _buildHeaderMapStatements(
+    normalizedName,
+    propertyEncoding,
+    isPropertyOptional: isNullable,
+  );
+
   // Resolve alias for property model matching.
   var resolved = model;
   if (resolved is AliasModel) {
     resolved = resolved.resolved;
   }
 
-  return switch (resolved) {
-    StringModel() => _buildStringFieldAddition(rawName, accessor),
-    AnyModel() => _buildAnyFieldAddition(rawName, accessor),
+  final hasHeaders = headerResult != null;
+  final headerVarName = headerResult?.headerVarName;
+
+  final fieldCode = switch (resolved) {
+    // When headers are present, field types that normally go to
+    // formData.fields must be promoted to formData.files via
+    // MultipartFile.fromString so the per-part headers are attached.
+    StringModel() =>
+      hasHeaders
+          ? _buildStringFileAddition(rawName, accessor, headerVarName!)
+          : _buildStringFieldAddition(rawName, accessor),
+    AnyModel() =>
+      hasHeaders
+          ? _buildPrimitiveFileAddition(
+              rawName,
+              accessor,
+              headerVarName!,
+              serializerMethod: 'toString',
+            )
+          : _buildAnyFieldAddition(rawName, accessor),
     NeverModel() => generateEncodingExceptionExpression(
       "Cannot encode NeverModel property '$rawName' "
       '- this type does not permit any value.',
@@ -157,7 +182,20 @@ Code? _buildFieldCode(
     DateModel() ||
     DecimalModel() ||
     UriModel() =>
-      contentType == ContentType.json
+      hasHeaders
+          ? contentType == ContentType.json
+              ? _buildJsonEncodeFileAddition(
+                  rawName,
+                  accessor,
+                  headerVarName!,
+                )
+              : _buildPrimitiveFileAddition(
+                  rawName,
+                  accessor,
+                  headerVarName!,
+                  serializerMethod: 'toString',
+                )
+          : contentType == ContentType.json
           ? _buildJsonEncodeFieldAddition(rawName, accessor)
           : _buildPrimitiveFieldAddition(
               rawName,
@@ -165,40 +203,59 @@ Code? _buildFieldCode(
               serializerMethod: 'toString',
             ),
 
-    DateTimeModel() => contentType == ContentType.json
-        ? _buildJsonEncodeFieldAddition(rawName, accessor)
-        : _buildPrimitiveFieldAddition(
-            rawName,
-            accessor,
-            serializerMethod: 'toTimeZonedIso8601String',
-          ),
+    DateTimeModel() =>
+      hasHeaders
+          ? contentType == ContentType.json
+              ? _buildJsonEncodeFileAddition(
+                  rawName,
+                  accessor,
+                  headerVarName!,
+                )
+              : _buildPrimitiveFileAddition(
+                  rawName,
+                  accessor,
+                  headerVarName!,
+                  serializerMethod: 'toTimeZonedIso8601String',
+                )
+          : contentType == ContentType.json
+          ? _buildJsonEncodeFieldAddition(rawName, accessor)
+          : _buildPrimitiveFieldAddition(
+              rawName,
+              accessor,
+              serializerMethod: 'toTimeZonedIso8601String',
+            ),
 
-    EnumModel() => _buildEnumFieldAddition(rawName, accessor, resolved),
+    EnumModel() =>
+      hasHeaders
+          ? _buildEnumFileAddition(rawName, accessor, resolved, headerVarName!)
+          : _buildEnumFieldAddition(rawName, accessor, resolved),
 
     BinaryModel() => _buildBinaryFileAddition(
       rawName,
       accessor,
       encoding: encoding,
+      headerVarName: headerVarName,
     ),
 
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() =>
-      _buildComplexObjectFileAddition(
-        rawName,
-        accessor,
-        encoding: encoding,
-      ),
+    AnyOfModel() => _buildComplexObjectFileAddition(
+      rawName,
+      accessor,
+      encoding: encoding,
+      headerVarName: headerVarName,
+    ),
 
     ListModel() => _buildListFieldAddition(
       rawName,
       accessor,
       resolved,
       encoding: encoding,
+      headerVarName: headerVarName,
     ),
 
-    // AliasModel is already resolved above, so recurse for any other alias
+    // AliasModel is already resolved above, so recurse for any other alias.
     AliasModel() => _buildFieldCode(
       resolved,
       rawName,
@@ -212,19 +269,165 @@ Code? _buildFieldCode(
       'Unsupported model type for multipart encoding: ${model.runtimeType}',
     ),
   };
+
+  if (fieldCode == null) return null;
+  if (headerResult == null) return fieldCode;
+
+  return Block.of([...headerResult.statements, fieldCode]);
+}
+
+/// Result of building per-part header map statements.
+class _HeaderMapResult {
+  const _HeaderMapResult(this.statements, this.headerVarName);
+  final List<Code> statements;
+  final String headerVarName;
+}
+
+/// Builds the header map variable declaration and entry addition statements
+/// for a multipart property's per-part headers.
+///
+/// Returns `null` if there are no non-Content-Type headers.
+_HeaderMapResult? _buildHeaderMapStatements(
+  String normalizedPropertyName,
+  MultipartPropertyEncoding? encoding, {
+  bool isPropertyOptional = false,
+}) {
+  final headers = encoding?.headers;
+  if (headers == null || headers.isEmpty) return null;
+
+  // Filter out Content-Type (case-insensitive) per OAS spec.
+  final filteredEntries = headers.entries
+      .where((e) => e.key.toLowerCase() != 'content-type')
+      .toList();
+
+  if (filteredEntries.isEmpty) return null;
+
+  final headerVarName = '${normalizedPropertyName}Headers';
+  final statements = <Code>[
+    // Declare the headers map.
+    declareFinal(headerVarName)
+        .assign(
+          literalMap(
+            {},
+            refer('String'),
+            refer('List<String>'),
+          ),
+        )
+        .statement,
+  ];
+
+  // Add an entry for each header.
+  for (final entry in filteredEntries) {
+    final rawHeaderName = entry.key;
+    final header = entry.value.resolve();
+    final paramName = normalizeMultipartHeaderName(
+      normalizedPropertyName,
+      rawHeaderName,
+    );
+
+    // When the property is optional, required header params are nullable
+    // at the method level but must be non-null here.
+    final paramRef = isPropertyOptional && header.isRequired
+        ? refer(paramName).nullChecked
+        : refer(paramName);
+
+    final serializeExpr = buildSimpleValueExpression(
+      paramRef,
+      header.model,
+      explode: header.explode,
+      allowEmpty: true,
+    );
+
+    final assignStatement = refer(headerVarName)
+        .index(literalString(rawHeaderName))
+        .assign(literalList([serializeExpr]))
+        .statement;
+
+    if (!header.isRequired) {
+      // Wrap optional header in null check.
+      statements
+        ..add(Code('if ($paramName != null) {'))
+        ..add(assignStatement)
+        ..add(const Code('}'));
+    } else {
+      statements.add(assignStatement);
+    }
+  }
+
+  return _HeaderMapResult(statements, headerVarName);
 }
 
 Code _buildStringFieldAddition(String rawName, String accessor) {
-  return refer('formData')
-      .property('fields')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          refer(accessor),
-        ]),
-      ])
-      .statement;
+  return refer('formData').property('fields').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(accessor),
+    ]),
+  ]).statement;
+}
+
+/// Builds a string field as MultipartFile.fromString with per-part headers.
+Code _buildStringFileAddition(
+  String rawName,
+  String accessor,
+  String headerVarName,
+) {
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer('MultipartFile', 'package:dio/dio.dart')
+          .property('fromString')
+          .call(
+            [refer(accessor)],
+            {'headers': refer(headerVarName)},
+          ),
+    ]),
+  ]).statement;
+}
+
+/// Builds a primitive field as MultipartFile.fromString with per-part headers.
+Code _buildPrimitiveFileAddition(
+  String rawName,
+  String accessor,
+  String headerVarName, {
+  required String serializerMethod,
+}) {
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer('MultipartFile', 'package:dio/dio.dart')
+          .property('fromString')
+          .call(
+            [refer(accessor).property(serializerMethod).call([])],
+            {'headers': refer(headerVarName)},
+          ),
+    ]),
+  ]).statement;
+}
+
+/// Builds an enum field as MultipartFile.fromString with per-part headers.
+Code _buildEnumFileAddition(
+  String rawName,
+  String accessor,
+  EnumModel<dynamic> model,
+  String headerVarName,
+) {
+  final toJsonCall = refer(accessor).property('toJson').call([]);
+  final valueExpr = model is EnumModel<String>
+      ? toJsonCall
+      : toJsonCall.property('toString').call([]);
+
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer('MultipartFile', 'package:dio/dio.dart')
+          .property('fromString')
+          .call(
+            [valueExpr],
+            {'headers': refer(headerVarName)},
+          ),
+    ]),
+  ]).statement;
 }
 
 Code _buildPrimitiveFieldAddition(
@@ -232,42 +435,50 @@ Code _buildPrimitiveFieldAddition(
   String accessor, {
   required String serializerMethod,
 }) {
-  return refer('formData')
-      .property('fields')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          refer(accessor).property(serializerMethod).call([]),
-        ]),
-      ])
-      .statement;
+  return refer('formData').property('fields').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(accessor).property(serializerMethod).call([]),
+    ]),
+  ]).statement;
 }
 
 Code _buildJsonEncodeFieldAddition(String rawName, String accessor) {
-  return refer('formData')
-      .property('fields')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
-        ]),
-      ])
-      .statement;
+  return refer('formData').property('fields').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
+    ]),
+  ]).statement;
+}
+
+/// Builds a json-encoded field as MultipartFile.fromString with per-part
+/// headers.
+Code _buildJsonEncodeFileAddition(
+  String rawName,
+  String accessor,
+  String headerVarName,
+) {
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer('MultipartFile', 'package:dio/dio.dart')
+          .property('fromString')
+          .call(
+            [refer('jsonEncode', 'dart:convert').call([refer(accessor)])],
+            {'headers': refer(headerVarName)},
+          ),
+    ]),
+  ]).statement;
 }
 
 Code _buildAnyFieldAddition(String rawName, String accessor) {
-  return refer('formData')
-      .property('fields')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          refer(accessor).property('toString').call([]),
-        ]),
-      ])
-      .statement;
+  return refer('formData').property('fields').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(accessor).property('toString').call([]),
+    ]),
+  ]).statement;
 }
 
 Code _buildEnumFieldAddition(
@@ -280,26 +491,23 @@ Code _buildEnumFieldAddition(
       ? toJsonCall
       : toJsonCall.property('toString').call([]);
 
-  return refer('formData')
-      .property('fields')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          valueExpr,
-        ]),
-      ])
-      .statement;
+  return refer('formData').property('fields').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      valueExpr,
+    ]),
+  ]).statement;
 }
 
 Code _buildBinaryFileAddition(
   String rawName,
   String accessor, {
   Map<String, MultipartPropertyEncoding>? encoding,
+  String? headerVarName,
 }) {
   final rawContentType = encoding?[rawName]?.rawContentType;
-  final isDefaultContentType = rawContentType == null ||
-      rawContentType == 'application/octet-stream';
+  final isDefaultContentType =
+      rawContentType == null || rawContentType == 'application/octet-stream';
 
   final namedArgs = <String, Expression>{
     'filename': literalString(rawName),
@@ -312,18 +520,19 @@ Code _buildBinaryFileAddition(
     ).property('parse').call([literalString(rawContentType)]);
   }
 
-  return refer('formData')
-      .property('files')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          refer('MultipartFile', 'package:dio/dio.dart')
-              .property('fromBytes')
-              .call([refer(accessor)], namedArgs),
-        ]),
-      ])
-      .statement;
+  if (headerVarName != null) {
+    namedArgs['headers'] = refer(headerVarName);
+  }
+
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromBytes').call([refer(accessor)], namedArgs),
+    ]),
+  ]).statement;
 }
 
 Code _buildListFieldAddition(
@@ -331,6 +540,7 @@ Code _buildListFieldAddition(
   String accessor,
   ListModel listModel, {
   Map<String, MultipartPropertyEncoding>? encoding,
+  String? headerVarName,
 }) {
   final propertyEncoding = encoding?[rawName];
   final style = propertyEncoding?.style;
@@ -355,7 +565,7 @@ Code _buildListFieldAddition(
     return _buildListForLoop(
       rawName,
       accessor,
-      _binaryItemExpression(rawName),
+      _binaryItemExpression(rawName, headerVarName: headerVarName),
       isFile: true,
     );
   }
@@ -367,7 +577,11 @@ Code _buildListFieldAddition(
     return _buildListForLoop(
       rawName,
       accessor,
-      _complexItemExpression(rawName, encoding: encoding),
+      _complexItemExpression(
+        rawName,
+        encoding: encoding,
+        headerVarName: headerVarName,
+      ),
       isFile: true,
     );
   }
@@ -381,6 +595,31 @@ Code _buildListFieldAddition(
 
   final explode = propertyEncoding?.explode ?? true;
 
+  // When headers are present, text items must be sent as
+  // MultipartFile.fromString so the headers can be attached.
+  if (headerVarName != null) {
+    final fileItemExpr =
+        'MultipartFile.fromString($itemExpr, headers: $headerVarName)';
+    if (explode) {
+      return _buildListForLoop(
+        rawName,
+        accessor,
+        fileItemExpr,
+        isFile: true,
+      );
+    }
+    final encoderCall = _buildEncoderCall(accessor, itemExpr, style: style);
+    // After the encoder, items are already strings.
+    final encodedFileItemExpr =
+        'MultipartFile.fromString(item, headers: $headerVarName)';
+    return _buildListForLoop(
+      rawName,
+      encoderCall,
+      encodedFileItemExpr,
+      isFile: true,
+    );
+  }
+
   if (explode) {
     // explode: true — for-loop adding each item as a separate field.
     return _buildListForLoop(rawName, accessor, itemExpr, isFile: false);
@@ -391,16 +630,12 @@ Code _buildListFieldAddition(
   final encoderCall = _buildEncoderCall(accessor, itemExpr, style: style);
   return Block.of([
     Code('for (final item in $encoderCall) {'),
-    refer('formData')
-        .property('fields')
-        .property('add')
-        .call([
-          refer('MapEntry', 'dart:core').call([
-            literalString(rawName),
-            refer('item'),
-          ]),
-        ])
-        .statement,
+    refer('formData').property('fields').property('add').call([
+      refer('MapEntry', 'dart:core').call([
+        literalString(rawName),
+        refer('item'),
+      ]),
+    ]).statement,
     const Code('}'),
   ]);
 }
@@ -437,9 +672,10 @@ String _itemToStringExpression(
     DecimalModel() ||
     UriModel() =>
       contentType == ContentType.json ? 'jsonEncode(item)' : 'item.toString()',
-    DateTimeModel() => contentType == ContentType.json
-        ? 'jsonEncode(item)'
-        : 'item.toTimeZonedIso8601String()',
+    DateTimeModel() =>
+      contentType == ContentType.json
+          ? 'jsonEncode(item)'
+          : 'item.toTimeZonedIso8601String()',
     EnumModel() => 'item.uriEncode(allowEmpty: true)',
     AliasModel() => _itemToStringExpression(
       contentModel.resolved,
@@ -450,19 +686,22 @@ String _itemToStringExpression(
 }
 
 /// Returns the expression string for a binary item in a for-loop.
-String _binaryItemExpression(String rawName) {
-  return "MultipartFile.fromBytes(item, filename: '$rawName')";
+String _binaryItemExpression(String rawName, {String? headerVarName}) {
+  final headersArg = headerVarName != null ? ', headers: $headerVarName' : '';
+  return "MultipartFile.fromBytes(item, filename: '$rawName'$headersArg)";
 }
 
 /// Returns the expression string for a complex object item in a for-loop.
 String _complexItemExpression(
   String rawName, {
   Map<String, MultipartPropertyEncoding>? encoding,
+  String? headerVarName,
 }) {
   final rawContentType =
       encoding?[rawName]?.rawContentType ?? 'application/json';
+  final headersArg = headerVarName != null ? ', headers: $headerVarName' : '';
   return 'MultipartFile.fromString(jsonEncode(item.toJson()), '
-      "contentType: DioMediaType.parse('$rawContentType'))";
+      "contentType: DioMediaType.parse('$rawContentType')$headersArg)";
 }
 
 /// Builds the encoder call string for explode: false arrays.
@@ -486,8 +725,9 @@ String _buildEncoderCall(
     MultipartEncodingStyle.pipeDelimited =>
       '$mappedList.toPipeDelimited(explode: false, '
           'allowEmpty: true, alreadyEncoded: true)',
-    _ => '$mappedList.toForm(explode: false, '
-        'allowEmpty: true, alreadyEncoded: true)',
+    _ =>
+      '$mappedList.toForm(explode: false, '
+          'allowEmpty: true, alreadyEncoded: true)',
   };
 }
 
@@ -495,6 +735,7 @@ Code _buildComplexObjectFileAddition(
   String rawName,
   String accessor, {
   Map<String, MultipartPropertyEncoding>? encoding,
+  String? headerVarName,
 }) {
   final propertyEncoding = encoding?[rawName];
 
@@ -505,8 +746,7 @@ Code _buildComplexObjectFileAddition(
     );
   }
 
-  final rawContentType =
-      propertyEncoding?.rawContentType ?? 'application/json';
+  final rawContentType = propertyEncoding?.rawContentType ?? 'application/json';
 
   final namedArgs = <String, Expression>{
     'contentType': refer(
@@ -515,19 +755,83 @@ Code _buildComplexObjectFileAddition(
     ).property('parse').call([literalString(rawContentType)]),
   };
 
-  return refer('formData')
-      .property('files')
-      .property('add')
-      .call([
-        refer('MapEntry', 'dart:core').call([
-          literalString(rawName),
-          refer('MultipartFile', 'package:dio/dio.dart')
-              .property('fromString')
-              .call([
-                refer('jsonEncode', 'dart:convert')
-                    .call([refer(accessor).property('toJson').call([])]),
-              ], namedArgs),
-        ]),
-      ])
-      .statement;
+  if (headerVarName != null) {
+    namedArgs['headers'] = refer(headerVarName);
+  }
+
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call([
+        refer(
+          'jsonEncode',
+          'dart:convert',
+        ).call([refer(accessor).property('toJson').call([])]),
+      ], namedArgs),
+    ]),
+  ]).statement;
+}
+
+/// Information about a per-part header parameter in multipart encoding.
+typedef MultipartHeaderParamInfo = ({
+  String name,
+  Model model,
+  bool isRequired,
+});
+
+/// Extracts per-part header parameters from a multipart request content.
+///
+/// Returns info needed to generate method parameters or call arguments.
+/// Content-Type headers are filtered per OAS spec.
+List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
+  RequestContent content,
+) {
+  final encoding = content.encoding;
+  if (encoding == null) return const [];
+
+  var model = content.model;
+  if (model is AliasModel) {
+    model = model.resolved;
+  }
+  if (model is! ClassModel) return const [];
+
+  final writeProperties =
+      model.properties.where((p) => !p.isReadOnly).toList();
+  final normalizedProps = normalizeProperties(writeProperties);
+
+  final result = <MultipartHeaderParamInfo>[];
+
+  for (final (:normalizedName, :property) in normalizedProps) {
+    final propertyEncoding = encoding[property.name];
+    final headers = propertyEncoding?.headers;
+    if (headers == null || headers.isEmpty) continue;
+
+    final isPropertyOptional = !property.isRequired || property.isNullable;
+
+    final filteredEntries = headers.entries
+        .where((e) => e.key.toLowerCase() != 'content-type')
+        .toList();
+
+    for (final entry in filteredEntries) {
+      final rawHeaderName = entry.key;
+      final header = entry.value.resolve(name: rawHeaderName);
+      final isRequired = !isPropertyOptional && header.isRequired;
+
+      final paramName = normalizeMultipartHeaderName(
+        normalizedName,
+        rawHeaderName,
+      );
+
+      result.add((
+        name: paramName,
+        model: header.model,
+        isRequired: isRequired,
+      ));
+    }
+  }
+
+  return result;
 }

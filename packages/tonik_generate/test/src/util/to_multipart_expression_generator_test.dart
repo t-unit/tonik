@@ -88,12 +88,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('name', body.name));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -138,14 +140,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.name != null) {
               formData.fields.add(MapEntry('name', body.name!));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -190,14 +194,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.nickname != null) {
               formData.fields.add(MapEntry('nickname', body.nickname!));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -242,14 +248,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.bio != null) {
               formData.fields.add(MapEntry('bio', body.bio!));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -278,11 +286,13 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -303,13 +313,15 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             throw UnsupportedError(
               'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -335,18 +347,19 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             throw UnsupportedError(
               'Multipart request bodies require an object schema (ClassModel). Got: BinaryModel.',
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
-    test('resolves AliasModel wrapping ClassModel and generates correctly',
-        () {
+    test('resolves AliasModel wrapping ClassModel and generates correctly', () {
       final classModel = ClassModel(
         name: 'InnerForm',
         isDeprecated: false,
@@ -391,12 +404,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('title', body.title));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -449,12 +464,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('name', body.name));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -500,12 +517,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('password', body.password));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -550,12 +569,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('data', body.data.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -600,14 +621,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format(r'''
+        collapseWhitespace(
+          format(r'''
           void test() {
             final formData = FormData();
             throw EncodingException(
               'Cannot encode NeverModel property \'impossible\' - this type does not permit any value.',
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
   });
@@ -654,12 +677,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('age', body.age.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -704,12 +729,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('score', body.score.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -754,12 +781,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('value', body.value.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -804,12 +833,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('active', body.active.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -854,12 +885,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('birth_date', body.birthDate.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -904,12 +937,14 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('amount', body.amount.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -954,119 +989,130 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('website', body.website.toString()));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
-    test('serializes DateTimeModel with text/plain via toTimeZonedIso8601String()', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'created_at',
-            model: DateTimeModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+    test(
+      'serializes DateTimeModel with text/plain via toTimeZonedIso8601String()',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'created_at',
+              model: DateTimeModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'created_at': const MultipartPropertyEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'created_at': const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('created_at', body.createdAt.toTimeZonedIso8601String()));
           }
-        ''')),
-      );
-    });
-
-    test('wraps nullable required primitive with text/plain with null-check', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'count',
-            model: IntegerModel(context: testContext),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
+        '''),
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'count': const MultipartPropertyEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+    test(
+      'wraps nullable required primitive with text/plain with null-check',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: IntegerModel(context: testContext),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             if (body.count != null) {
               formData.fields.add(MapEntry('count', body.count!.toString()));
             }
           }
-        ''')),
-      );
-    });
+        '''),
+          ),
+        );
+      },
+    );
 
-    test(
-        'serializes IntegerModel with application/json contentType '
+    test('serializes IntegerModel with application/json contentType '
         'via jsonEncode', () {
       final model = ClassModel(
         name: 'TestForm',
@@ -1108,17 +1154,18 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('age', jsonEncode(body.age)));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
-    test(
-        'serializes DateTimeModel with application/json contentType '
+    test('serializes DateTimeModel with application/json contentType '
         'via jsonEncode (not toTimeZonedIso8601String)', () {
       final model = ClassModel(
         name: 'TestForm',
@@ -1160,17 +1207,18 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('createdAt', jsonEncode(body.createdAt)));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
-    test(
-        'serializes BooleanModel with application/json contentType '
+    test('serializes BooleanModel with application/json contentType '
         'via jsonEncode', () {
       final model = ClassModel(
         name: 'TestForm',
@@ -1212,17 +1260,18 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('active', jsonEncode(body.active)));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
-    test(
-        'wraps nullable primitive with null-check when using '
+    test('wraps nullable primitive with null-check when using '
         'application/json contentType', () {
       final model = ClassModel(
         name: 'TestForm',
@@ -1264,266 +1313,284 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.score != null) {
               formData.fields.add(MapEntry('score', jsonEncode(body.score!)));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
   });
 
   group('enum properties', () {
-    test('serializes required EnumModel<String> with text/plain via toJson()',
-        () {
-      final enumModel = EnumModel<String>(
-        name: 'Status',
-        values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
-        },
-        isNullable: false,
-        isDeprecated: false,
-        context: testContext,
-      );
+    test(
+      'serializes required EnumModel<String> with text/plain via toJson()',
+      () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: testContext,
+        );
 
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'status',
-            model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'status',
+              model: enumModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': const MultipartPropertyEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'status': const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('status', body.status.toJson()));
           }
-        ''')),
-      );
-    });
-
-    test('serializes required EnumModel<int> with text/plain via toJson().toString()',
-        () {
-      final enumModel = EnumModel<int>(
-        name: 'Count',
-        values: {
-          const EnumEntry(value: 1),
-          const EnumEntry(value: 2),
-        },
-        isNullable: false,
-        isDeprecated: false,
-        context: testContext,
-      );
-
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'count',
-            model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
+        '''),
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'count': const MultipartPropertyEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+    test(
+      'serializes required EnumModel<int> with text/plain via toJson().toString()',
+      () {
+        final enumModel = EnumModel<int>(
+          name: 'Count',
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: enumModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('count', body.count.toJson().toString()));
           }
-        ''')),
-      );
-    });
-
-    test('serializes required EnumModel<String> with application/json via toJson()',
-        () {
-      final enumModel = EnumModel<String>(
-        name: 'Status',
-        values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
-        },
-        isNullable: false,
-        isDeprecated: false,
-        context: testContext,
-      );
-
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'status',
-            model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
+        '''),
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': const MultipartPropertyEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+    test(
+      'serializes required EnumModel<String> with application/json via toJson()',
+      () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'status',
+              model: enumModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'status': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('status', body.status.toJson()));
           }
-        ''')),
-      );
-    });
-
-    test('serializes required EnumModel<int> with application/json via toJson().toString()',
-        () {
-      final enumModel = EnumModel<int>(
-        name: 'Count',
-        values: {
-          const EnumEntry(value: 1),
-          const EnumEntry(value: 2),
-        },
-        isNullable: false,
-        isDeprecated: false,
-        context: testContext,
-      );
-
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'count',
-            model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
+        '''),
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'count': const MultipartPropertyEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+    test(
+      'serializes required EnumModel<int> with application/json via toJson().toString()',
+      () {
+        final enumModel = EnumModel<int>(
+          name: 'Count',
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: enumModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.fields.add(MapEntry('count', body.count.toJson().toString()));
           }
-        ''')),
-      );
-    });
+        '''),
+          ),
+        );
+      },
+    );
 
     test('wraps optional enum with null-check', () {
       final enumModel = EnumModel<String>(
@@ -1577,14 +1644,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.status != null) {
               formData.fields.add(MapEntry('status', body.status!.toJson()));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1640,17 +1709,18 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.status != null) {
               formData.fields.add(MapEntry('status', body.status!.toJson()));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
-
   });
 
   group('binary properties', () {
@@ -1695,7 +1765,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -1703,7 +1774,8 @@ void main() {
               MultipartFile.fromBytes(body.avatar, filename: 'avatar'),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1748,7 +1820,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.document != null) {
@@ -1758,7 +1831,8 @@ void main() {
               ));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1803,7 +1877,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.photo != null) {
@@ -1813,7 +1888,8 @@ void main() {
               ));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1858,7 +1934,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -1870,7 +1947,8 @@ void main() {
               ),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1915,7 +1993,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -1923,62 +2002,65 @@ void main() {
               MultipartFile.fromBytes(body.file, filename: 'file'),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
   });
 
   group('complex object properties', () {
-    test('generates JSON-encoded file part for required ClassModel property',
-        () {
-      final innerClass = ClassModel(
-        name: 'Address',
-        isDeprecated: false,
-        properties: [],
-        context: testContext,
-      );
+    test(
+      'generates JSON-encoded file part for required ClassModel property',
+      () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+        );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'address',
-            model: innerClass,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: innerClass,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const MultipartPropertyEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -1989,9 +2071,11 @@ void main() {
               ),
             ));
           }
-        ''')),
-      );
-    });
+        '''),
+          ),
+        );
+      },
+    );
 
     test('generates JSON-encoded file part for AllOfModel property', () {
       final allOfModel = AllOfModel(
@@ -2043,7 +2127,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -2054,7 +2139,8 @@ void main() {
               ),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2108,7 +2194,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -2119,7 +2206,8 @@ void main() {
               ),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2173,7 +2261,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -2184,7 +2273,8 @@ void main() {
               ),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2236,7 +2326,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.address != null) {
@@ -2249,7 +2340,8 @@ void main() {
               ));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2301,7 +2393,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.address != null) {
@@ -2314,7 +2407,8 @@ void main() {
               ));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2366,7 +2460,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -2377,7 +2472,8 @@ void main() {
               ),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2490,7 +2586,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry(
@@ -2501,7 +2598,8 @@ void main() {
               ),
             ));
           }
-        ''')),
+        '''),
+        ),
       );
     });
   });
@@ -2553,14 +2651,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.tags) {
               formData.fields.add(MapEntry('tags', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2608,14 +2708,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.tags) {
               formData.fields.add(MapEntry('tags', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2663,14 +2765,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               formData.fields.add(MapEntry('tags', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2718,14 +2822,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
               formData.fields.add(MapEntry('tags', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2773,14 +2879,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               formData.fields.add(MapEntry('tags', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2829,14 +2937,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             throw EncodingException(
               'deepObject style is not supported for array multipart properties (property: tags).',
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2897,14 +3007,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.statuses) {
               formData.fields.add(MapEntry('statuses', item.uriEncode(allowEmpty: true)));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -2963,14 +3075,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               formData.fields.add(MapEntry('codes', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3020,14 +3134,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.scores) {
               formData.fields.add(MapEntry('scores', item.toString()));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3075,14 +3191,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.scores) {
               formData.fields.add(MapEntry('scores', jsonEncode(item)));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3130,14 +3248,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.scores.map((item) => jsonEncode(item)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               formData.fields.add(MapEntry('scores', item));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3185,14 +3305,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.dates) {
               formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3240,14 +3362,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.dates) {
               formData.fields.add(MapEntry('dates', jsonEncode(item)));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3297,14 +3421,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.files) {
               formData.files.add(MapEntry('files', MultipartFile.fromBytes(item, filename: 'files')));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3352,14 +3478,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.files) {
               formData.files.add(MapEntry('files', MultipartFile.fromBytes(item, filename: 'files')));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3416,14 +3544,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.addresses) {
               formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'))));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3478,14 +3608,16 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             for (final item in body.addresses) {
               formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/xml'))));
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3535,7 +3667,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.tags != null) {
@@ -3544,7 +3677,8 @@ void main() {
               }
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3592,7 +3726,8 @@ void main() {
       final code = emitStatements(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             final formData = FormData();
             if (body.tags != null) {
@@ -3601,7 +3736,8 @@ void main() {
               }
             }
           }
-        ''')),
+        '''),
+        ),
       );
     });
   });
@@ -3648,7 +3784,8 @@ void main() {
       final code = emitExpressionAsMethod(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             () {
               final formData = FormData();
@@ -3656,7 +3793,8 @@ void main() {
               return formData;
             }();
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -3677,7 +3815,8 @@ void main() {
       final code = emitExpressionAsMethod(result);
       expect(
         collapseWhitespace(code),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           void test() {
             () {
               throw UnsupportedError(
@@ -3685,7 +3824,1419 @@ void main() {
               );
             }();
           }
-        ''')),
+        '''),
+        ),
+      );
+    });
+  });
+
+  group('per-part headers', () {
+    test('binary property with one required header passes headers to '
+        'MultipartFile', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'file': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: MultipartEncodingStyle.form,
+            explode: true,
+            allowReserved: false,
+            headers: {
+              'X-Rate-Limit': ResponseHeaderObject(
+                name: 'X-Rate-Limit',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final fileHeaders = <String, List<String>>{};
+            fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'file',
+              MultipartFile.fromBytes(body.file, filename: 'file', headers: fileHeaders),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('binary property with optional header wraps in null check', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'file': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Tag': ResponseHeaderObject(
+                name: 'X-Tag',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final fileHeaders = <String, List<String>>{};
+            if (fileTag != null) {
+              fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+            }
+            formData.files.add(MapEntry(
+              'file',
+              MultipartFile.fromBytes(body.file, filename: 'file', headers: fileHeaders),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('complex object with headers passes headers to MultipartFile', () {
+      final innerClass = ClassModel(
+        name: 'Address',
+        isDeprecated: false,
+        properties: [],
+        context: testContext,
+      );
+
+      final model = ClassModel(
+        name: 'PersonForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'address',
+            model: innerClass,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'address': MultipartPropertyEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final addressHeaders = <String, List<String>>{};
+            addressHeaders['X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'address',
+              MultipartFile.fromString(
+                jsonEncode(body.address.toJson()),
+                contentType: DioMediaType.parse('application/json'),
+                headers: addressHeaders,
+              ),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('string field with headers converts to MultipartFile.fromString', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'description',
+            model: StringModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'description': MultipartPropertyEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            headers: {
+              'X-Language': ResponseHeaderObject(
+                name: 'X-Language',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final descriptionHeaders = <String, List<String>>{};
+            descriptionHeaders['X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'description',
+              MultipartFile.fromString(body.description, headers: descriptionHeaders),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test(
+      'primitive field with headers converts to MultipartFile.fromString',
+      () {
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: IntegerModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: {
+                'X-Source': ResponseHeaderObject(
+                  name: 'X-Source',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+          void test() {
+            final formData = FormData();
+            final countHeaders = <String, List<String>>{};
+            countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'count',
+              MultipartFile.fromString(body.count.toString(), headers: countHeaders),
+            ));
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
+    test('enum field with headers converts to MultipartFile.fromString', () {
+      final enumModel = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+        isDeprecated: false,
+        context: testContext,
+      );
+
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'status',
+            model: enumModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'status': MultipartPropertyEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final statusHeaders = <String, List<String>>{};
+            statusHeaders['X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'status',
+              MultipartFile.fromString(body.status.toJson(), headers: statusHeaders),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('Content-Type header is filtered out from per-part headers', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'file': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'Content-Type': ResponseHeaderObject(
+                name: 'Content-Type',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      // No headers map since only Content-Type was present and it's filtered.
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            formData.files.add(MapEntry(
+              'file',
+              MultipartFile.fromBytes(body.file, filename: 'file'),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('multiple headers on one property are all included', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'file': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Rate-Limit': ResponseHeaderObject(
+                name: 'X-Rate-Limit',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+              'X-Tag': ResponseHeaderObject(
+                name: 'X-Tag',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final fileHeaders = <String, List<String>>{};
+            fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            if (fileTag != null) {
+              fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+            }
+            formData.files.add(MapEntry(
+              'file',
+              MultipartFile.fromBytes(body.file, filename: 'file', headers: fileHeaders),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('property without headers does not generate headers map', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'file': const MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            formData.files.add(MapEntry(
+              'file',
+              MultipartFile.fromBytes(body.file, filename: 'file'),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('exploded string list with headers uses MultipartFile.fromString '
+        'per item', () {
+      final model = ClassModel(
+        name: 'TestForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'tags': MultipartPropertyEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: MultipartEncodingStyle.form,
+            explode: true,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final tagsHeaders = <String, List<String>>{};
+            tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.tags) {
+              formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: tagsHeaders)));
+            }
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('non-exploded string list with headers uses MultipartFile.fromString '
+        'for encoded value', () {
+      final model = ClassModel(
+        name: 'TestForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: testContext),
+              context: testContext,
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'tags': MultipartPropertyEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            style: MultipartEncodingStyle.form,
+            explode: false,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final tagsHeaders = <String, List<String>>{};
+            tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+              formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: tagsHeaders)));
+            }
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('exploded binary list with headers passes headers to '
+        'MultipartFile.fromBytes', () {
+      final model = ClassModel(
+        name: 'TestForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'files',
+            model: ListModel(
+              content: BinaryModel(context: testContext),
+              context: testContext,
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'files': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: MultipartEncodingStyle.form,
+            explode: true,
+            headers: {
+              'X-Checksum': ResponseHeaderObject(
+                name: 'X-Checksum',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final filesHeaders = <String, List<String>>{};
+            filesHeaders['X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.files) {
+              formData.files.add(MapEntry('files', MultipartFile.fromBytes(item, filename: 'files', headers: filesHeaders)));
+            }
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('exploded complex list with headers passes headers to '
+        'MultipartFile.fromString', () {
+      final innerClass = ClassModel(
+        name: 'Address',
+        isDeprecated: false,
+        properties: [],
+        context: testContext,
+      );
+
+      final model = ClassModel(
+        name: 'TestForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'addresses',
+            model: ListModel(
+              content: innerClass,
+              context: testContext,
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'addresses': MultipartPropertyEncoding(
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            style: MultipartEncodingStyle.form,
+            explode: true,
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final addressesHeaders = <String, List<String>>{};
+            addressesHeaders['X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.addresses) {
+              formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'), headers: addressesHeaders)));
+            }
+          }
+        '''),
+        ),
+      );
+    });
+
+    test('required header on optional property uses null assertion', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: testContext),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'file': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Rate-Limit': ResponseHeaderObject(
+                name: 'X-Rate-Limit',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: IntegerModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      // The header param is nullable because the property is optional,
+      // but the header is required — so it needs ! when accessed.
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            if (body.file != null) {
+              final fileHeaders = <String, List<String>>{};
+              fileHeaders['X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
+              formData.files.add(MapEntry(
+                'file',
+                MultipartFile.fromBytes(body.file!, filename: 'file', headers: fileHeaders),
+              ));
+            }
+          }
+        '''),
+        ),
+      );
+    });
+
+    test(
+      'required header on nullable required property uses null assertion',
+      () {
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: testContext),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'file': MultipartPropertyEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: {
+                'X-Checksum': ResponseHeaderObject(
+                  name: 'X-Checksum',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+          void test() {
+            final formData = FormData();
+            if (body.file != null) {
+              final fileHeaders = <String, List<String>>{};
+              fileHeaders['X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
+              formData.files.add(MapEntry(
+                'file',
+                MultipartFile.fromBytes(body.file!, filename: 'file', headers: fileHeaders),
+              ));
+            }
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
+    test('AnyModel field with headers converts to MultipartFile.fromString', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'data',
+            model: AnyModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'data': MultipartPropertyEncoding(
+            contentType: ContentType.text,
+            rawContentType: 'text/plain',
+            headers: {
+              'X-Custom': ResponseHeaderObject(
+                name: 'X-Custom',
+                context: testContext,
+                description: null,
+                explode: false,
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isDeprecated: false,
+                encoding: ResponseHeaderEncoding.simple,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final dataHeaders = <String, List<String>>{};
+            dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'data',
+              MultipartFile.fromString(body.data.toString(), headers: dataHeaders),
+            ));
+          }
+        '''),
+        ),
+      );
+    });
+
+    test(
+      'primitive field with json contentType and headers uses jsonEncode in '
+      'MultipartFile.fromString',
+      () {
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: IntegerModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: {
+                'X-Source': ResponseHeaderObject(
+                  name: 'X-Source',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+          void test() {
+            final formData = FormData();
+            final countHeaders = <String, List<String>>{};
+            countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'count',
+              MultipartFile.fromString(jsonEncode(body.count), headers: countHeaders),
+            ));
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'DateTimeModel field with json contentType and headers uses jsonEncode '
+      'in MultipartFile.fromString',
+      () {
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'createdAt',
+              model: DateTimeModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'createdAt': MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              headers: {
+                'X-Source': ResponseHeaderObject(
+                  name: 'X-Source',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+          void test() {
+            final formData = FormData();
+            final createdAtHeaders = <String, List<String>>{};
+            createdAtHeaders['X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'createdAt',
+              MultipartFile.fromString(jsonEncode(body.createdAt), headers: createdAtHeaders),
+            ));
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'non-exploded DateTime list with headers uses item directly '
+      'after encoder stringifies',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'dates',
+              model: ListModel(
+                content: DateTimeModel(context: testContext),
+                context: testContext,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'dates': MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.form,
+              explode: false,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+          void test() {
+            final formData = FormData();
+            final datesHeaders = <String, List<String>>{};
+            datesHeaders['X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+              formData.files.add(MapEntry('dates', MultipartFile.fromString(item, headers: datesHeaders)));
+            }
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
+    test('resolves ResponseHeaderAlias to underlying header object', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'document',
+            model: BinaryModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      // Create a header alias that wraps a real header object.
+      final underlyingHeader = ResponseHeaderObject(
+        name: 'X-Trace-Id',
+        context: testContext,
+        description: 'Trace identifier',
+        explode: false,
+        model: StringModel(context: testContext),
+        isRequired: true,
+        isDeprecated: false,
+        encoding: ResponseHeaderEncoding.simple,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'document': MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            headers: {
+              'X-Trace-Id': ResponseHeaderAlias(
+                name: 'X-Trace-Id',
+                context: testContext,
+                header: underlyingHeader,
+              ),
+            },
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      // Alias should resolve transparently — same output as direct header.
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            final documentHeaders = <String, List<String>>{};
+            documentHeaders['X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
+            formData.files.add(MapEntry(
+              'document',
+              MultipartFile.fromBytes(body.document, filename: 'document', headers: documentHeaders),
+            ));
+          }
+        '''),
+        ),
       );
     });
   });

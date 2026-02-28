@@ -168,4 +168,159 @@ void main() {
       );
     });
   });
+
+  group('buildSimpleValueExpression', () {
+    test('serializes string model', () {
+      final model = StringModel(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myParam'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'myParam.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes integer model', () {
+      final model = IntegerModel(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('count'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'count.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes boolean model', () {
+      final model = BooleanModel(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('flag'),
+            model,
+            explode: true,
+            allowEmpty: false,
+          ),
+        ),
+        'flag.toSimple(explode: true, allowEmpty: false, )',
+      );
+    });
+
+    test('serializes enum model', () {
+      final model = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('status'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'status.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes dateTime model', () {
+      final model = DateTimeModel(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('timestamp'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'timestamp.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes never model as exception', () {
+      final model = NeverModel(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('neverParam'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        '''throw  EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
+      );
+    });
+
+    test('respects isNullable flag', () {
+      final model = StringModel(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myParam'),
+            model,
+            explode: false,
+            allowEmpty: true,
+            isNullable: true,
+          ),
+        ),
+        'myParam?.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes list of strings', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('tags'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'tags.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes alias model by resolving underlying type', () {
+      final underlying = IntegerModel(context: context);
+      final model = AliasModel(
+        name: 'MyInt',
+        model: underlying,
+        context: context,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myInt'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'myInt.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+  });
 }

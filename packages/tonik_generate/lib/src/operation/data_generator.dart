@@ -96,6 +96,29 @@ class DataGenerator {
         }
       }
 
+      // Collect multipart header params across all multipart contents.
+      final multipartHeaderParams = <Parameter>[];
+      for (final c in content) {
+        if (c.contentType == ContentType.multipart) {
+          for (final info in extractMultipartHeaderParamInfo(c)) {
+            multipartHeaderParams.add(
+              Parameter(
+                (b) => b
+                  ..name = info.name
+                  ..type = typeReference(
+                    info.model,
+                    nameManager,
+                    package,
+                    isNullableOverride: !info.isRequired,
+                  )
+                  ..named = true
+                  ..required = info.isRequired,
+              ),
+            );
+          }
+        }
+      }
+
       return Method(
         (b) => b
           ..name = '_data'
@@ -109,6 +132,7 @@ class DataGenerator {
                 ..required = isRequired,
             ),
           )
+          ..optionalParameters.addAll(multipartHeaderParams)
           ..lambda = false
           ..body = Block.of([
             if (!isRequired) const Code('if (body == null) return null;\n'),
@@ -170,6 +194,27 @@ class DataGenerator {
           ..add(refer('formData').returned.statement);
     }
 
+    // Collect multipart header params for single-content multipart bodies.
+    final multipartHeaderParams = <Parameter>[];
+    if (contentType == ContentType.multipart) {
+      for (final info in extractMultipartHeaderParamInfo(content.first)) {
+        multipartHeaderParams.add(
+          Parameter(
+            (b) => b
+              ..name = info.name
+              ..type = typeReference(
+                info.model,
+                nameManager,
+                package,
+                isNullableOverride: !info.isRequired,
+              )
+              ..named = true
+              ..required = info.isRequired,
+          ),
+        );
+      }
+    }
+
     return Method(
       (b) => b
         ..name = '_data'
@@ -183,6 +228,7 @@ class DataGenerator {
               ..required = true,
           ),
         )
+        ..optionalParameters.addAll(multipartHeaderParams)
         ..lambda = false
         ..body = Block.of(bodyCode),
     );

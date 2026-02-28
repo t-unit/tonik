@@ -805,6 +805,85 @@ void main() {
         );
       });
 
+      test(
+        'generates _data method with multipart header params in signature',
+        () {
+          final uploadModel = ClassModel(
+            name: 'UploadForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'file',
+                model: BinaryModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final operation = Operation(
+            operationId: 'uploadFile',
+            path: '/uploads',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'uploadFile',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: uploadModel,
+                  contentType: ContentType.multipart,
+                  rawContentType: 'multipart/form-data',
+                  encoding: {
+                    'file': MultipartPropertyEncoding(
+                      contentType: ContentType.bytes,
+                      rawContentType: 'application/octet-stream',
+                      headers: {
+                        'X-Rate-Limit': ResponseHeaderObject(
+                          name: 'X-Rate-Limit',
+                          context: testContext,
+                          description: null,
+                          explode: false,
+                          model: IntegerModel(context: testContext),
+                          isRequired: true,
+                          isDeprecated: false,
+                          encoding: ResponseHeaderEncoding.simple,
+                        ),
+                      },
+                    ),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateDataMethod(operation);
+
+          // _data() must include multipart header params so they're in scope.
+          expect(method.optionalParameters, hasLength(2));
+
+          final bodyParam = method.optionalParameters.first;
+          expect(bodyParam.name, 'body');
+
+          final headerParam = method.optionalParameters[1];
+          expect(headerParam.name, 'fileRateLimit');
+          expect(headerParam.named, isTrue);
+          expect(headerParam.required, isTrue);
+        },
+      );
+
       test('generates _data method for multi-content including multipart',
           () {
         final jsonModel = ClassModel(

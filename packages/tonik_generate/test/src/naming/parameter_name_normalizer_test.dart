@@ -344,6 +344,42 @@ void main() {
       },
     );
   });
+
+  group('normalizeMultipartHeaderName', () {
+    test('combines property name and header name', () {
+      expect(
+        normalizeMultipartHeaderName('profileImage', 'X-Rate-Limit-Limit'),
+        'profileImageRateLimitLimit',
+      );
+    });
+
+    test('handles simple header name', () {
+      expect(
+        normalizeMultipartHeaderName('file', 'X-Custom'),
+        'fileCustom',
+      );
+    });
+
+    test('handles header name without x- prefix', () {
+      expect(
+        normalizeMultipartHeaderName('document', 'Cache-Control'),
+        'documentCacheControl',
+      );
+    });
+
+    test('handles single-word header name', () {
+      expect(
+        normalizeMultipartHeaderName('avatar', 'Authorization'),
+        'avatarAuthorization',
+      );
+    });
+
+    test('different properties produce different names for same header', () {
+      final name1 = normalizeMultipartHeaderName('file', 'X-Custom');
+      final name2 = normalizeMultipartHeaderName('avatar', 'X-Custom');
+      expect(name1, isNot(name2));
+    });
+  });
 }
 
 PathParameterObject createPathParameter(

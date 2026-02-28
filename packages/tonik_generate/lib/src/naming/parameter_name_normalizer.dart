@@ -231,6 +231,24 @@ String _normalizeHeaderName(String name) {
   return _normalizeName(name);
 }
 
+/// Builds a Dart parameter name for a per-part multipart header by combining
+/// the normalized property name with the normalized header name.
+///
+/// For example: property `profileImage` + header `X-Rate-Limit-Limit`
+/// → `profileImageRateLimitLimit`.
+String normalizeMultipartHeaderName(
+  String normalizedPropertyName,
+  String rawHeaderName,
+) {
+  final normalizedHeader = _normalizeHeaderName(rawHeaderName);
+  if (normalizedHeader.isEmpty) return normalizedPropertyName;
+
+  // Capitalize the first letter of the header name so it joins in camelCase.
+  final capitalized =
+      normalizedHeader[0].toUpperCase() + normalizedHeader.substring(1);
+  return '$normalizedPropertyName$capitalized';
+}
+
 /// Normalizes a single parameter name.
 String _normalizeName(String name) {
   return normalizeSingle(name, preserveNumbers: true);

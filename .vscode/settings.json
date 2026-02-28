@@ -42,5 +42,8 @@
     "unconfigured",
     "użytkownik",
     "مرحبا"
-  ]
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "fvm": true
+  }
 }

@@ -412,4 +412,591 @@ void main() {
       expect(paramNames, contains('sessionId'));
     });
   });
+
+  group('multipart per-part header parameters', () {
+    test('generates parameter for property with one header', () {
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: ClassModel(
+              name: 'UploadForm',
+              properties: [
+                Property(
+                  name: 'file',
+                  model: BinaryModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              isDeprecated: false,
+            ),
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'file': MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Rate-Limit-Limit': ResponseHeaderObject(
+                    name: 'X-Rate-Limit-Limit',
+                    context: context,
+                    description: 'Rate limit',
+                    explode: false,
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                },
+              ),
+            },
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      // body + one header param
+      expect(parameters.length, 2);
+      final headerParam = parameters.firstWhere(
+        (p) => p.name == 'fileRateLimitLimit',
+      );
+      expect(headerParam.named, isTrue);
+      expect(headerParam.required, isTrue);
+      expect(headerParam.type?.accept(emitter).toString(), 'int');
+    });
+
+    test('generates multiple header parameters for multiple headers', () {
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: ClassModel(
+              name: 'UploadForm',
+              properties: [
+                Property(
+                  name: 'file',
+                  model: BinaryModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              isDeprecated: false,
+            ),
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'file': MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Rate-Limit-Limit': ResponseHeaderObject(
+                    name: 'X-Rate-Limit-Limit',
+                    context: context,
+                    description: 'Rate limit',
+                    explode: false,
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                  'X-Custom-Tag': ResponseHeaderObject(
+                    name: 'X-Custom-Tag',
+                    context: context,
+                    description: 'Custom tag',
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: false,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                },
+              ),
+            },
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      // body + two header params
+      expect(parameters.length, 3);
+
+      final rateLimitParam = parameters.firstWhere(
+        (p) => p.name == 'fileRateLimitLimit',
+      );
+      expect(rateLimitParam.required, isTrue);
+      expect(rateLimitParam.type?.accept(emitter).toString(), 'int');
+
+      final customTagParam = parameters.firstWhere(
+        (p) => p.name == 'fileCustomTag',
+      );
+      expect(customTagParam.required, isFalse);
+      expect(customTagParam.type?.accept(emitter).toString(), 'String?');
+    });
+
+    test(
+      'optional property with required header produces optional parameter',
+      () {
+        final requestBody = RequestBodyObject(
+          name: 'uploadBody',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'UploadForm',
+                properties: [
+                  Property(
+                    name: 'avatar',
+                    model: BinaryModel(context: context),
+                    isRequired: false,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+                isDeprecated: false,
+              ),
+              contentType: ContentType.multipart,
+              rawContentType: 'multipart/form-data',
+              encoding: {
+                'avatar': MultipartPropertyEncoding(
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                  headers: {
+                    'X-Custom': ResponseHeaderObject(
+                      name: 'X-Custom',
+                      context: context,
+                      description: null,
+                      explode: false,
+                      model: StringModel(context: context),
+                      isRequired: true,
+                      isDeprecated: false,
+                      encoding: ResponseHeaderEncoding.simple,
+                    ),
+                  },
+                ),
+              },
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'upload',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/upload',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'package:api/api.dart',
+        );
+
+        final headerParam = parameters.firstWhere(
+          (p) => p.name == 'avatarCustom',
+        );
+        // Optional because the property itself is optional.
+        expect(headerParam.required, isFalse);
+        expect(headerParam.type?.accept(emitter).toString(), 'String?');
+      },
+    );
+
+    test('does not filter out Content-Type header', () {
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: ClassModel(
+              name: 'UploadForm',
+              properties: [
+                Property(
+                  name: 'file',
+                  model: BinaryModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              isDeprecated: false,
+            ),
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'file': MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'Content-Type': ResponseHeaderObject(
+                    name: 'Content-Type',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: false,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: false,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                },
+              ),
+            },
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      // body + Content-Type + X-Custom (Content-Type is not filtered)
+      expect(parameters.length, 3);
+      final paramNames = parameters.map((p) => p.name).toList();
+      expect(paramNames, contains('body'));
+      expect(paramNames, contains('fileContentType'));
+      expect(paramNames, contains('fileCustom'));
+    });
+
+    test('no extra parameters for property without headers', () {
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: ClassModel(
+              name: 'UploadForm',
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              isDeprecated: false,
+            ),
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'name': const MultipartPropertyEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+              ),
+            },
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      // Only body parameter, no extra header params.
+      expect(parameters.length, 1);
+      expect(parameters.first.name, 'body');
+    });
+
+    test('multipart header parameter name does not collide with query '
+        'parameter of same normalized name', () {
+      // Query param "file_custom" normalizes to "fileCustom".
+      // Multipart header "X-Custom" on property "file" also normalizes to
+      // "fileCustom". We need unique names.
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: ClassModel(
+              name: 'UploadForm',
+              properties: [
+                Property(
+                  name: 'file',
+                  model: BinaryModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              isDeprecated: false,
+            ),
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'file': MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Custom': ResponseHeaderObject(
+                    name: 'X-Custom',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                },
+              ),
+            },
+          ),
+        },
+      );
+
+      final queryParam = QueryParameterObject(
+        name: null,
+        rawName: 'file_custom',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      // body + query param + multipart header param = 3 parameters.
+      expect(parameters.length, 3);
+
+      final paramNames = parameters.map((p) => p.name).toList();
+      // All names must be unique.
+      expect(
+        paramNames.toSet().length,
+        paramNames.length,
+        reason: 'Parameter names must be unique: $paramNames',
+      );
+    });
+
+    test('resolves ResponseHeaderAlias to underlying header object', () {
+      final underlyingHeader = ResponseHeaderObject(
+        name: 'X-Trace-Id',
+        context: context,
+        description: 'Trace identifier',
+        explode: false,
+        model: StringModel(context: context),
+        isRequired: true,
+        isDeprecated: false,
+        encoding: ResponseHeaderEncoding.simple,
+      );
+
+      final bodyModel = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: 'Upload',
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: bodyModel,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'file': MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Trace-Id': ResponseHeaderAlias(
+                    name: 'X-Trace-Id',
+                    context: context,
+                    header: underlyingHeader,
+                  ),
+                },
+              ),
+            },
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      // body + 1 resolved header = 2 parameters.
+      expect(parameters.length, 2);
+
+      final headerParam = parameters.firstWhere(
+        (p) => p.name != 'body',
+      );
+      expect(headerParam.name, 'fileTraceId');
+      expect(headerParam.required, isTrue);
+      // The type should come from the resolved underlying header (String).
+      final typeCode = headerParam.type?.accept(emitter).toString();
+      expect(typeCode, contains('String'));
+    });
+  });
 }
