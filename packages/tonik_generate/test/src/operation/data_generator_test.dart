@@ -884,8 +884,7 @@ void main() {
         },
       );
 
-      test('generates _data method for multi-content including multipart',
-          () {
+      test('generates _data method for multi-content including multipart', () {
         final jsonModel = ClassModel(
           name: 'JsonPayload',
           isDeprecated: false,

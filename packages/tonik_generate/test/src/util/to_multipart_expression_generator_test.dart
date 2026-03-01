@@ -4886,58 +4886,60 @@ void main() {
       },
     );
 
-    test('AnyModel field with headers converts to MultipartFile.fromString', () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'data',
-            model: AnyModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+    test(
+      'AnyModel field with headers converts to MultipartFile.fromString',
+      () {
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'data',
+              model: AnyModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'data': MultipartPropertyEncoding(
-            contentType: ContentType.text,
-            rawContentType: 'text/plain',
-            headers: {
-              'X-Custom': ResponseHeaderObject(
-                name: 'X-Custom',
-                context: testContext,
-                description: null,
-                explode: false,
-                model: StringModel(context: testContext),
-                isRequired: true,
-                isDeprecated: false,
-                encoding: ResponseHeaderEncoding.simple,
-              ),
-            },
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'data': MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                ),
+              },
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             final dataHeaders = <String, List<String>>{};
@@ -4948,9 +4950,10 @@ void main() {
             ));
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
 
     test(
       'primitive field with json contentType and headers uses jsonEncode in '

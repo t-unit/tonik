@@ -184,17 +184,17 @@ Code? _buildFieldCode(
     UriModel() =>
       hasHeaders
           ? contentType == ContentType.json
-              ? _buildJsonEncodeFileAddition(
-                  rawName,
-                  accessor,
-                  headerVarName!,
-                )
-              : _buildPrimitiveFileAddition(
-                  rawName,
-                  accessor,
-                  headerVarName!,
-                  serializerMethod: 'toString',
-                )
+                ? _buildJsonEncodeFileAddition(
+                    rawName,
+                    accessor,
+                    headerVarName!,
+                  )
+                : _buildPrimitiveFileAddition(
+                    rawName,
+                    accessor,
+                    headerVarName!,
+                    serializerMethod: 'toString',
+                  )
           : contentType == ContentType.json
           ? _buildJsonEncodeFieldAddition(rawName, accessor)
           : _buildPrimitiveFieldAddition(
@@ -206,17 +206,17 @@ Code? _buildFieldCode(
     DateTimeModel() =>
       hasHeaders
           ? contentType == ContentType.json
-              ? _buildJsonEncodeFileAddition(
-                  rawName,
-                  accessor,
-                  headerVarName!,
-                )
-              : _buildPrimitiveFileAddition(
-                  rawName,
-                  accessor,
-                  headerVarName!,
-                  serializerMethod: 'toTimeZonedIso8601String',
-                )
+                ? _buildJsonEncodeFileAddition(
+                    rawName,
+                    accessor,
+                    headerVarName!,
+                  )
+                : _buildPrimitiveFileAddition(
+                    rawName,
+                    accessor,
+                    headerVarName!,
+                    serializerMethod: 'toTimeZonedIso8601String',
+                  )
           : contentType == ContentType.json
           ? _buildJsonEncodeFieldAddition(rawName, accessor)
           : _buildPrimitiveFieldAddition(
@@ -465,7 +465,9 @@ Code _buildJsonEncodeFileAddition(
       refer('MultipartFile', 'package:dio/dio.dart')
           .property('fromString')
           .call(
-            [refer('jsonEncode', 'dart:convert').call([refer(accessor)])],
+            [
+              refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
+            ],
             {'headers': refer(headerVarName)},
           ),
     ]),
@@ -798,8 +800,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   }
   if (model is! ClassModel) return const [];
 
-  final writeProperties =
-      model.properties.where((p) => !p.isReadOnly).toList();
+  final writeProperties = model.properties.where((p) => !p.isReadOnly).toList();
   final normalizedProps = normalizeProperties(writeProperties);
 
   final result = <MultipartHeaderParamInfo>[];
