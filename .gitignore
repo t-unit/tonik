@@ -29,6 +29,8 @@
 /integration_test/server_variables/server_variables_api
 /integration_test/cookies/cookies_api
 /integration_test/read_write_only/read_write_only_api
+/integration_test/multipart/multipart_api
+/integration_test/multipart/multipart_3_1_api
 
 # Dependencies
 /pubspec.lock

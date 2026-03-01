@@ -1,0 +1,499 @@
+openapi: 3.0.3
+info:
+  title: Multipart API
+  description: OpenAPI specification testing multipart/form-data support
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: multipart
+    description: Operations using multipart/form-data encoding
+  - name: custom
+    description: Operations with custom content type mapped to multipart
+
+paths:
+  /multipart/simple:
+    post:
+      operationId: postSimpleFields
+      tags:
+        - multipart
+      summary: Post simple string, integer, and boolean fields
+      description: Tests basic multipart encoding with simple field types
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SimpleFields'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleFieldsResponse'
+
+  /multipart/binary:
+    post:
+      operationId: postBinaryUpload
+      tags:
+        - multipart
+      summary: Upload a binary file with a description
+      description: Tests binary file upload via multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BinaryUpload'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+
+  /multipart/enum:
+    post:
+      operationId: postEnumField
+      tags:
+        - multipart
+      summary: Post a multipart form with an enum field
+      description: Tests enum field serialization in multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnumForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+
+  /multipart/complex:
+    post:
+      operationId: postComplexObject
+      tags:
+        - multipart
+      summary: Post a multipart form with a nested complex object
+      description: Tests JSON encoding of complex object property in multipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplexForm'
+            encoding:
+              profile:
+                contentType: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplexResponse'
+
+  /multipart/arrays:
+    post:
+      operationId: postArrayFields
+      tags:
+        - multipart
+      summary: Post arrays of strings and enums
+      description: Tests array serialization with explode=true (default in OAS 3.0)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ArrayForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayResponse'
+
+  /multipart/mixed-required:
+    post:
+      operationId: postMixedRequired
+      tags:
+        - multipart
+      summary: Post a form with required and optional fields
+      description: Tests that optional fields are omitted when null
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MixedRequiredForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart/encoding-override:
+    post:
+      operationId: postEncodingOverride
+      tags:
+        - multipart
+      summary: Post with explicit encoding overrides
+      description: Tests explicit contentType encoding override on a field
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EncodingOverrideForm'
+            encoding:
+              data:
+                contentType: text/plain
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart/multiple-files:
+    post:
+      operationId: postMultipleFiles
+      tags:
+        - multipart
+      summary: Upload multiple binary files in a single array field
+      description: >-
+        Tests array of binary files per RFC 7578 Section 4.3 and OAS 3.0.4
+        Section 4.7.15.3.3. Each file is sent as a separate part with the
+        same field name.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipleFilesForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilesResponse'
+
+  /multipart/response:
+    get:
+      operationId: getMultipartResponse
+      tags:
+        - multipart
+      summary: Get a multipart response body
+      description: >-
+        Returns a multipart/form-data response. The generated client should
+        throw ResponseDecodingException at runtime (multipart response decoding
+        is not supported).
+      responses:
+        '200':
+          description: Multipart response
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/SimpleFields'
+
+  /multipart/headers:
+    post:
+      operationId: postWithHeaders
+      tags:
+        - multipart
+      summary: Post with per-part headers
+      description: Tests per-part header encoding for multipart properties
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HeaderPartsForm'
+            encoding:
+              description:
+                headers:
+                  X-Part-Meta:
+                    schema:
+                      type: string
+                    required: true
+              file:
+                headers:
+                  X-File-Hash:
+                    schema:
+                      type: string
+                    required: true
+                  X-File-Tag:
+                    schema:
+                      type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /custom/multipart:
+    post:
+      operationId: postCustomMultipart
+      tags:
+        - custom
+      summary: Post with custom content type mapped to multipart
+      description: >-
+        Tests contentTypes config with application/vnd.custom-multipart mapped
+        to multipart serialization format.
+      requestBody:
+        required: true
+        content:
+          application/vnd.custom-multipart:
+            schema:
+              $ref: '#/components/schemas/CustomForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+components:
+  schemas:
+    SimpleFields:
+      type: object
+      required:
+        - name
+        - age
+        - active
+      properties:
+        name:
+          type: string
+          description: Person name
+          example: John Doe
+        age:
+          type: integer
+          description: Person age
+          example: 30
+        active:
+          type: boolean
+          description: Whether the person is active
+          example: true
+
+    SimpleFieldsResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        active:
+          type: boolean
+
+    BinaryUpload:
+      type: object
+      required:
+        - file
+        - description
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The file to upload
+        description:
+          type: string
+          description: File description
+
+    UploadResponse:
+      type: object
+      properties:
+        filename:
+          type: string
+        size:
+          type: integer
+
+    Status:
+      type: string
+      enum:
+        - active
+        - inactive
+        - pending
+
+    EnumForm:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+
+    StatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+
+    Profile:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+
+    ComplexForm:
+      type: object
+      required:
+        - label
+        - profile
+      properties:
+        label:
+          type: string
+          description: A label for the form
+        profile:
+          $ref: '#/components/schemas/Profile'
+
+    ComplexResponse:
+      type: object
+      properties:
+        label:
+          type: string
+        profileJson:
+          type: string
+
+    Priority:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+
+    ArrayForm:
+      type: object
+      required:
+        - tags
+        - priorities
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array of tag strings
+        priorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Priority'
+          description: Array of priority enum values
+
+    ArrayResponse:
+      type: object
+      properties:
+        tagCount:
+          type: integer
+        priorityCount:
+          type: integer
+
+    MixedRequiredForm:
+      type: object
+      required:
+        - requiredField
+      properties:
+        requiredField:
+          type: string
+          description: This field is required
+        optionalField:
+          type: string
+          description: This field is optional
+        optionalFile:
+          type: string
+          format: binary
+          description: This file is optional
+
+    EncodingOverrideForm:
+      type: object
+      required:
+        - data
+        - label
+      properties:
+        data:
+          type: string
+          description: Field with explicit text/plain contentType encoding
+        label:
+          type: string
+          description: Regular string field
+
+    HeaderPartsForm:
+      type: object
+      required:
+        - description
+        - file
+      properties:
+        description:
+          type: string
+          description: Text description with per-part headers
+        file:
+          type: string
+          format: binary
+          description: Binary file with per-part headers
+
+    MultipleFilesForm:
+      type: object
+      required:
+        - files
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: >-
+            Array of binary files. Per RFC 7578 Section 4.3 and OAS 3.0.4
+            Section 4.7.15.3.3, each file is sent as a separate part with
+            the same field name.
+
+    FilesResponse:
+      type: object
+      properties:
+        fileCount:
+          type: integer
+
+    CustomForm:
+      type: object
+      required:
+        - field1
+        - field2
+      properties:
+        field1:
+          type: string
+          example: custom value
+        field2:
+          type: integer
+          example: 100
+
+    GenericResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string

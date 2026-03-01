@@ -1,0 +1,133 @@
+openapi: 3.1.0
+info:
+  title: Multipart 3.1 API
+  description: >-
+    OAS 3.1 multipart spec to verify version-aware encoding normalization.
+    In OAS 3.1, style and explode on multipart encoding objects are honored
+    (unlike OAS 3.0 where they are ignored).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: multipart31
+    description: OAS 3.1 multipart operations
+
+paths:
+  /multipart31/pipe-delimited:
+    post:
+      operationId: postPipeDelimited
+      tags:
+        - multipart31
+      summary: Post array with pipeDelimited style and explode=false
+      description: >-
+        Verifies OAS 3.1 honors style and explode on multipart encoding.
+        The array should be serialized as a single pipe-delimited value.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PipeDelimitedForm'
+            encoding:
+              items:
+                style: pipeDelimited
+                explode: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/default-explode:
+    post:
+      operationId: postDefaultExplode
+      tags:
+        - multipart31
+      summary: Post array with default explode=true
+      description: >-
+        Verifies default behavior (explode: true) which produces one entry per
+        array item — same as OAS 3.0.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DefaultExplodeForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/basic:
+    post:
+      operationId: postBasic31
+      tags:
+        - multipart31
+      summary: Basic string and binary smoke test for OAS 3.1
+      description: Verifies simple multipart works with OAS 3.1 spec
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BasicForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+components:
+  schemas:
+    PipeDelimitedForm:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+          description: Array to be serialized with pipe-delimited style
+
+    DefaultExplodeForm:
+      type: object
+      required:
+        - values
+      properties:
+        values:
+          type: array
+          items:
+            type: string
+          description: Array to be serialized with default explode=true
+
+    BasicForm:
+      type: object
+      required:
+        - name
+        - file
+      properties:
+        name:
+          type: string
+          description: A simple string field
+        file:
+          type: string
+          format: binary
+          description: A binary file upload
+
+    GenericResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string

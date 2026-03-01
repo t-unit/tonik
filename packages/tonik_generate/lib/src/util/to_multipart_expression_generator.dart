@@ -309,8 +309,13 @@ _HeaderMapResult? _buildHeaderMapStatements(
         .assign(
           literalMap(
             {},
-            refer('String'),
-            refer('List<String>'),
+            refer('String', 'dart:core'),
+            TypeReference(
+              (b) => b
+                ..symbol = 'List'
+                ..url = 'dart:core'
+                ..types.add(refer('String', 'dart:core')),
+            ),
           ),
         )
         .statement,
@@ -566,8 +571,8 @@ Code _buildListFieldAddition(
   if (contentModel is BinaryModel) {
     return _buildListForLoop(
       rawName,
-      accessor,
-      _binaryItemExpression(rawName, headerVarName: headerVarName),
+      refer(accessor),
+      _binaryItemExpr(rawName, headerVarName: headerVarName),
       isFile: true,
     );
   }
@@ -578,8 +583,8 @@ Code _buildListFieldAddition(
       contentModel is AnyOfModel) {
     return _buildListForLoop(
       rawName,
-      accessor,
-      _complexItemExpression(
+      refer(accessor),
+      _complexItemExpr(
         rawName,
         encoding: encoding,
         headerVarName: headerVarName,
@@ -590,33 +595,41 @@ Code _buildListFieldAddition(
 
   // For text-serializable types, build the item-to-string expression
   // and decide whether to go through an encoder.
-  final itemExpr = _itemToStringExpression(
+  final itemExpr = _itemToStringExpr(
     contentModel,
     contentType: contentType,
   );
+  final isIdentity = contentModel is StringModel;
 
   final explode = propertyEncoding?.explode ?? true;
 
   // When headers are present, text items must be sent as
   // MultipartFile.fromString so the headers can be attached.
   if (headerVarName != null) {
-    final fileItemExpr =
-        'MultipartFile.fromString($itemExpr, headers: $headerVarName)';
+    final fileItemExpr = refer('MultipartFile', 'package:dio/dio.dart')
+        .property('fromString')
+        .call([itemExpr], {'headers': refer(headerVarName)});
     if (explode) {
       return _buildListForLoop(
         rawName,
-        accessor,
+        refer(accessor),
         fileItemExpr,
         isFile: true,
       );
     }
-    final encoderCall = _buildEncoderCall(accessor, itemExpr, style: style);
+    final encoderExpr = _buildEncoderExpr(
+      accessor,
+      itemExpr,
+      needsMapping: !isIdentity,
+      style: style,
+    );
     // After the encoder, items are already strings.
-    final encodedFileItemExpr =
-        'MultipartFile.fromString(item, headers: $headerVarName)';
+    final encodedFileItemExpr = refer('MultipartFile', 'package:dio/dio.dart')
+        .property('fromString')
+        .call([refer('item')], {'headers': refer(headerVarName)});
     return _buildListForLoop(
       rawName,
-      encoderCall,
+      encoderExpr,
       encodedFileItemExpr,
       isFile: true,
     );
@@ -624,48 +637,60 @@ Code _buildListFieldAddition(
 
   if (explode) {
     // explode: true — for-loop adding each item as a separate field.
-    return _buildListForLoop(rawName, accessor, itemExpr, isFile: false);
+    return _buildListForLoop(
+      rawName,
+      refer(accessor),
+      itemExpr,
+      isFile: false,
+    );
   }
 
   // explode: false — map items to strings, run through the style encoder,
   // then for-loop over the (single-element) result.
-  final encoderCall = _buildEncoderCall(accessor, itemExpr, style: style);
+  final encoderExpr = _buildEncoderExpr(
+    accessor,
+    itemExpr,
+    needsMapping: !isIdentity,
+    style: style,
+  );
+  return _buildListForLoop(
+    rawName,
+    encoderExpr,
+    refer('item'),
+    isFile: false,
+  );
+}
+
+/// Builds a for-loop that iterates [iterableExpr] and adds each item.
+Code _buildListForLoop(
+  String rawName,
+  Expression iterableExpr,
+  Expression itemExpression, {
+  required bool isFile,
+}) {
+  final target = isFile ? 'files' : 'fields';
   return Block.of([
-    Code('for (final item in $encoderCall) {'),
-    refer('formData').property('fields').property('add').call([
+    const Code('for (final item in '),
+    iterableExpr.code,
+    const Code(') {'),
+    refer('formData').property(target).property('add').call([
       refer('MapEntry', 'dart:core').call([
         literalString(rawName),
-        refer('item'),
+        itemExpression,
       ]),
     ]).statement,
     const Code('}'),
   ]);
 }
 
-/// Builds a for-loop that iterates [accessor] and adds each item.
-Code _buildListForLoop(
-  String rawName,
-  String accessor,
-  String itemExpression, {
-  required bool isFile,
-}) {
-  final target = isFile ? 'files' : 'fields';
-  return Block.of([
-    Code('for (final item in $accessor) {'),
-    Code('formData.$target.add(MapEntry('),
-    Code("'$rawName', $itemExpression));"),
-    const Code('}'),
-  ]);
-}
-
-/// Returns the expression string to serialize a single list item to a string
+/// Returns an [Expression] to serialize a single list item to a string
 /// value, based on the content model type and content type.
-String _itemToStringExpression(
+Expression _itemToStringExpr(
   Model contentModel, {
   ContentType? contentType,
 }) {
   return switch (contentModel) {
-    StringModel() => 'item',
+    StringModel() => refer('item'),
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -673,64 +698,105 @@ String _itemToStringExpression(
     DateModel() ||
     DecimalModel() ||
     UriModel() =>
-      contentType == ContentType.json ? 'jsonEncode(item)' : 'item.toString()',
+      contentType == ContentType.json
+          ? refer('jsonEncode', 'dart:convert').call([refer('item')])
+          : refer('item').property('toString').call([]),
     DateTimeModel() =>
       contentType == ContentType.json
-          ? 'jsonEncode(item)'
-          : 'item.toTimeZonedIso8601String()',
-    EnumModel() => 'item.uriEncode(allowEmpty: true)',
-    AliasModel() => _itemToStringExpression(
+          ? refer('jsonEncode', 'dart:convert').call([refer('item')])
+          : refer('item').property('toTimeZonedIso8601String').call([]),
+    EnumModel() => refer('item').property('uriEncode').call(
+      [],
+      {'allowEmpty': literalTrue},
+    ),
+    AliasModel() => _itemToStringExpr(
       contentModel.resolved,
       contentType: contentType,
     ),
-    _ => 'item.toString()',
+    _ => refer('item').property('toString').call([]),
   };
 }
 
-/// Returns the expression string for a binary item in a for-loop.
-String _binaryItemExpression(String rawName, {String? headerVarName}) {
-  final headersArg = headerVarName != null ? ', headers: $headerVarName' : '';
-  return "MultipartFile.fromBytes(item, filename: '$rawName'$headersArg)";
+/// Returns an [Expression] for a binary item in a for-loop.
+Expression _binaryItemExpr(String rawName, {String? headerVarName}) {
+  final namedArgs = <String, Expression>{
+    'filename': literalString(rawName),
+  };
+  if (headerVarName != null) {
+    namedArgs['headers'] = refer(headerVarName);
+  }
+  return refer('MultipartFile', 'package:dio/dio.dart')
+      .property('fromBytes')
+      .call([refer('item')], namedArgs);
 }
 
-/// Returns the expression string for a complex object item in a for-loop.
-String _complexItemExpression(
+/// Returns an [Expression] for a complex object item in a for-loop.
+Expression _complexItemExpr(
   String rawName, {
   Map<String, MultipartPropertyEncoding>? encoding,
   String? headerVarName,
 }) {
   final rawContentType =
       encoding?[rawName]?.rawContentType ?? 'application/json';
-  final headersArg = headerVarName != null ? ', headers: $headerVarName' : '';
-  return 'MultipartFile.fromString(jsonEncode(item.toJson()), '
-      "contentType: DioMediaType.parse('$rawContentType')$headersArg)";
+  final namedArgs = <String, Expression>{
+    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
+        .property('parse')
+        .call([literalString(rawContentType)]),
+  };
+  if (headerVarName != null) {
+    namedArgs['headers'] = refer(headerVarName);
+  }
+  return refer('MultipartFile', 'package:dio/dio.dart')
+      .property('fromString')
+      .call([
+        refer('jsonEncode', 'dart:convert').call([
+          refer('item').property('toJson').call([]),
+        ]),
+      ], namedArgs);
 }
 
-/// Builds the encoder call string for explode: false arrays.
+/// Builds an [Expression] for the encoder call for explode: false arrays.
 ///
-/// Maps items to strings, then calls the appropriate style encoder.
-String _buildEncoderCall(
+/// Maps items to strings via [itemExpr], then calls the appropriate style
+/// encoder. Set [needsMapping] to false when [itemExpr] is identity
+/// (i.e. the item is already a string).
+Expression _buildEncoderExpr(
   String accessor,
-  String itemExpr, {
+  Expression itemExpr, {
+  required bool needsMapping,
   MultipartEncodingStyle? style,
 }) {
-  final needsMapping = itemExpr != 'item';
-  final mappedList = needsMapping
-      ? '$accessor.map((item) => $itemExpr).toList()'
-      : accessor;
+  Expression listExpr;
+  if (needsMapping) {
+    listExpr = refer(accessor).property('map').call([
+      Method(
+        (b) => b
+          ..lambda = true
+          ..requiredParameters.add(Parameter((p) => p..name = 'item'))
+          ..body = itemExpr.code,
+      ).closure,
+    ]).property('toList').call([]);
+  } else {
+    listExpr = refer(accessor);
+  }
 
-  return switch (style) {
-    MultipartEncodingStyle.spaceDelimited =>
-      '$mappedList.toSpaceDelimited(explode: false, '
-          'allowEmpty: true, alreadyEncoded: true, '
-          'percentEncodeDelimiter: false)',
-    MultipartEncodingStyle.pipeDelimited =>
-      '$mappedList.toPipeDelimited(explode: false, '
-          'allowEmpty: true, alreadyEncoded: true)',
-    _ =>
-      '$mappedList.toForm(explode: false, '
-          'allowEmpty: true, alreadyEncoded: true)',
+  final encoderMethod = switch (style) {
+    MultipartEncodingStyle.spaceDelimited => 'toSpaceDelimited',
+    MultipartEncodingStyle.pipeDelimited => 'toPipeDelimited',
+    _ => 'toForm',
   };
+
+  final namedArgs = <String, Expression>{
+    'explode': literalFalse,
+    'allowEmpty': literalTrue,
+    'alreadyEncoded': literalTrue,
+  };
+
+  if (style == MultipartEncodingStyle.spaceDelimited) {
+    namedArgs['percentEncodeDelimiter'] = literalFalse;
+  }
+
+  return listExpr.property(encoderMethod).call([], namedArgs);
 }
 
 Code _buildComplexObjectFileAddition(
