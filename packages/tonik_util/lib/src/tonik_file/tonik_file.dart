@@ -81,8 +81,8 @@ class TonikFileBytes extends TonikFile {
 
 /// A file-system path reference, optionally with a filename override.
 ///
-/// On native platforms, [toBytes] and [toBase64] read the file from disk
-/// synchronously. On web, they throw [UnsupportedError] — use
+/// On native platforms, [toBytes] reads the file from disk
+/// synchronously. On web, it throws [UnsupportedError] — use
 /// [TonikFileBytes] instead.
 @immutable
 class TonikFilePath extends TonikFile {

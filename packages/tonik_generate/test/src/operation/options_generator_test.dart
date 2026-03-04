@@ -1366,51 +1366,52 @@ void main() {
         );
       });
 
-      test('sets contentType to null for multipart arm in multi-content body',
-          () {
-        final requestBody = RequestBodyObject(
-          name: 'mixedBody',
-          context: context,
-          description: 'Mixed content body',
-          isRequired: true,
-          content: {
-            RequestContent(
-              model: StringModel(context: context),
-              contentType: ContentType.json,
-              rawContentType: 'application/json',
-            ),
-            RequestContent(
-              model: ClassModel(
-                name: 'FormModel',
-                isDeprecated: false,
-                properties: const [],
-                context: context,
+      test(
+        'sets contentType to null for multipart arm in multi-content body',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'mixedBody',
+            context: context,
+            description: 'Mixed content body',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
               ),
-              contentType: ContentType.multipart,
-              rawContentType: 'multipart/form-data',
-            ),
-          },
-        );
+              RequestContent(
+                model: ClassModel(
+                  name: 'FormModel',
+                  isDeprecated: false,
+                  properties: const [],
+                  context: context,
+                ),
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+              ),
+            },
+          );
 
-        final operation = Operation(
-          operationId: 'createMixed',
-          context: context,
-          summary: 'Create mixed',
-          description: 'Create with mixed content types',
-          tags: const {},
-          isDeprecated: false,
-          path: '/mixed',
-          method: HttpMethod.post,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          requestBody: requestBody,
-          securitySchemes: const {},
-        );
+          final operation = Operation(
+            operationId: 'createMixed',
+            context: context,
+            summary: 'Create mixed',
+            description: 'Create with mixed content types',
+            tags: const {},
+            isDeprecated: false,
+            path: '/mixed',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
 
-        const expectedMethod = '''
+          const expectedMethod = '''
           Options _options({required MixedBody body}) {
             final contentType = switch (body) {
               MixedBodyJson _ => 'application/json',
@@ -1428,13 +1429,14 @@ void main() {
           }
         ''';
 
-        final method = generator.generateOptionsMethod(operation, [], []);
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      });
+          final method = generator.generateOptionsMethod(operation, [], []);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
     });
   });
 }

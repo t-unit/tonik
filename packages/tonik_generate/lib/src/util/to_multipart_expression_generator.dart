@@ -569,7 +569,7 @@ switch ($accessor) {
       '$rawName',
       $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
     ));
-  case $tonikFilePath(:final path, :final fileName):
+  case $tonikFilePath(:final fileName):
     formData.files.add($mapEntry(
       '$rawName',
       $multipartFile.fromBytes($accessor.toBytes(), filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
@@ -808,7 +808,7 @@ Code _binaryItemExpr(String rawName, {String? headerVarName}) {
 switch (item) {
   case $tonikFileBytes(:final bytes, :final fileName):
     formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $headersArg)));
-  case $tonikFilePath(:final path, :final fileName):
+  case $tonikFilePath(:final fileName):
     formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(item.toBytes(), filename: fileName ?? '$rawName', $headersArg)));
 }''';
     },

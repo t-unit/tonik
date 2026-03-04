@@ -93,23 +93,28 @@ void main() {
   });
 
   group('Enum field', () {
-    test('serializes an enum value in a multipart field', () async {
-      const form = EnumForm(status: Status.active);
+    for (final (status, expected) in [
+      (Status.active, 'active'),
+      (Status.inactive, 'inactive'),
+      (Status.pending, 'pending'),
+    ]) {
+      test('serializes $expected in a multipart field', () async {
+        final form = EnumForm(status: status);
 
-      final response = await api.postEnumField(body: form);
+        final response = await api.postEnumField(body: form);
 
-      expect(response, isA<TonikSuccess<StatusResponse>>());
+        expect(response, isA<TonikSuccess<StatusResponse>>());
 
-      final success = response as TonikSuccess<StatusResponse>;
-      final formData = success.response.requestOptions.data as FormData;
+        final success = response as TonikSuccess<StatusResponse>;
+        final formData = success.response.requestOptions.data as FormData;
 
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['status'], 'active');
+        final fields = Map.fromEntries(formData.fields);
+        expect(fields['status'], expected);
 
-      // Server received the enum value.
-      expect(success.response.headers['x-has-status']?.first, 'true');
-      expect(success.response.headers['x-param-status']?.first, 'active');
-    });
+        expect(success.response.headers['x-has-status']?.first, 'true');
+        expect(success.response.headers['x-param-status']?.first, expected);
+      });
+    }
   });
 
   group('Complex object', () {
@@ -309,7 +314,41 @@ void main() {
   });
 
   group('Per-part headers', () {
-    test('sends per-part headers on multipart fields', () async {
+    test(
+      'sends required and optional per-part headers on multipart fields',
+      () async {
+        final fileBytes = Uint8List.fromList([10, 20, 30]);
+        final form = HeaderPartsForm(
+          description: 'test desc',
+          file: TonikFileBytes(fileBytes),
+        );
+
+        final response = await api.postWithHeaders(
+          body: form,
+          descriptionPartMeta: 'meta-value',
+          fileFileHash: 'abc123',
+          fileFileTag: 'tag-value',
+        );
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+
+        // Both fields should be sent as MultipartFile (per-part headers promote
+        // text fields from formData.fields to formData.files).
+        final formData = success.response.requestOptions.data as FormData;
+        expect(
+          formData.files.where((e) => e.key == 'description').toList(),
+          isNotEmpty,
+        );
+        expect(
+          formData.files.where((e) => e.key == 'file').toList(),
+          isNotEmpty,
+        );
+      },
+    );
+
+    test('omits optional X-File-Tag header when not provided', () async {
       final fileBytes = Uint8List.fromList([10, 20, 30]);
       final form = HeaderPartsForm(
         description: 'test desc',
@@ -320,22 +359,22 @@ void main() {
         body: form,
         descriptionPartMeta: 'meta-value',
         fileFileHash: 'abc123',
-        fileFileTag: 'tag-value',
       );
 
       expect(response, isA<TonikSuccess<GenericResponse>>());
 
       final success = response as TonikSuccess<GenericResponse>;
-
-      // Both fields should be sent as MultipartFile (per-part headers promote
-      // text fields from formData.fields to formData.files).
       final formData = success.response.requestOptions.data as FormData;
-      final descFiles = formData.files
-          .where((e) => e.key == 'description')
-          .toList();
-      expect(descFiles, isNotEmpty);
-      final fileFiles = formData.files.where((e) => e.key == 'file').toList();
-      expect(fileFiles, isNotEmpty);
+
+      // Both parts are still sent even without the optional header.
+      expect(
+        formData.files.where((e) => e.key == 'description').toList(),
+        isNotEmpty,
+      );
+      expect(
+        formData.files.where((e) => e.key == 'file').toList(),
+        isNotEmpty,
+      );
     });
   });
 }

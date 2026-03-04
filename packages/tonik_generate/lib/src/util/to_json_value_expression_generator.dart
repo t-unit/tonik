@@ -74,7 +74,9 @@ Expression _buildSerializationExpression(
     ),
     DateTimeModel() => callMethod('toTimeZonedIso8601String'),
     DecimalModel() || UriModel() => callMethod('toString'),
-    BinaryModel() => _callToBytesMethod(receiver, 'decodeToString',
+    BinaryModel() => _callToBytesMethod(
+      receiver,
+      'decodeToString',
       useNullAware: useNullAware,
       forceNonNull: forceNonNullReceiver,
     ),
@@ -171,11 +173,7 @@ Expression _callToBytesMethod(
         .property(methodName)
         .call([]);
   } else {
-    return receiver
-        .property('toBytes')
-        .call([])
-        .property(methodName)
-        .call([]);
+    return receiver.property('toBytes').call([]).property(methodName).call([]);
   }
 }
 

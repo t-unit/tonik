@@ -1775,7 +1775,7 @@ void main() {
                   'avatar',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'avatar',
                   MultipartFile.fromBytes(body.avatar.toBytes(), filename: fileName ?? 'avatar'),
@@ -1839,7 +1839,7 @@ void main() {
                     'document',
                     MultipartFile.fromBytes(bytes, filename: fileName ?? 'document'),
                   ));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry(
                     'document',
                     MultipartFile.fromBytes(body.document!.toBytes(), filename: fileName ?? 'document'),
@@ -1904,7 +1904,7 @@ void main() {
                     'photo',
                     MultipartFile.fromBytes(bytes, filename: fileName ?? 'photo'),
                   ));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry(
                     'photo',
                     MultipartFile.fromBytes(body.photo!.toBytes(), filename: fileName ?? 'photo'),
@@ -1972,7 +1972,7 @@ void main() {
                     contentType: DioMediaType.parse('image/png'),
                   ),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'image',
                   MultipartFile.fromBytes(
@@ -2039,7 +2039,7 @@ void main() {
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file'),
@@ -3473,7 +3473,7 @@ void main() {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry('files', MultipartFile.fromBytes(item.toBytes(), filename: fileName ?? 'files')));
               }
             }
@@ -3535,7 +3535,7 @@ void main() {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry('files', MultipartFile.fromBytes(item.toBytes(), filename: fileName ?? 'files')));
               }
             }
@@ -3951,7 +3951,7 @@ void main() {
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
@@ -4027,7 +4027,7 @@ void main() {
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
@@ -4389,7 +4389,7 @@ void main() {
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file'),
@@ -4476,7 +4476,7 @@ void main() {
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
@@ -4536,7 +4536,7 @@ void main() {
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file'),
@@ -4756,7 +4756,7 @@ void main() {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files', headers: filesHeaders)));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry('files', MultipartFile.fromBytes(item.toBytes(), filename: fileName ?? 'files', headers: filesHeaders)));
               }
             }
@@ -4909,7 +4909,7 @@ void main() {
                     'file',
                     MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
                   ));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry(
                     'file',
                     MultipartFile.fromBytes(body.file!.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
@@ -4987,7 +4987,7 @@ void main() {
                     'file',
                     MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
                   ));
-                case TonikFilePath(:final path, :final fileName):
+                case TonikFilePath(:final fileName):
                   formData.files.add(MapEntry(
                     'file',
                     MultipartFile.fromBytes(body.file!.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
@@ -5354,7 +5354,7 @@ void main() {
                   'document',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'document', headers: documentHeaders),
                 ));
-              case TonikFilePath(:final path, :final fileName):
+              case TonikFilePath(:final fileName):
                 formData.files.add(MapEntry(
                   'document',
                   MultipartFile.fromBytes(body.document.toBytes(), filename: fileName ?? 'document', headers: documentHeaders),

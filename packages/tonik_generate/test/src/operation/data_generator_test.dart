@@ -541,6 +541,52 @@ void main() {
       },
     );
 
+    test(
+      'handles optional application/octet-stream request body with BinaryModel',
+      () {
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'test',
+            context: testContext,
+            description: null,
+            isRequired: false,
+            content: {
+              RequestContent(
+                model: BinaryModel(context: testContext),
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+        Object? _data({required TonikFile? body}) {
+          return body?.toBytes();
+        }
+      ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     test('handles multiple content types with text variant', () {
       final operation = Operation(
         operationId: 'testOp',

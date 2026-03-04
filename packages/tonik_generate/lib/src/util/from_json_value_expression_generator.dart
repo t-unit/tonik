@@ -65,9 +65,9 @@ Expression buildFromJsonValueExpression(
           .property(isNullable ? 'decodeJsonNullableUri' : 'decodeJsonUri')
           .call([], contextParam);
     case BinaryModel():
-      final decodeExpr = refer(value)
-          .property('decodeJsonBinary')
-          .call([], contextParam);
+      final decodeExpr = refer(
+        value,
+      ).property('decodeJsonBinary').call([], contextParam);
       final wrapExpr = refer(
         'TonikFileBytes',
         'package:tonik_util/tonik_util.dart',
@@ -234,12 +234,13 @@ Expression _buildListFromJsonExpression(
       final mapFunction = Method(
         (b) => b
           ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = refer(
-            'TonikFileBytes',
-            'package:tonik_util/tonik_util.dart',
-          ).call([
-            refer('e').property('decodeJsonBinary').call([], contextParam),
-          ]).code,
+          ..body =
+              refer(
+                'TonikFileBytes',
+                'package:tonik_util/tonik_util.dart',
+              ).call([
+                refer('e').property('decodeJsonBinary').call([], contextParam),
+              ]).code,
       ).closure;
       final listExpr = refer(value).property(listDecoder).call(
         [],

@@ -111,10 +111,10 @@ class RequestBodyImporter {
           // Extract multipart encoding if present
           final explicitEncoding =
               contentType == core.ContentType.multipart &&
-                      mediaType.encoding != null &&
-                      mediaType.encoding!.isNotEmpty
-                  ? _importEncoding(mediaType.encoding!, context)
-                  : null;
+                  mediaType.encoding != null &&
+                  mediaType.encoding!.isNotEmpty
+              ? _importEncoding(mediaType.encoding!, context)
+              : null;
 
           if (mediaType.schema != null) {
             final model = modelImporter.importSchema(
@@ -184,15 +184,13 @@ class RequestBodyImporter {
     required Map<String, core.MultipartPropertyEncoding>? explicitEncoding,
   }) {
     // Resolve through aliases to find the underlying model
-    final resolved =
-        model is core.AliasModel ? model.resolved : model;
+    final resolved = model is core.AliasModel ? model.resolved : model;
 
     // Only populate per-property defaults for ClassModel
     if (resolved is! core.ClassModel) return null;
 
     final isOas30 = openApiObject.openapi.startsWith('3.0');
-    final propertyNames =
-        resolved.properties.map((p) => p.name).toSet();
+    final propertyNames = resolved.properties.map((p) => p.name).toSet();
 
     // Warn about encoding keys that don't match any property
     if (explicitEncoding != null) {
@@ -210,10 +208,10 @@ class RequestBodyImporter {
 
     for (final property in resolved.properties) {
       final existing = explicitEncoding?[property.name];
-      final defaultContentType =
-          _resolveDefaultContentType(property.model);
-      final defaultRawContentType =
-          _resolveDefaultRawContentType(property.model);
+      final defaultContentType = _resolveDefaultContentType(property.model);
+      final defaultRawContentType = _resolveDefaultRawContentType(
+        property.model,
+      );
 
       result[property.name] = core.MultipartPropertyEncoding(
         contentType: existing?.contentType ?? defaultContentType,

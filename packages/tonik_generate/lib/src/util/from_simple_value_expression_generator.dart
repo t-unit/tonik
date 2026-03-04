@@ -437,12 +437,13 @@ Expression _buildTonikFilePrimitiveList(
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body = refer(
-        'TonikFileBytes',
-        'package:tonik_util/tonik_util.dart',
-      ).call([
-        refer('e').property(decodeFunctionName).call([], contextParam),
-      ]).code,
+      ..body =
+          refer(
+            'TonikFileBytes',
+            'package:tonik_util/tonik_util.dart',
+          ).call([
+            refer('e').property(decodeFunctionName).call([], contextParam),
+          ]).code,
   ).closure;
 
   if (isRequired) {

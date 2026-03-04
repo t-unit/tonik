@@ -55,21 +55,20 @@ class DataGenerator {
           case .bytes:
             switch (c.model) {
               case BinaryModel():
-                switchCases
-                    .add(const Code(' value => value.value.toBytes(),'));
+                switchCases.add(const Code(' value => value.value.toBytes(),'));
               case PrimitiveModel():
                 switchCases.add(const Code(' value => value.value,'));
-              case AliasModel()
-                  || ListModel()
-                  || ClassModel()
-                  || EnumModel()
-                  || AllOfModel()
-                  || OneOfModel()
-                  || AnyOfModel()
-                  || AnyModel()
-                  || NeverModel()
-                  || NamedModel()
-                  || CompositeModel():
+              case AliasModel() ||
+                  ListModel() ||
+                  ClassModel() ||
+                  EnumModel() ||
+                  AllOfModel() ||
+                  OneOfModel() ||
+                  AnyOfModel() ||
+                  AnyModel() ||
+                  NeverModel() ||
+                  NamedModel() ||
+                  CompositeModel():
                 throw StateError(
                   'Unsupported model ${c.model} for bytes content type',
                 );
@@ -190,20 +189,24 @@ class DataGenerator {
       case ContentType.bytes:
         switch (model) {
           case BinaryModel():
-            bodyCode.add(const Code('body.toBytes();'));
+            if (isRequired) {
+              bodyCode.add(const Code('body.toBytes();'));
+            } else {
+              bodyCode.add(const Code('body?.toBytes();'));
+            }
           case PrimitiveModel():
             bodyCode.add(const Code('body;'));
-          case AliasModel()
-              || ListModel()
-              || ClassModel()
-              || EnumModel()
-              || AllOfModel()
-              || OneOfModel()
-              || AnyOfModel()
-              || AnyModel()
-              || NeverModel()
-              || NamedModel()
-              || CompositeModel():
+          case AliasModel() ||
+              ListModel() ||
+              ClassModel() ||
+              EnumModel() ||
+              AllOfModel() ||
+              OneOfModel() ||
+              AnyOfModel() ||
+              AnyModel() ||
+              NeverModel() ||
+              NamedModel() ||
+              CompositeModel():
             throw StateError(
               'Unsupported model $model for bytes content type',
             );

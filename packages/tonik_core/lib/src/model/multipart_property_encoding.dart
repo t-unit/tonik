@@ -55,13 +55,13 @@ class MultipartPropertyEncoding {
 
   @override
   int get hashCode => Object.hash(
-        contentType,
-        rawContentType,
-        headers,
-        style,
-        explode,
-        allowReserved,
-      );
+    contentType,
+    rawContentType,
+    headers,
+    style,
+    explode,
+    allowReserved,
+  );
 
   @override
   String toString() =>
