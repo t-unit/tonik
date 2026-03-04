@@ -495,6 +495,52 @@ void main() {
       },
     );
 
+    test(
+      'handles application/octet-stream request body with BinaryModel',
+      () {
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'test',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: BinaryModel(context: testContext),
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+        Object? _data({required TonikFile body}) {
+          return body.toBytes();
+        }
+      ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     test('handles multiple content types with text variant', () {
       final operation = Operation(
         operationId: 'testOp',
@@ -595,6 +641,62 @@ void main() {
           return switch (body) {
             final TestJson value => value.value.toJson(),
             final TestOctetStream value => value.value,
+          };
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('handles multiple content types with BinaryModel bytes variant', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'JsonModel',
+                properties: const [],
+                context: testContext,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+            RequestContent(
+              model: BinaryModel(context: testContext),
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required Test body}) {
+          return switch (body) {
+            final TestJson value => value.value.toJson(),
+            final TestOctetStream value => value.value.toBytes(),
           };
         }
       ''';

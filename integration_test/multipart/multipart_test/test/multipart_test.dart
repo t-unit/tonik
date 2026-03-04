@@ -58,7 +58,10 @@ void main() {
   group('Binary upload', () {
     test('uploads a binary file with a description field', () async {
       final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
-      final form = BinaryUpload(file: fileBytes, description: 'test file');
+      final form = BinaryUpload(
+        file: TonikFileBytes(fileBytes),
+        description: 'test file',
+      );
 
       final response = await api.postBinaryUpload(body: form);
 
@@ -217,7 +220,7 @@ void main() {
       final form = MixedRequiredForm(
         requiredField: 'hello',
         optionalField: 'world',
-        optionalFile: fileBytes,
+        optionalFile: TonikFileBytes(fileBytes),
       );
 
       final response = await api.postMixedRequired(body: form);
@@ -267,7 +270,13 @@ void main() {
       final file1 = Uint8List.fromList([1, 2, 3]);
       final file2 = Uint8List.fromList([4, 5, 6]);
       final file3 = Uint8List.fromList([7, 8, 9]);
-      final form = MultipleFilesForm(files: [file1, file2, file3]);
+      final form = MultipleFilesForm(
+        files: [
+          TonikFileBytes(file1),
+          TonikFileBytes(file2),
+          TonikFileBytes(file3),
+        ],
+      );
 
       final response = await api.postMultipleFiles(body: form);
 
@@ -302,7 +311,10 @@ void main() {
   group('Per-part headers', () {
     test('sends per-part headers on multipart fields', () async {
       final fileBytes = Uint8List.fromList([10, 20, 30]);
-      final form = HeaderPartsForm(description: 'test desc', file: fileBytes);
+      final form = HeaderPartsForm(
+        description: 'test desc',
+        file: TonikFileBytes(fileBytes),
+      );
 
       final response = await api.postWithHeaders(
         body: form,

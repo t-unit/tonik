@@ -1384,10 +1384,7 @@ String _parseResponse(Response<List<int>> response) {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: ListModel(
-                    content: IntegerModel(context: context),
-                    context: context,
-                  ),
+                  model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
                 ),
@@ -1398,10 +1395,10 @@ String _parseResponse(Response<List<int>> response) {
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
-List<int> _parseResponse(Response<List<int>> response) {
+TonikFile _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, 'application/octet-stream'):
-      final _$body = decodeResponseBytes(response.data);
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
       final content = response.headers.value('content-type') ?? 'not specified';
@@ -1438,10 +1435,7 @@ List<int> _parseResponse(Response<List<int>> response) {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: ListModel(
-                    content: IntegerModel(context: context),
-                    context: context,
-                  ),
+                  model: BinaryModel(context: context),
                   rawContentType: 'image/png',
                   contentType: ContentType.bytes,
                 ),
@@ -1452,10 +1446,10 @@ List<int> _parseResponse(Response<List<int>> response) {
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
-List<int> _parseResponse(Response<List<int>> response) {
+TonikFile _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, 'image/png'):
-      final _$body = decodeResponseBytes(response.data);
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
       final content = response.headers.value('content-type') ?? 'not specified';
@@ -1504,10 +1498,7 @@ List<int> _parseResponse(Response<List<int>> response) {
                   contentType: ContentType.text,
                 ),
                 ResponseBody(
-                  model: ListModel(
-                    content: IntegerModel(context: context),
-                    context: context,
-                  ),
+                  model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
                 ),
@@ -1528,7 +1519,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       final _$body = decodeResponseText(response.data);
       return AnonymousResponsePlain(body: _$body);
     case (200, 'application/octet-stream'):
-      final _$body = decodeResponseBytes(response.data);
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return AnonymousResponseOctetStream(body: _$body);
     default:
       final content = response.headers.value('content-type') ?? 'not specified';

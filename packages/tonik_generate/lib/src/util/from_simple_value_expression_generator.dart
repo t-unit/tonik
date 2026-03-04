@@ -119,10 +119,11 @@ Expression buildSimpleValueExpression(
       isRequired
           ? value.property('decodeSimpleUri').call([], contextParam)
           : value.property('decodeSimpleNullableUri').call([], contextParam),
-    BinaryModel() =>
-      isRequired
-          ? value.property('decodeSimpleBinary').call([], contextParam)
-          : value.property('decodeSimpleNullableBinary').call([], contextParam),
+    BinaryModel() => _buildFromSimpleBinaryExpression(
+      value,
+      isRequired: isRequired,
+      contextParam: contextParam,
+    ),
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
@@ -291,7 +292,7 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       contextParam: contextParam,
     ),
-    BinaryModel() => _buildPrimitiveList(
+    BinaryModel() => _buildTonikFilePrimitiveList(
       listDecode,
       'decodeSimpleBinary',
       isRequired,
@@ -386,6 +387,62 @@ Expression _buildClassList(
           ).property('fromSimple').call([
             refer('e'),
           ], explodeParam).code,
+  ).closure;
+
+  if (isRequired) {
+    return listDecode
+        .property('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  } else {
+    return listDecode
+        .nullSafeProperty('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  }
+}
+
+Expression _buildFromSimpleBinaryExpression(
+  Expression value, {
+  required bool isRequired,
+  required Map<String, Expression> contextParam,
+}) {
+  final tonikFileBytesRef = refer(
+    'TonikFileBytes',
+    'package:tonik_util/tonik_util.dart',
+  );
+
+  if (isRequired) {
+    return tonikFileBytesRef.call([
+      value.property('decodeSimpleBinary').call([], contextParam),
+    ]);
+  } else {
+    final decodeExpr = value
+        .property('decodeSimpleBinary')
+        .call([], contextParam);
+    return value
+        .equalTo(literalNull)
+        .conditional(literalNull, tonikFileBytesRef.call([decodeExpr]));
+  }
+}
+
+Expression _buildTonikFilePrimitiveList(
+  Expression listDecode,
+  String decodeFunctionName,
+  bool isRequired, {
+  Map<String, Expression> contextParam = const {},
+}) {
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body = refer(
+        'TonikFileBytes',
+        'package:tonik_util/tonik_util.dart',
+      ).call([
+        refer('e').property(decodeFunctionName).call([], contextParam),
+      ]).code,
   ).closure;
 
   if (isRequired) {

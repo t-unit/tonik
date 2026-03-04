@@ -99,7 +99,7 @@ void main() {
           nameManager: nameManager,
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
-        'value.decodeJsonBinary()',
+        'TonikFileBytes(value.decodeJsonBinary())',
       );
     });
 
@@ -112,7 +112,7 @@ void main() {
           package: 'package:my_package/my_package.dart',
           isNullable: true,
         ).accept(emitter).toString(),
-        'value.decodeJsonNullableBinary()',
+        'value == null ? null : TonikFileBytes(value.decodeJsonBinary())',
       );
     });
 
@@ -402,7 +402,7 @@ void main() {
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<String>()'
-          '.map((e) => e.decodeJsonBinary()).toList()',
+          '.map((e) => TonikFileBytes(e.decodeJsonBinary())).toList()',
         ),
       );
     });

@@ -50,8 +50,30 @@ class DataGenerator {
           ..add(refer(variantName, package).code);
 
         switch (c.contentType) {
-          case .text || .bytes:
+          case .text:
             switchCases.add(const Code(' value => value.value,'));
+          case .bytes:
+            switch (c.model) {
+              case BinaryModel():
+                switchCases
+                    .add(const Code(' value => value.value.toBytes(),'));
+              case PrimitiveModel():
+                switchCases.add(const Code(' value => value.value,'));
+              case AliasModel()
+                  || ListModel()
+                  || ClassModel()
+                  || EnumModel()
+                  || AllOfModel()
+                  || OneOfModel()
+                  || AnyOfModel()
+                  || AnyModel()
+                  || NeverModel()
+                  || NamedModel()
+                  || CompositeModel():
+                throw StateError(
+                  'Unsupported model ${c.model} for bytes content type',
+                );
+            }
           case .json:
             switchCases
               ..add(const Code(' value => value.'))
@@ -163,8 +185,29 @@ class DataGenerator {
     // Build return expression based on content type
     final bodyCode = [const Code('return ')];
     switch (contentType) {
-      case ContentType.text || ContentType.bytes:
+      case ContentType.text:
         bodyCode.add(const Code('body;'));
+      case ContentType.bytes:
+        switch (model) {
+          case BinaryModel():
+            bodyCode.add(const Code('body.toBytes();'));
+          case PrimitiveModel():
+            bodyCode.add(const Code('body;'));
+          case AliasModel()
+              || ListModel()
+              || ClassModel()
+              || EnumModel()
+              || AllOfModel()
+              || OneOfModel()
+              || AnyOfModel()
+              || AnyModel()
+              || NeverModel()
+              || NamedModel()
+              || CompositeModel():
+            throw StateError(
+              'Unsupported model $model for bytes content type',
+            );
+        }
       case ContentType.json:
         bodyCode
           ..add(buildToJsonPropertyExpression('body', property).code)

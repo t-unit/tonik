@@ -68,7 +68,7 @@ void main() {
   group('OAS 3.1 basic multipart', () {
     test('sends string and binary fields', () async {
       final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
-      final form = BasicForm(name: 'test-31', file: fileBytes);
+      final form = BasicForm(name: 'test-31', file: TonikFileBytes(fileBytes));
 
       final response = await api.postBasic31(body: form);
 

@@ -516,30 +516,67 @@ Code _buildBinaryFileAddition(
   final isDefaultContentType =
       rawContentType == null || rawContentType == 'application/octet-stream';
 
-  final namedArgs = <String, Expression>{
-    'filename': literalString(rawName),
-  };
+  final headersArg = headerVarName != null ? 'headers: $headerVarName, ' : '';
 
-  if (!isDefaultContentType) {
-    namedArgs['contentType'] = refer(
-      'DioMediaType',
-      'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]);
-  }
+  return Code.scope(
+    (allocate) {
+      final tonikFileBytes = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'TonikFileBytes'
+            ..url = 'package:tonik_util/tonik_util.dart',
+        ),
+      );
+      final tonikFilePath = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'TonikFilePath'
+            ..url = 'package:tonik_util/tonik_util.dart',
+        ),
+      );
+      final multipartFile = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'MultipartFile'
+            ..url = 'package:dio/dio.dart',
+        ),
+      );
+      final mapEntry = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'MapEntry'
+            ..url = 'dart:core',
+        ),
+      );
 
-  if (headerVarName != null) {
-    namedArgs['headers'] = refer(headerVarName);
-  }
+      final contentTypeArg = isDefaultContentType
+          ? ''
+          : () {
+              final dioMediaType = allocate(
+                TypeReference(
+                  (b) => b
+                    ..symbol = 'DioMediaType'
+                    ..url = 'package:dio/dio.dart',
+                ),
+              );
+              return "contentType: $dioMediaType.parse('$rawContentType'), ";
+            }();
 
-  return refer('formData').property('files').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
-      refer(
-        'MultipartFile',
-        'package:dio/dio.dart',
-      ).property('fromBytes').call([refer(accessor)], namedArgs),
-    ]),
-  ]).statement;
+      return '''
+switch ($accessor) {
+  case $tonikFileBytes(:final bytes, :final fileName):
+    formData.files.add($mapEntry(
+      '$rawName',
+      $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
+    ));
+  case $tonikFilePath(:final path, :final fileName):
+    formData.files.add($mapEntry(
+      '$rawName',
+      $multipartFile.fromBytes($accessor.toBytes(), filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
+    ));
+}''';
+    },
+  );
 }
 
 Code _buildListFieldAddition(
@@ -569,11 +606,10 @@ Code _buildListFieldAddition(
 
   // Binary and complex objects always use a for-loop (can't be delimited).
   if (contentModel is BinaryModel) {
-    return _buildListForLoop(
+    return _buildBinaryListForLoop(
       rawName,
-      refer(accessor),
-      _binaryItemExpr(rawName, headerVarName: headerVarName),
-      isFile: true,
+      accessor,
+      headerVarName: headerVarName,
     );
   }
 
@@ -683,6 +719,21 @@ Code _buildListForLoop(
   ]);
 }
 
+/// Builds a for-loop for binary list items, embedding a switch on the
+/// sealed `TonikFile` type inside each iteration.
+Code _buildBinaryListForLoop(
+  String rawName,
+  String accessor, {
+  String? headerVarName,
+}) {
+  final switchBody = _binaryItemExpr(rawName, headerVarName: headerVarName);
+  return Block.of([
+    Code('for (final item in $accessor) {'),
+    switchBody,
+    const Code('}'),
+  ]);
+}
+
 /// Returns an [Expression] to serialize a single list item to a string
 /// value, based on the content model type and content type.
 Expression _itemToStringExpr(
@@ -718,16 +769,50 @@ Expression _itemToStringExpr(
 }
 
 /// Returns an [Expression] for a binary item in a for-loop.
-Expression _binaryItemExpr(String rawName, {String? headerVarName}) {
-  final namedArgs = <String, Expression>{
-    'filename': literalString(rawName),
-  };
-  if (headerVarName != null) {
-    namedArgs['headers'] = refer(headerVarName);
-  }
-  return refer('MultipartFile', 'package:dio/dio.dart')
-      .property('fromBytes')
-      .call([refer('item')], namedArgs);
+///
+/// Generates a switch on the sealed TonikFile type.
+Code _binaryItemExpr(String rawName, {String? headerVarName}) {
+  final headersArg = headerVarName != null ? 'headers: $headerVarName, ' : '';
+
+  return Code.scope(
+    (allocate) {
+      final tonikFileBytes = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'TonikFileBytes'
+            ..url = 'package:tonik_util/tonik_util.dart',
+        ),
+      );
+      final tonikFilePath = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'TonikFilePath'
+            ..url = 'package:tonik_util/tonik_util.dart',
+        ),
+      );
+      final multipartFile = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'MultipartFile'
+            ..url = 'package:dio/dio.dart',
+        ),
+      );
+      final mapEntry = allocate(
+        TypeReference(
+          (b) => b
+            ..symbol = 'MapEntry'
+            ..url = 'dart:core',
+        ),
+      );
+      return '''
+switch (item) {
+  case $tonikFileBytes(:final bytes, :final fileName):
+    formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $headersArg)));
+  case $tonikFilePath(:final path, :final fileName):
+    formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(item.toBytes(), filename: fileName ?? '$rawName', $headersArg)));
+}''';
+    },
+  );
 }
 
 /// Returns an [Expression] for a complex object item in a for-loop.
@@ -739,20 +824,22 @@ Expression _complexItemExpr(
   final rawContentType =
       encoding?[rawName]?.rawContentType ?? 'application/json';
   final namedArgs = <String, Expression>{
-    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
-        .property('parse')
-        .call([literalString(rawContentType)]),
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
   };
   if (headerVarName != null) {
     namedArgs['headers'] = refer(headerVarName);
   }
-  return refer('MultipartFile', 'package:dio/dio.dart')
-      .property('fromString')
-      .call([
-        refer('jsonEncode', 'dart:convert').call([
-          refer('item').property('toJson').call([]),
-        ]),
-      ], namedArgs);
+  return refer(
+    'MultipartFile',
+    'package:dio/dio.dart',
+  ).property('fromString').call([
+    refer('jsonEncode', 'dart:convert').call([
+      refer('item').property('toJson').call([]),
+    ]),
+  ], namedArgs);
 }
 
 /// Builds an [Expression] for the encoder call for explode: false arrays.
@@ -768,14 +855,18 @@ Expression _buildEncoderExpr(
 }) {
   Expression listExpr;
   if (needsMapping) {
-    listExpr = refer(accessor).property('map').call([
-      Method(
-        (b) => b
-          ..lambda = true
-          ..requiredParameters.add(Parameter((p) => p..name = 'item'))
-          ..body = itemExpr.code,
-      ).closure,
-    ]).property('toList').call([]);
+    listExpr = refer(accessor)
+        .property('map')
+        .call([
+          Method(
+            (b) => b
+              ..lambda = true
+              ..requiredParameters.add(Parameter((p) => p..name = 'item'))
+              ..body = itemExpr.code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([]);
   } else {
     listExpr = refer(accessor);
   }

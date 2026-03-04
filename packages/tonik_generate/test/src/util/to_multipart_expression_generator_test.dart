@@ -1769,10 +1769,18 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry(
-              'avatar',
-              MultipartFile.fromBytes(body.avatar, filename: 'avatar'),
-            ));
+            switch (body.avatar) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'avatar',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'avatar',
+                  MultipartFile.fromBytes(body.avatar.toBytes(), filename: fileName ?? 'avatar'),
+                ));
+            }
           }
         '''),
         ),
@@ -1825,10 +1833,18 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.document != null) {
-              formData.files.add(MapEntry(
-                'document',
-                MultipartFile.fromBytes(body.document!, filename: 'document'),
-              ));
+              switch (body.document!) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry(
+                    'document',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'document'),
+                  ));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry(
+                    'document',
+                    MultipartFile.fromBytes(body.document!.toBytes(), filename: fileName ?? 'document'),
+                  ));
+              }
             }
           }
         '''),
@@ -1882,10 +1898,18 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.photo != null) {
-              formData.files.add(MapEntry(
-                'photo',
-                MultipartFile.fromBytes(body.photo!, filename: 'photo'),
-              ));
+              switch (body.photo!) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry(
+                    'photo',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'photo'),
+                  ));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry(
+                    'photo',
+                    MultipartFile.fromBytes(body.photo!.toBytes(), filename: fileName ?? 'photo'),
+                  ));
+              }
             }
           }
         '''),
@@ -1938,14 +1962,26 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry(
-              'image',
-              MultipartFile.fromBytes(
-                body.image,
-                filename: 'image',
-                contentType: DioMediaType.parse('image/png'),
-              ),
-            ));
+            switch (body.image) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'image',
+                  MultipartFile.fromBytes(
+                    bytes,
+                    filename: fileName ?? 'image',
+                    contentType: DioMediaType.parse('image/png'),
+                  ),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'image',
+                  MultipartFile.fromBytes(
+                    body.image.toBytes(),
+                    filename: fileName ?? 'image',
+                    contentType: DioMediaType.parse('image/png'),
+                  ),
+                ));
+            }
           }
         '''),
         ),
@@ -1997,10 +2033,18 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry(
-              'file',
-              MultipartFile.fromBytes(body.file, filename: 'file'),
-            ));
+            switch (body.file) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file'),
+                ));
+            }
           }
         '''),
         ),
@@ -3426,7 +3470,12 @@ void main() {
           void test() {
             final formData = FormData();
             for (final item in body.files) {
-              formData.files.add(MapEntry('files', MultipartFile.fromBytes(item, filename: 'files')));
+              switch (item) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(item.toBytes(), filename: fileName ?? 'files')));
+              }
             }
           }
         '''),
@@ -3483,7 +3532,12 @@ void main() {
           void test() {
             final formData = FormData();
             for (final item in body.files) {
-              formData.files.add(MapEntry('files', MultipartFile.fromBytes(item, filename: 'files')));
+              switch (item) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(item.toBytes(), filename: fileName ?? 'files')));
+              }
             }
           }
         '''),
@@ -3891,10 +3945,18 @@ void main() {
             final formData = FormData();
             final fileHeaders = <String, List<String>>{};
             fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
-              'file',
-              MultipartFile.fromBytes(body.file, filename: 'file', headers: fileHeaders),
-            ));
+            switch (body.file) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
+                ));
+            }
           }
         '''),
         ),
@@ -3959,10 +4021,18 @@ void main() {
             if (fileTag != null) {
               fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
             }
-            formData.files.add(MapEntry(
-              'file',
-              MultipartFile.fromBytes(body.file, filename: 'file', headers: fileHeaders),
-            ));
+            switch (body.file) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
+                ));
+            }
           }
         '''),
         ),
@@ -4313,10 +4383,18 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry(
-              'file',
-              MultipartFile.fromBytes(body.file, filename: 'file'),
-            ));
+            switch (body.file) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file'),
+                ));
+            }
           }
         '''),
         ),
@@ -4392,10 +4470,18 @@ void main() {
             if (fileTag != null) {
               fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
             }
-            formData.files.add(MapEntry(
-              'file',
-              MultipartFile.fromBytes(body.file, filename: 'file', headers: fileHeaders),
-            ));
+            switch (body.file) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
+                ));
+            }
           }
         '''),
         ),
@@ -4444,10 +4530,18 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry(
-              'file',
-              MultipartFile.fromBytes(body.file, filename: 'file'),
-            ));
+            switch (body.file) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'file',
+                  MultipartFile.fromBytes(body.file.toBytes(), filename: fileName ?? 'file'),
+                ));
+            }
           }
         '''),
         ),
@@ -4659,7 +4753,12 @@ void main() {
             final filesHeaders = <String, List<String>>{};
             filesHeaders['X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.files) {
-              formData.files.add(MapEntry('files', MultipartFile.fromBytes(item, filename: 'files', headers: filesHeaders)));
+              switch (item) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files', headers: filesHeaders)));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(item.toBytes(), filename: fileName ?? 'files', headers: filesHeaders)));
+              }
             }
           }
         '''),
@@ -4804,10 +4903,18 @@ void main() {
             if (body.file != null) {
               final fileHeaders = <String, List<String>>{};
               fileHeaders['X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
-              formData.files.add(MapEntry(
-                'file',
-                MultipartFile.fromBytes(body.file!, filename: 'file', headers: fileHeaders),
-              ));
+              switch (body.file!) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry(
+                    'file',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                  ));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry(
+                    'file',
+                    MultipartFile.fromBytes(body.file!.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
+                  ));
+              }
             }
           }
         '''),
@@ -4874,10 +4981,18 @@ void main() {
             if (body.file != null) {
               final fileHeaders = <String, List<String>>{};
               fileHeaders['X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
-              formData.files.add(MapEntry(
-                'file',
-                MultipartFile.fromBytes(body.file!, filename: 'file', headers: fileHeaders),
-              ));
+              switch (body.file!) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  formData.files.add(MapEntry(
+                    'file',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                  ));
+                case TonikFilePath(:final path, :final fileName):
+                  formData.files.add(MapEntry(
+                    'file',
+                    MultipartFile.fromBytes(body.file!.toBytes(), filename: fileName ?? 'file', headers: fileHeaders),
+                  ));
+              }
             }
           }
         '''),
@@ -5233,10 +5348,18 @@ void main() {
             final formData = FormData();
             final documentHeaders = <String, List<String>>{};
             documentHeaders['X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
-              'document',
-              MultipartFile.fromBytes(body.document, filename: 'document', headers: documentHeaders),
-            ));
+            switch (body.document) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'document',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'document', headers: documentHeaders),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'document',
+                  MultipartFile.fromBytes(body.document.toBytes(), filename: fileName ?? 'document', headers: documentHeaders),
+                ));
+            }
           }
         '''),
         ),

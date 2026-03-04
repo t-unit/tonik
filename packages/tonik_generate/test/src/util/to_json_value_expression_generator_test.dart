@@ -121,10 +121,10 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      // Binary data needs to be decoded from List<int> to String for JSON
+      // Binary data: toBytes() then decode to String for JSON.
       expect(
         emit(buildToJsonPropertyExpression('thumbnail', property)),
-        'thumbnail.decodeToString()',
+        'thumbnail.toBytes().decodeToString()',
       );
     });
 
@@ -138,7 +138,7 @@ void main() {
       );
       expect(
         emit(buildToJsonPropertyExpression('data', property)),
-        'data?.decodeToString()',
+        'data?.toBytes().decodeToString()',
       );
     });
 
@@ -258,10 +258,10 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      // List of binary needs each element decoded to string
+      // List of binary needs each element's bytes decoded to string
       expect(
         emit(buildToJsonPropertyExpression('images', property)),
-        'images.map((e) => e.decodeToString()).toList()',
+        'images.map((e) => e.toBytes().decodeToString()).toList()',
       );
     });
 

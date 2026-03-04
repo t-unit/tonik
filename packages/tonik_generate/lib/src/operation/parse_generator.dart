@@ -249,9 +249,14 @@ class ParseGenerator {
         declareFinal(bodyVar)
             .assign(
               refer(
-                'decodeResponseBytes',
+                'TonikFileBytes',
                 'package:tonik_util/tonik_util.dart',
-              ).call([refer('response.data')]),
+              ).call([
+                refer(
+                  'decodeResponseBytes',
+                  'package:tonik_util/tonik_util.dart',
+                ).call([refer('response.data')]),
+              ]),
             )
             .statement,
       ],

@@ -79,15 +79,8 @@ TypeReference typeReference(
     ),
     BinaryModel _ => TypeReference(
       (b) => b
-        ..symbol = 'List'
-        ..url = 'dart:core'
-        ..types.add(
-          TypeReference(
-            (b) => b
-              ..symbol = 'int'
-              ..url = 'dart:core',
-          ),
-        )
+        ..symbol = 'TonikFile'
+        ..url = 'package:tonik_util/tonik_util.dart'
         ..isNullable = isNullableOverride,
     ),
     NeverModel _ => TypeReference(

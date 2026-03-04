@@ -25,4 +25,5 @@ export 'src/encoding/space_delimited_encoder_extensions.dart';
 export 'src/encoding/uri_encoder_extensions.dart';
 export 'src/encoding_shape.dart';
 export 'src/offset_date_time.dart';
+export 'src/tonik_file/tonik_file.dart';
 export 'src/tonik_result.dart';

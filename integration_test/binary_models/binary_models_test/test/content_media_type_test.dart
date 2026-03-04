@@ -45,12 +45,12 @@ void main() {
       // ImageEncodedData.imageData should be List<int> due to config
       final imageEncodedData = ImageEncodedData(
         name: 'test-image',
-        imageData: imageBytes,
+        imageData: TonikFileBytes(imageBytes),
         description: 'Test PNG image',
       );
 
-      expect(imageEncodedData.imageData, isA<List<int>>());
-      expect(imageEncodedData.imageData, equals(imageBytes));
+      expect(imageEncodedData.imageData, isA<TonikFile>());
+      expect(imageEncodedData.imageData.toBytes(), equals(imageBytes));
     });
 
     test('ImageEncodedData serializes imageData to string in JSON', () {
@@ -64,7 +64,7 @@ void main() {
 
       final imageEncodedData = ImageEncodedData(
         name: 'test-image',
-        imageData: imageBytes,
+        imageData: TonikFileBytes(imageBytes),
       );
 
       // Serialize to JSON
@@ -89,10 +89,10 @@ void main() {
 
       final imageEncodedData = ImageEncodedData.fromJson(json);
 
-      // fromJson UTF-8 encodes the string to List<int>
-      expect(imageEncodedData.imageData, isA<List<int>>());
+      // fromJson UTF-8 encodes the string to TonikFile.
+      expect(imageEncodedData.imageData, isA<TonikFile>());
       expect(
-        imageEncodedData.imageData,
+        imageEncodedData.imageData.toBytes(),
         equals([72, 101, 108, 108, 111]),
       ); // UTF-8 bytes of "Hello"
     });
@@ -104,7 +104,7 @@ void main() {
 
       final imageEncodedData = ImageEncodedData(
         name: 'test-upload-image',
-        imageData: imageBytes,
+        imageData: TonikFileBytes(imageBytes),
         description: 'Test image upload',
       );
 
@@ -128,7 +128,7 @@ void main() {
 
       final responseBody =
           (success.value as GetContentMediaTypeImageResponse200).body;
-      expect(responseBody.imageData, isA<List<int>>());
+      expect(responseBody.imageData, isA<TonikFile>());
     });
   });
 
@@ -215,11 +215,11 @@ void main() {
 
       final unconfiguredData = UnconfiguredEncodedData(
         name: 'test-unconfigured',
-        data: dataBytes,
+        data: TonikFileBytes(dataBytes),
       );
 
-      expect(unconfiguredData.data, isA<List<int>>());
-      expect(unconfiguredData.data, equals(dataBytes));
+      expect(unconfiguredData.data, isA<TonikFile>());
+      expect(unconfiguredData.data.toBytes(), equals(dataBytes));
     });
 
     test('UnconfiguredEncodedData serializes data to string in JSON', () {
@@ -227,7 +227,7 @@ void main() {
 
       final unconfiguredData = UnconfiguredEncodedData(
         name: 'test-unconfigured',
-        data: dataBytes,
+        data: TonikFileBytes(dataBytes),
       );
 
       // Serialize to JSON
@@ -251,10 +251,10 @@ void main() {
 
         final unconfiguredData = UnconfiguredEncodedData.fromJson(json);
 
-        // fromJson UTF-8 encodes the string to List<int>
-        expect(unconfiguredData.data, isA<List<int>>());
+        // fromJson UTF-8 encodes the string to TonikFile.
+        expect(unconfiguredData.data, isA<TonikFile>());
         expect(
-          unconfiguredData.data,
+          unconfiguredData.data.toBytes(),
           equals([84, 101, 115, 116]),
         ); // UTF-8 bytes of "Test"
       },
@@ -267,7 +267,7 @@ void main() {
 
       final unconfiguredData = UnconfiguredEncodedData(
         name: 'test-upload-unconfigured',
-        data: dataBytes,
+        data: TonikFileBytes(dataBytes),
       );
 
       final result = await api.uploadContentMediaTypeUnconfigured(
@@ -291,7 +291,7 @@ void main() {
 
       final responseBody =
           (success.value as GetContentMediaTypeUnconfiguredResponse200).body;
-      expect(responseBody.data, isA<List<int>>());
+      expect(responseBody.data, isA<TonikFile>());
     });
   });
 }
