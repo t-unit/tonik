@@ -50,9 +50,10 @@ Expression buildMultipartBodyExpression(
 
   return Method(
     (b) => b
+      ..modifier = MethodModifier.async
       ..lambda = false
       ..body = Block.of(bodyStatements),
-  ).closure.call([]);
+  ).closure.call([]).awaited;
 }
 
 List<Code> _buildMultipartFields(
@@ -569,10 +570,10 @@ switch ($accessor) {
       '$rawName',
       $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
     ));
-  case $tonikFilePath(:final fileName):
+  case $tonikFilePath(:final path, :final fileName):
     formData.files.add($mapEntry(
       '$rawName',
-      $multipartFile.fromBytes($accessor.toBytes(), filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
+      await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
     ));
 }''';
     },
@@ -808,8 +809,8 @@ Code _binaryItemExpr(String rawName, {String? headerVarName}) {
 switch (item) {
   case $tonikFileBytes(:final bytes, :final fileName):
     formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $headersArg)));
-  case $tonikFilePath(:final fileName):
-    formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(item.toBytes(), filename: fileName ?? '$rawName', $headersArg)));
+  case $tonikFilePath(:final path, :final fileName):
+    formData.files.add($mapEntry('$rawName', await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $headersArg)));
 }''';
     },
   );

@@ -935,7 +935,7 @@ void main() {
         );
 
         const expectedMethod = '''
-          Object? _data({required CreateUserForm body}) {
+          Future<Object?> _data({required CreateUserForm body}) async {
             final formData = FormData();
             formData.fields.add(MapEntry('name', body.name));
             if (body.nickname != null) {
@@ -1106,10 +1106,10 @@ void main() {
         );
 
         const expectedMethod = '''
-          Object? _data({required CreateItem body}) {
+          Future<Object?> _data({required CreateItem body}) async {
             return switch (body) {
               final CreateItemJson value => value.value.toJson(),
-              final CreateItemFormData value => () {
+              final CreateItemFormData value => await () async {
                 final formData = FormData();
                 formData.fields.add(MapEntry('name', value.value.name));
                 return formData;

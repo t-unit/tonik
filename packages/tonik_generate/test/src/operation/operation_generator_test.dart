@@ -722,6 +722,127 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
       );
 
       test(
+        'generates call method with await _data for multipart request body',
+        () {
+          final multipartModel = ClassModel(
+            name: 'UploadForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final requestBody = RequestBodyObject(
+            name: 'upload',
+            context: context,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: multipartModel,
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                encoding: {
+                  'name': const MultipartPropertyEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    style: MultipartEncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
+                  ),
+                },
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'uploadForm',
+            context: context,
+            summary: 'Upload form',
+            description: 'Upload a form',
+            tags: const {},
+            isDeprecated: false,
+            path: '/upload',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            cookieParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<void>> call({required UploadForm body}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
+    _$data = await _data(body: body);
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+
+      test(
         'prioritizes body parameter for request body with conflicting names',
         () {
           final requestBody = RequestBodyObject(

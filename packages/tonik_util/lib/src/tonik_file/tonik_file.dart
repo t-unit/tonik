@@ -10,9 +10,9 @@ import 'package:tonik_util/src/tonik_file/file_reader_stub.dart'
 /// Transport-agnostic file reference for binary properties.
 ///
 /// Use [TonikFileBytes] for in-memory data or [TonikFilePath] for
-/// file-system references. The generator converts these to
-/// `MultipartFile.fromBytes` or `MultipartFile.fromFile` at serialization
-/// time.
+/// file-system references. The generator converts [TonikFileBytes] to
+/// `MultipartFile.fromBytes` and [TonikFilePath] to
+/// `await MultipartFile.fromFile` at serialization time.
 sealed class TonikFile {
   const TonikFile({this.fileName});
 
