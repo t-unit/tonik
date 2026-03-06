@@ -41,6 +41,14 @@ class MultipartPropertyEncoding {
   /// Whether reserved characters are allowed without encoding.
   final bool? allowReserved;
 
+  /// Whether this encoding uses style-based serialization mode.
+  ///
+  /// True when any of [style], [explode], or [allowReserved] is non-null,
+  /// meaning the OAS spec explicitly specified at least one of these fields.
+  /// When false, serialization is content-based (determined by [contentType]).
+  bool get isStyleBased =>
+      style != null || explode != null || allowReserved != null;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

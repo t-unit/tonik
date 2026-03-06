@@ -189,7 +189,6 @@ class RequestBodyImporter {
     // Only populate per-property defaults for ClassModel
     if (resolved is! core.ClassModel) return null;
 
-    final isOas30 = openApiObject.openapi.startsWith('3.0');
     final propertyNames = resolved.properties.map((p) => p.name).toSet();
 
     // Warn about encoding keys that don't match any property
@@ -217,11 +216,9 @@ class RequestBodyImporter {
         contentType: existing?.contentType ?? defaultContentType,
         rawContentType: existing?.rawContentType ?? defaultRawContentType,
         headers: existing?.headers,
-        style: isOas30
-            ? core.MultipartEncodingStyle.form
-            : existing?.style ?? core.MultipartEncodingStyle.form,
-        explode: isOas30 || (existing?.explode ?? true),
-        allowReserved: !isOas30 && (existing?.allowReserved ?? false),
+        style: existing?.style,
+        explode: existing?.explode,
+        allowReserved: existing?.allowReserved,
       );
     }
 
@@ -261,6 +258,7 @@ class RequestBodyImporter {
     core.Context context,
   ) {
     final result = <String, core.MultipartPropertyEncoding>{};
+    final isOas30 = openApiObject.openapi.startsWith('3.0');
     for (final entry in encodingMap.entries) {
       final propertyName = entry.key;
       final encoding = entry.value;
@@ -286,13 +284,28 @@ class RequestBodyImporter {
             )
           : null;
 
+      final hasExplicitStyleFields =
+          encoding.style != null ||
+          encoding.explode != null ||
+          encoding.allowReserved != null;
+      // OAS 3.0: always content-based; OAS 3.1: style-based only if explicit
+      final useStyleMode = !isOas30 && hasExplicitStyleFields;
+
+      final resolvedStyle = useStyleMode
+          ? (_mapSerializationStyle(encoding.style) ??
+              core.MultipartEncodingStyle.form)
+          : null;
+
       result[propertyName] = core.MultipartPropertyEncoding(
         contentType: resolvedContentType,
         rawContentType: encoding.contentType,
         headers: headers,
-        style: _mapSerializationStyle(encoding.style),
-        explode: encoding.explode,
-        allowReserved: encoding.allowReserved,
+        style: resolvedStyle,
+        explode: useStyleMode
+            ? (encoding.explode ??
+                (resolvedStyle == core.MultipartEncodingStyle.form))
+            : null,
+        allowReserved: useStyleMode ? (encoding.allowReserved ?? false) : null,
       );
     }
     return result;

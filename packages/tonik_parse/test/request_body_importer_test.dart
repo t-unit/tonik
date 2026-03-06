@@ -958,8 +958,8 @@ void main() {
 
       final imageEncoding = content.encoding!['profileImage']!;
       expect(imageEncoding.rawContentType, 'image/png');
-      expect(imageEncoding.style, MultipartEncodingStyle.form);
-      expect(imageEncoding.explode, isTrue);
+      expect(imageEncoding.style, isNull);
+      expect(imageEncoding.explode, isNull);
     });
 
     test('imports multipart/form-data with encoding headers', () {
@@ -1016,9 +1016,9 @@ void main() {
       final fileEncoding = content.encoding!['file']!;
       expect(fileEncoding.contentType, ContentType.bytes);
       expect(fileEncoding.rawContentType, 'application/octet-stream');
-      expect(fileEncoding.style, MultipartEncodingStyle.form);
-      expect(fileEncoding.explode, isTrue);
-      expect(fileEncoding.allowReserved, isFalse);
+      expect(fileEncoding.style, isNull);
+      expect(fileEncoding.explode, isNull);
+      expect(fileEncoding.allowReserved, isNull);
       expect(fileEncoding.headers, isNotNull);
       expect(fileEncoding.headers, hasLength(1));
       expect(fileEncoding.headers!['X-Custom'], isA<ResponseHeaderObject>());
@@ -1064,9 +1064,9 @@ void main() {
       final nameEncoding = content.encoding!['name']!;
       expect(nameEncoding.contentType, ContentType.text);
       expect(nameEncoding.rawContentType, 'text/plain');
-      expect(nameEncoding.style, MultipartEncodingStyle.form);
-      expect(nameEncoding.explode, isTrue);
-      expect(nameEncoding.allowReserved, isFalse);
+      expect(nameEncoding.style, isNull);
+      expect(nameEncoding.explode, isNull);
+      expect(nameEncoding.allowReserved, isNull);
     });
 
     group('multipart default encoding', () {
@@ -1132,9 +1132,9 @@ void main() {
         final encoding = content.encoding!['name']!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
-        expect(encoding.style, MultipartEncodingStyle.form);
-        expect(encoding.explode, isTrue);
-        expect(encoding.allowReserved, isFalse);
+        expect(encoding.style, isNull);
+        expect(encoding.explode, isNull);
+        expect(encoding.allowReserved, isNull);
       });
 
       test('integer property gets text/plain default', () {
@@ -1149,9 +1149,9 @@ void main() {
         final encoding = content.encoding!['count']!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
-        expect(encoding.style, MultipartEncodingStyle.form);
-        expect(encoding.explode, isTrue);
-        expect(encoding.allowReserved, isFalse);
+        expect(encoding.style, isNull);
+        expect(encoding.explode, isNull);
+        expect(encoding.allowReserved, isNull);
       });
 
       test('boolean property gets text/plain default', () {
@@ -1180,9 +1180,9 @@ void main() {
         final encoding = content.encoding!['file']!;
         expect(encoding.contentType, ContentType.bytes);
         expect(encoding.rawContentType, 'application/octet-stream');
-        expect(encoding.style, MultipartEncodingStyle.form);
-        expect(encoding.explode, isTrue);
-        expect(encoding.allowReserved, isFalse);
+        expect(encoding.style, isNull);
+        expect(encoding.explode, isNull);
+        expect(encoding.allowReserved, isNull);
       });
 
       test('object property gets application/json default', () {
@@ -1365,14 +1365,13 @@ void main() {
           // back to null (or whatever resolveContentType returns)
           expect(encoding.rawContentType, 'application/xml');
           expect(encoding.style, MultipartEncodingStyle.deepObject);
-          // Defaults filled for nulls
-          expect(encoding.explode, isTrue);
+          // deepObject: explode defaults to false per OAS spec
+          expect(encoding.explode, isFalse);
           expect(encoding.allowReserved, isFalse);
         },
       );
 
-      test('OAS 3.0 forces style/explode/allowReserved '
-          'regardless of explicit values', () {
+      test('OAS 3.0 ignores explicit style fields (always content-based)', () {
         final content = importMultipartContent(
           multipartSpec(
             version: '3.0.3',
@@ -1398,10 +1397,199 @@ void main() {
         final encoding = content.encoding!['data']!;
         // contentType is preserved (not affected by version)
         expect(encoding.rawContentType, 'application/xml');
-        // style/explode/allowReserved forced to defaults for OAS 3.0
+        // OAS 3.0 always uses content-based mode: style fields are null
+        expect(encoding.style, isNull);
+        expect(encoding.explode, isNull);
+        expect(encoding.allowReserved, isNull);
+      });
+
+      test('content-based when only contentType is explicit (no style fields)',
+          () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'data': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+            encoding: {
+              'data': {'contentType': 'application/xml'},
+            },
+          ),
+        );
+
+        final encoding = content.encoding!['data']!;
+        expect(encoding.rawContentType, 'application/xml');
+        // No style fields set → content-based mode
+        expect(encoding.style, isNull);
+        expect(encoding.explode, isNull);
+        expect(encoding.allowReserved, isNull);
+      });
+
+      test('style-based when only explode is explicit', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'data': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+            encoding: {
+              'data': {'explode': false},
+            },
+          ),
+        );
+
+        final encoding = content.encoding!['data']!;
+        // explode explicitly set → style-based mode with defaults filled
+        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.explode, isFalse);
+        expect(encoding.allowReserved, isFalse);
+      });
+
+      test('style-based when explode is explicitly true (default value)', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'data': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+            encoding: {
+              'data': {'explode': true},
+            },
+          ),
+        );
+
+        final encoding = content.encoding!['data']!;
+        // explode explicitly set to true (even though it's the form default)
+        // still triggers style-based mode
         expect(encoding.style, MultipartEncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isFalse);
+      });
+
+      test('style-based when only allowReserved is explicit', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'data': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+            encoding: {
+              'data': {'allowReserved': true},
+            },
+          ),
+        );
+
+        final encoding = content.encoding!['data']!;
+        // allowReserved explicitly set → style-based mode with defaults filled
+        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.explode, isTrue);
+        expect(encoding.allowReserved, isTrue);
+      });
+
+      test(
+          'style-based when only style (form) is explicit: '
+          'explode defaults true',
+          () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'data': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+            encoding: {
+              'data': {'style': 'form'},
+            },
+          ),
+        );
+
+        final encoding = content.encoding!['data']!;
+        // form style → explode defaults to true per OAS spec
+        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.explode, isTrue);
+        expect(encoding.allowReserved, isFalse);
+      });
+
+      test(
+          'style-based when only style (deepObject) is explicit: '
+          'explode defaults false',
+          () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'data': {
+                'type': 'object',
+                'properties': {
+                  'name': {'type': 'string'},
+                },
+              },
+            },
+            encoding: {
+              'data': {'style': 'deepObject'},
+            },
+          ),
+        );
+
+        final encoding = content.encoding!['data']!;
+        // non-form style → explode defaults to false per OAS spec
+        expect(encoding.style, MultipartEncodingStyle.deepObject);
+        expect(encoding.explode, isFalse);
+        expect(encoding.allowReserved, isFalse);
+      });
+
+      test(
+          'mixed map: style-based property and content-based property '
+          'coexist correctly',
+          () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'styled': {
+                'type': 'object',
+                'properties': {
+                  'key': {'type': 'string'},
+                },
+              },
+              'plain': {'type': 'string'},
+            },
+            encoding: {
+              'styled': {'style': 'deepObject'},
+            },
+          ),
+        );
+
+        // 'styled' has explicit style → style-based mode
+        final styledEncoding = content.encoding!['styled']!;
+        expect(styledEncoding.style, MultipartEncodingStyle.deepObject);
+        expect(styledEncoding.explode, isFalse);
+        expect(styledEncoding.allowReserved, isFalse);
+        expect(styledEncoding.isStyleBased, isTrue);
+
+        // 'plain' has no explicit encoding → content-based mode
+        final plainEncoding = content.encoding!['plain']!;
+        expect(plainEncoding.style, isNull);
+        expect(plainEncoding.explode, isNull);
+        expect(plainEncoding.allowReserved, isNull);
+        expect(plainEncoding.isStyleBased, isFalse);
       });
 
       test('readOnly properties are included in encoding map', () {
