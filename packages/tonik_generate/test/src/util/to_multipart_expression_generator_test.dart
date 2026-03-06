@@ -92,7 +92,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('name', body.name));
+            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -145,7 +145,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.name != null) {
-              formData.fields.add(MapEntry('name', body.name!));
+              formData.files.add(MapEntry('name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -199,7 +199,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.nickname != null) {
-              formData.fields.add(MapEntry('nickname', body.nickname!));
+              formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -253,7 +253,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.bio != null) {
-              formData.fields.add(MapEntry('bio', body.bio!));
+              formData.files.add(MapEntry('bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -408,7 +408,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('title', body.title));
+            formData.files.add(MapEntry('title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -468,7 +468,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('name', body.name));
+            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -521,7 +521,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('password', body.password));
+            formData.files.add(MapEntry('password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -573,7 +573,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('data', body.data.toString()));
+            formData.files.add(MapEntry('data', MultipartFile.fromString(body.data.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -681,7 +681,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('age', body.age.toString()));
+            formData.files.add(MapEntry('age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -733,7 +733,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('score', body.score.toString()));
+            formData.files.add(MapEntry('score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -785,7 +785,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('value', body.value.toString()));
+            formData.files.add(MapEntry('value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -837,7 +837,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('active', body.active.toString()));
+            formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -889,7 +889,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('birth_date', body.birthDate.toString()));
+            formData.files.add(MapEntry('birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -941,7 +941,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('amount', body.amount.toString()));
+            formData.files.add(MapEntry('amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -993,7 +993,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('website', body.website.toString()));
+            formData.files.add(MapEntry('website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -1047,7 +1047,7 @@ void main() {
             format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('created_at', body.createdAt.toTimeZonedIso8601String()));
+            formData.files.add(MapEntry('created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
           ),
@@ -1103,7 +1103,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.count != null) {
-              formData.fields.add(MapEntry('count', body.count!.toString()));
+              formData.files.add(MapEntry('count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -1158,7 +1158,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('age', jsonEncode(body.age)));
+            formData.files.add(MapEntry('age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -1211,7 +1211,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('createdAt', jsonEncode(body.createdAt)));
+            formData.files.add(MapEntry('createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -1264,7 +1264,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('active', jsonEncode(body.active)));
+            formData.files.add(MapEntry('active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -1318,7 +1318,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.score != null) {
-              formData.fields.add(MapEntry('score', jsonEncode(body.score!)));
+              formData.files.add(MapEntry('score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse('application/json'))));
             }
           }
         '''),
@@ -1386,7 +1386,7 @@ void main() {
             format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('status', body.status.toJson()));
+            formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
           ),
@@ -1452,7 +1452,7 @@ void main() {
             format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('count', body.count.toJson().toString()));
+            formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
           ),
@@ -1518,7 +1518,7 @@ void main() {
             format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('status', body.status.toJson()));
+            formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
           ),
@@ -1584,7 +1584,7 @@ void main() {
             format('''
           void test() {
             final formData = FormData();
-            formData.fields.add(MapEntry('count', body.count.toJson().toString()));
+            formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
           ),
@@ -1649,7 +1649,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.status != null) {
-              formData.fields.add(MapEntry('status', body.status!.toJson()));
+              formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -1714,7 +1714,7 @@ void main() {
           void test() {
             final formData = FormData();
             if (body.status != null) {
-              formData.fields.add(MapEntry('status', body.status!.toJson()));
+              formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -3843,7 +3843,7 @@ void main() {
           void test() {
             await () async {
               final formData = FormData();
-              formData.fields.add(MapEntry('name', body.name));
+              formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
               return formData;
             }();
           }
@@ -4174,7 +4174,7 @@ void main() {
             descriptionHeaders['X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'description',
-              MultipartFile.fromString(body.description, headers: descriptionHeaders),
+              MultipartFile.fromString(body.description, contentType: DioMediaType.parse('text/plain'), headers: descriptionHeaders),
             ));
           }
         '''),
@@ -4242,7 +4242,7 @@ void main() {
             countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'count',
-              MultipartFile.fromString(body.count.toString(), headers: countHeaders),
+              MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'), headers: countHeaders),
             ));
           }
         '''),
@@ -4320,7 +4320,7 @@ void main() {
             statusHeaders['X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'status',
-              MultipartFile.fromString(body.status.toJson(), headers: statusHeaders),
+              MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'), headers: statusHeaders),
             ));
           }
         '''),
@@ -5061,7 +5061,7 @@ void main() {
             dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'data',
-              MultipartFile.fromString(body.data.toString(), headers: dataHeaders),
+              MultipartFile.fromString(body.data.toString(), contentType: DioMediaType.parse('text/plain'), headers: dataHeaders),
             ));
           }
         '''),
@@ -5131,7 +5131,7 @@ void main() {
             countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'count',
-              MultipartFile.fromString(jsonEncode(body.count), headers: countHeaders),
+              MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse('application/json'), headers: countHeaders),
             ));
           }
         '''),
@@ -5201,7 +5201,7 @@ void main() {
             createdAtHeaders['X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'createdAt',
-              MultipartFile.fromString(jsonEncode(body.createdAt), headers: createdAtHeaders),
+              MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'), headers: createdAtHeaders),
             ));
           }
         '''),

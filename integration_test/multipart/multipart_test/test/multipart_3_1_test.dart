@@ -77,8 +77,8 @@ void main() {
       final success = response as TonikSuccess<GenericResponse>;
       final formData = success.response.requestOptions.data as FormData;
 
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['name'], 'test-31');
+      // Scalar fields go to files with explicit Content-Type.
+      expect(formData.files.any((e) => e.key == 'name'), isTrue);
       expect(formData.files.any((e) => e.key == 'file'), isTrue);
 
       // Server received the name text field.

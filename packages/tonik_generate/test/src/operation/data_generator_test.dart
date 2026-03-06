@@ -937,9 +937,9 @@ void main() {
         const expectedMethod = '''
           Future<Object?> _data({required CreateUserForm body}) async {
             final formData = FormData();
-            formData.fields.add(MapEntry('name', body.name));
+            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
             if (body.nickname != null) {
-              formData.fields.add(MapEntry('nickname', body.nickname!));
+              formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
             }
             return formData;
           }
@@ -1111,7 +1111,7 @@ void main() {
               final CreateItemJson value => value.value.toJson(),
               final CreateItemFormData value => await () async {
                 final formData = FormData();
-                formData.fields.add(MapEntry('name', value.value.name));
+                formData.files.add(MapEntry('name', MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse('text/plain'))));
                 return formData;
               }(),
             };

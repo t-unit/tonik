@@ -137,6 +137,7 @@ Code? _buildFieldCode(
   final accessor = '$bodyAccessor.$normalizedName${isNullable ? '!' : ''}';
   final propertyEncoding = encoding?[rawName];
   final contentType = propertyEncoding?.contentType;
+  final rawContentType = propertyEncoding?.rawContentType;
 
   // Build per-part header statements and variable name (if any).
   final headerResult = _buildHeaderMapStatements(
@@ -151,26 +152,22 @@ Code? _buildFieldCode(
     resolved = resolved.resolved;
   }
 
-  final hasHeaders = headerResult != null;
   final headerVarName = headerResult?.headerVarName;
 
   final fieldCode = switch (resolved) {
-    // When headers are present, field types that normally go to
-    // formData.fields must be promoted to formData.files via
-    // MultipartFile.fromString so the per-part headers are attached.
-    StringModel() =>
-      hasHeaders
-          ? _buildStringFileAddition(rawName, accessor, headerVarName!)
-          : _buildStringFieldAddition(rawName, accessor),
-    AnyModel() =>
-      hasHeaders
-          ? _buildPrimitiveFileAddition(
-              rawName,
-              accessor,
-              headerVarName!,
-              serializerMethod: 'toString',
-            )
-          : _buildAnyFieldAddition(rawName, accessor),
+    StringModel() => _buildStringFileAddition(
+      rawName,
+      accessor,
+      rawContentType: rawContentType!,
+      headerVarName: headerVarName,
+    ),
+    AnyModel() => _buildPrimitiveFileAddition(
+      rawName,
+      accessor,
+      rawContentType: rawContentType!,
+      serializerMethod: 'toString',
+      headerVarName: headerVarName,
+    ),
     NeverModel() => generateEncodingExceptionExpression(
       "Cannot encode NeverModel property '$rawName' "
       '- this type does not permit any value.',
@@ -183,53 +180,44 @@ Code? _buildFieldCode(
     DateModel() ||
     DecimalModel() ||
     UriModel() =>
-      hasHeaders
-          ? contentType == ContentType.json
-                ? _buildJsonEncodeFileAddition(
-                    rawName,
-                    accessor,
-                    headerVarName!,
-                  )
-                : _buildPrimitiveFileAddition(
-                    rawName,
-                    accessor,
-                    headerVarName!,
-                    serializerMethod: 'toString',
-                  )
-          : contentType == ContentType.json
-          ? _buildJsonEncodeFieldAddition(rawName, accessor)
-          : _buildPrimitiveFieldAddition(
+      contentType == ContentType.json
+          ? _buildJsonEncodeFileAddition(
               rawName,
               accessor,
+              rawContentType: rawContentType!,
+              headerVarName: headerVarName,
+            )
+          : _buildPrimitiveFileAddition(
+              rawName,
+              accessor,
+              rawContentType: rawContentType!,
               serializerMethod: 'toString',
+              headerVarName: headerVarName,
             ),
 
     DateTimeModel() =>
-      hasHeaders
-          ? contentType == ContentType.json
-                ? _buildJsonEncodeFileAddition(
-                    rawName,
-                    accessor,
-                    headerVarName!,
-                  )
-                : _buildPrimitiveFileAddition(
-                    rawName,
-                    accessor,
-                    headerVarName!,
-                    serializerMethod: 'toTimeZonedIso8601String',
-                  )
-          : contentType == ContentType.json
-          ? _buildJsonEncodeFieldAddition(rawName, accessor)
-          : _buildPrimitiveFieldAddition(
+      contentType == ContentType.json
+          ? _buildJsonEncodeFileAddition(
               rawName,
               accessor,
+              rawContentType: rawContentType!,
+              headerVarName: headerVarName,
+            )
+          : _buildPrimitiveFileAddition(
+              rawName,
+              accessor,
+              rawContentType: rawContentType!,
               serializerMethod: 'toTimeZonedIso8601String',
+              headerVarName: headerVarName,
             ),
 
-    EnumModel() =>
-      hasHeaders
-          ? _buildEnumFileAddition(rawName, accessor, resolved, headerVarName!)
-          : _buildEnumFieldAddition(rawName, accessor, resolved),
+    EnumModel() => _buildEnumFileAddition(
+      rawName,
+      accessor,
+      resolved,
+      rawContentType: rawContentType!,
+      headerVarName: headerVarName,
+    ),
 
     BinaryModel() => _buildBinaryFileAddition(
       rawName,
@@ -363,41 +351,44 @@ _HeaderMapResult? _buildHeaderMapStatements(
   return _HeaderMapResult(statements, headerVarName);
 }
 
-Code _buildStringFieldAddition(String rawName, String accessor) {
-  return refer('formData').property('fields').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
-      refer(accessor),
-    ]),
-  ]).statement;
-}
-
-/// Builds a string field as MultipartFile.fromString with per-part headers.
+/// Builds a string field as MultipartFile.fromString with explicit contentType.
 Code _buildStringFileAddition(
   String rawName,
-  String accessor,
-  String headerVarName,
-) {
+  String accessor, {
+  required String rawContentType,
+  String? headerVarName,
+}) {
+  final namedArgs = <String, Expression>{
+    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
+        .property('parse')
+        .call([literalString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer('MultipartFile', 'package:dio/dio.dart')
           .property('fromString')
-          .call(
-            [refer(accessor)],
-            {'headers': refer(headerVarName)},
-          ),
+          .call([refer(accessor)], namedArgs),
     ]),
   ]).statement;
 }
 
-/// Builds a primitive field as MultipartFile.fromString with per-part headers.
+/// Builds a primitive field as MultipartFile.fromString with explicit
+/// contentType.
 Code _buildPrimitiveFileAddition(
   String rawName,
-  String accessor,
-  String headerVarName, {
+  String accessor, {
+  required String rawContentType,
   required String serializerMethod,
+  String? headerVarName,
 }) {
+  final namedArgs = <String, Expression>{
+    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
+        .property('parse')
+        .call([literalString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
@@ -405,104 +396,64 @@ Code _buildPrimitiveFileAddition(
           .property('fromString')
           .call(
             [refer(accessor).property(serializerMethod).call([])],
-            {'headers': refer(headerVarName)},
+            namedArgs,
           ),
     ]),
   ]).statement;
 }
 
-/// Builds an enum field as MultipartFile.fromString with per-part headers.
+/// Builds an enum field as MultipartFile.fromString with explicit contentType.
 Code _buildEnumFileAddition(
   String rawName,
   String accessor,
-  EnumModel<dynamic> model,
-  String headerVarName,
-) {
+  EnumModel<dynamic> model, {
+  required String rawContentType,
+  String? headerVarName,
+}) {
   final toJsonCall = refer(accessor).property('toJson').call([]);
   final valueExpr = model is EnumModel<String>
       ? toJsonCall
       : toJsonCall.property('toString').call([]);
 
+  final namedArgs = <String, Expression>{
+    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
+        .property('parse')
+        .call([literalString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer('MultipartFile', 'package:dio/dio.dart')
           .property('fromString')
-          .call(
-            [valueExpr],
-            {'headers': refer(headerVarName)},
-          ),
+          .call([valueExpr], namedArgs),
     ]),
   ]).statement;
 }
 
-Code _buildPrimitiveFieldAddition(
-  String rawName,
-  String accessor, {
-  required String serializerMethod,
-}) {
-  return refer('formData').property('fields').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
-      refer(accessor).property(serializerMethod).call([]),
-    ]),
-  ]).statement;
-}
-
-Code _buildJsonEncodeFieldAddition(String rawName, String accessor) {
-  return refer('formData').property('fields').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
-      refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
-    ]),
-  ]).statement;
-}
-
-/// Builds a json-encoded field as MultipartFile.fromString with per-part
-/// headers.
+/// Builds a json-encoded field as MultipartFile.fromString with explicit
+/// contentType.
 Code _buildJsonEncodeFileAddition(
   String rawName,
-  String accessor,
-  String headerVarName,
-) {
+  String accessor, {
+  required String rawContentType,
+  String? headerVarName,
+}) {
+  final namedArgs = <String, Expression>{
+    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
+        .property('parse')
+        .call([literalString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer('MultipartFile', 'package:dio/dio.dart')
           .property('fromString')
           .call(
-            [
-              refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
-            ],
-            {'headers': refer(headerVarName)},
+            [refer('jsonEncode', 'dart:convert').call([refer(accessor)])],
+            namedArgs,
           ),
-    ]),
-  ]).statement;
-}
-
-Code _buildAnyFieldAddition(String rawName, String accessor) {
-  return refer('formData').property('fields').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
-      refer(accessor).property('toString').call([]),
-    ]),
-  ]).statement;
-}
-
-Code _buildEnumFieldAddition(
-  String rawName,
-  String accessor,
-  EnumModel<dynamic> model,
-) {
-  final toJsonCall = refer(accessor).property('toJson').call([]);
-  final valueExpr = model is EnumModel<String>
-      ? toJsonCall
-      : toJsonCall.property('toString').call([]);
-
-  return refer('formData').property('fields').property('add').call([
-    refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
-      valueExpr,
     ]),
   ]).statement;
 }

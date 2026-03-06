@@ -32,11 +32,11 @@ void main() {
 
       final formData = requestData as FormData;
 
-      // Verify fields are present and correctly typed.
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['name'], 'John Doe');
-      expect(fields['age'], '30');
-      expect(fields['active'], 'true');
+      // Verify fields are present in files (scalar parts now use
+      // MultipartFile.fromString with explicit Content-Type).
+      expect(formData.files.any((e) => e.key == 'name'), isTrue);
+      expect(formData.files.any((e) => e.key == 'age'), isTrue);
+      expect(formData.files.any((e) => e.key == 'active'), isTrue);
 
       // Verify server received the form params.
       expect(success.response.headers['x-has-name']?.first, 'true');
@@ -73,12 +73,9 @@ void main() {
 
       final formData = requestData as FormData;
 
-      // Binary field goes into files, text into fields.
+      // Both fields go into files (binary as bytes, text as MultipartFile).
       expect(formData.files.any((e) => e.key == 'file'), isTrue);
-      expect(
-        formData.fields.any((e) => e.key == 'description'),
-        isTrue,
-      );
+      expect(formData.files.any((e) => e.key == 'description'), isTrue);
 
       // Server sees the description text field in formParams.
       expect(
@@ -108,8 +105,8 @@ void main() {
         final success = response as TonikSuccess<StatusResponse>;
         final formData = success.response.requestOptions.data as FormData;
 
-        final fields = Map.fromEntries(formData.fields);
-        expect(fields['status'], expected);
+        // Enum fields go to files with explicit Content-Type.
+        expect(formData.files.any((e) => e.key == 'status'), isTrue);
 
         expect(success.response.headers['x-has-status']?.first, 'true');
         expect(success.response.headers['x-param-status']?.first, expected);
@@ -129,17 +126,10 @@ void main() {
       final success = response as TonikSuccess<ComplexResponse>;
       final formData = success.response.requestOptions.data as FormData;
 
-      // Label is a plain field.
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['label'], 'test');
-
-      // Profile should be JSON-encoded (may be in fields or files depending
-      // on generator implementation).
-      final allKeys = [
-        ...formData.fields.map((e) => e.key),
-        ...formData.files.map((e) => e.key),
-      ];
-      expect(allKeys, contains('profile'));
+      // Label and profile go to files (scalar with explicit Content-Type,
+      // and JSON-encoded complex object respectively).
+      expect(formData.files.any((e) => e.key == 'label'), isTrue);
+      expect(formData.files.any((e) => e.key == 'profile'), isTrue);
 
       // Server received both fields.
       expect(success.response.headers['x-has-label']?.first, 'true');
@@ -203,12 +193,11 @@ void main() {
       final success = response as TonikSuccess<GenericResponse>;
       final formData = success.response.requestOptions.data as FormData;
 
-      // Required field is present.
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['requiredField'], 'hello');
+      // Required field is present in files with explicit Content-Type.
+      expect(formData.files.any((e) => e.key == 'requiredField'), isTrue);
 
       // Optional fields should be absent.
-      expect(formData.fields.any((e) => e.key == 'optionalField'), isFalse);
+      expect(formData.files.any((e) => e.key == 'optionalField'), isFalse);
       expect(formData.files.any((e) => e.key == 'optionalFile'), isFalse);
 
       // Server saw required, but not optional.
@@ -235,9 +224,9 @@ void main() {
       final success = response as TonikSuccess<GenericResponse>;
       final formData = success.response.requestOptions.data as FormData;
 
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['requiredField'], 'hello');
-      expect(fields['optionalField'], 'world');
+      // All scalar fields go to files with explicit Content-Type.
+      expect(formData.files.any((e) => e.key == 'requiredField'), isTrue);
+      expect(formData.files.any((e) => e.key == 'optionalField'), isTrue);
       expect(formData.files.any((e) => e.key == 'optionalFile'), isTrue);
 
       // Server saw all text parts (binary file not in formParams).

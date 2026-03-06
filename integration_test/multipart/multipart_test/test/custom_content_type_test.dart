@@ -32,9 +32,13 @@ void main() {
       expect(requestData, isA<FormData>());
 
       final formData = requestData as FormData;
-      final fields = Map.fromEntries(formData.fields);
-      expect(fields['field1'], 'test data');
-      expect(fields['field2'], '999');
+      // Scalar fields use formData.files with explicit Content-Type.
+      expect(formData.files.any((e) => e.key == 'field1'), isTrue);
+      expect(formData.files.any((e) => e.key == 'field2'), isTrue);
+
+      // Verify actual field values via server echo-back headers.
+      expect(success.response.headers['x-param-field1']?.first, 'test data');
+      expect(success.response.headers['x-param-field2']?.first, '999');
     });
 
     test(
