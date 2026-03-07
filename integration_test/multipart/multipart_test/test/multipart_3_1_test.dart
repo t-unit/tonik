@@ -68,6 +68,45 @@ void main() {
     );
   });
 
+  group('OAS 3.1 URL-encoded object (content-based mode)', () {
+    test(
+      'serializes object properties as URL-encoded key-value pairs',
+      () async {
+        const address = Address31(firstName: 'John', lastName: 'Doe');
+        const form = UrlEncodedAddressForm(address: address);
+
+        final response = await api.postUrlEncodedObject(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+        final formData = success.response.requestOptions.data as FormData;
+
+        // The address field is a file part (not a plain field) because it
+        // carries a Content-Type of application/x-www-form-urlencoded.
+        expect(formData.files.any((e) => e.key == 'address'), isTrue);
+
+        // Server received the address as a URL-encoded string.
+        expect(success.response.headers['x-has-address']?.first, 'true');
+        expect(
+          success.response.headers['x-address-has-first-name']?.first,
+          'true',
+        );
+        expect(
+          success.response.headers['x-address-has-last-name']?.first,
+          'true',
+        );
+
+        // Verify the actual URL-encoded string value.
+        final addressValue =
+            success.response.headers['x-address-value']?.first ?? '';
+        expect(addressValue, contains('firstName=John'));
+        expect(addressValue, contains('lastName=Doe'));
+        expect(addressValue, contains('&'));
+      },
+    );
+  });
+
   group('OAS 3.1 basic multipart', () {
     test('sends string and binary fields', () async {
       final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);

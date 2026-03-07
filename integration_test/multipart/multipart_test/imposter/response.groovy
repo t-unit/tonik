@@ -150,6 +150,21 @@ switch (path) {
 
     // OAS 3.1 endpoints:
 
+    case '/multipart31/url-encoded-object':
+        // The address field is serialized as URL-encoded key-value pairs.
+        // formParams sees the raw part content: firstName=John&lastName=Doe
+        def addressValue = formParams['address'] ?: ''
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Address', formParams.containsKey('address').toString()
+            withHeader 'X-Address-Has-First-Name', addressValue.contains('firstName=').toString()
+            withHeader 'X-Address-Has-Last-Name', addressValue.contains('lastName=').toString()
+            withHeader 'X-Address-Value', addressValue
+            withContent '{"success":true,"message":"url-encoded-object received"}'
+        }
+        break
+
     case '/multipart31/pipe-delimited':
         respond {
             withStatusCode 200

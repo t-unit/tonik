@@ -2646,6 +2646,461 @@ void main() {
         ),
       );
     });
+
+    group('content-based mode (URL-encoded)', () {
+      test(
+        'generates URL-encoded file part for required ClassModel property',
+        () {
+          final innerClass = ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'address': const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                // No style/explode/allowReserved → content-based mode
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final formData = FormData();
+                final addressParts = <String>[];
+                for (final entry in (body.address.toJson() as Map).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map) {
+                    for (final subEntry in value.entries) {
+                      final subValue = subEntry.value;
+                      if (subValue == null) continue;
+                      if (subValue is Map) {
+                        throw EncodingException(
+                          'URL-encoded part encoding does not support nesting deeper than '
+                          'one level (property: address, key: ${entry.key}).',
+                        );
+                      }
+                      addressParts.add(
+                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
+                      );
+                    }
+                  } else {
+                    addressParts.add(
+                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                    );
+                  }
+                }
+                formData.files.add(MapEntry(
+                  'address',
+                  MultipartFile.fromString(
+                    addressParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'generates URL-encoded file part for AllOfModel property',
+        () {
+          final allOfModel = AllOfModel(
+            name: 'CombinedAddress',
+            isDeprecated: false,
+            models: {StringModel(context: testContext)},
+            context: testContext,
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: allOfModel,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'address': const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final formData = FormData();
+                final addressParts = <String>[];
+                for (final entry in (body.address.toJson() as Map).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map) {
+                    for (final subEntry in value.entries) {
+                      final subValue = subEntry.value;
+                      if (subValue == null) continue;
+                      if (subValue is Map) {
+                        throw EncodingException(
+                          'URL-encoded part encoding does not support nesting deeper than '
+                          'one level (property: address, key: ${entry.key}).',
+                        );
+                      }
+                      addressParts.add(
+                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
+                      );
+                    }
+                  } else {
+                    addressParts.add(
+                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                    );
+                  }
+                }
+                formData.files.add(MapEntry(
+                  'address',
+                  MultipartFile.fromString(
+                    addressParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test('wraps optional URL-encoded property with null-check', () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: innerClass,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final formData = FormData();
+              if (body.address != null) {
+                final addressParts = <String>[];
+                for (final entry in (body.address!.toJson() as Map).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map) {
+                    for (final subEntry in value.entries) {
+                      final subValue = subEntry.value;
+                      if (subValue == null) continue;
+                      if (subValue is Map) {
+                        throw EncodingException(
+                          'URL-encoded part encoding does not support nesting deeper than '
+                          'one level (property: address, key: ${entry.key}).',
+                        );
+                      }
+                      addressParts.add(
+                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
+                      );
+                    }
+                  } else {
+                    addressParts.add(
+                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                    );
+                  }
+                }
+                formData.files.add(MapEntry(
+                  'address',
+                  MultipartFile.fromString(
+                    addressParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+              }
+            }
+          '''),
+          ),
+        );
+      });
+
+      test(
+        'style-based mode with URL-encoded contentType uses JSON serialization',
+        () {
+          final innerClass = ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'address': const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                // style/explode present → style-based mode, contentType ignored
+                style: MultipartEncodingStyle.form,
+                explode: true,
+                allowReserved: false,
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                formData.files.add(MapEntry(
+                  'address',
+                  MultipartFile.fromString(
+                    jsonEncode(body.address.toJson()),
+                    contentType: DioMediaType.parse(
+                      'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'URL-encoded property with per-part headers passes headers to '
+        'MultipartFile',
+        () {
+          final innerClass = ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'address': MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                headers: {
+                  'X-Custom-Header': ResponseHeaderObject(
+                    name: 'X-Custom-Header',
+                    description: null,
+                    isRequired: true,
+                    isDeprecated: false,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    context: testContext,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                },
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final formData = FormData();
+                final addressHeaders = <String, List<String>>{};
+                addressHeaders['X-Custom-Header'] = [
+                  addressCustomHeader.toSimple(explode: false, allowEmpty: true),
+                ];
+                final addressParts = <String>[];
+                for (final entry in (body.address.toJson() as Map).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map) {
+                    for (final subEntry in value.entries) {
+                      final subValue = subEntry.value;
+                      if (subValue == null) continue;
+                      if (subValue is Map) {
+                        throw EncodingException(
+                          'URL-encoded part encoding does not support nesting deeper than '
+                          'one level (property: address, key: ${entry.key}).',
+                        );
+                      }
+                      addressParts.add(
+                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
+                      );
+                    }
+                  } else {
+                    addressParts.add(
+                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                    );
+                  }
+                }
+                formData.files.add(MapEntry(
+                  'address',
+                  MultipartFile.fromString(
+                    addressParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      'application/x-www-form-urlencoded',
+                    ),
+                    headers: addressHeaders,
+                  ),
+                ));
+              }
+            '''),
+            ),
+          );
+        },
+      );
+    });
   });
 
   group('array properties', () {

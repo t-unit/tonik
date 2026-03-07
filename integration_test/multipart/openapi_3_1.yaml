@@ -87,6 +87,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/url-encoded-object:
+    post:
+      operationId: postUrlEncodedObject
+      tags:
+        - multipart31
+      summary: Post a complex object as URL-encoded multipart part
+      description: >-
+        Verifies OAS 3.1 content-based mode with application/x-www-form-urlencoded.
+        When no style/explode/allowReserved are set and contentType is
+        application/x-www-form-urlencoded, the object is serialized as
+        URL-encoded key-value pairs (key=value&key2=value2).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UrlEncodedAddressForm'
+            encoding:
+              address:
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
 components:
   schemas:
     PipeDelimitedForm:
@@ -133,4 +161,23 @@ components:
         success:
           type: boolean
         message:
+          type: string
+
+    UrlEncodedAddressForm:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          $ref: '#/components/schemas/Address31'
+
+    Address31:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+        lastName:
           type: string

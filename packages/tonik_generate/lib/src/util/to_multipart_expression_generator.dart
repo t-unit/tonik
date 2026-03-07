@@ -1000,6 +1000,16 @@ Code _buildComplexObjectFileAddition(
     );
   }
 
+  // Content-based mode with application/x-www-form-urlencoded → URL-encode.
+  final isStyleBased = propertyEncoding?.isStyleBased ?? false;
+  if (!isStyleBased && propertyEncoding?.contentType == ContentType.form) {
+    return _buildUrlEncodedObjectFileAddition(
+      rawName,
+      accessor,
+      headerVarName: headerVarName,
+    );
+  }
+
   final rawContentType = propertyEncoding?.rawContentType ?? 'application/json';
 
   final namedArgs = <String, Expression>{
@@ -1027,6 +1037,103 @@ Code _buildComplexObjectFileAddition(
       ], namedArgs),
     ]),
   ]).statement;
+}
+
+/// Builds a URL-encoded (`application/x-www-form-urlencoded`) file part for a
+/// complex object in content-based serialization mode.
+///
+/// Calls `toJson()` on the object at runtime, iterates its entries, and builds
+/// a `key=value` string joined with `&`. One level of nested objects is
+/// supported via bracket notation (`parent[child]=value`). Deeper nesting
+/// throws an `EncodingException` at runtime.
+Code _buildUrlEncodedObjectFileAddition(
+  String rawName,
+  String accessor, {
+  String? headerVarName,
+}) {
+  // Derive a valid Dart identifier for the parts accumulator variable from the
+  // last segment of the accessor (e.g. 'body.address!' → 'address').
+  final propVarName = accessor.split('.').last.replaceAll('!', '');
+  final partsVarName = '${propVarName}Parts';
+
+  // headers named arg placed after contentType, empty string when absent.
+  final headersLine =
+      headerVarName != null ? '\n    headers: $headerVarName,' : '';
+
+  return Code.scope((allocate) {
+    final encodingException = allocate(
+      TypeReference(
+        (b) => b
+          ..symbol = 'EncodingException'
+          ..url = 'package:tonik_util/tonik_util.dart',
+      ),
+    );
+    final multipartFile = allocate(
+      TypeReference(
+        (b) => b
+          ..symbol = 'MultipartFile'
+          ..url = 'package:dio/dio.dart',
+      ),
+    );
+    final dioMediaType = allocate(
+      TypeReference(
+        (b) => b
+          ..symbol = 'DioMediaType'
+          ..url = 'package:dio/dio.dart',
+      ),
+    );
+    final mapEntry = allocate(
+      TypeReference(
+        (b) => b
+          ..symbol = 'MapEntry'
+          ..url = 'dart:core',
+      ),
+    );
+    // dart:core types used bare in the raw string — must be allocated so the
+    // emitter adds the correct prefix when dart:core is imported as aliased.
+    final string = allocate(
+      TypeReference((b) => b..symbol = 'String'..url = 'dart:core'),
+    );
+    final map = allocate(
+      TypeReference((b) => b..symbol = 'Map'..url = 'dart:core'),
+    );
+    final uri = allocate(
+      TypeReference((b) => b..symbol = 'Uri'..url = 'dart:core'),
+    );
+
+    return '''
+final $partsVarName = <$string>[];
+for (final entry in ($accessor.toJson() as $map).entries) {
+  final value = entry.value;
+  if (value == null) continue;
+  if (value is $map) {
+    for (final subEntry in value.entries) {
+      final subValue = subEntry.value;
+      if (subValue == null) continue;
+      if (subValue is $map) {
+        throw $encodingException(
+          'URL-encoded part encoding does not support nesting deeper than '
+          'one level (property: $rawName, key: \${entry.key}).',
+        );
+      }
+      $partsVarName.add(
+        '\${$uri.encodeQueryComponent(entry.key)}[\${$uri.encodeQueryComponent(subEntry.key)}]=\${$uri.encodeQueryComponent(subValue.toString())}',
+      );
+    }
+  } else {
+    $partsVarName.add(
+      '\${$uri.encodeQueryComponent(entry.key)}=\${$uri.encodeQueryComponent(value.toString())}',
+    );
+  }
+}
+formData.files.add($mapEntry(
+  '$rawName',
+  $multipartFile.fromString(
+    $partsVarName.join('&'),
+    contentType: $dioMediaType.parse('application/x-www-form-urlencoded'),$headersLine
+  ),
+));''';
+  });
 }
 
 /// Information about a per-part header parameter in multipart encoding.
