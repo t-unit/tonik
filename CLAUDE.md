@@ -10,3 +10,17 @@
 4. Only after the user confirms, write the implementation.
 
 This applies to every sub-plan checkpoint, every TDD cycle, and any plan step that says "wait for confirmation" or "checkpoint". Never skip this step, even if the tests are clearly ready and the implementation seems obvious.
+
+## Tool Usage Preferences
+
+### LSP-First Code Navigation
+
+When the task is semantic (finding a class, tracing usages, getting a method signature), prefer LSP tools over text search:
+
+- **Finding where a symbol is defined** → `LSP goToDefinition` instead of grep
+- **Finding all usages** → `LSP findReferences` instead of grep
+- **Getting type info / docs** → `LSP hover` instead of reading the file
+- **Getting a file's structure** → `LSP documentSymbol` instead of scanning the file
+- **Checking errors after an edit** → `mcp__ide__getDiagnostics` first; only run `fvm dart analyze` when you need package-wide or monorepo-wide results, or when the edited file may not be open in VS Code
+
+Grep and Glob remain appropriate for: string/comment/pattern search, file-name patterns, YAML/Markdown files, or when LSP returns no results.

@@ -3794,6 +3794,326 @@ void main() {
         ),
       );
     });
+
+    group('content-based mode (no style fields)', () {
+      test('list of strings, application/json, content-based mode', () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'tags': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+            }
+          '''),
+          ),
+        );
+      });
+
+      test('list of integers, application/json, content-based mode', () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'scores',
+              model: ListModel(
+                content: IntegerModel(context: testContext),
+                context: testContext,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'scores': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              formData.files.add(MapEntry('scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse('application/json'))));
+            }
+          '''),
+          ),
+        );
+      });
+
+      test(
+        'list of strings, no encoding at all (defaults to application/json)',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+            void test() {
+              final formData = FormData();
+              formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+            }
+          '''),
+            ),
+          );
+        },
+      );
+
+      test('list of ClassModel, content-based mode', () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'addresses',
+              model: ListModel(
+                content: innerClass,
+                context: testContext,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'addresses': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse('application/json'))));
+            }
+          '''),
+          ),
+        );
+      });
+
+      test('list of DateTimeModel, content-based mode', () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'dates',
+              model: ListModel(
+                content: DateTimeModel(context: testContext),
+                context: testContext,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'dates': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              formData.files.add(MapEntry('dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse('application/json'))));
+            }
+          '''),
+          ),
+        );
+      });
+
+      test('optional list, content-based mode, null-wrapping applies', () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
+              ),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'tags': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              if (body.tags != null) {
+                formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse('application/json'))));
+              }
+            }
+          '''),
+          ),
+        );
+      });
+    });
   });
 
   group('buildMultipartBodyExpression', () {
