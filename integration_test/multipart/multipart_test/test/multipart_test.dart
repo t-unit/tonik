@@ -148,38 +148,36 @@ void main() {
   });
 
   group('Array fields', () {
-    test('serializes string and enum arrays with explode=true', () async {
-      const form = ArrayForm(
-        tags: ['dart', 'flutter', 'openapi'],
-        priorities: [Priority.high, Priority.low],
-      );
+    test(
+      'serializes arrays as JSON-encoded single parts (OAS 3.0 content-based)',
+      () async {
+        const form = ArrayForm(
+          tags: ['dart', 'flutter', 'openapi'],
+          priorities: [Priority.high, Priority.low],
+        );
 
-      final response = await api.postArrayFields(body: form);
+        final response = await api.postArrayFields(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayResponse>>());
+        expect(response, isA<TonikSuccess<ArrayResponse>>());
 
-      final success = response as TonikSuccess<ArrayResponse>;
-      final formData = success.response.requestOptions.data as FormData;
+        final success = response as TonikSuccess<ArrayResponse>;
 
-      // With explode=true (OAS 3.0 default), each array item should be a
-      // separate entry with the same key.
-      final tagEntries = formData.fields.where((e) => e.key == 'tags').toList();
-      expect(tagEntries, hasLength(3));
-      expect(tagEntries.map((e) => e.value), ['dart', 'flutter', 'openapi']);
+        // OAS 3.0 multipart always uses content-based mode: each array is
+        // JSON-encoded into a single part, not multiple exploded form fields.
+        // The server receives one JSON string per field.
+        expect(success.response.headers['x-has-tags']?.first, 'true');
+        expect(success.response.headers['x-has-priorities']?.first, 'true');
 
-      final priorityEntries = formData.fields
-          .where((e) => e.key == 'priorities')
-          .toList();
-      expect(priorityEntries, hasLength(2));
-      expect(priorityEntries.map((e) => e.value), ['high', 'low']);
+        // Verify the server received valid JSON arrays (not comma-separated
+        // strings or multiple separate fields).
+        final tagsValue = success.response.headers['x-param-tags']?.first ?? '';
+        expect(tagsValue, '["dart","flutter","openapi"]');
 
-      // Server received the fields.
-      expect(success.response.headers['x-has-tags']?.first, 'true');
-      expect(
-        success.response.headers['x-has-priorities']?.first,
-        'true',
-      );
-    });
+        final prioritiesValue =
+            success.response.headers['x-param-priorities']?.first ?? '';
+        expect(prioritiesValue, '["high","low"]');
+      },
+    );
   });
 
   group('Mixed required/optional fields', () {

@@ -42,27 +42,30 @@ void main() {
     });
   });
 
-  group('OAS 3.1 default explode', () {
-    test('serializes array items as separate parts (explode=true)', () async {
-      const form = DefaultExplodeForm(values: ['one', 'two', 'three']);
+  group('OAS 3.1 content-based array (no encoding specified)', () {
+    test(
+      'serializes array as single JSON-encoded part when no encoding is set',
+      () async {
+        const form = DefaultExplodeForm(values: ['one', 'two', 'three']);
 
-      final response = await api.postDefaultExplode(body: form);
+        final response = await api.postDefaultExplode(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+        expect(response, isA<TonikSuccess<GenericResponse>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
-      final formData = success.response.requestOptions.data as FormData;
+        final success = response as TonikSuccess<GenericResponse>;
 
-      // Default explode=true: each array item is a separate form data entry.
-      final valueEntries = formData.fields
-          .where((e) => e.key == 'values')
-          .toList();
-      expect(valueEntries, hasLength(3));
-      expect(valueEntries.map((e) => e.value), ['one', 'two', 'three']);
-
-      // Server received the values field.
-      expect(success.response.headers['x-has-values']?.first, 'true');
-    });
+        // In OAS 3.1, when no style/explode/allowReserved are set on an array
+        // property, the spec defines content-based mode: the array is
+        // JSON-encoded into a single part, NOT sent as multiple exploded
+        // fields.
+        // The server receives one JSON string, not three separate values.
+        expect(success.response.headers['x-has-values']?.first, 'true');
+        expect(
+          success.response.headers['x-param-values']?.first,
+          '["one","two","three"]',
+        );
+      },
+    );
   });
 
   group('OAS 3.1 basic multipart', () {

@@ -63,11 +63,16 @@ switch (path) {
         break
 
     case '/multipart/arrays':
+        // In OAS 3.0, multipart arrays always use content-based mode:
+        // each array is JSON-encoded into a single part. The server receives
+        // a JSON string, not multiple form-field entries.
         respond {
             withStatusCode 200
             withHeader 'Content-Type', 'application/json'
             withHeader 'X-Has-Tags', formParams.containsKey('tags').toString()
             withHeader 'X-Has-Priorities', formParams.containsKey('priorities').toString()
+            withHeader 'X-Param-Tags', (formParams['tags'] ?: '')
+            withHeader 'X-Param-Priorities', (formParams['priorities'] ?: '')
             withContent '{"tagCount":3,"priorityCount":2}'
         }
         break

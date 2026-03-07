@@ -293,7 +293,7 @@ class RequestBodyImporter {
 
       final resolvedStyle = useStyleMode
           ? (_mapSerializationStyle(encoding.style) ??
-              core.MultipartEncodingStyle.form)
+                core.MultipartEncodingStyle.form)
           : null;
 
       result[propertyName] = core.MultipartPropertyEncoding(
@@ -303,7 +303,7 @@ class RequestBodyImporter {
         style: resolvedStyle,
         explode: useStyleMode
             ? (encoding.explode ??
-                (resolvedStyle == core.MultipartEncodingStyle.form))
+                  (resolvedStyle == core.MultipartEncodingStyle.form))
             : null,
         allowReserved: useStyleMode ? (encoding.allowReserved ?? false) : null,
       );

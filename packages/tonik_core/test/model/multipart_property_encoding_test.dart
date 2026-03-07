@@ -21,24 +21,28 @@ void main() {
         expect(encoding.isStyleBased, isTrue);
       });
 
-      test('is true when explode is set to true (default value still triggers)',
-          () {
-        const encoding = MultipartPropertyEncoding(explode: true);
-        expect(encoding.isStyleBased, isTrue);
-      });
+      test(
+        'is true when explode is set to true (default value still triggers)',
+        () {
+          const encoding = MultipartPropertyEncoding(explode: true);
+          expect(encoding.isStyleBased, isTrue);
+        },
+      );
 
       test('is true when allowReserved is set', () {
         const encoding = MultipartPropertyEncoding(allowReserved: true);
         expect(encoding.isStyleBased, isTrue);
       });
 
-      test('is false when only contentType is set (style fields still null)',
-          () {
-        const encoding = MultipartPropertyEncoding(
-          rawContentType: 'application/json',
-        );
-        expect(encoding.isStyleBased, isFalse);
-      });
+      test(
+        'is false when only contentType is set (style fields still null)',
+        () {
+          const encoding = MultipartPropertyEncoding(
+            rawContentType: 'application/json',
+          );
+          expect(encoding.isStyleBased, isFalse);
+        },
+      );
     });
   });
 }

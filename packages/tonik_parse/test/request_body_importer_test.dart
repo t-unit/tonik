@@ -1403,31 +1403,33 @@ void main() {
         expect(encoding.allowReserved, isNull);
       });
 
-      test('content-based when only contentType is explicit (no style fields)',
-          () {
-        final content = importMultipartContent(
-          multipartSpec(
-            properties: {
-              'data': {
-                'type': 'object',
-                'properties': {
-                  'name': {'type': 'string'},
+      test(
+        'content-based when only contentType is explicit (no style fields)',
+        () {
+          final content = importMultipartContent(
+            multipartSpec(
+              properties: {
+                'data': {
+                  'type': 'object',
+                  'properties': {
+                    'name': {'type': 'string'},
+                  },
                 },
               },
-            },
-            encoding: {
-              'data': {'contentType': 'application/xml'},
-            },
-          ),
-        );
+              encoding: {
+                'data': {'contentType': 'application/xml'},
+              },
+            ),
+          );
 
-        final encoding = content.encoding!['data']!;
-        expect(encoding.rawContentType, 'application/xml');
-        // No style fields set → content-based mode
-        expect(encoding.style, isNull);
-        expect(encoding.explode, isNull);
-        expect(encoding.allowReserved, isNull);
-      });
+          final encoding = content.encoding!['data']!;
+          expect(encoding.rawContentType, 'application/xml');
+          // No style fields set → content-based mode
+          expect(encoding.style, isNull);
+          expect(encoding.explode, isNull);
+          expect(encoding.allowReserved, isNull);
+        },
+      );
 
       test('style-based when only explode is explicit', () {
         final content = importMultipartContent(
@@ -1502,10 +1504,8 @@ void main() {
         expect(encoding.allowReserved, isTrue);
       });
 
-      test(
-          'style-based when only style (form) is explicit: '
-          'explode defaults true',
-          () {
+      test('style-based when only style (form) is explicit: '
+          'explode defaults true', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1529,10 +1529,8 @@ void main() {
         expect(encoding.allowReserved, isFalse);
       });
 
-      test(
-          'style-based when only style (deepObject) is explicit: '
-          'explode defaults false',
-          () {
+      test('style-based when only style (deepObject) is explicit: '
+          'explode defaults false', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1556,10 +1554,8 @@ void main() {
         expect(encoding.allowReserved, isFalse);
       });
 
-      test(
-          'mixed map: style-based property and content-based property '
-          'coexist correctly',
-          () {
+      test('mixed map: style-based property and content-based property '
+          'coexist correctly', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {

@@ -4113,6 +4113,319 @@ void main() {
           ),
         );
       });
+
+      test(
+        'list of strings, text/plain contentType (parser default), '
+        'content-based → promoted to application/json',
+        () {
+          // In OAS 3.0/3.1 the parser computes contentType: text/plain as the
+          // default for string/scalar array items. Content-based mode must
+          // promote this to application/json since the spec does not define
+          // how to serialize an array as a single text/plain part.
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'tags': const MultipartPropertyEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                // No style/explode/allowReserved → content-based mode
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test('list of string enums, content-based mode → JSON-encoded array', () {
+        final enumModel = EnumModel<String>(
+          name: 'Priority',
+          isNullable: false,
+          isDeprecated: false,
+          values: {
+            const EnumEntry(value: 'high'),
+            const EnumEntry(value: 'low'),
+          },
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'priorities',
+              model: ListModel(
+                content: enumModel,
+                context: testContext,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'priorities': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              // No style fields → content-based mode
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              formData.files.add(MapEntry('priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse('application/json'))));
+            }
+          '''),
+          ),
+        );
+      });
+
+      test(
+        'list of BinaryModel, content-based mode (no style) → '
+        'binary for-loop per item',
+        () {
+          // BinaryModel items bypass the content-based/style-based check and
+          // always produce a for-loop, matching the plan's "one file part per
+          // binary item" rule.
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'files',
+                model: ListModel(
+                  content: BinaryModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'files': const MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                // No style/explode/allowReserved → content-based mode
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                for (final item in body.files) {
+                  switch (item) {
+                    case TonikFileBytes(:final bytes, :final fileName):
+                      formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                    case TonikFilePath(:final path, :final fileName):
+                      formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                  }
+                }
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'list of ListModel items (array-of-arrays), '
+        'content-based mode → EncodingException',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'matrix',
+                model: ListModel(
+                  content: ListModel(
+                    content: IntegerModel(context: testContext),
+                    context: testContext,
+                  ),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'matrix': const MultipartPropertyEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                // No style fields → content-based mode
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                throw EncodingException(
+                  'Arrays of arrays are not supported for multipart encoding (property: matrix).',
+                );
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'list with explicit unsupported contentType, '
+        'content-based mode → EncodingException',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'items',
+                model: ListModel(
+                  content: StringModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'items': const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+                // No style fields → content-based mode
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                throw EncodingException(
+                  'Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "items". Only application/json is supported for content-based array serialization.',
+                );
+              }
+            '''),
+            ),
+          );
+        },
+      );
     });
   });
 

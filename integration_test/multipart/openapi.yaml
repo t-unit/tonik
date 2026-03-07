@@ -111,7 +111,10 @@ paths:
       tags:
         - multipart
       summary: Post arrays of strings and enums
-      description: Tests array serialization with explode=true (default in OAS 3.0)
+      description: >-
+        Tests array serialization in content-based mode (OAS 3.0 multipart
+        always uses content-based). Each array is JSON-encoded into a single
+        part, regardless of style/explode settings.
       requestBody:
         required: true
         content:

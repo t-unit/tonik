@@ -47,10 +47,11 @@ paths:
       operationId: postDefaultExplode
       tags:
         - multipart31
-      summary: Post array with default explode=true
+      summary: Post array with no encoding (OAS 3.1 content-based mode)
       description: >-
-        Verifies default behavior (explode: true) which produces one entry per
-        array item — same as OAS 3.0.
+        Verifies OAS 3.1 content-based mode: when no style/explode/allowReserved
+        is set on an array property, the array is serialized as a single
+        JSON-encoded part (content-based), not as multiple exploded form fields.
       requestBody:
         required: true
         content:
@@ -108,7 +109,9 @@ components:
           type: array
           items:
             type: string
-          description: Array to be serialized with default explode=true
+          description: >-
+            Array with no encoding specified. In OAS 3.1, this triggers
+            content-based mode: the array is JSON-encoded into a single part.
 
     BasicForm:
       type: object

@@ -31,8 +31,9 @@ class DataGenerator {
     final isRequired = requestBody.isRequired;
 
     if (hasMultipleContent) {
-      final hasMultipartArm =
-          content.any((c) => c.contentType == ContentType.multipart);
+      final hasMultipartArm = content.any(
+        (c) => c.contentType == ContentType.multipart,
+      );
 
       final parameterType = TypeReference(
         (b) => b
@@ -148,14 +149,13 @@ class DataGenerator {
           ..name = '_data'
           ..returns = hasMultipartArm
               ? TypeReference(
-              (b) => b
-                ..symbol = 'Future'
-                ..url = 'dart:async'
-                ..types.add(refer('Object?', 'dart:core')),
-            )
+                  (b) => b
+                    ..symbol = 'Future'
+                    ..url = 'dart:async'
+                    ..types.add(refer('Object?', 'dart:core')),
+                )
               : refer('Object?', 'dart:core')
-          ..modifier =
-              hasMultipartArm ? MethodModifier.async : null
+          ..modifier = hasMultipartArm ? MethodModifier.async : null
           ..optionalParameters.add(
             Parameter(
               (b) => b
@@ -280,11 +280,11 @@ class DataGenerator {
         ..name = '_data'
         ..returns = isMultipart
             ? TypeReference(
-              (b) => b
-                ..symbol = 'Future'
-                ..url = 'dart:async'
-                ..types.add(refer('Object?', 'dart:core')),
-            )
+                (b) => b
+                  ..symbol = 'Future'
+                  ..url = 'dart:async'
+                  ..types.add(refer('Object?', 'dart:core')),
+              )
             : refer('Object?', 'dart:core')
         ..modifier = isMultipart ? MethodModifier.async : null
         ..optionalParameters.add(

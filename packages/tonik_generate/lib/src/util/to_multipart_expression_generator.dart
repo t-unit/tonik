@@ -359,17 +359,19 @@ Code _buildStringFileAddition(
   String? headerVarName,
 }) {
   final namedArgs = <String, Expression>{
-    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
-        .property('parse')
-        .call([literalString(rawContentType)]),
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
-      refer('MultipartFile', 'package:dio/dio.dart')
-          .property('fromString')
-          .call([refer(accessor)], namedArgs),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call([refer(accessor)], namedArgs),
     ]),
   ]).statement;
 }
@@ -384,20 +386,22 @@ Code _buildPrimitiveFileAddition(
   String? headerVarName,
 }) {
   final namedArgs = <String, Expression>{
-    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
-        .property('parse')
-        .call([literalString(rawContentType)]),
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
-      refer('MultipartFile', 'package:dio/dio.dart')
-          .property('fromString')
-          .call(
-            [refer(accessor).property(serializerMethod).call([])],
-            namedArgs,
-          ),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call(
+        [refer(accessor).property(serializerMethod).call([])],
+        namedArgs,
+      ),
     ]),
   ]).statement;
 }
@@ -416,17 +420,19 @@ Code _buildEnumFileAddition(
       : toJsonCall.property('toString').call([]);
 
   final namedArgs = <String, Expression>{
-    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
-        .property('parse')
-        .call([literalString(rawContentType)]),
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
-      refer('MultipartFile', 'package:dio/dio.dart')
-          .property('fromString')
-          .call([valueExpr], namedArgs),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call([valueExpr], namedArgs),
     ]),
   ]).statement;
 }
@@ -440,20 +446,24 @@ Code _buildJsonEncodeFileAddition(
   String? headerVarName,
 }) {
   final namedArgs = <String, Expression>{
-    'contentType': refer('DioMediaType', 'package:dio/dio.dart')
-        .property('parse')
-        .call([literalString(rawContentType)]),
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer('formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
-      refer('MultipartFile', 'package:dio/dio.dart')
-          .property('fromString')
-          .call(
-            [refer('jsonEncode', 'dart:convert').call([refer(accessor)])],
-            namedArgs,
-          ),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call(
+        [
+          refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
+        ],
+        namedArgs,
+      ),
     ]),
   ]).statement;
 }
@@ -565,6 +575,18 @@ Code _buildListFieldAddition(
     );
   }
 
+  // Content-based mode: no style/explode/allowReserved → single JSON part.
+  final isStyleBased = propertyEncoding?.isStyleBased ?? false;
+  if (!isStyleBased) {
+    return _buildContentBasedListAddition(
+      rawName,
+      accessor,
+      contentModel,
+      propertyEncoding: propertyEncoding,
+      headerVarName: headerVarName,
+    );
+  }
+
   if (contentModel is ClassModel ||
       contentModel is AllOfModel ||
       contentModel is OneOfModel ||
@@ -647,6 +669,127 @@ Code _buildListFieldAddition(
     refer('item'),
     isFile: false,
   );
+}
+
+/// Builds a single multipart file part for a non-binary array in content-based
+/// mode (no style/explode/allowReserved set).
+///
+/// Serializes the whole list as JSON via `jsonEncode`, applying any necessary
+/// per-element mapping first (e.g. `.toJson()` for complex objects,
+/// `.toTimeZonedIso8601String()` for DateTime, `.uriEncode()` for enums).
+Code _buildContentBasedListAddition(
+  String rawName,
+  String accessor,
+  Model contentModel, {
+  MultipartPropertyEncoding? propertyEncoding,
+  String? headerVarName,
+}) {
+  // Array-of-arrays is not supported: the spec recurses into items but there
+  // is no meaningful single-part serialization for nested lists.
+  if (contentModel is ListModel) {
+    return generateEncodingExceptionExpression(
+      'Arrays of arrays are not supported for multipart encoding '
+      '(property: $rawName).',
+    ).statement;
+  }
+
+  // Only application/json and text/plain are supported for content-based array
+  // serialization. text/plain is promoted to application/json (the OAS spec
+  // does not define how to serialize an array as a single text/plain part).
+  // ContentType.bytes covers AnyModel defaults and falls through to JSON.
+  final explicitContentType = propertyEncoding?.contentType;
+  if (explicitContentType != null &&
+      explicitContentType != ContentType.json &&
+      explicitContentType != ContentType.text &&
+      explicitContentType != ContentType.bytes) {
+    final explicitRaw = propertyEncoding?.rawContentType ?? '';
+    return generateEncodingExceptionExpression(
+      'Unsupported contentType "$explicitRaw" for array multipart '
+      'property "$rawName". Only application/json is supported for '
+      'content-based array serialization.',
+    ).statement;
+  }
+
+  // Always use application/json — text/plain is promoted since the spec does
+  // not define how to serialize an array as a single text/plain part.
+  const rawContentType = 'application/json';
+
+  // Build the expression to pass to jsonEncode.
+  final Expression jsonArg;
+  if (contentModel is ClassModel ||
+      contentModel is AllOfModel ||
+      contentModel is OneOfModel ||
+      contentModel is AnyOfModel) {
+    // Complex objects: map each item to its JSON representation first.
+    jsonArg = refer(accessor)
+        .property('map')
+        .call([
+          Method(
+            (b) => b
+              ..lambda = true
+              ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+              ..body = refer('e').property('toJson').call([]).code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([]);
+  } else if (contentModel is DateTimeModel) {
+    // DateTime: map each item to its ISO 8601 string representation.
+    jsonArg = refer(accessor)
+        .property('map')
+        .call([
+          Method(
+            (b) => b
+              ..lambda = true
+              ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+              ..body = refer(
+                'e',
+              ).property('toTimeZonedIso8601String').call([]).code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([]);
+  } else if (contentModel is EnumModel) {
+    // Enums: map each item to its URI-encoded string representation.
+    jsonArg = refer(accessor)
+        .property('map')
+        .call([
+          Method(
+            (b) => b
+              ..lambda = true
+              ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+              ..body = refer('e').property('uriEncode').call([], {
+                'allowEmpty': literalTrue,
+              }).code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([]);
+  } else {
+    // Primitives (String, int, double, bool, etc.) are JSON-serializable
+    // directly — pass the list as-is.
+    jsonArg = refer(accessor);
+  }
+
+  final jsonExpr = refer('jsonEncode', 'dart:convert').call([jsonArg]);
+
+  final namedArgs = <String, Expression>{
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
+
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call([jsonExpr], namedArgs),
+    ]),
+  ]).statement;
 }
 
 /// Builds a for-loop that iterates [iterableExpr] and adds each item.

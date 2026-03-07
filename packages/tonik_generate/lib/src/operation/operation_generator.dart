@@ -359,34 +359,31 @@ class OperationGenerator {
               }),
             )
             .statement,
-        refer(r'_$data')
-            .assign(
-              () {
-                final isDataAsync = hasRequestBody &&
-                    operation.requestBody!.resolvedContent.any(
-                      (c) => c.contentType == ContentType.multipart,
-                    );
-                final dataCall = refer('_data').call([], {
-                  if (hasRequestBody) 'body': refer('body'),
-                  if (hasRequestBody)
-                    ...() {
-                      final args = <String, Expression>{};
-                      for (final c
-                          in operation.requestBody!.resolvedContent) {
-                        if (c.contentType == ContentType.multipart) {
-                          for (final info
-                              in extractMultipartHeaderParamInfo(c)) {
-                            args[info.name] = refer(info.name);
-                          }
-                        }
+        refer(r'_$data').assign(
+          () {
+            final isDataAsync =
+                hasRequestBody &&
+                operation.requestBody!.resolvedContent.any(
+                  (c) => c.contentType == ContentType.multipart,
+                );
+            final dataCall = refer('_data').call([], {
+              if (hasRequestBody) 'body': refer('body'),
+              if (hasRequestBody)
+                ...() {
+                  final args = <String, Expression>{};
+                  for (final c in operation.requestBody!.resolvedContent) {
+                    if (c.contentType == ContentType.multipart) {
+                      for (final info in extractMultipartHeaderParamInfo(c)) {
+                        args[info.name] = refer(info.name);
                       }
-                      return args;
-                    }(),
-                });
-                return isDataAsync ? dataCall.awaited : dataCall;
-              }(),
-            )
-            .statement,
+                    }
+                  }
+                  return args;
+                }(),
+            });
+            return isDataAsync ? dataCall.awaited : dataCall;
+          }(),
+        ).statement,
         refer(r'_$options')
             .assign(
               refer('_options').call([], {
