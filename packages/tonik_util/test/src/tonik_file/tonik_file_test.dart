@@ -160,6 +160,47 @@ void main() {
     });
   });
 
+  group('uriEncode', () {
+    test('encodes non-empty bytes with URI component encoding', () {
+      // "Hello" in UTF-8
+      const file = TonikFileBytes([72, 101, 108, 108, 111]);
+      expect(file.uriEncode(allowEmpty: false), 'Hello');
+    });
+
+    test('encodes with query component when useQueryComponent is true', () {
+      // "a b" in UTF-8
+      const file = TonikFileBytes([97, 32, 98]);
+      final result = file.uriEncode(
+        allowEmpty: false,
+        useQueryComponent: true,
+      );
+      // Uri.encodeQueryComponent encodes space as '+'
+      expect(result, 'a+b');
+    });
+
+    test('encodes with component encoding when useQueryComponent is false',
+        () {
+      // "a b" in UTF-8
+      const file = TonikFileBytes([97, 32, 98]);
+      final result = file.uriEncode(allowEmpty: false);
+      // Uri.encodeComponent encodes space as '%20'
+      expect(result, 'a%20b');
+    });
+
+    test('throws FormatException for empty bytes when allowEmpty is false', () {
+      const file = TonikFileBytes([]);
+      expect(
+        () => file.uriEncode(allowEmpty: false),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
+    test('returns empty string for empty bytes when allowEmpty is true', () {
+      const file = TonikFileBytes([]);
+      expect(file.uriEncode(allowEmpty: true), '');
+    });
+  });
+
   group('TonikFile sealed dispatch', () {
     test('can be used in exhaustive switch with TonikFileBytes', () {
       const TonikFile file = TonikFileBytes([1, 2, 3], fileName: 'test.bin');

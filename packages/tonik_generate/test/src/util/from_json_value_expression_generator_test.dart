@@ -811,6 +811,26 @@ void main() {
           );
         });
 
+        test('generates for nullable list of BinaryModel', () {
+          final binaryListModel = ListModel(
+            content: BinaryModel(context: context),
+            context: context,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: binaryListModel,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: true,
+            ).accept(emitter).toString(),
+            equals(
+              'value.decodeJsonNullableList<String>()'
+              '?.map((e) => TonikFileBytes(e.decodeJsonBinary())).toList()',
+            ),
+          );
+        });
+
         test('generates for nullable list of enums', () {
           final enumModel = EnumModel(
             isDeprecated: false,

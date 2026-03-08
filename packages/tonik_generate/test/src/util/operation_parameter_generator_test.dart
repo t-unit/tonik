@@ -910,6 +910,83 @@ void main() {
       );
     });
 
+    test('generates deprecated annotation for deprecated multipart header',
+        () {
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: ClassModel(
+              name: 'UploadForm',
+              properties: [
+                Property(
+                  name: 'file',
+                  model: BinaryModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              isDeprecated: false,
+            ),
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'file': MultipartPropertyEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'X-Legacy': ResponseHeaderObject(
+                    name: 'X-Legacy',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: false,
+                    isDeprecated: true,
+                    encoding: ResponseHeaderEncoding.simple,
+                  ),
+                },
+              ),
+            },
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'package:api/api.dart',
+      );
+
+      final headerParam = parameters.firstWhere((p) => p.name != 'body');
+      expect(headerParam.annotations, hasLength(1));
+      expect(
+        headerParam.annotations.first.accept(emitter).toString(),
+        contains('Deprecated'),
+      );
+    });
+
     test('resolves ResponseHeaderAlias to underlying header object', () {
       final underlyingHeader = ResponseHeaderObject(
         name: 'X-Trace-Id',

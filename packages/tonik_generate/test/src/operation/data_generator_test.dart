@@ -1125,6 +1125,242 @@ void main() {
           collapseWhitespace(format(expectedMethod)),
         );
       });
+      test('generates _data method for multi-content with form variant', () {
+        final jsonModel = ClassModel(
+          name: 'JsonPayload',
+          isDeprecated: false,
+          properties: const [],
+          context: testContext,
+        );
+
+        final formModel = ClassModel(
+          name: 'FormPayload',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'email',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final operation = Operation(
+          operationId: 'createUser',
+          path: '/users',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'createUser',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: jsonModel,
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+              RequestContent(
+                model: formModel,
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+          Object? _data({required CreateUser body}) {
+            return switch (body) {
+              final CreateUserJson value => value.value.toJson(),
+              final CreateUserXWwwFormUrlencoded value => value.value.toForm(explode: true, allowEmpty: true, useQueryComponent: true),
+            };
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test(
+        'generates _data method for optional multi-content with null check',
+        () {
+          final jsonModel = ClassModel(
+            name: 'JsonPayload',
+            isDeprecated: false,
+            properties: const [],
+            context: testContext,
+          );
+
+          final formModel = ClassModel(
+            name: 'FormPayload',
+            isDeprecated: false,
+            properties: const [],
+            context: testContext,
+          );
+
+          final operation = Operation(
+            operationId: 'updateItem',
+            path: '/items',
+            method: HttpMethod.put,
+            requestBody: RequestBodyObject(
+              name: 'updateItem',
+              context: testContext,
+              description: null,
+              isRequired: false,
+              content: {
+                RequestContent(
+                  model: jsonModel,
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                ),
+                RequestContent(
+                  model: formModel,
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = '''
+            Object? _data({UpdateItem? body}) {
+              if (body == null) return null;
+              return switch (body) {
+                final UpdateItemJson value => value.value.toJson(),
+                final UpdateItemXWwwFormUrlencoded value => value.value.toForm(explode: true, allowEmpty: true, useQueryComponent: true),
+              };
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates _data method for multi-content multipart with header params',
+        () {
+          final jsonModel = ClassModel(
+            name: 'JsonPayload',
+            isDeprecated: false,
+            properties: const [],
+            context: testContext,
+          );
+
+          final uploadModel = ClassModel(
+            name: 'UploadPayload',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'file',
+                model: BinaryModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final operation = Operation(
+            operationId: 'uploadItem',
+            path: '/items/upload',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'uploadItem',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: jsonModel,
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                ),
+                RequestContent(
+                  model: uploadModel,
+                  contentType: ContentType.multipart,
+                  rawContentType: 'multipart/form-data',
+                  encoding: {
+                    'file': MultipartPropertyEncoding(
+                      contentType: ContentType.bytes,
+                      rawContentType: 'application/octet-stream',
+                      headers: {
+                        'X-Checksum': ResponseHeaderObject(
+                          name: 'X-Checksum',
+                          context: testContext,
+                          description: null,
+                          explode: false,
+                          model: StringModel(context: testContext),
+                          isRequired: true,
+                          isDeprecated: false,
+                          encoding: ResponseHeaderEncoding.simple,
+                        ),
+                      },
+                    ),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateDataMethod(operation);
+
+          // Verify the multipart header params are included in the method
+          // signature alongside the body parameter.
+          expect(method.optionalParameters, hasLength(2));
+
+          final bodyParam = method.optionalParameters.first;
+          expect(bodyParam.name, 'body');
+
+          final headerParam = method.optionalParameters[1];
+          expect(headerParam.name, 'fileChecksum');
+          expect(headerParam.named, isTrue);
+          expect(headerParam.required, isTrue);
+
+          // Must be async because of multipart
+          expect(method.modifier, MethodModifier.async);
+        },
+      );
     });
   });
 }

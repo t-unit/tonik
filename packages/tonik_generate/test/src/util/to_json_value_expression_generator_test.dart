@@ -979,6 +979,29 @@ void main() {
     });
   });
 
+  group('buildToJsonPropertyExpression for BinaryModel with forceNonNull',
+      () {
+    test('generates force non-null toBytes for Binary property', () {
+      final property = Property(
+        name: 'avatar',
+        model: BinaryModel(context: context),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'avatar',
+            property,
+            forceNonNullReceiver: true,
+          ),
+        ),
+        'avatar!.toBytes().decodeToString()',
+      );
+    });
+  });
+
   group('buildToJsonPropertyExpression for AnyModel', () {
     test('generates encodeAnyToJson call for AnyModel property', () {
       final property = Property(

@@ -551,6 +551,83 @@ void main() {
       });
     });
 
+    group('BinaryModel', () {
+      test('generates TonikFileBytes wrapping for required BinaryModel', () {
+        final value = refer('value');
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: BinaryModel(context: context),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'tonik_core',
+            explode: literalBool(false),
+          ).accept(emitter).toString(),
+          'TonikFileBytes(value.decodeSimpleBinary())',
+        );
+      });
+
+      test('generates null-checked TonikFileBytes for optional BinaryModel',
+          () {
+        final value = refer('value');
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: BinaryModel(context: context),
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'tonik_core',
+            explode: literalBool(false),
+          ).accept(emitter).toString(),
+          'value == null ? null : '
+          'TonikFileBytes(value.decodeSimpleBinary())',
+        );
+      });
+
+      test('generates TonikFileBytes mapping for required List<BinaryModel>',
+          () {
+        final value = refer('value');
+        final listModel = ListModel(
+          content: BinaryModel(context: context),
+          context: context,
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: listModel,
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'tonik_core',
+            explode: literalBool(false),
+          ).accept(emitter).toString(),
+          'value.decodeSimpleStringList()'
+          '.map((e) => TonikFileBytes(e.decodeSimpleBinary())).toList()',
+        );
+      });
+
+      test(
+          'generates nullable TonikFileBytes mapping for optional '
+          'List<BinaryModel>', () {
+        final value = refer('value');
+        final listModel = ListModel(
+          content: BinaryModel(context: context),
+          context: context,
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: listModel,
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'tonik_core',
+            explode: literalBool(false),
+          ).accept(emitter).toString(),
+          'value.decodeSimpleNullableStringList()'
+          '?.map((e) => TonikFileBytes(e.decodeSimpleBinary())).toList()',
+        );
+      });
+    });
+
     group('NeverModel', () {
       test('generates throw for required NeverModel', () {
         final value = refer('value');
