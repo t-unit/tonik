@@ -8,6 +8,157 @@ void main() {
     context = Context.initial();
   });
 
+  group('stableKey cycle detection', () {
+    test(
+      'does not stack overflow for direct circular ClassModel reference',
+      () {
+        final modelA = ClassModel(
+          name: 'A',
+          properties: [],
+          context: context,
+          isDeprecated: false,
+        );
+        final modelB = ClassModel(
+          name: 'B',
+          properties: [],
+          context: context,
+          isDeprecated: false,
+        );
+        // A → B → A
+        modelA.properties = [
+          Property(
+            name: 'b',
+            model: modelB,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ];
+        modelB.properties = [
+          Property(
+            name: 'a',
+            model: modelA,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ];
+
+        expect(() => modelA.stableKey, returnsNormally);
+        expect(modelA.stableKey, contains('<cycle>'));
+      },
+    );
+
+    test('does not stack overflow for self-referential ClassModel', () {
+      final modelA = ClassModel(
+        name: 'A',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+      );
+      // A → A
+      modelA.properties = [
+        Property(
+          name: 'self',
+          model: modelA,
+          isRequired: false,
+          isNullable: true,
+          isDeprecated: false,
+        ),
+      ];
+
+      expect(() => modelA.stableKey, returnsNormally);
+      expect(modelA.stableKey, contains('<cycle>'));
+    });
+
+    test('does not stack overflow for transitive cycle A → B → C → A', () {
+      final modelA = ClassModel(
+        name: 'A',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+      );
+      final modelB = ClassModel(
+        name: 'B',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+      );
+      final modelC = ClassModel(
+        name: 'C',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+      );
+      modelA.properties = [
+        Property(
+          name: 'b',
+          model: modelB,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ];
+      modelB.properties = [
+        Property(
+          name: 'c',
+          model: modelC,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ];
+      modelC.properties = [
+        Property(
+          name: 'a',
+          model: modelA,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ];
+
+      expect(() => modelA.stableKey, returnsNormally);
+      expect(modelA.stableKey, contains('<cycle>'));
+    });
+
+    test('cycle keys are deterministic (same result on repeated calls)', () {
+      final modelA = ClassModel(
+        name: 'A',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+      );
+      final modelB = ClassModel(
+        name: 'B',
+        properties: [],
+        context: context,
+        isDeprecated: false,
+      );
+      modelA.properties = [
+        Property(
+          name: 'b',
+          model: modelB,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ];
+      modelB.properties = [
+        Property(
+          name: 'a',
+          model: modelA,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ];
+
+      expect(modelA.stableKey, modelA.stableKey);
+      expect(modelB.stableKey, modelB.stableKey);
+    });
+  });
+
   group('stableKey', () {
     test('generates same key for primitive models regardless of context', () {
       final model1 = StringModel(context: context.push('path1'));

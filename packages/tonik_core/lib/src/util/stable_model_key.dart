@@ -6,28 +6,37 @@ extension StableModelKey on Model {
   ///
   /// This ensures models with the same structure but different Set iteration
   /// orders produce the same string.
-  String get stableKey {
-    return switch (this) {
-      AllOfModel(:final models) => 'AllOfModel{${_stableSortedModels(models)}}',
+  ///
+  /// Cycle detection is handled via a visited set — circular references produce
+  /// the sentinel string `'<cycle>'`.
+  String get stableKey => _computeStableKey(this, {});
+}
+
+String _computeStableKey(Model model, Set<Model> visiting) {
+  if (!visiting.add(model)) return '<cycle>';
+  try {
+    return switch (model) {
+      AllOfModel(:final models) =>
+        'AllOfModel{${_stableSortedModels(models, visiting)}}',
       OneOfModel(:final models, :final discriminator) =>
         'OneOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models)}}',
+            '${_stableSortedDiscriminatedModels(models, visiting)}}',
       AnyOfModel(:final models, :final discriminator) =>
         'AnyOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models)}}',
+            '${_stableSortedDiscriminatedModels(models, visiting)}}',
       ListModel(:final content, :final name) =>
-        'ListModel{$name,${content.stableKey}}',
+        'ListModel{$name,${_computeStableKey(content, visiting)}}',
       ClassModel(:final name, :final properties) =>
         'ClassModel{'
             '$name,'
             '${properties.map(
-              (p) => '${p.name}:${p.model.stableKey}',
+              (p) => '${p.name}:${_computeStableKey(p.model, visiting)}',
             ).join(',')}'
             '}',
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) =>
-        'AliasModel{$name,${model.stableKey}}',
+        'AliasModel{$name,${_computeStableKey(model, visiting)}}',
       StringModel() => 'StringModel',
       IntegerModel() => 'IntegerModel',
       BooleanModel() => 'BooleanModel',
@@ -42,28 +51,32 @@ extension StableModelKey on Model {
       AnyModel() => 'AnyModel',
       NeverModel() => 'NeverModel',
       _ => throw UnimplementedError(
-        'stableKey not implemented for $runtimeType',
+        'stableKey not implemented for ${model.runtimeType}',
       ),
     };
+  } finally {
+    visiting.remove(model);
   }
 }
 
-String _stableSortedModels(Set<Model> models) {
-  final sorted = models.toList()
-    ..sort((a, b) => a.stableKey.compareTo(b.stableKey));
-  return sorted.map((m) => m.stableKey).join(',');
+String _stableSortedModels(Set<Model> models, Set<Model> visiting) {
+  final keys = {for (final m in models) m: _computeStableKey(m, visiting)};
+  final sorted = keys.entries.toList()
+    ..sort((a, b) => a.value.compareTo(b.value));
+  return sorted.map((e) => e.value).join(',');
 }
 
-String _stableSortedDiscriminatedModels(Set<DiscriminatedModel> models) {
-  final sorted = models.toList()
-    ..sort((a, b) {
-      final aKey = '${a.discriminatorValue}:${a.model.stableKey}';
-      final bKey = '${b.discriminatorValue}:${b.model.stableKey}';
-      return aKey.compareTo(bKey);
-    });
-  return sorted
-      .map((dm) => '${dm.discriminatorValue}:${dm.model.stableKey}')
-      .join(',');
+String _stableSortedDiscriminatedModels(
+  Set<DiscriminatedModel> models,
+  Set<Model> visiting,
+) {
+  final keys = {
+    for (final dm in models)
+      dm: '${dm.discriminatorValue}:${_computeStableKey(dm.model, visiting)}',
+  };
+  final sorted = keys.entries.toList()
+    ..sort((a, b) => a.value.compareTo(b.value));
+  return sorted.map((e) => e.value).join(',');
 }
 
 /// Creates a stable sorted string representation of enum values.
