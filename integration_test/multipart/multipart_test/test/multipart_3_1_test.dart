@@ -75,9 +75,9 @@ void main() {
     });
   });
 
-  group('OAS 3.1 content-based array (no encoding specified)', () {
+  group('OAS 3.1 array with no encoding specified', () {
     test(
-      'serializes array as single JSON-encoded part when no encoding is set',
+      'serializes array as repeated form fields when no encoding is set',
       () async {
         const form = DefaultExplodeForm(values: ['one', 'two', 'three']);
 
@@ -87,15 +87,17 @@ void main() {
 
         final success = response as TonikSuccess<GenericResponse>;
 
-        // In OAS 3.1, when no style/explode/allowReserved are set on an array
-        // property, the spec defines content-based mode: the array is
-        // JSON-encoded into a single part, NOT sent as multiple exploded
-        // fields.
-        // The server receives one JSON string, not three separate values.
-        expect(success.response.headers['x-has-values']?.first, 'true');
+        // Per RFC 7578 §4.3 and OAS 3.x default: when no style/explode/
+        // allowReserved are set on an array property, each element is sent
+        // as a separate form field with the same name (repeated fields).
+        final formData = success.response.requestOptions.data as FormData;
+
+        final valueEntries =
+            formData.fields.where((e) => e.key == 'values').toList();
+        expect(valueEntries, hasLength(3));
         expect(
-          success.response.headers['x-param-values']?.first,
-          '["one","two","three"]',
+          valueEntries.map((e) => e.value).toList(),
+          ['one', 'two', 'three'],
         );
       },
     );

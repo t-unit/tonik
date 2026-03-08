@@ -112,9 +112,9 @@ paths:
         - multipart
       summary: Post arrays of strings and enums
       description: >-
-        Tests array serialization in content-based mode (OAS 3.0 multipart
-        always uses content-based). Each array is JSON-encoded into a single
-        part, regardless of style/explode settings.
+        Tests array serialization with default encoding (no style/explode set).
+        Per RFC 7578 §4.3 and OAS 3.x, each element is sent as a separate
+        form field with the same name (repeated fields).
       requestBody:
         required: true
         content:

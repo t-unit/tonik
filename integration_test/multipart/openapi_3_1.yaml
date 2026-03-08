@@ -49,9 +49,9 @@ paths:
         - multipart31
       summary: Post array with no encoding (OAS 3.1 content-based mode)
       description: >-
-        Verifies OAS 3.1 content-based mode: when no style/explode/allowReserved
-        is set on an array property, the array is serialized as a single
-        JSON-encoded part (content-based), not as multiple exploded form fields.
+        Verifies OAS 3.1 default array encoding: when no style/explode/
+        allowReserved is set on an array property, each element is sent as a
+        separate form field with the same name (repeated fields per RFC 7578).
       requestBody:
         required: true
         content:

@@ -149,7 +149,7 @@ void main() {
 
   group('Array fields', () {
     test(
-      'serializes arrays as JSON-encoded single parts (OAS 3.0 content-based)',
+      'serializes arrays as repeated form fields (one field per element)',
       () async {
         const form = ArrayForm(
           tags: ['dart', 'flutter', 'openapi'],
@@ -162,20 +162,26 @@ void main() {
 
         final success = response as TonikSuccess<ArrayResponse>;
 
-        // OAS 3.0 multipart always uses content-based mode: each array is
-        // JSON-encoded into a single part, not multiple exploded form fields.
-        // The server receives one JSON string per field.
-        expect(success.response.headers['x-has-tags']?.first, 'true');
-        expect(success.response.headers['x-has-priorities']?.first, 'true');
+        // Per RFC 7578 §4.3 and OAS 3.x default: each array element is sent
+        // as a separate form field with the same name (repeated fields),
+        // not as a single JSON-encoded blob.
+        final formData = success.response.requestOptions.data as FormData;
 
-        // Verify the server received valid JSON arrays (not comma-separated
-        // strings or multiple separate fields).
-        final tagsValue = success.response.headers['x-param-tags']?.first ?? '';
-        expect(tagsValue, '["dart","flutter","openapi"]');
+        final tagEntries =
+            formData.fields.where((e) => e.key == 'tags').toList();
+        expect(tagEntries, hasLength(3));
+        expect(
+          tagEntries.map((e) => e.value).toList(),
+          ['dart', 'flutter', 'openapi'],
+        );
 
-        final prioritiesValue =
-            success.response.headers['x-param-priorities']?.first ?? '';
-        expect(prioritiesValue, '["high","low"]');
+        final priorityEntries =
+            formData.fields.where((e) => e.key == 'priorities').toList();
+        expect(priorityEntries, hasLength(2));
+        expect(
+          priorityEntries.map((e) => e.value).toList(),
+          ['high', 'low'],
+        );
       },
     );
   });

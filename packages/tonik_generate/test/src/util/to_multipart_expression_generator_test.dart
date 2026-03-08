@@ -4946,7 +4946,7 @@ void main() {
       });
 
       test(
-        'list of strings, no encoding at all (defaults to application/json)',
+        'list of strings, no encoding at all → repeated text/plain fields',
         () {
           final model = ClassModel(
             name: 'TestForm',
@@ -4986,7 +4986,9 @@ void main() {
               format('''
             void test() {
               final formData = FormData();
-              formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+              for (final item in body.tags) {
+                formData.fields.add(MapEntry('tags', item));
+              }
             }
           '''),
             ),
@@ -5160,13 +5162,12 @@ void main() {
       });
 
       test(
-        'list of strings, text/plain contentType (parser default), '
-        'content-based → promoted to application/json',
+        'list of strings, text/plain contentType (parser default) '
+        '→ repeated text/plain fields',
         () {
           // In OAS 3.0/3.1 the parser computes contentType: text/plain as the
-          // default for string/scalar array items. Content-based mode must
-          // promote this to application/json since the spec does not define
-          // how to serialize an array as a single text/plain part.
+          // default for string/scalar array items. With no style fields set,
+          // the default is repeated parts (one per element), not a JSON blob.
           final model = ClassModel(
             name: 'TestForm',
             isDeprecated: false,
@@ -5193,7 +5194,7 @@ void main() {
               'tags': const MultipartPropertyEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
-                // No style/explode/allowReserved → content-based mode
+                // No style/explode/allowReserved → falls through to explode: true
               ),
             },
           );
@@ -5212,7 +5213,247 @@ void main() {
               format('''
               void test() {
                 final formData = FormData();
-                formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+                for (final item in body.tags) {
+                  formData.fields.add(MapEntry('tags', item));
+                }
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'list of integers, text/plain (parser default) → repeated form fields',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'scores',
+                model: ListModel(
+                  content: IntegerModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'scores': const MultipartPropertyEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                // No style/explode/allowReserved → repeated parts
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                for (final item in body.scores) {
+                  formData.fields.add(MapEntry('scores', item.toString()));
+                }
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'list of DateTimes, text/plain (parser default) → repeated ISO 8601 fields',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'dates',
+                model: ListModel(
+                  content: DateTimeModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'dates': const MultipartPropertyEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                // No style/explode/allowReserved → repeated parts
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                for (final item in body.dates) {
+                  formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
+                }
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'list of enums, text/plain (parser default) → repeated uriEncode fields',
+        () {
+          final enumModel = EnumModel<String>(
+            name: 'Priority',
+            isNullable: false,
+            isDeprecated: false,
+            values: {
+              const EnumEntry(value: 'high'),
+              const EnumEntry(value: 'low'),
+            },
+            context: testContext,
+          );
+
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'priorities',
+                model: ListModel(
+                  content: enumModel,
+                  context: testContext,
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              'priorities': const MultipartPropertyEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain',
+                // No style/explode/allowReserved → repeated parts
+              ),
+            },
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                for (final item in body.priorities) {
+                  formData.fields.add(MapEntry('priorities', item.uriEncode(allowEmpty: true)));
+                }
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'optional list, no encoding → repeated fields with null guard',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: testContext),
+                  context: testContext,
+                ),
+                isRequired: false,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format('''
+              void test() {
+                final formData = FormData();
+                if (body.tags != null) {
+                  for (final item in body.tags!) {
+                    formData.fields.add(MapEntry('tags', item));
+                  }
+                }
               }
             '''),
             ),

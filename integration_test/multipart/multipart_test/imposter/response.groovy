@@ -63,9 +63,10 @@ switch (path) {
         break
 
     case '/multipart/arrays':
-        // In OAS 3.0, multipart arrays always use content-based mode:
-        // each array is JSON-encoded into a single part. The server receives
-        // a JSON string, not multiple form-field entries.
+        // Per RFC 7578 §4.3 and OAS 3.x default, each array element is sent
+        // as a separate form field with the same name (repeated fields).
+        // formParams['tags'] will contain the last value; the test verifies
+        // the full set of fields client-side via FormData.
         respond {
             withStatusCode 200
             withHeader 'Content-Type', 'application/json'
@@ -249,6 +250,8 @@ switch (path) {
         break
 
     case '/multipart31/default-explode':
+        // Repeated fields: formParams['values'] returns the last value.
+        // The test verifies the full set of fields client-side via FormData.
         respond {
             withStatusCode 200
             withHeader 'Content-Type', 'application/json'

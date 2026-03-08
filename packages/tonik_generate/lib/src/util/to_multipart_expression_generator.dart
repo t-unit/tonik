@@ -577,9 +577,11 @@ Code _buildListFieldAddition(
     );
   }
 
-  // Content-based mode: no style/explode/allowReserved → single JSON part.
+  // Explicit application/json → single JSON blob (content-based).
+  // Unsupported explicit types (e.g. form) → content-based handler throws.
+  // null / text/plain → fall through to for-loop (one part per element).
   final isStyleBased = propertyEncoding?.isStyleBased ?? false;
-  if (!isStyleBased) {
+  if (!isStyleBased && contentType != null && contentType != ContentType.text) {
     return _buildContentBasedListAddition(
       rawName,
       accessor,
