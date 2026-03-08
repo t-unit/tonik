@@ -943,15 +943,17 @@ void main() {
       expect(content.encoding, hasLength(3));
 
       final idEncoding = content.encoding!['id']!;
-      expect(idEncoding.contentType, ContentType.text);
-      expect(idEncoding.rawContentType, 'text/plain');
+      // OAS 3.1: contentType SHALL be ignored when style fields are present
+      expect(idEncoding.contentType, isNull);
+      expect(idEncoding.rawContentType, isNull);
       expect(idEncoding.style, MultipartEncodingStyle.form);
       expect(idEncoding.explode, isTrue);
       expect(idEncoding.allowReserved, isFalse);
 
       final addressEncoding = content.encoding!['address']!;
-      expect(addressEncoding.contentType, ContentType.json);
-      expect(addressEncoding.rawContentType, 'application/json');
+      // OAS 3.1: contentType SHALL be ignored when style fields are present
+      expect(addressEncoding.contentType, isNull);
+      expect(addressEncoding.rawContentType, isNull);
       expect(addressEncoding.style, MultipartEncodingStyle.deepObject);
       expect(addressEncoding.explode, isTrue);
       expect(addressEncoding.allowReserved, isFalse);
@@ -1361,9 +1363,9 @@ void main() {
           );
 
           final encoding = content.encoding!['data']!;
-          // application/xml doesn't map to a known ContentType, so it falls
-          // back to null (or whatever resolveContentType returns)
-          expect(encoding.rawContentType, 'application/xml');
+          // OAS 3.1: when style fields are present, contentType SHALL be ignored
+          expect(encoding.rawContentType, isNull);
+          expect(encoding.contentType, isNull);
           expect(encoding.style, MultipartEncodingStyle.deepObject);
           // deepObject: explode defaults to false per OAS spec
           expect(encoding.explode, isFalse);

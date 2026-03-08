@@ -250,9 +250,14 @@ class RequestBodyImporter {
           ? 'application/octet-stream'
           : _resolveDefaultRawContentType(property.model);
 
+      final isStyleBased = existing?.isStyleBased ?? false;
       result[property.name] = core.MultipartPropertyEncoding(
-        contentType: existing?.contentType ?? defaultContentType,
-        rawContentType: existing?.rawContentType ?? defaultRawContentType,
+        contentType: isStyleBased
+            ? null
+            : (existing?.contentType ?? defaultContentType),
+        rawContentType: isStyleBased
+            ? null
+            : (existing?.rawContentType ?? defaultRawContentType),
         headers: existing?.headers,
         style: existing?.style,
         explode: existing?.explode,
@@ -335,8 +340,8 @@ class RequestBodyImporter {
           : null;
 
       result[propertyName] = core.MultipartPropertyEncoding(
-        contentType: resolvedContentType,
-        rawContentType: encoding.contentType,
+        contentType: useStyleMode ? null : resolvedContentType,
+        rawContentType: useStyleMode ? null : encoding.contentType,
         headers: headers,
         style: resolvedStyle,
         explode: useStyleMode
