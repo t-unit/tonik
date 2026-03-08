@@ -1211,7 +1211,7 @@ void main() {
         }) {
           final values = <String>{};
           final listMatrix = list
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
             .toList()
             .toMatrix(
               paramName,
@@ -1902,5 +1902,130 @@ void main() {
         'false',
       );
     });
+  });
+
+  group('allOf with nullable component models', () {
+    test(
+      'fromSimple generates value without null assertion for nullable '
+      'component',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'Combined',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              properties: const [],
+              context: context,
+            ),
+            ClassModel(
+              isDeprecated: false,
+              name: 'NullableClass',
+              properties: const [],
+              context: context,
+              isNullable: true,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        expect(
+          generated,
+          contains('NullableClass.fromSimple(value, explode: explode)'),
+        );
+        expect(generated, isNot(contains('value!')));
+      },
+    );
+
+    test(
+      'currentEncodingShape uses braces around if statement for nullable '
+      'component',
+      () {
+        // OneOfModel with mixed content (simple + complex) has mixed
+        // encodingShape, which triggers the dynamic currentEncodingShape
+        // getter. The nullable ClassModel triggers the if-branch with braces.
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'NullableClass',
+          properties: const [],
+          context: context,
+          isNullable: true,
+        );
+        final statusOneOf = OneOfModel(
+          isDeprecated: false,
+          name: 'Status',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'State',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+        );
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'Combined',
+          models: {statusOneOf, nullableClass},
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        expect(
+          generated,
+          contains('if (nullableClass != null) {'),
+        );
+        expect(
+          generated,
+          contains('shapes.add(nullableClass!.currentEncodingShape);'),
+        );
+      },
+    );
+
+    test(
+      'fromForm generates value without null assertion for nullable component',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'Combined',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              properties: const [],
+              context: context,
+            ),
+            ClassModel(
+              isDeprecated: false,
+              name: 'NullableClass',
+              properties: const [],
+              context: context,
+              isNullable: true,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        expect(
+          generated,
+          contains('NullableClass.fromForm(value, explode: explode)'),
+        );
+        expect(generated, isNot(contains('value!')));
+      },
+    );
   });
 }

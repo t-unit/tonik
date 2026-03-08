@@ -525,7 +525,7 @@ void main() {
           }) {
             final values = <String>{};
             final listMatrix = list
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
                   paramName,
@@ -576,7 +576,7 @@ void main() {
           }) {
             final values = <String>{};
             final listMatrix = list
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
                   paramName,

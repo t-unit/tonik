@@ -184,7 +184,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(false),
         ).accept(emitter).toString(),
-        'value == null ? null : UserRole.fromSimple(value!, explode: false, )',
+        'value == null ? null : UserRole.fromSimple(value, explode: false, )',
       );
     });
 
@@ -222,7 +222,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(true),
         ).accept(emitter).toString(),
-        'value == null ? null : UserRole.fromSimple(value!, explode: true, )',
+        'value == null ? null : UserRole.fromSimple(value, explode: true, )',
       );
     });
 
@@ -256,7 +256,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(false),
         ).accept(emitter).toString(),
-        'value == null ? null : User.fromSimple(value!, explode: false, )',
+        'value == null ? null : User.fromSimple(value, explode: false, )',
       );
     });
 
@@ -290,7 +290,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(true),
         ).accept(emitter).toString(),
-        'value == null ? null : User.fromSimple(value!, explode: true, )',
+        'value == null ? null : User.fromSimple(value, explode: true, )',
       );
     });
 

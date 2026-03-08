@@ -393,12 +393,11 @@ class AllOfGenerator {
 
       for (final prop in normalizedProperties) {
         if (_isNullableViaTypedef(prop.property.model)) {
-          bodyCode.add(
-            Code(
-              'if (${prop.normalizedName} != null) '
-              'shapes.add(${prop.normalizedName}!.currentEncodingShape);',
-            ),
-          );
+          bodyCode.addAll([
+            Code('if (${prop.normalizedName} != null) {'),
+            Code('  shapes.add(${prop.normalizedName}!.currentEncodingShape);'),
+            const Code('}'),
+          ]);
         } else {
           bodyCode.add(
             Code('shapes.add(${prop.normalizedName}.currentEncodingShape);'),
@@ -1262,13 +1261,14 @@ class AllOfGenerator {
 
       for (final prop in normalizedProperties) {
         if (_isNullableViaTypedef(prop.property.model)) {
-          bodyCode.add(
+          bodyCode.addAll([
+            Code('if (${prop.normalizedName} != null) {'),
             Code(
-              'if (${prop.normalizedName} != null) '
-              'map.addAll(${prop.normalizedName}! '
+              '  map.addAll(${prop.normalizedName}! '
               '.parameterProperties(allowEmpty: allowEmpty));',
             ),
-          );
+            const Code('}'),
+          ]);
         } else {
           bodyCode.add(
             Code(
@@ -1499,13 +1499,14 @@ class AllOfGenerator {
 
       for (final prop in normalizedProperties) {
         if (_isNullableViaTypedef(prop.property.model)) {
-          bodyCode.add(
+          bodyCode.addAll([
+            Code('if (${prop.normalizedName} != null) {'),
             Code(
-              'if (${prop.normalizedName} != null) '
-              'map.addAll(${prop.normalizedName}! '
+              '  map.addAll(${prop.normalizedName}! '
               '.parameterProperties(allowEmpty: allowEmpty));',
             ),
-          );
+            const Code('}'),
+          ]);
         } else {
           bodyCode.add(
             Code(

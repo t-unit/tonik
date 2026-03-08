@@ -203,7 +203,7 @@ Expression _buildFromSimpleExpression(
               refer(
                 name,
                 package,
-              ).property('fromSimple').call([value.nullChecked], explodeParam),
+              ).property('fromSimple').call([value], explodeParam),
             );
 }
 

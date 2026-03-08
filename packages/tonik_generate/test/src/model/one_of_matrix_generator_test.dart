@@ -622,7 +622,7 @@ void main() {
         }) {
           return switch (this) {
             StringOrIntListList(:final value) => value
-              .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+              .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
               .toList()
               .toMatrix(
                 paramName,
@@ -676,7 +676,7 @@ void main() {
         }) {
           return switch (this) {
             StringOrDateTimeListList(:final value) => value
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
                   paramName,
@@ -737,7 +737,7 @@ void main() {
         }) {
           return switch (this) {
             StringOrEnumListList(:final value) => value
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
                   paramName,
@@ -793,7 +793,7 @@ void main() {
         }) {
           return switch (this) {
             StringListOrIntListList(:final value) => value
-              .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+              .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
               .toList()
               .toMatrix(
                 paramName,
