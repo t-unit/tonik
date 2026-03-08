@@ -124,6 +124,7 @@ class RequestBodyImporter {
 
             final encoding = contentType == core.ContentType.multipart
                 ? _populateMultipartDefaults(
+                    name: name,
                     model: model,
                     explicitEncoding: explicitEncoding,
                   )
@@ -180,6 +181,7 @@ class RequestBodyImporter {
   }
 
   Map<String, core.MultipartPropertyEncoding>? _populateMultipartDefaults({
+    required String? name,
     required core.Model model,
     required Map<String, core.MultipartPropertyEncoding>? explicitEncoding,
   }) {
@@ -187,7 +189,15 @@ class RequestBodyImporter {
     final resolved = model is core.AliasModel ? model.resolved : model;
 
     // Only populate per-property defaults for ClassModel
-    if (resolved is! core.ClassModel) return null;
+    if (resolved is! core.ClassModel) {
+      final label = name != null ? 'Multipart body "$name"' : 'Multipart body';
+      log.warning(
+        '$label has a non-object schema (${resolved.runtimeType}). '
+        'Only object schemas with properties are supported. '
+        'The generated method will throw at runtime.',
+      );
+      return null;
+    }
 
     final propertyNames = resolved.properties.map((p) => p.name).toSet();
 

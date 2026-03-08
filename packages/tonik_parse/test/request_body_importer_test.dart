@@ -1742,7 +1742,13 @@ void main() {
         );
       });
 
-      test('non-ClassModel multipart body does not get encoding populated', () {
+      test('non-ClassModel multipart body does not get encoding populated '
+          'and logs warning', () {
+        final logs = <LogRecord>[];
+        final sub = Logger.root.onRecord.listen(logs.add);
+
+        addTearDown(sub.cancel);
+
         final spec = {
           'openapi': '3.1.0',
           'info': {'title': 'Test', 'version': '1.0.0'},
@@ -1771,6 +1777,15 @@ void main() {
 
         final content = body.content.first;
         expect(content.encoding, isNull);
+        expect(
+          logs.any(
+            (r) =>
+                r.level == Level.WARNING &&
+                r.message.contains('BareString') &&
+                r.message.contains('non-object schema'),
+          ),
+          isTrue,
+        );
       });
     });
 
