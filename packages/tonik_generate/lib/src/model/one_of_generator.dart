@@ -449,6 +449,7 @@ class OneOfGenerator {
     blocks.add(
       generateJsonDecodingExceptionExpression(
         'Invalid JSON for $className',
+        raw: true,
       ).statement,
     );
 
@@ -599,6 +600,7 @@ class OneOfGenerator {
     bodyBlocks.add(
       generateSimpleDecodingExceptionExpression(
         'Invalid $encodingStyleName value for $className',
+        raw: true,
       ).statement,
     );
 

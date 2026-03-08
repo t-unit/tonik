@@ -217,7 +217,7 @@ void main() {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
 
-            throw JsonDecodingException('Invalid JSON for Result');
+            throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
 
         expect(
@@ -348,7 +348,7 @@ void main() {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
 
-            throw JsonDecodingException('Invalid JSON for Result');
+            throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
 
         expect(
@@ -889,6 +889,57 @@ void main() {
           contains(collapseWhitespace(expectedMethod)),
         );
       });
+    });
+  });
+
+  group('nullable oneOf with \$Raw-prefixed class name', () {
+    test('fromJson throws raw string literal for \$Raw-prefixed class name', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Cat',
+              properties: const [],
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Dog',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final generatedClasses = generator.generateClasses(model, r'$RawPet');
+      final baseClass = generatedClasses.firstWhere(
+        (c) => c.name == r'$RawPet',
+      );
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      expect(
+        generatedCode,
+        contains(r"r'Invalid JSON for $RawPet'"),
+      );
     });
   });
 }

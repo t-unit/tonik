@@ -306,7 +306,7 @@ void main() {
           try {
             return EntityPerson(Person.fromSimple(value, explode: explode));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid simple value for Entity');
+          throw SimpleDecodingException(r'Invalid simple value for Entity');
         }
       ''';
 
@@ -344,7 +344,7 @@ void main() {
           try {
             return ResultSuccess(value.decodeSimpleString(context: r'Result'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid simple value for Result');
+          throw SimpleDecodingException(r'Invalid simple value for Result');
         }
       ''';
 
@@ -429,7 +429,7 @@ void main() {
             try {
               return EntityPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid simple value for Entity');
+            throw SimpleDecodingException(r'Invalid simple value for Entity');
           }
         ''';
 
@@ -497,7 +497,7 @@ void main() {
             try {
               return MixedEntityPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid simple value for MixedEntity');
+            throw SimpleDecodingException(r'Invalid simple value for MixedEntity');
           }
         ''';
 
@@ -562,13 +562,66 @@ void main() {
             try {
               return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid simple value for EntityNoDisc');
+            throw SimpleDecodingException(r'Invalid simple value for EntityNoDisc');
           }
         ''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
           contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+  });
+
+  group('nullable oneOf with \$Raw-prefixed class name', () {
+    late OneOfModel model;
+
+    setUp(() {
+      final person = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: const [],
+        context: context,
+      );
+      final company = ClassModel(
+        isDeprecated: false,
+        name: 'Company',
+        properties: const [],
+        context: context,
+      );
+
+      model = OneOfModel(
+        isDeprecated: false,
+        name: 'Entity',
+        models: {
+          (discriminatorValue: null, model: person),
+          (discriminatorValue: null, model: company),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+    });
+
+    test(
+      'fromSimple throws raw string literal for \$Raw-prefixed class name',
+      () {
+        final classes = generator.generateClasses(model, r'$RawEntity');
+        final baseClass = classes.firstWhere((c) => c.name == r'$RawEntity');
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        expect(
+          generatedCode,
+          contains(r"r'Invalid simple value for $RawEntity'"),
         );
       },
     );

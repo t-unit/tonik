@@ -1527,7 +1527,7 @@ void main() {
                 return ValueString(value.decodeSimpleString(context: r'Value'));
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
-              throw SimpleDecodingException('Invalid simple value for Value');
+              throw SimpleDecodingException(r'Invalid simple value for Value');
             }
           '''),
         ),
@@ -1569,7 +1569,7 @@ void main() {
                 return ValueString(value.decodeFormString(context: r'Value'));
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
-              throw SimpleDecodingException('Invalid form value for Value');
+              throw SimpleDecodingException(r'Invalid form value for Value');
             }
           '''),
         ),
@@ -1609,7 +1609,7 @@ void main() {
               try {
                 return ValueList(json.decodeJsonList<String>(context: r'Value'));
               } on Object catch (_) {}
-              throw JsonDecodingException('Invalid JSON for Value');
+              throw JsonDecodingException(r'Invalid JSON for Value');
             }
           '''),
         ),
@@ -1651,7 +1651,7 @@ void main() {
                 return ValueString(value.decodeSimpleString(context: r'Value'));
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
-              throw SimpleDecodingException('Invalid simple value for Value');
+              throw SimpleDecodingException(r'Invalid simple value for Value');
             }
           '''),
         ),

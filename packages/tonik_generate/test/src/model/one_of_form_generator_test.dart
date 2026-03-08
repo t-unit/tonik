@@ -220,7 +220,7 @@ void main() {
           try {
             return ResultSuccess(value.decodeFormString(context: r'Result'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid form value for Result');
+          throw SimpleDecodingException(r'Invalid form value for Result');
         }
       ''';
 
@@ -267,7 +267,7 @@ void main() {
           try {
             return ResponseUser(User.fromForm(value, explode: explode));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid form value for Response');
+          throw SimpleDecodingException(r'Invalid form value for Response');
         }
       ''';
 
@@ -352,7 +352,7 @@ void main() {
             try {
               return ChoiceB(B.fromForm(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid form value for Choice');
+            throw SimpleDecodingException(r'Invalid form value for Choice');
           }
         ''';
 
