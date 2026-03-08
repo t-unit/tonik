@@ -1243,10 +1243,13 @@ class OneOfGenerator {
 
     for (final m in model.models.toSortedList()) {
       final variantName = variantNames[m]!;
+      final usesValue = matrixParameterExpressionUsesValue(m.model);
 
       caseCodes.addAll([
         Code.scope(
-          (allocate) => '${allocate(refer(variantName))}(:final value) => ',
+          (allocate) => usesValue
+              ? '${allocate(refer(variantName))}(:final value) => '
+              : '${allocate(refer(variantName))}() => ',
         ),
         buildMatrixParameterExpression(
           refer('value'),

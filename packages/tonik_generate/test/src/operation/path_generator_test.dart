@@ -1174,7 +1174,7 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required List<AnonymousModel> filters}) {
-          return [r'data', filters.toMatrix('filters', explode: false, allowEmpty: false, ), ];
+          return [r'data', throw EncodingException('Lists with complex content cannot be matrix-encoded'), ];
         }
       ''';
 

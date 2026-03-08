@@ -62,6 +62,26 @@ Expression buildMatrixParameterExpression(
   };
 }
 
+/// Returns true if the matrix encoding expression for [model] uses the value
+/// (i.e., does not unconditionally throw).
+///
+/// Used by OneOf/AnyOf generators to decide whether to destructure the variant.
+bool matrixParameterExpressionUsesValue(Model model) {
+  return switch (model) {
+    BinaryModel() => false,
+    ListModel(:final content) => _listMatrixContentUsesValue(content),
+    _ => true,
+  };
+}
+
+bool _listMatrixContentUsesValue(Model content) {
+  return switch (content) {
+    ClassModel() || ListModel() => false,
+    AliasModel(:final model) => _listMatrixContentUsesValue(model),
+    _ => true,
+  };
+}
+
 Expression _buildAnyModelMatrixExpression(
   Expression valueExpression, {
   required Expression paramName,
@@ -169,15 +189,9 @@ Expression _buildListMatrixExpression(
             },
           ),
     ClassModel() || ListModel() =>
-      valueExpression
-          .property('toMatrix')
-          .call(
-            [paramName],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
-          ),
+      generateEncodingExceptionExpression(
+        'Lists with complex content cannot be matrix-encoded',
+      ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),

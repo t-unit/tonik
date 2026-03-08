@@ -756,6 +756,55 @@ void main() {
           contains(collapseWhitespace(expectedMethod)),
         );
       });
+
+      test(
+        'generates EncodingException for AnyOf with List<ClassModel> variant',
+        () {
+          final classModel = ClassModel(
+            isDeprecated: false,
+            name: 'Row',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+          final listOfClassModel = ListModel(
+            content: classModel,
+            context: context,
+          );
+
+          final model = AnyOfModel(
+            isDeprecated: false,
+            name: 'RowsOrModel',
+            models: {
+              (discriminatorValue: null, model: listOfClassModel),
+              (discriminatorValue: null, model: classModel),
+            },
+            context: context,
+          );
+
+          final generatedClass = generator.generateClass(model);
+          final generated = format(generatedClass.accept(emitter).toString());
+
+          // AnyOf uses if-guards, not a switch. Verify the list branch throws.
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                'if (list != null) { throw EncodingException('
+                " 'Lists with complex content are not supported"
+                " for encoding', ); }",
+              ),
+            ),
+          );
+        },
+      );
     });
   });
 }
