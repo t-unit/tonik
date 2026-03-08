@@ -607,7 +607,9 @@ void main() {
         collapseWhitespace(generated),
         contains(
           collapseWhitespace(
-            "throw EncodingException(\n'Binary data cannot be form-encoded',\n)",
+            'throw EncodingException(\n'
+            "'Binary data cannot be form-encoded',\n"
+            ')',
           ),
         ),
       );

@@ -409,7 +409,9 @@ void main() {
         collapseWhitespace(generated),
         contains(
           collapseWhitespace(
-            "throw EncodingException(\n'Binary data cannot be label-encoded',\n)",
+            'throw EncodingException(\n'
+            "'Binary data cannot be label-encoded',\n"
+            ')',
           ),
         ),
       );

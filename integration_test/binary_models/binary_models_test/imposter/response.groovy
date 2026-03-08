@@ -296,6 +296,24 @@ if (context.request.path.matches('.*/files/[^/]+') && context.request.method == 
         response.usingDefaultBehaviour()
     }
     
+} else if (context.request.path == '/api/v1/binary/multi-content-type' && context.request.method == 'GET') {
+    // getMultiContentType endpoint - returns JSON or binary based on format query param
+    def format = context.request.queryParams['format'] ?: 'json'
+    if (format == 'binary') {
+        response.withHeader('Content-Type', 'application/octet-stream')
+                .withFile('test_binary.bin')
+    } else {
+        response.withHeader('Content-Type', 'application/json')
+                .withContent('{"id":"file-123","fileName":"test.bin","size":1024,"createdAt":"2024-01-01T00:00:00Z"}')
+    }
+
+} else if (context.request.path.matches('.*/binary/with-headers/[^/]+') && context.request.method == 'GET') {
+    // getBinaryWithHeaders endpoint - returns binary with response headers
+    response.withHeader('Content-Type', 'application/octet-stream')
+            .withHeader('Content-Disposition', 'attachment; filename="downloaded.bin"')
+            .withHeader('X-File-Size', '42')
+            .withFile('test_binary.bin')
+
 } else {
     // Use default OpenAPI behavior for unhandled paths
     response.usingDefaultBehaviour()
