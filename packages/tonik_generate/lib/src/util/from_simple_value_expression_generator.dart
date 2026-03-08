@@ -17,6 +17,7 @@ String? getSimpleDecodingUnsupportedReason(Model model) {
     DateModel() ||
     UriModel() ||
     BinaryModel() ||
+    Base64Model() ||
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
@@ -42,6 +43,7 @@ String? _getListContentUnsupportedReason(Model content) {
     DateModel() ||
     UriModel() ||
     BinaryModel() ||
+    Base64Model() ||
     EnumModel() ||
     OneOfModel() ||
     AllOfModel() ||
@@ -120,6 +122,11 @@ Expression buildSimpleValueExpression(
           ? value.property('decodeSimpleUri').call([], contextParam)
           : value.property('decodeSimpleNullableUri').call([], contextParam),
     BinaryModel() => _buildFromSimpleBinaryExpression(
+      value,
+      isRequired: isRequired,
+      contextParam: contextParam,
+    ),
+    Base64Model() => _buildFromSimpleBase64Expression(
       value,
       isRequired: isRequired,
       contextParam: contextParam,
@@ -298,6 +305,12 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       contextParam: contextParam,
     ),
+    Base64Model() => _buildTonikFilePrimitiveList(
+      listDecode,
+      'decodeSimpleBase64',
+      isRequired,
+      contextParam: contextParam,
+    ),
     ClassModel() => throw UnimplementedError(
       'ClassModel is not supported in lists for simple encoding',
     ),
@@ -421,6 +434,30 @@ Expression _buildFromSimpleBinaryExpression(
   } else {
     final decodeExpr = value
         .property('decodeSimpleBinary')
+        .call([], contextParam);
+    return value
+        .equalTo(literalNull)
+        .conditional(literalNull, tonikFileBytesRef.call([decodeExpr]));
+  }
+}
+
+Expression _buildFromSimpleBase64Expression(
+  Expression value, {
+  required bool isRequired,
+  required Map<String, Expression> contextParam,
+}) {
+  final tonikFileBytesRef = refer(
+    'TonikFileBytes',
+    'package:tonik_util/tonik_util.dart',
+  );
+
+  if (isRequired) {
+    return tonikFileBytesRef.call([
+      value.property('decodeSimpleBase64').call([], contextParam),
+    ]);
+  } else {
+    final decodeExpr = value
+        .property('decodeSimpleBase64')
         .call([], contextParam);
     return value
         .equalTo(literalNull)

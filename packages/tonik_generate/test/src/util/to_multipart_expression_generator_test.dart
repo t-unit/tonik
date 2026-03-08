@@ -2356,6 +2356,68 @@ void main() {
         ),
       );
     });
+
+    test(
+      'generates binary switch for Base64Model property (same as BinaryModel)',
+      () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'avatar',
+            model: Base64Model(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: testContext,
+      );
+
+      final content = RequestContent(
+        model: model,
+        contentType: ContentType.multipart,
+        rawContentType: 'multipart/form-data',
+        encoding: {
+          'avatar': const MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+          ),
+        },
+      );
+
+      final result = buildMultipartBodyStatements(
+        content,
+        'body',
+        nameManager,
+        'test_package',
+      );
+
+      final code = emitStatements(result);
+      expect(
+        collapseWhitespace(code),
+        collapseWhitespace(
+          format('''
+          void test() {
+            final formData = FormData();
+            switch (body.avatar) {
+              case TonikFileBytes(:final bytes, :final fileName):
+                formData.files.add(MapEntry(
+                  'avatar',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
+                ));
+              case TonikFilePath(:final path, :final fileName):
+                formData.files.add(MapEntry(
+                  'avatar',
+                  await MultipartFile.fromFile(path, filename: fileName ?? 'avatar'),
+                ));
+            }
+          }
+        '''),
+        ),
+      );
+    });
   });
 
   group('complex object properties', () {

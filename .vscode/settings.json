@@ -33,6 +33,7 @@
     "pubspecs",
     "Rexy",
     "roundtrips",
+    "serialise",
     "Sess",
     "Slurper",
     "tonik",

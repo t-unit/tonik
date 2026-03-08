@@ -38,6 +38,7 @@ extension StableModelKey on Model {
       DecimalModel() => 'DecimalModel',
       UriModel() => 'UriModel',
       BinaryModel() => 'BinaryModel',
+      Base64Model() => 'Base64Model',
       AnyModel() => 'AnyModel',
       NeverModel() => 'NeverModel',
       _ => throw UnimplementedError(

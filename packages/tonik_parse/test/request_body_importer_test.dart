@@ -880,6 +880,57 @@ void main() {
       expect(descriptionEncoding.rawContentType, 'text/plain');
     });
 
+    test(
+      'format: byte property defaults to application/octet-stream in multipart',
+      () {
+        final fileContentWithBase64 = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'requestBodies': {
+              'Base64Upload': {
+                'description': 'Upload with base64 field',
+                'required': true,
+                'content': {
+                  'multipart/form-data': {
+                    'schema': {
+                      'type': 'object',
+                      'properties': {
+                        'data': {'type': 'string', 'format': 'byte'},
+                        'name': {'type': 'string'},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(fileContentWithBase64);
+        final body =
+            api.requestBodies.firstWhereOrNull(
+                  (r) => r.name == 'Base64Upload',
+                )!
+                as RequestBodyObject;
+
+        final content = body.content.first;
+        expect(content.encoding, isNotNull);
+        expect(content.encoding, hasLength(2));
+
+        // format: byte → Base64Model → application/octet-stream (spec-correct)
+        final dataEncoding = content.encoding!['data']!;
+        expect(dataEncoding.contentType, ContentType.bytes);
+        expect(dataEncoding.rawContentType, 'application/octet-stream');
+
+        // plain string → text/plain
+        final nameEncoding = content.encoding!['name']!;
+        expect(nameEncoding.contentType, ContentType.text);
+        expect(nameEncoding.rawContentType, 'text/plain');
+      },
+    );
+
     test('imports multipart/form-data with encoding', () {
       final fileContentWithEncoding = {
         'openapi': '3.1.0',
@@ -1363,7 +1414,8 @@ void main() {
           );
 
           final encoding = content.encoding!['data']!;
-          // OAS 3.1: when style fields are present, contentType SHALL be ignored
+          // OAS 3.1: when style fields are present, contentType SHALL be
+          // ignored
           expect(encoding.rawContentType, isNull);
           expect(encoding.contentType, isNull);
           expect(encoding.style, MultipartEncodingStyle.deepObject);
@@ -1649,7 +1701,7 @@ void main() {
         },
       );
 
-      test('explicit contentType overrides format:byte default', () {
+      test('explicit contentType overrides format:byte text/plain default', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {

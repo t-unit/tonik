@@ -89,6 +89,12 @@ Expression buildFromFormValueExpression(
       contextParam: contextParam,
     ),
 
+    Base64Model() => _buildFromFormBase64Expression(
+      value,
+      isRequired: isRequired,
+      contextParam: contextParam,
+    ),
+
     AliasModel() => buildFromFormValueExpression(
       value,
       model: model.model,
@@ -258,6 +264,12 @@ Expression _buildListFromFormExpression(
       isRequired,
       contextParam: contextParam,
     ),
+    Base64Model() => _buildTonikFilePrimitiveList(
+      listDecode,
+      'decodeFormBase64',
+      isRequired,
+      contextParam: contextParam,
+    ),
     ClassModel() => throw UnimplementedError(
       'ClassModel is not supported in lists for form encoding',
     ),
@@ -378,6 +390,30 @@ Expression _buildFromFormBinaryExpression(
   } else {
     final decodeExpr = value
         .property('decodeFormBinary')
+        .call([], contextParam);
+    return value
+        .equalTo(literalNull)
+        .conditional(literalNull, tonikFileBytesRef.call([decodeExpr]));
+  }
+}
+
+Expression _buildFromFormBase64Expression(
+  Expression value, {
+  required bool isRequired,
+  required Map<String, Expression> contextParam,
+}) {
+  final tonikFileBytesRef = refer(
+    'TonikFileBytes',
+    'package:tonik_util/tonik_util.dart',
+  );
+
+  if (isRequired) {
+    return tonikFileBytesRef.call([
+      value.property('decodeFormBase64').call([], contextParam),
+    ]);
+  } else {
+    final decodeExpr = value
+        .property('decodeFormBase64')
         .call([], contextParam);
     return value
         .equalTo(literalNull)

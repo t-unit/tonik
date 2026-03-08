@@ -198,6 +198,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/FilesResponse'
 
+  /multipart/byte:
+    post:
+      operationId: postByteField
+      tags:
+        - multipart
+      summary: Post a format byte field in multipart
+      description: >-
+        Tests that format:byte (Base64Model) is sent as application/octet-stream,
+        not text/plain. Per OAS 3.0.4 §4.7.15, format:byte defaults to
+        application/octet-stream in multipart encoding.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ByteForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart/response:
     get:
       operationId: getMultipartResponse
@@ -492,6 +516,22 @@ components:
         field2:
           type: integer
           example: 100
+
+    ByteForm:
+      type: object
+      required:
+        - label
+        - data
+      properties:
+        label:
+          type: string
+          description: A simple text label (sent as text/plain)
+        data:
+          type: string
+          format: byte
+          description: >-
+            Base64-encoded binary data. Per OAS 3.0.4 §4.7.15, format:byte
+            defaults to application/octet-stream in multipart encoding.
 
     GenericResponse:
       type: object

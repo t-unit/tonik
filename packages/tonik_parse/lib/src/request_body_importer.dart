@@ -5,7 +5,6 @@ import 'package:tonik_parse/src/model/encoding.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
-import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
@@ -123,15 +122,11 @@ class RequestBodyImporter {
               context.push('body'),
             );
 
-            final propertyFormats = contentType == core.ContentType.multipart
-                ? _extractPropertyFormats(mediaType.schema)
-                : null;
             final encoding = contentType == core.ContentType.multipart
                 ? _populateMultipartDefaults(
                     name: name,
                     model: model,
                     explicitEncoding: explicitEncoding,
-                    propertyFormats: propertyFormats,
                   )
                 : null;
 
@@ -185,29 +180,10 @@ class RequestBodyImporter {
     }
   }
 
-  Map<String, String?> _extractPropertyFormats(Schema? schema) {
-    if (schema == null) return {};
-    Schema? resolved = schema;
-    if (schema.ref != null) {
-      final refName = schema.ref!.split('/').last;
-      resolved = openApiObject.components?.schemas?[refName];
-    }
-    final properties = resolved?.properties;
-    if (properties == null) return {};
-    return {
-      for (final e in properties.entries)
-        e.key: e.value.format ??
-            (e.value.ref != null
-                ? (openApiObject.components?.schemas?[e.value.ref!.split('/').last])?.format
-                : null),
-    };
-  }
-
   Map<String, core.MultipartPropertyEncoding>? _populateMultipartDefaults({
     required String? name,
     required core.Model model,
     required Map<String, core.MultipartPropertyEncoding>? explicitEncoding,
-    required Map<String, String?>? propertyFormats,
   }) {
     // Resolve through aliases to find the underlying model
     final resolved = model is core.AliasModel ? model.resolved : model;
@@ -241,14 +217,9 @@ class RequestBodyImporter {
 
     for (final property in resolved.properties) {
       final existing = explicitEncoding?[property.name];
-      final format = propertyFormats?[property.name];
-      final isByteFormat = format == 'byte' || format == 'binary';
-      final defaultContentType = isByteFormat
-          ? core.ContentType.bytes
-          : _resolveDefaultContentType(property.model);
-      final defaultRawContentType = isByteFormat
-          ? 'application/octet-stream'
-          : _resolveDefaultRawContentType(property.model);
+      final defaultContentType = _resolveDefaultContentType(property.model);
+      final defaultRawContentType =
+          _resolveDefaultRawContentType(property.model);
 
       final isStyleBased = existing?.isStyleBased ?? false;
       result[property.name] = core.MultipartPropertyEncoding(
@@ -277,6 +248,7 @@ class RequestBodyImporter {
       core.OneOfModel() => core.ContentType.json,
       core.AnyOfModel() => core.ContentType.json,
       core.BinaryModel() => core.ContentType.bytes,
+      core.Base64Model() => core.ContentType.bytes,
       core.AnyModel() => core.ContentType.json,
       _ => core.ContentType.text,
     };
@@ -291,6 +263,7 @@ class RequestBodyImporter {
       core.OneOfModel() => 'application/json',
       core.AnyOfModel() => 'application/json',
       core.BinaryModel() => 'application/octet-stream',
+      core.Base64Model() => 'application/octet-stream',
       core.AnyModel() => 'application/json',
       _ => 'text/plain',
     };

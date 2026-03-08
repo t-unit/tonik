@@ -77,7 +77,7 @@ TypeReference typeReference(
         ..url = 'dart:core'
         ..isNullable = isNullableOverride,
     ),
-    BinaryModel _ => TypeReference(
+    BinaryModel _ || Base64Model _ => TypeReference(
       (b) => b
         ..symbol = 'TonikFile'
         ..url = 'package:tonik_util/tonik_util.dart'

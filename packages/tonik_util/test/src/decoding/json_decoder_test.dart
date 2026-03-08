@@ -516,4 +516,68 @@ void main() {
       }
     });
   });
+
+  group('decodeJsonBase64', () {
+    test('decodes base64 string to List<int>', () {
+      // "Hello" in base64 is "SGVsbG8="
+      const base64String = 'SGVsbG8=';
+      final result = base64String.decodeJsonBase64();
+      expect(result, [72, 101, 108, 108, 111]);
+    });
+
+    test('decodes empty base64 string to empty list', () {
+      const emptyBase64 = '';
+      final result = emptyBase64.decodeJsonBase64();
+      expect(result, <int>[]);
+    });
+
+    test('throws InvalidTypeException if value is null', () {
+      expect(
+        () => null.decodeJsonBase64(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws InvalidTypeException if value is not a string', () {
+      expect(
+        () => 123.decodeJsonBase64(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('includes context in error messages', () {
+      try {
+        null.decodeJsonBase64(context: 'User.avatar');
+        fail('Should have thrown');
+      } on InvalidTypeException catch (e) {
+        expect(e.context, 'User.avatar');
+      }
+    });
+
+    test('round-trips with base64 encoding', () {
+      final original = [1, 2, 3, 4, 5];
+      final encoded = base64.encode(original);
+      final decoded = encoded.decodeJsonBase64();
+      expect(decoded, original);
+    });
+  });
+
+  group('decodeJsonNullableBase64', () {
+    test('decodes base64 string to List<int>', () {
+      const base64String = 'SGVsbG8=';
+      final result = base64String.decodeJsonNullableBase64();
+      expect(result, [72, 101, 108, 108, 111]);
+    });
+
+    test('returns null for null value', () {
+      final result = null.decodeJsonNullableBase64();
+      expect(result, isNull);
+    });
+
+    test('returns empty list for empty string', () {
+      const emptyBase64 = '';
+      final result = emptyBase64.decodeJsonNullableBase64();
+      expect(result, <int>[]);
+    });
+  });
 }

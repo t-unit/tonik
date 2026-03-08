@@ -160,6 +160,25 @@ void main() {
       );
     });
 
+    test('generates uriEncode call for Base64Model', () {
+      final model = Base64Model(context: context);
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates uriEncode call with useQueryComponent', () {
       final model = StringModel(context: context);
       final expression = buildUriEncodeExpression(
@@ -409,6 +428,31 @@ void main() {
     test('generates map expression for List<BinaryModel>', () {
       final model = ListModel(
         content: BinaryModel(context: context),
+        context: context,
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates map expression for List<Base64Model>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
         context: context,
       );
       final expression = buildUriEncodeExpression(

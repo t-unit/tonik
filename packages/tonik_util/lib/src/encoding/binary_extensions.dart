@@ -11,4 +11,11 @@ extension BinaryToStringEncoder on List<int> {
     const decoder = Utf8Decoder(allowMalformed: true);
     return decoder.convert(this);
   }
+
+  /// Encodes this binary data (`List<int>`) to a base64 string.
+  ///
+  /// This is used when serializing base64-encoded binary data to JSON.
+  String encodeToBase64String() {
+    return base64.encode(this);
+  }
 }

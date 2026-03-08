@@ -101,6 +101,15 @@ void main() {
         ).accept(emitter).toString(),
         'TonikFileBytes(value.decodeJsonBinary())',
       );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: Base64Model(context: context),
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'TonikFileBytes(value.decodeJsonBase64())',
+      );
     });
 
     test('generates for nullable primitive types', () {
@@ -113,6 +122,16 @@ void main() {
           isNullable: true,
         ).accept(emitter).toString(),
         'value == null ? null : TonikFileBytes(value.decodeJsonBinary())',
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: Base64Model(context: context),
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          isNullable: true,
+        ).accept(emitter).toString(),
+        'value == null ? null : TonikFileBytes(value.decodeJsonBase64())',
       );
     });
 
@@ -403,6 +422,24 @@ void main() {
         equals(
           'value.decodeJsonList<String>()'
           '.map((e) => TonikFileBytes(e.decodeJsonBinary())).toList()',
+        ),
+      );
+
+      // Test list of base64
+      final base64ListModel = ListModel(
+        content: Base64Model(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: base64ListModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonList<String>()'
+          '.map((e) => TonikFileBytes(e.decodeJsonBase64())).toList()',
         ),
       );
     });
@@ -827,6 +864,26 @@ void main() {
             equals(
               'value.decodeJsonNullableList<String>()'
               '?.map((e) => TonikFileBytes(e.decodeJsonBinary())).toList()',
+            ),
+          );
+        });
+
+        test('generates for nullable list of Base64Model', () {
+          final base64ListModel = ListModel(
+            content: Base64Model(context: context),
+            context: context,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: base64ListModel,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: true,
+            ).accept(emitter).toString(),
+            equals(
+              'value.decodeJsonNullableList<String>()'
+              '?.map((e) => TonikFileBytes(e.decodeJsonBase64())).toList()',
             ),
           );
         });

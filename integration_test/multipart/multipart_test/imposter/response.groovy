@@ -115,6 +115,21 @@ switch (path) {
         }
         break
 
+    case '/multipart/byte':
+        // format:byte fields default to application/octet-stream in OAS 3.0.
+        // Binary parts do NOT appear in formParams (unlike text/plain parts).
+        // If the byte field appeared in formParams it would indicate the wrong
+        // content type (text/plain) was used — the old StringModel behavior.
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Label', formParams.containsKey('label').toString()
+            withHeader 'X-Param-Label', (formParams['label'] ?: '')
+            withHeader 'X-Has-Data', formParams.containsKey('data').toString()
+            withContent '{"success":true,"message":"byte received"}'
+        }
+        break
+
     case '/multipart/response':
         // Return a multipart/form-data response to trigger ResponseDecodingException.
         respond {
@@ -277,6 +292,19 @@ switch (path) {
             withHeader 'X-Data-Is-Valid-Json', isValidJson.toString()
             withHeader 'X-Data-Contains-FirstName', dataValue.contains('"firstName"').toString()
             withContent '{"success":true,"message":"any-model received"}'
+        }
+        break
+
+    case '/multipart31/byte':
+        // format:byte fields default to application/octet-stream in OAS 3.1.
+        // Binary parts do NOT appear in formParams (unlike text/plain parts).
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Label', formParams.containsKey('label').toString()
+            withHeader 'X-Param-Label', (formParams['label'] ?: '')
+            withHeader 'X-Has-Data', formParams.containsKey('data').toString()
+            withContent '{"success":true,"message":"byte 3.1 received"}'
         }
         break
 

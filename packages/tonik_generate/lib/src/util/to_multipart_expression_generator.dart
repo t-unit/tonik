@@ -220,7 +220,7 @@ Code? _buildFieldCode(
       headerVarName: headerVarName,
     ),
 
-    BinaryModel() => _buildBinaryFileAddition(
+    BinaryModel() || Base64Model() => _buildBinaryFileAddition(
       rawName,
       accessor,
       encoding: encoding,
@@ -469,7 +469,7 @@ Code _buildJsonEncodeFileAddition(
   ]).statement;
 }
 
-/// Builds an AnyModel field as MultipartFile.fromString using [encodeAnyToJson]
+/// Builds an AnyModel field as MultipartFile.fromString using encodeAnyToJson
 /// for runtime-safe serialization of unknown types.
 Code _buildAnyModelFileAddition(
   String rawName,
@@ -604,7 +604,7 @@ Code _buildListFieldAddition(
   }
 
   // Binary and complex objects always use a for-loop (can't be delimited).
-  if (contentModel is BinaryModel) {
+  if (contentModel is BinaryModel || contentModel is Base64Model) {
     return _buildBinaryListForLoop(
       rawName,
       accessor,

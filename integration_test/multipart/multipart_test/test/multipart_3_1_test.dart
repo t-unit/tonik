@@ -18,38 +18,41 @@ void main() {
     api = Multipart31Api(CustomServer(baseUrl: baseUrl));
   });
 
-  group('OAS 3.1 style-based primitive encoding (null rawContentType fallback)', () {
-    test(
-      'serializes string, integer and boolean as text/plain when only style is set',
-      () async {
-        const form = StylePrimitivesForm(
-          name: 'hello',
-          count: 42,
-          active: true,
-        );
+  group(
+    'OAS 3.1 style-based primitive encoding (null rawContentType fallback)',
+    () {
+      test(
+        'serializes string, integer and boolean as text/plain when only style is set',
+        () async {
+          const form = StylePrimitivesForm(
+            name: 'hello',
+            count: 42,
+            active: true,
+          );
 
-        final response = await api.postStylePrimitives(body: form);
+          final response = await api.postStylePrimitives(body: form);
 
-        expect(response, isA<TonikSuccess<GenericResponse>>());
+          expect(response, isA<TonikSuccess<GenericResponse>>());
 
-        final success = response as TonikSuccess<GenericResponse>;
-        final formData = success.response.requestOptions.data as FormData;
+          final success = response as TonikSuccess<GenericResponse>;
+          final formData = success.response.requestOptions.data as FormData;
 
-        // Style-based primitives fall back to text/plain and go into files.
-        expect(formData.files.any((e) => e.key == 'name'), isTrue);
-        expect(formData.files.any((e) => e.key == 'count'), isTrue);
-        expect(formData.files.any((e) => e.key == 'active'), isTrue);
+          // Style-based primitives fall back to text/plain and go into files.
+          expect(formData.files.any((e) => e.key == 'name'), isTrue);
+          expect(formData.files.any((e) => e.key == 'count'), isTrue);
+          expect(formData.files.any((e) => e.key == 'active'), isTrue);
 
-        // Server received all three fields with the correct string values.
-        expect(success.response.headers['x-has-name']?.first, 'true');
-        expect(success.response.headers['x-has-count']?.first, 'true');
-        expect(success.response.headers['x-has-active']?.first, 'true');
-        expect(success.response.headers['x-param-name']?.first, 'hello');
-        expect(success.response.headers['x-param-count']?.first, '42');
-        expect(success.response.headers['x-param-active']?.first, 'true');
-      },
-    );
-  });
+          // Server received all three fields with the correct string values.
+          expect(success.response.headers['x-has-name']?.first, 'true');
+          expect(success.response.headers['x-has-count']?.first, 'true');
+          expect(success.response.headers['x-has-active']?.first, 'true');
+          expect(success.response.headers['x-param-name']?.first, 'hello');
+          expect(success.response.headers['x-param-count']?.first, '42');
+          expect(success.response.headers['x-param-active']?.first, 'true');
+        },
+      );
+    },
+  );
 
   group('OAS 3.1 pipe-delimited encoding', () {
     test('serializes array as single pipe-delimited value', () async {
@@ -92,8 +95,9 @@ void main() {
         // as a separate form field with the same name (repeated fields).
         final formData = success.response.requestOptions.data as FormData;
 
-        final valueEntries =
-            formData.fields.where((e) => e.key == 'values').toList();
+        final valueEntries = formData.fields
+            .where((e) => e.key == 'values')
+            .toList();
         expect(valueEntries, hasLength(3));
         expect(
           valueEntries.map((e) => e.value).toList(),
@@ -312,6 +316,43 @@ void main() {
     });
   });
 
+  group('OAS 3.1 format:byte field', () {
+    test(
+      'sends format:byte as binary part, not a readable text field',
+      () async {
+        final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
+        final form = ByteForm(
+          label: 'test-label',
+          data: TonikFileBytes(fileBytes),
+        );
+
+        final response = await api.postByteField31(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+        final formData = success.response.requestOptions.data as FormData;
+
+        // Both fields go to files.
+        expect(formData.files.any((e) => e.key == 'label'), isTrue);
+        expect(formData.files.any((e) => e.key == 'data'), isTrue);
+
+        // The text label is readable by the server as a form param.
+        expect(success.response.headers['x-has-label']?.first, 'true');
+        expect(
+          success.response.headers['x-param-label']?.first,
+          'test-label',
+        );
+
+        // The format:byte field is sent as application/octet-stream binary —
+        // the server cannot read it as a text form param. If it showed up in
+        // formParams it would mean the old text/plain (StringModel) behavior
+        // was used instead of the correct Base64Model behavior.
+        expect(success.response.headers['x-has-data']?.first, 'false');
+      },
+    );
+  });
+
   group('OAS 3.1 AnyModel multipart JSON encoding', () {
     test(
       'serializes Map object as valid JSON, not Dart toString()',
@@ -319,7 +360,7 @@ void main() {
         // The bug: before the fix, a Map would be serialized as
         // {firstName: John, lastName: Doe} (Dart toString), not
         // {"firstName":"John","lastName":"Doe"} (valid JSON).
-        final form = AnyModelForm(
+        const form = AnyModelForm(
           data: {'firstName': 'John', 'lastName': 'Doe'},
         );
 
@@ -351,7 +392,7 @@ void main() {
     test(
       'serializes primitive integer as JSON number',
       () async {
-        final form = AnyModelForm(data: 42);
+        const form = AnyModelForm(data: 42);
 
         final response = await api.postAnyModel(body: form);
 

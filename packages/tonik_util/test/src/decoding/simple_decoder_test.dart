@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/date.dart';
@@ -456,6 +458,62 @@ void main() {
         } on InvalidTypeException catch (e) {
           expect(e.context, 'User.thumbnail');
         }
+      });
+    });
+
+    group('decodeSimpleBase64', () {
+      test('decodes base64 string to List<int>', () {
+        // "Hello" in base64 is "SGVsbG8="
+        const base64String = 'SGVsbG8=';
+        final result = base64String.decodeSimpleBase64();
+        expect(result, [72, 101, 108, 108, 111]);
+      });
+
+      test('decodes empty base64 string to empty list', () {
+        const emptyBase64 = '';
+        final result = emptyBase64.decodeSimpleBase64();
+        expect(result, <int>[]);
+      });
+
+      test('round-trips with base64 encoding', () {
+        final original = [1, 2, 3, 4, 5];
+        final encoded = base64.encode(original);
+        final decoded = encoded.decodeSimpleBase64();
+        expect(decoded, original);
+      });
+
+      test('throws InvalidTypeException if value is null', () {
+        expect(
+          () => null.decodeSimpleBase64(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('includes context in error messages', () {
+        try {
+          null.decodeSimpleBase64(context: 'User.avatar');
+          fail('Should have thrown');
+        } on InvalidTypeException catch (e) {
+          expect(e.context, 'User.avatar');
+        }
+      });
+    });
+
+    group('decodeSimpleNullableBase64', () {
+      test('decodes base64 string to List<int>', () {
+        const base64String = 'SGVsbG8=';
+        final result = base64String.decodeSimpleNullableBase64();
+        expect(result, [72, 101, 108, 108, 111]);
+      });
+
+      test('returns null for null value', () {
+        final result = null.decodeSimpleNullableBase64();
+        expect(result, isNull);
+      });
+
+      test('returns null for empty string', () {
+        final result = ''.decodeSimpleNullableBase64();
+        expect(result, isNull);
       });
     });
   });

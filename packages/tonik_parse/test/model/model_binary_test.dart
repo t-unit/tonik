@@ -123,12 +123,12 @@ void main() {
       expect(result.context.path, ['components', 'schemas']);
     });
 
-    test('returns StringModel for format: byte', () {
+    test('returns Base64Model for format: byte', () {
       final context = Context.initial().pushAll(['components', 'schemas']);
 
       final result = importer.importSchema(inlineByte, context);
 
-      expect(result, isA<StringModel>());
+      expect(result, isA<Base64Model>());
       expect(result.context.path, ['components', 'schemas']);
     });
 
@@ -264,13 +264,13 @@ void main() {
       expect((fileData as AliasModel).model, isA<BinaryModel>());
     });
 
-    test('creates AliasModel wrapping StringModel for named byte schema', () {
+    test('creates AliasModel wrapping Base64Model for named byte schema', () {
       final base64Data = importer.models.firstWhere(
         (m) => m is NamedModel && m.name == 'Base64Data',
       );
 
       expect(base64Data, isA<AliasModel>());
-      expect((base64Data as AliasModel).model, isA<StringModel>());
+      expect((base64Data as AliasModel).model, isA<Base64Model>());
     });
   });
 

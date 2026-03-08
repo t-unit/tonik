@@ -370,4 +370,41 @@ void main() {
       );
     });
   });
+
+  group('format:byte field (OAS 3.0)', () {
+    test(
+      'sends format:byte as binary part, not a readable text field',
+      () async {
+        final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
+        final form = ByteForm(
+          label: 'test-label',
+          data: TonikFileBytes(fileBytes),
+        );
+
+        final response = await api.postByteField(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+        final formData = success.response.requestOptions.data as FormData;
+
+        // Both fields go to files.
+        expect(formData.files.any((e) => e.key == 'label'), isTrue);
+        expect(formData.files.any((e) => e.key == 'data'), isTrue);
+
+        // The text label is readable by the server as a form param.
+        expect(success.response.headers['x-has-label']?.first, 'true');
+        expect(
+          success.response.headers['x-param-label']?.first,
+          'test-label',
+        );
+
+        // The format:byte field is sent as application/octet-stream binary —
+        // the server cannot read it as a text form param. If it showed up in
+        // formParams it would mean the old text/plain (StringModel) behavior
+        // was used instead of the correct Base64Model behavior.
+        expect(success.response.headers['x-has-data']?.first, 'false');
+      },
+    );
+  });
 }

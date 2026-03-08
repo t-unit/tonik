@@ -115,7 +115,7 @@ Expression _buildFormSerializationExpression(
       allowEmptyLiteral: allowEmptyLiteral,
     ),
 
-    BinaryModel() => throw UnsupportedError(
+    BinaryModel() || Base64Model() => throw UnsupportedError(
       'Form encoding not supported for binary types',
     ),
 

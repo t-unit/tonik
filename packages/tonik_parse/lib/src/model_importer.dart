@@ -397,7 +397,7 @@ class ModelImporter {
       'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.contentEncoding != null =>
         _resolveContentEncodedModel(schema, context),
-      'string' when schema.format == 'byte' => StringModel(context: context),
+      'string' when schema.format == 'byte' => Base64Model(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,
         schema.enumerated!,

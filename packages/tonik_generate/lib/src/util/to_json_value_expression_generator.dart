@@ -80,6 +80,12 @@ Expression _buildSerializationExpression(
       useNullAware: useNullAware,
       forceNonNull: forceNonNullReceiver,
     ),
+    Base64Model() => _callToBytesMethod(
+      receiver,
+      'encodeToBase64String',
+      useNullAware: useNullAware,
+      forceNonNull: forceNonNullReceiver,
+    ),
     DateModel() ||
     EnumModel() ||
     ClassModel() ||
@@ -191,6 +197,7 @@ bool _needsTransformation(Model model) {
     DecimalModel() ||
     UriModel() ||
     BinaryModel() ||
+    Base64Model() ||
     DateModel() => true,
     // Aliases delegate to their underlying model
     AliasModel() => _needsTransformation(model.model),

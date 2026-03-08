@@ -18,6 +18,7 @@ Expression buildUriEncodeExpression(
     DoubleModel() ||
     NumberModel() ||
     BinaryModel() ||
+    Base64Model() ||
     EnumModel() => valueExpression.property('uriEncode').call(
       [],
       {
@@ -77,6 +78,7 @@ Expression _buildListUriEncodeExpression(
     UriModel() ||
     DateModel() ||
     BinaryModel() ||
+    Base64Model() ||
     EnumModel() =>
       valueExpression
           .property('map')
