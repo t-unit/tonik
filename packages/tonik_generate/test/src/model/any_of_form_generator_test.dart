@@ -1337,4 +1337,28 @@ void main() {
       );
     });
   });
+
+  group('BinaryModel field encoding', () {
+    test('throws EncodingException for BinaryModel field in toForm', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'WithBinary',
+        models: {
+          (discriminatorValue: null, model: BinaryModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
+
+      expect(
+        generated,
+        contains(
+          "throw EncodingException('Binary data cannot be form-encoded')",
+        ),
+      );
+    });
+  });
 }

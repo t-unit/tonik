@@ -715,6 +715,16 @@ class OneOfGenerator {
               .code,
           const Code(','),
         ]);
+      } else if (m.model is BinaryModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Binary data cannot be simple-encoded',
+          ).code,
+          const Code(','),
+        ]);
       } else {
         caseCodes.addAll([
           Code.scope(
@@ -839,6 +849,16 @@ class OneOfGenerator {
               ])
               .thrown
               .code,
+          const Code(','),
+        ]);
+      } else if (m.model is BinaryModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Binary data cannot be form-encoded',
+          ).code,
           const Code(','),
         ]);
       } else {
@@ -1171,6 +1191,16 @@ class OneOfGenerator {
               ])
               .thrown
               .code,
+          const Code(','),
+        ]);
+      } else if (m.model is BinaryModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Binary data cannot be label-encoded',
+          ).code,
           const Code(','),
         ]);
       } else {

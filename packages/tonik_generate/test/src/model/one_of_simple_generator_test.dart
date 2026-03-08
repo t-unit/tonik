@@ -574,7 +574,7 @@ void main() {
     );
   });
 
-  group('nullable oneOf with \$Raw-prefixed class name', () {
+  group(r'nullable oneOf with $Raw-prefixed class name', () {
     late OneOfModel model;
 
     setUp(() {
@@ -613,7 +613,7 @@ void main() {
     });
 
     test(
-      'fromSimple throws raw string literal for \$Raw-prefixed class name',
+      r'fromSimple throws raw string literal for $Raw-prefixed class name',
       () {
         final classes = generator.generateClasses(model, r'$RawEntity');
         final baseClass = classes.firstWhere((c) => c.name == r'$RawEntity');
@@ -625,5 +625,36 @@ void main() {
         );
       },
     );
+
+    test('throws EncodingException for BinaryModel variant in toSimple', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'WithBinary',
+        models: {
+          (
+            discriminatorValue: 'binary',
+            model: BinaryModel(context: context),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'WithBinary');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException(\n'Binary data cannot be simple-encoded',\n)",
+          ),
+        ),
+      );
+    });
   });
 }

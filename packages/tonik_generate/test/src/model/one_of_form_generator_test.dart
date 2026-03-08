@@ -581,5 +581,36 @@ void main() {
         );
       },
     );
+
+    test('throws EncodingException for BinaryModel variant in toForm', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'WithBinary',
+        models: {
+          (
+            discriminatorValue: 'binary',
+            model: BinaryModel(context: context),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'WithBinary');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException(\n'Binary data cannot be form-encoded',\n)",
+          ),
+        ),
+      );
+    });
   });
 }

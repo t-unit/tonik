@@ -289,7 +289,13 @@ class AnyOfGenerator {
     final toMethodName = isForm ? 'toForm' : 'toSimple';
     final codes = <Code>[];
 
-    if (fieldModel.encodingShape == EncodingShape.simple) {
+    if (fieldModel is BinaryModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'Binary data cannot be ${isForm ? 'form' : 'simple'}-encoded',
+        ).statement,
+      );
+    } else if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.$toMethodName( '
@@ -415,7 +421,13 @@ class AnyOfGenerator {
   }) {
     final codes = <Code>[];
 
-    if (fieldModel.encodingShape == EncodingShape.simple) {
+    if (fieldModel is BinaryModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'Binary data cannot be label-encoded',
+        ).statement,
+      );
+    } else if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.toLabel( '
