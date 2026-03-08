@@ -117,7 +117,7 @@ Expression _buildListMatrixExpression(
                   {'allowEmpty': allowEmpty},
                 ).code,
             ).closure,
-          ])
+          ], {}, [refer('String', 'dart:core')])
           .property('toList')
           .call([])
           .property('toMatrix')
@@ -156,7 +156,7 @@ Expression _buildListMatrixExpression(
                         )
                         .code,
             ).closure,
-          ])
+          ], {}, [refer('String', 'dart:core')])
           .property('toList')
           .call([])
           .property('toMatrix')
