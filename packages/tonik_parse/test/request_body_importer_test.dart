@@ -1630,19 +1630,57 @@ void main() {
         );
       });
 
-      test('format: byte string property gets text/plain (not binary)', () {
+      test(
+        'format: byte string property gets application/octet-stream',
+        () {
+          final content = importMultipartContent(
+            multipartSpec(
+              properties: {
+                'encoded': {'type': 'string', 'format': 'byte'},
+              },
+            ),
+          );
+
+          final encoding = content.encoding!['encoded']!;
+          expect(encoding.contentType, ContentType.bytes);
+          expect(encoding.rawContentType, 'application/octet-stream');
+        },
+      );
+
+      test('explicit contentType overrides format:byte default', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
-              'encoded': {'type': 'string', 'format': 'byte'},
+              'data': {'type': 'string', 'format': 'byte'},
+            },
+            encoding: {
+              'data': {'contentType': 'text/plain'},
             },
           ),
         );
-
-        final encoding = content.encoding!['encoded']!;
+        final encoding = content.encoding!['data']!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
+
+      test(
+        r'format:byte via $ref property schema gets application/octet-stream',
+        () {
+          final content = importMultipartContent(
+            multipartSpec(
+              properties: {
+                'data': {r'$ref': '#/components/schemas/ByteData'},
+              },
+              schemas: {
+                'ByteData': {'type': 'string', 'format': 'byte'},
+              },
+            ),
+          );
+          final encoding = content.encoding!['data']!;
+          expect(encoding.contentType, ContentType.bytes);
+          expect(encoding.rawContentType, 'application/octet-stream');
+        },
+      );
 
       test('form-urlencoded body does not get default encoding populated', () {
         final spec = {
