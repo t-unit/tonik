@@ -2521,60 +2521,344 @@ void main() {
       );
     });
 
-    test('throws UnsupportedError for deepObject style', () {
-      final innerClass = ClassModel(
-        name: 'Address',
-        isDeprecated: false,
-        properties: [],
-        context: testContext,
-      );
+    test(
+      'generates deepObject-encoded file part for required ClassModel property',
+      () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+        );
 
-      final model = ClassModel(
-        name: 'PersonForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'address',
-            model: innerClass,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: innerClass,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const MultipartPropertyEncoding(
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            style: MultipartEncodingStyle.deepObject,
-            explode: true,
-            allowReserved: false,
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
 
-      expect(
-        () => buildMultipartBodyStatements(
+        final result = buildMultipartBodyStatements(
           content,
           'body',
           nameManager,
           'test_package',
-        ),
-        throwsA(
-          isA<UnsupportedError>().having(
-            (e) => e.message,
-            'message',
-            contains('deepObject'),
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              for (final entry in body.address
+                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
+                formData.fields.add(MapEntry(entry.name, entry.value));
+              }
+            }
+          '''),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
+
+    test(
+      'generates deepObject-encoded file part for optional ClassModel property',
+      () {
+        final innerClass = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: [],
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: innerClass,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              if (body.address != null) {
+                for (final entry in body.address!
+                    .toDeepObject(r'address', explode: true, allowEmpty: true)) {
+                  formData.fields.add(MapEntry(entry.name, entry.value));
+                }
+              }
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates deepObject-encoded file part for AllOfModel property',
+      () {
+        final allOfModel = AllOfModel(
+          name: 'CombinedAddress',
+          isDeprecated: false,
+          models: {
+            StringModel(context: testContext),
+          },
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: allOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              for (final entry in body.address
+                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
+                formData.fields.add(MapEntry(entry.name, entry.value));
+              }
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates deepObject-encoded file part for OneOfModel property',
+      () {
+        final oneOfModel = OneOfModel(
+          name: 'AddressVariant',
+          isDeprecated: false,
+          models: {
+            (
+              discriminatorValue: null,
+              model: StringModel(context: testContext),
+            ),
+          },
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: oneOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              for (final entry in body.address
+                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
+                formData.fields.add(MapEntry(entry.name, entry.value));
+              }
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates deepObject-encoded file part for AnyOfModel property',
+      () {
+        final anyOfModel = AnyOfModel(
+          name: 'AddressMixed',
+          isDeprecated: false,
+          models: {
+            (
+              discriminatorValue: null,
+              model: StringModel(context: testContext),
+            ),
+          },
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'PersonForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'address',
+              model: anyOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'address': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+            void test() {
+              final formData = FormData();
+              for (final entry in body.address
+                  .toDeepObject(r'address', explode: true, allowEmpty: true)) {
+                formData.fields.add(MapEntry(entry.name, entry.value));
+              }
+            }
+          '''),
+          ),
+        );
+      },
+    );
 
     test('resolves AliasModel wrapping ClassModel for complex property', () {
       final innerClass = ClassModel(

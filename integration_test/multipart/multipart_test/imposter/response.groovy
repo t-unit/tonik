@@ -150,6 +150,65 @@ switch (path) {
 
     // OAS 3.1 endpoints:
 
+    case '/multipart31/deep-object':
+        // deepObject sends separate form fields with bracket-notation names:
+        //   name="address[city]" value="Berlin"
+        //   name="address[zip]"  value="10115"
+        def addrCity = formParams['address[city]'] ?: ''
+        def addrZip = formParams['address[zip]'] ?: ''
+        def hasAddress = (formParams.containsKey('address[city]') || formParams.containsKey('address[zip]')).toString()
+        def addressValue = "address[city]=${addrCity}&address[zip]=${addrZip}"
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Address', hasAddress
+            withHeader 'X-Address-Has-City', formParams.containsKey('address[city]').toString()
+            withHeader 'X-Address-Has-Zip', formParams.containsKey('address[zip]').toString()
+            withHeader 'X-Address-Value', addressValue
+            withContent '{"success":true,"message":"deep-object received"}'
+        }
+        break
+
+    case '/multipart31/deep-object-types':
+        // deepObject sends separate form fields with bracket-notation names:
+        //   name="profile[name]" value="Alice"
+        //   name="profile[age]"  value="30"
+        //   name="profile[active]" value="true"
+        def profName = formParams['profile[name]'] ?: ''
+        def profAge = formParams['profile[age]'] ?: ''
+        def profActive = formParams['profile[active]'] ?: ''
+        def hasProfile = (formParams.containsKey('profile[name]') || formParams.containsKey('profile[age]') || formParams.containsKey('profile[active]')).toString()
+        def profileValue = "profile[name]=${profName}&profile[age]=${profAge}&profile[active]=${profActive}"
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Profile', hasProfile
+            withHeader 'X-Profile-Has-Name', formParams.containsKey('profile[name]').toString()
+            withHeader 'X-Profile-Has-Age', formParams.containsKey('profile[age]').toString()
+            withHeader 'X-Profile-Has-Active', formParams.containsKey('profile[active]').toString()
+            withHeader 'X-Profile-Value', profileValue
+            withContent '{"success":true,"message":"deep-object-types received"}'
+        }
+        break
+
+    case '/multipart31/deep-object-optional':
+        // deepObject sends separate form fields with bracket-notation names.
+        // shipping is required, billing is optional.
+        def shipCity = formParams['shipping[city]'] ?: ''
+        def shipZip = formParams['shipping[zip]'] ?: ''
+        def hasShipping = (formParams.containsKey('shipping[city]') || formParams.containsKey('shipping[zip]')).toString()
+        def hasBilling = (formParams.containsKey('billing[city]') || formParams.containsKey('billing[zip]')).toString()
+        def shippingValue = "shipping[city]=${shipCity}&shipping[zip]=${shipZip}"
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Shipping', hasShipping
+            withHeader 'X-Has-Billing', hasBilling
+            withHeader 'X-Shipping-Value', shippingValue
+            withContent '{"success":true,"message":"deep-object-optional received"}'
+        }
+        break
+
     case '/multipart31/url-encoded-object':
         // The address field is serialized as URL-encoded key-value pairs.
         // formParams sees the raw part content: firstName=John&lastName=Doe

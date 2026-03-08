@@ -985,6 +985,53 @@ Expression _buildEncoderExpr(
   return listExpr.property(encoderMethod).call([], namedArgs);
 }
 
+Code _buildDeepObjectFileAddition(
+  String rawName,
+  String accessor, {
+  String? headerVarName,
+}) {
+  final iterableExpr = refer(accessor).property('toDeepObject').call(
+    [literalString(rawName, raw: true)],
+    {'explode': literalTrue, 'allowEmpty': literalTrue},
+  );
+
+  if (headerVarName != null) {
+    // With per-part headers: each bracket-notation entry becomes a file part.
+    final fileExpr = refer('MultipartFile', 'package:dio/dio.dart')
+        .property('fromString')
+        .call(
+          [refer('entry').property('value')],
+          {'headers': refer(headerVarName)},
+        );
+    return Block.of([
+      const Code('for (final entry in '),
+      iterableExpr.code,
+      const Code(') {'),
+      refer('formData').property('files').property('add').call([
+        refer('MapEntry', 'dart:core').call([
+          refer('entry').property('name'),
+          fileExpr,
+        ]),
+      ]).statement,
+      const Code('}'),
+    ]);
+  }
+
+  // Without headers: each bracket-notation entry becomes a plain form field.
+  return Block.of([
+    const Code('for (final entry in '),
+    iterableExpr.code,
+    const Code(') {'),
+    refer('formData').property('fields').property('add').call([
+      refer('MapEntry', 'dart:core').call([
+        refer('entry').property('name'),
+        refer('entry').property('value'),
+      ]),
+    ]).statement,
+    const Code('}'),
+  ]);
+}
+
 Code _buildComplexObjectFileAddition(
   String rawName,
   String accessor, {
@@ -994,9 +1041,10 @@ Code _buildComplexObjectFileAddition(
   final propertyEncoding = encoding?[rawName];
 
   if (propertyEncoding?.style == MultipartEncodingStyle.deepObject) {
-    throw UnsupportedError(
-      'deepObject style is not supported for complex object '
-      'multipart properties (property: $rawName).',
+    return _buildDeepObjectFileAddition(
+      rawName,
+      accessor,
+      headerVarName: headerVarName,
     );
   }
 

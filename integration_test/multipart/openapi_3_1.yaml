@@ -87,6 +87,92 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/deep-object:
+    post:
+      operationId: postDeepObject
+      tags:
+        - multipart31
+      summary: Post a complex object as a deepObject-encoded multipart part
+      description: >-
+        Verifies OAS 3.1 deepObject style on multipart encoding.
+        When style: deepObject is set on an object property, it is serialized
+        using bracket notation (address[city]=Berlin&address[zip]=10115) with
+        Content-Type: application/x-www-form-urlencoded.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeepObjectForm'
+            encoding:
+              address:
+                style: deepObject
+                explode: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/deep-object-types:
+    post:
+      operationId: postDeepObjectTypes
+      tags:
+        - multipart31
+      summary: Post an object with mixed scalar types using deepObject encoding
+      description: >-
+        Verifies deepObject encoding handles string, integer, and boolean
+        property types correctly, including URL-encoding of special characters.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeepObjectTypesForm'
+            encoding:
+              profile:
+                style: deepObject
+                explode: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/deep-object-optional:
+    post:
+      operationId: postDeepObjectOptional
+      tags:
+        - multipart31
+      summary: Post a form with required and optional deepObject fields
+      description: >-
+        Verifies that optional deepObject fields are omitted when null and
+        included with proper bracket notation when provided.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeepObjectOptionalForm'
+            encoding:
+              shipping:
+                style: deepObject
+                explode: true
+              billing:
+                style: deepObject
+                explode: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart31/url-encoded-object:
     post:
       operationId: postUrlEncodedObject
@@ -154,6 +240,57 @@ components:
           type: string
           format: binary
           description: A binary file upload
+
+    DeepObjectProfile:
+      type: object
+      required:
+        - name
+        - age
+        - active
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        active:
+          type: boolean
+
+    DeepObjectTypesForm:
+      type: object
+      required:
+        - profile
+      properties:
+        profile:
+          $ref: '#/components/schemas/DeepObjectProfile'
+
+    DeepObjectOptionalForm:
+      type: object
+      required:
+        - shipping
+      properties:
+        shipping:
+          $ref: '#/components/schemas/DeepObjectAddress'
+        billing:
+          $ref: '#/components/schemas/DeepObjectAddress'
+
+    DeepObjectForm:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          $ref: '#/components/schemas/DeepObjectAddress'
+
+    DeepObjectAddress:
+      type: object
+      required:
+        - city
+        - zip
+      properties:
+        city:
+          type: string
+        zip:
+          type: string
 
     GenericResponse:
       type: object
