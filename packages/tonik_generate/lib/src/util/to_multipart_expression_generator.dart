@@ -163,11 +163,10 @@ Code? _buildFieldCode(
       rawContentType: effectiveRawContentType,
       headerVarName: headerVarName,
     ),
-    AnyModel() => _buildPrimitiveFileAddition(
+    AnyModel() => _buildAnyModelFileAddition(
       rawName,
       accessor,
-      rawContentType: effectiveRawContentType,
-      serializerMethod: 'toString',
+      rawContentType: rawContentType ?? 'application/json',
       headerVarName: headerVarName,
     ),
     NeverModel() => generateEncodingExceptionExpression(
@@ -463,6 +462,42 @@ Code _buildJsonEncodeFileAddition(
       ).property('fromString').call(
         [
           refer('jsonEncode', 'dart:convert').call([refer(accessor)]),
+        ],
+        namedArgs,
+      ),
+    ]),
+  ]).statement;
+}
+
+/// Builds an AnyModel field as MultipartFile.fromString using [encodeAnyToJson]
+/// for runtime-safe serialization of unknown types.
+Code _buildAnyModelFileAddition(
+  String rawName,
+  String accessor, {
+  required String rawContentType,
+  String? headerVarName,
+}) {
+  final namedArgs = <String, Expression>{
+    'contentType': refer(
+      'DioMediaType',
+      'package:dio/dio.dart',
+    ).property('parse').call([literalString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
+  return refer('formData').property('files').property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      literalString(rawName),
+      refer(
+        'MultipartFile',
+        'package:dio/dio.dart',
+      ).property('fromString').call(
+        [
+          refer('jsonEncode', 'dart:convert').call([
+            refer(
+              'encodeAnyToJson',
+              'package:tonik_util/tonik_util.dart',
+            ).call([refer(accessor)]),
+          ]),
         ],
         namedArgs,
       ),

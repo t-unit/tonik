@@ -528,7 +528,7 @@ void main() {
       );
     });
 
-    test('serializes AnyModel property via toString()', () {
+    test('serializes AnyModel property via jsonEncode()', () {
       final model = ClassModel(
         name: 'TestForm',
         isDeprecated: false,
@@ -573,7 +573,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry('data', MultipartFile.fromString(body.data.toString(), contentType: DioMediaType.parse('text/plain'))));
+            formData.files.add(MapEntry('data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -1523,7 +1523,7 @@ void main() {
       );
     });
 
-    test('AnyModel falls back to text/plain when rawContentType is null', () {
+    test('AnyModel falls back to application/json when rawContentType is null', () {
       final model = ClassModel(
         name: 'TestForm',
         isDeprecated: false,
@@ -1565,7 +1565,7 @@ void main() {
           format('''
           void test() {
             final formData = FormData();
-            formData.files.add(MapEntry('value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse('text/plain'))));
+            formData.files.add(MapEntry('value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -6980,7 +6980,7 @@ void main() {
             dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
             formData.files.add(MapEntry(
               'data',
-              MultipartFile.fromString(body.data.toString(), contentType: DioMediaType.parse('text/plain'), headers: dataHeaders),
+              MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'), headers: dataHeaders),
             ));
           }
         '''),

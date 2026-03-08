@@ -311,4 +311,61 @@ void main() {
       expect(success.response.headers['x-param-name']?.first, 'test-31');
     });
   });
+
+  group('OAS 3.1 AnyModel multipart JSON encoding', () {
+    test(
+      'serializes Map object as valid JSON, not Dart toString()',
+      () async {
+        // The bug: before the fix, a Map would be serialized as
+        // {firstName: John, lastName: Doe} (Dart toString), not
+        // {"firstName":"John","lastName":"Doe"} (valid JSON).
+        final form = AnyModelForm(
+          data: {'firstName': 'John', 'lastName': 'Doe'},
+        );
+
+        final response = await api.postAnyModel(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+        final formData = success.response.requestOptions.data as FormData;
+
+        // The data field goes to files (JSON-encoded as application/json).
+        expect(formData.files.any((e) => e.key == 'data'), isTrue);
+
+        // Server received the field.
+        expect(success.response.headers['x-has-data']?.first, 'true');
+
+        // The value must be valid JSON (starts with '{', contains quoted keys).
+        expect(
+          success.response.headers['x-data-is-valid-json']?.first,
+          'true',
+        );
+        expect(
+          success.response.headers['x-data-contains-firstname']?.first,
+          'true',
+        );
+      },
+    );
+
+    test(
+      'serializes primitive integer as JSON number',
+      () async {
+        final form = AnyModelForm(data: 42);
+
+        final response = await api.postAnyModel(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+
+        expect(success.response.headers['x-has-data']?.first, 'true');
+        expect(success.response.headers['x-data-value']?.first, '42');
+        expect(
+          success.response.headers['x-data-is-valid-json']?.first,
+          'true',
+        );
+      },
+    );
+  });
 }

@@ -206,6 +206,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/any-model:
+    post:
+      operationId: postAnyModel
+      tags:
+        - multipart31
+      summary: Post AnyModel field in multipart — verifies JSON encoding
+      description: >-
+        Verifies that AnyModel fields (from boolean schema `true`) are serialized
+        via encodeAnyToJson + jsonEncode rather than toString(). Passing a Map
+        object must produce valid JSON, not a Dart Map literal like {key: value}.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AnyModelForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart31/url-encoded-object:
     post:
       operationId: postUrlEncodedObject
@@ -368,3 +392,13 @@ components:
           type: string
         lastName:
           type: string
+
+    AnyValue: true
+
+    AnyModelForm:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/AnyValue'

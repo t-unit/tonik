@@ -261,6 +261,25 @@ switch (path) {
         }
         break
 
+    case '/multipart31/any-model':
+        // The data field should be JSON-encoded (not toString()).
+        // Passing a Map like {firstName: John} must produce {"firstName":"John"},
+        // not the Dart literal {firstName: John}.
+        def dataValue = formParams['data'] ?: ''
+        def isValidJson = dataValue.startsWith('{') || dataValue.startsWith('[') ||
+                          dataValue ==~ /^-?\d+(\.\d+)?$/ || dataValue ==~ /^".*"$/ ||
+                          dataValue == 'true' || dataValue == 'false' || dataValue == 'null'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Data', formParams.containsKey('data').toString()
+            withHeader 'X-Data-Value', dataValue
+            withHeader 'X-Data-Is-Valid-Json', isValidJson.toString()
+            withHeader 'X-Data-Contains-FirstName', dataValue.contains('"firstName"').toString()
+            withContent '{"success":true,"message":"any-model received"}'
+        }
+        break
+
     case '/multipart31/basic':
         respond {
             withStatusCode 200

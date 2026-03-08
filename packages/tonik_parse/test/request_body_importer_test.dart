@@ -1206,7 +1206,7 @@ void main() {
         expect(encoding.rawContentType, 'application/json');
       });
 
-      test('AnyModel property gets application/octet-stream default', () {
+      test('AnyModel property gets application/json default', () {
         // AnyModel is created from boolean schemas (true/false), which are
         // OAS 3.1 only (JSON Schema 2020-12). In OAS 3.0, {} becomes a
         // ClassModel, not AnyModel, so AnyModel in 3.0 is unreachable.
@@ -1222,8 +1222,8 @@ void main() {
         );
 
         final encoding = content.encoding!['data']!;
-        expect(encoding.contentType, ContentType.bytes);
-        expect(encoding.rawContentType, 'application/octet-stream');
+        expect(encoding.contentType, ContentType.json);
+        expect(encoding.rawContentType, 'application/json');
       });
 
       test('array of objects gets application/json default', () {
@@ -1285,7 +1285,7 @@ void main() {
         expect(encoding.rawContentType, 'text/plain');
       });
 
-      test('array of AnyModel gets application/octet-stream default', () {
+      test('array of AnyModel gets application/json default', () {
         // See AnyModel test above — AnyModel is OAS 3.1 only.
         final content = importMultipartContent(
           multipartSpec(
@@ -1302,8 +1302,8 @@ void main() {
         );
 
         final encoding = content.encoding!['values']!;
-        expect(encoding.contentType, ContentType.bytes);
-        expect(encoding.rawContentType, 'application/octet-stream');
+        expect(encoding.contentType, ContentType.json);
+        expect(encoding.rawContentType, 'application/json');
       });
 
       test('AliasModel wrapping string gets text/plain default', () {

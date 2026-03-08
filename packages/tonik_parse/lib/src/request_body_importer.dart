@@ -277,7 +277,7 @@ class RequestBodyImporter {
       core.OneOfModel() => core.ContentType.json,
       core.AnyOfModel() => core.ContentType.json,
       core.BinaryModel() => core.ContentType.bytes,
-      core.AnyModel() => core.ContentType.bytes,
+      core.AnyModel() => core.ContentType.json,
       _ => core.ContentType.text,
     };
   }
@@ -291,7 +291,7 @@ class RequestBodyImporter {
       core.OneOfModel() => 'application/json',
       core.AnyOfModel() => 'application/json',
       core.BinaryModel() => 'application/octet-stream',
-      core.AnyModel() => 'application/octet-stream',
+      core.AnyModel() => 'application/json',
       _ => 'text/plain',
     };
   }
