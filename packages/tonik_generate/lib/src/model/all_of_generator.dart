@@ -47,11 +47,12 @@ class AllOfGenerator {
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(m, nameManager, package);
+      final isNullable = _isNullableViaTypedef(m);
       return Property(
         name: typeRef.symbol,
         model: m,
-        isRequired: true,
-        isNullable: false,
+        isRequired: !isNullable,
+        isNullable: isNullable,
         isDeprecated: false,
       );
     }).toList();
@@ -98,11 +99,12 @@ class AllOfGenerator {
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(m, nameManager, package);
+      final isNullable = _isNullableViaTypedef(m);
       return Property(
         name: typeRef.symbol,
         model: m,
-        isRequired: true,
-        isNullable: false,
+        isRequired: !isNullable,
+        isNullable: isNullable,
         isDeprecated: false,
       );
     }).toList();
@@ -390,11 +392,30 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        bodyCode.add(
-          Code('shapes.add(${prop.normalizedName}.currentEncodingShape);'),
-        );
+        if (_isNullableViaTypedef(prop.property.model)) {
+          bodyCode.add(
+            Code(
+              'if (${prop.normalizedName} != null) '
+              'shapes.add(${prop.normalizedName}!.currentEncodingShape);',
+            ),
+          );
+        } else {
+          bodyCode.add(
+            Code('shapes.add(${prop.normalizedName}.currentEncodingShape);'),
+          );
+        }
       }
 
+      final hasNullableModels = normalizedProperties.any(
+        (prop) => _isNullableViaTypedef(prop.property.model),
+      );
+      if (hasNullableModels) {
+        bodyCode.addAll([
+          const Code('if (shapes.isEmpty) return '),
+          encodingShapeType.property('complex').code,
+          const Code(';'),
+        ]);
+      }
       bodyCode.addAll([
         const Code('if (shapes.length > 1) return '),
         encodingShapeType.property('mixed').statement,
@@ -555,11 +576,19 @@ class AllOfGenerator {
       for (final normalized in normalizedProperties) {
         final fieldName = normalized.normalizedName;
         final fieldNameJson = '${fieldName}Json';
+        final isNullable = _isNullableViaTypedef(normalized.property.model);
 
+        if (isNullable) {
+          bodyCode.add(Code('if ($fieldName != null) {'));
+        }
         bodyCode.addAll([
           Code('final $fieldNameJson = '),
-          refer(fieldName).code,
-          const Code('.toJson();'),
+          if (isNullable)
+            Code('$fieldName!.toJson();')
+          else ...[
+            refer(fieldName).code,
+            const Code('.toJson();'),
+          ],
           const Code('if ('),
           refer(fieldNameJson).code,
           const Code(' is! '),
@@ -574,6 +603,9 @@ class AllOfGenerator {
           refer(fieldNameJson).code,
           const Code(');'),
         ]);
+        if (isNullable) {
+          bodyCode.add(const Code('}'));
+        }
       }
 
       bodyCode.add(const Code('return map;'));
@@ -635,11 +667,19 @@ class AllOfGenerator {
         for (final normalized in normalizedProperties) {
           final fieldName = normalized.normalizedName;
           final fieldNameJson = '${fieldName}Json';
+          final isNullable = _isNullableViaTypedef(normalized.property.model);
 
+          if (isNullable) {
+            mapParts.add(Code('if ($fieldName != null) {'));
+          }
           mapParts.addAll([
             Code('final $fieldNameJson = '),
-            refer(fieldName).code,
-            const Code('.toJson();'),
+            if (isNullable)
+              Code('$fieldName!.toJson();')
+            else ...[
+              refer(fieldName).code,
+              const Code('.toJson();'),
+            ],
             const Code('if ('),
             refer(fieldNameJson).code,
             const Code(' is! '),
@@ -654,6 +694,9 @@ class AllOfGenerator {
             refer(fieldNameJson).code,
             const Code(');'),
           ]);
+          if (isNullable) {
+            mapParts.add(const Code('}'));
+          }
         }
 
         mapParts.add(const Code('return map;'));
@@ -825,17 +868,38 @@ class AllOfGenerator {
     ];
 
     for (final normalized in normalizedProperties) {
-      propertyMergingLines.add(
-        refer('mergedProperties').property('addAll').call([
-          refer(normalized.normalizedName).property('parameterProperties').call(
-            [],
-            {
-              'allowEmpty': refer('allowEmpty'),
-              'allowLists': refer('allowLists'),
-            },
-          ),
-        ]).statement,
-      );
+      final isNullable = _isNullableViaTypedef(normalized.property.model);
+      if (isNullable) {
+        propertyMergingLines.addAll([
+          Code('if (${normalized.normalizedName} != null) {'),
+          refer('mergedProperties').property('addAll').call([
+            refer(normalized.normalizedName).nullChecked.property(
+              'parameterProperties',
+            ).call(
+              [],
+              {
+                'allowEmpty': refer('allowEmpty'),
+                'allowLists': refer('allowLists'),
+              },
+            ),
+          ]).statement,
+          const Code('}'),
+        ]);
+      } else {
+        propertyMergingLines.add(
+          refer('mergedProperties').property('addAll').call([
+            refer(normalized.normalizedName).property(
+              'parameterProperties',
+            ).call(
+              [],
+              {
+                'allowEmpty': refer('allowEmpty'),
+                'allowLists': refer('allowLists'),
+              },
+            ),
+          ]).statement,
+        );
+      }
     }
 
     propertyMergingLines.add(
@@ -1061,6 +1125,10 @@ class AllOfGenerator {
     }
 
     final primaryField = normalizedProperties.first;
+    final primarySimpleReceiver =
+        _isNullableViaTypedef(primaryField.property.model)
+            ? refer(primaryField.normalizedName).nullChecked
+            : refer(primaryField.normalizedName);
 
     return Method(
       (b) => b
@@ -1070,7 +1138,7 @@ class AllOfGenerator {
         ..optionalParameters.addAll(buildEncodingParameters())
         ..lambda = false
         ..body = Block.of([
-          refer(primaryField.normalizedName)
+          primarySimpleReceiver
               .property('toSimple')
               .call([], {
                 'explode': refer('explode'),
@@ -1127,10 +1195,14 @@ class AllOfGenerator {
 
         // Call toForm on each property and collect results.
         for (final prop in normalizedProperties) {
+          final isNullable = _isNullableViaTypedef(prop.property.model);
+          final receiver = isNullable
+              ? refer(prop.normalizedName).nullChecked
+              : refer(prop.normalizedName);
           bodyCode.addAll([
             declareFinal('${prop.normalizedName}Form')
                 .assign(
-                  refer(prop.normalizedName).property('toForm').call([], {
+                  receiver.property('toForm').call([], {
                     'explode': refer('explode'),
                     'allowEmpty': refer('allowEmpty'),
                     'useQueryComponent': refer('useQueryComponent'),
@@ -1189,12 +1261,22 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        bodyCode.add(
-          Code(
-            'map.addAll(${prop.normalizedName} '
-            '.parameterProperties(allowEmpty: allowEmpty));',
-          ),
-        );
+        if (_isNullableViaTypedef(prop.property.model)) {
+          bodyCode.add(
+            Code(
+              'if (${prop.normalizedName} != null) '
+              'map.addAll(${prop.normalizedName}! '
+              '.parameterProperties(allowEmpty: allowEmpty));',
+            ),
+          );
+        } else {
+          bodyCode.add(
+            Code(
+              'map.addAll(${prop.normalizedName} '
+              '.parameterProperties(allowEmpty: allowEmpty));',
+            ),
+          );
+        }
       }
 
       bodyCode.addAll([
@@ -1249,8 +1331,12 @@ class AllOfGenerator {
       }
 
       final primaryField = normalizedProperties.first;
+      final primaryFormRtReceiver =
+          _isNullableViaTypedef(primaryField.property.model)
+              ? refer(primaryField.normalizedName).nullChecked
+              : refer(primaryField.normalizedName);
       validationCode.addAll([
-        refer(primaryField.normalizedName)
+        primaryFormRtReceiver
             .property('toForm')
             .call([], {
               'explode': refer('explode'),
@@ -1412,12 +1498,22 @@ class AllOfGenerator {
       ]);
 
       for (final prop in normalizedProperties) {
-        bodyCode.add(
-          Code(
-            'map.addAll(${prop.normalizedName} '
-            '.parameterProperties(allowEmpty: allowEmpty));',
-          ),
-        );
+        if (_isNullableViaTypedef(prop.property.model)) {
+          bodyCode.add(
+            Code(
+              'if (${prop.normalizedName} != null) '
+              'map.addAll(${prop.normalizedName}! '
+              '.parameterProperties(allowEmpty: allowEmpty));',
+            ),
+          );
+        } else {
+          bodyCode.add(
+            Code(
+              'map.addAll(${prop.normalizedName} '
+              '.parameterProperties(allowEmpty: allowEmpty));',
+            ),
+          );
+        }
       }
 
       bodyCode.addAll([
@@ -1451,6 +1547,10 @@ class AllOfGenerator {
     }
 
     final primaryField = normalizedProperties.first;
+    final primaryFormReceiver =
+        _isNullableViaTypedef(primaryField.property.model)
+            ? refer(primaryField.normalizedName).nullChecked
+            : refer(primaryField.normalizedName);
 
     return Method(
       (b) => b
@@ -1460,7 +1560,7 @@ class AllOfGenerator {
         ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = Block.of([
-          refer(primaryField.normalizedName)
+          primaryFormReceiver
               .property('toForm')
               .call([], {
                 'explode': refer('explode'),
@@ -1549,8 +1649,12 @@ class AllOfGenerator {
       }
 
       final primaryField = normalizedProperties.first;
+      final primaryLabelRtReceiver =
+          _isNullableViaTypedef(primaryField.property.model)
+              ? refer(primaryField.normalizedName).nullChecked
+              : refer(primaryField.normalizedName);
       validationCode.addAll([
-        refer(primaryField.normalizedName)
+        primaryLabelRtReceiver
             .property('toLabel')
             .call([], {
               'explode': refer('explode'),
@@ -1676,6 +1780,10 @@ class AllOfGenerator {
     }
 
     final primaryField = normalizedProperties.first;
+    final primaryLabelReceiver =
+        _isNullableViaTypedef(primaryField.property.model)
+            ? refer(primaryField.normalizedName).nullChecked
+            : refer(primaryField.normalizedName);
 
     return Method(
       (b) => b
@@ -1684,7 +1792,7 @@ class AllOfGenerator {
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
         ..lambda = false
-        ..body = refer(primaryField.normalizedName)
+        ..body = primaryLabelReceiver
             .property('toLabel')
             .call([], {
               'explode': refer('explode'),
@@ -1723,16 +1831,29 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        bodyCode.add(
-          refer('mergedProperties').property('addAll').call([
-            refer(prop.normalizedName).property('parameterProperties').call(
-              [],
-              {
-                'allowEmpty': refer('allowEmpty'),
-              },
-            ),
-          ]).statement,
-        );
+        final isNullable = _isNullableViaTypedef(prop.property.model);
+        if (isNullable) {
+          bodyCode.addAll([
+            Code('if (${prop.normalizedName} != null) {'),
+            refer('mergedProperties').property('addAll').call([
+              refer(prop.normalizedName).nullChecked.property(
+                'parameterProperties',
+              ).call([], {'allowEmpty': refer('allowEmpty')}),
+            ]).statement,
+            const Code('}'),
+          ]);
+        } else {
+          bodyCode.add(
+            refer('mergedProperties').property('addAll').call([
+              refer(prop.normalizedName).property('parameterProperties').call(
+                [],
+                {
+                  'allowEmpty': refer('allowEmpty'),
+                },
+              ),
+            ]).statement,
+          );
+        }
       }
 
       bodyCode.addAll([
@@ -1856,15 +1977,28 @@ class AllOfGenerator {
       ];
 
       for (final normalized in normalizedProperties) {
-        propertyMergingLines.add(
-          refer('mergedProperties').property('addAll').call([
-            refer(
-              normalized.normalizedName,
-            ).property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }),
-          ]).statement,
-        );
+        final isNullable = _isNullableViaTypedef(normalized.property.model);
+        if (isNullable) {
+          propertyMergingLines.addAll([
+            Code('if (${normalized.normalizedName} != null) {'),
+            refer('mergedProperties').property('addAll').call([
+              refer(normalized.normalizedName).nullChecked.property(
+                'parameterProperties',
+              ).call([], {'allowEmpty': refer('allowEmpty')}),
+            ]).statement,
+            const Code('}'),
+          ]);
+        } else {
+          propertyMergingLines.add(
+            refer('mergedProperties').property('addAll').call([
+              refer(
+                normalized.normalizedName,
+              ).property('parameterProperties').call([], {
+                'allowEmpty': refer('allowEmpty'),
+              }),
+            ]).statement,
+          );
+        }
       }
 
       propertyMergingLines.add(
@@ -2010,8 +2144,11 @@ class AllOfGenerator {
               prop.property.model.encodingShape == EncodingShape.mixed,
           orElse: () => normalizedProperties.first,
         );
+        final receiver = _isNullableViaTypedef(simpleProp.property.model)
+            ? refer(simpleProp.normalizedName).nullChecked
+            : refer(simpleProp.normalizedName);
         bodyCode.add(
-          refer(simpleProp.normalizedName)
+          receiver
               .property('uriEncode')
               .call([], {
                 'allowEmpty': refer('allowEmpty'),
@@ -2120,10 +2257,14 @@ class AllOfGenerator {
     ];
 
     for (final prop in normalizedProperties) {
+      final isNullable = _isNullableViaTypedef(prop.property.model);
+      final receiver = isNullable
+          ? refer(prop.normalizedName).nullChecked
+          : refer(prop.normalizedName);
       valueCollectionCode.addAll([
         declareFinal('${prop.normalizedName}Encoded')
             .assign(
-              refer(prop.normalizedName).property('uriEncode').call([], {
+              receiver.property('uriEncode').call([], {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
               }),
@@ -2202,4 +2343,18 @@ class AllOfGenerator {
       }).toList(),
     );
   }
+
+  /// Returns true when [m] produces a nullable Dart field type via the
+  /// `typedef X = $RawX?` pattern.
+  ///
+  /// [ClassModel] and composite models (allOf/anyOf/oneOf) use this pattern
+  /// when they are nullable, so their field types are effectively nullable even
+  /// though the [TypeReference] symbol has `isNullable: false`.
+  static bool _isNullableViaTypedef(Model m) => switch (m) {
+    ClassModel(:final isNullable) => isNullable,
+    AllOfModel(:final isNullable) => isNullable,
+    OneOfModel(:final isNullable) => isNullable,
+    AnyOfModel(:final isNullable) => isNullable,
+    _ => false,
+  };
 }

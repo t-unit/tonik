@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 Expression buildMatrixParameterExpression(
   Expression valueExpression,
@@ -51,6 +52,9 @@ Expression buildMatrixParameterExpression(
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
+    ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be matrix-encoded',
     ),
     _ => throw UnimplementedError(
       'Unsupported model type for matrix encoding: $model',
@@ -174,6 +178,9 @@ Expression _buildListMatrixExpression(
               'allowEmpty': allowEmpty,
             },
           ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be matrix-encoded',
+    ),
     _ => throw UnimplementedError(
       'Unsupported list content type for matrix encoding: $contentModel',
     ),

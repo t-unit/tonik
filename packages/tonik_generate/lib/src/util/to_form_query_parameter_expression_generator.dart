@@ -21,6 +21,14 @@ List<Code> buildToFormQueryParameterCode(
     ];
   }
 
+  if (model is BinaryModel) {
+    return [
+      generateEncodingExceptionExpression(
+        'Binary data cannot be form-encoded',
+      ).statement,
+    ];
+  }
+
   if (model is AnyModel) {
     return [
       const Code('entries.add(('),
@@ -182,6 +190,9 @@ String? _getFormSerializationSuffix(
 
     AnyModel() => '?.toString() ?? ""',
     NeverModel() => null,
+    BinaryModel() => throw UnimplementedError(
+      'BinaryModel is not supported for form query parameter encoding',
+    ),
 
     _ => throw UnimplementedError(
       'Unsupported model type for form encoding: $model',
@@ -234,6 +245,11 @@ String? _handleListExpression(
       contentModel.model,
       explode: explode,
       allowEmpty: allowEmpty,
+    ),
+
+    BinaryModel() => throw UnimplementedError(
+      'BinaryModel is not supported as list content for form query '
+      'parameter encoding',
     ),
 
     _ => throw UnimplementedError(

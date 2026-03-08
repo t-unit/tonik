@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 Expression buildSimpleParameterExpression(
   Expression valueExpression,
@@ -48,6 +49,9 @@ Expression buildSimpleParameterExpression(
           'allowEmpty': allowEmpty,
         },
       ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be simple-encoded',
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for simple encoding: $model',
     ),
@@ -142,6 +146,9 @@ Expression _buildListSimpleExpression(
         'explode': explode,
         'allowEmpty': allowEmpty,
       },
+    ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be simple-encoded',
     ),
     _ => throw UnimplementedError(
       'Unsupported list content type for simple encoding: $contentModel',

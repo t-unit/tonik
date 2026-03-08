@@ -514,12 +514,11 @@ class ModelImporter {
 
   ListModel _parseArray(String? name, Schema schema, Context context) {
     final items = schema.items;
-    if (items == null) {
-      throw ArgumentError('Array schema $schema has no items');
-    }
 
     final modelContext = context.push('array');
-    final content = _resolveSchemaRef(null, items, modelContext);
+    final content = items == null
+        ? AnyModel(context: modelContext)
+        : _resolveSchemaRef(null, items, modelContext);
     return ListModel(
       content: content,
       context: context,
