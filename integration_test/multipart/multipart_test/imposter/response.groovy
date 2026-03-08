@@ -224,6 +224,20 @@ switch (path) {
         }
         break
 
+    case '/multipart31/style-primitives':
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Name', formParams.containsKey('name').toString()
+            withHeader 'X-Has-Count', formParams.containsKey('count').toString()
+            withHeader 'X-Has-Active', formParams.containsKey('active').toString()
+            withHeader 'X-Param-Name', (formParams['name'] ?: '')
+            withHeader 'X-Param-Count', (formParams['count'] ?: '')
+            withHeader 'X-Param-Active', (formParams['active'] ?: '')
+            withContent '{"success":true,"message":"style-primitives received"}'
+        }
+        break
+
     case '/multipart31/pipe-delimited':
         respond {
             withStatusCode 200

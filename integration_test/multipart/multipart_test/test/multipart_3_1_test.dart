@@ -18,6 +18,39 @@ void main() {
     api = Multipart31Api(CustomServer(baseUrl: baseUrl));
   });
 
+  group('OAS 3.1 style-based primitive encoding (null rawContentType fallback)', () {
+    test(
+      'serializes string, integer and boolean as text/plain when only style is set',
+      () async {
+        const form = StylePrimitivesForm(
+          name: 'hello',
+          count: 42,
+          active: true,
+        );
+
+        final response = await api.postStylePrimitives(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+        final formData = success.response.requestOptions.data as FormData;
+
+        // Style-based primitives fall back to text/plain and go into files.
+        expect(formData.files.any((e) => e.key == 'name'), isTrue);
+        expect(formData.files.any((e) => e.key == 'count'), isTrue);
+        expect(formData.files.any((e) => e.key == 'active'), isTrue);
+
+        // Server received all three fields with the correct string values.
+        expect(success.response.headers['x-has-name']?.first, 'true');
+        expect(success.response.headers['x-has-count']?.first, 'true');
+        expect(success.response.headers['x-has-active']?.first, 'true');
+        expect(success.response.headers['x-param-name']?.first, 'hello');
+        expect(success.response.headers['x-param-count']?.first, '42');
+        expect(success.response.headers['x-param-active']?.first, 'true');
+      },
+    );
+  });
+
   group('OAS 3.1 pipe-delimited encoding', () {
     test('serializes array as single pipe-delimited value', () async {
       const form = PipeDelimitedForm(items: ['alpha', 'beta', 'gamma']);

@@ -173,6 +173,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/style-primitives:
+    post:
+      operationId: postStylePrimitives
+      tags:
+        - multipart31
+      summary: Post primitive fields with style-based encoding and no explicit contentType
+      description: >-
+        Verifies OAS 3.1 style-based encoding for primitive properties.
+        When style/explode/allowReserved are set without an explicit contentType,
+        primitives should serialize as plain strings with text/plain content type.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StylePrimitivesForm'
+            encoding:
+              name:
+                style: form
+                explode: true
+              count:
+                style: form
+                explode: true
+              active:
+                allowReserved: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart31/url-encoded-object:
     post:
       operationId: postUrlEncodedObject
@@ -291,6 +324,23 @@ components:
           type: string
         zip:
           type: string
+
+    StylePrimitivesForm:
+      type: object
+      required:
+        - name
+        - count
+        - active
+      properties:
+        name:
+          type: string
+          description: String field with style-based encoding (no explicit contentType)
+        count:
+          type: integer
+          description: Integer field with style-based encoding (no explicit contentType)
+        active:
+          type: boolean
+          description: Boolean field with allowReserved (no explicit contentType)
 
     GenericResponse:
       type: object

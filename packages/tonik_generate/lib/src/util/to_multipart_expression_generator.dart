@@ -138,6 +138,8 @@ Code? _buildFieldCode(
   final propertyEncoding = encoding?[rawName];
   final contentType = propertyEncoding?.contentType;
   final rawContentType = propertyEncoding?.rawContentType;
+  final effectiveRawContentType =
+      rawContentType ?? 'text/plain'; // style-based primitives serialise as plain strings
 
   // Build per-part header statements and variable name (if any).
   final headerResult = _buildHeaderMapStatements(
@@ -158,13 +160,13 @@ Code? _buildFieldCode(
     StringModel() => _buildStringFileAddition(
       rawName,
       accessor,
-      rawContentType: rawContentType!,
+      rawContentType: effectiveRawContentType,
       headerVarName: headerVarName,
     ),
     AnyModel() => _buildPrimitiveFileAddition(
       rawName,
       accessor,
-      rawContentType: rawContentType!,
+      rawContentType: effectiveRawContentType,
       serializerMethod: 'toString',
       headerVarName: headerVarName,
     ),
@@ -184,13 +186,13 @@ Code? _buildFieldCode(
           ? _buildJsonEncodeFileAddition(
               rawName,
               accessor,
-              rawContentType: rawContentType!,
+              rawContentType: effectiveRawContentType,
               headerVarName: headerVarName,
             )
           : _buildPrimitiveFileAddition(
               rawName,
               accessor,
-              rawContentType: rawContentType!,
+              rawContentType: effectiveRawContentType,
               serializerMethod: 'toString',
               headerVarName: headerVarName,
             ),
@@ -200,13 +202,13 @@ Code? _buildFieldCode(
           ? _buildJsonEncodeFileAddition(
               rawName,
               accessor,
-              rawContentType: rawContentType!,
+              rawContentType: effectiveRawContentType,
               headerVarName: headerVarName,
             )
           : _buildPrimitiveFileAddition(
               rawName,
               accessor,
-              rawContentType: rawContentType!,
+              rawContentType: effectiveRawContentType,
               serializerMethod: 'toTimeZonedIso8601String',
               headerVarName: headerVarName,
             ),
@@ -215,7 +217,7 @@ Code? _buildFieldCode(
       rawName,
       accessor,
       resolved,
-      rawContentType: rawContentType!,
+      rawContentType: effectiveRawContentType,
       headerVarName: headerVarName,
     ),
 
