@@ -21,7 +21,6 @@
 - Default values
 - Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
-- multipart/form-data
 - Example values generation from `example`/`examples`
 
 ## Non-goals

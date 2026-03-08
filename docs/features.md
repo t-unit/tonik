@@ -210,7 +210,7 @@ Validation constraints (`minimum`, `maximum`, `pattern`, `minLength`, etc.) are 
 | `application/octet-stream` | ✅ | Binary data |
 | `text/plain` | ✅ | String body |
 | Custom types | ✅ | Via [config mapping](configuration.md#content-type-mapping) |
-| `multipart/form-data` | ❌ | roadmap |
+| `multipart/form-data` | ✅ | See [Multipart](multipart.md) |
 
 See [Data Types](data_types.md#form-url-encoded-bodies) for examples.
 
