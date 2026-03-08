@@ -130,6 +130,13 @@ class ParseGenerator {
     ResponseObject response,
     String? contentType,
   ) {
+    // Multipart response decoding is not supported; generate a runtime error.
+    if (_isMultipartResponseBody(response, contentType)) {
+      return generateResponseDecodingExceptionExpression(
+        'Multipart response body decoding is not supported.',
+      ).statement;
+    }
+
     if (operation.responses.length > 1) {
       return _generateMultiResponseCase(
         operation,
@@ -140,6 +147,20 @@ class ParseGenerator {
     } else {
       return _generateSingleResponseCase(response, contentType);
     }
+  }
+
+  bool _isMultipartResponseBody(
+    ResponseObject response,
+    String? contentType,
+  ) {
+    final responseBody = contentType != null
+        ? response.bodies.firstWhere(
+            (body) => body.rawContentType == contentType,
+            orElse: () => response.bodies.first,
+          )
+        : response.bodies.firstOrNull;
+
+    return responseBody?.contentType == ContentType.multipart;
   }
 
   ({List<Code> statements, String varName})? _createBodyDecode(
@@ -165,6 +186,9 @@ class ParseGenerator {
       ContentType.text => _createTextBodyDecode(),
       ContentType.bytes => _createBytesBodyDecode(),
       ContentType.form => _createFormBodyDecode(responseBody),
+      ContentType.multipart => throw UnimplementedError(
+        'Multipart response body decoding is not yet supported.',
+      ),
     };
   }
 
@@ -225,9 +249,14 @@ class ParseGenerator {
         declareFinal(bodyVar)
             .assign(
               refer(
-                'decodeResponseBytes',
+                'TonikFileBytes',
                 'package:tonik_util/tonik_util.dart',
-              ).call([refer('response.data')]),
+              ).call([
+                refer(
+                  'decodeResponseBytes',
+                  'package:tonik_util/tonik_util.dart',
+                ).call([refer('response.data')]),
+              ]),
             )
             .statement,
       ],

@@ -1384,10 +1384,7 @@ String _parseResponse(Response<List<int>> response) {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: ListModel(
-                    content: IntegerModel(context: context),
-                    context: context,
-                  ),
+                  model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
                 ),
@@ -1398,10 +1395,10 @@ String _parseResponse(Response<List<int>> response) {
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
-List<int> _parseResponse(Response<List<int>> response) {
+TonikFile _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, 'application/octet-stream'):
-      final _$body = decodeResponseBytes(response.data);
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
       final content = response.headers.value('content-type') ?? 'not specified';
@@ -1438,10 +1435,7 @@ List<int> _parseResponse(Response<List<int>> response) {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: ListModel(
-                    content: IntegerModel(context: context),
-                    context: context,
-                  ),
+                  model: BinaryModel(context: context),
                   rawContentType: 'image/png',
                   contentType: ContentType.bytes,
                 ),
@@ -1452,10 +1446,10 @@ List<int> _parseResponse(Response<List<int>> response) {
         );
         final method = generator.generateParseResponseMethod(operation);
         const expectedMethod = r'''
-List<int> _parseResponse(Response<List<int>> response) {
+TonikFile _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, 'image/png'):
-      final _$body = decodeResponseBytes(response.data);
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
       final content = response.headers.value('content-type') ?? 'not specified';
@@ -1504,10 +1498,7 @@ List<int> _parseResponse(Response<List<int>> response) {
                   contentType: ContentType.text,
                 ),
                 ResponseBody(
-                  model: ListModel(
-                    content: IntegerModel(context: context),
-                    context: context,
-                  ),
+                  model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
                 ),
@@ -1528,7 +1519,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       final _$body = decodeResponseText(response.data);
       return AnonymousResponsePlain(body: _$body);
     case (200, 'application/octet-stream'):
-      final _$body = decodeResponseBytes(response.data);
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return AnonymousResponseOctetStream(body: _$body);
     default:
       final content = response.headers.value('content-type') ?? 'not specified';
@@ -1981,6 +1972,184 @@ DateTime _parseResponse(Response<List<int>> response) {
           expect(
             collapseWhitespace(format(method.accept(emitter).toString())),
             collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+    });
+
+    group('multipart response', () {
+      test(
+        'generates code that throws ResponseDecodingException '
+        'instead of crashing the generator',
+        () {
+          final operation = Operation(
+            operationId: 'multipartOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multipart',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'multipart/form-data',
+                    contentType: ContentType.multipart,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+
+          // Should not throw at generation time.
+          final method = generator.generateParseResponseMethod(operation);
+          final actual = format(method.accept(emitter).toString());
+
+          // Generated code should contain a throw of
+          // ResponseDecodingException with the correct message.
+          expect(
+            collapseWhitespace(actual),
+            contains(
+              collapseWhitespace(
+                'throw ResponseDecodingException(\n'
+                "'Multipart response body decoding is not supported.',\n"
+                ');',
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'generated multipart response method is well-formed '
+        'and matches expected output',
+        () {
+          final operation = Operation(
+            operationId: 'multipartOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multipart',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'multipart/form-data',
+                    contentType: ContentType.multipart,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+String _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, 'multipart/form-data'):
+      throw ResponseDecodingException(
+        'Multipart response body decoding is not supported.',
+      );
+    default:
+      final content = response.headers.value('content-type') ?? 'not specified';
+      final status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates multipart response in multi-response operation',
+        () {
+          final operation = Operation(
+            operationId: 'multipartMultiOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multipart-multi',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'multipart/form-data',
+                    contentType: ContentType.multipart,
+                  ),
+                },
+              ),
+              const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+
+          // Should not throw at generation time.
+          final method = generator.generateParseResponseMethod(operation);
+          final actual = format(method.accept(emitter).toString());
+
+          // The multipart case should throw ResponseDecodingException.
+          expect(
+            collapseWhitespace(actual),
+            contains(
+              collapseWhitespace(
+                'throw ResponseDecodingException(\n'
+                "'Multipart response body decoding is not supported.',\n"
+                ');',
+              ),
+            ),
           );
         },
       );

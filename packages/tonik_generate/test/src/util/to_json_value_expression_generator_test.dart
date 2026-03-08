@@ -121,10 +121,10 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      // Binary data needs to be decoded from List<int> to String for JSON
+      // Binary data: toBytes() then decode to String for JSON.
       expect(
         emit(buildToJsonPropertyExpression('thumbnail', property)),
-        'thumbnail.decodeToString()',
+        'thumbnail.toBytes().decodeToString()',
       );
     });
 
@@ -138,7 +138,36 @@ void main() {
       );
       expect(
         emit(buildToJsonPropertyExpression('data', property)),
-        'data?.decodeToString()',
+        'data?.toBytes().decodeToString()',
+      );
+    });
+
+    test('for Base64 property', () {
+      final property = Property(
+        name: 'thumbnail',
+        model: Base64Model(context: context),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      // Base64 data: toBytes() then encode to base64 string for JSON.
+      expect(
+        emit(buildToJsonPropertyExpression('thumbnail', property)),
+        'thumbnail.toBytes().encodeToBase64String()',
+      );
+    });
+
+    test('for nullable Base64 property', () {
+      final property = Property(
+        name: 'data',
+        model: Base64Model(context: context),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(buildToJsonPropertyExpression('data', property)),
+        'data?.toBytes().encodeToBase64String()',
       );
     });
 
@@ -258,10 +287,28 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      // List of binary needs each element decoded to string
+      // List of binary needs each element's bytes decoded to string
       expect(
         emit(buildToJsonPropertyExpression('images', property)),
-        'images.map((e) => e.decodeToString()).toList()',
+        'images.map((e) => e.toBytes().decodeToString()).toList()',
+      );
+    });
+
+    test('for List<Base64> property', () {
+      final property = Property(
+        name: 'images',
+        model: ListModel(
+          content: Base64Model(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      // List of base64 needs each element's bytes base64-encoded
+      expect(
+        emit(buildToJsonPropertyExpression('images', property)),
+        'images.map((e) => e.toBytes().encodeToBase64String()).toList()',
       );
     });
 
@@ -975,6 +1022,51 @@ void main() {
       expect(
         emit(buildToJsonQueryParameterExpression('forbidden', parameter)),
         contains('EncodingException'),
+      );
+    });
+  });
+
+  group('buildToJsonPropertyExpression for BinaryModel with forceNonNull',
+      () {
+    test('generates force non-null toBytes for Binary property', () {
+      final property = Property(
+        name: 'avatar',
+        model: BinaryModel(context: context),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'avatar',
+            property,
+            forceNonNullReceiver: true,
+          ),
+        ),
+        'avatar!.toBytes().decodeToString()',
+      );
+    });
+  });
+
+  group('buildToJsonPropertyExpression for Base64Model with forceNonNull', () {
+    test('generates force non-null toBytes for Base64 property', () {
+      final property = Property(
+        name: 'avatar',
+        model: Base64Model(context: context),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'avatar',
+            property,
+            forceNonNullReceiver: true,
+          ),
+        ),
+        'avatar!.toBytes().encodeToBase64String()',
       );
     });
   });

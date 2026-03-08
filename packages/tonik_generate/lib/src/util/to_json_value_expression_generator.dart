@@ -74,7 +74,18 @@ Expression _buildSerializationExpression(
     ),
     DateTimeModel() => callMethod('toTimeZonedIso8601String'),
     DecimalModel() || UriModel() => callMethod('toString'),
-    BinaryModel() => callMethod('decodeToString'),
+    BinaryModel() => _callToBytesMethod(
+      receiver,
+      'decodeToString',
+      useNullAware: useNullAware,
+      forceNonNull: forceNonNullReceiver,
+    ),
+    Base64Model() => _callToBytesMethod(
+      receiver,
+      'encodeToBase64String',
+      useNullAware: useNullAware,
+      forceNonNull: forceNonNullReceiver,
+    ),
     DateModel() ||
     EnumModel() ||
     ClassModel() ||
@@ -148,6 +159,30 @@ Expression _handleListExpression(
   }
 }
 
+/// Calls `.toBytes().methodName()` on a `TonikFile` receiver.
+Expression _callToBytesMethod(
+  Expression receiver,
+  String methodName, {
+  required bool useNullAware,
+  required bool forceNonNull,
+}) {
+  if (forceNonNull) {
+    return receiver.nullChecked
+        .property('toBytes')
+        .call([])
+        .property(methodName)
+        .call([]);
+  } else if (useNullAware) {
+    return receiver
+        .nullSafeProperty('toBytes')
+        .call([])
+        .property(methodName)
+        .call([]);
+  } else {
+    return receiver.property('toBytes').call([]).property(methodName).call([]);
+  }
+}
+
 bool _needsTransformation(Model model) {
   return switch (model) {
     // These primitive types serialize as-is
@@ -162,6 +197,7 @@ bool _needsTransformation(Model model) {
     DecimalModel() ||
     UriModel() ||
     BinaryModel() ||
+    Base64Model() ||
     DateModel() => true,
     // Aliases delegate to their underlying model
     AliasModel() => _needsTransformation(model.model),

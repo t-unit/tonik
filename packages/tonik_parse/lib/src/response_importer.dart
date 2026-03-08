@@ -137,10 +137,10 @@ class ResponseImporter {
                 core.ContentType.text => core.StringModel(
                   context: context.push('body'),
                 ),
-                core.ContentType.form => () {
+                core.ContentType.form || core.ContentType.multipart => () {
                   log.warning(
-                    'No schema found for form content type $rawContentType. '
-                    'Treating as binary data.',
+                    'No schema found for ${contentType.name} content type '
+                    '$rawContentType. Treating as binary data.',
                   );
                   return core.BinaryModel(
                     context: context.push('body'),

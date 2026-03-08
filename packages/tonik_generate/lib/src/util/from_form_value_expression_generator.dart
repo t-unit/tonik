@@ -83,12 +83,17 @@ Expression buildFromFormValueExpression(
           )
           .call([], contextParam),
 
-    BinaryModel() =>
-      value
-          .property(
-            isRequired ? 'decodeFormBinary' : 'decodeFormNullableBinary',
-          )
-          .call([], contextParam),
+    BinaryModel() => _buildFromFormBinaryExpression(
+      value,
+      isRequired: isRequired,
+      contextParam: contextParam,
+    ),
+
+    Base64Model() => _buildFromFormBase64Expression(
+      value,
+      isRequired: isRequired,
+      contextParam: contextParam,
+    ),
 
     AliasModel() => buildFromFormValueExpression(
       value,
@@ -253,9 +258,15 @@ Expression _buildListFromFormExpression(
       isRequired,
       contextParam: contextParam,
     ),
-    BinaryModel() => _buildPrimitiveList(
+    BinaryModel() => _buildTonikFilePrimitiveList(
       listDecode,
       'decodeFormBinary',
+      isRequired,
+      contextParam: contextParam,
+    ),
+    Base64Model() => _buildTonikFilePrimitiveList(
+      listDecode,
+      'decodeFormBase64',
       isRequired,
       contextParam: contextParam,
     ),
@@ -345,6 +356,87 @@ Expression _buildClassList(
       ..body = refer(name, package).property('fromForm').call([
         refer('e'),
       ], explodeParam).code,
+  ).closure;
+
+  if (isRequired) {
+    return listDecode
+        .property('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  } else {
+    return listDecode
+        .nullSafeProperty('map')
+        .call([mapFunction])
+        .property('toList')
+        .call([]);
+  }
+}
+
+Expression _buildFromFormBinaryExpression(
+  Expression value, {
+  required bool isRequired,
+  required Map<String, Expression> contextParam,
+}) {
+  final tonikFileBytesRef = refer(
+    'TonikFileBytes',
+    'package:tonik_util/tonik_util.dart',
+  );
+
+  if (isRequired) {
+    return tonikFileBytesRef.call([
+      value.property('decodeFormBinary').call([], contextParam),
+    ]);
+  } else {
+    final decodeExpr = value
+        .property('decodeFormBinary')
+        .call([], contextParam);
+    return value
+        .equalTo(literalNull)
+        .conditional(literalNull, tonikFileBytesRef.call([decodeExpr]));
+  }
+}
+
+Expression _buildFromFormBase64Expression(
+  Expression value, {
+  required bool isRequired,
+  required Map<String, Expression> contextParam,
+}) {
+  final tonikFileBytesRef = refer(
+    'TonikFileBytes',
+    'package:tonik_util/tonik_util.dart',
+  );
+
+  if (isRequired) {
+    return tonikFileBytesRef.call([
+      value.property('decodeFormBase64').call([], contextParam),
+    ]);
+  } else {
+    final decodeExpr = value
+        .property('decodeFormBase64')
+        .call([], contextParam);
+    return value
+        .equalTo(literalNull)
+        .conditional(literalNull, tonikFileBytesRef.call([decodeExpr]));
+  }
+}
+
+Expression _buildTonikFilePrimitiveList(
+  Expression listDecode,
+  String decodeFunctionName,
+  bool isRequired, {
+  Map<String, Expression> contextParam = const {},
+}) {
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body =
+          refer(
+            'TonikFileBytes',
+            'package:tonik_util/tonik_util.dart',
+          ).call([
+            refer('e').property(decodeFunctionName).call([], contextParam),
+          ]).code,
   ).closure;
 
   if (isRequired) {

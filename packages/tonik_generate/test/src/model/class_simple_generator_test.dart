@@ -129,8 +129,8 @@ void main() {
             amount: values[r'amount'].decodeSimpleBigDecimal(
               context: r'Sample.amount',
             ),
-            thumbnail: values[r'thumbnail'].decodeSimpleBinary(
-              context: r'Sample.thumbnail',
+            thumbnail: TonikFileBytes(
+              values[r'thumbnail'].decodeSimpleBinary(context: r'Sample.thumbnail'),
             ),
           );
         }

@@ -59,6 +59,7 @@ class Importer {
       openApiObject: openApiObject,
       modelImporter: modelImporter,
       contentTypes: contentTypes,
+      responseHeaderImporter: responseHeaderImporter,
     );
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,

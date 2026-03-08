@@ -38,6 +38,27 @@ Expression buildToSimpleHeaderParameterExpression(
   );
 }
 
+/// Creates a Dart expression that serializes a value using simple style
+/// encoding, accepting a [Model] directly.
+///
+/// This is the model-based variant that works independently of the parameter
+/// type (request header, response header, per-part header, etc.).
+Expression buildSimpleValueExpression(
+  Expression accessor,
+  Model model, {
+  required bool explode,
+  required bool allowEmpty,
+  bool isNullable = false,
+}) {
+  return _buildSimpleSerializationExpression(
+    accessor,
+    model,
+    isNullable: isNullable,
+    explode: explode,
+    allowEmpty: allowEmpty,
+  );
+}
+
 Expression _buildSimpleSerializationExpression(
   Expression receiver,
   Model model, {

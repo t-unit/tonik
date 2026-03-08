@@ -41,7 +41,7 @@ void main() {
       final fileInfo = FileInfo(
         fileName: 'photo.png',
         contentType: 'image/png',
-        thumbnail: thumbnailData,
+        thumbnail: TonikFileBytes(thumbnailData),
         description: 'A test photo',
       );
 
@@ -62,7 +62,7 @@ void main() {
       final fileInfo = FileInfo(
         fileName: 'test.jpg',
         contentType: 'image/jpeg',
-        thumbnail: thumbnailData,
+        thumbnail: TonikFileBytes(thumbnailData),
       );
 
       final json = fileInfo.toJson()! as Map<String, dynamic>;
@@ -107,8 +107,8 @@ void main() {
 
       // Verify thumbnail is binary data (automatically decoded from base64)
       expect(responseBody.thumbnail, isNotNull);
-      expect(responseBody.thumbnail, isA<List<int>>());
-      expect(responseBody.thumbnail!.length, greaterThan(0));
+      expect(responseBody.thumbnail, isA<TonikFile>());
+      expect(responseBody.thumbnail!.toBytes().length, greaterThan(0));
     });
 
     test('thumbnail is automatically UTF-8 decoded from JSON', () {
@@ -129,7 +129,7 @@ void main() {
 
       // Verify thumbnail is decoded to binary
       expect(metadata.thumbnail, isNotNull);
-      expect(metadata.thumbnail, equals(thumbnailData));
+      expect(metadata.thumbnail!.toBytes(), equals(thumbnailData));
     });
 
     test('404 - file not found', () async {

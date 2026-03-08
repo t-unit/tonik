@@ -14,6 +14,7 @@ export 'src/model/cookie_parameter.dart';
 export 'src/model/external_documentation.dart';
 export 'src/model/license.dart';
 export 'src/model/model.dart';
+export 'src/model/multipart_property_encoding.dart';
 export 'src/model/operation.dart';
 export 'src/model/path_parameter.dart';
 export 'src/model/query_parameter.dart';

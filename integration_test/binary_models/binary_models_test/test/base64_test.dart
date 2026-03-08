@@ -33,15 +33,14 @@ void main() {
     test('201 - uploads data with base64 encoded field', () async {
       final base64Api = buildBase64Api(responseStatus: '201');
 
-      // Create test binary data and encode to base64
+      // Create test binary data — format:byte auto-encodes to base64 in JSON.
       final binaryData = Uint8List.fromList(
         List.generate(256, (i) => i),
       );
-      final base64String = base64.encode(binaryData);
 
       final base64Data = Base64Data(
         name: 'test-data',
-        encodedData: base64String,
+        encodedData: TonikFileBytes(binaryData),
         description: 'Test data with base64 encoding',
       );
 
@@ -56,24 +55,25 @@ void main() {
       expect(responseBody.message, contains('test-data'));
     });
 
-    test('encodedData (format:byte) is a base64 string in JSON', () {
-      // Create test binary data and encode to base64
+    test('binary data (format:byte) is base64 encoded in JSON', () {
+      // format:byte fields are stored as binary (TonikFile) and automatically
+      // base64-encoded when serialized to JSON.
       final binaryData = Uint8List.fromList([10, 20, 30, 40, 50]);
-      final base64String = base64.encode(binaryData);
+      final expectedBase64 = base64.encode(binaryData);
 
       final base64Data = Base64Data(
         name: 'test',
-        encodedData: base64String,
+        encodedData: TonikFileBytes(binaryData),
       );
 
       // Serialize to JSON
       final json = base64Data.toJson()! as Map<String, dynamic>;
 
-      // Verify encodedData is a base64 string in JSON
+      // Verify encodedData is a base64 string in JSON (auto-encoded)
       expect(json['encodedData'], isA<String>());
-      expect(json['encodedData'], equals(base64String));
+      expect(json['encodedData'], equals(expectedBase64));
 
-      // Verify we can decode it back to binary
+      // Verify we can decode the JSON value back to binary
       final decoded = base64.decode(json['encodedData'] as String);
       expect(decoded, equals(binaryData));
     });
@@ -81,7 +81,10 @@ void main() {
     test('400 - bad request', () async {
       final base64Api = buildBase64Api(responseStatus: '400');
 
-      const base64Data = Base64Data(name: '', encodedData: '');
+      const base64Data = Base64Data(
+        name: '',
+        encodedData: TonikFileBytes([]),
+      );
 
       final result = await base64Api.uploadBase64Data(body: base64Data);
       final success = result as TonikSuccess<UploadBase64DataResponse>;
@@ -107,17 +110,13 @@ void main() {
       final responseBody = (success.value as GetBase64DataResponse200).body;
       expect(responseBody.name, 'test-data');
 
-      // Verify encodedData is a base64 string
-      expect(responseBody.encodedData, isA<String>());
-      expect(responseBody.encodedData.length, greaterThan(0));
-
-      // Verify we can decode it to binary
-      final decoded = base64.decode(responseBody.encodedData);
-      expect(decoded.length, greaterThan(0));
+      // format:byte is decoded from base64 JSON string to binary (TonikFile).
+      expect(responseBody.encodedData, isA<TonikFile>());
+      expect(responseBody.encodedData.toBytes().length, greaterThan(0));
     });
 
-    test('encodedData (format:byte) is a base64 string from JSON', () {
-      // Create mock JSON response with base64 encoded data
+    test('base64 JSON string (format:byte) is decoded to binary', () {
+      // When parsing JSON, the base64 string is decoded to binary (TonikFile).
       final binaryData = Uint8List.fromList([100, 200, 50, 75, 125]);
       final base64String = base64.encode(binaryData);
 
@@ -130,12 +129,8 @@ void main() {
       // Parse from JSON
       final data = Base64Data.fromJson(json);
 
-      // Verify encodedData is the base64 string
-      expect(data.encodedData, equals(base64String));
-
-      // Verify we can decode it back to binary
-      final decoded = base64.decode(data.encodedData);
-      expect(decoded, equals(binaryData));
+      // Verify encodedData is decoded back to binary
+      expect(data.encodedData.toBytes(), equals(binaryData));
     });
 
     test('404 - data not found', () async {

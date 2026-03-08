@@ -65,11 +65,27 @@ Expression buildFromJsonValueExpression(
           .property(isNullable ? 'decodeJsonNullableUri' : 'decodeJsonUri')
           .call([], contextParam);
     case BinaryModel():
-      return refer(value)
-          .property(
-            isNullable ? 'decodeJsonNullableBinary' : 'decodeJsonBinary',
-          )
-          .call([], contextParam);
+      final decodeExpr = refer(
+        value,
+      ).property('decodeJsonBinary').call([], contextParam);
+      final wrapExpr = refer(
+        'TonikFileBytes',
+        'package:tonik_util/tonik_util.dart',
+      ).call([decodeExpr]);
+      return isNullable
+          ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
+          : wrapExpr;
+    case Base64Model():
+      final decodeExpr = refer(
+        value,
+      ).property('decodeJsonBase64').call([], contextParam);
+      final wrapExpr = refer(
+        'TonikFileBytes',
+        'package:tonik_util/tonik_util.dart',
+      ).call([decodeExpr]);
+      return isNullable
+          ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
+          : wrapExpr;
     case ListModel():
       return _buildListFromJsonExpression(
         value,
@@ -198,7 +214,7 @@ Expression _buildListFromJsonExpression(
                 .property('toList')
                 .call([]);
 
-    case DateTimeModel() || DateModel() || DecimalModel() || BinaryModel():
+    case DateTimeModel() || DateModel() || DecimalModel():
       final jsonType = _jsonTypeForPrimitive(unwrappedContent);
       final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
       final mapFunction = Method(
@@ -212,6 +228,64 @@ Expression _buildListFromJsonExpression(
         [],
         contextParam,
         [refer(jsonType, 'dart:core')],
+      );
+      return isNullable
+          ? listExpr
+                .nullSafeProperty('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([])
+          : listExpr
+                .property('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([]);
+
+    case BinaryModel():
+      final mapFunction = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body =
+              refer(
+                'TonikFileBytes',
+                'package:tonik_util/tonik_util.dart',
+              ).call([
+                refer('e').property('decodeJsonBinary').call([], contextParam),
+              ]).code,
+      ).closure;
+      final listExpr = refer(value).property(listDecoder).call(
+        [],
+        contextParam,
+        [refer('String', 'dart:core')],
+      );
+      return isNullable
+          ? listExpr
+                .nullSafeProperty('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([])
+          : listExpr
+                .property('map')
+                .call([mapFunction])
+                .property('toList')
+                .call([]);
+
+    case Base64Model():
+      final mapFunction = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body =
+              refer(
+                'TonikFileBytes',
+                'package:tonik_util/tonik_util.dart',
+              ).call([
+                refer('e').property('decodeJsonBase64').call([], contextParam),
+              ]).code,
+      ).closure;
+      final listExpr = refer(value).property(listDecoder).call(
+        [],
+        contextParam,
+        [refer('String', 'dart:core')],
       );
       return isNullable
           ? listExpr
@@ -248,6 +322,7 @@ String? _decodeMethodForPrimitive(Model model) {
   if (model is DateTimeModel) return 'decodeJsonDateTime';
   if (model is DateModel) return 'decodeJsonDate';
   if (model is BinaryModel) return 'decodeJsonBinary';
+  if (model is Base64Model) return 'decodeJsonBase64';
   return null;
 }
 
@@ -259,6 +334,7 @@ String _jsonTypeForPrimitive(Model model) {
   if (model is StringModel) return 'String';
   if (model is BooleanModel) return 'bool';
   if (model is BinaryModel) return 'String';
+  if (model is Base64Model) return 'String';
   return 'Object?';
 }
 

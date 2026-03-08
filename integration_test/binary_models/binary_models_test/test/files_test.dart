@@ -41,8 +41,8 @@ void main() {
       expect(success.value, isA<GetFileResponse200>());
 
       final responseBody = (success.value as GetFileResponse200).body;
-      expect(responseBody, isA<List<int>>());
-      expect(responseBody.length, greaterThan(0));
+      expect(responseBody, isA<TonikFile>());
+      expect(responseBody.toBytes().length, greaterThan(0));
     });
 
     test('404 - file not found', () async {
@@ -69,7 +69,7 @@ void main() {
 
       final result = await filesApi.uploadFile(
         id: 'new-file',
-        body: testData,
+        body: TonikFileBytes(testData),
       );
       final success = result as TonikSuccess<UploadFileResponse>;
 
@@ -88,7 +88,7 @@ void main() {
 
       final result = await filesApi.uploadFile(
         id: 'invalid',
-        body: testData,
+        body: TonikFileBytes(testData),
       );
       final success = result as TonikSuccess<UploadFileResponse>;
 

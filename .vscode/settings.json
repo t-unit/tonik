@@ -33,6 +33,7 @@
     "pubspecs",
     "Rexy",
     "roundtrips",
+    "serialise",
     "Sess",
     "Slurper",
     "tonik",
@@ -42,5 +43,8 @@
     "unconfigured",
     "użytkownik",
     "مرحبا"
-  ]
+  ],
+  "chat.tools.terminal.autoApprove": {
+    "fvm": true
+  }
 }

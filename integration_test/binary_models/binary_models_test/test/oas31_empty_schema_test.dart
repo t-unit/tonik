@@ -55,8 +55,8 @@ void main() {
         expect(success.value, isA<GetRawBinaryResponse200>());
 
         final responseBody = (success.value as GetRawBinaryResponse200).body;
-        expect(responseBody, isA<List<int>>());
-        expect(responseBody.length, greaterThan(0));
+        expect(responseBody, isA<TonikFile>());
+        expect(responseBody.toBytes().length, greaterThan(0));
       });
 
       test('404 - not found with empty schema', () async {
@@ -90,7 +90,9 @@ void main() {
           0xBE,
         ]);
 
-        final result = await filesApi.uploadRawBinary(body: testData);
+        final result = await filesApi.uploadRawBinary(
+          body: TonikFileBytes(testData),
+        );
 
         expect(result, isA<TonikSuccess<UploadResponse>>());
         final success = result as TonikSuccess<UploadResponse>;
@@ -107,17 +109,17 @@ void main() {
 
         final result = await imagesApi.getImageOas31();
 
-        expect(result, isA<TonikSuccess<List<int>>>());
-        final success = result as TonikSuccess<List<int>>;
+        expect(result, isA<TonikSuccess<TonikFile>>());
+        final success = result as TonikSuccess<TonikFile>;
 
         expect(success.response.statusCode, 200);
-        expect(success.value.length, greaterThan(0));
+        expect(success.value.toBytes().length, greaterThan(0));
 
         // Verify it's PNG data (starts with PNG magic bytes)
-        expect(success.value[0], 0x89);
-        expect(success.value[1], 0x50); // 'P'
-        expect(success.value[2], 0x4E); // 'N'
-        expect(success.value[3], 0x47); // 'G'
+        expect(success.value.toBytes()[0], 0x89);
+        expect(success.value.toBytes()[1], 0x50); // 'P'
+        expect(success.value.toBytes()[2], 0x4E); // 'N'
+        expect(success.value.toBytes()[3], 0x47); // 'G'
       });
     });
   });

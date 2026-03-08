@@ -1,0 +1,444 @@
+openapi: 3.1.0
+info:
+  title: Multipart 3.1 API
+  description: >-
+    OAS 3.1 multipart spec to verify version-aware encoding normalization.
+    In OAS 3.1, style and explode on multipart encoding objects are honored
+    (unlike OAS 3.0 where they are ignored).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: multipart31
+    description: OAS 3.1 multipart operations
+
+paths:
+  /multipart31/pipe-delimited:
+    post:
+      operationId: postPipeDelimited
+      tags:
+        - multipart31
+      summary: Post array with pipeDelimited style and explode=false
+      description: >-
+        Verifies OAS 3.1 honors style and explode on multipart encoding.
+        The array should be serialized as a single pipe-delimited value.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PipeDelimitedForm'
+            encoding:
+              items:
+                style: pipeDelimited
+                explode: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/default-explode:
+    post:
+      operationId: postDefaultExplode
+      tags:
+        - multipart31
+      summary: Post array with no encoding (OAS 3.1 content-based mode)
+      description: >-
+        Verifies OAS 3.1 default array encoding: when no style/explode/
+        allowReserved is set on an array property, each element is sent as a
+        separate form field with the same name (repeated fields per RFC 7578).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DefaultExplodeForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/basic:
+    post:
+      operationId: postBasic31
+      tags:
+        - multipart31
+      summary: Basic string and binary smoke test for OAS 3.1
+      description: Verifies simple multipart works with OAS 3.1 spec
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BasicForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/deep-object:
+    post:
+      operationId: postDeepObject
+      tags:
+        - multipart31
+      summary: Post a complex object as a deepObject-encoded multipart part
+      description: >-
+        Verifies OAS 3.1 deepObject style on multipart encoding.
+        When style: deepObject is set on an object property, it is serialized
+        using bracket notation (address[city]=Berlin&address[zip]=10115) with
+        Content-Type: application/x-www-form-urlencoded.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeepObjectForm'
+            encoding:
+              address:
+                style: deepObject
+                explode: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/deep-object-types:
+    post:
+      operationId: postDeepObjectTypes
+      tags:
+        - multipart31
+      summary: Post an object with mixed scalar types using deepObject encoding
+      description: >-
+        Verifies deepObject encoding handles string, integer, and boolean
+        property types correctly, including URL-encoding of special characters.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeepObjectTypesForm'
+            encoding:
+              profile:
+                style: deepObject
+                explode: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/deep-object-optional:
+    post:
+      operationId: postDeepObjectOptional
+      tags:
+        - multipart31
+      summary: Post a form with required and optional deepObject fields
+      description: >-
+        Verifies that optional deepObject fields are omitted when null and
+        included with proper bracket notation when provided.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeepObjectOptionalForm'
+            encoding:
+              shipping:
+                style: deepObject
+                explode: true
+              billing:
+                style: deepObject
+                explode: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/style-primitives:
+    post:
+      operationId: postStylePrimitives
+      tags:
+        - multipart31
+      summary: Post primitive fields with style-based encoding and no explicit contentType
+      description: >-
+        Verifies OAS 3.1 style-based encoding for primitive properties.
+        When style/explode/allowReserved are set without an explicit contentType,
+        primitives should serialize as plain strings with text/plain content type.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StylePrimitivesForm'
+            encoding:
+              name:
+                style: form
+                explode: true
+              count:
+                style: form
+                explode: true
+              active:
+                allowReserved: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/any-model:
+    post:
+      operationId: postAnyModel
+      tags:
+        - multipart31
+      summary: Post AnyModel field in multipart — verifies JSON encoding
+      description: >-
+        Verifies that AnyModel fields (from boolean schema `true`) are serialized
+        via encodeAnyToJson + jsonEncode rather than toString(). Passing a Map
+        object must produce valid JSON, not a Dart Map literal like {key: value}.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AnyModelForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/byte:
+    post:
+      operationId: postByteField31
+      tags:
+        - multipart31
+      summary: Post a format byte field in multipart (OAS 3.1)
+      description: >-
+        Tests that format:byte (Base64Model) is sent as application/octet-stream,
+        not text/plain. Per OAS 3.1, format:byte defaults to
+        application/octet-stream in multipart encoding.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ByteForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart31/url-encoded-object:
+    post:
+      operationId: postUrlEncodedObject
+      tags:
+        - multipart31
+      summary: Post a complex object as URL-encoded multipart part
+      description: >-
+        Verifies OAS 3.1 content-based mode with application/x-www-form-urlencoded.
+        When no style/explode/allowReserved are set and contentType is
+        application/x-www-form-urlencoded, the object is serialized as
+        URL-encoded key-value pairs (key=value&key2=value2).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UrlEncodedAddressForm'
+            encoding:
+              address:
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+components:
+  schemas:
+    PipeDelimitedForm:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+          description: Array to be serialized with pipe-delimited style
+
+    DefaultExplodeForm:
+      type: object
+      required:
+        - values
+      properties:
+        values:
+          type: array
+          items:
+            type: string
+          description: >-
+            Array with no encoding specified. In OAS 3.1, this triggers
+            content-based mode: the array is JSON-encoded into a single part.
+
+    BasicForm:
+      type: object
+      required:
+        - name
+        - file
+      properties:
+        name:
+          type: string
+          description: A simple string field
+        file:
+          type: string
+          format: binary
+          description: A binary file upload
+
+    DeepObjectProfile:
+      type: object
+      required:
+        - name
+        - age
+        - active
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+        active:
+          type: boolean
+
+    DeepObjectTypesForm:
+      type: object
+      required:
+        - profile
+      properties:
+        profile:
+          $ref: '#/components/schemas/DeepObjectProfile'
+
+    DeepObjectOptionalForm:
+      type: object
+      required:
+        - shipping
+      properties:
+        shipping:
+          $ref: '#/components/schemas/DeepObjectAddress'
+        billing:
+          $ref: '#/components/schemas/DeepObjectAddress'
+
+    DeepObjectForm:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          $ref: '#/components/schemas/DeepObjectAddress'
+
+    DeepObjectAddress:
+      type: object
+      required:
+        - city
+        - zip
+      properties:
+        city:
+          type: string
+        zip:
+          type: string
+
+    StylePrimitivesForm:
+      type: object
+      required:
+        - name
+        - count
+        - active
+      properties:
+        name:
+          type: string
+          description: String field with style-based encoding (no explicit contentType)
+        count:
+          type: integer
+          description: Integer field with style-based encoding (no explicit contentType)
+        active:
+          type: boolean
+          description: Boolean field with allowReserved (no explicit contentType)
+
+    GenericResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    UrlEncodedAddressForm:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          $ref: '#/components/schemas/Address31'
+
+    Address31:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    ByteForm:
+      type: object
+      required:
+        - label
+        - data
+      properties:
+        label:
+          type: string
+          description: A simple text label (sent as text/plain)
+        data:
+          type: string
+          format: byte
+          description: >-
+            Base64-encoded binary data. Per OAS 3.1, format:byte defaults to
+            application/octet-stream in multipart encoding.
+
+    AnyValue: true
+
+    AnyModelForm:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/AnyValue'

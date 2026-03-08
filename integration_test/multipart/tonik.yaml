@@ -1,0 +1,6 @@
+spec: multipart/openapi.yaml
+packageName: multipart_api
+outputDir: multipart
+
+contentTypes:
+  application/vnd.custom-multipart: multipart

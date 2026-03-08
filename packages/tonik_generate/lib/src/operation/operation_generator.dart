@@ -14,6 +14,7 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
+import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 
 /// Generator for creating callable operation classes
 /// from Operation definitions.
@@ -358,13 +359,31 @@ class OperationGenerator {
               }),
             )
             .statement,
-        refer(r'_$data')
-            .assign(
-              refer(
-                '_data',
-              ).call([], {if (hasRequestBody) 'body': refer('body')}),
-            )
-            .statement,
+        refer(r'_$data').assign(
+          () {
+            final isDataAsync =
+                hasRequestBody &&
+                operation.requestBody!.resolvedContent.any(
+                  (c) => c.contentType == ContentType.multipart,
+                );
+            final dataCall = refer('_data').call([], {
+              if (hasRequestBody) 'body': refer('body'),
+              if (hasRequestBody)
+                ...() {
+                  final args = <String, Expression>{};
+                  for (final c in operation.requestBody!.resolvedContent) {
+                    if (c.contentType == ContentType.multipart) {
+                      for (final info in extractMultipartHeaderParamInfo(c)) {
+                        args[info.name] = refer(info.name);
+                      }
+                    }
+                  }
+                  return args;
+                }(),
+            });
+            return isDataAsync ? dataCall.awaited : dataCall;
+          }(),
+        ).statement,
         refer(r'_$options')
             .assign(
               refer('_options').call([], {

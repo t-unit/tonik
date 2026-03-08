@@ -144,6 +144,11 @@ melos:
         cd integration_test/read_write_only/read_write_only_test
         dart test
 
+    test-integration-multipart:
+      run: |
+        cd integration_test/multipart/multipart_test
+        dart test
+
     test-integration-all:
       run: |
         set -e
@@ -166,3 +171,4 @@ melos:
         melos run test-integration-server-variables
         melos run test-integration-cookies
         melos run test-integration-read-write-only
+        melos run test-integration-multipart

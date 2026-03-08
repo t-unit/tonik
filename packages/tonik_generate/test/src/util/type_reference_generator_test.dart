@@ -143,21 +143,18 @@ void main() {
         nameManager = NameManager(generator: NameGenerator());
       });
 
-      test('returns List<int> TypeReference for BinaryModel', () {
+      test('returns TonikFile TypeReference for BinaryModel', () {
         final model = BinaryModel(context: context);
 
         final result = typeReference(model, nameManager, package);
 
-        expect(result.symbol, 'List');
-        expect(result.url, 'dart:core');
+        expect(result.symbol, 'TonikFile');
+        expect(result.url, 'package:tonik_util/tonik_util.dart');
         expect(result.isNullable, isFalse);
-        expect(result.types, hasLength(1));
-        expect(result.types[0].symbol, 'int');
-        expect(result.types[0].url, 'dart:core');
       });
 
       test(
-        'returns nullable List<int> TypeReference for BinaryModel '
+        'returns nullable TonikFile TypeReference for BinaryModel '
         'with isNullableOverride',
         () {
           final model = BinaryModel(context: context);
@@ -169,17 +166,14 @@ void main() {
             isNullableOverride: true,
           );
 
-          expect(result.symbol, 'List');
-          expect(result.url, 'dart:core');
+          expect(result.symbol, 'TonikFile');
+          expect(result.url, 'package:tonik_util/tonik_util.dart');
           expect(result.isNullable, isTrue);
-          expect(result.types, hasLength(1));
-          expect(result.types[0].symbol, 'int');
-          expect(result.types[0].url, 'dart:core');
         },
       );
 
       test(
-        'returns List<List<int>> TypeReference for ListModel '
+        'returns List<TonikFile> TypeReference for ListModel '
         'with BinaryModel content',
         () {
           final binaryModel = BinaryModel(context: context);
@@ -196,11 +190,60 @@ void main() {
           expect(result.types, hasLength(1));
 
           final innerType = result.types[0] as TypeReference;
-          expect(innerType.symbol, 'List');
-          expect(innerType.url, 'dart:core');
-          expect(innerType.types, hasLength(1));
-          expect(innerType.types[0].symbol, 'int');
-          expect(innerType.types[0].url, 'dart:core');
+          expect(innerType.symbol, 'TonikFile');
+          expect(innerType.url, 'package:tonik_util/tonik_util.dart');
+        },
+      );
+
+      test('returns TonikFile TypeReference for Base64Model', () {
+        final model = Base64Model(context: context);
+
+        final result = typeReference(model, nameManager, package);
+
+        expect(result.symbol, 'TonikFile');
+        expect(result.url, 'package:tonik_util/tonik_util.dart');
+        expect(result.isNullable, isFalse);
+      });
+
+      test(
+        'returns nullable TonikFile TypeReference for Base64Model '
+        'with isNullableOverride',
+        () {
+          final model = Base64Model(context: context);
+
+          final result = typeReference(
+            model,
+            nameManager,
+            package,
+            isNullableOverride: true,
+          );
+
+          expect(result.symbol, 'TonikFile');
+          expect(result.url, 'package:tonik_util/tonik_util.dart');
+          expect(result.isNullable, isTrue);
+        },
+      );
+
+      test(
+        'returns List<TonikFile> TypeReference for ListModel '
+        'with Base64Model content',
+        () {
+          final base64Model = Base64Model(context: context);
+          final model = ListModel(
+            content: base64Model,
+            context: context,
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isFalse);
+          expect(result.types, hasLength(1));
+
+          final innerType = result.types[0] as TypeReference;
+          expect(innerType.symbol, 'TonikFile');
+          expect(innerType.url, 'package:tonik_util/tonik_util.dart');
         },
       );
     });

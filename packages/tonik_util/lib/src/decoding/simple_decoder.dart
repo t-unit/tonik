@@ -229,6 +229,32 @@ extension SimpleDecoder on String? {
     return decodeSimpleBinary(context: context);
   }
 
+  /// Decodes a base64-encoded string to binary data (`List<int>`).
+  ///
+  /// Expects a valid base64-encoded string.
+  /// Throws [InvalidTypeException] if the value is null.
+  List<int> decodeSimpleBase64({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    if (this!.isEmpty) {
+      return <int>[];
+    }
+    return base64.decode(this!);
+  }
+
+  /// Decodes a base64-encoded string to nullable binary data.
+  ///
+  /// Returns null if the string is empty or null.
+  List<int>? decodeSimpleNullableBase64({String? context}) {
+    if (this?.isEmpty ?? true) return null;
+    return decodeSimpleBase64(context: context);
+  }
+
   /// Decodes a string to a list of strings.
   ///
   /// Splits the string by commas.

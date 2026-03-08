@@ -411,6 +411,13 @@ class BinaryModel extends PrimitiveModel {
   String toString() => 'BinaryModel';
 }
 
+class Base64Model extends PrimitiveModel {
+  Base64Model({required super.context});
+
+  @override
+  String toString() => 'Base64Model';
+}
+
 class AnyModel extends Model {
   AnyModel({required super.context});
 

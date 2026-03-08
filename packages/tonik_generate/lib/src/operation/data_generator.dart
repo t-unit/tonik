@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating data method for operations.
@@ -30,6 +31,10 @@ class DataGenerator {
     final isRequired = requestBody.isRequired;
 
     if (hasMultipleContent) {
+      final hasMultipartArm = content.any(
+        (c) => c.contentType == ContentType.multipart,
+      );
+
       final parameterType = TypeReference(
         (b) => b
           ..symbol = nameManager.requestBodyNames(requestBody).$1
@@ -46,44 +51,111 @@ class DataGenerator {
 
         switchCases
           ..add(const Code('final '))
-          ..add(refer(variantName, package).code)
-          ..add(const Code(' value => value.'));
+          ..add(refer(variantName, package).code);
 
         switch (c.contentType) {
-          case .text || .bytes:
-            switchCases.add(const Code('value,'));
+          case .text:
+            switchCases.add(const Code(' value => value.value,'));
+          case .bytes:
+            switch (c.model) {
+              case BinaryModel():
+                switchCases.add(const Code(' value => value.value.toBytes(),'));
+              case PrimitiveModel():
+                switchCases.add(const Code(' value => value.value,'));
+              case AliasModel() ||
+                  ListModel() ||
+                  ClassModel() ||
+                  EnumModel() ||
+                  AllOfModel() ||
+                  OneOfModel() ||
+                  AnyOfModel() ||
+                  AnyModel() ||
+                  NeverModel() ||
+                  NamedModel() ||
+                  CompositeModel():
+                throw StateError(
+                  'Unsupported model ${c.model} for bytes content type',
+                );
+            }
           case .json:
-            switchCases.add(
-              buildToJsonPropertyExpression(
-                'value',
-                Property(
-                  name: 'value',
-                  model: c.model,
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                ),
-              ).code,
-            );
-            switchCases.add(const Code(','));
+            switchCases
+              ..add(const Code(' value => value.'))
+              ..add(
+                buildToJsonPropertyExpression(
+                  'value',
+                  Property(
+                    name: 'value',
+                    model: c.model,
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ).code,
+              )
+              ..add(const Code(','));
           case .form:
-            switchCases.add(
-              buildToFormValueExpression(
-                'value',
-                c.model,
-                useQueryComponent: true,
-                explodeLiteral: true,
-                allowEmptyLiteral: true,
-              ).code,
+            switchCases
+              ..add(const Code(' value => value.'))
+              ..add(
+                buildToFormValueExpression(
+                  'value',
+                  c.model,
+                  useQueryComponent: true,
+                  explodeLiteral: true,
+                  allowEmptyLiteral: true,
+                ).code,
+              )
+              ..add(const Code(','));
+          case .multipart:
+            switchCases
+              ..add(const Code(' value => '))
+              ..add(
+                buildMultipartBodyExpression(
+                  c,
+                  'value.value',
+                  nameManager,
+                  package,
+                ).code,
+              )
+              ..add(const Code(','));
+        }
+      }
+
+      // Collect multipart header params across all multipart contents.
+      final multipartHeaderParams = <Parameter>[];
+      for (final c in content) {
+        if (c.contentType == ContentType.multipart) {
+          for (final info in extractMultipartHeaderParamInfo(c)) {
+            multipartHeaderParams.add(
+              Parameter(
+                (b) => b
+                  ..name = info.name
+                  ..type = typeReference(
+                    info.model,
+                    nameManager,
+                    package,
+                    isNullableOverride: !info.isRequired,
+                  )
+                  ..named = true
+                  ..required = info.isRequired,
+              ),
             );
-            switchCases.add(const Code(','));
+          }
         }
       }
 
       return Method(
         (b) => b
           ..name = '_data'
-          ..returns = refer('Object?', 'dart:core')
+          ..returns = hasMultipartArm
+              ? TypeReference(
+                  (b) => b
+                    ..symbol = 'Future'
+                    ..url = 'dart:async'
+                    ..types.add(refer('Object?', 'dart:core')),
+                )
+              : refer('Object?', 'dart:core')
+          ..modifier = hasMultipartArm ? MethodModifier.async : null
           ..optionalParameters.add(
             Parameter(
               (b) => b
@@ -93,6 +165,7 @@ class DataGenerator {
                 ..required = isRequired,
             ),
           )
+          ..optionalParameters.addAll(multipartHeaderParams)
           ..lambda = false
           ..body = Block.of([
             if (!isRequired) const Code('if (body == null) return null;\n'),
@@ -123,8 +196,33 @@ class DataGenerator {
     // Build return expression based on content type
     final bodyCode = [const Code('return ')];
     switch (contentType) {
-      case ContentType.text || ContentType.bytes:
+      case ContentType.text:
         bodyCode.add(const Code('body;'));
+      case ContentType.bytes:
+        switch (model) {
+          case BinaryModel():
+            if (isRequired) {
+              bodyCode.add(const Code('body.toBytes();'));
+            } else {
+              bodyCode.add(const Code('body?.toBytes();'));
+            }
+          case PrimitiveModel():
+            bodyCode.add(const Code('body;'));
+          case AliasModel() ||
+              ListModel() ||
+              ClassModel() ||
+              EnumModel() ||
+              AllOfModel() ||
+              OneOfModel() ||
+              AnyOfModel() ||
+              AnyModel() ||
+              NeverModel() ||
+              NamedModel() ||
+              CompositeModel():
+            throw StateError(
+              'Unsupported model $model for bytes content type',
+            );
+        }
       case ContentType.json:
         bodyCode
           ..add(buildToJsonPropertyExpression('body', property).code)
@@ -140,12 +238,55 @@ class DataGenerator {
         bodyCode
           ..add(formExpr.code)
           ..add(const Code(';'));
+      case ContentType.multipart:
+        bodyCode
+          ..clear()
+          ..addAll(
+            buildMultipartBodyStatements(
+              content.first,
+              'body',
+              nameManager,
+              package,
+            ),
+          )
+          ..add(refer('formData').returned.statement);
     }
+
+    // Collect multipart header params for single-content multipart bodies.
+    final multipartHeaderParams = <Parameter>[];
+    if (contentType == ContentType.multipart) {
+      for (final info in extractMultipartHeaderParamInfo(content.first)) {
+        multipartHeaderParams.add(
+          Parameter(
+            (b) => b
+              ..name = info.name
+              ..type = typeReference(
+                info.model,
+                nameManager,
+                package,
+                isNullableOverride: !info.isRequired,
+              )
+              ..named = true
+              ..required = info.isRequired,
+          ),
+        );
+      }
+    }
+
+    final isMultipart = contentType == ContentType.multipart;
 
     return Method(
       (b) => b
         ..name = '_data'
-        ..returns = refer('Object?', 'dart:core')
+        ..returns = isMultipart
+            ? TypeReference(
+                (b) => b
+                  ..symbol = 'Future'
+                  ..url = 'dart:async'
+                  ..types.add(refer('Object?', 'dart:core')),
+              )
+            : refer('Object?', 'dart:core')
+        ..modifier = isMultipart ? MethodModifier.async : null
         ..optionalParameters.add(
           Parameter(
             (b) => b
@@ -155,6 +296,7 @@ class DataGenerator {
               ..required = true,
           ),
         )
+        ..optionalParameters.addAll(multipartHeaderParams)
         ..lambda = false
         ..body = Block.of(bodyCode),
     );

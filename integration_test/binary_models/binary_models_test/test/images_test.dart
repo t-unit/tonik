@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:binary_models_api/binary_models_api.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
@@ -39,17 +37,17 @@ void main() {
       expect(success.value, isA<GetImageResponse200>());
 
       final responseBody = (success.value as GetImageResponse200).body;
-      expect(responseBody, isA<List<int>>());
-      expect(responseBody.length, greaterThan(0));
+      expect(responseBody, isA<TonikFile>());
+      expect(responseBody.toBytes().length, greaterThan(0));
 
-      // Verify it's actual binary data
-      expect(responseBody, isA<Uint8List>());
+      // Verify it's actual binary data.
+      expect(responseBody, isA<TonikFileBytes>());
 
       // Check PNG magic number (89 50 4E 47)
-      expect(responseBody[0], 0x89);
-      expect(responseBody[1], 0x50);
-      expect(responseBody[2], 0x4E);
-      expect(responseBody[3], 0x47);
+      expect(responseBody.toBytes()[0], 0x89);
+      expect(responseBody.toBytes()[1], 0x50);
+      expect(responseBody.toBytes()[2], 0x4E);
+      expect(responseBody.toBytes()[3], 0x47);
     });
 
     test('404 - image not found', () async {

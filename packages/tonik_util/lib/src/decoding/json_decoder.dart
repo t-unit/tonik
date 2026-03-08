@@ -476,4 +476,42 @@ extension JsonDecoder on Object? {
     }
     return decodeJsonBinary(context: context);
   }
+
+  /// Decodes a base64-encoded JSON string value to binary data (`List<int>`).
+  ///
+  /// Expects a valid base64-encoded string.
+  /// Throws [InvalidTypeException] if the value is not a string or is null.
+  List<int> decodeJsonBase64({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    if (this is! String) {
+      throw InvalidTypeException(
+        value: toString(),
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    final str = this! as String;
+    if (str.isEmpty) {
+      return <int>[];
+    }
+    return base64.decode(str);
+  }
+
+  /// Decodes a base64-encoded JSON value to nullable binary data.
+  ///
+  /// Returns null if the value is null.
+  /// Returns empty list if the value is an empty string.
+  /// Throws [InvalidTypeException] if the value is not a string.
+  List<int>? decodeJsonNullableBase64({String? context}) {
+    if (this == null) {
+      return null;
+    }
+    return decodeJsonBase64(context: context);
+  }
 }

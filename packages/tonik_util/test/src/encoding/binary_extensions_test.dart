@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:test/test.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 
@@ -47,6 +49,33 @@ void main() {
         100,
       ]; // "Hello\nWorld"
       expect(bytes.decodeToString(), 'Hello\nWorld');
+    });
+  });
+
+  group('encodeToBase64String', () {
+    test('encodes List<int> to base64 string', () {
+      const bytes = [72, 101, 108, 108, 111]; // "Hello"
+      expect(bytes.encodeToBase64String(), 'SGVsbG8=');
+    });
+
+    test('encodes empty List<int> to empty base64 string', () {
+      const bytes = <int>[];
+      expect(bytes.encodeToBase64String(), '');
+    });
+
+    test('round-trips with base64 decoding', () {
+      final original = [1, 2, 3, 255, 0, 127];
+      final encoded = original.encodeToBase64String();
+      final decoded = base64.decode(encoded);
+      expect(decoded, original);
+    });
+
+    test('produces valid base64 for binary data', () {
+      const bytes = [0xFF, 0xFE, 0x00, 0x01];
+      final result = bytes.encodeToBase64String();
+      // Should be valid base64
+      expect(() => base64.decode(result), returnsNormally);
+      expect(base64.decode(result), bytes);
     });
   });
 }

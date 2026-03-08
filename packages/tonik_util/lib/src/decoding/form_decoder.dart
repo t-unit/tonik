@@ -236,6 +236,32 @@ extension FormDecoder on String? {
     return decodeFormBinary(context: context);
   }
 
+  /// Decodes a base64-encoded form string to binary data (`List<int>`).
+  ///
+  /// Expects a valid base64-encoded string.
+  /// Throws [InvalidTypeException] if the value is null.
+  List<int> decodeFormBase64({String? context}) {
+    if (this == null) {
+      throw InvalidTypeException(
+        value: 'null',
+        targetType: List<int>,
+        context: context,
+      );
+    }
+    if (this!.isEmpty) {
+      return <int>[];
+    }
+    return base64.decode(this!);
+  }
+
+  /// Decodes a base64-encoded form string to nullable binary data.
+  ///
+  /// Returns null if the string is empty or null.
+  List<int>? decodeFormNullableBase64({String? context}) {
+    if (this?.isEmpty ?? true) return null;
+    return decodeFormBase64(context: context);
+  }
+
   /// Decodes a form-encoded string to a Date.
   ///
   /// Expects ISO 8601 date format (e.g., '2023-01-01').

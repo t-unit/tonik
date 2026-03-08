@@ -82,23 +82,26 @@ void main() {
     });
 
     test(
-      'contentEncoding:base64 behaves identically to format:byte',
+      'format:byte and contentEncoding:base64 produce identical JSON',
       () {
         final binaryData = Uint8List.fromList([1, 2, 3, 4, 5]);
         final base64String = base64.encode(binaryData);
 
-        // Create both format:byte and contentEncoding:base64 models
+        // format:byte (Base64Model): accepts binary (TonikFile), auto-encodes
+        // to base64 string in JSON.
         final formatByteData = Base64Data(
           name: 'format-byte',
-          encodedData: base64String,
+          encodedData: TonikFileBytes(binaryData),
         );
 
+        // contentEncoding:base64 with text/plain config: String field, the
+        // user is responsible for providing the base64 string directly.
         final contentEncodedData = ContentEncodedData(
           name: 'content-encoding',
           encodedData: base64String,
         );
 
-        // Both should serialize identically (as base64 string)
+        // Both should serialize with identical JSON values (base64 string)
         final formatByteJson = formatByteData.toJson()! as Map<String, dynamic>;
         final contentEncodedJson =
             contentEncodedData.toJson()! as Map<String, dynamic>;

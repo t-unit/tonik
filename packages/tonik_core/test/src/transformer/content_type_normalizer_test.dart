@@ -556,6 +556,106 @@ void main() {
         expect(transformedOriginal.content.first.model, isA<StringModel>());
       });
 
+      test('keeps original model for ContentType.multipart requests', () {
+        final originalModel = ClassModel(
+          name: 'MultipartData',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'UploadForm',
+          context: context,
+          description: 'Upload form data',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: originalModel,
+              rawContentType: 'multipart/form-data',
+              contentType: ContentType.multipart,
+            ),
+          },
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: {requestBody},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedBody =
+            transformed.requestBodies.first as RequestBodyObject;
+        final content = transformedBody.content.first;
+
+        expect(content.model, isA<ClassModel>());
+        expect((content.model as ClassModel).name, 'MultipartData');
+      });
+
+      test('preserves encoding when normalizing multipart request content', () {
+        final encoding = {
+          'file': const MultipartPropertyEncoding(
+            contentType: ContentType.bytes,
+            rawContentType: 'application/octet-stream',
+            style: MultipartEncodingStyle.form,
+            explode: true,
+          ),
+        };
+
+        final requestBody = RequestBodyObject(
+          name: 'UploadForm',
+          context: context,
+          description: 'Upload with encoding',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'UploadData',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              rawContentType: 'multipart/form-data',
+              contentType: ContentType.multipart,
+              encoding: encoding,
+            ),
+          },
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: {requestBody},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedBody =
+            transformed.requestBodies.first as RequestBodyObject;
+        final content = transformedBody.content.first;
+
+        expect(content.encoding, isNotNull);
+        expect(content.encoding, equals(encoding));
+      });
+
       test('logs warning when replacing model for text content type', () {
         final requestBody = RequestBodyObject(
           name: 'TextBody',

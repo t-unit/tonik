@@ -123,6 +123,8 @@ class NameGenerator {
       OneOfModel() => model.name ?? 'oneOf',
       ClassModel() => model.name ?? 'class',
       EnumModel() => model.name ?? 'enum',
+      BinaryModel() => 'binary',
+      Base64Model() => 'base64',
       ListModel() => 'list',
       _ => 'unknown',
     };

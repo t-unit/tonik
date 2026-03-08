@@ -28,6 +28,7 @@ extension SpaceDelimitedStringListEncoder on List<String> {
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
+    bool percentEncodeDelimiter = true,
   }) {
     if (isEmpty) {
       if (!allowEmpty) {
@@ -44,8 +45,9 @@ extension SpaceDelimitedStringListEncoder on List<String> {
         (item) => item.uriEncode(allowEmpty: allowEmpty),
       ).toList();
     } else {
+      final delimiter = alreadyEncoded && !percentEncodeDelimiter ? ' ' : '%20';
       if (alreadyEncoded) {
-        return [join('%20')];
+        return [join(delimiter)];
       }
       return [
         map(

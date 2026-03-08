@@ -52,10 +52,11 @@ nameOverrides:
   # Reserved for future use
 
 contentTypes:
-  # Map custom content types to JSON serialization
+  # Map custom content types to built-in serialization
   "application/problem+json": json
   "application/vnd.api+json": json
   "application/hal+json": json
+  "multipart/mixed": multipart
 
 contentMediaTypes:
   # Map schema contentMediaType to Dart types for content-encoded strings
@@ -246,10 +247,11 @@ contentTypes:
   "application/vnd.api+json": json
   "application/vnd.custom-form": form
   "text/csv": text
-  "application/pdf": binary
+  "application/pdf": bytes
+  "multipart/mixed": multipart
 ```
 
-Supported targets: `json`, `form`, `text`, `binary`.
+Supported targets: `json`, `form`, `text`, `bytes`, `multipart`.
 
 ## Schema Content Media Type Mapping
 
