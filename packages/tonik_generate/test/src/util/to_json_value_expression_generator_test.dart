@@ -244,6 +244,96 @@ void main() {
       );
     });
 
+    test('for required property with nullable ClassModel type', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Metadata',
+        properties: const [],
+        isNullable: true,
+        context: context,
+      );
+      final property = Property(
+        name: 'metadata',
+        model: classModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+
+      expect(
+        emit(buildToJsonPropertyExpression('metadata', property)),
+        'metadata?.toJson()',
+      );
+    });
+
+    test('for required property with nullable AllOfModel type', () {
+      final allOfModel = AllOfModel(
+        isDeprecated: false,
+        name: 'Combined',
+        models: const {},
+        isNullable: true,
+        context: context,
+      );
+      final property = Property(
+        name: 'combined',
+        model: allOfModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+
+      expect(
+        emit(buildToJsonPropertyExpression('combined', property)),
+        'combined?.toJson()',
+      );
+    });
+
+    test('for required property with nullable OneOfModel type', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'Pet',
+        models: const {},
+        discriminator: 'petType',
+        isNullable: true,
+        context: context,
+      );
+      final property = Property(
+        name: 'pet',
+        model: oneOfModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+
+      expect(
+        emit(buildToJsonPropertyExpression('pet', property)),
+        'pet?.toJson()',
+      );
+    });
+
+    test('for required property with nullable AnyOfModel type', () {
+      final anyOfModel = AnyOfModel(
+        isDeprecated: false,
+        name: 'Content',
+        models: const {},
+        discriminator: 'contentType',
+        isNullable: true,
+        context: context,
+      );
+      final property = Property(
+        name: 'content',
+        model: anyOfModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+
+      expect(
+        emit(buildToJsonPropertyExpression('content', property)),
+        'content?.toJson()',
+      );
+    });
+
     test('for List<String> property', () {
       final property = Property(
         name: 'tags',
@@ -613,6 +703,54 @@ void main() {
       expect(
         emit(buildToJsonPropertyExpression('content', property)),
         'content?.toJson()',
+      );
+    });
+
+    test('for required property with nullable AliasModel type (Class)', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+      final aliasModel = AliasModel(
+        name: 'PrimaryAddress',
+        model: classModel,
+        isNullable: true,
+        context: context,
+      );
+      final property = Property(
+        name: 'address',
+        model: aliasModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+
+      expect(
+        emit(buildToJsonPropertyExpression('address', property)),
+        'address?.toJson()',
+      );
+    });
+
+    test('for required property with nullable AliasModel type (DateTime)', () {
+      final aliasModel = AliasModel(
+        name: 'Timestamp',
+        model: DateTimeModel(context: context),
+        isNullable: true,
+        context: context,
+      );
+      final property = Property(
+        name: 'createdAt',
+        model: aliasModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+
+      expect(
+        emit(buildToJsonPropertyExpression('createdAt', property)),
+        'createdAt?.toTimeZonedIso8601String()',
       );
     });
 

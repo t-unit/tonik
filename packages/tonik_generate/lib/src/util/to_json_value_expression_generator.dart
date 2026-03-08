@@ -56,7 +56,9 @@ Expression _buildSerializationExpression(
   final directReceiver = forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
       !forceNonNullReceiver &&
-      (isNullable || (model is EnumModel && model.isNullable));
+      (isNullable ||
+          (model is EnumModel && model.isNullable) ||
+          _isNullableViaTypedef(model));
 
   Expression callMethod(String methodName) {
     if (forceNonNullReceiver) {
@@ -101,7 +103,7 @@ Expression _buildSerializationExpression(
     AliasModel() => _buildSerializationExpression(
       receiver,
       model.model,
-      isNullable,
+      isNullable || model.isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
     ),
     PrimitiveModel() => directReceiver,
@@ -182,6 +184,14 @@ Expression _callToBytesMethod(
     return receiver.property('toBytes').call([]).property(methodName).call([]);
   }
 }
+
+bool _isNullableViaTypedef(Model model) => switch (model) {
+  ClassModel(:final isNullable) => isNullable,
+  AllOfModel(:final isNullable) => isNullable,
+  OneOfModel(:final isNullable) => isNullable,
+  AnyOfModel(:final isNullable) => isNullable,
+  _ => false,
+};
 
 bool _needsTransformation(Model model) {
   return switch (model) {
