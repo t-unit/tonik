@@ -161,3 +161,8 @@ jobs:
         run: |
           cd integration_test/multipart/multipart_test
           dart test --concurrency=2
+
+      - name: Run figma integration tests
+        run: |
+          cd integration_test/figma/figma_test
+          dart test --concurrency=2
