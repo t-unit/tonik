@@ -362,7 +362,7 @@ class NameGenerator {
       inputName = inputName.substring(2);
     }
 
-    var cleaned = inputName.replaceAll('-', '_');
+    var cleaned = inputName.replaceAll('-', '_').replaceAll('.', '_');
     cleaned = cleaned.replaceAll(RegExp(r'[^\w$]'), '');
     cleaned = cleaned.replaceFirst(RegExp('^_+'), '');
 

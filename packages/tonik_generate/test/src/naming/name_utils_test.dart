@@ -160,5 +160,40 @@ void main() {
         expect(normalizeEnumValueName('IN_PROGRESS'), 'inProgress');
       });
     });
+
+    group('version string enum values', () {
+      test('spells out version-like strings with dot separator', () {
+        expect(normalizeEnumValueName('1.0.2'), 'oneDotZeroDotTwo');
+        expect(normalizeEnumValueName('2.1.0'), 'twoDotOneDotZero');
+      });
+
+      test('handles two-segment version strings', () {
+        expect(normalizeEnumValueName('1.0'), 'oneDotZero');
+      });
+    });
+
+    group('dotted enum values', () {
+      test('treats dots as word separators', () {
+        expect(normalizeEnumValueName('api.response'), 'apiResponse');
+        expect(normalizeEnumValueName('error.code'), 'errorCode');
+      });
+    });
+
+    group('version strings with suffixes', () {
+      test('spells out version part and normalizes suffix', () {
+        expect(
+          normalizeEnumValueName('1.0.2-beta'),
+          'oneDotZeroDotTwoBeta',
+        );
+      });
+    });
+
+    group('digit-leading safety net', () {
+      test('prefixes with dollar sign if result starts with digit', () {
+        // A mixed value where normalization produces a digit-leading
+        // result — the safety net should add a $ prefix
+        expect(normalizeEnumValueName('123_456'), r'$123456');
+      });
+    });
   });
 }

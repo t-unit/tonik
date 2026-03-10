@@ -384,6 +384,20 @@ void main() {
             'MyClassName',
           );
         });
+
+        test('treats dots as word separators in schema names', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                isDeprecated: false,
+                name: 'billing.credit_balance_transaction',
+                properties: const [],
+                context: Context.initial(),
+              ),
+            ),
+            'BillingCreditBalanceTransaction',
+          );
+        });
       });
 
       group('unique name generation', () {
