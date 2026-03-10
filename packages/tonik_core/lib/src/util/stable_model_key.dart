@@ -11,11 +11,13 @@ import 'package:tonik_core/src/model/model.dart';
 /// critical for specs with deeply circular model graphs (e.g. Stripe's 90+
 /// cyclic schemas), where uncached computation effectively hangs.
 class StableModelSorter {
+  static const _maxDepth = 5;
+
   final _cache = <Model, String>{};
 
   /// Returns the stable key for [model], computing and caching it if needed.
   String stableKeyOf(Model model) {
-    return _cache[model] ??= _computeStableKey(model, {});
+    return _cache[model] ??= _computeStableKey(model, {}, 0);
   }
 
   /// Returns a deterministically sorted list of [models].
@@ -70,37 +72,49 @@ class StableModelSorter {
   /// each model is visited at most once, giving O(V+E) complexity instead
   /// of exponential path enumeration in dense cyclic graphs.
   ///
+  /// [depth] bounds recursion so that keys stay compact even in large,
+  /// densely connected graphs. Beyond [_maxDepth], only the runtime type
+  /// is emitted instead of a full structural traversal.
+  ///
   /// For Set-based children (AllOf, OneOf, AnyOf), children are sorted by a
   /// cheap deterministic key before traversal so the result is independent
   /// of Set iteration order.
-  String _computeStableKey(Model model, Set<Model> visited) {
-    final cached = _cache[model];
-    if (cached != null) return cached;
+  String _computeStableKey(Model model, Set<Model> visited, int depth) {
+    if (depth > _maxDepth) {
+      return switch (model) {
+        ClassModel(:final name) => 'ClassModel{$name}',
+        EnumModel(:final name) => 'EnumModel{$name}',
+        AliasModel(:final name) => 'AliasModel{$name}',
+        ListModel(:final name) => 'ListModel{$name}',
+        _ => model.runtimeType.toString(),
+      };
+    }
 
     if (!visited.add(model)) return '<cycle>';
 
     return switch (model) {
       AllOfModel(:final models) =>
-        'AllOfModel{${_stableSortedModels(models, visited)}}',
+        'AllOfModel{${_stableSortedModels(models, visited, depth)}}',
       OneOfModel(:final models, :final discriminator) =>
         'OneOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models, visited)}}',
+            '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
       AnyOfModel(:final models, :final discriminator) =>
         'AnyOfModel{$discriminator,'
-            '${_stableSortedDiscriminatedModels(models, visited)}}',
+            '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
       ListModel(:final content, :final name) =>
-        'ListModel{$name,${_computeStableKey(content, visited)}}',
+        'ListModel{$name,${_computeStableKey(content, visited, depth + 1)}}',
       ClassModel(:final name, :final properties) =>
         'ClassModel{'
             '$name,'
             '${properties.map(
-              (p) => '${p.name}:${_computeStableKey(p.model, visited)}',
+              (p) => '${p.name}:'
+                  '${_computeStableKey(p.model, visited, depth + 1)}',
             ).join(',')}'
             '}',
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) =>
-        'AliasModel{$name,${_computeStableKey(model, visited)}}',
+        'AliasModel{$name,${_computeStableKey(model, visited, depth + 1)}}',
       StringModel() => 'StringModel',
       IntegerModel() => 'IntegerModel',
       BooleanModel() => 'BooleanModel',
@@ -122,9 +136,15 @@ class StableModelSorter {
 
   /// Sorts models by a cheap deterministic key, then computes full keys
   /// in that fixed order.
-  String _stableSortedModels(Set<Model> models, Set<Model> visited) {
+  String _stableSortedModels(
+    Set<Model> models,
+    Set<Model> visited,
+    int depth,
+  ) {
     final sorted = models.toList()..sort(_cheapModelCompare);
-    return sorted.map((m) => _computeStableKey(m, visited)).join(',');
+    return sorted
+        .map((m) => _computeStableKey(m, visited, depth + 1))
+        .join(',');
   }
 
   /// Sorts discriminated models by discriminator value first, then by a
@@ -132,13 +152,14 @@ class StableModelSorter {
   String _stableSortedDiscriminatedModels(
     Set<DiscriminatedModel> models,
     Set<Model> visited,
+    int depth,
   ) {
     final sorted = models.toList()..sort(_cheapDiscriminatedModelCompare);
     return sorted
         .map(
           (dm) =>
               '${dm.discriminatorValue}:'
-              '${_computeStableKey(dm.model, visited)}',
+              '${_computeStableKey(dm.model, visited, depth + 1)}',
         )
         .join(',');
   }

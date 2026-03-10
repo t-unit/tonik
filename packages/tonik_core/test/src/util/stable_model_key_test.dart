@@ -554,6 +554,157 @@ void main() {
     });
   });
 
+  group('key size bounds', () {
+    test(
+      'keys do not grow quadratically for densely connected models',
+      () {
+        const modelCount = 30;
+        final classModels = <ClassModel>[];
+        final sharedContext = context.push('schemas');
+
+        for (var i = 0; i < modelCount; i++) {
+          classModels.add(
+            ClassModel(
+              name: 'Model$i',
+              properties: [],
+              context: sharedContext.push('Model$i'),
+              isDeprecated: false,
+            ),
+          );
+        }
+
+        // Dense connectivity: each model references 5 others.
+        for (var i = 0; i < modelCount; i++) {
+          classModels[i].properties = [
+            for (var j = 1; j <= 5; j++)
+              Property(
+                name: 'ref$j',
+                model: classModels[(i + j) % modelCount],
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+          ];
+        }
+
+        // Compute keys sequentially (same order a real sort would).
+        final keyLengths = <int>[];
+        for (final model in classModels) {
+          keyLengths.add(sorter.stableKeyOf(model).length);
+        }
+
+        final maxLen = keyLengths.reduce(
+          (a, b) => a > b ? a : b,
+        );
+        final minLen = keyLengths.reduce(
+          (a, b) => a < b ? a : b,
+        );
+
+        // No single key should exceed 10 KB.
+        expect(
+          maxLen,
+          lessThan(10 * 1024),
+          reason:
+              'Largest key is $maxLen chars, expected < 10240. '
+              'Keys are likely embedding full cached keys of '
+              'previously-computed models.',
+        );
+
+        // No quadratic growth: max/min ratio should be bounded.
+        expect(
+          maxLen / minLen,
+          lessThan(10),
+          reason:
+              'Key size ratio (max/min) is ${maxLen / minLen}. '
+              'Expected < 10x, indicating quadratic growth.',
+        );
+      },
+    );
+  });
+
+  group('depth limit', () {
+    test(
+      'key truncates deep nesting instead of expanding all levels',
+      () {
+        // Create a 10-level AliasModel chain: A0 → A1 → … → A9 → StringModel
+        const depth = 10;
+        Model current = StringModel(context: context.push('leaf'));
+        final aliases = <AliasModel>[];
+
+        for (var i = depth - 1; i >= 0; i--) {
+          final alias = AliasModel(
+            name: 'Alias$i',
+            model: current,
+            context: context.push('Alias$i'),
+          );
+          aliases.insert(0, alias);
+          current = alias;
+        }
+
+        final key = sorter.stableKeyOf(aliases.first);
+
+        // The key should NOT contain all 10 alias names — depth limit
+        // should truncate before reaching the leaf.
+        var aliasCount = 0;
+        for (var i = 0; i < depth; i++) {
+          if (key.contains('Alias$i')) aliasCount++;
+        }
+
+        expect(
+          aliasCount,
+          lessThan(depth),
+          reason:
+              'Key contains all $depth alias levels ($aliasCount found). '
+              'Expected depth limit to truncate before the leaf.',
+        );
+      },
+    );
+  });
+
+  group('determinism across instances', () {
+    test(
+      'two independent StableModelSorter instances produce identical keys',
+      () {
+        final sorter1 = StableModelSorter();
+        final sorter2 = StableModelSorter();
+
+        final modelA = ClassModel(
+          name: 'A',
+          properties: [],
+          context: context,
+          isDeprecated: false,
+        );
+        final modelB = ClassModel(
+          name: 'B',
+          properties: [],
+          context: context,
+          isDeprecated: false,
+        );
+        modelA.properties = [
+          Property(
+            name: 'b',
+            model: modelB,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ];
+        modelB.properties = [
+          Property(
+            name: 'a',
+            model: modelA,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ];
+
+        expect(sorter1.stableKeyOf(modelA), sorter2.stableKeyOf(modelA));
+        expect(sorter1.stableKeyOf(modelB), sorter2.stableKeyOf(modelB));
+      },
+    );
+  });
+
   group('sortDiscriminatedModels', () {
     test('returns consistently ordered list', () {
       final sharedContext = context.push('Test');
