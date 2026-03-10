@@ -2,6 +2,35 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 
+final _semverRegExp = RegExp(
+  r'^\d+\.\d+\.\d+'
+  r'(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?'
+  r'(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$',
+);
+
+/// Returns a valid semver version string for use in pubspec.yaml.
+///
+/// If [version] is already valid semver, it is returned as-is.
+/// Otherwise, the original value is sanitized and appended as a prerelease
+/// tag to `0.0.1` (e.g. `0.0.1-2026-02-25.clover`).
+String sanitizeVersion(String version) {
+  final trimmed = version.trim();
+  if (trimmed.isEmpty) return '0.0.1';
+
+  if (_semverRegExp.hasMatch(trimmed)) return trimmed;
+
+  // Replace disallowed characters with hyphens, collapse runs, strip edges.
+  final sanitized = trimmed
+      .replaceAll(RegExp(r'[^0-9A-Za-z.\-]'), '-')
+      .replaceAll(RegExp('-{2,}'), '-')
+      .replaceAll(RegExp(r'\.{2,}'), '.')
+      .replaceAll(RegExp(r'^[.\-]+|[.\-]+$'), '');
+
+  if (sanitized.isEmpty) return '0.0.1';
+
+  return '0.0.1-$sanitized';
+}
+
 void generatePubspec({
   required ApiDocument apiDocument,
   required String outputDirectory,
@@ -14,11 +43,12 @@ void generatePubspec({
     pubspecFile.parent.createSync(recursive: true);
   }
 
+  final version = sanitizeVersion(apiDocument.version);
   final content =
       '''
 name: $package
 description: Generated API client for ${apiDocument.title}
-version: ${apiDocument.version}
+version: $version
 environment:
   sdk: '>=3.10.0 <4.0.0'
 
