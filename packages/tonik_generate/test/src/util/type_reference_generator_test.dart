@@ -140,7 +140,10 @@ void main() {
 
       setUp(() {
         context = Context.initial();
-        nameManager = NameManager(generator: NameGenerator());
+        nameManager = NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        );
       });
 
       test('returns TonikFile TypeReference for BinaryModel', () {

@@ -12,7 +12,10 @@ void main() {
   late DartEmitter emitter;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ResponseWrapperGenerator(
       nameManager: nameManager,
       package: 'test_package',

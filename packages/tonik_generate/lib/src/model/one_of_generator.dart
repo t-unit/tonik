@@ -22,10 +22,15 @@ import 'package:tonik_util/tonik_util.dart';
 /// A generator for creating sealed Dart classes from OneOf model definitions.
 @immutable
 class OneOfGenerator {
-  const OneOfGenerator({required this.nameManager, required this.package});
+  const OneOfGenerator({
+    required this.nameManager,
+    required this.package,
+    required this.stableModelSorter,
+  });
 
   final NameManager nameManager;
   final String package;
+  final StableModelSorter stableModelSorter;
 
   ({String code, String filename}) generate(OneOfModel model) {
     return generateCompositeLibrary(
@@ -59,7 +64,9 @@ class OneOfGenerator {
   ) {
     final variantNames = <DiscriminatedModel, String>{};
 
-    for (final discriminatedModel in model.models.toSortedList()) {
+    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
+      model.models,
+    )) {
       final uniqueVariantName = nameManager.generateVariantName(
         parentClassName: parentClassName,
         model: discriminatedModel.model,
@@ -190,7 +197,9 @@ class OneOfGenerator {
   ) {
     final classes = <Class>[];
 
-    for (final discriminatedModel in model.models.toSortedList()) {
+    for (final discriminatedModel in stableModelSorter.sortDiscriminatedModels(
+      model.models,
+    )) {
       final variantName = variantNames[discriminatedModel]!;
 
       final typeRef = typeReference(
@@ -249,7 +258,9 @@ class OneOfGenerator {
     Map<DiscriminatedModel, String> variantNames,
   ) {
     final caseCodes = <Code>[];
-    final sortedModels = model.models.toSortedList();
+    final sortedModels = stableModelSorter.sortDiscriminatedModels(
+      model.models,
+    );
     for (var i = 0; i < sortedModels.length; i++) {
       final discriminatedModel = sortedModels[i];
       final variantName = variantNames[discriminatedModel]!;
@@ -320,13 +331,16 @@ class OneOfGenerator {
 
       final resultCases = <Code>[];
 
-      for (final m in model.models.toSortedList().where(
-        (m) =>
-            m.discriminatorValue != null &&
-            m.model is! PrimitiveModel &&
-            m.model is! ListModel &&
-            model is! EnumModel,
-      )) {
+      for (final m
+          in stableModelSorter
+              .sortDiscriminatedModels(model.models)
+              .where(
+                (m) =>
+                    m.discriminatorValue != null &&
+                    m.model is! PrimitiveModel &&
+                    m.model is! ListModel &&
+                    model is! EnumModel,
+              )) {
         final variantName = variantNames[m]!;
 
         resultCases.addAll([
@@ -362,9 +376,12 @@ class OneOfGenerator {
     if (hasPrimitives && hasOnlyPrimitives) {
       final cases = <Code>[];
 
-      for (final m in model.models.toSortedList().where(
-        (m) => m.model is PrimitiveModel,
-      )) {
+      for (final m
+          in stableModelSorter
+              .sortDiscriminatedModels(model.models)
+              .where(
+                (m) => m.model is PrimitiveModel,
+              )) {
         final variantName = variantNames[m]!;
 
         cases.addAll([
@@ -389,9 +406,12 @@ class OneOfGenerator {
       ]);
     }
 
-    for (final m in model.models.toSortedList().where(
-      (m) => m.model is PrimitiveModel,
-    )) {
+    for (final m
+        in stableModelSorter
+            .sortDiscriminatedModels(model.models)
+            .where(
+              (m) => m.model is PrimitiveModel,
+            )) {
       final typeRef = typeReference(m.model, nameManager, package);
       final variantName = variantNames[m]!;
 
@@ -405,9 +425,12 @@ class OneOfGenerator {
     }
 
     // Fallback: try all non-primitive variants when discriminator doesn't match
-    for (final m in model.models.toSortedList().where(
-      (m) => m.model is! PrimitiveModel,
-    )) {
+    for (final m
+        in stableModelSorter
+            .sortDiscriminatedModels(model.models)
+            .where(
+              (m) => m.model is! PrimitiveModel,
+            )) {
       final modelType = m.model;
       final modelName = nameManager.modelName(modelType);
       final variantName = variantNames[m]!;
@@ -493,9 +516,14 @@ class OneOfGenerator {
           const Code('}'),
         ]);
 
-        for (final m in model.models.toSortedList().where(
-          (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
-        )) {
+        for (final m
+            in stableModelSorter
+                .sortDiscriminatedModels(model.models)
+                .where(
+                  (m) =>
+                      m.discriminatorValue != null &&
+                      m.model is! PrimitiveModel,
+                )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
 
@@ -521,7 +549,7 @@ class OneOfGenerator {
       }
     }
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 
@@ -629,7 +657,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
 
       final encodingShape = m.model.encodingShape;
@@ -763,7 +791,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
 
       final encodingShape = m.model.encodingShape;
@@ -907,7 +935,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       final isList = m.model is ListModel;
@@ -986,7 +1014,7 @@ class OneOfGenerator {
 
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
@@ -1108,7 +1136,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
 
       final encodingShape = m.model.encodingShape;
@@ -1241,7 +1269,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final usesValue = matrixParameterExpressionUsesValue(m.model);
 
@@ -1293,7 +1321,7 @@ class OneOfGenerator {
   ) {
     final caseCodes = <Code>[];
 
-    for (final m in model.models.toSortedList()) {
+    for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
 

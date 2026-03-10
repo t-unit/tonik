@@ -16,7 +16,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -1328,309 +1331,327 @@ void main() {
   });
 
   group('style-based encoding with null rawContentType', () {
-    test('StringModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+    test(
+      'StringModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'name': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'name': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('IntegerModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'count',
-            model: IntegerModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'count': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+    test(
+      'IntegerModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: IntegerModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('BooleanModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'active',
-            model: BooleanModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'active': const MultipartPropertyEncoding(
-            allowReserved: true,
-          ),
-        },
-      );
+    test(
+      'BooleanModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'active',
+              model: BooleanModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'active': const MultipartPropertyEncoding(
+              allowReserved: true,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('DateTimeModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'createdAt',
-            model: DateTimeModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'createdAt': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: false,
-          ),
-        },
-      );
+    test(
+      'DateTimeModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'createdAt',
+              model: DateTimeModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'createdAt': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: false,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry('createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('AnyModel falls back to application/json when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'value',
-            model: AnyModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'value': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+    test(
+      'AnyModel falls back to application/json when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'value',
+              model: AnyModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'value': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry('value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('EnumModel<String> falls back to text/plain when rawContentType is null', () {
-      final enumModel = EnumModel<String>(
-        name: 'Status',
-        values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
-        },
-        isNullable: false,
-        isDeprecated: false,
-        context: testContext,
-      );
-
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'status',
-            model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+    test(
+      'EnumModel<String> falls back to text/plain when rawContentType is null',
+      () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'status',
+              model: enumModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'status': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   });
 
   group('enum properties', () {
@@ -2360,45 +2381,45 @@ void main() {
     test(
       'generates binary switch for Base64Model property (same as BinaryModel)',
       () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'avatar',
-            model: Base64Model(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'avatar',
+              model: Base64Model(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'avatar': const MultipartPropertyEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'avatar': const MultipartPropertyEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
           void test() {
             final formData = FormData();
             switch (body.avatar) {
@@ -2415,9 +2436,10 @@ void main() {
             }
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   });
 
   group('complex object properties', () {

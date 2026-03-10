@@ -126,18 +126,22 @@ Expression _buildListMatrixExpression(
     EnumModel() =>
       valueExpression
           .property('map')
-          .call([
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body = refer('e').property('uriEncode').call(
-                  [],
-                  {'allowEmpty': allowEmpty},
-                ).code,
-            ).closure,
-          ], {}, [refer('String', 'dart:core')])
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body = refer('e').property('uriEncode').call(
+                    [],
+                    {'allowEmpty': allowEmpty},
+                  ).code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
           .property('toList')
           .call([])
           .property('toMatrix')
@@ -159,24 +163,28 @@ Expression _buildListMatrixExpression(
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
       valueExpression
           .property('map')
-          .call([
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body =
-                    refer(
-                          'encodeAnyToUri',
-                          'package:tonik_util/tonik_util.dart',
-                        )
-                        .call(
-                          [refer('e')],
-                          {'allowEmpty': allowEmpty},
-                        )
-                        .code,
-            ).closure,
-          ], {}, [refer('String', 'dart:core')])
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body =
+                      refer(
+                            'encodeAnyToUri',
+                            'package:tonik_util/tonik_util.dart',
+                          )
+                          .call(
+                            [refer('e')],
+                            {'allowEmpty': allowEmpty},
+                          )
+                          .code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
           .property('toList')
           .call([])
           .property('toMatrix')
@@ -188,10 +196,9 @@ Expression _buildListMatrixExpression(
               'alreadyEncoded': literalTrue,
             },
           ),
-    ClassModel() || ListModel() =>
-      generateEncodingExceptionExpression(
-        'Lists with complex content cannot be matrix-encoded',
-      ),
+    ClassModel() || ListModel() => generateEncodingExceptionExpression(
+      'Lists with complex content cannot be matrix-encoded',
+    ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),

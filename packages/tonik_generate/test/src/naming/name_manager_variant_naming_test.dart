@@ -7,7 +7,10 @@ void main() {
   group('NameManager generateVariantName', () {
     test('generates variant names for models with explicit names', () {
       final nameGenerator = NameGenerator();
-      final nameManager = NameManager(generator: nameGenerator);
+      final nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
 
       final classModel = ClassModel(
         isDeprecated: false,
@@ -30,7 +33,10 @@ void main() {
 
     test('generates variant names for primitive models', () {
       final nameGenerator = NameGenerator();
-      final nameManager = NameManager(generator: nameGenerator);
+      final nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
 
       final stringModel = StringModel(
         context: Context.initial()
@@ -50,7 +56,10 @@ void main() {
 
     test('generates variant names using discriminator values', () {
       final nameGenerator = NameGenerator();
-      final nameManager = NameManager(generator: nameGenerator);
+      final nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
 
       final anonymousModel = ClassModel(
         isDeprecated: false,
@@ -72,7 +81,10 @@ void main() {
 
     test('generates variant names using generated discriminator names', () {
       final nameGenerator = NameGenerator();
-      final nameManager = NameManager(generator: nameGenerator);
+      final nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
 
       final anonymousModel = ClassModel(
         isDeprecated: false,
@@ -94,7 +106,10 @@ void main() {
 
     test('ensures uniqueness of variant names', () {
       final nameGenerator = NameGenerator();
-      final nameManager = NameManager(generator: nameGenerator);
+      final nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
 
       final classModel = ClassModel(
         isDeprecated: false,
@@ -126,7 +141,10 @@ void main() {
 
     test('generates unique names for different parent classes', () {
       final nameGenerator = NameGenerator();
-      final nameManager = NameManager(generator: nameGenerator);
+      final nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
 
       final classModel = ClassModel(
         isDeprecated: false,

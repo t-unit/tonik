@@ -551,9 +551,8 @@ void main() {
 
       final result = await api.getLibraryAnalyticsComponentActions(
         fileKey: 'lib_file_1',
-        groupBy:
-            V1AnalyticsLibrariesFileKeyComponentActionsParametersModel
-                .component,
+        groupBy: V1AnalyticsLibrariesFileKeyComponentActionsParametersModel
+            .component,
         startDate: '2024-01-01',
         endDate: '2024-12-31',
       );
@@ -563,8 +562,7 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
+          result as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -595,10 +593,11 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
-      expect(success.value,
-          isA<GetLibraryAnalyticsComponentActionsResponse200>());
+          result as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
+      expect(
+        success.value,
+        isA<GetLibraryAnalyticsComponentActionsResponse200>(),
+      );
 
       expect(
         success.response.requestOptions.uri.queryParameters['group_by'],
@@ -611,9 +610,8 @@ void main() {
 
       final result = await api.getLibraryAnalyticsComponentActions(
         fileKey: 'lib_file_1',
-        groupBy:
-            V1AnalyticsLibrariesFileKeyComponentActionsParametersModel
-                .component,
+        groupBy: V1AnalyticsLibrariesFileKeyComponentActionsParametersModel
+            .component,
         cursor: 'next_page_token_abc',
       );
 
@@ -622,8 +620,7 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
+          result as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
       expect(
         success.response.requestOptions.uri.queryParameters['cursor'],
         'next_page_token_abc',
@@ -635,9 +632,8 @@ void main() {
 
       final result = await api.getLibraryAnalyticsComponentActions(
         fileKey: 'lib_file_1',
-        groupBy:
-            V1AnalyticsLibrariesFileKeyComponentActionsParametersModel
-                .component,
+        groupBy: V1AnalyticsLibrariesFileKeyComponentActionsParametersModel
+            .component,
       );
 
       expect(
@@ -645,8 +641,7 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
+          result as TonikSuccess<GetLibraryAnalyticsComponentActionsResponse>;
       expect(success.response.statusCode, 403);
       expect(
         success.value,
@@ -672,8 +667,7 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>;
+          result as TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -693,8 +687,7 @@ void main() {
 
       final result = await api.getLibraryAnalyticsVariableUsages(
         fileKey: 'var_lib_file',
-        groupBy:
-            V1AnalyticsLibrariesFileKeyVariableUsagesParametersModel.file,
+        groupBy: V1AnalyticsLibrariesFileKeyVariableUsagesParametersModel.file,
       );
 
       expect(
@@ -702,8 +695,7 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>;
+          result as TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>;
       expect(
         success.response.requestOptions.uri.queryParameters['group_by'],
         'file',
@@ -724,8 +716,7 @@ void main() {
         isA<TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>>(),
       );
       final success =
-          result
-              as TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>;
+          result as TonikSuccess<GetLibraryAnalyticsVariableUsagesResponse>;
       expect(success.response.statusCode, 401);
       expect(
         success.value,

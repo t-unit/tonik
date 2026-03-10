@@ -24,10 +24,15 @@ import 'package:tonik_util/tonik_util.dart';
 /// A generator for creating Dart classes from allOf model definitions.
 @immutable
 class AllOfGenerator {
-  const AllOfGenerator({required this.nameManager, required this.package});
+  const AllOfGenerator({
+    required this.nameManager,
+    required this.package,
+    required this.stableModelSorter,
+  });
 
   final NameManager nameManager;
   final String package;
+  final StableModelSorter stableModelSorter;
 
   ({String code, String filename}) generate(AllOfModel model) {
     return generateCompositeLibrary(
@@ -43,7 +48,7 @@ class AllOfGenerator {
   @visibleForTesting
   List<Spec> generateClasses(AllOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
-    final models = model.models.toSortedList();
+    final models = stableModelSorter.sortModels(model.models);
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(m, nameManager, package);
@@ -95,7 +100,7 @@ class AllOfGenerator {
               )
             : publicClassName);
 
-    final models = model.models.toSortedList();
+    final models = stableModelSorter.sortModels(model.models);
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(m, nameManager, package);
@@ -872,30 +877,34 @@ class AllOfGenerator {
         propertyMergingLines.addAll([
           Code('if (${normalized.normalizedName} != null) {'),
           refer('mergedProperties').property('addAll').call([
-            refer(normalized.normalizedName).nullChecked.property(
-              'parameterProperties',
-            ).call(
-              [],
-              {
-                'allowEmpty': refer('allowEmpty'),
-                'allowLists': refer('allowLists'),
-              },
-            ),
+            refer(normalized.normalizedName).nullChecked
+                .property(
+                  'parameterProperties',
+                )
+                .call(
+                  [],
+                  {
+                    'allowEmpty': refer('allowEmpty'),
+                    'allowLists': refer('allowLists'),
+                  },
+                ),
           ]).statement,
           const Code('}'),
         ]);
       } else {
         propertyMergingLines.add(
           refer('mergedProperties').property('addAll').call([
-            refer(normalized.normalizedName).property(
-              'parameterProperties',
-            ).call(
-              [],
-              {
-                'allowEmpty': refer('allowEmpty'),
-                'allowLists': refer('allowLists'),
-              },
-            ),
+            refer(normalized.normalizedName)
+                .property(
+                  'parameterProperties',
+                )
+                .call(
+                  [],
+                  {
+                    'allowEmpty': refer('allowEmpty'),
+                    'allowLists': refer('allowLists'),
+                  },
+                ),
           ]).statement,
         );
       }
@@ -1126,8 +1135,8 @@ class AllOfGenerator {
     final primaryField = normalizedProperties.first;
     final primarySimpleReceiver =
         _isNullableViaTypedef(primaryField.property.model)
-            ? refer(primaryField.normalizedName).nullChecked
-            : refer(primaryField.normalizedName);
+        ? refer(primaryField.normalizedName).nullChecked
+        : refer(primaryField.normalizedName);
 
     return Method(
       (b) => b
@@ -1333,8 +1342,8 @@ class AllOfGenerator {
       final primaryField = normalizedProperties.first;
       final primaryFormRtReceiver =
           _isNullableViaTypedef(primaryField.property.model)
-              ? refer(primaryField.normalizedName).nullChecked
-              : refer(primaryField.normalizedName);
+          ? refer(primaryField.normalizedName).nullChecked
+          : refer(primaryField.normalizedName);
       validationCode.addAll([
         primaryFormRtReceiver
             .property('toForm')
@@ -1550,8 +1559,8 @@ class AllOfGenerator {
     final primaryField = normalizedProperties.first;
     final primaryFormReceiver =
         _isNullableViaTypedef(primaryField.property.model)
-            ? refer(primaryField.normalizedName).nullChecked
-            : refer(primaryField.normalizedName);
+        ? refer(primaryField.normalizedName).nullChecked
+        : refer(primaryField.normalizedName);
 
     return Method(
       (b) => b
@@ -1652,8 +1661,8 @@ class AllOfGenerator {
       final primaryField = normalizedProperties.first;
       final primaryLabelRtReceiver =
           _isNullableViaTypedef(primaryField.property.model)
-              ? refer(primaryField.normalizedName).nullChecked
-              : refer(primaryField.normalizedName);
+          ? refer(primaryField.normalizedName).nullChecked
+          : refer(primaryField.normalizedName);
       validationCode.addAll([
         primaryLabelRtReceiver
             .property('toLabel')
@@ -1783,8 +1792,8 @@ class AllOfGenerator {
     final primaryField = normalizedProperties.first;
     final primaryLabelReceiver =
         _isNullableViaTypedef(primaryField.property.model)
-            ? refer(primaryField.normalizedName).nullChecked
-            : refer(primaryField.normalizedName);
+        ? refer(primaryField.normalizedName).nullChecked
+        : refer(primaryField.normalizedName);
 
     return Method(
       (b) => b
@@ -1837,9 +1846,11 @@ class AllOfGenerator {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
             refer('mergedProperties').property('addAll').call([
-              refer(prop.normalizedName).nullChecked.property(
-                'parameterProperties',
-              ).call([], {'allowEmpty': refer('allowEmpty')}),
+              refer(prop.normalizedName).nullChecked
+                  .property(
+                    'parameterProperties',
+                  )
+                  .call([], {'allowEmpty': refer('allowEmpty')}),
             ]).statement,
             const Code('}'),
           ]);
@@ -1983,9 +1994,11 @@ class AllOfGenerator {
           propertyMergingLines.addAll([
             Code('if (${normalized.normalizedName} != null) {'),
             refer('mergedProperties').property('addAll').call([
-              refer(normalized.normalizedName).nullChecked.property(
-                'parameterProperties',
-              ).call([], {'allowEmpty': refer('allowEmpty')}),
+              refer(normalized.normalizedName).nullChecked
+                  .property(
+                    'parameterProperties',
+                  )
+                  .call([], {'allowEmpty': refer('allowEmpty')}),
             ]).statement,
             const Code('}'),
           ]);

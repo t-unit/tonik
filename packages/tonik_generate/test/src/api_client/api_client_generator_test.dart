@@ -18,7 +18,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ApiClientGenerator(
       nameManager: nameManager,
       package: 'package:test_package/test_package.dart',

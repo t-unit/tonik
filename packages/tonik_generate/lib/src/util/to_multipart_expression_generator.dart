@@ -139,7 +139,8 @@ Code? _buildFieldCode(
   final contentType = propertyEncoding?.contentType;
   final rawContentType = propertyEncoding?.rawContentType;
   final effectiveRawContentType =
-      rawContentType ?? 'text/plain'; // style-based primitives serialise as plain strings
+      rawContentType ??
+      'text/plain'; // style-based primitives serialise as plain strings
 
   // Build per-part header statements and variable name (if any).
   final headerResult = _buildHeaderMapStatements(
@@ -1029,10 +1030,12 @@ Code _buildDeepObjectFileAddition(
   String accessor, {
   String? headerVarName,
 }) {
-  final iterableExpr = refer(accessor).property('toDeepObject').call(
-    [literalString(rawName, raw: true)],
-    {'explode': literalTrue, 'allowEmpty': literalTrue},
-  );
+  final iterableExpr = refer(accessor)
+      .property('toDeepObject')
+      .call(
+        [literalString(rawName, raw: true)],
+        {'explode': literalTrue, 'allowEmpty': literalTrue},
+      );
 
   if (headerVarName != null) {
     // With per-part headers: each bracket-notation entry becomes a file part.
@@ -1144,8 +1147,9 @@ Code _buildUrlEncodedObjectFileAddition(
   final partsVarName = '${propVarName}Parts';
 
   // headers named arg placed after contentType, empty string when absent.
-  final headersLine =
-      headerVarName != null ? '\n    headers: $headerVarName,' : '';
+  final headersLine = headerVarName != null
+      ? '\n    headers: $headerVarName,'
+      : '';
 
   return Code.scope((allocate) {
     final encodingException = allocate(
@@ -1179,13 +1183,25 @@ Code _buildUrlEncodedObjectFileAddition(
     // dart:core types used bare in the raw string — must be allocated so the
     // emitter adds the correct prefix when dart:core is imported as aliased.
     final string = allocate(
-      TypeReference((b) => b..symbol = 'String'..url = 'dart:core'),
+      TypeReference(
+        (b) => b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+      ),
     );
     final map = allocate(
-      TypeReference((b) => b..symbol = 'Map'..url = 'dart:core'),
+      TypeReference(
+        (b) => b
+          ..symbol = 'Map'
+          ..url = 'dart:core',
+      ),
     );
     final uri = allocate(
-      TypeReference((b) => b..symbol = 'Uri'..url = 'dart:core'),
+      TypeReference(
+        (b) => b
+          ..symbol = 'Uri'
+          ..url = 'dart:core',
+      ),
     );
 
     return '''

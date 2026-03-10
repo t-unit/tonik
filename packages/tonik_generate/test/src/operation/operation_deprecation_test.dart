@@ -13,7 +13,10 @@ void main() {
   late List<Server> testServers;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
 

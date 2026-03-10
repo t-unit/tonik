@@ -19,10 +19,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = AllOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);

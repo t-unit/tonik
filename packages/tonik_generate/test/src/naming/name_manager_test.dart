@@ -11,7 +11,10 @@ void main() {
 
     setUp(() {
       generator = NameGenerator();
-      manager = NameManager(generator: generator);
+      manager = NameManager(
+        generator: generator,
+        stableModelSorter: StableModelSorter(),
+      );
       context = Context.initial();
     });
 
@@ -721,7 +724,10 @@ void main() {
 
     setUp(() {
       generator = NameGenerator();
-      manager = NameManager(generator: generator);
+      manager = NameManager(
+        generator: generator,
+        stableModelSorter: StableModelSorter(),
+      );
     });
 
     test('caches and returns the same result for identical server lists', () {
@@ -822,7 +828,10 @@ void main() {
 
     setUp(() {
       generator = NameGenerator();
-      manager = NameManager(generator: generator);
+      manager = NameManager(
+        generator: generator,
+        stableModelSorter: StableModelSorter(),
+      );
       context = Context.initial();
     });
 

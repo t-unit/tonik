@@ -14,7 +14,10 @@ void main() {
   late String Function(String, {Object? uri}) format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = DataGenerator(
       nameManager: nameManager,
       package: 'test_package',

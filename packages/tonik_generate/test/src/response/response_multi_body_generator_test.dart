@@ -15,7 +15,10 @@ void main() {
 
   setUp(() {
     emitter = DartEmitter(orderDirectives: true, useNullSafetySyntax: true);
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ResponseGenerator(
       nameManager: nameManager,
       package: 'test_package',

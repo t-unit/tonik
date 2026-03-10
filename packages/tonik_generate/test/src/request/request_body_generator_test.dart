@@ -17,7 +17,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = RequestBodyGenerator(
       nameManager: nameManager,
       package: 'test_package',

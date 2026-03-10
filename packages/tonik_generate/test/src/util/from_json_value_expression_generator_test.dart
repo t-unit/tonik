@@ -18,7 +18,10 @@ void main() {
 
   setUp(() {
     context = Context.initial();
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     emitter = DartEmitter(useNullSafetySyntax: true);
     scopedAllocator = CorePrefixedAllocator();
     scopedEmitter = DartEmitter(
@@ -928,7 +931,10 @@ void main() {
 
     setUp(() {
       context = Context.initial();
-      nameManager = NameManager(generator: NameGenerator());
+      nameManager = NameManager(
+        generator: NameGenerator(),
+        stableModelSorter: StableModelSorter(),
+      );
       emitter = DartEmitter(
         useNullSafetySyntax: true,
         allocator: Allocator.simplePrefixing(),

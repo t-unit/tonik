@@ -1164,8 +1164,7 @@ void main() {
     });
   });
 
-  group('buildToJsonPropertyExpression for BinaryModel with forceNonNull',
-      () {
+  group('buildToJsonPropertyExpression for BinaryModel with forceNonNull', () {
     test('generates force non-null toBytes for Binary property', () {
       final property = Property(
         name: 'avatar',

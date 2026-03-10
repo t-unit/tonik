@@ -16,7 +16,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ServerGenerator(nameManager: nameManager);
     emitter = DartEmitter(useNullSafetySyntax: true);
   });

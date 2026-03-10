@@ -23,10 +23,15 @@ import 'package:tonik_util/tonik_util.dart';
 
 @immutable
 class AnyOfGenerator {
-  const AnyOfGenerator({required this.nameManager, required this.package});
+  const AnyOfGenerator({
+    required this.nameManager,
+    required this.package,
+    required this.stableModelSorter,
+  });
 
   final NameManager nameManager;
   final String package;
+  final StableModelSorter stableModelSorter;
 
   ({String code, String filename}) generate(AnyOfModel model) {
     return generateCompositeLibrary(
@@ -42,20 +47,23 @@ class AnyOfGenerator {
   List<Spec> generateClasses(AnyOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
 
-    final pseudoProperties = model.models.toSortedList().map((discriminated) {
-      final typeRef = typeReference(
-        discriminated.model,
-        nameManager,
-        package,
-      );
-      return Property(
-        name: typeRef.symbol,
-        model: discriminated.model,
-        isRequired: false,
-        isNullable: true,
-        isDeprecated: false,
-      );
-    }).toList();
+    final pseudoProperties = stableModelSorter
+        .sortDiscriminatedModels(model.models)
+        .map((discriminated) {
+          final typeRef = typeReference(
+            discriminated.model,
+            nameManager,
+            package,
+          );
+          return Property(
+            name: typeRef.symbol,
+            model: discriminated.model,
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          );
+        })
+        .toList();
 
     final normalized = normalizeProperties(pseudoProperties);
 
@@ -117,16 +125,23 @@ class AnyOfGenerator {
               )
             : publicClassName);
 
-    final pseudoProperties = model.models.toSortedList().map((discriminated) {
-      final typeRef = typeReference(discriminated.model, nameManager, package);
-      return Property(
-        name: typeRef.symbol,
-        model: discriminated.model,
-        isRequired: false,
-        isNullable: true,
-        isDeprecated: false,
-      );
-    }).toList();
+    final pseudoProperties = stableModelSorter
+        .sortDiscriminatedModels(model.models)
+        .map((discriminated) {
+          final typeRef = typeReference(
+            discriminated.model,
+            nameManager,
+            package,
+          );
+          return Property(
+            name: typeRef.symbol,
+            model: discriminated.model,
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          );
+        })
+        .toList();
 
     final normalized = normalizeProperties(pseudoProperties);
 
@@ -558,7 +573,7 @@ class AnyOfGenerator {
   }
 
   Map<Model, String?> _discriminatorMap(AnyOfModel model) => {
-    for (final dm in model.models.toSortedList())
+    for (final dm in stableModelSorter.sortDiscriminatedModels(model.models))
       dm.model: dm.discriminatorValue,
   };
 

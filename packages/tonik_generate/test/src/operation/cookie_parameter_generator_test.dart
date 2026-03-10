@@ -21,7 +21,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     optionsGenerator = OptionsGenerator(
       nameManager: nameManager,
       package: 'package:api/api.dart',
