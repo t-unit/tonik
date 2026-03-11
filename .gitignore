@@ -32,6 +32,7 @@
 /integration_test/multipart/multipart_api
 /integration_test/multipart/multipart_3_1_api
 /integration_test/figma/figma_api
+/integration_test/stripe/stripe_api
 
 # Dependencies
 /pubspec.lock

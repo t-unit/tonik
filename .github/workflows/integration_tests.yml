@@ -166,3 +166,8 @@ jobs:
         run: |
           cd integration_test/figma/figma_test
           dart test --concurrency=2
+
+      - name: Run stripe integration tests
+        run: |
+          cd integration_test/stripe/stripe_test
+          dart test --concurrency=2
