@@ -203,7 +203,10 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
   final withDotsSeparated = text.replaceAll('.', ' ');
 
   // Clean invalid characters but preserve separators for splitting
-  final cleaned = withDotsSeparated.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s$]'), '');
+  final cleaned = withDotsSeparated.replaceAll(
+    RegExp(r'[^a-zA-Z0-9_\-\s$]'),
+    '',
+  );
 
   // Split on separators and case boundaries, but NOT on $
   final tokens = cleaned
@@ -351,8 +354,9 @@ String normalizeEnumValueName(String value) {
     final suffix = versionMatch.group(2) ?? '';
 
     final segments = versionPart.split('.');
-    final spelled =
-        segments.map((s) => _numberToWords(int.parse(s))).join(' dot ');
+    final spelled = segments
+        .map((s) => _numberToWords(int.parse(s)))
+        .join(' dot ');
 
     final fullSpelled = suffix.isNotEmpty ? '$spelled $suffix' : spelled;
     final normalized = normalizeSingle(fullSpelled);

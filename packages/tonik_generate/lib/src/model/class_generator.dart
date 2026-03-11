@@ -481,7 +481,10 @@ class ClassGenerator {
     }
 
     final codes = <Code>[
-      Code(r"final _$map = json.decodeMap(context: r'" "$className');"),
+      Code(
+        r"final _$map = json.decodeMap(context: r'"
+        "$className');",
+      ),
     ];
 
     final propertyAssignments = <Code>[];

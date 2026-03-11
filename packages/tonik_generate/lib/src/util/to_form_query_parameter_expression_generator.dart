@@ -96,7 +96,8 @@ List<Code> buildToFormQueryParameterCode(
         ).statement,
         const Code('}'),
         Code(
-          r'_$entries' ".add((name: r'${parameter.rawName}', value: <",
+          r'_$entries'
+          ".add((name: r'${parameter.rawName}', value: <",
         ),
         refer('String', 'dart:core').code,
         Code(
@@ -126,7 +127,8 @@ List<Code> buildToFormQueryParameterCode(
         const Code('}'),
         const Code('}'),
         Code(
-          r'_$entries' '.add(('
+          r'_$entries'
+          '.add(('
           "name: r'${parameter.rawName}', "
           'value: $valueExpression, '
           '),);',
@@ -147,7 +149,8 @@ List<Code> buildToFormQueryParameterCode(
 
   return [
     Code(
-      r'_$entries' '.add(('
+      r'_$entries'
+      '.add(('
       "name: r'${parameter.rawName}', "
       'value: $valueExpression, '
       '),);',
@@ -285,7 +288,10 @@ List<Code> _buildExplodedListCode(
       contentModel is OneOfModel ||
       contentModel is AnyOfModel) {
     return [
-      Code(r'_$entries' '.addAll($parameterName.map((e) => ('),
+      Code(
+        r'_$entries'
+        '.addAll($parameterName.map((e) => (',
+      ),
       Code("name: r'$rawName', "),
       const Code('value: '),
       refer(
@@ -307,7 +313,10 @@ List<Code> _buildExplodedListCode(
       ).statement,
       const Code('}'),
       const Code('}'),
-      Code(r'_$entries' '.addAll($parameterName.map((e) => ('),
+      Code(
+        r'_$entries'
+        '.addAll($parameterName.map((e) => (',
+      ),
       Code("name: r'$rawName', "),
       Code(
         'value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);',
@@ -316,7 +325,10 @@ List<Code> _buildExplodedListCode(
   }
 
   return [
-    Code(r'_$entries' '.addAll($parameterName.map((e) => ('),
+    Code(
+      r'_$entries'
+      '.addAll($parameterName.map((e) => (',
+    ),
     Code("name: r'$rawName', "),
     Code('value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);'),
   ];

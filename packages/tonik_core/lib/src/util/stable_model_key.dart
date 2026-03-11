@@ -57,8 +57,7 @@ class StableModelSorter {
     DiscriminatedModel b,
   ) {
     if (a.discriminatorValue != null && b.discriminatorValue != null) {
-      final discComp =
-          a.discriminatorValue!.compareTo(b.discriminatorValue!);
+      final discComp = a.discriminatorValue!.compareTo(b.discriminatorValue!);
       if (discComp != 0) return discComp;
     }
     return _compareModelsStably(a.model, b.model);
@@ -172,8 +171,9 @@ class StableModelSorter {
 
   /// Cheap, non-recursive comparator for pre-sorting Set children.
   static int _cheapModelCompare(Model a, Model b) {
-    final typeComp =
-        a.runtimeType.toString().compareTo(b.runtimeType.toString());
+    final typeComp = a.runtimeType.toString().compareTo(
+      b.runtimeType.toString(),
+    );
     if (typeComp != 0) return typeComp;
     return a.context.toString().compareTo(b.context.toString());
   }
@@ -184,8 +184,7 @@ class StableModelSorter {
     DiscriminatedModel b,
   ) {
     if (a.discriminatorValue != null && b.discriminatorValue != null) {
-      final discComp =
-          a.discriminatorValue!.compareTo(b.discriminatorValue!);
+      final discComp = a.discriminatorValue!.compareTo(b.discriminatorValue!);
       if (discComp != 0) return discComp;
     }
     return _cheapModelCompare(a.model, b.model);

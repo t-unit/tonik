@@ -255,8 +255,7 @@ void main() {
       );
     });
 
-    test(
-        'generates correct equals when property is named "other" '
+    test('generates correct equals when property is named "other" '
         '(shadows operator parameter)', () {
       final model = ClassModel(
         isDeprecated: false,
