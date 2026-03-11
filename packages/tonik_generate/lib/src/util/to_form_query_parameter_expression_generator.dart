@@ -31,7 +31,7 @@ List<Code> buildToFormQueryParameterCode(
 
   if (model is AnyModel) {
     return [
-      const Code('entries.add(('),
+      const Code(r'_$entries.add(('),
       Code("name: r'${parameter.rawName}', "),
       const Code('value: '),
       refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart')
@@ -70,7 +70,7 @@ List<Code> buildToFormQueryParameterCode(
         contentModel is OneOfModel ||
         contentModel is AnyOfModel) {
       return [
-        const Code('entries.add(('),
+        const Code(r'_$entries.add(('),
         Code("name: r'${parameter.rawName}', "),
         const Code('value: '),
         refer(parameterName).code,
@@ -95,7 +95,9 @@ List<Code> buildToFormQueryParameterCode(
           'Form encoding only supports lists of simple types',
         ).statement,
         const Code('}'),
-        Code("entries.add((name: r'${parameter.rawName}', value: <"),
+        Code(
+          r'_$entries' ".add((name: r'${parameter.rawName}', value: <",
+        ),
         refer('String', 'dart:core').code,
         Code(
           '>[].toForm(explode: $explode, allowEmpty: $allowEmpty),),);',
@@ -124,7 +126,7 @@ List<Code> buildToFormQueryParameterCode(
         const Code('}'),
         const Code('}'),
         Code(
-          'entries.add(('
+          r'_$entries' '.add(('
           "name: r'${parameter.rawName}', "
           'value: $valueExpression, '
           '),);',
@@ -145,7 +147,7 @@ List<Code> buildToFormQueryParameterCode(
 
   return [
     Code(
-      'entries.add(('
+      r'_$entries' '.add(('
       "name: r'${parameter.rawName}', "
       'value: $valueExpression, '
       '),);',
@@ -283,7 +285,7 @@ List<Code> _buildExplodedListCode(
       contentModel is OneOfModel ||
       contentModel is AnyOfModel) {
     return [
-      Code('entries.addAll($parameterName.map((e) => ('),
+      Code(r'_$entries' '.addAll($parameterName.map((e) => ('),
       Code("name: r'$rawName', "),
       const Code('value: '),
       refer(
@@ -305,7 +307,7 @@ List<Code> _buildExplodedListCode(
       ).statement,
       const Code('}'),
       const Code('}'),
-      Code('entries.addAll($parameterName.map((e) => ('),
+      Code(r'_$entries' '.addAll($parameterName.map((e) => ('),
       Code("name: r'$rawName', "),
       Code(
         'value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);',
@@ -314,7 +316,7 @@ List<Code> _buildExplodedListCode(
   }
 
   return [
-    Code('entries.addAll($parameterName.map((e) => ('),
+    Code(r'_$entries' '.addAll($parameterName.map((e) => ('),
     Code("name: r'$rawName', "),
     Code('value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);'),
   ];

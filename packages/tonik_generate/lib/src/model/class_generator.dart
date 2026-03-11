@@ -377,7 +377,7 @@ class ClassGenerator {
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
-        refer("values[r'$propertyName']"),
+        refer("_\$values[r'$propertyName']"),
         model: modelType,
         isRequired: isRequired && !isNullable,
         nameManager: nameManager,
@@ -400,7 +400,7 @@ class ClassGenerator {
         .toSet();
 
     return Block.of([
-      declareFinal('values')
+      declareFinal(r'_$values')
           .assign(
             refer('value').property('decodeObject').call([], {
               'explode': refer('explode'),
@@ -481,7 +481,7 @@ class ClassGenerator {
     }
 
     final codes = <Code>[
-      Code("final map = json.decodeMap(context: r'$className');"),
+      Code(r"final _$map = json.decodeMap(context: r'" "$className');"),
     ];
 
     final propertyAssignments = <Code>[];
@@ -493,7 +493,7 @@ class ClassGenerator {
       final requiredInResponse = property.isRequired && !property.isWriteOnly;
 
       final valueExpr = buildFromJsonValueExpression(
-        "map[r'$jsonKey']",
+        "_\$map[r'$jsonKey']",
         model: property.model,
         nameManager: nameManager,
         package: package,
@@ -832,7 +832,7 @@ class ClassGenerator {
             ..add(const Code('}'))
             ..add(
               Code(
-                "result[r'$propertyName'] = "
+                "_\$result[r'$propertyName'] = "
                 '$name!.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
@@ -840,7 +840,7 @@ class ClassGenerator {
         } else {
           propertyAssignments.add(
             Code(
-              "result[r'$propertyName'] = "
+              "_\$result[r'$propertyName'] = "
               '$name.uriEncode(allowEmpty: allowEmpty, '
               'useQueryComponent: useQueryComponent);',
             ),
@@ -850,28 +850,28 @@ class ClassGenerator {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  result[r'$propertyName'] = '';
+  _\$result[r'$propertyName'] = '';
 }'''),
         );
       } else {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  result[r'$propertyName'] = '';
+  _\$result[r'$propertyName'] = '';
 }'''),
         );
       }
     }
 
     final methodBody = [
-      const Code('final result = '),
+      const Code(r'final _$result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
-      const Code('return result;'),
+      const Code(r'return _$result;'),
     ];
 
     return Method(
@@ -938,7 +938,7 @@ if ($name != null) {
               ..add(const Code('}'))
               ..add(
                 Code(
-                  "result[r'$propertyName'] = "
+                  "_\$result[r'$propertyName'] = "
                   '$name!.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent);',
                 ),
@@ -946,7 +946,7 @@ if ($name != null) {
           } else {
             propertyAssignments.add(
               Code(
-                "result[r'$propertyName'] = "
+                "_\$result[r'$propertyName'] = "
                 '$name.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
@@ -956,9 +956,9 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  result[r'$propertyName'] = '';
+  _\$result[r'$propertyName'] = '';
 }'''),
           );
         }
@@ -974,7 +974,7 @@ if ($name != null) {
         );
 
         final assignmentExpr = refer(
-          'result',
+          r'_$result',
         ).index(literalString(propertyName, raw: true)).assign(encodeExpr);
 
         if (isRequired && !isNullable) {
@@ -1010,7 +1010,7 @@ if ($name != null) {
             ..add(
               Code('''
 } else if (allowEmpty) {
-  result[r'$propertyName'] = '';
+  _\$result[r'$propertyName'] = '';
 }'''),
             );
         }
@@ -1018,10 +1018,10 @@ if ($name != null) {
     }
 
     methodBody.addAll([
-      const Code('final result = '),
+      const Code(r'final _$result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
-      const Code('return result;'),
+      const Code(r'return _$result;'),
     ]);
 
     return Method(
@@ -1067,7 +1067,7 @@ if ($name != null) {
 
       if (resolvedModel is AnyModel) {
         propertyAssignments.add(
-          Code("result[r'$propertyName'] = $name?.toString() ?? '';"),
+          Code("_\$result[r'$propertyName'] = $name?.toString() ?? '';"),
         );
         continue;
       }
@@ -1097,7 +1097,7 @@ if ($name != null) {
               ..add(const Code('}'))
               ..add(
                 Code(
-                  "result[r'$propertyName'] = "
+                  "_\$result[r'$propertyName'] = "
                   '$name!.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent);',
                 ),
@@ -1105,7 +1105,7 @@ if ($name != null) {
           } else {
             propertyAssignments.add(
               Code(
-                "result[r'$propertyName'] = "
+                "_\$result[r'$propertyName'] = "
                 '$name.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
@@ -1115,18 +1115,18 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  result[r'$propertyName'] = '';
+  _\$result[r'$propertyName'] = '';
 }'''),
           );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  result[r'$propertyName'] = '';
+  _\$result[r'$propertyName'] = '';
 }'''),
           );
         }
@@ -1144,7 +1144,7 @@ if ($name != null) {
             encodingShapeRef.property('simple').code,
             const Code(') {'),
             Code(
-              "    result[r'$propertyName'] = "
+              "    _\$result[r'$propertyName'] = "
               '$name!.toSimple(explode: false, allowEmpty: allowEmpty);',
             ),
             const Code('} else {'),
@@ -1161,7 +1161,7 @@ if ($name != null) {
             encodingShapeRef.property('simple').code,
             const Code(') {'),
             Code(
-              "  result[r'$propertyName'] = "
+              "  _\$result[r'$propertyName'] = "
               '$name.toSimple(explode: false, allowEmpty: allowEmpty);',
             ),
             const Code('} else {'),
@@ -1177,10 +1177,10 @@ if ($name != null) {
     }
 
     final methodBody = [
-      const Code('final result = '),
+      const Code(r'final _$result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
-      const Code('return result;'),
+      const Code(r'return _$result;'),
     ];
 
     return Method(
@@ -1328,7 +1328,7 @@ if ($name != null) {
       final isNullable = prop.property.isNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(
-        refer("values[r'$propertyName']"),
+        refer("_\$values[r'$propertyName']"),
         model: modelType,
         isRequired: isRequired && !isNullable,
         nameManager: nameManager,
@@ -1351,7 +1351,7 @@ if ($name != null) {
         .toSet();
 
     return Block.of([
-      declareFinal('values')
+      declareFinal(r'_$values')
           .assign(
             refer('value').property('decodeObject').call([], {
               'explode': refer('explode'),

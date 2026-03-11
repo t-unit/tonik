@@ -137,20 +137,20 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (int != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -187,20 +187,20 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (a != null) {
-            shapes.add(a!.currentEncodingShape);
+            _$shapes.add(a!.currentEncodingShape);
           }
           if (b != null) {
-            shapes.add(b!.currentEncodingShape);
+            _$shapes.add(b!.currentEncodingShape);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -239,20 +239,20 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (data != null) {
-            shapes.add(data!.currentEncodingShape);
+            _$shapes.add(data!.currentEncodingShape);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -542,32 +542,32 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          final values = <String>{};
+          final _$values = <String>{};
           if (int != null) {
-            final intForm = int!.toForm(
+            final _$intForm = int!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            values.add(intForm);
+            _$values.add(_$intForm);
           }
           if (string != null) {
-            final stringForm = string!.toForm(
+            final _$stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            values.add(stringForm);
+            _$values.add(_$stringForm);
           }
-          if (values.isEmpty) return '';
-          if (values.length > 1) {
+          if (_$values.isEmpty) return '';
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf form encoding for Simple: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -605,16 +605,16 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          final mapValues = <Map<String, String>>[];
+          final _$mapValues = <Map<String, String>>[];
           if (a != null) {
-            final aForm = a!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(aForm);
+            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$aForm);
           }
-          final map = <String, String>{};
-          for (final m in mapValues) { map.addAll(m); }
-          return map.toForm(
+          final _$map = <String, String>{};
+          for (final _$m in _$mapValues) { _$map.addAll(_$m); }
+          return _$map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
@@ -673,29 +673,29 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
+          final _$mapValues = <Map<String, String>>[];
+          String? _$discriminatorValue;
           if (a != null) {
-            final aForm = a!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(aForm);
-              discriminatorValue ??= r'a';
+            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$aForm);
+              _$discriminatorValue ??= r'a';
           }
           if (b != null) {
-            final bForm = b!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(bForm);
-              discriminatorValue ??= r'b';
+            final _$bForm = b!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$bForm);
+              _$discriminatorValue ??= r'b';
           }
-          final map = <String, String>{};
-          for (final m in mapValues) { 
-            map.addAll(m); 
+          final _$map = <String, String>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
           }
-          final discValue = discriminatorValue;
-          if (discValue != null) {
-            map.putIfAbsent('type', () => discValue);
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent('type', () => _$discValue);
           }
-          return map.toForm(
+          return _$map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
@@ -738,45 +738,45 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          final values = <String>{};
-          final mapValues = <Map<String, String>>[];
-          
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, String>>[];
+
           if (data != null) {
-            final dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(dataForm);
+            final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$dataForm);
           }
 
           if (string != null) {
-            final stringForm = string!.toForm(
+            final _$stringForm = string!.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            values.add(stringForm);
+            _$values.add(_$stringForm);
           }
-          
-          if (values.isEmpty && mapValues.isEmpty) return '';
-          if (mapValues.isNotEmpty && values.isNotEmpty) {
+
+          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
             throw EncodingException(
               r'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
             );
           }
-          
-          if (values.isNotEmpty) {
-            if (values.length > 1) {
+
+          if (_$values.isNotEmpty) {
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
               );
             }
-            return values.first;
+            return _$values.first;
           } else {
-            final map = <String, String>{};
-            for (final m in mapValues) { 
-              map.addAll(m); 
+            final _$map = <String, String>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
             }
-            return map.toForm(
+            return _$map.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
               alreadyEncoded: true,
@@ -895,14 +895,14 @@ void main() {
         final klass = generator.generateClass(model);
         final generated = format(klass.accept(emitter).toString());
 
-        const expected = '''
+        const expected = r'''
           String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            final values = <String>{};
-            final mapValues = <Map<String, String>>[];
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, String>>[];
             if (innerChoice != null) {
               switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
-                values.add(
+                _$values.add(
                   innerChoice!.toForm(
                     explode: explode,
                     allowEmpty: allowEmpty,
@@ -911,10 +911,10 @@ void main() {
                 );
                 break;
                 case EncodingShape.complex:
-                  final innerChoiceForm = innerChoice!.parameterProperties(
+                  final _$innerChoiceForm = innerChoice!.parameterProperties(
                     allowEmpty: allowEmpty,
                   );
-                  mapValues.add(innerChoiceForm);
+                  _$mapValues.add(_$innerChoiceForm);
                   break;
                 case EncodingShape.mixed:
                   throw EncodingException(
@@ -923,32 +923,32 @@ void main() {
               }
             }
             if (string != null) {
-              final stringForm = string!.toForm(
+              final _$stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              values.add(stringForm);
+              _$values.add(_$stringForm);
             }
-            if (values.isEmpty && mapValues.isEmpty) return '';
-            if (mapValues.isNotEmpty && values.isNotEmpty) {
+            if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
               throw EncodingException(
                 r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
-            if (values.isNotEmpty) {
-              if (values.length > 1) {
+            if (_$values.isNotEmpty) {
+              if (_$values.length > 1) {
                 throw EncodingException(
                   r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
               }
-              return values.first;
+              return _$values.first;
             } else {
-              final map = <String, String>{};
-              for (final m in mapValues) { 
-                map.addAll(m); 
+              final _$map = <String, String>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
               }
-              return map.toForm(
+              return _$map.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 alreadyEncoded: true,
@@ -1003,11 +1003,11 @@ void main() {
         final klass = generator.generateClass(model);
         final generated = format(klass.accept(emitter).toString());
 
-        const expected = '''
+        const expected = r'''
           if (innerAnyOf != null) {
             switch (innerAnyOf!.currentEncodingShape) {
               case EncodingShape.simple:
-                values.add(
+                _$values.add(
                   innerAnyOf!.toForm(
                     explode: explode,
                     allowEmpty: allowEmpty,
@@ -1016,10 +1016,10 @@ void main() {
                 );
                 break;
               case EncodingShape.complex:
-                final innerAnyOfForm = innerAnyOf!.parameterProperties(
+                final _$innerAnyOfForm = innerAnyOf!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
-                mapValues.add(innerAnyOfForm);
+                _$mapValues.add(_$innerAnyOfForm);
                 break;
               case EncodingShape.mixed:
                 throw EncodingException(
@@ -1066,49 +1066,51 @@ void main() {
         final klass = generator.generateClass(model);
         final generated = format(klass.accept(emitter).toString());
 
-        const expected = '''
+        const expected = r'''
           String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            final values = <String>{};
-            final mapValues = <Map<String, String>>[]; 
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, String>>[];
             if (myClass != null) {
-              final myClassForm = myClass!.parameterProperties(allowEmpty: allowEmpty);
-              mapValues.add(myClassForm);
+              final _$myClassForm = myClass!.parameterProperties(
+                allowEmpty: allowEmpty,
+              );
+              _$mapValues.add(_$myClassForm);
             }
             if (int != null) {
-              final intForm = int!.toForm(
+              final _$intForm = int!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              values.add(intForm);
+              _$values.add(_$intForm);
             }
             if (string != null) {
-              final stringForm = string!.toForm(
+              final _$stringForm = string!.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              values.add(stringForm);
+              _$values.add(_$stringForm);
             }
-            if (values.isEmpty && mapValues.isEmpty) return '';
-            if (mapValues.isNotEmpty && values.isNotEmpty) {
+            if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
               throw EncodingException(
                 r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
               );
             }
-            if (values.isNotEmpty) {
-              if (values.length > 1) {
+            if (_$values.isNotEmpty) {
+              if (_$values.length > 1) {
                 throw EncodingException(
                   r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
               }
-              return values.first;
+              return _$values.first;
             } else {
-              final map = <String, String>{};
-              for (final m in mapValues) { 
-                map.addAll(m); 
+              final _$map = <String, String>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
               }
-              return map.toForm(
+              return _$map.toForm(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 alreadyEncoded: true,
@@ -1219,19 +1221,19 @@ void main() {
         final klass = generator.generateClass(model);
         final generated = format(klass.accept(emitter).toString());
 
-        const expected = '''
+        const expected = r'''
           if (innerChoice != null) {
             switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
-                values.add(
+                _$values.add(
                   innerChoice!.toSimple(explode: explode, allowEmpty: allowEmpty),
                 );
                 break;
               case EncodingShape.complex:
-                final innerChoiceSimple = innerChoice!.parameterProperties(
+                final _$innerChoiceSimple = innerChoice!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
-                mapValues.add(innerChoiceSimple);
+                _$mapValues.add(_$innerChoiceSimple);
                 break;
               case EncodingShape.mixed:
                 throw EncodingException(
@@ -1261,19 +1263,22 @@ void main() {
         final klass = generator.generateClass(model);
         final generated = format(klass.accept(emitter).toString());
 
-        const expected = '''
+        const expected = r'''
           String toSimple({required bool explode, required bool allowEmpty}) {
-            final values = <String>{};
+            final _$values = <String>{};
             if (int != null) {
-              final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
-              values.add(intSimple);
-            }
-            if (string != null) {
-              final stringSimple = string!.toSimple(
+              final _$intSimple = int!.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
               );
-              values.add(stringSimple);
+              _$values.add(_$intSimple);
+            }
+            if (string != null) {
+              final _$stringSimple = string!.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+              _$values.add(_$stringSimple);
             }
         ''';
 
@@ -1328,8 +1333,8 @@ void main() {
               );
             }
             final _$map = <String, String>{};
-            for (final m in _$mapValues) {
-              _$map.addAll(m);
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
             }
             return _$map;
           }

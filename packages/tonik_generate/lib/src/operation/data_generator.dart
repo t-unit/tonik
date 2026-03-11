@@ -234,6 +234,7 @@ class DataGenerator {
           useQueryComponent: true,
           explodeLiteral: true,
           allowEmptyLiteral: true,
+          isNullable: !isRequired,
         );
         bodyCode
           ..add(formExpr.code)
@@ -249,7 +250,7 @@ class DataGenerator {
               package,
             ),
           )
-          ..add(refer('formData').returned.statement);
+          ..add(refer(r'_$formData').returned.statement);
     }
 
     // Collect multipart header params for single-content multipart bodies.

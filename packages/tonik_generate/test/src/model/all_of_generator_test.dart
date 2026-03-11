@@ -365,13 +365,13 @@ void main() {
       final combinedClass = generator.generateClass(model);
       final generated = format(combinedClass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
-          shapes.add(int.currentEncodingShape);
-          shapes.add(value.currentEncodingShape);
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          final _$shapes = <EncodingShape>{};
+          _$shapes.add(int.currentEncodingShape);
+          _$shapes.add(value.currentEncodingShape);
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -484,22 +484,22 @@ void main() {
 
       const expectedMethod = r'''
           Object? toJson() {
-            final map = <String, Object?>{};
-            final $baseJson = $base.toJson();
-            if ($baseJson is! Map<String, Object?>) {
+            final _$map = <String, Object?>{};
+            final _$$baseJson = $base.toJson();
+            if (_$$baseJson is! Map<String, Object?>) {
               throw EncodingException(
-                'Expected \$base.toJson() to return Map<String, Object?>, got ${$baseJson.runtimeType}',
+                'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
               );
             }
-            map.addAll($baseJson);
-            final $mixinJson = $mixin.toJson();
-            if ($mixinJson is! Map<String, Object?>) {
+            _$map.addAll(_$$baseJson);
+            final _$$mixinJson = $mixin.toJson();
+            if (_$$mixinJson is! Map<String, Object?>) {
               throw EncodingException(
-                'Expected \$mixin.toJson() to return Map<String, Object?>, got ${$mixinJson.runtimeType}',
+                'Expected \$mixin.toJson() to return Map<String, Object?>, got ${_$$mixinJson.runtimeType}',
               );
             }
-            map.addAll($mixinJson);
-            return map;
+            _$map.addAll(_$$mixinJson);
+            return _$map;
           }
         ''';
 
@@ -682,8 +682,8 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             return other is CombinedModel &&
-              other.$base == $base &&
-              other.$mixin == $mixin;
+              other.$base == this.$base &&
+              other.$mixin == this.$mixin;
           }
         ''';
 
@@ -824,8 +824,8 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             return other is EnumStringModel &&
-              other.status == status &&
-              other.string == string;
+              other.status == this.status &&
+              other.string == this.string;
           }
         ''';
 
@@ -1174,8 +1174,8 @@ void main() {
       final combinedClass = generator.generateClass(model);
       final generated = format(combinedClass.accept(emitter).toString());
 
-      const expectedToLabel = '''
-        final listLabel = list
+      const expectedToLabel = r'''
+        final _$listLabel = list
           .map((e) => e.uriEncode(allowEmpty: allowEmpty))
           .toList()
           .toLabel(
@@ -1207,14 +1207,14 @@ void main() {
       final combinedClass = generator.generateClass(model);
       final generated = format(combinedClass.accept(emitter).toString());
 
-      const expectedToMatrix = '''
+      const expectedToMatrix = r'''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final values = <String>{};
-          final listMatrix = list
+          final _$values = <String>{};
+          final _$listMatrix = list
             .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
             .toList()
             .toMatrix(
@@ -1223,13 +1223,13 @@ void main() {
               allowEmpty: allowEmpty,
               alreadyEncoded: true,
             );
-          values.add(listMatrix);
-          if (values.length > 1) {
+          _$values.add(_$listMatrix);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -1255,20 +1255,20 @@ void main() {
       final combinedClass = generator.generateClass(model);
       final generated = format(combinedClass.accept(emitter).toString());
 
-      const expectedToJson = '''
+      const expectedToJson = r'''
         Object? toJson() {
-          final values = <Object?>[];
-          final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
-          values.add(listJson);
+          final _$values = <Object?>[];
+          final _$listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
+          _$values.add(_$listJson);
           const deepEquals = DeepCollectionEquality();
-          for (var i = 1; i < values.length; i++) {
-            if (!deepEquals.equals(values[0], values[i])) {
+          for (var i = 1; i < _$values.length; i++) {
+            if (!deepEquals.equals(_$values[0], _$values[i])) {
               throw EncodingException(
                 'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
               );
             }
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -1308,22 +1308,22 @@ void main() {
       final combinedClass = generator.generateClass(model);
       final generated = format(combinedClass.accept(emitter).toString());
 
-      const expectedToJson = '''
+      const expectedToJson = r'''
         Object? toJson() {
-          final values = <Object?>[];
-          final listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
-          values.add(listJson);
-          final list2Json = list2.map((e) => e.toJson()).toList();
-          values.add(list2Json);
+          final _$values = <Object?>[];
+          final _$listJson = list.map((e) => e.toTimeZonedIso8601String()).toList();
+          _$values.add(_$listJson);
+          final _$list2Json = list2.map((e) => e.toJson()).toList();
+          _$values.add(_$list2Json);
           const deepEquals = DeepCollectionEquality();
-          for (var i = 1; i < values.length; i++) {
-            if (!deepEquals.equals(values[0], values[i])) {
+          for (var i = 1; i < _$values.length; i++) {
+            if (!deepEquals.equals(_$values[0], _$values[i])) {
               throw EncodingException(
                 'Inconsistent allOf JSON encoding: all arrays must encode to the same result',
               );
             }
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -1564,25 +1564,25 @@ void main() {
         final combinedClass = generator.generateClass(model);
         final generated = format(combinedClass.accept(emitter).toString());
 
-        const expectedParameterProperties = '''
+        const expectedParameterProperties = r'''
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
           }) {
-            final mergedProperties = <String, String>{};
-            mergedProperties.addAll(
+            final _$mergedProperties = <String, String>{};
+            _$mergedProperties.addAll(
               testClass1.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
               ),
             );
-            mergedProperties.addAll(
+            _$mergedProperties.addAll(
               testClass2.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
               ),
             );
-            return mergedProperties;
+            return _$mergedProperties;
           }
         ''';
 

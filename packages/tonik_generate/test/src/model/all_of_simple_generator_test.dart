@@ -48,20 +48,20 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToSimple = '''
+    const expectedToSimple = r'''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
-          final listSimple = list
+          final _$values = <String>{};
+          final _$listSimple = list
             .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
             .toList()
             .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          values.add(listSimple);
-          if (values.length > 1) {
+          _$values.add(_$listSimple);
+          if (_$values.length > 1) {
             throw EncodingException(
               'Inconsistent allOf simple encoding: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -101,25 +101,25 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToSimple = '''
+    const expectedToSimple = r'''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
-          final listSimple = list
+          final _$values = <String>{};
+          final _$listSimple = list
             .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
             .toList()
             .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          values.add(listSimple);
-          final list2Simple = list2
+          _$values.add(_$listSimple);
+          final _$list2Simple = list2
             .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty))
             .toList()
             .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          values.add(list2Simple);
-          if (values.length > 1) {
+          _$values.add(_$list2Simple);
+          if (_$values.length > 1) {
             throw EncodingException(
               'Inconsistent allOf simple encoding: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 

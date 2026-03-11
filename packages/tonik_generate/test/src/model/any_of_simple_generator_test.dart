@@ -256,31 +256,31 @@ void main() {
       ).format;
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
+          final _$mapValues = <Map<String, String>>[];
+          String? _$discriminatorValue;
 
           if (a != null) {
-            final aSimple = a!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(aSimple);
-              discriminatorValue ??= r'a';
+            final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$aSimple);
+              _$discriminatorValue ??= r'a';
           }
           if (b != null) {
-            final bSimple = b!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(bSimple);
-              discriminatorValue ??= r'b';
+            final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$bSimple);
+              _$discriminatorValue ??= r'b';
           }
 
-          final map = <String, String>{};
-          for (final m in mapValues) { map.addAll(m); }
-          final discValue = discriminatorValue;
-          if (discValue != null) { 
-            map.putIfAbsent('disc', () => discValue);
+          final _$map = <String, String>{};
+          for (final _$m in _$mapValues) { _$map.addAll(_$m); }
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent('disc', () => _$discValue);
           }
-          return map.toSimple(
-            explode: explode, 
-            allowEmpty: allowEmpty, 
+          return _$map.toSimple(
+            explode: explode,
+            allowEmpty: allowEmpty,
             alreadyEncoded: true,
           );
         }
@@ -341,24 +341,24 @@ void main() {
         ).format;
         final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           String toSimple({required bool explode, required bool allowEmpty}) {
-            final mapValues = <Map<String, String>>[];
+            final _$mapValues = <Map<String, String>>[];
 
             if (a != null) {
-              final aSimple = a!.parameterProperties(allowEmpty: allowEmpty);
-              mapValues.add(aSimple);
+              final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$aSimple);
             }
             if (b != null) {
-              final bSimple = b!.parameterProperties(allowEmpty: allowEmpty);
-              mapValues.add(bSimple);
+              final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty);
+              _$mapValues.add(_$bSimple);
             }
 
-            final map = <String, String>{};
-            for (final m in mapValues) { map.addAll(m); }
-            return map.toSimple(
-              explode: explode, 
-              allowEmpty: allowEmpty, 
+            final _$map = <String, String>{};
+            for (final _$m in _$mapValues) { _$map.addAll(_$m); }
+            return _$map.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
               alreadyEncoded: true,
             );
           }
@@ -390,30 +390,33 @@ void main() {
       ).format;
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
+          final _$values = <String>{};
           if (bool != null) {
-            final boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, );
-            values.add(boolSimple);
+            final _$boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, );
+            _$values.add(_$boolSimple);
           }
           if (int != null) {
-            final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
-            values.add(intSimple);
+            final _$intSimple = int!.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$intSimple);
           }
           if (string != null) {
-            final stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, );
-            values.add(stringSimple);
+            final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, );
+            _$values.add(_$stringSimple);
           }
 
-          if (values.isEmpty) return '';
+          if (_$values.isEmpty) return '';
 
-          if (values.length > 1) {
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf simple encoding for OnlyPrimitivesSimple: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -458,50 +461,50 @@ void main() {
         ).format;
         final generated = format(klass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, String>>[];
+          String? _$discriminatorValue;
 
           if (string != null) {
-            final stringSimple = string!.toSimple( 
-              explode: explode, 
-              allowEmpty: allowEmpty, 
+            final _$stringSimple = string!.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
             );
-            values.add(stringSimple);
+            _$values.add(_$stringSimple);
           }
           if (user != null) {
-            final userSimple = user!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(userSimple);
-            discriminatorValue ??= r'user';
+            final _$userSimple = user!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$userSimple);
+            _$discriminatorValue ??= r'user';
           }
 
-          if (values.isEmpty && mapValues.isEmpty) return '';
-          if (mapValues.isNotEmpty && values.isNotEmpty) {
+          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
             throw EncodingException(
               r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values',
             );
           }
-          if (values.isNotEmpty) {
-            if (values.length > 1) {
+          if (_$values.isNotEmpty) {
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value',
               );
             }
-            return values.first;
+            return _$values.first;
           } else {
-            final map = <String, String>{};
-            for (final m in mapValues) { 
-              map.addAll(m); 
+            final _$map = <String, String>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
             }
-            final discValue = discriminatorValue;
-            if (discValue != null) { 
-              map.putIfAbsent('disc', () => discValue);
+            final _$discValue = _$discriminatorValue;
+            if (_$discValue != null) {
+              _$map.putIfAbsent('disc', () => _$discValue);
             }
-            return map.toSimple(
-              explode: explode, 
-              allowEmpty: allowEmpty, 
+            return _$map.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
               alreadyEncoded: true,
             );
           }

@@ -65,12 +65,15 @@ class ParseGenerator {
         Block.of([
           const Code('default:'),
           const Code(
-            "final content = response.headers.value('content-type') "
+            r"final _$content = response.headers.value('content-type') "
             "?? 'not specified';",
           ),
-          const Code('final status = response.statusCode;'),
+          const Code(r'final _$status = response.statusCode;'),
           generateResponseDecodingExceptionExpression(
-            r'Unexpected content type: $content for status code: $status',
+            'Unexpected content type: '
+            r'${_$content}'
+            ' for status code: '
+            r'${_$status}',
           ).statement,
         ]),
       );

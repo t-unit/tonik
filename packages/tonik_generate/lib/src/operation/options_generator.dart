@@ -43,7 +43,7 @@ class OptionsGenerator {
 
     final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
       'method': literalString(methodString),
-      'headers': refer('headers'),
+      'headers': refer(r'_$headers'),
       'contentType': ?contentType,
       'responseType': refer(
         'ResponseType',
@@ -129,7 +129,7 @@ class OptionsGenerator {
     }
 
     bodyStatements.add(
-      declareFinal('contentType')
+      declareFinal(r'_$contentType')
           .assign(
             CodeExpression(
               Block.of([
@@ -141,7 +141,7 @@ class OptionsGenerator {
           )
           .statement,
     );
-    return refer('contentType');
+    return refer(r'_$contentType');
   }
 
   void _generateHeaders(
@@ -183,7 +183,7 @@ class OptionsGenerator {
         : '*/*';
 
     bodyStatements.add(
-      declareFinal('headers')
+      declareFinal(r'_$headers')
           .assign(
             literalMap(
               {},
@@ -197,7 +197,7 @@ class OptionsGenerator {
     // For required Accept header, always assign using encoder
     if (hasAcceptHeader && acceptIsRequired) {
       bodyStatements.add(
-        refer('headers')
+        refer(r'_$headers')
             .index(literalString('Accept', raw: true))
             .assign(
               buildToSimpleHeaderParameterExpression(
@@ -213,7 +213,7 @@ class OptionsGenerator {
       bodyStatements
         ..add(Code('if ($acceptParamName != null) {'))
         ..add(
-          refer('headers')
+          refer(r'_$headers')
               .index(literalString('Accept', raw: true))
               .assign(
                 buildToSimpleHeaderParameterExpression(
@@ -227,7 +227,7 @@ class OptionsGenerator {
         )
         ..add(const Code('} else {'))
         ..add(
-          refer('headers')
+          refer(r'_$headers')
               .index(literalString('Accept'))
               .assign(literalString(acceptValue))
               .statement,
@@ -236,7 +236,7 @@ class OptionsGenerator {
     } else {
       // No Accept header param, just assign default
       bodyStatements.add(
-        refer('headers')
+        refer(r'_$headers')
             .index(literalString('Accept'))
             .assign(literalString(acceptValue))
             .statement,
@@ -353,7 +353,7 @@ class OptionsGenerator {
         .toList();
 
     bodyStatements.add(
-      declareFinal('cookieParts')
+      declareFinal(r'_$cookieParts')
           .assign(
             literalList(
               [],
@@ -374,12 +374,14 @@ class OptionsGenerator {
     }
 
     bodyStatements
-      ..add(const Code('if (cookieParts.isNotEmpty) {'))
+      ..add(const Code(r'if (_$cookieParts.isNotEmpty) {'))
       ..add(
-        refer('headers')
+        refer(r'_$headers')
             .index(literalString('Cookie', raw: true))
             .assign(
-              refer('cookieParts').property('join').call([literalString('; ')]),
+              refer(r'_$cookieParts').property('join').call([
+                literalString('; '),
+              ]),
             )
             .statement,
       )
@@ -406,7 +408,7 @@ class OptionsGenerator {
           'allowEmpty': literalBool(true),
         });
         bodyStatements.add(
-          refer('cookieParts').property('add').call([
+          refer(r'_$cookieParts').property('add').call([
             literalString('$rawName=', raw: true).operatorAdd(encodedValue),
           ]).statement,
         );
@@ -414,7 +416,7 @@ class OptionsGenerator {
       }
 
       bodyStatements.add(
-        refer('cookieParts').property('add').call([
+        refer(r'_$cookieParts').property('add').call([
           literalString('$rawName=', raw: true).operatorAdd(
             refer(paramName)
                 .property('map')
@@ -451,7 +453,7 @@ class OptionsGenerator {
       'allowEmpty': literalBool(true),
     });
     bodyStatements.add(
-      refer('cookieParts').property('add').call([
+      refer(r'_$cookieParts').property('add').call([
         literalString('$rawName=', raw: true).operatorAdd(encodedValue),
       ]).statement,
     );
@@ -488,7 +490,7 @@ class OptionsGenerator {
       allowEmpty: resolvedParam.allowEmptyValue,
     );
 
-    return refer('headers')
+    return refer(r'_$headers')
         .index(literalString(resolvedParam.rawName, raw: true))
         .assign(valueExpression)
         .statement;

@@ -391,7 +391,7 @@ class AllOfGenerator {
 
     if (hasDynamicModels) {
       final bodyCode = <Code>[
-        const Code('final shapes = <'),
+        const Code(r'final _$shapes = <'),
         encodingShapeType.code,
         const Code('>{};'),
       ];
@@ -400,12 +400,16 @@ class AllOfGenerator {
         if (_isNullableViaTypedef(prop.property.model)) {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
-            Code('  shapes.add(${prop.normalizedName}!.currentEncodingShape);'),
+            Code(
+              '  _\$shapes.add(${prop.normalizedName}!.currentEncodingShape);',
+            ),
             const Code('}'),
           ]);
         } else {
           bodyCode.add(
-            Code('shapes.add(${prop.normalizedName}.currentEncodingShape);'),
+            Code(
+              '_\$shapes.add(${prop.normalizedName}.currentEncodingShape);',
+            ),
           );
         }
       }
@@ -415,15 +419,15 @@ class AllOfGenerator {
       );
       if (hasNullableModels) {
         bodyCode.addAll([
-          const Code('if (shapes.isEmpty) return '),
+          const Code(r'if (_$shapes.isEmpty) return '),
           encodingShapeType.property('complex').code,
           const Code(';'),
         ]);
       }
       bodyCode.addAll([
-        const Code('if (shapes.length > 1) return '),
+        const Code(r'if (_$shapes.length > 1) return '),
         encodingShapeType.property('mixed').statement,
-        const Code('return shapes.first;'),
+        const Code(r'return _$shapes.first;'),
       ]);
 
       return Method(
@@ -487,7 +491,7 @@ class AllOfGenerator {
     // If all properties are lists, handle like simple encoding
     if (allListProperties) {
       final jsonParts = <Code>[
-        declareFinal('values')
+        declareFinal(r'_$values')
             .assign(
               literalList(
                 [],
@@ -499,7 +503,7 @@ class AllOfGenerator {
 
       for (final normalized in normalizedProperties) {
         final fieldName = normalized.normalizedName;
-        final fieldNameJson = '${fieldName}Json';
+        final fieldNameJson = '_\$${fieldName}Json';
 
         jsonParts.addAll([
           Code('final $fieldNameJson = '),
@@ -509,7 +513,7 @@ class AllOfGenerator {
           ).code,
           const Code(';'),
           refer(
-            'values',
+            r'_$values',
           ).property('add').call([refer(fieldNameJson)]).statement,
         ]);
       }
@@ -522,12 +526,12 @@ class AllOfGenerator {
         ).newInstance([]).code,
         const Code(';'),
         const Code('for (var i = 1; i < '),
-        refer('values').property('length').code,
+        refer(r'_$values').property('length').code,
         const Code('; i++) {'),
         const Code('if (!'),
         refer('deepEquals').property('equals').call([
-          refer('values').index(literalNum(0)),
-          refer('values').index(refer('i')),
+          refer(r'_$values').index(literalNum(0)),
+          refer(r'_$values').index(refer('i')),
         ]).code,
         const Code(') {'),
         generateEncodingExceptionExpression(
@@ -537,7 +541,7 @@ class AllOfGenerator {
         const Code('}'),
         const Code('}'),
         const Code('return '),
-        refer('values').property('first').code,
+        refer(r'_$values').property('first').code,
         const Code(';'),
       ]);
 
@@ -572,14 +576,14 @@ class AllOfGenerator {
           raw: true,
         ).statement,
         const Code('}'),
-        const Code('final map = '),
+        const Code(r'final _$map = '),
         buildEmptyMapStringObject().statement,
       ];
 
       final mapType = buildMapStringObjectType();
       for (final normalized in normalizedProperties) {
         final fieldName = normalized.normalizedName;
-        final fieldNameJson = '${fieldName}Json';
+        final fieldNameJson = '_\$${fieldName}Json';
         final isNullable = _isNullableViaTypedef(normalized.property.model);
 
         if (isNullable) {
@@ -603,7 +607,7 @@ class AllOfGenerator {
             'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
           ).statement,
           const Code('}'),
-          const Code('map.addAll('),
+          const Code(r'_$map.addAll('),
           refer(fieldNameJson).code,
           const Code(');'),
         ]);
@@ -612,7 +616,7 @@ class AllOfGenerator {
         }
       }
 
-      bodyCode.add(const Code('return map;'));
+      bodyCode.add(const Code(r'return _$map;'));
 
       return Method(
         (b) => b
@@ -664,13 +668,13 @@ class AllOfGenerator {
         // Lists are handled earlier, so this is only for non-list complex types
         final mapType = buildMapStringObjectType();
         final mapParts = <Code>[
-          const Code('final map = '),
+          const Code(r'final _$map = '),
           buildEmptyMapStringObject().statement,
         ];
 
         for (final normalized in normalizedProperties) {
           final fieldName = normalized.normalizedName;
-          final fieldNameJson = '${fieldName}Json';
+          final fieldNameJson = '_\$${fieldName}Json';
           final isNullable = _isNullableViaTypedef(normalized.property.model);
 
           if (isNullable) {
@@ -694,7 +698,7 @@ class AllOfGenerator {
               'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
             ).statement,
             const Code('}'),
-            const Code('map.addAll('),
+            const Code(r'_$map.addAll('),
             refer(fieldNameJson).code,
             const Code(');'),
           ]);
@@ -703,7 +707,7 @@ class AllOfGenerator {
           }
         }
 
-        mapParts.add(const Code('return map;'));
+        mapParts.add(const Code(r'return _$map;'));
 
         return Method(
           (b) => b
@@ -867,7 +871,7 @@ class AllOfGenerator {
 
     final propertyMergingLines = [
       declareFinal(
-        'mergedProperties',
+        r'_$mergedProperties',
       ).assign(buildEmptyMapStringString()).statement,
     ];
 
@@ -876,7 +880,7 @@ class AllOfGenerator {
       if (isNullable) {
         propertyMergingLines.addAll([
           Code('if (${normalized.normalizedName} != null) {'),
-          refer('mergedProperties').property('addAll').call([
+          refer(r'_$mergedProperties').property('addAll').call([
             refer(normalized.normalizedName).nullChecked
                 .property(
                   'parameterProperties',
@@ -893,7 +897,7 @@ class AllOfGenerator {
         ]);
       } else {
         propertyMergingLines.add(
-          refer('mergedProperties').property('addAll').call([
+          refer(r'_$mergedProperties').property('addAll').call([
             refer(normalized.normalizedName)
                 .property(
                   'parameterProperties',
@@ -911,7 +915,7 @@ class AllOfGenerator {
     }
 
     propertyMergingLines.add(
-      refer('mergedProperties').returned.statement,
+      refer(r'_$mergedProperties').returned.statement,
     );
 
     return Method(
@@ -1054,13 +1058,13 @@ class AllOfGenerator {
         // Lists with simple content can be encoded directly with toSimple
         final valueCollectionCode = <Code>[
           declareFinal(
-            'values',
+            r'_$values',
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
         for (final prop in normalizedProperties) {
           valueCollectionCode.addAll([
-            declareFinal('${prop.normalizedName}Simple')
+            declareFinal('_\$${prop.normalizedName}Simple')
                 .assign(
                   buildSimpleParameterExpression(
                     refer(prop.normalizedName),
@@ -1070,20 +1074,20 @@ class AllOfGenerator {
                   ),
                 )
                 .statement,
-            refer('values').property('add').call([
-              refer('${prop.normalizedName}Simple'),
+            refer(r'_$values').property('add').call([
+              refer('_\$${prop.normalizedName}Simple'),
             ]).statement,
           ]);
         }
 
         valueCollectionCode.addAll([
-          const Code('if (values.length > 1) {'),
+          const Code(r'if (_$values.length > 1) {'),
           generateEncodingExceptionExpression(
             'Inconsistent allOf simple encoding: '
             'all values must encode to the same result',
           ).statement,
           const Code('}'),
-          const Code('return values.first;'),
+          const Code(r'return _$values.first;'),
         ]);
 
         return Method(
@@ -1197,7 +1201,7 @@ class AllOfGenerator {
           ).statement,
           const Code('}'),
           declareFinal(
-            'values',
+            r'_$values',
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
@@ -1208,7 +1212,7 @@ class AllOfGenerator {
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
           bodyCode.addAll([
-            declareFinal('${prop.normalizedName}Form')
+            declareFinal('_\$${prop.normalizedName}Form')
                 .assign(
                   receiver.property('toForm').call([], {
                     'explode': refer('explode'),
@@ -1217,21 +1221,21 @@ class AllOfGenerator {
                   }),
                 )
                 .statement,
-            refer('values').property('add').call([
-              refer('${prop.normalizedName}Form'),
+            refer(r'_$values').property('add').call([
+              refer('_\$${prop.normalizedName}Form'),
             ]).statement,
           ]);
         }
 
         bodyCode.addAll([
-          const Code('if (values.length > 1) {'),
+          const Code(r'if (_$values.length > 1) {'),
           generateEncodingExceptionExpression(
             'Inconsistent allOf form encoding for $className: '
             'all values must encode to the same result',
             raw: true,
           ).statement,
           const Code('}'),
-          const Code('return values.first;'),
+          const Code(r'return _$values.first;'),
         ]);
 
         return Method(
@@ -1261,7 +1265,7 @@ class AllOfGenerator {
           raw: true,
         ).statement,
         const Code('}'),
-        const Code('final map = <'),
+        const Code(r'final _$map = <'),
         refer('String', 'dart:core').code,
         const Code(', '),
         refer('String', 'dart:core').code,
@@ -1273,7 +1277,7 @@ class AllOfGenerator {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
             Code(
-              '  map.addAll(${prop.normalizedName}! '
+              '  _\$map.addAll(${prop.normalizedName}! '
               '.parameterProperties(allowEmpty: allowEmpty));',
             ),
             const Code('}'),
@@ -1281,7 +1285,7 @@ class AllOfGenerator {
         } else {
           bodyCode.add(
             Code(
-              'map.addAll(${prop.normalizedName} '
+              '_\$map.addAll(${prop.normalizedName} '
               '.parameterProperties(allowEmpty: allowEmpty));',
             ),
           );
@@ -1290,7 +1294,7 @@ class AllOfGenerator {
 
       bodyCode.addAll([
         const Code(
-          'return map.toForm( '
+          r'return _$map.toForm( '
           'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
         ),
       ]);
@@ -1410,13 +1414,13 @@ class AllOfGenerator {
           // Lists with simple content can be encoded directly with toForm
           final valueCollectionCode = <Code>[
             declareFinal(
-              'values',
+              r'_$values',
             ).assign(literalSet([], refer('String', 'dart:core'))).statement,
           ];
 
           for (final prop in normalizedProperties) {
             valueCollectionCode.addAll([
-              declareFinal('${prop.normalizedName}Form')
+              declareFinal('_\$${prop.normalizedName}Form')
                   .assign(
                     buildFormParameterExpression(
                       refer(prop.normalizedName),
@@ -1426,21 +1430,21 @@ class AllOfGenerator {
                     ),
                   )
                   .statement,
-              refer('values').property('add').call([
-                refer('${prop.normalizedName}Form'),
+              refer(r'_$values').property('add').call([
+                refer('_\$${prop.normalizedName}Form'),
               ]).statement,
             ]);
           }
 
           valueCollectionCode.addAll([
-            const Code('if (values.length > 1) {'),
+            const Code(r'if (_$values.length > 1) {'),
             generateEncodingExceptionExpression(
               'Inconsistent allOf form encoding: '
               'all values must encode to the same result',
               raw: true,
             ).statement,
             const Code('}'),
-            const Code('return values.first;'),
+            const Code(r'return _$values.first;'),
           ]);
 
           return Method(
@@ -1499,7 +1503,7 @@ class AllOfGenerator {
 
       // Manually merge all parameterProperties.
       bodyCode.addAll([
-        const Code('final map = <'),
+        const Code(r'final _$map = <'),
         refer('String', 'dart:core').code,
         const Code(', '),
         refer('String', 'dart:core').code,
@@ -1511,7 +1515,7 @@ class AllOfGenerator {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
             Code(
-              '  map.addAll(${prop.normalizedName}! '
+              '  _\$map.addAll(${prop.normalizedName}! '
               '.parameterProperties(allowEmpty: allowEmpty));',
             ),
             const Code('}'),
@@ -1519,7 +1523,7 @@ class AllOfGenerator {
         } else {
           bodyCode.add(
             Code(
-              'map.addAll(${prop.normalizedName} '
+              '_\$map.addAll(${prop.normalizedName} '
               '.parameterProperties(allowEmpty: allowEmpty));',
             ),
           );
@@ -1528,7 +1532,7 @@ class AllOfGenerator {
 
       bodyCode.addAll([
         const Code(
-          'return map.toForm( '
+          r'return _$map.toForm( '
           'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
         ),
       ]);
@@ -1713,13 +1717,13 @@ class AllOfGenerator {
         // Lists with simple content can be encoded directly with toLabel
         final valueCollectionCode = <Code>[
           declareFinal(
-            'values',
+            r'_$values',
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
         for (final prop in normalizedProperties) {
           valueCollectionCode.addAll([
-            declareFinal('${prop.normalizedName}Label')
+            declareFinal('_\$${prop.normalizedName}Label')
                 .assign(
                   buildLabelParameterExpression(
                     refer(prop.normalizedName),
@@ -1729,20 +1733,20 @@ class AllOfGenerator {
                   ),
                 )
                 .statement,
-            refer('values').property('add').call([
-              refer('${prop.normalizedName}Label'),
+            refer(r'_$values').property('add').call([
+              refer('_\$${prop.normalizedName}Label'),
             ]).statement,
           ]);
         }
 
         valueCollectionCode.addAll([
-          const Code('if (values.length > 1) {'),
+          const Code(r'if (_$values.length > 1) {'),
           generateEncodingExceptionExpression(
             'Inconsistent allOf label encoding: '
             'all values must encode to the same result',
           ).statement,
           const Code('}'),
-          const Code('return values.first;'),
+          const Code(r'return _$values.first;'),
         ]);
 
         return Method(
@@ -1836,7 +1840,7 @@ class AllOfGenerator {
           'Simple encoding not supported: contains complex types',
         ).statement,
         const Code('}'),
-        const Code('final mergedProperties = '),
+        const Code(r'final _$mergedProperties = '),
         buildEmptyMapStringString().statement,
       ];
 
@@ -1845,7 +1849,7 @@ class AllOfGenerator {
         if (isNullable) {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
-            refer('mergedProperties').property('addAll').call([
+            refer(r'_$mergedProperties').property('addAll').call([
               refer(prop.normalizedName).nullChecked
                   .property(
                     'parameterProperties',
@@ -1856,7 +1860,7 @@ class AllOfGenerator {
           ]);
         } else {
           bodyCode.add(
-            refer('mergedProperties').property('addAll').call([
+            refer(r'_$mergedProperties').property('addAll').call([
               refer(prop.normalizedName).property('parameterProperties').call(
                 [],
                 {
@@ -1870,7 +1874,7 @@ class AllOfGenerator {
 
       bodyCode.addAll([
         const Code(
-          'return mergedProperties.toMatrix( '
+          r'return _$mergedProperties.toMatrix( '
           'paramName, explode: explode, allowEmpty: allowEmpty, '
           'alreadyEncoded: true);',
         ),
@@ -1929,13 +1933,13 @@ class AllOfGenerator {
         // Lists with simple content can be encoded directly with toMatrix
         final valueCollectionCode = <Code>[
           declareFinal(
-            'values',
+            r'_$values',
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
         for (final prop in normalizedProperties) {
           valueCollectionCode.addAll([
-            declareFinal('${prop.normalizedName}Matrix')
+            declareFinal('_\$${prop.normalizedName}Matrix')
                 .assign(
                   buildMatrixParameterExpression(
                     refer(prop.normalizedName),
@@ -1946,21 +1950,21 @@ class AllOfGenerator {
                   ),
                 )
                 .statement,
-            refer('values').property('add').call([
-              refer('${prop.normalizedName}Matrix'),
+            refer(r'_$values').property('add').call([
+              refer('_\$${prop.normalizedName}Matrix'),
             ]).statement,
           ]);
         }
 
         valueCollectionCode.addAll([
-          const Code('if (values.length > 1) {'),
+          const Code(r'if (_$values.length > 1) {'),
           generateEncodingExceptionExpression(
             'Inconsistent allOf matrix encoding for $className: '
             'all values must encode to the same result',
             raw: true,
           ).statement,
           const Code('}'),
-          const Code('return values.first;'),
+          const Code(r'return _$values.first;'),
         ]);
 
         return Method(
@@ -1984,7 +1988,7 @@ class AllOfGenerator {
       // For non-list complex types, use parameterProperties
       final propertyMergingLines = [
         declareFinal(
-          'mergedProperties',
+          r'_$mergedProperties',
         ).assign(buildEmptyMapStringString()).statement,
       ];
 
@@ -1993,7 +1997,7 @@ class AllOfGenerator {
         if (isNullable) {
           propertyMergingLines.addAll([
             Code('if (${normalized.normalizedName} != null) {'),
-            refer('mergedProperties').property('addAll').call([
+            refer(r'_$mergedProperties').property('addAll').call([
               refer(normalized.normalizedName).nullChecked
                   .property(
                     'parameterProperties',
@@ -2004,7 +2008,7 @@ class AllOfGenerator {
           ]);
         } else {
           propertyMergingLines.add(
-            refer('mergedProperties').property('addAll').call([
+            refer(r'_$mergedProperties').property('addAll').call([
               refer(
                 normalized.normalizedName,
               ).property('parameterProperties').call([], {
@@ -2017,7 +2021,7 @@ class AllOfGenerator {
 
       propertyMergingLines.add(
         const Code(
-          'return mergedProperties.toMatrix( '
+          r'return _$mergedProperties.toMatrix( '
           'paramName, explode: explode, allowEmpty: allowEmpty, '
           'alreadyEncoded: true);',
         ),
@@ -2073,13 +2077,13 @@ class AllOfGenerator {
     // For primitive-only AllOf, collect all values and validate they're equal
     final valueCollectionCode = <Code>[
       declareFinal(
-        'values',
+        r'_$values',
       ).assign(literalSet([], refer('String', 'dart:core'))).statement,
     ];
 
     for (final prop in normalizedProperties) {
       valueCollectionCode.addAll([
-        declareFinal('${prop.normalizedName}Matrix')
+        declareFinal('_\$${prop.normalizedName}Matrix')
             .assign(
               buildMatrixParameterExpression(
                 refer(prop.normalizedName),
@@ -2090,21 +2094,21 @@ class AllOfGenerator {
               ),
             )
             .statement,
-        refer('values').property('add').call([
-          refer('${prop.normalizedName}Matrix'),
+        refer(r'_$values').property('add').call([
+          refer('_\$${prop.normalizedName}Matrix'),
         ]).statement,
       ]);
     }
 
     valueCollectionCode.addAll([
-      const Code('if (values.length > 1) {'),
+      const Code(r'if (_$values.length > 1) {'),
       generateEncodingExceptionExpression(
         'Inconsistent allOf matrix encoding for $className: '
         'all values must encode to the same result',
         raw: true,
       ).statement,
       const Code('}'),
-      const Code('return values.first;'),
+      const Code(r'return _$values.first;'),
     ]);
 
     return Method(
@@ -2266,7 +2270,7 @@ class AllOfGenerator {
     // For AllOf, all properties must encode to the same value
     final valueCollectionCode = <Code>[
       declareFinal(
-        'values',
+        r'_$values',
       ).assign(literalSet([], refer('String', 'dart:core'))).statement,
     ];
 
@@ -2276,7 +2280,7 @@ class AllOfGenerator {
           ? refer(prop.normalizedName).nullChecked
           : refer(prop.normalizedName);
       valueCollectionCode.addAll([
-        declareFinal('${prop.normalizedName}Encoded')
+        declareFinal('_\$${prop.normalizedName}Encoded')
             .assign(
               receiver.property('uriEncode').call([], {
                 'allowEmpty': refer('allowEmpty'),
@@ -2284,21 +2288,21 @@ class AllOfGenerator {
               }),
             )
             .statement,
-        refer('values').property('add').call([
-          refer('${prop.normalizedName}Encoded'),
+        refer(r'_$values').property('add').call([
+          refer('_\$${prop.normalizedName}Encoded'),
         ]).statement,
       ]);
     }
 
     valueCollectionCode.addAll([
-      const Code('if (values.length > 1) {'),
+      const Code(r'if (_$values.length > 1) {'),
       generateEncodingExceptionExpression(
         'Inconsistent allOf encoding for $className: '
         'all values must encode to the same result',
         raw: true,
       ).statement,
       const Code('}'),
-      const Code('return values.first;'),
+      const Code(r'return _$values.first;'),
     ]);
 
     return Method(

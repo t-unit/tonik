@@ -202,10 +202,10 @@ void main() {
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final map = <String, String>{};
-          map.addAll($base.parameterProperties(allowEmpty: allowEmpty));
-          map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
-          return map.toForm(
+          final _$map = <String, String>{};
+          _$map.addAll($base.parameterProperties(allowEmpty: allowEmpty));
+          _$map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
+          return _$map.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
@@ -477,32 +477,32 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToFormMethod = '''
+    const expectedToFormMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final values = <String>{};
-          final intForm = int.toForm(
+          final _$values = <String>{};
+          final _$intForm = int.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(intForm);
-          final choiceForm = choice.toForm(
+          _$values.add(_$intForm);
+          final _$choiceForm = choice.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(choiceForm);
-          if (values.length > 1) {
+          _$values.add(_$choiceForm);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -634,38 +634,38 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToFormMethod = '''
+    const expectedToFormMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode MultiDynamic: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final values = <String>{};
-          final flexibleAForm = flexibleA.toForm(
+          final _$values = <String>{};
+          final _$flexibleAForm = flexibleA.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(flexibleAForm);
-          final flexibleBForm = flexibleB.toForm(
+          _$values.add(_$flexibleAForm);
+          final _$flexibleBForm = flexibleB.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(flexibleBForm);
-          final stringForm = string.toForm(
+          _$values.add(_$flexibleBForm);
+          final _$stringForm = string.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(stringForm);
-          if (values.length > 1) {
+          _$values.add(_$stringForm);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding for MultiDynamic: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -744,44 +744,44 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToFormMethod = '''
+    const expectedToFormMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode ComplexMixed: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final values = <String>{};
-          final flexibleValueForm = flexibleValue.toForm(
+          final _$values = <String>{};
+          final _$flexibleValueForm = flexibleValue.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(flexibleValueForm);
-          final bigDecimalForm = bigDecimal.toForm(
+          _$values.add(_$flexibleValueForm);
+          final _$bigDecimalForm = bigDecimal.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(bigDecimalForm);
-          final choiceForm = choice.toForm(
+          _$values.add(_$bigDecimalForm);
+          final _$choiceForm = choice.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(choiceForm);
-          final stringForm = string.toForm(
+          _$values.add(_$choiceForm);
+          final _$stringForm = string.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(stringForm);
-          if (values.length > 1) {
+          _$values.add(_$stringForm);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding for ComplexMixed: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -807,20 +807,20 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToForm = '''
+    const expectedToForm = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          final values = <String>{};
-          final listForm = list
+          final _$values = <String>{};
+          final _$listForm = list
             .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
             .toList()
             .toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
-          values.add(listForm);
-          if (values.length > 1) {
+          _$values.add(_$listForm);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -846,20 +846,20 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToForm = '''
+    const expectedToForm = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          final values = <String>{};
-          final listForm = list
+          final _$values = <String>{};
+          final _$listForm = list
             .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
             .toList()
             .toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
-          values.add(listForm);
-          if (values.length > 1) {
+          _$values.add(_$listForm);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -909,32 +909,32 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToFormMethod = '''
+    const expectedToFormMethod = r'''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final values = <String>{};
-          final flexibleValueForm = flexibleValue.toForm(
+          final _$values = <String>{};
+          final _$flexibleValueForm = flexibleValue.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(flexibleValueForm);
-          final intForm = int.toForm(
+          _$values.add(_$flexibleValueForm);
+          final _$intForm = int.toForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          values.add(intForm);
-          if (values.length > 1) {
+          _$values.add(_$intForm);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 

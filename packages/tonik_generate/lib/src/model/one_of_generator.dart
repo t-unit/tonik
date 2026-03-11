@@ -289,26 +289,29 @@ class OneOfGenerator {
     final blocks = <Code>[
       const Code('final ('),
       refer('dynamic', 'dart:core').code,
-      const Code(' json, '),
+      const Code(r' _$json, '),
       refer('String?', 'dart:core').code,
-      const Code(' discriminator) = switch (this) {\n'),
+      const Code(r' _$discriminator) = switch (this) {'),
+      const Code('\n'),
       ...caseCodes,
       const Code('\n};'),
     ];
 
     if (model.discriminator != null) {
       blocks.addAll([
-        const Code('if (discriminator != null && json is '),
+        const Code(r'if (_$discriminator != null && _$json is '),
         buildMapStringObjectType().code,
         const Code(') {'),
         Code(
-          "json.putIfAbsent('${model.discriminator}', () => discriminator);",
+          r"_$json.putIfAbsent('" +
+              model.discriminator! +
+              r"', () => _$discriminator);",
         ),
         const Code('}'),
       ]);
     }
 
-    blocks.add(const Code('return json;'));
+    blocks.add(const Code(r'return _$json;'));
 
     return Block.of(blocks);
   }
@@ -322,7 +325,7 @@ class OneOfGenerator {
 
     if (model.discriminator != null) {
       final discriminatorCode = [
-        const Code('final discriminator = json is '),
+        const Code(r'final _$discriminator = json is '),
         buildMapStringObjectType().code,
         const Code(' ? '),
         Code("json['${model.discriminator}']"),
@@ -359,11 +362,11 @@ class OneOfGenerator {
 
       blocks.addAll([
         ...discriminatorCode,
-        const Code('final result = switch (discriminator) {'),
+        const Code(r'final _$result = switch (_$discriminator) {'),
         ...resultCases,
         const Code('};'),
-        const Code('if (result != null) {'),
-        const Code('return result;'),
+        const Code(r'if (_$result != null) {'),
+        const Code(r'return _$result;'),
         const Code('}'),
       ]);
     }
@@ -498,18 +501,18 @@ class OneOfGenerator {
       if (hasDiscriminatedComplexTypes) {
         bodyBlocks.addAll([
           const Code('if (explode && value != null && value.isNotEmpty) {'),
-          const Code("final pairs = value.split(',');"),
+          const Code(r"final _$pairs = value.split(',');"),
           refer('String?', 'dart:core').code,
-          const Code(' discriminator;'),
-          const Code('for (final pair in pairs) {'),
-          const Code("final parts = pair.split('=');"),
-          const Code('if (parts.length == 2) {'),
-          const Code('final key = '),
+          const Code(r' _$discriminator;'),
+          const Code(r'for (final pair in _$pairs) {'),
+          const Code(r"final _$parts = pair.split('=');"),
+          const Code(r'if (_$parts.length == 2) {'),
+          const Code(r'final _$key = '),
           refer('Uri', 'dart:core').property('decodeComponent').call([
-            refer('parts').index(literalNum(0)),
+            refer(r'_$parts').index(literalNum(0)),
           ]).statement,
-          Code("if (key == '${model.discriminator}') {"),
-          const Code('discriminator = parts[1];'),
+          Code("if (_\$key == '${model.discriminator!}') {"),
+          const Code(r'_$discriminator = _$parts[1];'),
           const Code('break;'),
           const Code('}'),
           const Code('}'),
@@ -528,7 +531,9 @@ class OneOfGenerator {
           final modelType = m.model;
 
           bodyBlocks.addAll([
-            Code("if (discriminator == '${m.discriminatorValue}') {"),
+            Code(
+              "if (_\$discriminator == '${m.discriminatorValue!}') {",
+            ),
             const Code('return '),
             refer(variantName).call([
               refer(

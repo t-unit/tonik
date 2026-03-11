@@ -105,16 +105,20 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final mergedProperties = <String, String>{};
-          mergedProperties.addAll(class1.parameterProperties(allowEmpty: allowEmpty));
-          mergedProperties.addAll(class2.parameterProperties(allowEmpty: allowEmpty));
-          return mergedProperties.toMatrix(
+          final _$mergedProperties = <String, String>{};
+          _$mergedProperties.addAll(
+            class1.parameterProperties(allowEmpty: allowEmpty),
+          );
+          _$mergedProperties.addAll(
+            class2.parameterProperties(allowEmpty: allowEmpty),
+          );
+          return _$mergedProperties.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -143,31 +147,31 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final values = <String>{};
-          final intMatrix = int.toMatrix(
+          final _$values = <String>{};
+          final _$intMatrix = int.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
-          values.add(intMatrix);
-          final stringMatrix = string.toMatrix(
+          _$values.add(_$intMatrix);
+          final _$stringMatrix = string.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
-          values.add(stringMatrix);
-          if (values.length > 1) {
+          _$values.add(_$stringMatrix);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf matrix encoding for AllOfPrimitive: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -230,7 +234,7 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toMatrix(
           String paramName, {
           required bool explode,
@@ -241,10 +245,10 @@ void main() {
               'Simple encoding not supported: contains complex types',
             );
           }
-          final mergedProperties = <String, String>{};
-          mergedProperties.addAll(anyOfModel.parameterProperties(allowEmpty: allowEmpty));
-          mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
-          return mergedProperties.toMatrix(
+          final _$mergedProperties = <String, String>{};
+          _$mergedProperties.addAll(anyOfModel.parameterProperties(allowEmpty: allowEmpty));
+          _$mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
+          return _$mergedProperties.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -311,31 +315,31 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final values = <String>{};
-          final statusMatrix = status.toMatrix(
+          final _$values = <String>{};
+          final _$statusMatrix = status.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
-          values.add(statusMatrix);
-          final stringMatrix = string.toMatrix(
+          _$values.add(_$statusMatrix);
+          final _$stringMatrix = string.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
           );
-          values.add(stringMatrix);
-          if (values.length > 1) {
+          _$values.add(_$stringMatrix);
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf matrix encoding for AllOfEnum: all values must encode to the same result',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -438,15 +442,15 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final mergedProperties = <String, String>{};
-          mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
-          return mergedProperties.toMatrix(
+          final _$mergedProperties = <String, String>{};
+          _$mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
+          return _$mergedProperties.toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -478,25 +482,25 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           String toMatrix(
             String paramName, {
             required bool explode,
             required bool allowEmpty,
           }) {
-            final values = <String>{};
-            final listMatrix = list.toMatrix(
+            final _$values = <String>{};
+            final _$listMatrix = list.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(listMatrix);
-            if (values.length > 1) {
+            _$values.add(_$listMatrix);
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf matrix encoding for AllOfList: all values must encode to the same result',
               );
             }
-            return values.first;
+            return _$values.first;
           }
         ''';
         expect(
@@ -521,14 +525,14 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           String toMatrix(
             String paramName, {
             required bool explode,
             required bool allowEmpty,
           }) {
-            final values = <String>{};
-            final listMatrix = list
+            final _$values = <String>{};
+            final _$listMatrix = list
                 .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
@@ -537,13 +541,13 @@ void main() {
                   allowEmpty: allowEmpty,
                   alreadyEncoded: true,
                 );
-            values.add(listMatrix);
-            if (values.length > 1) {
+            _$values.add(_$listMatrix);
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf matrix encoding for AllOfIntList: all values must encode to the same result',
               );
             }
-            return values.first;
+            return _$values.first;
           }
         ''';
         expect(
@@ -572,14 +576,14 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           String toMatrix(
             String paramName, {
             required bool explode,
             required bool allowEmpty,
           }) {
-            final values = <String>{};
-            final listMatrix = list
+            final _$values = <String>{};
+            final _$listMatrix = list
                 .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
@@ -588,19 +592,19 @@ void main() {
                   allowEmpty: allowEmpty,
                   alreadyEncoded: true,
                 );
-            values.add(listMatrix);
-            final list2Matrix = list2.toMatrix(
+            _$values.add(_$listMatrix);
+            final _$list2Matrix = list2.toMatrix(
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(list2Matrix);
-            if (values.length > 1) {
+            _$values.add(_$list2Matrix);
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',
               );
             }
-            return values.first;
+            return _$values.first;
           }
         ''';
         expect(

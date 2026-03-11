@@ -159,13 +159,13 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory User.fromJson(Object? json) {
-          final map = json.decodeMap(context: r'User');
+          final _$map = json.decodeMap(context: r'User');
           return User(
-            id: map[r'id'].decodeJsonInt(context: r'User.id'),
-            name: map[r'name'].decodeJsonString(context: r'User.name'),
-            createdAt: map[r'createdAt'].decodeJsonNullableString(
+            id: _$map[r'id'].decodeJsonInt(context: r'User.id'),
+            name: _$map[r'name'].decodeJsonString(context: r'User.name'),
+            createdAt: _$map[r'createdAt'].decodeJsonNullableString(
               context: r'User.createdAt',
             ),
             password: null,
@@ -229,9 +229,9 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory User.fromSimple(String? value, {required bool explode}) {
-          final values = value.decodeObject(
+          final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: ',',
             expectedKeys: {r'id', r'name', r'createdAt'},
@@ -239,9 +239,9 @@ void main() {
             context: r'User',
           );
           return User(
-            id: values[r'id'].decodeSimpleInt(context: r'User.id'),
-            name: values[r'name'].decodeSimpleString(context: r'User.name'),
-            createdAt: values[r'createdAt'].decodeSimpleNullableString(
+            id: _$values[r'id'].decodeSimpleInt(context: r'User.id'),
+            name: _$values[r'name'].decodeSimpleString(context: r'User.name'),
+            createdAt: _$values[r'createdAt'].decodeSimpleNullableString(
               context: r'User.createdAt',
             ),
             password: null,
@@ -297,9 +297,9 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory User.fromForm(String? value, {required bool explode}) {
-          final values = value.decodeObject(
+          final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: '&',
             expectedKeys: {r'id', r'name', r'createdAt'},
@@ -307,9 +307,9 @@ void main() {
             context: r'User',
           );
           return User(
-            id: values[r'id'].decodeFormInt(context: r'User.id'),
-            name: values[r'name'].decodeFormString(context: r'User.name'),
-            createdAt: values[r'createdAt'].decodeFormNullableString(
+            id: _$values[r'id'].decodeFormInt(context: r'User.id'),
+            name: _$values[r'name'].decodeFormString(context: r'User.name'),
+            createdAt: _$values[r'createdAt'].decodeFormNullableString(
               context: r'User.createdAt',
             ),
             password: null,
@@ -362,25 +362,25 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
           bool useQueryComponent = false,
         }) {
-          final result = <String, String>{};
-          result[r'name'] = name.uriEncode(
+          final _$result = <String, String>{};
+          _$result[r'name'] = name.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
           if (password == null) {
             throw EncodingException(r'Required property password is null.');
           }
-          result[r'password'] = password!.uriEncode(
+          _$result[r'password'] = password!.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           );
-          return result;
+          return _$result;
         }
       ''';
 
@@ -623,12 +623,12 @@ void main() {
         Object? toJson() => {r'name': name, r'age': age};
       ''';
 
-        const expectedFromJson = '''
+        const expectedFromJson = r'''
         factory Simple.fromJson(Object? json) {
-          final map = json.decodeMap(context: r'Simple');
+          final _$map = json.decodeMap(context: r'Simple');
           return Simple(
-            name: map[r'name'].decodeJsonString(context: r'Simple.name'),
-            age: map[r'age'].decodeJsonInt(context: r'Simple.age'),
+            name: _$map[r'name'].decodeJsonString(context: r'Simple.name'),
+            age: _$map[r'age'].decodeJsonInt(context: r'Simple.age'),
           );
         }
       ''';

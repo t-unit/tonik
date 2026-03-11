@@ -165,58 +165,58 @@ void main() {
       ).format;
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
       Object? toJson() {
-        final values = <Object?>{};
-        final mapValues = <Map<String, Object?>>[];
-        String? discriminatorValue;
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
+        String? _$discriminatorValue;
 
         if (a != null) {
-          final Object? aJson = a!.toJson();
-          if (aJson is Map<String, Object?>) {
-            mapValues.add(aJson);
-              discriminatorValue ??= r'a';
+          final Object? _$aJson = a!.toJson();
+          if (_$aJson is Map<String, Object?>) {
+            _$mapValues.add(_$aJson);
+              _$discriminatorValue ??= r'a';
           } else {
-            values.add(aJson);
+            _$values.add(_$aJson);
           }
         }
         if (b != null) {
-          final Object? bJson = b!.toJson();
-          if (bJson is Map<String, Object?>) {
-            mapValues.add(bJson);
-              discriminatorValue ??= r'b';
+          final Object? _$bJson = b!.toJson();
+          if (_$bJson is Map<String, Object?>) {
+            _$mapValues.add(_$bJson);
+              _$discriminatorValue ??= r'b';
           } else {
-            values.add(bJson);
+            _$values.add(_$bJson);
           }
         }
 
-        if (values.isEmpty && mapValues.isEmpty) return null;
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
 
-        if (values.isNotEmpty && mapValues.isNotEmpty) {
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for Payload: cannot encode both simple and complex values',
           );
         }
 
-        if (values.isNotEmpty) {
-          if (values.length > 1) {
+        if (_$values.isNotEmpty) {
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
 
-        if (mapValues.isNotEmpty) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
           }
-          final discValue = discriminatorValue;
-          if (discValue != null) {
-            map.putIfAbsent('disc', () => discValue);
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent('disc', () => _$discValue);
           }
-          return map;
+          return _$map;
         }
 
         return null;
@@ -280,51 +280,51 @@ void main() {
       ).format;
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
       Object? toJson() {
-        final values = <Object?>{};
-        final mapValues = <Map<String, Object?>>[];
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
 
         if (a != null) {
-          final Object? aJson = a!.toJson();
-          if (aJson is Map<String, Object?>) {
-            mapValues.add(aJson);
+          final Object? _$aJson = a!.toJson();
+          if (_$aJson is Map<String, Object?>) {
+            _$mapValues.add(_$aJson);
           } else {
-            values.add(aJson);
+            _$values.add(_$aJson);
           }
         }
         if (b != null) {
-          final Object? bJson = b!.toJson();
-          if (bJson is Map<String, Object?>) {
-            mapValues.add(bJson);
+          final Object? _$bJson = b!.toJson();
+          if (_$bJson is Map<String, Object?>) {
+            _$mapValues.add(_$bJson);
           } else {
-            values.add(bJson);
+            _$values.add(_$bJson);
           }
         }
 
-        if (values.isEmpty && mapValues.isEmpty) return null;
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
 
-        if (values.isNotEmpty && mapValues.isNotEmpty) {
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for PayloadNoDisc: cannot encode both simple and complex values',
           );
         }
 
-        if (values.isNotEmpty) {
-          if (values.length > 1) {
+        if (_$values.isNotEmpty) {
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
 
-        if (mapValues.isNotEmpty) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
           }
-          return map;
+          return _$map;
         }
 
         return null;
@@ -358,64 +358,64 @@ void main() {
     ).format;
     final generated = format(klass.accept(emitter).toString());
 
-    const expectedMethod = '''
+    const expectedMethod = r'''
       Object? toJson() {
-        final values = <Object?>{};
-        final mapValues = <Map<String, Object?>>[];
-        String? discriminatorValue;
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
+        String? _$discriminatorValue;
 
         if (bool != null) {
-          final Object? boolJson = bool!;
-          if (boolJson is Map<String, Object?>) {
-            mapValues.add(boolJson);
+          final Object? _$boolJson = bool!;
+          if (_$boolJson is Map<String, Object?>) {
+            _$mapValues.add(_$boolJson);
           } else {
-            values.add(boolJson);
+            _$values.add(_$boolJson);
           }
         }
         if (int != null) {
-          final Object? intJson = int!;
-          if (intJson is Map<String, Object?>) {
-            mapValues.add(intJson);
+          final Object? _$intJson = int!;
+          if (_$intJson is Map<String, Object?>) {
+            _$mapValues.add(_$intJson);
           } else {
-            values.add(intJson);
+            _$values.add(_$intJson);
           }
         }
         if (string != null) {
-          final Object? stringJson = string!;
-          if (stringJson is Map<String, Object?>) {
-            mapValues.add(stringJson);
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
           } else {
-            values.add(stringJson);
+            _$values.add(_$stringJson);
           }
         }
 
-        if (values.isEmpty && mapValues.isEmpty) return null;
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
 
-        if (values.isNotEmpty && mapValues.isNotEmpty) {
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for OnlyPrimitives: cannot encode both simple and complex values',
           );
         }
 
-        if (values.isNotEmpty) {
-          if (values.length > 1) {
+        if (_$values.isNotEmpty) {
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
 
-        if (mapValues.isNotEmpty) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
           }
-          final discValue = discriminatorValue;
-          if (discValue != null) {
-            map.putIfAbsent('type', () => discValue);
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent('type', () => _$discValue);
           }
-          return map;
+          return _$map;
         }
 
         return null;
@@ -464,58 +464,58 @@ void main() {
       ).format;
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
       Object? toJson() {
-        final values = <Object?>{};
-        final mapValues = <Map<String, Object?>>[];
-        String? discriminatorValue;
+        final _$values = <Object?>{};
+        final _$mapValues = <Map<String, Object?>>[];
+        String? _$discriminatorValue;
 
         if (string != null) {
-          final Object? stringJson = string!;
-          if (stringJson is Map<String, Object?>) {
-            mapValues.add(stringJson);
-              discriminatorValue ??= r'str';
+          final Object? _$stringJson = string!;
+          if (_$stringJson is Map<String, Object?>) {
+            _$mapValues.add(_$stringJson);
+              _$discriminatorValue ??= r'str';
           } else {
-            values.add(stringJson);
+            _$values.add(_$stringJson);
           }
         }
         if (user != null) {
-          final Object? userJson = user!.toJson();
-          if (userJson is Map<String, Object?>) {
-            mapValues.add(userJson);
-              discriminatorValue ??= r'user';
+          final Object? _$userJson = user!.toJson();
+          if (_$userJson is Map<String, Object?>) {
+            _$mapValues.add(_$userJson);
+              _$discriminatorValue ??= r'user';
           } else {
-            values.add(userJson);
+            _$values.add(_$userJson);
           }
         }
 
-        if (values.isEmpty && mapValues.isEmpty) return null;
+        if (_$values.isEmpty && _$mapValues.isEmpty) return null;
 
-        if (values.isNotEmpty && mapValues.isNotEmpty) {
+        if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
           throw EncodingException(
             r'Mixed encoding not supported for Mixed: cannot encode both simple and complex values',
           );
         }
 
-        if (values.isNotEmpty) {
-          if (values.length > 1) {
+        if (_$values.isNotEmpty) {
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
 
-        if (mapValues.isNotEmpty) {
-          final map = <String, Object?>{};
-          for (final m in mapValues) {
-            map.addAll(m);
+        if (_$mapValues.isNotEmpty) {
+          final _$map = <String, Object?>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
           }
-          final discValue = discriminatorValue;
-          if (discValue != null) {
-            map.putIfAbsent('disc', () => discValue);
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent('disc', () => _$discValue);
           }
-          return map;
+          return _$map;
         }
 
         return null;

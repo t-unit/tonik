@@ -50,13 +50,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options() {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = '*/*';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = '*/*';
           return Options(
             method: 'GET',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -94,13 +94,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options() {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = '*/*';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = '*/*';
           return Options(
             method: 'POST',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -138,13 +138,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options() {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = '*/*';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = '*/*';
           return Options(
             method: 'PUT',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -182,13 +182,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options() {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = '*/*';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = '*/*';
           return Options(
             method: 'DELETE',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -239,15 +239,15 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
           Options _options({required String xMyHeader}) {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
-            headers[r'X-My-Header'] =
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
+            _$headers[r'X-My-Header'] =
                 xMyHeader.toSimple(explode: false, allowEmpty: false);
             return Options(
               method: 'GET',
-              headers: headers,
+              headers: _$headers,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -372,30 +372,30 @@ void main() {
             (normalizedName: 'xOptionalList', parameter: optionalListHeader),
           ];
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
           Options _options({
             required String xRequiredString,
             required DateTime xRequiredDate,
             bool? xOptionalBool,
             List<String>? xOptionalList,
           }) {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
-            headers[r'X-Required-String'] =
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
+            _$headers[r'X-Required-String'] =
                 xRequiredString.toSimple(explode: false, allowEmpty: false);
-            headers[r'X-Required-Date'] =
+            _$headers[r'X-Required-Date'] =
                 xRequiredDate.toSimple(explode: false, allowEmpty: true);
             if (xOptionalBool != null) {
-              headers[r'X-Optional-Bool'] = xOptionalBool
+              _$headers[r'X-Optional-Bool'] = xOptionalBool
                   .toSimple(explode: false, allowEmpty: false);
             }
             if (xOptionalList != null) {
-              headers[r'X-Optional-List'] = xOptionalList
+              _$headers[r'X-Optional-List'] = xOptionalList
                   .toSimple(explode: true, allowEmpty: false);
             }
             return Options(
               method: 'GET',
-              headers: headers,
+              headers: _$headers,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -452,14 +452,14 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options({required String xMyHeader}) {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = '*/*';
-          headers[r'X-My-Header'] = xMyHeader.toSimple(explode: true, allowEmpty: true);
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = '*/*';
+          _$headers[r'X-My-Header'] = xMyHeader.toSimple(explode: true, allowEmpty: true);
           return Options(
             method: 'GET',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -523,17 +523,17 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
           Options _options({required List<AnonymousModel> xColors}) {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
-            headers[r'X-Colors'] = xColors
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
+            _$headers[r'X-Colors'] = xColors
                 .map((e) => e.toSimple(explode: true, allowEmpty: false))
                 .toList()
                 .toSimple(explode: true, allowEmpty: false);
             return Options(
               method: 'GET',
-              headers: headers,
+              headers: _$headers,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -598,14 +598,14 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
           Options _options({required List<List<AnonymousModel>> xMatrix}) {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
             throw EncodingException('Simple encoding does not support list with complex elements for header X-Matrix');
             return Options(
               method: 'GET',
-              headers: headers,
+              headers: _$headers,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -646,13 +646,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
           Options _options() {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
-              headers: headers,
+              headers: _$headers,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -702,13 +702,13 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Options _options() {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
-              headers: headers,
+              headers: _$headers,
               contentType: 'application/json',
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
@@ -765,18 +765,18 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Options _options({required MultiContent body}) {
-            final contentType = switch (body) {
+            final _$contentType = switch (body) {
               MultiContentJson _ => 'application/json',
               MultiContentFormData _ => 'multipart/form-data',
             };
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
-              headers: headers,
-              contentType: contentType,
+              headers: _$headers,
+              contentType: _$contentType,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -829,13 +829,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options() {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = 'application/json,application/xml';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = 'application/json,application/xml';
           return Options(
             method: 'GET',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -876,13 +876,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options() {
-          final headers = <String, dynamic>{};
-          headers['Accept'] = '*/*';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = '*/*';
           return Options(
             method: 'GET',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -941,13 +941,13 @@ void main() {
         securitySchemes: const {},
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         Options _options({required String accept}) {
-          final headers = <String, dynamic>{};
-          headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
+          final _$headers = <String, dynamic>{};
+          _$headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
           return Options(
             method: 'GET',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -1015,17 +1015,17 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
         Options _options({String? accept}) {
-          final headers = <String, dynamic>{};
+          final _$headers = <String, dynamic>{};
           if (accept != null) {
-            headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
+            _$headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
           } else {
-            headers['Accept'] = 'application/json,application/xml';
+            _$headers['Accept'] = 'application/json,application/xml';
           }
           return Options(
             method: 'GET',
-            headers: headers,
+            headers: _$headers,
             responseType: ResponseType.bytes,
             validateStatus: (_) => true,
           );
@@ -1091,13 +1091,13 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
               r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
             );
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
           '''),
         ),
@@ -1150,16 +1150,16 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
             if (trackingId != null) {
-              cookieParts.add(
+              _$cookieParts.add(
                 r'tracking_id=' +
                     trackingId.toForm(explode: false, allowEmpty: true),
               );
             }
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
           '''),
         ),
@@ -1233,16 +1233,16 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
               r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
             );
-            cookieParts.add(
+            _$cookieParts.add(
               r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
             );
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
           '''),
         ),
@@ -1295,13 +1295,13 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
               r'page_num=' + pageNum.toForm(explode: false, allowEmpty: true),
             );
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
           '''),
         ),
@@ -1347,13 +1347,13 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Options _options() {
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
-              headers: headers,
+              headers: _$headers,
               contentType: null,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
@@ -1414,18 +1414,18 @@ void main() {
             securitySchemes: const {},
           );
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
           Options _options({required MixedBody body}) {
-            final contentType = switch (body) {
+            final _$contentType = switch (body) {
               MixedBodyJson _ => 'application/json',
               MixedBodyFormData _ => null,
             };
-            final headers = <String, dynamic>{};
-            headers['Accept'] = '*/*';
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = '*/*';
             return Options(
               method: 'POST',
-              headers: headers,
-              contentType: contentType,
+              headers: _$headers,
+              contentType: _$contentType,
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );

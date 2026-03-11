@@ -219,9 +219,9 @@ void main() {
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
-            return other is SimpleResponse && 
-              other.xTest == xTest && 
-              other.body == body;
+            return other is SimpleResponse &&
+              other.xTest == this.xTest &&
+              other.body == this.body;
           }
         ''';
 
@@ -268,7 +268,7 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
-            return other is ListHeaderResponse && _$deepEquals.equals(other.xList, xList) && other.body == body;
+            return other is ListHeaderResponse && _$deepEquals.equals(other.xList, this.xList) && other.body == this.body;
           }
         ''';
 

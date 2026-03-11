@@ -46,11 +46,12 @@ Expression buildToFormValueExpression(
   required bool useQueryComponent,
   bool? explodeLiteral,
   bool? allowEmptyLiteral,
+  bool isNullable = false,
 }) {
   return _buildFormSerializationExpression(
     refer(valueExpression),
     model,
-    isNullable: false,
+    isNullable: isNullable,
     useQueryComponent: useQueryComponent,
     explodeLiteral: explodeLiteral,
     allowEmptyLiteral: allowEmptyLiteral,

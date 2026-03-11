@@ -328,25 +328,25 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'Choice');
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory Choice.fromForm(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
-              final pairs = value.split(',');
-              String? discriminator;
-              for (final pair in pairs) {
-                final parts = pair.split('=');
-                if (parts.length == 2) {
-                  final key = Uri.decodeComponent(parts[0]);
-                  if (key == 'type') {
-                    discriminator = parts[1];
+              final _$pairs = value.split(',');
+              String? _$discriminator;
+              for (final pair in _$pairs) {
+                final _$parts = pair.split('=');
+                if (_$parts.length == 2) {
+                  final _$key = Uri.decodeComponent(_$parts[0]);
+                  if (_$key == 'type') {
+                    _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (discriminator == 'a') {
+              if (_$discriminator == 'a') {
                 return ChoiceA(A.fromForm(value, explode: explode));
               }
-              if (discriminator == 'b') {
+              if (_$discriminator == 'b') {
                 return ChoiceB(B.fromForm(value, explode: explode));
               }
             }

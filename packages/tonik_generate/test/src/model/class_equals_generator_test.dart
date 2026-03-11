@@ -60,7 +60,7 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is User && 
-            other.name == name && other.age == age;
+            other.name == this.name && other.age == this.age;
         }
         ''';
 
@@ -114,7 +114,7 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is User && 
-            other.name == name && other.address == address;
+            other.name == this.name && other.address == this.address;
         }
         ''';
 
@@ -157,8 +157,8 @@ void main() {
         if (identical(this, other)) return true;
         const _$deepEquals = DeepCollectionEquality();
         return other is User && 
-          other.name == name && 
-          _$deepEquals.equals(other.tags, tags);
+          other.name == this.name &&
+          _$deepEquals.equals(other.tags, this.tags);
       }
       ''';
 
@@ -197,7 +197,7 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is User && 
-            other.firstName == firstName && other.lastName == lastName;
+            other.firstName == this.firstName && other.lastName == this.lastName;
         }
         ''';
 
@@ -243,12 +243,53 @@ void main() {
         if (identical(this, other)) return true;
         const _$deepEquals = DeepCollectionEquality();
         return other is NestedData && 
-          other.name == name && 
-          _$deepEquals.equals(other.nestedList, nestedList);
+          other.name == this.name &&
+          _$deepEquals.equals(other.nestedList, this.nestedList);
       }
       ''';
 
       final generatedClass = generator.generateClass(nestedListModel);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test(
+        'generates correct equals when property is named "other" '
+        '(shadows operator parameter)', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Config',
+        properties: [
+          Property(
+            name: 'other',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          Property(
+            name: 'value',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      const expectedMethod = '''
+        @override
+        bool operator ==(Object other) {
+          if (identical(this, other)) return true;
+          return other is Config &&
+            other.other == this.other && other.value == this.value;
+        }
+        ''';
+
+      final generatedClass = generator.generateClass(model);
       expect(
         collapseWhitespace(format(generatedClass.accept(emitter).toString())),
         contains(collapseWhitespace(expectedMethod)),

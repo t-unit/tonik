@@ -114,11 +114,11 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
 }) {
-  final mergedProperties = <String, String>{};
-  mergedProperties.addAll(
+  final _$mergedProperties = <String, String>{};
+  _$mergedProperties.addAll(
     $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
   );
-  return mergedProperties;
+  return _$mergedProperties;
 }
 ''';
 
@@ -188,25 +188,25 @@ Map<String, String> parameterProperties({
       final combinedClass = generator.generateClass(model);
       final classCode = format(combinedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
 }) {
-  final mergedProperties = <String, String>{};
-  mergedProperties.addAll(
+  final _$mergedProperties = <String, String>{};
+  _$mergedProperties.addAll(
     firstModel.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
     ),
   );
-  mergedProperties.addAll(
+  _$mergedProperties.addAll(
     secondModel.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
     ),
   );
-  return mergedProperties;
+  return _$mergedProperties;
 }
 ''';
 
@@ -271,25 +271,25 @@ Map<String, String> parameterProperties({
         final combinedClass = generator.generateClass(model);
         final classCode = format(combinedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
 }) {
-  final mergedProperties = <String, String>{};
-  mergedProperties.addAll(
+  final _$mergedProperties = <String, String>{};
+  _$mergedProperties.addAll(
     stringOrComplex.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
     ),
   );
-  mergedProperties.addAll(
+  _$mergedProperties.addAll(
     simpleModel.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
     ),
   );
-  return mergedProperties;
+  return _$mergedProperties;
 }
 ''';
 

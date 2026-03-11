@@ -21,7 +21,7 @@ class QueryGenerator {
   ) {
     final parameters = <Parameter>[];
     final body = <Code>[
-      declareFinal('entries')
+      declareFinal(r'_$entries')
           .assign(
             literalList(
               [],
@@ -109,7 +109,7 @@ class QueryGenerator {
     );
 
     return Block.of([
-      const Code('entries.addAll('),
+      const Code(r'_$entries.addAll('),
       deepObjectExpression,
       const Code(');'),
     ]);
@@ -136,10 +136,10 @@ class QueryGenerator {
 
   Code _generateReturnStatement() {
     return Block.of([
-      const Code('if (entries.isEmpty) {'),
+      const Code(r'if (_$entries.isEmpty) {'),
       const Code('  return null;'),
       const Code('}'),
-      refer('entries')
+      refer(r'_$entries')
           .property('map')
           .call([
             Method(

@@ -80,9 +80,9 @@ String _parseResponse(Response<List<int>> response) {
       final _$body = _$json.decodeJsonString();
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -142,9 +142,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = AnonymousModel.fromJson(_$json);
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -208,9 +208,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -263,9 +263,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = _$json.decodeJsonList<int>();
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -332,9 +332,9 @@ String _parseResponse(Response<List<int>> response) {
                 .toList();
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -410,9 +410,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = Pet.fromJson(_$json);
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -462,9 +462,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = _$json.decodeJsonString();
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -514,9 +514,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = _$json.decodeJsonString();
               return _$body;
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -589,9 +589,9 @@ String _parseResponse(Response<List<int>> response) {
             case (400, _):
               return MultiStatusOpResponse400();
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
+              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
           }
         }
       ''';
@@ -685,10 +685,10 @@ String _parseResponse(Response<List<int>> response) {
                     .decodeSimpleNullableDateTime(context: r'x-expires-after'),
               );
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -898,10 +898,10 @@ String _parseResponse(Response<List<int>> response) {
                     .decodeSimpleString(context: r'x-user-id'),
               );
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -986,10 +986,10 @@ String _parseResponse(Response<List<int>> response) {
                     .decodeSimpleString(context: r'x-user-id'),
               );
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -1066,10 +1066,10 @@ String _parseResponse(Response<List<int>> response) {
                     .decodeSimpleString(context: r'body'),
               );
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -1132,10 +1132,10 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = _$json.decodeJsonInt();
               return UserResponseXml(body: _$body);
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -1209,10 +1209,10 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = _$json.decodeJsonInt();
               return GetUserResponse400(body: _$body);
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -1351,9 +1351,9 @@ String _parseResponse(Response<List<int>> response) {
       final _$body = decodeResponseText(response.data);
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1404,9 +1404,9 @@ TonikFile _parseResponse(Response<List<int>> response) {
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1455,9 +1455,9 @@ TonikFile _parseResponse(Response<List<int>> response) {
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1525,9 +1525,9 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return AnonymousResponseOctetStream(body: _$body);
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1579,9 +1579,9 @@ String _parseResponse(Response<List<int>> response) {
       final _$body = _$formString.decodeFormString();
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1653,9 +1653,9 @@ FormData _parseResponse(Response<List<int>> response) {
       final _$body = FormData.fromForm(_$formString, explode: true);
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1705,9 +1705,9 @@ int _parseResponse(Response<List<int>> response) {
       final _$body = _$formString.decodeFormInt();
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1757,9 +1757,9 @@ DateTime _parseResponse(Response<List<int>> response) {
       final _$body = _$formString.decodeFormDateTime();
       return _$body;
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';
@@ -1858,10 +1858,10 @@ DateTime _parseResponse(Response<List<int>> response) {
                   xAnyHeader: response.headers.value(r'X-Any-Header'),
               );
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -1964,10 +1964,10 @@ DateTime _parseResponse(Response<List<int>> response) {
               final _$body = _$json.decodeJsonString();
               return MultiNeverOpResponse404(body: _$body);
             default:
-              final content = response.headers.value('content-type') ?? 'not specified';
-              final status = response.statusCode;
+              final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: $content for status code: $status',
+                'Unexpected content type: ${_$content} for status code: ${_$status}',
               );
           }
         }
@@ -2079,9 +2079,9 @@ String _parseResponse(Response<List<int>> response) {
         'Multipart response body decoding is not supported.',
       );
     default:
-      final content = response.headers.value('content-type') ?? 'not specified';
-      final status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: $content for status code: $status');
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
   }
 }
 ''';

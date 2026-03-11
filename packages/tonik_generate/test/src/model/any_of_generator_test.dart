@@ -362,8 +362,8 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           return other is ValueChoice &&
-            other.int == int &&
-            other.string == string;
+            other.int == this.int &&
+            other.string == this.string;
         }
       ''';
 
@@ -428,20 +428,20 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (int != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -478,20 +478,20 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (adminProfile != null) {
-            shapes.add(adminProfile!.currentEncodingShape);
+            _$shapes.add(adminProfile!.currentEncodingShape);
           }
           if (userProfile != null) {
-            shapes.add(userProfile!.currentEncodingShape);
+            _$shapes.add(userProfile!.currentEncodingShape);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -530,20 +530,20 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (data != null) {
-            shapes.add(data!.currentEncodingShape);
+            _$shapes.add(data!.currentEncodingShape);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -626,30 +626,32 @@ void main() {
         ).format;
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
-  final mapValues = <Map<String, String>>[];
-  String? discriminatorValue;
+  final _$mapValues = <Map<String, String>>[];
+  String? _$discriminatorValue;
   if (company != null) {
-    final companySimple = company!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(companySimple);
-    discriminatorValue ??= r'company';
+    final _$companySimple = company!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
+    _$mapValues.add(_$companySimple);
+    _$discriminatorValue ??= r'company';
   }
   if (person != null) {
-    final personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(personSimple);
-    discriminatorValue ??= r'person';
+    final _$personSimple = person!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$personSimple);
+    _$discriminatorValue ??= r'person';
   }
-  final map = <String, String>{};
-  for (final m in mapValues) {
-    map.addAll(m);
+  final _$map = <String, String>{};
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
-  final discValue = discriminatorValue;
-  if (discValue != null) {
-    map.putIfAbsent('type', () => discValue);
+  final _$discValue = _$discriminatorValue;
+  if (_$discValue != null) {
+    _$map.putIfAbsent('type', () => _$discValue);
   }
-  return map.toSimple(
+  return _$map.toSimple(
     explode: explode,
     allowEmpty: allowEmpty,
     alreadyEncoded: true,
@@ -740,34 +742,34 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         ).format;
         final generated = format(toFormMethod.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 @override
 String toForm({
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
 }) {
-  final mapValues = <Map<String, String>>[];
-  String? discriminatorValue;
+  final _$mapValues = <Map<String, String>>[];
+  String? _$discriminatorValue;
   if (company != null) {
-    final companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(companyForm);
-    discriminatorValue ??= r'company';
+    final _$companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$companyForm);
+    _$discriminatorValue ??= r'company';
   }
   if (person != null) {
-    final personForm = person!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(personForm);
-    discriminatorValue ??= r'person';
+    final _$personForm = person!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$personForm);
+    _$discriminatorValue ??= r'person';
   }
-  final map = <String, String>{};
-  for (final m in mapValues) {
-    map.addAll(m);
+  final _$map = <String, String>{};
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
-  final discValue = discriminatorValue;
-  if (discValue != null) {
-    map.putIfAbsent('type', () => discValue);
+  final _$discValue = _$discriminatorValue;
+  if (_$discValue != null) {
+    _$map.putIfAbsent('type', () => _$discValue);
   }
-  return map.toForm(
+  return _$map.toForm(
     explode: explode,
     allowEmpty: allowEmpty,
     alreadyEncoded: true,
@@ -809,28 +811,28 @@ String toForm({
         ).format;
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
-  final values = <String>{};
+  final _$values = <String>{};
   if (int != null) {
-    final intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
-    values.add(intSimple);
+    final _$intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
+    _$values.add(_$intSimple);
   }
   if (string != null) {
-    final stringSimple = string!.toSimple(
+    final _$stringSimple = string!.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
     );
-    values.add(stringSimple);
+    _$values.add(_$stringSimple);
   }
-  if (values.isEmpty) return '';
-  if (values.length > 1) {
+  if (_$values.isEmpty) return '';
+  if (_$values.length > 1) {
     throw EncodingException(
       r'Ambiguous anyOf simple encoding for SimpleChoice: multiple values provided, anyOf requires exactly one value',
     );
   }
-  return values.first;
+  return _$values.first;
 }
       ''';
 
@@ -882,47 +884,47 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         ).format;
         final generated = format(toSimpleMethod.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
-  final values = <String>{};
-  final mapValues = <Map<String, String>>[];
-  String? discriminatorValue;
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  String? _$discriminatorValue;
   if (data != null) {
-    final dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
-    mapValues.add(dataSimple);
-    discriminatorValue ??= r'data';
+    final _$dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$dataSimple);
+    _$discriminatorValue ??= r'data';
   }
   if (string != null) {
-    final stringSimple = string!.toSimple(
+    final _$stringSimple = string!.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
     );
-    values.add(stringSimple);
+    _$values.add(_$stringSimple);
   }
-  if (values.isEmpty && mapValues.isEmpty) return '';
-  if (mapValues.isNotEmpty && values.isNotEmpty) {
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
     throw EncodingException(
       r'Ambiguous anyOf simple encoding for MixedChoice: mixing simple and complex values',
     );
   }
-  if (values.isNotEmpty) {
-    if (values.length > 1) {
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
       throw EncodingException(
         r'Ambiguous anyOf simple encoding for MixedChoice: multiple values provided, anyOf requires exactly one value',
       );
     }
-    return values.first;
+    return _$values.first;
   } else {
-    final map = <String, String>{};
-    for (final m in mapValues) {
-      map.addAll(m);
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
     }
-    final discValue = discriminatorValue;
-    if (discValue != null) {
-      map.putIfAbsent('type', () => discValue);
+    final _$discValue = _$discriminatorValue;
+    if (_$discValue != null) {
+      _$map.putIfAbsent('type', () => _$discValue);
     }
-    return map.toSimple(
+    return _$map.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
       alreadyEncoded: true,
@@ -1025,8 +1027,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     _$mapValues.add( user!.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists), );
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1080,8 +1082,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     _$mapValues.add( user!.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists), );
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1138,8 +1140,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     _$discriminatorValue ??= r'data';
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
@@ -1211,8 +1213,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     }
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1292,8 +1294,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     }
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
@@ -1369,8 +1371,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     );
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1429,8 +1431,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
     );
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1526,8 +1528,8 @@ Map<String, String> parameterProperties({
     );
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1575,8 +1577,8 @@ Map<String, String> parameterProperties({
     throw EncodingException('Lists are not supported in parameterProperties');
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1653,8 +1655,8 @@ Map<String, String> parameterProperties({
     }
   }
   final _$map = <String, String>{};
-  for (final m in _$mapValues) {
-    _$map.addAll(m);
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
   }
   return _$map;
 }
@@ -1703,20 +1705,20 @@ Map<String, String> parameterProperties({
 
       expect(allOfModel.encodingShape, EncodingShape.simple);
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (simpleAllOf != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -1763,20 +1765,20 @@ Map<String, String> parameterProperties({
 
       expect(allOfModel.encodingShape, EncodingShape.complex);
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (complexAllOf != null) {
-            shapes.add(complexAllOf!.currentEncodingShape);
+            _$shapes.add(complexAllOf!.currentEncodingShape);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -1818,20 +1820,20 @@ Map<String, String> parameterProperties({
 
       expect(allOfModel.encodingShape, EncodingShape.mixed);
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (mixedAllOf != null) {
-            shapes.add(mixedAllOf!.currentEncodingShape);
+            _$shapes.add(mixedAllOf!.currentEncodingShape);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -1869,20 +1871,20 @@ Map<String, String> parameterProperties({
 
       expect(oneOfModel.encodingShape, EncodingShape.simple);
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (simpleOneOf != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 
@@ -1934,20 +1936,20 @@ Map<String, String> parameterProperties({
 
       expect(nestedAnyOfModel.encodingShape, EncodingShape.complex);
 
-      const expectedGetter = '''
+      const expectedGetter = r'''
         EncodingShape get currentEncodingShape {
-          final shapes = <EncodingShape>{};
+          final _$shapes = <EncodingShape>{};
           if (nestedAnyOf != null) {
-            shapes.add(nestedAnyOf!.currentEncodingShape);
+            _$shapes.add(nestedAnyOf!.currentEncodingShape);
           }
           if (string != null) {
-            shapes.add(EncodingShape.simple);
+            _$shapes.add(EncodingShape.simple);
           }
-          if (shapes.isEmpty) {
+          if (_$shapes.isEmpty) {
             throw StateError('At least one field must be non-null in anyOf');
           }
-          if (shapes.length > 1) return EncodingShape.mixed;
-          return shapes.first;
+          if (_$shapes.length > 1) return EncodingShape.mixed;
+          return _$shapes.first;
         }
       ''';
 

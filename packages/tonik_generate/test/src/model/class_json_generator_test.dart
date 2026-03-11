@@ -640,12 +640,12 @@ void main() {
           ],
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: r'User');
+    final _$map = json.decodeMap(context: r'User');
     return User(
-      name: map[r'name'].decodeJsonString(context: r'User.name'),
-      age: map[r'age'].decodeJsonInt(context: r'User.age'),
+      name: _$map[r'name'].decodeJsonString(context: r'User.name'),
+      age: _$map[r'age'].decodeJsonInt(context: r'User.age'),
     );
   }''';
 
@@ -680,12 +680,12 @@ void main() {
         ],
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: r'User');
+    final _$map = json.decodeMap(context: r'User');
     return User(
-      name: map[r'name'].decodeJsonString(context: r'User.name'),
-      bio: map[r'bio'].decodeJsonNullableString(context: r'User.bio'),
+      name: _$map[r'name'].decodeJsonString(context: r'User.name'),
+      bio: _$map[r'bio'].decodeJsonNullableString(context: r'User.bio'),
     );
   }''';
 
@@ -712,11 +712,11 @@ void main() {
         ],
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: r'User');
+    final _$map = json.decodeMap(context: r'User');
     return User(
-      name: map[r'name'].decodeJsonNullableString(context: r'User.name'),
+      name: _$map[r'name'].decodeJsonNullableString(context: r'User.name'),
     );
   }''';
 
@@ -750,14 +750,14 @@ void main() {
         ],
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
   factory User.fromJson(Object? json) {
-    final map = json.decodeMap(context: r'User');
+    final _$map = json.decodeMap(context: r'User');
     return User(
-      firstName: map[r'first-name'].decodeJsonString(
+      firstName: _$map[r'first-name'].decodeJsonString(
         context: r'User.first-name',
       ),
-      id: map[r'_id'].decodeJsonString(context: r'User._id'),
+      id: _$map[r'_id'].decodeJsonString(context: r'User._id'),
     );
   }''';
 
@@ -791,12 +791,12 @@ void main() {
         ],
       );
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
   factory Test.fromJson(Object? json) {
-    final map = json.decodeMap(context: r'Test');
+    final _$map = json.decodeMap(context: r'Test');
     return Test(
-      json: map[r'json'].decodeJsonString(context: r'Test.json'),
-      map: map[r'map'].decodeJsonString(context: r'Test.map'),
+      json: _$map[r'json'].decodeJsonString(context: r'Test.json'),
+      map: _$map[r'map'].decodeJsonString(context: r'Test.map'),
     );
   }''';
 

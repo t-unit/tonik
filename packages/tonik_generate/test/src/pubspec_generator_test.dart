@@ -20,7 +20,10 @@ void main() {
     });
 
     test('returns semver with prerelease and build as-is', () {
-      expect(sanitizeVersion('1.0.0-alpha.1+build.42'), '1.0.0-alpha.1+build.42');
+      expect(
+        sanitizeVersion('1.0.0-alpha.1+build.42'),
+        '1.0.0-alpha.1+build.42',
+      );
     });
 
     test('returns 0.0.1 fallback for non-semver date-based version', () {

@@ -57,7 +57,7 @@ void main() {
         @override
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
-          return other is TestClass && other.value == value;
+          return other is TestClass && other.value == this.value;
         }
       ''';
 
@@ -79,7 +79,7 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           const _$deepEquals = DeepCollectionEquality();
-          return other is TestClass && _$deepEquals.equals(other.values, values);
+          return other is TestClass && _$deepEquals.equals(other.values, this.values);
         }
       ''';
 
@@ -104,10 +104,10 @@ void main() {
         bool operator ==(Object other) {
           if (identical(this, other)) return true;
           const _$deepEquals = DeepCollectionEquality();
-          return other is TestClass && 
-            other.id == id && 
-            _$deepEquals.equals(other.items, items) && 
-            other.name == name;
+          return other is TestClass &&
+            other.id == this.id &&
+            _$deepEquals.equals(other.items, this.items) &&
+            other.name == this.name;
         }
       ''';
 
