@@ -183,10 +183,16 @@ class ApiClientGenerator {
           ApiKeyLocation.query => 'query',
           ApiKeyLocation.cookie => 'cookie',
         };
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
-        lines.add('/// - API Key ($location)$description');
+        if (scheme.description != null && scheme.description!.isNotEmpty) {
+          lines.addAll(
+            formatDocCommentWithPrefix(
+              '- API Key ($location): ',
+              scheme.description,
+            ),
+          );
+        } else {
+          lines.add('/// - API Key ($location)');
+        }
 
       case HttpSecurityScheme():
         final schemeName = switch (scheme.scheme.toLowerCase()) {
@@ -194,16 +200,25 @@ class ApiClientGenerator {
           'basic' => 'Basic',
           _ => scheme.scheme.toUpperCase(),
         };
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
-        lines.add('/// - HTTP $schemeName$description');
+        if (scheme.description != null && scheme.description!.isNotEmpty) {
+          lines.addAll(
+            formatDocCommentWithPrefix(
+              '- HTTP $schemeName: ',
+              scheme.description,
+            ),
+          );
+        } else {
+          lines.add('/// - HTTP $schemeName');
+        }
 
       case OAuth2SecurityScheme():
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
-        lines.add('/// - OAuth2$description');
+        if (scheme.description != null && scheme.description!.isNotEmpty) {
+          lines.addAll(
+            formatDocCommentWithPrefix('- OAuth2: ', scheme.description),
+          );
+        } else {
+          lines.add('/// - OAuth2');
+        }
         final flows = scheme.flows;
 
         // Find the first available flow and show its scopes
@@ -225,17 +240,26 @@ class ApiClientGenerator {
         }
 
       case OpenIdConnectSecurityScheme():
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
-        lines.add('/// - OpenID Connect$description');
+        if (scheme.description != null && scheme.description!.isNotEmpty) {
+          lines.addAll(
+            formatDocCommentWithPrefix(
+              '- OpenID Connect: ',
+              scheme.description,
+            ),
+          );
+        } else {
+          lines.add('/// - OpenID Connect');
+        }
         lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
 
       case MutualTlsSecurityScheme():
-        final description = (scheme.description?.isNotEmpty ?? false)
-            ? ': ${scheme.description}'
-            : '';
-        lines.add('/// - Mutual TLS$description');
+        if (scheme.description != null && scheme.description!.isNotEmpty) {
+          lines.addAll(
+            formatDocCommentWithPrefix('- Mutual TLS: ', scheme.description),
+          );
+        } else {
+          lines.add('/// - Mutual TLS');
+        }
     }
 
     return lines;
@@ -298,7 +322,12 @@ class ApiClientGenerator {
       final description =
           paramDescriptionsByOriginalName[pathParam.parameter.name];
       if (description != null && description.isNotEmpty) {
-        docs.add('/// [${pathParam.normalizedName}] $description');
+        docs.addAll(
+          formatDocCommentWithPrefix(
+            '[${pathParam.normalizedName}] ',
+            description,
+          ),
+        );
       }
     }
 
@@ -306,7 +335,12 @@ class ApiClientGenerator {
       final description =
           paramDescriptionsByOriginalName[queryParam.parameter.name];
       if (description != null && description.isNotEmpty) {
-        docs.add('/// [${queryParam.normalizedName}] $description');
+        docs.addAll(
+          formatDocCommentWithPrefix(
+            '[${queryParam.normalizedName}] ',
+            description,
+          ),
+        );
       }
     }
 
@@ -314,7 +348,12 @@ class ApiClientGenerator {
       final description =
           paramDescriptionsByOriginalName[headerParam.parameter.name];
       if (description != null && description.isNotEmpty) {
-        docs.add('/// [${headerParam.normalizedName}] $description');
+        docs.addAll(
+          formatDocCommentWithPrefix(
+            '[${headerParam.normalizedName}] ',
+            description,
+          ),
+        );
       }
     }
 

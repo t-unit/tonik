@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
+import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 
 /// Generates server classes for API client.
@@ -235,7 +236,11 @@ class ServerGenerator {
       (b) => b
         ..name = className
         ..extend = refer(baseClassName)
-        ..docs.add('/// ${server.description ?? 'Server'} - ${server.url}')
+        ..docs.addAll(
+          formatDocComment(
+            '${server.description ?? 'Server'} - ${server.url}',
+          ),
+        )
         ..constructors.add(
           Constructor(
             (c) => c
@@ -341,7 +346,11 @@ class ServerGenerator {
       (b) => b
         ..name = className
         ..extend = refer(baseClassName)
-        ..docs.add('/// ${server.description ?? 'Server'} - ${server.url}')
+        ..docs.addAll(
+          formatDocComment(
+            '${server.description ?? 'Server'} - ${server.url}',
+          ),
+        )
         ..fields.addAll(variableFields)
         ..constructors.add(
           Constructor(

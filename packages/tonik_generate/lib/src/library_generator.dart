@@ -59,7 +59,7 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
   final lines = <String>[];
 
   if (apiDocument.title.isNotEmpty) {
-    lines.add('/// ${apiDocument.title}');
+    lines.addAll(formatDocComment(apiDocument.title));
   }
 
   if (apiDocument.version.isNotEmpty) {
@@ -77,7 +77,12 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
   if (apiDocument.contact != null) {
     lines
       ..add('///')
-      ..add('/// Contact: ${apiDocument.contact!.name ?? 'N/A'}');
+      ..addAll(
+        formatDocCommentWithPrefix(
+          'Contact: ',
+          apiDocument.contact!.name ?? 'N/A',
+        ),
+      );
 
     if (apiDocument.contact!.email != null) {
       lines.add('/// Email: ${apiDocument.contact!.email}');
@@ -91,7 +96,12 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
   if (apiDocument.license != null) {
     lines
       ..add('///')
-      ..add('/// License: ${apiDocument.license!.name ?? 'N/A'}');
+      ..addAll(
+        formatDocCommentWithPrefix(
+          'License: ',
+          apiDocument.license!.name ?? 'N/A',
+        ),
+      );
 
     if (apiDocument.license!.url != null) {
       lines.add('/// License URL: ${apiDocument.license!.url}');
@@ -105,14 +115,22 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
   if (apiDocument.termsOfService != null) {
     lines
       ..add('///')
-      ..add('/// Terms of Service: ${apiDocument.termsOfService}');
+      ..addAll(
+        formatDocCommentWithPrefix(
+          'Terms of Service: ',
+          apiDocument.termsOfService,
+        ),
+      );
   }
 
   if (apiDocument.externalDocs != null) {
     lines
       ..add('///')
-      ..add(
-        '/// Documentation: ${apiDocument.externalDocs!.description ?? 'N/A'}',
+      ..addAll(
+        formatDocCommentWithPrefix(
+          'Documentation: ',
+          apiDocument.externalDocs!.description ?? 'N/A',
+        ),
       );
 
     if (apiDocument.externalDocs!.url.isNotEmpty) {
@@ -146,10 +164,16 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
         ApiKeyLocation.query => 'query',
         ApiKeyLocation.cookie => 'cookie',
       };
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
-      lines.add('/// - API Key ($location)$description');
+      if (scheme.description != null && scheme.description!.isNotEmpty) {
+        lines.addAll(
+          formatDocCommentWithPrefix(
+            '- API Key ($location): ',
+            scheme.description,
+          ),
+        );
+      } else {
+        lines.add('/// - API Key ($location)');
+      }
 
     case HttpSecurityScheme():
       final schemeName = switch (scheme.scheme.toLowerCase()) {
@@ -157,19 +181,28 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
         'basic' => 'Basic',
         _ => scheme.scheme.toUpperCase(),
       };
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
-      lines.add('/// - HTTP $schemeName$description');
+      if (scheme.description != null && scheme.description!.isNotEmpty) {
+        lines.addAll(
+          formatDocCommentWithPrefix(
+            '- HTTP $schemeName: ',
+            scheme.description,
+          ),
+        );
+      } else {
+        lines.add('/// - HTTP $schemeName');
+      }
       if (scheme.bearerFormat != null) {
         lines.add('///   Format: ${scheme.bearerFormat}');
       }
 
     case OAuth2SecurityScheme():
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
-      lines.add('/// - OAuth2$description');
+      if (scheme.description != null && scheme.description!.isNotEmpty) {
+        lines.addAll(
+          formatDocCommentWithPrefix('- OAuth2: ', scheme.description),
+        );
+      } else {
+        lines.add('/// - OAuth2');
+      }
       final flows = scheme.flows;
 
       if (flows.authorizationCode != null) {
@@ -201,17 +234,26 @@ List<String> _formatSecurityScheme(SecurityScheme scheme) {
       }
 
     case OpenIdConnectSecurityScheme():
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
-      lines.add('/// - OpenID Connect$description');
+      if (scheme.description != null && scheme.description!.isNotEmpty) {
+        lines.addAll(
+          formatDocCommentWithPrefix(
+            '- OpenID Connect: ',
+            scheme.description,
+          ),
+        );
+      } else {
+        lines.add('/// - OpenID Connect');
+      }
       lines.add('///   Discovery URL: ${scheme.openIdConnectUrl}');
 
     case MutualTlsSecurityScheme():
-      final description = (scheme.description?.isNotEmpty ?? false)
-          ? ': ${scheme.description}'
-          : '';
-      lines.add('/// - Mutual TLS$description');
+      if (scheme.description != null && scheme.description!.isNotEmpty) {
+        lines.addAll(
+          formatDocCommentWithPrefix('- Mutual TLS: ', scheme.description),
+        );
+      } else {
+        lines.add('/// - Mutual TLS');
+      }
   }
 
   return lines;

@@ -11,6 +11,20 @@ List<String> formatDocComment(String? text) {
   return text.split('\n').map((line) => '/// $line').toList();
 }
 
+/// Formats a string as a doc comment with a prefix on the first line.
+///
+/// The [prefix] is prepended to the first line only. If the text is
+/// multiline, continuation lines get the `/// ` prefix without [prefix].
+/// Returns an empty list if [text] is null or empty.
+List<String> formatDocCommentWithPrefix(String prefix, String? text) {
+  if (text == null || text.isEmpty) return [];
+  final lines = text.split('\n');
+  return [
+    '/// $prefix${lines.first}',
+    for (var i = 1; i < lines.length; i++) '/// ${lines[i]}',
+  ];
+}
+
 /// Formats a list of strings as doc comments.
 ///
 /// Each string in the list is processed with [formatDocComment],
