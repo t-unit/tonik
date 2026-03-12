@@ -75,6 +75,24 @@ const dartKeywords = {
   'yield',
 };
 
+const _specialCharReplacements = {
+  '+': 'plus',
+  '*': 'asterisk',
+  '/': 'slash',
+  '~': 'tilde',
+  '>': 'greaterThan',
+  '<': 'lessThan',
+  '=': 'equals',
+  '!': 'exclamation',
+  '@': 'at',
+  '#': 'hash',
+  '%': 'percent',
+  '^': 'caret',
+  '&': 'ampersand',
+  '|': 'pipe',
+  r'\': 'backslash',
+};
+
 const generatedClassTokens = {
   'fromJson',
   'toJson',
@@ -202,8 +220,25 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
   // Replace dots with spaces so they act as word boundaries
   final withDotsSeparated = text.replaceAll('.', ' ');
 
+  // Replace special characters with word equivalents
+  var withSpecialCharsReplaced = withDotsSeparated;
+  for (final entry in _specialCharReplacements.entries) {
+    withSpecialCharsReplaced = withSpecialCharsReplaced.replaceAll(
+      entry.key,
+      ' ${entry.value} ',
+    );
+  }
+
+  // Replace minus sign (not hyphen separator) with "minus"
+  // Only when NOT preceded by a letter or digit (i.e., it's a sign,
+  // not a separator like "my-name" or "2-beta")
+  withSpecialCharsReplaced = withSpecialCharsReplaced.replaceAllMapped(
+    RegExp('(?<![a-zA-Z0-9])-'),
+    (m) => ' minus ',
+  );
+
   // Clean invalid characters but preserve separators for splitting
-  final cleaned = withDotsSeparated.replaceAll(
+  final cleaned = withSpecialCharsReplaced.replaceAll(
     RegExp(r'[^a-zA-Z0-9_\-\s$]'),
     '',
   );
@@ -332,6 +367,11 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
     preserveNumbers: preserveNumbers,
   );
 
+  // Safety net: if result starts with a digit, prefix with $
+  if (processedName.isNotEmpty && RegExp(r'^\d').hasMatch(processedName)) {
+    processedName = '\$$processedName';
+  }
+
   return ensureNotKeyword(processedName);
 }
 
@@ -351,7 +391,8 @@ String normalizeEnumValueName(String value) {
   final versionMatch = RegExp(r'^(\d+(?:\.\d+)+)(.*)$').firstMatch(value);
   if (versionMatch != null) {
     final versionPart = versionMatch.group(1)!;
-    final suffix = versionMatch.group(2) ?? '';
+    final suffix =
+        (versionMatch.group(2) ?? '').replaceFirst(RegExp('^-'), '');
 
     final segments = versionPart.split('.');
     final spelled = segments

@@ -136,9 +136,9 @@ void main() {
       });
 
       test('handles special characters', () {
-        expect(normalizeEnumValueName('!@#'), 'value');
-        expect(normalizeEnumValueName('status!'), 'status');
-        expect(normalizeEnumValueName('test@#123'), 'test123');
+        expect(normalizeEnumValueName('!@#'), 'exclamationAtHash');
+        expect(normalizeEnumValueName('status!'), 'statusExclamation');
+        expect(normalizeEnumValueName('test@#123'), 'testAtHash123');
       });
 
       test('handles leading underscores', () {
@@ -194,6 +194,37 @@ void main() {
         // result — the safety net should add a $ prefix
         expect(normalizeEnumValueName('123_456'), r'$123456');
       });
+    });
+  });
+
+  group('normalizeSingle with special character property names', () {
+    test('converts +1 to plus1', () {
+      expect(normalizeSingle('+1', preserveNumbers: true), 'plus1');
+    });
+
+    test('converts -1 to minus1', () {
+      expect(normalizeSingle('-1', preserveNumbers: true), 'minus1');
+    });
+
+    test('converts >= to greaterThanEquals', () {
+      expect(normalizeSingle('>=', preserveNumbers: true), 'greaterThanEquals');
+    });
+
+    test('converts * to asterisk', () {
+      expect(normalizeSingle('*', preserveNumbers: true), 'asterisk');
+    });
+
+    test('converts pure special chars to word equivalents', () {
+      expect(
+        normalizeSingle('!!!', preserveNumbers: true),
+        'exclamationExclamationExclamation',
+      );
+    });
+
+    test('prefixes with dollar sign if result starts with digit', () {
+      // Safety net for digit-leading results
+      final result = normalizeSingle('42foo', preserveNumbers: true);
+      expect(result, isNot(startsWith(RegExp(r'\d').pattern)));
     });
   });
 }

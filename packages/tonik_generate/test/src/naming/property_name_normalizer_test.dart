@@ -265,6 +265,36 @@ void main() {
       expect(result[1].normalizedName, 'user2');
     });
   });
+
+  group('special character property names', () {
+    test('replaces special characters with word equivalents', () {
+      final result = normalizeProperties([
+        createProperty('+1'),
+        createProperty('-1'),
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        'plus1',
+        'minus1',
+      ]);
+    });
+
+    test('treats hyphen between words as a separator', () {
+      final result = normalizeProperties([
+        createProperty('my-name'),
+      ]);
+
+      expect(result.first.normalizedName, 'myName');
+    });
+
+    test('treats hyphen between word and digits as a separator', () {
+      final result = normalizeProperties([
+        createProperty('response-200'),
+      ]);
+
+      expect(result.first.normalizedName, 'response200');
+    });
+  });
 }
 
 Property createProperty(String name, {bool isDeprecated = false}) {
