@@ -15,6 +15,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
@@ -406,12 +407,12 @@ class ClassGenerator {
               'explode': refer('explode'),
               'explodeSeparator': literalString(','),
               'expectedKeys': literalSet(
-                expectedKeys.map((k) => literalString(k, raw: true)),
+                expectedKeys.map(specLiteralString),
               ),
               'listKeys': literalSet(
-                listKeys.map((k) => literalString(k, raw: true)),
+                listKeys.map(specLiteralString),
               ),
-              'context': literalString(className, raw: true),
+              'context': specLiteralString(className),
             }),
           )
           .statement,
@@ -978,7 +979,7 @@ if ($name != null) {
 
         final assignmentExpr = refer(
           r'_$result',
-        ).index(literalString(propertyName, raw: true)).assign(encodeExpr);
+        ).index(specLiteralString(propertyName)).assign(encodeExpr);
 
         if (isRequired && !isNullable) {
           if (isFieldNullable) {
@@ -1360,12 +1361,12 @@ if ($name != null) {
               'explode': refer('explode'),
               'explodeSeparator': literalString('&'),
               'expectedKeys': literalSet(
-                expectedKeys.map((k) => literalString(k, raw: true)),
+                expectedKeys.map(specLiteralString),
               ),
               'listKeys': literalSet(
-                listKeys.map((k) => literalString(k, raw: true)),
+                listKeys.map(specLiteralString),
               ),
-              'context': literalString(className, raw: true),
+              'context': specLiteralString(className),
             }),
           )
           .statement,

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Creates a Dart expression that correctly deserializes a form-encoded value
 /// to its Dart representation.
@@ -184,7 +185,7 @@ Map<String, Expression> _buildContextParam(
         ? '$contextClass.$contextProperty'
         : contextClass ?? contextProperty!;
 
-    return {'context': literalString(contextString, raw: true)};
+    return {'context': specLiteralString(contextString)};
   }
   return <String, Expression>{};
 }

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -198,7 +199,7 @@ class OptionsGenerator {
     if (hasAcceptHeader && acceptIsRequired) {
       bodyStatements.add(
         refer(r'_$headers')
-            .index(literalString('Accept', raw: true))
+            .index(specLiteralString('Accept'))
             .assign(
               buildToSimpleHeaderParameterExpression(
                 acceptParamName!,
@@ -214,7 +215,7 @@ class OptionsGenerator {
         ..add(Code('if ($acceptParamName != null) {'))
         ..add(
           refer(r'_$headers')
-              .index(literalString('Accept', raw: true))
+              .index(specLiteralString('Accept'))
               .assign(
                 buildToSimpleHeaderParameterExpression(
                   acceptParamName!,
@@ -377,7 +378,7 @@ class OptionsGenerator {
       ..add(const Code(r'if (_$cookieParts.isNotEmpty) {'))
       ..add(
         refer(r'_$headers')
-            .index(literalString('Cookie', raw: true))
+            .index(specLiteralString('Cookie'))
             .assign(
               refer(r'_$cookieParts').property('join').call([
                 literalString('; '),
@@ -409,7 +410,7 @@ class OptionsGenerator {
         });
         bodyStatements.add(
           refer(r'_$cookieParts').property('add').call([
-            literalString('$rawName=', raw: true).operatorAdd(encodedValue),
+            specLiteralString('$rawName=').operatorAdd(encodedValue),
           ]).statement,
         );
         return;
@@ -417,7 +418,7 @@ class OptionsGenerator {
 
       bodyStatements.add(
         refer(r'_$cookieParts').property('add').call([
-          literalString('$rawName=', raw: true).operatorAdd(
+          specLiteralString('$rawName=').operatorAdd(
             refer(paramName)
                 .property('map')
                 .call([
@@ -454,7 +455,7 @@ class OptionsGenerator {
     });
     bodyStatements.add(
       refer(r'_$cookieParts').property('add').call([
-        literalString('$rawName=', raw: true).operatorAdd(encodedValue),
+        specLiteralString('$rawName=').operatorAdd(encodedValue),
       ]).statement,
     );
   }
@@ -491,7 +492,7 @@ class OptionsGenerator {
     );
 
     return refer(r'_$headers')
-        .index(literalString(resolvedParam.rawName, raw: true))
+        .index(specLiteralString(resolvedParam.rawName))
         .assign(valueExpression)
         .statement;
   }

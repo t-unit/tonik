@@ -4,6 +4,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Builds FormData construction statements for single-content multipart bodies.
@@ -1033,7 +1034,7 @@ Code _buildDeepObjectFileAddition(
   final iterableExpr = refer(accessor)
       .property('toDeepObject')
       .call(
-        [literalString(rawName, raw: true)],
+        [specLiteralString(rawName)],
         {'explode': literalTrue, 'allowEmpty': literalTrue},
       );
 

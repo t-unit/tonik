@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 class ParseGenerator {
   const ParseGenerator({required this.nameManager, required this.package});
@@ -434,7 +435,7 @@ class ParseGenerator {
       final headerValue = refer('response')
           .property('headers')
           .property('value')
-          .call([literalString(headerName, raw: true)]);
+          .call([specLiteralString(headerName)]);
       return Block.of([
         const Code('if ('),
         headerValue.code,
@@ -485,7 +486,7 @@ class ParseGenerator {
       final headerValue = refer('response')
           .property('headers')
           .property('value')
-          .call([literalString(rawHeaderName, raw: true)]);
+          .call([specLiteralString(rawHeaderName)]);
       final resolvedHeader = norm.header!.resolve();
       final decode = buildSimpleValueExpression(
         headerValue,
