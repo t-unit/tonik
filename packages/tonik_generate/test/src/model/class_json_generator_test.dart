@@ -827,6 +827,106 @@ void main() {
       );
     });
 
+    test(
+      'generates fromJson with null check for required property '
+      'referencing nullable ClassModel',
+      () {
+        // ClassModel with isNullable=true produces `typedef Foo = $RawFoo?`,
+        // so fromJson must use the nullable decoder.
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'NullableLicense',
+          properties: [
+            Property(
+              name: 'key',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'Repo',
+          properties: [
+            Property(
+              name: 'license',
+              model: nullableClass,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+        );
+
+        const expectedMethod = r'''
+  factory Repo.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Repo');
+    return Repo(
+      license: _$map[r'license'] == null
+          ? null
+          : NullableLicense.fromJson(_$map[r'license']),
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates fromJson with null check for required property '
+      'referencing nullable AliasModel',
+      () {
+        // AliasModel wrapping a string with isNullable=true
+        final nullableAlias = AliasModel(
+          name: 'NullableDescription',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'Item',
+          properties: [
+            Property(
+              name: 'description',
+              model: nullableAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+        );
+
+        const expectedMethod = r'''
+  factory Item.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Item');
+    return Item(
+      description: _$map[r'description'].decodeJsonNullableString(
+        context: r'Item.description',
+      ),
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
     test('generates fromSimple method for class without properties', () {
       final model = ClassModel(
         isDeprecated: false,

@@ -1538,6 +1538,172 @@ Map<String, String> parameterProperties({
     );
 
     test(
+      'generates parameterProperties with null check for required property '
+      'referencing nullable AliasModel (simple encoding)',
+      () {
+        // AliasModel with isNullable=true means the typedef is
+        // `typedef Foo = String?`, so the field type is nullable even though
+        // Property.isNullable is false.
+        final nullableAlias = AliasModel(
+          name: 'NullableDescription',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Item',
+          properties: [
+            Property(
+              name: 'description',
+              model: nullableAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // Should generate null-aware encoding because the model is nullable
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  if (description != null) {
+    _$result[r'description'] = description!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'description'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for required property '
+      'referencing nullable AliasModel in mixed-shape model',
+      () {
+        // Same scenario in mixed-shape context
+        final nullableAlias = AliasModel(
+          name: 'NullableDescription',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'MixedItem',
+          properties: [
+            Property(
+              name: 'description',
+              model: nullableAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // The simple property with nullable model should have null check
+        expect(
+          collapseWhitespace(classCode),
+          contains(
+            collapseWhitespace(r'''
+if (description != null) {
+  _$result[r'description'] = description!.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+} else if (allowEmpty) {
+  _$result[r'description'] = '';
+}'''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for required property '
+      'referencing nullable ListModel',
+      () {
+        // ListModel with isNullable=true
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+                isNullable: true,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // Should NOT have the unconditional "if (!allowLists)" guard
+        // because the list is nullable (even though required)
+        expect(
+          collapseWhitespace(classCode),
+          isNot(
+            contains(
+              collapseWhitespace(
+                'if (!allowLists) {'
+                "  throw EncodingException('Lists are not supported",
+              ),
+            ),
+          ),
+        );
+
+        // Should have null-aware access
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace('if (items != null)')),
+        );
+      },
+    );
+
+    test(
       'toForm calls parameterProperties with useQueryComponent',
       () {
         final model = ClassModel(
