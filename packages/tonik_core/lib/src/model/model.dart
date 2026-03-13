@@ -8,6 +8,20 @@ sealed class Model {
   final Context context;
   EncodingShape get encodingShape;
 
+  /// Whether this model produces a nullable Dart type, including through
+  /// typedef/alias chains.
+  bool get isEffectivelyNullable => switch (this) {
+    AliasModel(:final isNullable, :final model) =>
+      isNullable || model.isEffectivelyNullable,
+    ClassModel(:final isNullable) => isNullable,
+    EnumModel(:final isNullable) => isNullable,
+    ListModel(:final isNullable) => isNullable,
+    AllOfModel(:final isNullable) => isNullable,
+    OneOfModel(:final isNullable) => isNullable,
+    AnyOfModel(:final isNullable) => isNullable,
+    _ => false,
+  };
+
   /// Short non-recursive label for use in other models' [toString] output.
   String get _ref => switch (this) {
     AliasModel(:final name) => 'AliasModel($name)',

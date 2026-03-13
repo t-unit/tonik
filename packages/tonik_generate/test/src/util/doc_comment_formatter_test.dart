@@ -96,7 +96,7 @@ void main() {
     test('formats multi-line text with prefix on first line only', () {
       final result = formatDocCommentWithPrefix(
         '[sort] ',
-        'Sort property.\n`updated` means the alert\'s state changed.',
+        "Sort property.\n`updated` means the alert's state changed.",
       );
 
       expect(result, [

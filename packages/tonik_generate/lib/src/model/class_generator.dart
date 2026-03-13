@@ -376,7 +376,7 @@ class ClassGenerator {
       final modelType = prop.property.model;
       final isRequired = prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable =
-          prop.property.isNullable || _isModelNullable(modelType);
+          prop.property.isNullable || modelType.isEffectivelyNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
         refer("_\$values[r'$propertyName']"),
@@ -504,9 +504,10 @@ class ClassGenerator {
         package: package,
         contextClass: className,
         contextProperty: jsonKey,
-        isNullable: property.isNullable ||
+        isNullable:
+            property.isNullable ||
             !requiredInResponse ||
-            _isModelNullable(property.model),
+            property.model.isEffectivelyNullable,
       ).code;
 
       propertyAssignments
@@ -811,7 +812,7 @@ class ClassGenerator {
       final propertyName = prop.property.name;
       final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable =
-          prop.property.isNullable || _isModelNullable(prop.property.model);
+          prop.property.isNullable || prop.property.model.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
       final resolvedModel = model is AliasModel ? model.resolved : model;
@@ -908,7 +909,7 @@ if ($name != null) {
           p.property.isRequired &&
           !p.property.isReadOnly &&
           !p.property.isNullable &&
-          !_isModelNullable(p.property.model),
+          !p.property.model.isEffectivelyNullable,
     );
 
     final methodBody = <Code>[];
@@ -931,7 +932,7 @@ if ($name != null) {
       final fieldModel = prop.property.model;
       final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable =
-          prop.property.isNullable || _isModelNullable(fieldModel);
+          prop.property.isNullable || fieldModel.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
 
       if (fieldModel.encodingShape == EncodingShape.simple) {
@@ -1071,7 +1072,7 @@ if ($name != null) {
       final propertyName = prop.property.name;
       final isRequired = prop.property.isRequired && !prop.property.isReadOnly;
       final isNullable =
-          prop.property.isNullable || _isModelNullable(prop.property.model);
+          prop.property.isNullable || prop.property.model.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
       final resolvedModel = model is AliasModel ? model.resolved : model;
@@ -1337,7 +1338,7 @@ if ($name != null) {
       final modelType = prop.property.model;
       final isRequired = prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable =
-          prop.property.isNullable || _isModelNullable(modelType);
+          prop.property.isNullable || modelType.isEffectivelyNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(
         refer("_\$values[r'$propertyName']"),
@@ -1500,14 +1501,3 @@ if ($name != null) {
       ]),
   );
 }
-
-bool _isModelNullable(Model model) => switch (model) {
-  AliasModel(:final isNullable) => isNullable,
-  ClassModel(:final isNullable) => isNullable,
-  EnumModel(:final isNullable) => isNullable,
-  ListModel(:final isNullable) => isNullable,
-  AllOfModel(:final isNullable) => isNullable,
-  OneOfModel(:final isNullable) => isNullable,
-  AnyOfModel(:final isNullable) => isNullable,
-  _ => false,
-};

@@ -58,7 +58,7 @@ Expression _buildSerializationExpression(
       !forceNonNullReceiver &&
       (isNullable ||
           (model is EnumModel && model.isNullable) ||
-          _isNullableViaTypedef(model));
+          model.isEffectivelyNullable);
 
   Expression callMethod(String methodName) {
     if (forceNonNullReceiver) {
@@ -125,8 +125,8 @@ Expression _handleListExpression(
     return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
-  final isContentNullable =
-      contentModel is AliasModel && contentModel.isNullable;
+  final isContentNullable = contentModel.isEffectivelyNullable ||
+      (contentModel is AliasModel && contentModel.isNullable);
 
   final innerExpr = _buildSerializationExpression(
     refer('e'),
@@ -184,14 +184,6 @@ Expression _callToBytesMethod(
     return receiver.property('toBytes').call([]).property(methodName).call([]);
   }
 }
-
-bool _isNullableViaTypedef(Model model) => switch (model) {
-  ClassModel(:final isNullable) => isNullable,
-  AllOfModel(:final isNullable) => isNullable,
-  OneOfModel(:final isNullable) => isNullable,
-  AnyOfModel(:final isNullable) => isNullable,
-  _ => false,
-};
 
 bool _needsTransformation(Model model) {
   return switch (model) {

@@ -1063,7 +1063,7 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: {
-            ApiKeySecurityScheme(
+            const ApiKeySecurityScheme(
               type: SecuritySchemeType.apiKey,
               location: ApiKeyLocation.header,
               description:
@@ -1089,47 +1089,49 @@ void main() {
         ]);
       });
 
-      test('multi-line HTTP scheme description produces valid doc comments',
-          () {
-        final operation = Operation(
-          operationId: 'getUser',
-          context: testContext,
-          summary: 'Get user',
-          tags: {Tag(name: 'users')},
-          isDeprecated: false,
-          path: '/users/{id}',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: {
-            HttpSecurityScheme(
-              type: SecuritySchemeType.http,
-              scheme: 'bearer',
-              bearerFormat: null,
-              description: 'Bearer token auth.\nUse the /login endpoint.',
-            ),
-          },
-        );
+      test(
+        'multi-line HTTP scheme description produces valid doc comments',
+        () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            tags: {Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: {
+              const HttpSecurityScheme(
+                type: SecuritySchemeType.http,
+                scheme: 'bearer',
+                bearerFormat: null,
+                description: 'Bearer token auth.\nUse the /login endpoint.',
+              ),
+            },
+          );
 
-        final generatedClass = generator.generateClass(
-          {operation},
-          Tag(name: 'users'),
-          testServers,
-        );
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'users'),
+            testServers,
+          );
 
-        final method = generatedClass.methods.first;
+          final method = generatedClass.methods.first;
 
-        expect(method.docs, [
-          '/// Get user',
-          '///',
-          '/// Security:',
-          '/// - HTTP Bearer: Bearer token auth.',
-          '/// Use the /login endpoint.',
-        ]);
-      });
+          expect(method.docs, [
+            '/// Get user',
+            '///',
+            '/// Security:',
+            '/// - HTTP Bearer: Bearer token auth.',
+            '/// Use the /login endpoint.',
+          ]);
+        },
+      );
 
       test('multi-line OAuth2 description produces valid doc comments', () {
         final operation = Operation(
@@ -1146,7 +1148,7 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: {
-            OAuth2SecurityScheme(
+            const OAuth2SecurityScheme(
               type: SecuritySchemeType.oauth2,
               description: "OAuth2 authentication.\nSee the developer's guide.",
               flows: OAuth2Flows(
@@ -1176,8 +1178,7 @@ void main() {
         ]);
       });
 
-      test(
-          'multi-line security description does not crash '
+      test('multi-line security description does not crash '
           'DartFormatter', () {
         final operation = Operation(
           operationId: 'getUser',
@@ -1208,7 +1209,7 @@ void main() {
           cookieParameters: const {},
           responses: const {},
           securitySchemes: {
-            ApiKeySecurityScheme(
+            const ApiKeySecurityScheme(
               type: SecuritySchemeType.apiKey,
               location: ApiKeyLocation.header,
               description:

@@ -671,11 +671,22 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
+        final isNullable = m.model.isEffectivelyNullable;
+
         if (encodingShape == EncodingShape.mixed) {
-          caseCodes.addAll([
+          caseCodes.add(
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
+          );
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code("value == null ? '' : "),
+            ]);
+          }
+
+          caseCodes.addAll([
             refer('value')
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
@@ -699,10 +710,19 @@ class OneOfGenerator {
             const Code(','),
           ]);
         } else {
-          caseCodes.addAll([
+          caseCodes.add(
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
+          );
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code("value == null ? '' : "),
+            ]);
+          }
+
+          caseCodes.addAll([
             const Code('{'),
             const Code('...'),
             refer('value').property('parameterProperties').call([], {
@@ -759,10 +779,21 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else {
-        caseCodes.addAll([
+        final isNullable = m.model.isEffectivelyNullable;
+
+        caseCodes.add(
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+        );
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
           refer('value').property('toSimple').call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
@@ -805,11 +836,22 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
+        final isNullable = m.model.isEffectivelyNullable;
+
         if (encodingShape == EncodingShape.mixed) {
-          caseCodes.addAll([
+          caseCodes.add(
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
+          );
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code("value == null ? '' : "),
+            ]);
+          }
+
+          caseCodes.addAll([
             refer('value')
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
@@ -834,10 +876,19 @@ class OneOfGenerator {
             const Code(','),
           ]);
         } else {
-          caseCodes.addAll([
+          caseCodes.add(
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
+          );
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code("value == null ? '' : "),
+            ]);
+          }
+
+          caseCodes.addAll([
             const Code('{'),
             const Code('...'),
             refer('value').property('parameterProperties').call([], {
@@ -895,10 +946,21 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else {
-        caseCodes.addAll([
+        final isNullable = m.model.isEffectivelyNullable;
+
+        caseCodes.add(
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+        );
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
           refer('value').property('toForm').call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
@@ -965,10 +1027,24 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else {
-        caseCodes.addAll([
-          Code('$variantName(:final value) => '),
-          const Code('value.currentEncodingShape,'),
-        ]);
+        final isNullable = m.model.isEffectivelyNullable;
+
+        if (isNullable) {
+          caseCodes.addAll([
+            Code('$variantName(:final value) => '),
+            const Code('value == null ? '),
+            refer(
+              'EncodingShape',
+              'package:tonik_util/tonik_util.dart',
+            ).property('simple').code,
+            const Code(' : value.currentEncodingShape,'),
+          ]);
+        } else {
+          caseCodes.addAll([
+            Code('$variantName(:final value) => '),
+            const Code('value.currentEncodingShape,'),
+          ]);
+        }
       }
     }
 
@@ -1035,7 +1111,15 @@ class OneOfGenerator {
             ).code,
           );
       } else if (encodingShape == EncodingShape.mixed) {
+        final isNullable = m.model.isEffectivelyNullable;
+
         caseCodes.add(Code('$variantName(:final value) => '));
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code('value == null ? <String, String>{} : '),
+          ]);
+        }
 
         if (discriminatorValue != null) {
           caseCodes.addAll([
@@ -1089,7 +1173,16 @@ class OneOfGenerator {
               ).code,
             );
         } else {
+          final isNullable = m.model.isEffectivelyNullable;
+
           caseCodes.add(Code('$variantName(:final value) => '));
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code('value == null ? <String, String>{} : '),
+            ]);
+          }
+
           if (discriminatorValue != null) {
             caseCodes.addAll([
               const Code('{'),
@@ -1150,11 +1243,22 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null) {
+        final isNullable = m.model.isEffectivelyNullable;
+
         if (encodingShape == EncodingShape.mixed) {
-          caseCodes.addAll([
+          caseCodes.add(
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
+          );
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code("value == null ? '' : "),
+            ]);
+          }
+
+          caseCodes.addAll([
             refer('value')
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
@@ -1178,10 +1282,19 @@ class OneOfGenerator {
             const Code(','),
           ]);
         } else {
-          caseCodes.addAll([
+          caseCodes.add(
             Code.scope(
               (allocate) => '${allocate(refer(variantName))}(:final value) => ',
             ),
+          );
+
+          if (isNullable) {
+            caseCodes.addAll([
+              const Code("value == null ? '' : "),
+            ]);
+          }
+
+          caseCodes.addAll([
             const Code('{  ...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
@@ -1237,10 +1350,21 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else {
-        caseCodes.addAll([
+        final isNullable = m.model.isEffectivelyNullable;
+
+        caseCodes.add(
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+        );
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
           refer('value').property('toLabel').call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
@@ -1277,13 +1401,23 @@ class OneOfGenerator {
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final usesValue = matrixParameterExpressionUsesValue(m.model);
+      final isNullable = usesValue && m.model.isEffectivelyNullable;
 
-      caseCodes.addAll([
+      caseCodes.add(
         Code.scope(
           (allocate) => usesValue
               ? '${allocate(refer(variantName))}(:final value) => '
               : '${allocate(refer(variantName))}() => ',
         ),
+      );
+
+      if (isNullable) {
+        caseCodes.addAll([
+          const Code("value == null ? '' : "),
+        ]);
+      }
+
+      caseCodes.addAll([
         buildMatrixParameterExpression(
           refer('value'),
           m.model,
@@ -1345,10 +1479,21 @@ class OneOfGenerator {
         ]);
       } else {
         // Simple or mixed types can call uriEncode
-        caseCodes.addAll([
+        final isNullable = modelType.isEffectivelyNullable;
+
+        caseCodes.add(
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+        );
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
           refer('value').property('uriEncode').call([], {
             'allowEmpty': refer('allowEmpty'),
             'useQueryComponent': refer('useQueryComponent'),
@@ -1389,4 +1534,5 @@ class OneOfGenerator {
         ..body = body,
     );
   }
+
 }

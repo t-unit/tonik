@@ -1706,4 +1706,166 @@ void main() {
       );
     });
   });
+
+  group('nullable variant encoding', () {
+    test(
+      'currentEncodingShape generates null check for nullable ClassModel '
+      'variant',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedGetter = '''
+          EncodingShape get currentEncodingShape {
+            return switch (this) {
+              ValueDetails(:final value) => value == null
+                ? EncodingShape.simple
+                : value.currentEncodingShape,
+              ValueString() => EncodingShape.simple,
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedGetter)),
+        );
+      },
+    );
+
+    test(
+      'toSimple generates null check for nullable ClassModel variant',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              'ValueDetails(:final value) => value == null '
+              "? '' : value.toSimple(explode: explode, "
+              'allowEmpty: allowEmpty),',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'parameterProperties generates null check for nullable ClassModel '
+      'variant',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) {
+            return switch (this) {
+              ValueDetails(:final value) => value == null
+                ? <String, String>{}
+                : value.parameterProperties(
+                    allowEmpty: allowEmpty,
+                    allowLists: allowLists,
+                  ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+  });
 }

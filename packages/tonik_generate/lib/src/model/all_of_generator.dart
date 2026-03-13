@@ -52,7 +52,7 @@ class AllOfGenerator {
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(m, nameManager, package);
-      final isNullable = _isNullableViaTypedef(m);
+      final isNullable = m.isEffectivelyNullable;
       return Property(
         name: typeRef.symbol,
         model: m,
@@ -104,7 +104,7 @@ class AllOfGenerator {
 
     final pseudoProperties = models.map((m) {
       final typeRef = typeReference(m, nameManager, package);
-      final isNullable = _isNullableViaTypedef(m);
+      final isNullable = m.isEffectivelyNullable;
       return Property(
         name: typeRef.symbol,
         model: m,
@@ -397,7 +397,7 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        if (_isNullableViaTypedef(prop.property.model)) {
+        if (prop.property.model.isEffectivelyNullable) {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
             Code(
@@ -415,7 +415,7 @@ class AllOfGenerator {
       }
 
       final hasNullableModels = normalizedProperties.any(
-        (prop) => _isNullableViaTypedef(prop.property.model),
+        (prop) => prop.property.model.isEffectivelyNullable,
       );
       if (hasNullableModels) {
         bodyCode.addAll([
@@ -584,7 +584,7 @@ class AllOfGenerator {
       for (final normalized in normalizedProperties) {
         final fieldName = normalized.normalizedName;
         final fieldNameJson = '_\$${fieldName}Json';
-        final isNullable = _isNullableViaTypedef(normalized.property.model);
+        final isNullable = normalized.property.model.isEffectivelyNullable;
 
         if (isNullable) {
           bodyCode.add(Code('if ($fieldName != null) {'));
@@ -675,7 +675,7 @@ class AllOfGenerator {
         for (final normalized in normalizedProperties) {
           final fieldName = normalized.normalizedName;
           final fieldNameJson = '_\$${fieldName}Json';
-          final isNullable = _isNullableViaTypedef(normalized.property.model);
+          final isNullable = normalized.property.model.isEffectivelyNullable;
 
           if (isNullable) {
             mapParts.add(Code('if ($fieldName != null) {'));
@@ -876,7 +876,7 @@ class AllOfGenerator {
     ];
 
     for (final normalized in normalizedProperties) {
-      final isNullable = _isNullableViaTypedef(normalized.property.model);
+      final isNullable = normalized.property.model.isEffectivelyNullable;
       if (isNullable) {
         propertyMergingLines.addAll([
           Code('if (${normalized.normalizedName} != null) {'),
@@ -1138,7 +1138,7 @@ class AllOfGenerator {
 
     final primaryField = normalizedProperties.first;
     final primarySimpleReceiver =
-        _isNullableViaTypedef(primaryField.property.model)
+        primaryField.property.model.isEffectivelyNullable
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
 
@@ -1207,7 +1207,7 @@ class AllOfGenerator {
 
         // Call toForm on each property and collect results.
         for (final prop in normalizedProperties) {
-          final isNullable = _isNullableViaTypedef(prop.property.model);
+          final isNullable = prop.property.model.isEffectivelyNullable;
           final receiver = isNullable
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
@@ -1273,7 +1273,7 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        if (_isNullableViaTypedef(prop.property.model)) {
+        if (prop.property.model.isEffectivelyNullable) {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
             Code(
@@ -1345,7 +1345,7 @@ class AllOfGenerator {
 
       final primaryField = normalizedProperties.first;
       final primaryFormRtReceiver =
-          _isNullableViaTypedef(primaryField.property.model)
+          primaryField.property.model.isEffectivelyNullable
           ? refer(primaryField.normalizedName).nullChecked
           : refer(primaryField.normalizedName);
       validationCode.addAll([
@@ -1511,7 +1511,7 @@ class AllOfGenerator {
       ]);
 
       for (final prop in normalizedProperties) {
-        if (_isNullableViaTypedef(prop.property.model)) {
+        if (prop.property.model.isEffectivelyNullable) {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
             Code(
@@ -1562,7 +1562,7 @@ class AllOfGenerator {
 
     final primaryField = normalizedProperties.first;
     final primaryFormReceiver =
-        _isNullableViaTypedef(primaryField.property.model)
+        primaryField.property.model.isEffectivelyNullable
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
 
@@ -1664,7 +1664,7 @@ class AllOfGenerator {
 
       final primaryField = normalizedProperties.first;
       final primaryLabelRtReceiver =
-          _isNullableViaTypedef(primaryField.property.model)
+          primaryField.property.model.isEffectivelyNullable
           ? refer(primaryField.normalizedName).nullChecked
           : refer(primaryField.normalizedName);
       validationCode.addAll([
@@ -1795,7 +1795,7 @@ class AllOfGenerator {
 
     final primaryField = normalizedProperties.first;
     final primaryLabelReceiver =
-        _isNullableViaTypedef(primaryField.property.model)
+        primaryField.property.model.isEffectivelyNullable
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
 
@@ -1845,7 +1845,7 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        final isNullable = _isNullableViaTypedef(prop.property.model);
+        final isNullable = prop.property.model.isEffectivelyNullable;
         if (isNullable) {
           bodyCode.addAll([
             Code('if (${prop.normalizedName} != null) {'),
@@ -1993,7 +1993,7 @@ class AllOfGenerator {
       ];
 
       for (final normalized in normalizedProperties) {
-        final isNullable = _isNullableViaTypedef(normalized.property.model);
+        final isNullable = normalized.property.model.isEffectivelyNullable;
         if (isNullable) {
           propertyMergingLines.addAll([
             Code('if (${normalized.normalizedName} != null) {'),
@@ -2162,7 +2162,7 @@ class AllOfGenerator {
               prop.property.model.encodingShape == EncodingShape.mixed,
           orElse: () => normalizedProperties.first,
         );
-        final receiver = _isNullableViaTypedef(simpleProp.property.model)
+        final receiver = simpleProp.property.model.isEffectivelyNullable
             ? refer(simpleProp.normalizedName).nullChecked
             : refer(simpleProp.normalizedName);
         bodyCode.add(
@@ -2275,7 +2275,7 @@ class AllOfGenerator {
     ];
 
     for (final prop in normalizedProperties) {
-      final isNullable = _isNullableViaTypedef(prop.property.model);
+      final isNullable = prop.property.model.isEffectivelyNullable;
       final receiver = isNullable
           ? refer(prop.normalizedName).nullChecked
           : refer(prop.normalizedName);
@@ -2362,17 +2362,4 @@ class AllOfGenerator {
     );
   }
 
-  /// Returns true when [m] produces a nullable Dart field type via the
-  /// `typedef X = $RawX?` pattern.
-  ///
-  /// [ClassModel] and composite models (allOf/anyOf/oneOf) use this pattern
-  /// when they are nullable, so their field types are effectively nullable even
-  /// though the [TypeReference] symbol has `isNullable: false`.
-  static bool _isNullableViaTypedef(Model m) => switch (m) {
-    ClassModel(:final isNullable) => isNullable,
-    AllOfModel(:final isNullable) => isNullable,
-    OneOfModel(:final isNullable) => isNullable,
-    AnyOfModel(:final isNullable) => isNullable,
-    _ => false,
-  };
 }

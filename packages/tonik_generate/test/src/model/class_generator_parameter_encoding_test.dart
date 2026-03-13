@@ -1755,5 +1755,136 @@ String toForm({
         );
       },
     );
+
+    test(
+      'generates null-safe toJson and fromJson for required property '
+      'referencing AliasModel that wraps nullable ClassModel',
+      () {
+        // AliasModel(isNullable: false) wrapping ClassModel(isNullable: true)
+        // simulates `typedef Outer = Inner; typedef Inner = $RawInner?;`
+        final innerClass = ClassModel(
+          isDeprecated: false,
+          name: 'Inner',
+          properties: [
+            Property(
+              name: 'value',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final outerAlias = AliasModel(
+          name: 'Outer',
+          model: innerClass,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'inner',
+              model: outerAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // toJson should use null-safe access because the underlying model
+        // is nullable via typedef chain
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace("r'inner': inner?.toJson()")),
+        );
+
+        // fromJson should use null-safe decoding
+        expect(
+          collapseWhitespace(classCode),
+          contains(
+            collapseWhitespace(
+              r"_$map[r'inner'] == null ? null : Inner.fromJson(_$map[r'inner'])",
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for property '
+      'referencing nested AliasModel chain where inner alias is nullable',
+      () {
+        // AliasModel(isNullable: false) wrapping
+        //   AliasModel(isNullable: true) wrapping StringModel
+        // simulates `typedef Outer = Inner; typedef Inner = String?;`
+        final innerAlias = AliasModel(
+          name: 'InnerAlias',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final outerAlias = AliasModel(
+          name: 'OuterAlias',
+          model: innerAlias,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Wrapper',
+          properties: [
+            Property(
+              name: 'label',
+              model: outerAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // Should generate null-aware encoding because the nested alias
+        // is nullable
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  if (label != null) {
+    _$result[r'label'] = label!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'label'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 }
