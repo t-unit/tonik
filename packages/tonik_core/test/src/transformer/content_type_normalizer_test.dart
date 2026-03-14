@@ -334,6 +334,179 @@ void main() {
 
         expect(transformedOriginal.bodies.first.model, isA<BinaryModel>());
       });
+
+      test('preserves ResponseAlias when inner response is unchanged', () {
+        final innerResponse = ResponseObject(
+          name: 'JsonResponse',
+          context: context,
+          description: 'A JSON response',
+          headers: const {},
+          bodies: {
+            ResponseBody(
+              model: ClassModel(
+                name: 'User',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final aliasContext = context.pushAll(['responses', 'MyAlias']);
+        final alias = ResponseAlias(
+          name: 'MyAlias',
+          context: aliasContext,
+          description: 'alias description',
+          response: innerResponse,
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: {innerResponse, alias},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedAlias = transformed.responses.firstWhere(
+          (r) => r.name == 'MyAlias',
+        );
+
+        expect(transformedAlias, isA<ResponseAlias>());
+        expect(transformedAlias.name, 'MyAlias');
+        expect(transformedAlias.context, aliasContext);
+        expect(transformedAlias.description, 'alias description');
+      });
+
+      test(
+        'ResponseAlias retains own name/context when inner response changes',
+        () {
+          final innerResponse = ResponseObject(
+            name: 'InnerResponse',
+            context: context.pushAll(['responses', 'InnerResponse']),
+            description: '',
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: IntegerModel(context: context),
+                rawContentType: 'application/octet-stream',
+                contentType: ContentType.bytes,
+              ),
+            },
+          );
+
+          final aliasContext = context.pushAll(['responses', 'AliasName']);
+          final alias = ResponseAlias(
+            name: 'AliasName',
+            context: aliasContext,
+            description: 'my alias desc',
+            response: innerResponse,
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: const {},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: {innerResponse, alias},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: const {},
+          );
+
+          final transformed = normalizer.apply(document);
+          final transformedAlias =
+              transformed.responses.firstWhere(
+                    (r) => r.name == 'AliasName',
+                  )
+                  as ResponseAlias;
+
+          expect(transformedAlias.name, 'AliasName');
+          expect(transformedAlias.context, aliasContext);
+          expect(transformedAlias.description, 'my alias desc');
+
+          final normalizedInner = transformedAlias.response as ResponseObject;
+          expect(normalizedInner.bodies.first.model, isA<BinaryModel>());
+        },
+      );
+
+      test(
+        'multiple aliases sharing inner response get same normalized instance',
+        () {
+          final sharedInner = ResponseObject(
+            name: 'SharedResponse',
+            context: context,
+            description: '',
+            headers: const {},
+            bodies: {
+              ResponseBody(
+                model: IntegerModel(context: context),
+                rawContentType: 'application/octet-stream',
+                contentType: ContentType.bytes,
+              ),
+            },
+          );
+
+          final alias1 = ResponseAlias(
+            name: 'Alias1',
+            context: context.pushAll(['responses', 'Alias1']),
+            response: sharedInner,
+          );
+
+          final alias2 = ResponseAlias(
+            name: 'Alias2',
+            context: context.pushAll(['responses', 'Alias2']),
+            response: sharedInner,
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: const {},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: {sharedInner, alias1, alias2},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: const {},
+          );
+
+          final transformed = normalizer.apply(document);
+          final transformedAlias1 =
+              transformed.responses.firstWhere(
+                    (r) => r.name == 'Alias1',
+                  )
+                  as ResponseAlias;
+          final transformedAlias2 =
+              transformed.responses.firstWhere(
+                    (r) => r.name == 'Alias2',
+                  )
+                  as ResponseAlias;
+
+          expect(
+            identical(transformedAlias1.response, transformedAlias2.response),
+            isTrue,
+          );
+        },
+      );
     });
 
     group('RequestContent normalization', () {
@@ -509,6 +682,183 @@ void main() {
         expect(content.model, isA<ClassModel>());
         expect((content.model as ClassModel).name, 'FormRequest');
       });
+
+      test('preserves RequestBodyAlias when inner body is unchanged', () {
+        final innerBody = RequestBodyObject(
+          name: 'JsonBody',
+          context: context,
+          description: 'A JSON body',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'User',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+            ),
+          },
+        );
+
+        final aliasContext = context.pushAll(['requestBodies', 'MyAlias']);
+        final alias = RequestBodyAlias(
+          name: 'MyAlias',
+          context: aliasContext,
+          description: 'alias description',
+          requestBody: innerBody,
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: {innerBody, alias},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedAlias = transformed.requestBodies.firstWhere(
+          (r) => r.name == 'MyAlias',
+        );
+
+        expect(transformedAlias, isA<RequestBodyAlias>());
+        expect(transformedAlias.name, 'MyAlias');
+        expect(transformedAlias.context, aliasContext);
+        expect(transformedAlias.description, 'alias description');
+      });
+
+      test(
+        'RequestBodyAlias retains own name/context when inner body changes',
+        () {
+          final innerBody = RequestBodyObject(
+            name: 'InnerBody',
+            context: context.pushAll(['requestBodies', 'InnerBody']),
+            description: '',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: DoubleModel(context: context),
+                rawContentType: 'text/plain',
+                contentType: ContentType.text,
+              ),
+            },
+          );
+
+          final aliasContext = context.pushAll(['requestBodies', 'AliasName']);
+          final alias = RequestBodyAlias(
+            name: 'AliasName',
+            context: aliasContext,
+            description: 'my alias desc',
+            requestBody: innerBody,
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: const {},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: {innerBody, alias},
+          );
+
+          final transformed = normalizer.apply(document);
+          final transformedAlias =
+              transformed.requestBodies.firstWhere(
+                    (r) => r.name == 'AliasName',
+                  )
+                  as RequestBodyAlias;
+
+          expect(transformedAlias.name, 'AliasName');
+          expect(transformedAlias.context, aliasContext);
+          expect(transformedAlias.description, 'my alias desc');
+
+          final normalizedInner =
+              transformedAlias.requestBody as RequestBodyObject;
+          expect(normalizedInner.content.first.model, isA<StringModel>());
+        },
+      );
+
+      test(
+        'multiple aliases sharing inner body get same normalized instance',
+        () {
+          final sharedInner = RequestBodyObject(
+            name: 'SharedBody',
+            context: context,
+            description: '',
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: DoubleModel(context: context),
+                rawContentType: 'text/plain',
+                contentType: ContentType.text,
+              ),
+            },
+          );
+
+          final alias1 = RequestBodyAlias(
+            name: 'Alias1',
+            context: context.pushAll(['requestBodies', 'Alias1']),
+            requestBody: sharedInner,
+          );
+
+          final alias2 = RequestBodyAlias(
+            name: 'Alias2',
+            context: context.pushAll(['requestBodies', 'Alias2']),
+            requestBody: sharedInner,
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: const {},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: {sharedInner, alias1, alias2},
+          );
+
+          final transformed = normalizer.apply(document);
+          final transformedAlias1 =
+              transformed.requestBodies.firstWhere(
+                    (r) => r.name == 'Alias1',
+                  )
+                  as RequestBodyAlias;
+          final transformedAlias2 =
+              transformed.requestBodies.firstWhere(
+                    (r) => r.name == 'Alias2',
+                  )
+                  as RequestBodyAlias;
+
+          expect(
+            identical(
+              transformedAlias1.requestBody,
+              transformedAlias2.requestBody,
+            ),
+            isTrue,
+          );
+        },
+      );
 
       test('handles RequestBodyAlias by normalizing referenced body', () {
         final referencedBody = RequestBodyObject(

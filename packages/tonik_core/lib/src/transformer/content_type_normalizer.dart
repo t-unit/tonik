@@ -20,17 +20,20 @@ class ContentTypeNormalizer {
   ///
   /// Returns a new document with normalized responses and request bodies.
   ApiDocument apply(ApiDocument document) {
+    final responseCache = <Response, Response>{};
+    final requestBodyCache = <RequestBody, RequestBody>{};
+
     // Build a map from original to normalized request bodies
     final requestBodyMap = <RequestBody, RequestBody>{};
     for (final original in document.requestBodies) {
-      final normalized = _normalizeRequestBody(original);
+      final normalized = _normalizeRequestBody(original, requestBodyCache);
       requestBodyMap[original] = normalized;
     }
 
     // Build a map from original to normalized responses
     final responseMap = <Response, Response>{};
     for (final original in document.responses) {
-      final normalized = _normalizeResponse(original);
+      final normalized = _normalizeResponse(original, responseCache);
       responseMap[original] = normalized;
     }
 
@@ -97,18 +100,27 @@ class ContentTypeNormalizer {
     );
   }
 
-  Response _normalizeResponse(Response response) {
+  Response _normalizeResponse(
+    Response response,
+    Map<Response, Response> cache,
+  ) {
+    final cached = cache[response];
+    if (cached != null) return cached;
+
+    final Response result;
     switch (response) {
-      case ResponseAlias(:final response):
-        final normalized = _normalizeResponse(response);
-        if (identical(normalized, response)) {
-          return response;
+      case ResponseAlias(response: final inner):
+        final normalized = _normalizeResponse(inner, cache);
+        if (identical(normalized, inner)) {
+          result = response;
+        } else {
+          result = ResponseAlias(
+            name: response.name,
+            context: response.context,
+            description: response.description,
+            response: normalized,
+          );
         }
-        return ResponseAlias(
-          name: response.name,
-          context: response.context,
-          response: normalized,
-        );
       case ResponseObject(:final bodies):
         final normalizedBodies = <ResponseBody>{};
         var hasChanges = false;
@@ -121,16 +133,20 @@ class ContentTypeNormalizer {
         }
         // Return original if nothing changed
         if (!hasChanges) {
-          return response;
+          result = response;
+        } else {
+          result = ResponseObject(
+            name: response.name,
+            context: response.context,
+            description: response.description,
+            headers: response.headers,
+            bodies: normalizedBodies,
+          );
         }
-        return ResponseObject(
-          name: response.name,
-          context: response.context,
-          description: response.description,
-          headers: response.headers,
-          bodies: normalizedBodies,
-        );
     }
+
+    cache[response] = result;
+    return result;
   }
 
   ResponseBody _normalizeResponseBody(ResponseBody body, Context context) {
@@ -151,18 +167,27 @@ class ContentTypeNormalizer {
     );
   }
 
-  RequestBody _normalizeRequestBody(RequestBody requestBody) {
+  RequestBody _normalizeRequestBody(
+    RequestBody requestBody,
+    Map<RequestBody, RequestBody> cache,
+  ) {
+    final cached = cache[requestBody];
+    if (cached != null) return cached;
+
+    final RequestBody result;
     switch (requestBody) {
-      case RequestBodyAlias(:final requestBody):
-        final normalized = _normalizeRequestBody(requestBody);
-        if (identical(normalized, requestBody)) {
-          return requestBody;
+      case RequestBodyAlias(requestBody: final inner):
+        final normalized = _normalizeRequestBody(inner, cache);
+        if (identical(normalized, inner)) {
+          result = requestBody;
+        } else {
+          result = RequestBodyAlias(
+            name: requestBody.name,
+            context: requestBody.context,
+            description: requestBody.description,
+            requestBody: normalized,
+          );
         }
-        return RequestBodyAlias(
-          name: requestBody.name,
-          context: requestBody.context,
-          requestBody: normalized,
-        );
       case RequestBodyObject(:final content):
         final normalizedContent = <RequestContent>{};
         var hasChanges = false;
@@ -178,16 +203,20 @@ class ContentTypeNormalizer {
         }
         // Return original if nothing changed
         if (!hasChanges) {
-          return requestBody;
+          result = requestBody;
+        } else {
+          result = RequestBodyObject(
+            name: requestBody.name,
+            context: requestBody.context,
+            description: requestBody.description,
+            isRequired: requestBody.isRequired,
+            content: normalizedContent,
+          );
         }
-        return RequestBodyObject(
-          name: requestBody.name,
-          context: requestBody.context,
-          description: requestBody.description,
-          isRequired: requestBody.isRequired,
-          content: normalizedContent,
-        );
     }
+
+    cache[requestBody] = result;
+    return result;
   }
 
   RequestContent _normalizeRequestContent(
