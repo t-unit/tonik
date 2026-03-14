@@ -31,6 +31,7 @@ analyzer:
     unnecessary_nullable_for_final_variable_declarations: ignore
     dead_code: ignore
     unnecessary_this: ignore
+    unintended_html_in_doc_comment: ignore
 ''';
 
   analysisOptionsFile.writeAsStringSync(content);

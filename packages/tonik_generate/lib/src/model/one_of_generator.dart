@@ -1117,7 +1117,9 @@ class OneOfGenerator {
 
         if (isNullable) {
           caseCodes.addAll([
-            const Code('value == null ? <String, String>{} : '),
+            const Code('value == null ? '),
+            buildEmptyMapStringString().code,
+            const Code(' : '),
           ]);
         }
 
@@ -1179,7 +1181,9 @@ class OneOfGenerator {
 
           if (isNullable) {
             caseCodes.addAll([
-              const Code('value == null ? <String, String>{} : '),
+              const Code('value == null ? '),
+              buildEmptyMapStringString().code,
+              const Code(' : '),
             ]);
           }
 
