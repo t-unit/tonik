@@ -495,7 +495,10 @@ class OneOfGenerator {
 
     if (model.discriminator != null) {
       final hasDiscriminatedComplexTypes = model.models.any(
-        (m) => m.discriminatorValue != null && m.model is! PrimitiveModel,
+        (m) =>
+            m.discriminatorValue != null &&
+            m.model is! PrimitiveModel &&
+            m.model is! ListModel,
       );
 
       if (hasDiscriminatedComplexTypes) {
@@ -525,7 +528,8 @@ class OneOfGenerator {
                 .where(
                   (m) =>
                       m.discriminatorValue != null &&
-                      m.model is! PrimitiveModel,
+                      m.model is! PrimitiveModel &&
+                      m.model is! ListModel,
                 )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
@@ -670,7 +674,8 @@ class OneOfGenerator {
 
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
-          discriminatorValue != null) {
+          discriminatorValue != null &&
+          m.model is! ListModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -835,7 +840,8 @@ class OneOfGenerator {
 
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
-          discriminatorValue != null) {
+          discriminatorValue != null &&
+          m.model is! ListModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -1246,7 +1252,8 @@ class OneOfGenerator {
 
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
-          discriminatorValue != null) {
+          discriminatorValue != null &&
+          m.model is! ListModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
