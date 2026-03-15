@@ -922,6 +922,141 @@ void main() {
         });
       });
     });
+
+    group('respects model own nullability when isNullable is false', () {
+      test(
+        'nullable AliasModel wrapping ClassModel produces null check',
+        () {
+          final classModel = ClassModel(
+            isDeprecated: false,
+            context: context,
+            name: 'License',
+            properties: const [],
+          );
+          final nullableAlias = AliasModel(
+            context: context,
+            name: 'NullableLicense',
+            model: classModel,
+            isNullable: true,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: nullableAlias,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: false,
+            ).accept(emitter).toString(),
+            'value == null ? null : License.fromJson(value)',
+          );
+        },
+      );
+
+      test(
+        'nested nullable AliasModel produces null check',
+        () {
+          final classModel = ClassModel(
+            isDeprecated: false,
+            context: context,
+            name: 'License',
+            properties: const [],
+          );
+          final innerAlias = AliasModel(
+            context: context,
+            name: 'InnerAlias',
+            model: classModel,
+            isNullable: true,
+          );
+          final outerAlias = AliasModel(
+            context: context,
+            name: 'OuterAlias',
+            model: innerAlias,
+            isNullable: false,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: outerAlias,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: false,
+            ).accept(emitter).toString(),
+            'value == null ? null : License.fromJson(value)',
+          );
+        },
+      );
+
+      test(
+        'nullable AliasModel wrapping primitive produces nullable decode',
+        () {
+          final nullableStringAlias = AliasModel(
+            context: context,
+            name: 'NullableString',
+            model: StringModel(context: context),
+            isNullable: true,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: nullableStringAlias,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: false,
+            ).accept(emitter).toString(),
+            'value.decodeJsonNullableString()',
+          );
+        },
+      );
+
+      test(
+        'nullable ClassModel with isNullable false produces null check',
+        () {
+          final nullableClass = ClassModel(
+            isDeprecated: false,
+            context: context,
+            name: 'License',
+            properties: const [],
+            isNullable: true,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: nullableClass,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: false,
+            ).accept(emitter).toString(),
+            'value == null ? null : License.fromJson(value)',
+          );
+        },
+      );
+
+      test(
+        'nullable EnumModel with isNullable false produces null check',
+        () {
+          final nullableEnum = EnumModel(
+            isDeprecated: false,
+            context: context,
+            name: 'Status',
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
+            },
+            isNullable: true,
+          );
+          expect(
+            buildFromJsonValueExpression(
+              'value',
+              model: nullableEnum,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              isNullable: false,
+            ).accept(emitter).toString(),
+            'value == null ? null : Status.fromJson(value)',
+          );
+        },
+      );
+    });
   });
 
   group('buildFromJsonValueExpression for NeverModel', () {
