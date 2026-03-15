@@ -2343,5 +2343,124 @@ void main() {
         );
       },
     );
+
+    test(
+      'nullable ClassModel variant subclass has nullable value field',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final subclass = classes.firstWhere((c) => c.name == 'ValueDetails');
+        final valueField = subclass.fields.firstWhere(
+          (f) => f.name == 'value',
+        );
+        final fieldType = valueField.type!.accept(emitter).toString();
+
+        expect(fieldType, 'Details?');
+      },
+    );
+
+    test(
+      'nullable ListModel variant subclass has nullable value field',
+      () {
+        final nullableList = ListModel(
+          name: 'Items',
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableList),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final subclass = classes.firstWhere((c) => c.name == 'ValueItems');
+        final valueField = subclass.fields.firstWhere(
+          (f) => f.name == 'value',
+        );
+        final fieldType = valueField.type!.accept(emitter).toString();
+
+        expect(fieldType, 'List<String>?');
+      },
+    );
+
+    test(
+      'non-nullable ClassModel variant subclass has non-nullable value field',
+      () {
+        final nonNullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nonNullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final subclass = classes.firstWhere((c) => c.name == 'ValueDetails');
+        final valueField = subclass.fields.firstWhere(
+          (f) => f.name == 'value',
+        );
+        final fieldType = valueField.type!.accept(emitter).toString();
+
+        expect(fieldType, 'Details');
+      },
+    );
   });
 }

@@ -206,6 +206,7 @@ class OneOfGenerator {
         discriminatedModel.model,
         nameManager,
         package,
+        isNullableOverride: discriminatedModel.model.isEffectivelyNullable,
       );
 
       final hasCollectionValue = discriminatedModel.model is ListModel;
@@ -745,10 +746,13 @@ class OneOfGenerator {
       } else if (m.model is ListModel &&
           (m.model as ListModel).hasSimpleContent) {
         // Lists with simple content can be encoded using helper
+        final isNullableList = m.model.isEffectivelyNullable;
+
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+          if (isNullableList) const Code("value == null ? '' : "),
           buildSimpleParameterExpression(
             refer('value'),
             m.model as ListModel,
@@ -913,10 +917,13 @@ class OneOfGenerator {
       } else if (m.model is ListModel &&
           (m.model as ListModel).hasSimpleContent) {
         // Lists with simple content can be encoded using helper
+        final isNullableList = m.model.isEffectivelyNullable;
+
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+          if (isNullableList) const Code("value == null ? '' : "),
           buildFormParameterExpression(
             refer('value'),
             m.model as ListModel,
@@ -1322,10 +1329,13 @@ class OneOfGenerator {
       } else if (m.model is ListModel &&
           (m.model as ListModel).hasSimpleContent) {
         // Lists with simple content can be encoded using helper
+        final isNullableList = m.model.isEffectivelyNullable;
+
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}(:final value) => ',
           ),
+          if (isNullableList) const Code("value == null ? '' : "),
           buildLabelParameterExpression(
             refer('value'),
             m.model as ListModel,

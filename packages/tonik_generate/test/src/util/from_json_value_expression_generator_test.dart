@@ -945,7 +945,6 @@ void main() {
               model: nullableAlias,
               nameManager: nameManager,
               package: 'package:my_package/my_package.dart',
-              isNullable: false,
             ).accept(emitter).toString(),
             'value == null ? null : License.fromJson(value)',
           );
@@ -971,7 +970,6 @@ void main() {
             context: context,
             name: 'OuterAlias',
             model: innerAlias,
-            isNullable: false,
           );
           expect(
             buildFromJsonValueExpression(
@@ -979,7 +977,6 @@ void main() {
               model: outerAlias,
               nameManager: nameManager,
               package: 'package:my_package/my_package.dart',
-              isNullable: false,
             ).accept(emitter).toString(),
             'value == null ? null : License.fromJson(value)',
           );
@@ -1001,7 +998,6 @@ void main() {
               model: nullableStringAlias,
               nameManager: nameManager,
               package: 'package:my_package/my_package.dart',
-              isNullable: false,
             ).accept(emitter).toString(),
             'value.decodeJsonNullableString()',
           );
@@ -1024,7 +1020,6 @@ void main() {
               model: nullableClass,
               nameManager: nameManager,
               package: 'package:my_package/my_package.dart',
-              isNullable: false,
             ).accept(emitter).toString(),
             'value == null ? null : License.fromJson(value)',
           );
@@ -1050,7 +1045,6 @@ void main() {
               model: nullableEnum,
               nameManager: nameManager,
               package: 'package:my_package/my_package.dart',
-              isNullable: false,
             ).accept(emitter).toString(),
             'value == null ? null : Status.fromJson(value)',
           );

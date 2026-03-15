@@ -119,6 +119,7 @@ rm -rf multipart/multipart_api
 rm -rf multipart/multipart_3_1_api
 rm -rf figma/figma_api
 rm -rf stripe/stripe_api
+rm -rf github/github_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
@@ -210,6 +211,11 @@ if [ -d "stripe/stripe_api" ]; then
     add_dependency_overrides_recursive "stripe/stripe_api"
 fi
 
+$TONIK_BINARY --config github/tonik.yaml || echo "WARNING: GitHub generation failed. See docs/integration-test-plans/bugs/github-bugs.md"
+if [ -d "github/github_api" ]; then
+    add_dependency_overrides_recursive "github/github_api"
+fi
+
 # Run dart pub get for all generated packages in parallel
 echo "Running dart pub get for all generated packages in parallel..."
 (
@@ -240,6 +246,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd multipart/multipart_3_1_api && dart pub get &
   ([ -d "figma/figma_api" ] && cd figma/figma_api && dart pub get) &
   ([ -d "stripe/stripe_api" ] && cd stripe/stripe_api && dart pub get) &
+  ([ -d "github/github_api" ] && cd github/github_api && dart pub get) &
   wait
 )
 echo "All dart pub get operations completed"
@@ -287,6 +294,7 @@ restore_test_package_overrides "read_write_only/read_write_only_test/pubspec.yam
 restore_test_package_overrides "multipart/multipart_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "figma/figma_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "stripe/stripe_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "github/github_test/pubspec.yaml" "../../../packages/tonik_util"
 
 # Run dart pub get for all test packages in parallel
 echo "Running dart pub get for all test packages in parallel..."
@@ -314,6 +322,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd multipart/multipart_test && dart pub get &
   cd figma/figma_test && dart pub get &
   cd stripe/stripe_test && dart pub get &
+  cd github/github_test && dart pub get &
   wait
 )
 echo "All test package dependencies resolved"

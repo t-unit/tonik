@@ -1814,7 +1814,8 @@ String toForm({
           collapseWhitespace(classCode),
           contains(
             collapseWhitespace(
-              r"_$map[r'inner'] == null ? null : Inner.fromJson(_$map[r'inner'])",
+              r"_$map[r'inner'] == null ? null "
+              r": Inner.fromJson(_$map[r'inner'])",
             ),
           ),
         );
