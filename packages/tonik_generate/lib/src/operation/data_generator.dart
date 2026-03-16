@@ -242,14 +242,16 @@ class DataGenerator {
       case ContentType.multipart:
         bodyCode
           ..clear()
-          ..addAll(
-            buildMultipartBodyStatements(
+          ..addAll([
+            if (!isRequired)
+              const Code('if (body == null) return null;\n'),
+            ...buildMultipartBodyStatements(
               content.first,
               'body',
               nameManager,
               package,
             ),
-          )
+          ])
           ..add(refer(r'_$formData').returned.statement);
     }
 
@@ -294,7 +296,7 @@ class DataGenerator {
               ..name = 'body'
               ..type = parameterType
               ..named = true
-              ..required = true,
+              ..required = isRequired,
           ),
         )
         ..optionalParameters.addAll(multipartHeaderParams)
