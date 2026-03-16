@@ -120,6 +120,9 @@ rm -rf multipart/multipart_3_1_api
 rm -rf figma/figma_api
 rm -rf stripe/stripe_api
 rm -rf github/github_api
+rm -rf openai/openai_full_api
+rm -rf asana/asana_api
+rm -rf twilio/twilio_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
@@ -216,6 +219,21 @@ if [ -d "github/github_api" ]; then
     add_dependency_overrides_recursive "github/github_api"
 fi
 
+$TONIK_BINARY --config openai/tonik_full.yaml || echo "WARNING: OpenAI generation failed."
+if [ -d "openai/openai_full_api" ]; then
+    add_dependency_overrides_recursive "openai/openai_full_api"
+fi
+
+$TONIK_BINARY --config asana/tonik.yaml || echo "WARNING: Asana generation failed."
+if [ -d "asana/asana_api" ]; then
+    add_dependency_overrides_recursive "asana/asana_api"
+fi
+
+$TONIK_BINARY --config twilio/tonik.yaml || echo "WARNING: Twilio generation failed."
+if [ -d "twilio/twilio_api" ]; then
+    add_dependency_overrides_recursive "twilio/twilio_api"
+fi
+
 # Run dart pub get for all generated packages in parallel
 echo "Running dart pub get for all generated packages in parallel..."
 (
@@ -247,6 +265,9 @@ echo "Running dart pub get for all generated packages in parallel..."
   ([ -d "figma/figma_api" ] && cd figma/figma_api && dart pub get) &
   ([ -d "stripe/stripe_api" ] && cd stripe/stripe_api && dart pub get) &
   ([ -d "github/github_api" ] && cd github/github_api && dart pub get) &
+  ([ -d "openai/openai_full_api" ] && cd openai/openai_full_api && dart pub get) &
+  ([ -d "asana/asana_api" ] && cd asana/asana_api && dart pub get) &
+  ([ -d "twilio/twilio_api" ] && cd twilio/twilio_api && dart pub get) &
   wait
 )
 echo "All dart pub get operations completed"
@@ -295,6 +316,8 @@ restore_test_package_overrides "multipart/multipart_test/pubspec.yaml" "../../..
 restore_test_package_overrides "figma/figma_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "stripe/stripe_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "github/github_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "openai/openai_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "asana/asana_test/pubspec.yaml" "../../../packages/tonik_util"
 
 # Run dart pub get for all test packages in parallel
 echo "Running dart pub get for all test packages in parallel..."
@@ -323,6 +346,8 @@ echo "Running dart pub get for all test packages in parallel..."
   cd figma/figma_test && dart pub get &
   cd stripe/stripe_test && dart pub get &
   cd github/github_test && dart pub get &
+  cd openai/openai_test && dart pub get &
+  cd asana/asana_test && dart pub get &
   wait
 )
 echo "All test package dependencies resolved"

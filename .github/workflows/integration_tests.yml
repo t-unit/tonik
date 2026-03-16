@@ -171,3 +171,8 @@ jobs:
         run: |
           cd integration_test/stripe/stripe_test
           dart test --concurrency=2
+
+      - name: Run openai integration tests
+        run: |
+          cd integration_test/openai/openai_test
+          dart test --concurrency=2

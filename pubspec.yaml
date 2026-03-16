@@ -159,6 +159,16 @@ melos:
         cd integration_test/stripe/stripe_test
         dart test
 
+    test-integration-openai:
+      run: |
+        cd integration_test/openai/openai_test
+        dart test
+
+    test-integration-asana:
+      run: |
+        cd integration_test/asana/asana_test
+        dart test
+
     test-integration-all:
       run: |
         set -e
@@ -184,3 +194,4 @@ melos:
         melos run test-integration-multipart
         melos run test-integration-figma
         melos run test-integration-stripe
+        melos run test-integration-openai
