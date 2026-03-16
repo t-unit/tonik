@@ -312,9 +312,11 @@ class NameGenerator {
       return 'Anonymous';
     }
 
-    return filteredPath
+    final joined = filteredPath
         .map((part) => _sanitizeName(part, isPathComponent: true))
         .join();
+
+    return RegExp(r'^\d').hasMatch(joined) ? '\$$joined' : joined;
   }
 
   /// Removes OpenAPI-specific prefixes from a context path
