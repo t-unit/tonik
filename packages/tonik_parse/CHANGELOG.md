@@ -1,3 +1,18 @@
+## 0.6.0
+
+ - **FIX**: deduplicate AliasModel instances for bare $ref aliases in allOf.
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: improved binary and array without items handling.
+ - **FIX**: better base64 data handleing.
+ - **FIX**: correclty handle any models in multipart.
+ - **FIX**: improved content type checks for mulitpart.
+ - **FIX**: handle byte formatted strings in multipart correclty.
+ - **FIX**: warn for invalid types in multipart.
+ - **FEAT**: improved array support in multipart.
+ - **FEAT**: better style handling for mutlipart.
+ - **FEAT**: basic form data handling.
+ - **FEAT**: improved encoding parsing for mutlipart.
+
 ## 0.5.0
 
  - **FIX**: proper default vlaue for explode in cookies.

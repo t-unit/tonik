@@ -1,3 +1,15 @@
+## 0.6.0
+
+ - **FIX**: shadowing of variables prevent proper names.
+ - **FIX**: proper nested nullable handling for models.
+ - **FIX**: improved stablesort for deeply nested models.
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: handle cycles for stable model key generation.
+ - **FIX**: better base64 data handleing.
+ - **FEAT**: improved array support in multipart.
+ - **FEAT**: better style handling for mutlipart.
+ - **FEAT**: basic form data handling.
+
 ## 0.5.0
 
  - **FEAT**: handle schema level read and write only.

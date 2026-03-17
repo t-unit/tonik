@@ -1,3 +1,11 @@
+## 0.6.0
+
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: better base64 data handleing.
+ - **FEAT**: use async file loading in multipart requests.
+ - **FEAT**: introduce TonikFile.
+ - **FEAT**: basic form data handling.
+
 ## 0.5.0
 
  - **FEAT**: read and write only for oneOf.

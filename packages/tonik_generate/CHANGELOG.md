@@ -1,3 +1,40 @@
+## 0.6.0
+
+ - **FIX**: validate version and use fallback.
+ - **FIX**: prefix types with $ if they start with a number.
+ - **FIX**: complex list handling in form and simple encoding.
+ - **FIX**: impoved nullable checks in from json code generation.
+ - **FIX**: proper scope dict definition.
+ - **FIX**: proper nested nullable handling for models.
+ - **FIX**: better nullable model handling.
+ - **FIX**: improve doc formatting with multilines.
+ - **FIX**: allow single ‘ and “ in properties and enum variables.
+ - **FIX**: handle property names starting with plus (+) or minus (-).
+ - **FIX**: better avoid shadowing via local variables.
+ - **FIX**: proper handle required in multipart.
+ - **FIX**: allow versions in enum values.
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: graceful handle complex data in lists for matrix encoding.
+ - **FIX**: llOf with nullable component models.
+ - **FIX**: handle nullable json fields in classes.
+ - **FIX**: add missing type annotation for matrix expressions.
+ - **FIX**: handle binary data in parameters.
+ - **FIX**: use raw strings for SimpleDecodingException.
+ - **FIX**: improved binary and array without items handling.
+ - **FIX**: fallback content type for multipart primitves.
+ - **FIX**: correclty handle any models in multipart.
+ - **FIX**: proper encoding for arrays in multipart.
+ - **FIX**: better base64 data handleing.
+ - **FEAT**: deep object support for multipart.
+ - **FEAT**: better url encoding support mulitpart.
+ - **FEAT**: improved array support in multipart.
+ - **FEAT**: improve content type for mutlipart data with scalar types.
+ - **FEAT**: use async file loading in multipart requests.
+ - **FEAT**: introduce TonikFile.
+ - **FEAT**: gracefully fail on mulitpart responses.
+ - **FEAT**: multipart header support.
+ - **FEAT**: basic form data handling.
+
 ## 0.5.0
 
  - **FIX**: proper default vlaue for explode in cookies.

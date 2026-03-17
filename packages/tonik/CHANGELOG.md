@@ -1,3 +1,10 @@
+## 0.6.0
+
+ - **FEAT**: allow custom multipart configuration.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.5.0
 
  - **FEAT**: improve read/write only handling.

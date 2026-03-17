@@ -3,6 +3,103 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-03-17
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.6.0`](#tonik_util---v060)
+ - [`tonik_core` - `v0.6.0`](#tonik_core---v060)
+ - [`tonik_parse` - `v0.6.0`](#tonik_parse---v060)
+ - [`tonik_generate` - `v0.6.0`](#tonik_generate---v060)
+ - [`tonik` - `v0.6.0`](#tonik---v060)
+
+---
+
+#### `tonik_util` - `v0.6.0`
+
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: better base64 data handleing.
+ - **FEAT**: use async file loading in multipart requests.
+ - **FEAT**: introduce TonikFile.
+ - **FEAT**: basic form data handling.
+
+#### `tonik_core` - `v0.6.0`
+
+ - **FIX**: shadowing of variables prevent proper names.
+ - **FIX**: proper nested nullable handling for models.
+ - **FIX**: improved stablesort for deeply nested models.
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: handle cycles for stable model key generation.
+ - **FIX**: better base64 data handleing.
+ - **FEAT**: improved array support in multipart.
+ - **FEAT**: better style handling for mutlipart.
+ - **FEAT**: basic form data handling.
+
+#### `tonik_parse` - `v0.6.0`
+
+ - **FIX**: deduplicate AliasModel instances for bare $ref aliases in allOf.
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: improved binary and array without items handling.
+ - **FIX**: better base64 data handleing.
+ - **FIX**: correclty handle any models in multipart.
+ - **FIX**: improved content type checks for mulitpart.
+ - **FIX**: handle byte formatted strings in multipart correclty.
+ - **FIX**: warn for invalid types in multipart.
+ - **FEAT**: improved array support in multipart.
+ - **FEAT**: better style handling for mutlipart.
+ - **FEAT**: basic form data handling.
+ - **FEAT**: improved encoding parsing for mutlipart.
+
+#### `tonik_generate` - `v0.6.0`
+
+ - **FIX**: validate version and use fallback.
+ - **FIX**: prefix types with $ if they start with a number.
+ - **FIX**: complex list handling in form and simple encoding.
+ - **FIX**: impoved nullable checks in from json code generation.
+ - **FIX**: proper scope dict definition.
+ - **FIX**: proper nested nullable handling for models.
+ - **FIX**: better nullable model handling.
+ - **FIX**: improve doc formatting with multilines.
+ - **FIX**: allow single ‘ and “ in properties and enum variables.
+ - **FIX**: handle property names starting with plus (+) or minus (-).
+ - **FIX**: better avoid shadowing via local variables.
+ - **FIX**: proper handle required in multipart.
+ - **FIX**: allow versions in enum values.
+ - **FIX**: stable sort performance improvements.
+ - **FIX**: graceful handle complex data in lists for matrix encoding.
+ - **FIX**: llOf with nullable component models.
+ - **FIX**: handle nullable json fields in classes.
+ - **FIX**: add missing type annotation for matrix expressions.
+ - **FIX**: handle binary data in parameters.
+ - **FIX**: use raw strings for SimpleDecodingException.
+ - **FIX**: improved binary and array without items handling.
+ - **FIX**: fallback content type for multipart primitves.
+ - **FIX**: correclty handle any models in multipart.
+ - **FIX**: proper encoding for arrays in multipart.
+ - **FIX**: better base64 data handleing.
+ - **FEAT**: deep object support for multipart.
+ - **FEAT**: better url encoding support mulitpart.
+ - **FEAT**: improved array support in multipart.
+ - **FEAT**: improve content type for mutlipart data with scalar types.
+ - **FEAT**: use async file loading in multipart requests.
+ - **FEAT**: introduce TonikFile.
+ - **FEAT**: gracefully fail on mulitpart responses.
+ - **FEAT**: multipart header support.
+ - **FEAT**: basic form data handling.
+
+#### `tonik` - `v0.6.0`
+
+ - **FEAT**: allow custom multipart configuration.
+
+
 ## 2026-02-08
 
 ### Changes
