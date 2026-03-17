@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
@@ -78,7 +79,7 @@ class PathGenerator {
         final segments = pathComponent
             .split('/')
             .where((s) => s.isNotEmpty)
-            .map((s) => literalString(s, raw: true));
+            .map(specLiteralString);
         pathPartExpressions.addAll(segments);
         continue;
       }
@@ -92,7 +93,7 @@ class PathGenerator {
         final segments = pathComponent
             .split('/')
             .where((s) => s.isNotEmpty)
-            .map((s) => literalString(s, raw: true));
+            .map(specLiteralString);
         pathPartExpressions.addAll(segments);
         continue;
       }

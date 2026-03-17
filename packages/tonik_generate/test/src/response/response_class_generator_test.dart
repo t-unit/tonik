@@ -18,7 +18,10 @@ void main() {
 
   setUp(() {
     emitter = DartEmitter(orderDirectives: true, useNullSafetySyntax: true);
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ResponseGenerator(
       nameManager: nameManager,
       package: 'test_package',
@@ -216,9 +219,9 @@ void main() {
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
-            return other is SimpleResponse && 
-              other.xTest == xTest && 
-              other.body == body;
+            return other is SimpleResponse &&
+              other.xTest == this.xTest &&
+              other.body == this.body;
           }
         ''';
 
@@ -265,7 +268,7 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
-            return other is ListHeaderResponse && _$deepEquals.equals(other.xList, xList) && other.body == body;
+            return other is ListHeaderResponse && _$deepEquals.equals(other.xList, this.xList) && other.body == this.body;
           }
         ''';
 

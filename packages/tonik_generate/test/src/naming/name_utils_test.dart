@@ -136,9 +136,9 @@ void main() {
       });
 
       test('handles special characters', () {
-        expect(normalizeEnumValueName('!@#'), 'value');
-        expect(normalizeEnumValueName('status!'), 'status');
-        expect(normalizeEnumValueName('test@#123'), 'test123');
+        expect(normalizeEnumValueName('!@#'), 'exclamationAtHash');
+        expect(normalizeEnumValueName('status!'), 'statusExclamation');
+        expect(normalizeEnumValueName('test@#123'), 'testAtHash123');
       });
 
       test('handles leading underscores', () {
@@ -159,6 +159,72 @@ void main() {
         expect(normalizeEnumValueName('PENDING'), 'pending');
         expect(normalizeEnumValueName('IN_PROGRESS'), 'inProgress');
       });
+    });
+
+    group('version string enum values', () {
+      test('spells out version-like strings with dot separator', () {
+        expect(normalizeEnumValueName('1.0.2'), 'oneDotZeroDotTwo');
+        expect(normalizeEnumValueName('2.1.0'), 'twoDotOneDotZero');
+      });
+
+      test('handles two-segment version strings', () {
+        expect(normalizeEnumValueName('1.0'), 'oneDotZero');
+      });
+    });
+
+    group('dotted enum values', () {
+      test('treats dots as word separators', () {
+        expect(normalizeEnumValueName('api.response'), 'apiResponse');
+        expect(normalizeEnumValueName('error.code'), 'errorCode');
+      });
+    });
+
+    group('version strings with suffixes', () {
+      test('spells out version part and normalizes suffix', () {
+        expect(
+          normalizeEnumValueName('1.0.2-beta'),
+          'oneDotZeroDotTwoBeta',
+        );
+      });
+    });
+
+    group('digit-leading safety net', () {
+      test('prefixes with dollar sign if result starts with digit', () {
+        // A mixed value where normalization produces a digit-leading
+        // result — the safety net should add a $ prefix
+        expect(normalizeEnumValueName('123_456'), r'$123456');
+      });
+    });
+  });
+
+  group('normalizeSingle with special character property names', () {
+    test('converts +1 to plus1', () {
+      expect(normalizeSingle('+1', preserveNumbers: true), 'plus1');
+    });
+
+    test('converts -1 to minus1', () {
+      expect(normalizeSingle('-1', preserveNumbers: true), 'minus1');
+    });
+
+    test('converts >= to greaterThanEquals', () {
+      expect(normalizeSingle('>=', preserveNumbers: true), 'greaterThanEquals');
+    });
+
+    test('converts * to asterisk', () {
+      expect(normalizeSingle('*', preserveNumbers: true), 'asterisk');
+    });
+
+    test('converts pure special chars to word equivalents', () {
+      expect(
+        normalizeSingle('!!!', preserveNumbers: true),
+        'exclamationExclamationExclamation',
+      );
+    });
+
+    test('prefixes with dollar sign if result starts with digit', () {
+      // Safety net for digit-leading results
+      final result = normalizeSingle('42foo', preserveNumbers: true);
+      expect(result, isNot(startsWith(RegExp(r'\d').pattern)));
     });
   });
 }

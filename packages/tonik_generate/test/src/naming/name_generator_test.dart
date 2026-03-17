@@ -50,6 +50,25 @@ void main() {
           );
         });
 
+        test(r'prefixes $ when path starts with digits (Twilio-style)', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            properties: const [],
+            context: Context.initial().pushAll([
+              'paths',
+              '2010-04-01-Accounts.json',
+              'get',
+              'responses',
+              '200',
+              'content',
+            ]),
+          );
+          expect(
+            nameGenerator.generateModelName(model),
+            r'$20100401AccountsJsonGetResponses200ContentModel',
+          );
+        });
+
         test('oneOf model with inline model', () {
           final inlineClassModel = ClassModel(
             isDeprecated: false,
@@ -382,6 +401,20 @@ void main() {
               ),
             ),
             'MyClassName',
+          );
+        });
+
+        test('treats dots as word separators in schema names', () {
+          expect(
+            nameGenerator.generateModelName(
+              ClassModel(
+                isDeprecated: false,
+                name: 'billing.credit_balance_transaction',
+                properties: const [],
+                context: Context.initial(),
+              ),
+            ),
+            'BillingCreditBalanceTransaction',
           );
         });
       });

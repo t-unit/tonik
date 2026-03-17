@@ -17,7 +17,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -138,6 +141,7 @@ void main() {
       generator = OneOfGenerator(
         nameManager: nameManager,
         package: 'package:example',
+        stableModelSorter: StableModelSorter(),
       );
     });
 
@@ -198,6 +202,7 @@ void main() {
       generator = AnyOfGenerator(
         nameManager: nameManager,
         package: 'package:example',
+        stableModelSorter: StableModelSorter(),
       );
     });
 
@@ -256,6 +261,7 @@ void main() {
       generator = AllOfGenerator(
         nameManager: nameManager,
         package: 'package:example',
+        stableModelSorter: StableModelSorter(),
       );
     });
 

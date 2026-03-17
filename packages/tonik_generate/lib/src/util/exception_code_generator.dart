@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Generates a throw expression for FormatException.
 Expression generateFormatExceptionExpression(
@@ -95,5 +96,6 @@ Expression _generateExceptionExpression(
   bool raw = false,
 }) {
   final ref = refer(type, importUrl);
-  return ref.call([literalString(message, raw: raw)]).thrown;
+  final stringExpr = raw ? specLiteralString(message) : literalString(message);
+  return ref.call([stringExpr]).thrown;
 }

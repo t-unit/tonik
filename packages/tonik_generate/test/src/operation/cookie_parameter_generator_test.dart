@@ -21,7 +21,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     optionsGenerator = OptionsGenerator(
       nameManager: nameManager,
       package: 'package:api/api.dart',
@@ -285,13 +288,13 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-              final cookieParts = <String>[];
-              cookieParts.add(
+          collapseWhitespace(r'''
+              final _$cookieParts = <String>[];
+              _$cookieParts.add(
                 r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
               );
-              if (cookieParts.isNotEmpty) {
-                headers[r'Cookie'] = cookieParts.join('; ');
+              if (_$cookieParts.isNotEmpty) {
+                _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
             '''),
         ),
@@ -373,16 +376,16 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-              final cookieParts = <String>[];
-              cookieParts.add(
+          collapseWhitespace(r'''
+              final _$cookieParts = <String>[];
+              _$cookieParts.add(
                 r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
               );
-              cookieParts.add(
+              _$cookieParts.add(
                 r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
               );
-              if (cookieParts.isNotEmpty) {
-                headers[r'Cookie'] = cookieParts.join('; ');
+              if (_$cookieParts.isNotEmpty) {
+                _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
             '''),
         ),
@@ -440,16 +443,16 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
             if (optionalSession != null) {
-              cookieParts.add(
+              _$cookieParts.add(
                 r'optional_session=' +
                     optionalSession.toForm(explode: false, allowEmpty: true),
               );
             }
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
           '''),
         ),
@@ -507,11 +510,13 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(r'page=' + pageNum.toForm(explode: false, allowEmpty: true));
-            if (cookieParts.isNotEmpty) {
-              headers[r'Cookie'] = cookieParts.join('; ');
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
+              r'page=' + pageNum.toForm(explode: false, allowEmpty: true),
+            );
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
           '''),
         ),
@@ -572,9 +577,9 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            final cookieParts = <String>[];
-            cookieParts.add(r'tags=' + tags.toForm(explode: false, allowEmpty: true));
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(r'tags=' + tags.toForm(explode: false, allowEmpty: true));
           '''),
         ),
       );
@@ -651,7 +656,7 @@ void main() {
       final methodString = method.accept(emitter).toString();
       expect(
         collapseWhitespace(methodString),
-        contains("cookieParts.add(r'user=' + user.toForm("),
+        contains(r"_$cookieParts.add(r'user=' + user.toForm("),
       );
     });
 
@@ -709,8 +714,8 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            cookieParts.add(
+          collapseWhitespace(r'''
+            _$cookieParts.add(
               r'identifier=' + identifier.toForm(explode: false, allowEmpty: true),
             );
           '''),
@@ -772,8 +777,8 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            cookieParts.add(r'value=' + value.toForm(explode: false, allowEmpty: true));
+          collapseWhitespace(r'''
+            _$cookieParts.add(r'value=' + value.toForm(explode: false, allowEmpty: true));
           '''),
         ),
       );
@@ -858,7 +863,7 @@ void main() {
       final methodString = method.accept(emitter).toString();
       expect(
         collapseWhitespace(methodString),
-        contains("cookieParts.add(r'entity=' + entity.toForm("),
+        contains(r"_$cookieParts.add(r'entity=' + entity.toForm("),
       );
     });
 
@@ -992,8 +997,8 @@ void main() {
       expect(
         collapseWhitespace(methodString),
         contains(
-          collapseWhitespace('''
-            cookieParts.add(
+          collapseWhitespace(r'''
+            _$cookieParts.add(
               r'ids=' +
                   ids
                       .map((e) => e.toForm(explode: false, allowEmpty: true))

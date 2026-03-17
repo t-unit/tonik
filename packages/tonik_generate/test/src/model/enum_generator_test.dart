@@ -12,7 +12,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = EnumGenerator(nameManager: nameManager);
   });
 
@@ -2444,7 +2447,7 @@ void main() {
         final generated = generator.generateEnum(model, 'Status');
 
         expect(generated.enumValue.values, hasLength(2));
-        expect(generated.enumValue.values[1].name, 'unknown');
+        expect(generated.enumValue.values[1].name, 'unKnown');
 
         expect(
           generated.enumValue.values[1].arguments.first

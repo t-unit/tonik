@@ -308,6 +308,66 @@ paths:
           description: Image downloaded successfully (no explicit schema)
           content:
             image/png: {}
+  /binary/multi-content-type:
+    get:
+      tags:
+        - files
+      summary: Get either JSON or binary at same status code
+      description: >-
+        Returns 200 with either application/json or application/octet-stream.
+        Tests that the generated client correctly handles multiple content
+        types at the same status code.
+      operationId: getMultiContentType
+      parameters:
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: JSON or binary response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileMetadata'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /binary/with-headers/{id}:
+    get:
+      tags:
+        - files
+      summary: Download binary with additional response headers
+      description: >-
+        Returns a binary response with additional headers that must be
+        extracted (Content-Disposition, X-File-Size). Tests that binary
+        responses can carry header metadata.
+      operationId: getBinaryWithHeaders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Binary file with metadata headers
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: Suggested filename
+            X-File-Size:
+              schema:
+                type: integer
+              description: File size in bytes
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
   /content-media-type/image:
     post:
       tags:

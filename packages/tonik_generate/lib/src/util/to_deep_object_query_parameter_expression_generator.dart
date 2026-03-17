@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Creates a Code expression that correctly serializes a query parameter
 /// using deepObject encoding.
@@ -22,7 +23,7 @@ Code buildToDeepObjectQueryParameterCode(
   if (model is AnyModel) {
     return refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart')
         .call(
-          [refer(parameterName), literalString(rawName, raw: true)],
+          [refer(parameterName), specLiteralString(rawName)],
           {
             'explode': literalBool(explode),
             'allowEmpty': literalBool(allowEmpty),
@@ -35,7 +36,7 @@ Code buildToDeepObjectQueryParameterCode(
     return refer(parameterName)
         .property('toDeepObject')
         .call(
-          [literalString(rawName, raw: true)],
+          [specLiteralString(rawName)],
           {
             'explode': literalBool(explode),
             'allowEmpty': literalBool(allowEmpty),
@@ -46,10 +47,9 @@ Code buildToDeepObjectQueryParameterCode(
 
   return refer('EncodingException', 'package:tonik_util/tonik_util.dart')
       .call([
-        literalString(
+        specLiteralString(
           'deepObject encoding only supports object types. '
           'Parameter "$rawName" is not supported.',
-          raw: true,
         ),
       ])
       .thrown

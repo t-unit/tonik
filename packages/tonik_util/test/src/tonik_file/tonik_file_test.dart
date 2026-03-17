@@ -178,8 +178,7 @@ void main() {
       expect(result, 'a+b');
     });
 
-    test('encodes with component encoding when useQueryComponent is false',
-        () {
+    test('encodes with component encoding when useQueryComponent is false', () {
       // "a b" in UTF-8
       const file = TonikFileBytes([97, 32, 98]);
       final result = file.uriEncode(allowEmpty: false);

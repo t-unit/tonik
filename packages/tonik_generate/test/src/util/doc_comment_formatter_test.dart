@@ -82,4 +82,65 @@ void main() {
       expect(result[2], '/// Second');
     });
   });
+
+  group('formatDocCommentWithPrefix', () {
+    test('formats single line with prefix', () {
+      final result = formatDocCommentWithPrefix(
+        '[paramName] ',
+        'A description',
+      );
+
+      expect(result, ['/// [paramName] A description']);
+    });
+
+    test('formats multi-line text with prefix on first line only', () {
+      final result = formatDocCommentWithPrefix(
+        '[sort] ',
+        "Sort property.\n`updated` means the alert's state changed.",
+      );
+
+      expect(result, [
+        '/// [sort] Sort property.',
+        "/// `updated` means the alert's state changed.",
+      ]);
+    });
+
+    test('handles three lines', () {
+      final result = formatDocCommentWithPrefix(
+        '- API Key (header): ',
+        'Line one\nLine two\nLine three',
+      );
+
+      expect(result, [
+        '/// - API Key (header): Line one',
+        '/// Line two',
+        '/// Line three',
+      ]);
+    });
+
+    test('returns empty list for null text', () {
+      final result = formatDocCommentWithPrefix('[param] ', null);
+
+      expect(result, isEmpty);
+    });
+
+    test('returns empty list for empty text', () {
+      final result = formatDocCommentWithPrefix('[param] ', '');
+
+      expect(result, isEmpty);
+    });
+
+    test('handles text with empty continuation lines', () {
+      final result = formatDocCommentWithPrefix(
+        '[param] ',
+        'First line\n\nThird line',
+      );
+
+      expect(result, [
+        '/// [param] First line',
+        '/// ',
+        '/// Third line',
+      ]);
+    });
+  });
 }

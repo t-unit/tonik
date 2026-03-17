@@ -19,7 +19,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ClassGenerator(
       nameManager: nameManager,
       package: 'package:example',
@@ -126,26 +129,26 @@ void main() {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
-  result[r'id'] = id.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'id'] = id.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
   if (name != null) {
-    result[r'name'] = name!.uriEncode(
+    _$result[r'name'] = name!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'name'] = '';
+    _$result[r'name'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -209,30 +212,30 @@ Map<String, String> parameterProperties({
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (nullableName != null) {
-    result[r'nullable_name'] = nullableName!.uriEncode(
+    _$result[r'nullable_name'] = nullableName!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'nullable_name'] = '';
+    _$result[r'nullable_name'] = '';
   }
   if (nullableCount != null) {
-    result[r'nullable_count'] = nullableCount!.uriEncode(
+    _$result[r'nullable_count'] = nullableCount!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'nullable_count'] = '';
+    _$result[r'nullable_count'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -338,21 +341,24 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
-    result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
+    _$result[r'value'] = value.toSimple(
+      explode: false,
+      allowEmpty: allowEmpty,
+    );
   } else {
     throw EncodingException(
       r'parameterProperties not supported for Container: contains complex types',
     );
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -410,21 +416,21 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
-    result[r'data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
+    _$result[r'data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
   } else {
     throw EncodingException(
       r'parameterProperties not supported for FlexibleContainer: contains complex types',
     );
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -479,15 +485,15 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
-    result[r'combined'] = combined.toSimple(
+    _$result[r'combined'] = combined.toSimple(
       explode: false,
       allowEmpty: allowEmpty,
     );
@@ -496,7 +502,7 @@ Map<String, String> parameterProperties({
       r'parameterProperties not supported for CombinedContainer: contains complex types',
     );
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -535,26 +541,26 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
-  result[r'name'] = name.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
   if (count != null) {
-    result[r'count'] = count!.uriEncode(
+    _$result[r'count'] = count!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'count'] = '';
+    _$result[r'count'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -661,16 +667,16 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (value != null) {
     if (value!.currentEncodingShape == EncodingShape.simple) {
-      result[r'value'] = value!.toSimple(
+      _$result[r'value'] = value!.toSimple(
         explode: false,
         allowEmpty: allowEmpty,
       );
@@ -680,7 +686,7 @@ Map<String, String> parameterProperties({
       );
     }
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -827,31 +833,34 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
-  result[r'name'] = name.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
   if (count != null) {
-    result[r'count'] = count!.uriEncode(
+    _$result[r'count'] = count!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'count'] = '';
+    _$result[r'count'] = '';
   }
-  result[r'active'] = active.uriEncode(
+  _$result[r'active'] = active.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
   if (data1.currentEncodingShape == EncodingShape.simple) {
-    result[r'data1'] = data1.toSimple(explode: false, allowEmpty: allowEmpty);
+    _$result[r'data1'] = data1.toSimple(
+      explode: false,
+      allowEmpty: allowEmpty,
+    );
   } else {
     throw EncodingException(
       r'parameterProperties not supported for MixedContainer: contains complex types',
@@ -859,7 +868,7 @@ Map<String, String> parameterProperties({
   }
   if (data2 != null) {
     if (data2!.currentEncodingShape == EncodingShape.simple) {
-      result[r'data2'] = data2!.toSimple(
+      _$result[r'data2'] = data2!.toSimple(
         explode: false,
         allowEmpty: allowEmpty,
       );
@@ -870,7 +879,7 @@ Map<String, String> parameterProperties({
     }
   }
   if (flexible.currentEncodingShape == EncodingShape.simple) {
-    result[r'flexible'] = flexible.toSimple(
+    _$result[r'flexible'] = flexible.toSimple(
       explode: false,
       allowEmpty: allowEmpty,
     );
@@ -879,7 +888,7 @@ Map<String, String> parameterProperties({
       r'parameterProperties not supported for MixedContainer: contains complex types',
     );
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -920,7 +929,7 @@ Map<String, String> parameterProperties({
 
         expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -929,16 +938,16 @@ Map<String, String> parameterProperties({
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(
+    _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'tags'] = '';
+    _$result[r'tags'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -990,7 +999,7 @@ Map<String, String> parameterProperties({
 
         expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1002,9 +1011,9 @@ Map<String, String> parameterProperties({
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (ids != null) {
-    result[r'ids'] = ids!
+    _$result[r'ids'] = ids!
         .map(
           (e) => e.uriEncode(
             allowEmpty: allowEmpty,
@@ -1017,17 +1026,17 @@ Map<String, String> parameterProperties({
           useQueryComponent: useQueryComponent,
         );
   } else if (allowEmpty) {
-    result[r'ids'] = '';
+    _$result[r'ids'] = '';
   }
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(
+    _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'tags'] = '';
+    _$result[r'tags'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1069,7 +1078,7 @@ Map<String, String> parameterProperties({
 
         expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1078,12 +1087,12 @@ Map<String, String> parameterProperties({
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
-  result[r'tags'] = tags.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'tags'] = tags.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1132,7 +1141,7 @@ Map<String, String> parameterProperties({
 
         expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1141,20 +1150,20 @@ Map<String, String> parameterProperties({
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
-  result[r'id'] = id.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'id'] = id.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(
+    _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'tags'] = '';
+    _$result[r'tags'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1269,7 +1278,7 @@ Map<String, String> parameterProperties({
 
         expect(parameterPropertiesMethod, isNotNull);
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1278,9 +1287,9 @@ Map<String, String> parameterProperties({
   if (!allowLists && statuses != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (statuses != null) {
-    result[r'statuses'] = statuses!
+    _$result[r'statuses'] = statuses!
         .map(
           (e) => e.uriEncode(
             allowEmpty: allowEmpty,
@@ -1293,9 +1302,9 @@ Map<String, String> parameterProperties({
           useQueryComponent: useQueryComponent,
         );
   } else if (allowEmpty) {
-    result[r'statuses'] = '';
+    _$result[r'statuses'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1331,7 +1340,7 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1340,12 +1349,12 @@ Map<String, String> parameterProperties({
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
-  result[r'tags'] = tags.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'tags'] = tags.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1381,7 +1390,7 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1390,16 +1399,16 @@ Map<String, String> parameterProperties({
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
+  final _$result = <String, String>{};
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(
+    _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'tags'] = '';
+    _$result[r'tags'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1441,7 +1450,7 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -1450,20 +1459,20 @@ Map<String, String> parameterProperties({
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
-  result[r'name'] = name.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
   if (tags != null) {
-    result[r'tags'] = tags!.uriEncode(
+    _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   } else if (allowEmpty) {
-    result[r'tags'] = '';
+    _$result[r'tags'] = '';
   }
-  return result;
+  return _$result;
 }
 ''';
 
@@ -1502,28 +1511,194 @@ Map<String, String> parameterProperties({
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
 }) {
-  final result = <String, String>{};
-  result[r'name'] = name.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
-  result[r'age'] = age.uriEncode(
+  _$result[r'age'] = age.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
-  return result;
+  return _$result;
 }
 ''';
 
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for required property '
+      'referencing nullable AliasModel (simple encoding)',
+      () {
+        // AliasModel with isNullable=true means the typedef is
+        // `typedef Foo = String?`, so the field type is nullable even though
+        // Property.isNullable is false.
+        final nullableAlias = AliasModel(
+          name: 'NullableDescription',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Item',
+          properties: [
+            Property(
+              name: 'description',
+              model: nullableAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // Should generate null-aware encoding because the model is nullable
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  if (description != null) {
+    _$result[r'description'] = description!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'description'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for required property '
+      'referencing nullable AliasModel in mixed-shape model',
+      () {
+        // Same scenario in mixed-shape context
+        final nullableAlias = AliasModel(
+          name: 'NullableDescription',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'MixedItem',
+          properties: [
+            Property(
+              name: 'description',
+              model: nullableAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // The simple property with nullable model should have null check
+        expect(
+          collapseWhitespace(classCode),
+          contains(
+            collapseWhitespace(r'''
+if (description != null) {
+  _$result[r'description'] = description!.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+} else if (allowEmpty) {
+  _$result[r'description'] = '';
+}'''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for required property '
+      'referencing nullable ListModel',
+      () {
+        // ListModel with isNullable=true
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+                isNullable: true,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // Should NOT have the unconditional "if (!allowLists)" guard
+        // because the list is nullable (even though required)
+        expect(
+          collapseWhitespace(classCode),
+          isNot(
+            contains(
+              collapseWhitespace(
+                'if (!allowLists) {'
+                "  throw EncodingException('Lists are not supported",
+              ),
+            ),
+          ),
+        );
+
+        // Should have null-aware access
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace('if (items != null)')),
         );
       },
     );
@@ -1571,6 +1746,138 @@ String toForm({
     alreadyEncoded: true,
     useQueryComponent: useQueryComponent,
   );
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates null-safe toJson and fromJson for required property '
+      'referencing AliasModel that wraps nullable ClassModel',
+      () {
+        // AliasModel(isNullable: false) wrapping ClassModel(isNullable: true)
+        // simulates `typedef Outer = Inner; typedef Inner = $RawInner?;`
+        final innerClass = ClassModel(
+          isDeprecated: false,
+          name: 'Inner',
+          properties: [
+            Property(
+              name: 'value',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final outerAlias = AliasModel(
+          name: 'Outer',
+          model: innerClass,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Container',
+          properties: [
+            Property(
+              name: 'inner',
+              model: outerAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // toJson should use null-safe access because the underlying model
+        // is nullable via typedef chain
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace("r'inner': inner?.toJson()")),
+        );
+
+        // fromJson should use null-safe decoding
+        expect(
+          collapseWhitespace(classCode),
+          contains(
+            collapseWhitespace(
+              r"_$map[r'inner'] == null ? null "
+              r": Inner.fromJson(_$map[r'inner'])",
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with null check for property '
+      'referencing nested AliasModel chain where inner alias is nullable',
+      () {
+        // AliasModel(isNullable: false) wrapping
+        //   AliasModel(isNullable: true) wrapping StringModel
+        // simulates `typedef Outer = Inner; typedef Inner = String?;`
+        final innerAlias = AliasModel(
+          name: 'InnerAlias',
+          model: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+
+        final outerAlias = AliasModel(
+          name: 'OuterAlias',
+          model: innerAlias,
+          context: context,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Wrapper',
+          properties: [
+            Property(
+              name: 'label',
+              model: outerAlias,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        // Should generate null-aware encoding because the nested alias
+        // is nullable
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  if (label != null) {
+    _$result[r'label'] = label!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'label'] = '';
+  }
+  return _$result;
 }
 ''';
 

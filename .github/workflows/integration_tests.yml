@@ -161,3 +161,28 @@ jobs:
         run: |
           cd integration_test/multipart/multipart_test
           dart test --concurrency=2
+
+      - name: Run figma integration tests
+        run: |
+          cd integration_test/figma/figma_test
+          dart test --concurrency=2
+
+      - name: Run stripe integration tests
+        run: |
+          cd integration_test/stripe/stripe_test
+          dart test --concurrency=2
+
+      - name: Run github integration tests
+        run: |
+          cd integration_test/github/github_test
+          dart test --concurrency=2
+
+      - name: Run openai integration tests
+        run: |
+          cd integration_test/openai/openai_test
+          dart test --concurrency=2
+
+      - name: Run asana integration tests
+        run: |
+          cd integration_test/asana/asana_test
+          dart test --concurrency=2

@@ -13,7 +13,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -910,8 +913,7 @@ void main() {
       );
     });
 
-    test('generates deprecated annotation for deprecated multipart header',
-        () {
+    test('generates deprecated annotation for deprecated multipart header', () {
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,

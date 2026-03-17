@@ -56,7 +56,9 @@ Expression _buildSerializationExpression(
   final directReceiver = forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
       !forceNonNullReceiver &&
-      (isNullable || (model is EnumModel && model.isNullable));
+      (isNullable ||
+          (model is EnumModel && model.isNullable) ||
+          model.isEffectivelyNullable);
 
   Expression callMethod(String methodName) {
     if (forceNonNullReceiver) {
@@ -101,7 +103,7 @@ Expression _buildSerializationExpression(
     AliasModel() => _buildSerializationExpression(
       receiver,
       model.model,
-      isNullable,
+      isNullable || model.isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
     ),
     PrimitiveModel() => directReceiver,
@@ -123,8 +125,8 @@ Expression _handleListExpression(
     return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
-  final isContentNullable =
-      contentModel is AliasModel && contentModel.isNullable;
+  final isContentNullable = contentModel.isEffectivelyNullable ||
+      (contentModel is AliasModel && contentModel.isNullable);
 
   final innerExpr = _buildSerializationExpression(
     refer('e'),

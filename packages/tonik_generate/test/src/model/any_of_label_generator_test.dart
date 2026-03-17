@@ -18,10 +18,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = AnyOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -43,31 +47,34 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
+          final _$values = <String>{};
           if (bool != null) {
-            final boolLabel = bool!.toLabel(explode: explode, allowEmpty: allowEmpty);
-            values.add(boolLabel);
-          }
-          if (int != null) {
-            final intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty);
-            values.add(intLabel);
-          }
-          if (string != null) {
-            final stringLabel = string!.toLabel(
+            final _$boolLabel = bool!.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(stringLabel);
+            _$values.add(_$boolLabel);
           }
-          if (values.isEmpty) return '';
-          if (values.length > 1) {
+          if (int != null) {
+            final _$intLabel = int!.toLabel(explode: explode, allowEmpty: allowEmpty);
+            _$values.add(_$intLabel);
+          }
+          if (string != null) {
+            final _$stringLabel = string!.toLabel(
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$stringLabel);
+          }
+          if (_$values.isEmpty) return '';
+          if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf label encoding for AnyOfPrimitive: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return values.first;
+          return _$values.first;
         }
       ''';
 
@@ -122,29 +129,29 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
+          final _$mapValues = <Map<String, String>>[];
+          String? _$discriminatorValue;
           if (class1 != null) {
-            final class1Label = class1!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(class1Label);
-            discriminatorValue ??= r'class1';
+            final _$class1Label = class1!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$class1Label);
+            _$discriminatorValue ??= r'class1';
           }
           if (class2 != null) {
-            final class2Label = class2!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(class2Label);
-            discriminatorValue ??= r'class2';
+            final _$class2Label = class2!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$class2Label);
+            _$discriminatorValue ??= r'class2';
           }
-          final map = <String, String>{};
-          for (final m in mapValues) {
-            map.addAll(m);
+          final _$map = <String, String>{};
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
           }
-          final discValue = discriminatorValue;
-          if (discValue != null) {
-            map.putIfAbsent('type', () => discValue);
+          final _$discValue = _$discriminatorValue;
+          if (_$discValue != null) {
+            _$map.putIfAbsent('type', () => _$discValue);
           }
-          return map.toLabel(
+          return _$map.toLabel(
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
@@ -189,46 +196,46 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = '''
+      const expectedMethod = r'''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
-          final mapValues = <Map<String, String>>[];
-          String? discriminatorValue;
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, String>>[];
+          String? _$discriminatorValue;
           if (data != null) {
-            final dataLabel = data!.parameterProperties(allowEmpty: allowEmpty);
-            mapValues.add(dataLabel);
-            discriminatorValue ??= r'data';
+            final _$dataLabel = data!.parameterProperties(allowEmpty: allowEmpty);
+            _$mapValues.add(_$dataLabel);
+            _$discriminatorValue ??= r'data';
           }
           if (string != null) {
-            final stringLabel = string!.toLabel(
+            final _$stringLabel = string!.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(stringLabel);
+            _$values.add(_$stringLabel);
           }
-          if (values.isEmpty && mapValues.isEmpty) return '';
-          if (mapValues.isNotEmpty && values.isNotEmpty) {
+          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
             throw EncodingException(
               r'Ambiguous anyOf label encoding for AnyOfMixed: mixing simple and complex values',
             );
           }
-          if (values.isNotEmpty) {
-            if (values.length > 1) {
+          if (_$values.isNotEmpty) {
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Ambiguous anyOf label encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
               );
             }
-            return values.first;
+            return _$values.first;
           } else {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
+            final _$map = <String, String>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
             }
-            final discValue = discriminatorValue;
-            if (discValue != null) {
-              map.putIfAbsent('type', () => discValue);
+            final _$discValue = _$discriminatorValue;
+            if (_$discValue != null) {
+              _$map.putIfAbsent('type', () => _$discValue);
             }
-            return map.toLabel(
+            return _$map.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
               alreadyEncoded: true,
@@ -307,22 +314,22 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
-      const expected = '''
+      const expected = r'''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          final values = <String>{};
-          final mapValues = <Map<String, String>>[];
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, String>>[];
           if (innerChoice != null) {
             switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
-                values.add(
+                _$values.add(
                   innerChoice!.toLabel(explode: explode, allowEmpty: allowEmpty),
                 );
                 break;
               case EncodingShape.complex:
-                final innerChoiceLabel = innerChoice!.parameterProperties(
+                final _$innerChoiceLabel = innerChoice!.parameterProperties(
                   allowEmpty: allowEmpty,
                 );
-                mapValues.add(innerChoiceLabel);
+                _$mapValues.add(_$innerChoiceLabel);
                 break;
               case EncodingShape.mixed:
                 throw EncodingException(
@@ -331,31 +338,31 @@ void main() {
             }
           }
           if (string != null) {
-            final stringLabel = string!.toLabel(
+            final _$stringLabel = string!.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
             );
-            values.add(stringLabel);
+            _$values.add(_$stringLabel);
           }
-          if (values.isEmpty && mapValues.isEmpty) return '';
-          if (mapValues.isNotEmpty && values.isNotEmpty) {
+          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
             throw EncodingException(
               r'Ambiguous anyOf label encoding for TestAnyOf: mixing simple and complex values',
             );
           }
-          if (values.isNotEmpty) {
-            if (values.length > 1) {
+          if (_$values.isNotEmpty) {
+            if (_$values.length > 1) {
               throw EncodingException(
                 r'Ambiguous anyOf label encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
               );
             }
-            return values.first;
+            return _$values.first;
           } else {
-            final map = <String, String>{};
-            for (final m in mapValues) {
-              map.addAll(m);
+            final _$map = <String, String>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
             }
-            return map.toLabel(
+            return _$map.toLabel(
               explode: explode,
               allowEmpty: allowEmpty,
               alreadyEncoded: true,
@@ -367,6 +374,30 @@ void main() {
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(expected)),
+      );
+    });
+  });
+
+  group('BinaryModel field encoding', () {
+    test('throws EncodingException for BinaryModel field in toLabel', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'WithBinary',
+        models: {
+          (discriminatorValue: null, model: BinaryModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(klass.accept(emitter).toString());
+
+      expect(
+        generated,
+        contains(
+          "throw EncodingException('Binary data cannot be label-encoded')",
+        ),
       );
     });
   });

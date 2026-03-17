@@ -7,6 +7,45 @@ sealed class Model {
 
   final Context context;
   EncodingShape get encodingShape;
+
+  /// Whether this model produces a nullable Dart type, including through
+  /// typedef/alias chains.
+  bool get isEffectivelyNullable => switch (this) {
+    AliasModel(:final isNullable, :final model) =>
+      isNullable || model.isEffectivelyNullable,
+    ClassModel(:final isNullable) => isNullable,
+    EnumModel(:final isNullable) => isNullable,
+    ListModel(:final isNullable) => isNullable,
+    AllOfModel(:final isNullable) => isNullable,
+    OneOfModel(:final isNullable) => isNullable,
+    AnyOfModel(:final isNullable) => isNullable,
+    _ => false,
+  };
+
+  /// Short non-recursive label for use in other models' [toString] output.
+  String get _ref => switch (this) {
+    AliasModel(:final name) => 'AliasModel($name)',
+    ListModel(:final name) => 'ListModel($name)',
+    ClassModel(:final name) => 'ClassModel($name)',
+    EnumModel(:final name) => 'EnumModel($name)',
+    AllOfModel(:final name) => 'AllOfModel($name)',
+    OneOfModel(:final name) => 'OneOfModel($name)',
+    AnyOfModel(:final name) => 'AnyOfModel($name)',
+    IntegerModel() => 'IntegerModel',
+    DoubleModel() => 'DoubleModel',
+    NumberModel() => 'NumberModel',
+    StringModel() => 'StringModel',
+    BooleanModel() => 'BooleanModel',
+    DateTimeModel() => 'DateTimeModel',
+    DateModel() => 'DateModel',
+    DecimalModel() => 'DecimalModel',
+    UriModel() => 'UriModel',
+    BinaryModel() => 'BinaryModel',
+    Base64Model() => 'Base64Model',
+    AnyModel() => 'AnyModel',
+    NeverModel() => 'NeverModel',
+    _ => 'Model',
+  };
 }
 
 mixin NamedModel on Model {
@@ -90,8 +129,9 @@ class AliasModel extends Model with NamedModel {
 
   @override
   String toString() =>
-      'AliasModel{name: $name, nameOverride: $nameOverride, model: $model, '
-      'description: $description, isDeprecated: $isDeprecated}';
+      'AliasModel{name: $name, nameOverride: $nameOverride, '
+      'model: ${model._ref}, description: $description, '
+      'isDeprecated: $isDeprecated}';
 }
 
 class ListModel extends Model with NamedModel {
@@ -122,7 +162,8 @@ class ListModel extends Model with NamedModel {
 
   @override
   String toString() =>
-      'ListModel{name: $name, nameOverride: $nameOverride, content: $content}';
+      'ListModel{name: $name, nameOverride: $nameOverride, '
+      'content: ${content._ref}}';
 }
 
 class ClassModel extends Model with NamedModel {
@@ -156,8 +197,8 @@ class ClassModel extends Model with NamedModel {
   @override
   String toString() =>
       'ClassModel{name: $name, nameOverride: $nameOverride, '
-      'properties: $properties, description: $description, '
-      'isDeprecated: $isDeprecated}';
+      'properties: [${properties.map((p) => p.name).join(', ')}], '
+      'description: $description, isDeprecated: $isDeprecated}';
 }
 
 /// Represents an individual value within an enum, with optional name override.
@@ -254,7 +295,8 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
 
   @override
   String toString() =>
-      'AllOfModel{name: $name, nameOverride: $nameOverride, models: $models, '
+      'AllOfModel{name: $name, nameOverride: $nameOverride, '
+      'models: {${models.map((m) => m._ref).join(', ')}}, '
       'description: $description, isDeprecated: $isDeprecated}';
 }
 
@@ -292,7 +334,8 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
 
   @override
   String toString() =>
-      'OneOfModel{name: $name, nameOverride: $nameOverride, models: $models, '
+      'OneOfModel{name: $name, nameOverride: $nameOverride, '
+      'models: {${models.map((m) => m.model._ref).join(', ')}}, '
       'discriminator: $discriminator, description: $description, '
       'isDeprecated: $isDeprecated}';
 }
@@ -329,7 +372,8 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
 
   @override
   String toString() =>
-      'AnyOfModel{name: $name, nameOverride: $nameOverride, models: $models, '
+      'AnyOfModel{name: $name, nameOverride: $nameOverride, '
+      'models: {${models.map((m) => m.model._ref).join(', ')}}, '
       'discriminator: $discriminator, description: $description, '
       'isDeprecated: $isDeprecated}';
 }
@@ -464,8 +508,9 @@ class Property {
 
   @override
   String toString() =>
-      'Property{name: $name, nameOverride: $nameOverride, model: $model, '
-      'isRequired: $isRequired, isNullable: $isNullable, '
-      'isDeprecated: $isDeprecated, isReadOnly: $isReadOnly, '
-      'isWriteOnly: $isWriteOnly, description: $description}';
+      'Property{name: $name, nameOverride: $nameOverride, '
+      'model: ${model._ref}, isRequired: $isRequired, '
+      'isNullable: $isNullable, isDeprecated: $isDeprecated, '
+      'isReadOnly: $isReadOnly, isWriteOnly: $isWriteOnly, '
+      'description: $description}';
 }

@@ -234,6 +234,7 @@ class DataGenerator {
           useQueryComponent: true,
           explodeLiteral: true,
           allowEmptyLiteral: true,
+          isNullable: !isRequired,
         );
         bodyCode
           ..add(formExpr.code)
@@ -241,15 +242,17 @@ class DataGenerator {
       case ContentType.multipart:
         bodyCode
           ..clear()
-          ..addAll(
-            buildMultipartBodyStatements(
+          ..addAll([
+            if (!isRequired)
+              const Code('if (body == null) return null;\n'),
+            ...buildMultipartBodyStatements(
               content.first,
               'body',
               nameManager,
               package,
             ),
-          )
-          ..add(refer('formData').returned.statement);
+          ])
+          ..add(refer(r'_$formData').returned.statement);
     }
 
     // Collect multipart header params for single-content multipart bodies.
@@ -293,7 +296,7 @@ class DataGenerator {
               ..name = 'body'
               ..type = parameterType
               ..named = true
-              ..required = true,
+              ..required = isRequired,
           ),
         )
         ..optionalParameters.addAll(multipartHeaderParams)

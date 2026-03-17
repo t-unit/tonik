@@ -11,7 +11,10 @@ void main() {
     late Context context;
 
     setUp(() {
-      nameManager = NameManager(generator: NameGenerator());
+      nameManager = NameManager(
+        generator: NameGenerator(),
+        stableModelSorter: StableModelSorter(),
+      );
       context = Context.initial();
     });
 
@@ -588,55 +591,58 @@ void main() {
         );
       });
 
-      test('generates null-checked TonikFileBytes for optional BinaryModel',
-          () {
-        final expression = buildFromFormValueExpression(
-          refer("values['file']"),
-          model: BinaryModel(context: context),
-          isRequired: false,
-          nameManager: nameManager,
-          package: 'test_package',
-          contextClass: 'TestClass',
-          contextProperty: 'file',
-        );
+      test(
+        'generates null-checked TonikFileBytes for optional BinaryModel',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer("values['file']"),
+            model: BinaryModel(context: context),
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'test_package',
+            contextClass: 'TestClass',
+            contextProperty: 'file',
+          );
 
-        final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          // Strings split at function call boundary; no space possible.
-          // ignore: missing_whitespace_between_adjacent_strings
-          "values['file'] == null ? null : TonikFileBytes("
-          "values['file'].decodeFormBinary(context: r'TestClass.file'))",
-        );
-      });
-
-      test('generates TonikFileBytes mapping for required List<BinaryModel>',
-          () {
-        final expression = buildFromFormValueExpression(
-          refer("values['files']"),
-          model: ListModel(
-            content: BinaryModel(context: context),
-            context: context,
-          ),
-          isRequired: true,
-          nameManager: nameManager,
-          package: 'test_package',
-          contextClass: 'TestClass',
-          contextProperty: 'files',
-        );
-
-        final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          "values['files'].decodeFormStringList("
-          "context: r'TestClass.files').map((e) => "
-          'TonikFileBytes(e.decodeFormBinary('
-          "context: r'TestClass.files'))).toList()",
-        );
-      });
+          final code = expression.accept(DartEmitter()).toString();
+          expect(
+            code,
+            // Strings split at function call boundary; no space possible.
+            // ignore: missing_whitespace_between_adjacent_strings
+            "values['file'] == null ? null : TonikFileBytes("
+            "values['file'].decodeFormBinary(context: r'TestClass.file'))",
+          );
+        },
+      );
 
       test(
-          'generates nullable TonikFileBytes mapping for optional '
+        'generates TonikFileBytes mapping for required List<BinaryModel>',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer("values['files']"),
+            model: ListModel(
+              content: BinaryModel(context: context),
+              context: context,
+            ),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'test_package',
+            contextClass: 'TestClass',
+            contextProperty: 'files',
+          );
+
+          final code = expression.accept(DartEmitter()).toString();
+          expect(
+            code,
+            "values['files'].decodeFormStringList("
+            "context: r'TestClass.files').map((e) => "
+            'TonikFileBytes(e.decodeFormBinary('
+            "context: r'TestClass.files'))).toList()",
+          );
+        },
+      );
+
+      test('generates nullable TonikFileBytes mapping for optional '
           'List<BinaryModel>', () {
         final expression = buildFromFormValueExpression(
           refer("values['files']"),
@@ -682,55 +688,58 @@ void main() {
         );
       });
 
-      test('generates null-checked TonikFileBytes for optional Base64Model',
-          () {
-        final expression = buildFromFormValueExpression(
-          refer("values['file']"),
-          model: Base64Model(context: context),
-          isRequired: false,
-          nameManager: nameManager,
-          package: 'test_package',
-          contextClass: 'TestClass',
-          contextProperty: 'file',
-        );
+      test(
+        'generates null-checked TonikFileBytes for optional Base64Model',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer("values['file']"),
+            model: Base64Model(context: context),
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'test_package',
+            contextClass: 'TestClass',
+            contextProperty: 'file',
+          );
 
-        final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          // Strings split at function call boundary; no space possible.
-          // ignore: missing_whitespace_between_adjacent_strings
-          "values['file'] == null ? null : TonikFileBytes("
-          "values['file'].decodeFormBase64(context: r'TestClass.file'))",
-        );
-      });
-
-      test('generates TonikFileBytes mapping for required List<Base64Model>',
-          () {
-        final expression = buildFromFormValueExpression(
-          refer("values['files']"),
-          model: ListModel(
-            content: Base64Model(context: context),
-            context: context,
-          ),
-          isRequired: true,
-          nameManager: nameManager,
-          package: 'test_package',
-          contextClass: 'TestClass',
-          contextProperty: 'files',
-        );
-
-        final code = expression.accept(DartEmitter()).toString();
-        expect(
-          code,
-          "values['files'].decodeFormStringList("
-          "context: r'TestClass.files').map((e) => "
-          'TonikFileBytes(e.decodeFormBase64('
-          "context: r'TestClass.files'))).toList()",
-        );
-      });
+          final code = expression.accept(DartEmitter()).toString();
+          expect(
+            code,
+            // Strings split at function call boundary; no space possible.
+            // ignore: missing_whitespace_between_adjacent_strings
+            "values['file'] == null ? null : TonikFileBytes("
+            "values['file'].decodeFormBase64(context: r'TestClass.file'))",
+          );
+        },
+      );
 
       test(
-          'generates nullable TonikFileBytes mapping for optional '
+        'generates TonikFileBytes mapping for required List<Base64Model>',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer("values['files']"),
+            model: ListModel(
+              content: Base64Model(context: context),
+              context: context,
+            ),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'test_package',
+            contextClass: 'TestClass',
+            contextProperty: 'files',
+          );
+
+          final code = expression.accept(DartEmitter()).toString();
+          expect(
+            code,
+            "values['files'].decodeFormStringList("
+            "context: r'TestClass.files').map((e) => "
+            'TonikFileBytes(e.decodeFormBase64('
+            "context: r'TestClass.files'))).toList()",
+          );
+        },
+      );
+
+      test('generates nullable TonikFileBytes mapping for optional '
           'List<Base64Model>', () {
         final expression = buildFromFormValueExpression(
           refer("values['files']"),

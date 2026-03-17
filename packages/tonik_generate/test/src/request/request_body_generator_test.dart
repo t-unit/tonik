@@ -17,7 +17,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = RequestBodyGenerator(
       nameManager: nameManager,
       package: 'test_package',
@@ -188,7 +191,7 @@ void main() {
             @override
             bool operator ==(Object other) {
               if (identical(this, other)) return true;
-              return other is MultiBodyJson && other.value == value;
+              return other is MultiBodyJson && other.value == this.value;
             }
           ''';
 
@@ -229,7 +232,7 @@ void main() {
             bool operator ==(Object other) {
               if (identical(this, other)) return true;
               const _$deepEquals = DeepCollectionEquality();
-              return other is MultiBodyJson && _$deepEquals.equals(other.value, value);
+              return other is MultiBodyJson && _$deepEquals.equals(other.value, this.value);
             }
           ''';
 

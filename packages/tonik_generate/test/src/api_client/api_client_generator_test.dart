@@ -18,7 +18,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ApiClientGenerator(
       nameManager: nameManager,
       package: 'package:test_package/test_package.dart',
@@ -853,6 +856,143 @@ void main() {
         );
       });
 
+      test('handles multi-line parameter descriptions with quotes', () {
+        final operation = Operation(
+          operationId: 'listAlerts',
+          context: testContext,
+          summary: 'List alerts',
+          tags: {Tag(name: 'alerts')},
+          isDeprecated: false,
+          path: '/alerts',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {
+            QueryParameterObject(
+              name: 'sort',
+              rawName: 'sort',
+              description:
+                  "Sort property.\n`updated` means the alert's state changed.",
+              isRequired: false,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              allowReserved: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: QueryParameterEncoding.form,
+              context: testContext,
+            ),
+          },
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'alerts'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        expect(method.docs, [
+          '/// List alerts',
+          '/// [sort] Sort property.',
+          "/// `updated` means the alert's state changed.",
+        ]);
+      });
+
+      test('multi-line path parameter description produces valid code', () {
+        final operation = Operation(
+          operationId: 'getItem',
+          context: testContext,
+          summary: 'Get item',
+          tags: {Tag(name: 'items')},
+          isDeprecated: false,
+          path: '/items/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: {
+            PathParameterObject(
+              name: 'id',
+              rawName: 'id',
+              description: "The item's unique ID.\nMust be a valid UUID.",
+              isRequired: true,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: PathParameterEncoding.simple,
+              context: testContext,
+            ),
+          },
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'items'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        expect(method.docs, [
+          '/// Get item',
+          "/// [id] The item's unique ID.",
+          '/// Must be a valid UUID.',
+        ]);
+      });
+
+      test('multi-line header description produces valid code', () {
+        final operation = Operation(
+          operationId: 'getStuff',
+          context: testContext,
+          summary: 'Get stuff',
+          tags: {Tag(name: 'stuff')},
+          isDeprecated: false,
+          path: '/stuff',
+          method: HttpMethod.get,
+          headers: {
+            RequestHeaderObject(
+              name: 'X-Custom',
+              rawName: 'X-Custom',
+              description: "Line one with quote's.\nLine two.",
+              isRequired: false,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: HeaderParameterEncoding.simple,
+              context: testContext,
+            ),
+          },
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'stuff'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        expect(method.docs, [
+          '/// Get stuff',
+          "/// [custom] Line one with quote's.",
+          '/// Line two.',
+        ]);
+      });
+
       test('includes overridden description from parameter alias', () {
         final originalParam = QueryParameterObject(
           name: 'limit',
@@ -904,6 +1044,189 @@ void main() {
           method.docs,
           contains('/// [limit] Overridden description from reference'),
         );
+      });
+    });
+
+    group('security scheme descriptions with newlines', () {
+      test('multi-line API key description produces valid doc comments', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: {
+            const ApiKeySecurityScheme(
+              type: SecuritySchemeType.apiKey,
+              location: ApiKeyLocation.header,
+              description:
+                  "The API key.\nMust be a valid key from the admin's panel.",
+            ),
+          },
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        expect(method.docs, [
+          '/// Get user',
+          '///',
+          '/// Security:',
+          '/// - API Key (header): The API key.',
+          "/// Must be a valid key from the admin's panel.",
+        ]);
+      });
+
+      test(
+        'multi-line HTTP scheme description produces valid doc comments',
+        () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            tags: {Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: {
+              const HttpSecurityScheme(
+                type: SecuritySchemeType.http,
+                scheme: 'bearer',
+                bearerFormat: null,
+                description: 'Bearer token auth.\nUse the /login endpoint.',
+              ),
+            },
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'users'),
+            testServers,
+          );
+
+          final method = generatedClass.methods.first;
+
+          expect(method.docs, [
+            '/// Get user',
+            '///',
+            '/// Security:',
+            '/// - HTTP Bearer: Bearer token auth.',
+            '/// Use the /login endpoint.',
+          ]);
+        },
+      );
+
+      test('multi-line OAuth2 description produces valid doc comments', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: {
+            const OAuth2SecurityScheme(
+              type: SecuritySchemeType.oauth2,
+              description: "OAuth2 authentication.\nSee the developer's guide.",
+              flows: OAuth2Flows(
+                authorizationCode: null,
+                implicit: null,
+                password: null,
+                clientCredentials: null,
+              ),
+            ),
+          },
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+
+        expect(method.docs, [
+          '/// Get user',
+          '///',
+          '/// Security:',
+          '/// - OAuth2: OAuth2 authentication.',
+          "/// See the developer's guide.",
+        ]);
+      });
+
+      test('multi-line security description does not crash '
+          'DartFormatter', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {
+            QueryParameterObject(
+              name: 'sort',
+              rawName: 'sort',
+              description:
+                  "Sort property.\n`updated` means the alert's state changed.",
+              isRequired: false,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              allowReserved: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: QueryParameterEncoding.form,
+              context: testContext,
+            ),
+          },
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: {
+            const ApiKeySecurityScheme(
+              type: SecuritySchemeType.apiKey,
+              location: ApiKeyLocation.header,
+              description:
+                  "The API key.\nMust be a valid key from admin's panel.",
+            ),
+          },
+        );
+
+        // This should not throw - the bug was that DartFormatter would
+        // crash with "Unterminated string literal" on multi-line descriptions
+        final result = generator.generate(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+
+        expect(result.code, contains('class UsersApi'));
       });
     });
 

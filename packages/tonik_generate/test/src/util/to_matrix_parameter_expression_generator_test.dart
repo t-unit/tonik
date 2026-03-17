@@ -205,7 +205,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value.map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -239,7 +239,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value.map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(
@@ -248,7 +248,7 @@ void main() {
       );
     });
 
-    test('generates toMatrix call for List<Class>', () {
+    test('generates EncodingException for List<Class>', () {
       final classModel = ClassModel(
         isDeprecated: false,
         name: 'User',
@@ -277,7 +277,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        final result = throw EncodingException('Lists with complex content cannot be matrix-encoded');
       ''';
 
       expect(
@@ -286,7 +286,7 @@ void main() {
       );
     });
 
-    test('generates toMatrix call for List<List<String>>', () {
+    test('generates EncodingException for List<List<String>>', () {
       final innerList = ListModel(
         content: StringModel(context: context),
         context: context,
@@ -305,7 +305,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        final result = throw EncodingException('Lists with complex content cannot be matrix-encoded');
       ''';
 
       expect(
@@ -392,7 +392,7 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+        final result = value.map<String>((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
 
       expect(

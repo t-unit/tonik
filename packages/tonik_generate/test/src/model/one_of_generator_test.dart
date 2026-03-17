@@ -19,10 +19,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = OneOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -516,7 +520,7 @@ void main() {
           @override
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
-            return other is ResultSuccess && other.value == value;
+            return other is ResultSuccess && other.value == this.value;
           }
 
           @override
@@ -559,7 +563,7 @@ void main() {
           bool operator ==(Object other) {
             if (identical(this, other)) return true;
             const _$deepEquals = DeepCollectionEquality();
-            return other is ResultStrings && _$deepEquals.equals(other.value, value);
+            return other is ResultStrings && _$deepEquals.equals(other.value, this.value);
           }
           
           @override
@@ -1527,7 +1531,7 @@ void main() {
                 return ValueString(value.decodeSimpleString(context: r'Value'));
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
-              throw SimpleDecodingException('Invalid simple value for Value');
+              throw SimpleDecodingException(r'Invalid simple value for Value');
             }
           '''),
         ),
@@ -1569,7 +1573,7 @@ void main() {
                 return ValueString(value.decodeFormString(context: r'Value'));
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
-              throw SimpleDecodingException('Invalid form value for Value');
+              throw SimpleDecodingException(r'Invalid form value for Value');
             }
           '''),
         ),
@@ -1609,7 +1613,7 @@ void main() {
               try {
                 return ValueList(json.decodeJsonList<String>(context: r'Value'));
               } on Object catch (_) {}
-              throw JsonDecodingException('Invalid JSON for Value');
+              throw JsonDecodingException(r'Invalid JSON for Value');
             }
           '''),
         ),
@@ -1651,7 +1655,7 @@ void main() {
                 return ValueString(value.decodeSimpleString(context: r'Value'));
               } on DecodingException catch (_) {
               } on FormatException catch (_) {}
-              throw SimpleDecodingException('Invalid simple value for Value');
+              throw SimpleDecodingException(r'Invalid simple value for Value');
             }
           '''),
         ),
@@ -1701,5 +1705,762 @@ void main() {
         ),
       );
     });
+
+    test(
+      'fromSimple with discriminator excludes ListModel from '
+      'discriminator dispatch',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        // ListModel should NOT appear in the discriminator dispatch block
+        // and should only be handled via the try/catch decode path
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              factory Value.fromSimple(String? value, {required bool explode}) {
+                try {
+                  return ValueList(value.decodeSimpleStringList(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                try {
+                  return ValueStr(value.decodeSimpleString(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                throw SimpleDecodingException(r'Invalid simple value for Value');
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'fromForm with discriminator excludes ListModel from '
+      'discriminator dispatch',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              factory Value.fromForm(String? value, {required bool explode}) {
+                try {
+                  return ValueList(value.decodeFormStringList(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                try {
+                  return ValueStr(value.decodeFormString(context: r'Value'));
+                } on DecodingException catch (_) {
+                } on FormatException catch (_) {}
+                throw SimpleDecodingException(r'Invalid form value for Value');
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'toSimple with discriminator and ListModel with simple content '
+      'uses buildSimpleParameterExpression',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              @override
+              String toSimple({required bool explode, required bool allowEmpty}) {
+                return switch (this) {
+                  ValueList(:final value) => value.toSimple(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                  ValueStr(:final value) => value.toSimple(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'toSimple with discriminator and ListModel with complex content '
+      'throws EncodingException',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: ClassModel(
+                  properties: const [],
+                  context: context,
+                  isDeprecated: false,
+                ),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              @override
+              String toSimple({required bool explode, required bool allowEmpty}) {
+                return switch (this) {
+                  ValueList() => throw EncodingException(
+                    'Lists with complex content are not supported for encoding',
+                  ),
+                  ValueStr(:final value) => value.toSimple(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'toForm with discriminator and ListModel with simple content '
+      'uses buildFormParameterExpression',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              @override
+              String toForm({
+                required bool explode,
+                required bool allowEmpty,
+                bool useQueryComponent = false,
+              }) {
+                return switch (this) {
+                  ValueList(:final value) => value.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                  ValueStr(:final value) => value.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'toForm with discriminator and ListModel with complex content '
+      'throws EncodingException',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: ClassModel(
+                  properties: const [],
+                  context: context,
+                  isDeprecated: false,
+                ),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              @override
+              String toForm({
+                required bool explode,
+                required bool allowEmpty,
+                bool useQueryComponent = false,
+              }) {
+                return switch (this) {
+                  ValueList() => throw EncodingException(
+                    'Lists with complex content are not supported for encoding',
+                  ),
+                  ValueStr(:final value) => value.toForm(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'toLabel with discriminator and ListModel with simple content '
+      'uses buildLabelParameterExpression',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              @override
+              String toLabel({required bool explode, required bool allowEmpty}) {
+                return switch (this) {
+                  ValueList(:final value) => value.toLabel(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                  ValueStr(:final value) => value.toLabel(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'toLabel with discriminator and ListModel with complex content '
+      'throws EncodingException',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: ClassModel(
+                  properties: const [],
+                  context: context,
+                  isDeprecated: false,
+                ),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              @override
+              String toLabel({required bool explode, required bool allowEmpty}) {
+                return switch (this) {
+                  ValueList() => throw EncodingException(
+                    'Lists with complex content are not supported for encoding',
+                  ),
+                  ValueStr(:final value) => value.toLabel(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'parameterProperties with discriminator and ListModel '
+      'throws EncodingException',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          discriminator: 'type',
+          models: {
+            (
+              discriminatorValue: 'list',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: 'str',
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              Map<String, String> parameterProperties({
+                bool allowEmpty = true,
+                bool allowLists = true,
+              }) {
+                return switch (this) {
+                  ValueList() => throw EncodingException(
+                    'Lists are not supported in parameterProperties',
+                  ),
+                  ValueStr() => throw EncodingException(
+                    r'parameterProperties not supported for Value: cannot determine properties at runtime',
+                  ),
+                };
+              }
+            '''),
+          ),
+        );
+      },
+    );
+  });
+
+  group('nullable variant encoding', () {
+    test(
+      'currentEncodingShape generates null check for nullable ClassModel '
+      'variant',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedGetter = '''
+          EncodingShape get currentEncodingShape {
+            return switch (this) {
+              ValueDetails(:final value) => value == null
+                ? EncodingShape.simple
+                : value.currentEncodingShape,
+              ValueString() => EncodingShape.simple,
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedGetter)),
+        );
+      },
+    );
+
+    test(
+      'toSimple generates null check for nullable ClassModel variant',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              'ValueDetails(:final value) => value == null '
+              "? '' : value.toSimple(explode: explode, "
+              'allowEmpty: allowEmpty),',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'parameterProperties generates null check for nullable ClassModel '
+      'variant',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) {
+            return switch (this) {
+              ValueDetails(:final value) => value == null
+                ? <String, String>{}
+                : value.parameterProperties(
+                    allowEmpty: allowEmpty,
+                    allowLists: allowLists,
+                  ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'nullable ClassModel variant subclass has nullable value field',
+      () {
+        final nullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final subclass = classes.firstWhere((c) => c.name == 'ValueDetails');
+        final valueField = subclass.fields.firstWhere(
+          (f) => f.name == 'value',
+        );
+        final fieldType = valueField.type!.accept(emitter).toString();
+
+        expect(fieldType, 'Details?');
+      },
+    );
+
+    test(
+      'nullable ListModel variant subclass has nullable value field',
+      () {
+        final nullableList = ListModel(
+          name: 'Items',
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nullableList),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final subclass = classes.firstWhere((c) => c.name == 'ValueItems');
+        final valueField = subclass.fields.firstWhere(
+          (f) => f.name == 'value',
+        );
+        final fieldType = valueField.type!.accept(emitter).toString();
+
+        expect(fieldType, 'List<String>?');
+      },
+    );
+
+    test(
+      'non-nullable ClassModel variant subclass has non-nullable value field',
+      () {
+        final nonNullableClass = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'info',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: nonNullableClass),
+            (
+              discriminatorValue: null,
+              model: StringModel(context: context),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final subclass = classes.firstWhere((c) => c.name == 'ValueDetails');
+        final valueField = subclass.fields.firstWhere(
+          (f) => f.name == 'value',
+        );
+        final fieldType = valueField.type!.accept(emitter).toString();
+
+        expect(fieldType, 'Details');
+      },
+    );
   });
 }

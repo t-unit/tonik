@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 Expression buildMatrixParameterExpression(
   Expression valueExpression,
@@ -52,9 +53,32 @@ Expression buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be matrix-encoded',
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for matrix encoding: $model',
     ),
+  };
+}
+
+/// Returns true if the matrix encoding expression for [model] uses the value
+/// (i.e., does not unconditionally throw).
+///
+/// Used by OneOf/AnyOf generators to decide whether to destructure the variant.
+bool matrixParameterExpressionUsesValue(Model model) {
+  return switch (model) {
+    BinaryModel() => false,
+    ListModel(:final content) => _listMatrixContentUsesValue(content),
+    _ => true,
+  };
+}
+
+bool _listMatrixContentUsesValue(Model content) {
+  return switch (content) {
+    ClassModel() || ListModel() => false,
+    AliasModel(:final model) => _listMatrixContentUsesValue(model),
+    _ => true,
   };
 }
 
@@ -102,18 +126,22 @@ Expression _buildListMatrixExpression(
     EnumModel() =>
       valueExpression
           .property('map')
-          .call([
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body = refer('e').property('uriEncode').call(
-                  [],
-                  {'allowEmpty': allowEmpty},
-                ).code,
-            ).closure,
-          ])
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body = refer('e').property('uriEncode').call(
+                    [],
+                    {'allowEmpty': allowEmpty},
+                  ).code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
           .property('toList')
           .call([])
           .property('toMatrix')
@@ -135,24 +163,28 @@ Expression _buildListMatrixExpression(
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
       valueExpression
           .property('map')
-          .call([
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body =
-                    refer(
-                          'encodeAnyToUri',
-                          'package:tonik_util/tonik_util.dart',
-                        )
-                        .call(
-                          [refer('e')],
-                          {'allowEmpty': allowEmpty},
-                        )
-                        .code,
-            ).closure,
-          ])
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body =
+                      refer(
+                            'encodeAnyToUri',
+                            'package:tonik_util/tonik_util.dart',
+                          )
+                          .call(
+                            [refer('e')],
+                            {'allowEmpty': allowEmpty},
+                          )
+                          .code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
           .property('toList')
           .call([])
           .property('toMatrix')
@@ -164,16 +196,12 @@ Expression _buildListMatrixExpression(
               'alreadyEncoded': literalTrue,
             },
           ),
-    ClassModel() || ListModel() =>
-      valueExpression
-          .property('toMatrix')
-          .call(
-            [paramName],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
-          ),
+    ClassModel() || ListModel() => generateEncodingExceptionExpression(
+      'Lists with complex content cannot be matrix-encoded',
+    ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be matrix-encoded',
+    ),
     _ => throw UnimplementedError(
       'Unsupported list content type for matrix encoding: $contentModel',
     ),

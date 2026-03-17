@@ -5,9 +5,10 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 
 /// Manages name generation and caches results for consistent naming.
 class NameManager {
-  NameManager({required this.generator});
+  NameManager({required this.generator, required this.stableModelSorter});
 
   final NameGenerator generator;
+  final StableModelSorter stableModelSorter;
 
   final modelNames = <Model, String>{};
 
@@ -87,7 +88,9 @@ class NameManager {
         if (contextComp != 0) return contextComp;
 
         // Finally, sort by stable model structure
-        return a.stableKey.compareTo(b.stableKey);
+        return stableModelSorter
+            .stableKeyOf(a)
+            .compareTo(stableModelSorter.stableKeyOf(b));
       });
 
     for (final model in sortedModels.where(

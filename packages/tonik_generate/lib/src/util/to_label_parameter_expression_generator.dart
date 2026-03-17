@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 Expression buildLabelParameterExpression(
   Expression valueExpression,
@@ -44,6 +45,9 @@ Expression buildLabelParameterExpression(
       valueExpression,
       explode: explode,
       allowEmpty: allowEmpty,
+    ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be label-encoded',
     ),
     _ => throw UnimplementedError(
       'Unsupported model type for label encoding: $model',
@@ -136,6 +140,9 @@ Expression _buildListLabelExpression(
         'explode': explode,
         'allowEmpty': allowEmpty,
       },
+    ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be label-encoded',
     ),
     _ => throw UnimplementedError(
       'Unsupported list content type for label encoding: $contentModel',

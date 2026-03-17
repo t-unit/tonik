@@ -17,9 +17,9 @@ Method generateEqualsMethod({
 
     if (prop.hasCollectionValue) {
       hasCollectionProperties = true;
-      comparisons.add('_\$deepEquals.equals(other.$name, $name)');
+      comparisons.add('_\$deepEquals.equals(other.$name, this.$name)');
     } else {
-      comparisons.add('other.$name == $name');
+      comparisons.add('other.$name == this.$name');
     }
   }
 

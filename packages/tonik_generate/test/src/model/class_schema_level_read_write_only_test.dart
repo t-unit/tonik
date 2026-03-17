@@ -19,7 +19,10 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ClassGenerator(
       nameManager: nameManager,
       package: 'package:example',
@@ -123,15 +126,15 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       // All properties should be decoded normally.
-      const expectedMethod = '''
+      const expectedMethod = r'''
         factory ServerStatus.fromJson(Object? json) {
-          final map = json.decodeMap(context: r'ServerStatus');
+          final _$map = json.decodeMap(context: r'ServerStatus');
           return ServerStatus(
-            uptime: map[r'uptime'].decodeJsonInt(context: r'ServerStatus.uptime'),
-            version: map[r'version'].decodeJsonString(
+            uptime: _$map[r'uptime'].decodeJsonInt(context: r'ServerStatus.uptime'),
+            version: _$map[r'version'].decodeJsonString(
               context: r'ServerStatus.version',
             ),
-            region: map[r'region'].decodeJsonNullableString(
+            region: _$map[r'region'].decodeJsonNullableString(
               context: r'ServerStatus.region',
             ),
           );

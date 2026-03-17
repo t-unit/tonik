@@ -200,6 +200,15 @@ class ModelImporter {
     }
 
     if (name != null || _hasAnnotationSiblings(schema)) {
+      if (name != null) {
+        final existing = models.firstWhereOrNull(
+          (m) => m is NamedModel && m.name == name,
+        );
+        if (existing != null) {
+          return existing;
+        }
+      }
+
       final aliasModel = AliasModel(
         name: name,
         model: refModel,
@@ -209,10 +218,8 @@ class ModelImporter {
         isNullable: schema.type.contains('null'),
       );
 
-      if (name == null) {
-        _logModelAdded(aliasModel);
-        models.add(aliasModel);
-      }
+      _logModelAdded(aliasModel);
+      models.add(aliasModel);
 
       return aliasModel;
     }
@@ -282,6 +289,15 @@ class ModelImporter {
     }
 
     if (name != null || _hasAnnotationSiblings(schema)) {
+      if (name != null) {
+        final existing = models.firstWhereOrNull(
+          (m) => m is NamedModel && m.name == name,
+        );
+        if (existing != null) {
+          return existing;
+        }
+      }
+
       final aliasModel = AliasModel(
         name: name,
         model: refModel,
@@ -291,10 +307,8 @@ class ModelImporter {
         isNullable: schema.type.contains('null'),
       );
 
-      if (name == null) {
-        _logModelAdded(aliasModel);
-        models.add(aliasModel);
-      }
+      _logModelAdded(aliasModel);
+      models.add(aliasModel);
 
       return aliasModel;
     }
@@ -514,12 +528,11 @@ class ModelImporter {
 
   ListModel _parseArray(String? name, Schema schema, Context context) {
     final items = schema.items;
-    if (items == null) {
-      throw ArgumentError('Array schema $schema has no items');
-    }
 
     final modelContext = context.push('array');
-    final content = _resolveSchemaRef(null, items, modelContext);
+    final content = items == null
+        ? AnyModel(context: modelContext)
+        : _resolveSchemaRef(null, items, modelContext);
     return ListModel(
       content: content,
       context: context,

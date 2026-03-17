@@ -15,7 +15,10 @@ void main() {
 
   setUp(() {
     context = Context.initial();
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     emitter = DartEmitter(useNullSafetySyntax: true);
     scopedAllocator = CorePrefixedAllocator();
     scopedEmitter = DartEmitter(
@@ -184,7 +187,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(false),
         ).accept(emitter).toString(),
-        'value == null ? null : UserRole.fromSimple(value!, explode: false, )',
+        'value == null ? null : UserRole.fromSimple(value, explode: false, )',
       );
     });
 
@@ -222,7 +225,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(true),
         ).accept(emitter).toString(),
-        'value == null ? null : UserRole.fromSimple(value!, explode: true, )',
+        'value == null ? null : UserRole.fromSimple(value, explode: true, )',
       );
     });
 
@@ -256,7 +259,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(false),
         ).accept(emitter).toString(),
-        'value == null ? null : User.fromSimple(value!, explode: false, )',
+        'value == null ? null : User.fromSimple(value, explode: false, )',
       );
     });
 
@@ -290,7 +293,7 @@ void main() {
           package: 'tonik_core',
           explode: literalBool(true),
         ).accept(emitter).toString(),
-        'value == null ? null : User.fromSimple(value!, explode: true, )',
+        'value == null ? null : User.fromSimple(value, explode: true, )',
       );
     });
 
@@ -567,46 +570,49 @@ void main() {
         );
       });
 
-      test('generates null-checked TonikFileBytes for optional BinaryModel',
-          () {
-        final value = refer('value');
-        expect(
-          buildSimpleValueExpression(
-            value,
-            model: BinaryModel(context: context),
-            isRequired: false,
-            nameManager: nameManager,
-            package: 'tonik_core',
-            explode: literalBool(false),
-          ).accept(emitter).toString(),
-          'value == null ? null : '
-          'TonikFileBytes(value.decodeSimpleBinary())',
-        );
-      });
-
-      test('generates TonikFileBytes mapping for required List<BinaryModel>',
-          () {
-        final value = refer('value');
-        final listModel = ListModel(
-          content: BinaryModel(context: context),
-          context: context,
-        );
-        expect(
-          buildSimpleValueExpression(
-            value,
-            model: listModel,
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'tonik_core',
-            explode: literalBool(false),
-          ).accept(emitter).toString(),
-          'value.decodeSimpleStringList()'
-          '.map((e) => TonikFileBytes(e.decodeSimpleBinary())).toList()',
-        );
-      });
+      test(
+        'generates null-checked TonikFileBytes for optional BinaryModel',
+        () {
+          final value = refer('value');
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: BinaryModel(context: context),
+              isRequired: false,
+              nameManager: nameManager,
+              package: 'tonik_core',
+              explode: literalBool(false),
+            ).accept(emitter).toString(),
+            'value == null ? null : '
+            'TonikFileBytes(value.decodeSimpleBinary())',
+          );
+        },
+      );
 
       test(
-          'generates nullable TonikFileBytes mapping for optional '
+        'generates TonikFileBytes mapping for required List<BinaryModel>',
+        () {
+          final value = refer('value');
+          final listModel = ListModel(
+            content: BinaryModel(context: context),
+            context: context,
+          );
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: listModel,
+              isRequired: true,
+              nameManager: nameManager,
+              package: 'tonik_core',
+              explode: literalBool(false),
+            ).accept(emitter).toString(),
+            'value.decodeSimpleStringList()'
+            '.map((e) => TonikFileBytes(e.decodeSimpleBinary())).toList()',
+          );
+        },
+      );
+
+      test('generates nullable TonikFileBytes mapping for optional '
           'List<BinaryModel>', () {
         final value = refer('value');
         final listModel = ListModel(
@@ -644,46 +650,49 @@ void main() {
         );
       });
 
-      test('generates null-checked TonikFileBytes for optional Base64Model',
-          () {
-        final value = refer('value');
-        expect(
-          buildSimpleValueExpression(
-            value,
-            model: Base64Model(context: context),
-            isRequired: false,
-            nameManager: nameManager,
-            package: 'tonik_core',
-            explode: literalBool(false),
-          ).accept(emitter).toString(),
-          'value == null ? null : '
-          'TonikFileBytes(value.decodeSimpleBase64())',
-        );
-      });
-
-      test('generates TonikFileBytes mapping for required List<Base64Model>',
-          () {
-        final value = refer('value');
-        final listModel = ListModel(
-          content: Base64Model(context: context),
-          context: context,
-        );
-        expect(
-          buildSimpleValueExpression(
-            value,
-            model: listModel,
-            isRequired: true,
-            nameManager: nameManager,
-            package: 'tonik_core',
-            explode: literalBool(false),
-          ).accept(emitter).toString(),
-          'value.decodeSimpleStringList()'
-          '.map((e) => TonikFileBytes(e.decodeSimpleBase64())).toList()',
-        );
-      });
+      test(
+        'generates null-checked TonikFileBytes for optional Base64Model',
+        () {
+          final value = refer('value');
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: Base64Model(context: context),
+              isRequired: false,
+              nameManager: nameManager,
+              package: 'tonik_core',
+              explode: literalBool(false),
+            ).accept(emitter).toString(),
+            'value == null ? null : '
+            'TonikFileBytes(value.decodeSimpleBase64())',
+          );
+        },
+      );
 
       test(
-          'generates nullable TonikFileBytes mapping for optional '
+        'generates TonikFileBytes mapping for required List<Base64Model>',
+        () {
+          final value = refer('value');
+          final listModel = ListModel(
+            content: Base64Model(context: context),
+            context: context,
+          );
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: listModel,
+              isRequired: true,
+              nameManager: nameManager,
+              package: 'tonik_core',
+              explode: literalBool(false),
+            ).accept(emitter).toString(),
+            'value.decodeSimpleStringList()'
+            '.map((e) => TonikFileBytes(e.decodeSimpleBase64())).toList()',
+          );
+        },
+      );
+
+      test('generates nullable TonikFileBytes mapping for optional '
           'List<Base64Model>', () {
         final value = refer('value');
         final listModel = ListModel(

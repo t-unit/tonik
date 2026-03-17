@@ -31,6 +31,12 @@
 /integration_test/read_write_only/read_write_only_api
 /integration_test/multipart/multipart_api
 /integration_test/multipart/multipart_3_1_api
+/integration_test/figma/figma_api
+/integration_test/stripe/stripe_api
+/integration_test/github/github_api
+/integration_test/openai/openai_full_api
+/integration_test/asana/asana_api
+/integration_test/twilio/twilio_api
 
 # Dependencies
 /pubspec.lock

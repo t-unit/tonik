@@ -16,26 +16,31 @@ Expression buildFromJsonValueExpression(
   bool isNullable = false,
 }) {
   final contextParam = _buildContextParam(contextClass, contextProperty);
+  final nullable = isNullable || model.isEffectivelyNullable;
 
   switch (model) {
     case IntegerModel():
       return refer(value)
-          .property(isNullable ? 'decodeJsonNullableInt' : 'decodeJsonInt')
+          .property(
+            nullable ? 'decodeJsonNullableInt' : 'decodeJsonInt',
+          )
           .call([], contextParam);
     case NumberModel():
       return refer(value)
-          .property(isNullable ? 'decodeJsonNullableNum' : 'decodeJsonNum')
+          .property(
+            nullable ? 'decodeJsonNullableNum' : 'decodeJsonNum',
+          )
           .call([], contextParam);
     case DoubleModel():
       return refer(value)
           .property(
-            isNullable ? 'decodeJsonNullableDouble' : 'decodeJsonDouble',
+            nullable ? 'decodeJsonNullableDouble' : 'decodeJsonDouble',
           )
           .call([], contextParam);
     case DecimalModel():
       return refer(value)
           .property(
-            isNullable
+            nullable
                 ? 'decodeJsonNullableBigDecimal'
                 : 'decodeJsonBigDecimal',
           )
@@ -43,26 +48,32 @@ Expression buildFromJsonValueExpression(
     case StringModel():
       return refer(value)
           .property(
-            isNullable ? 'decodeJsonNullableString' : 'decodeJsonString',
+            nullable ? 'decodeJsonNullableString' : 'decodeJsonString',
           )
           .call([], contextParam);
     case BooleanModel():
       return refer(value)
-          .property(isNullable ? 'decodeJsonNullableBool' : 'decodeJsonBool')
+          .property(
+            nullable ? 'decodeJsonNullableBool' : 'decodeJsonBool',
+          )
           .call([], contextParam);
     case DateTimeModel():
       return refer(value)
           .property(
-            isNullable ? 'decodeJsonNullableDateTime' : 'decodeJsonDateTime',
+            nullable ? 'decodeJsonNullableDateTime' : 'decodeJsonDateTime',
           )
           .call([], contextParam);
     case DateModel():
       return refer(value)
-          .property(isNullable ? 'decodeJsonNullableDate' : 'decodeJsonDate')
+          .property(
+            nullable ? 'decodeJsonNullableDate' : 'decodeJsonDate',
+          )
           .call([], contextParam);
     case UriModel():
       return refer(value)
-          .property(isNullable ? 'decodeJsonNullableUri' : 'decodeJsonUri')
+          .property(
+            nullable ? 'decodeJsonNullableUri' : 'decodeJsonUri',
+          )
           .call([], contextParam);
     case BinaryModel():
       final decodeExpr = refer(
@@ -72,7 +83,7 @@ Expression buildFromJsonValueExpression(
         'TonikFileBytes',
         'package:tonik_util/tonik_util.dart',
       ).call([decodeExpr]);
-      return isNullable
+      return nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
           : wrapExpr;
     case Base64Model():
@@ -83,7 +94,7 @@ Expression buildFromJsonValueExpression(
         'TonikFileBytes',
         'package:tonik_util/tonik_util.dart',
       ).call([decodeExpr]);
-      return isNullable
+      return nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
           : wrapExpr;
     case ListModel():
@@ -102,7 +113,7 @@ Expression buildFromJsonValueExpression(
         className,
         package,
       ).property('fromJson').call([refer(value)]);
-      return isNullable
+      return nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
           : expr;
     case EnumModel():
@@ -111,7 +122,7 @@ Expression buildFromJsonValueExpression(
         className,
         package,
       ).property('fromJson').call([refer(value)]);
-      return isNullable
+      return nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
           : expr;
     case AliasModel():
@@ -122,13 +133,13 @@ Expression buildFromJsonValueExpression(
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
-        isNullable: isNullable,
+        isNullable: nullable,
       );
     case NeverModel():
       final throwExpr = generateJsonDecodingExceptionExpression(
         'Cannot decode NeverModel - this type does not permit any value.',
       );
-      return isNullable
+      return nullable
           ? refer(
               value,
             ).equalTo(literalNull).conditional(literalNull, throwExpr)
@@ -152,7 +163,8 @@ Expression _buildListFromJsonExpression(
   final content = model.content;
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
-  // Use nullable list decoder if isNullable
+  // isNullable already accounts for model.isEffectivelyNullable via the
+  // caller (buildFromJsonValueExpression), so no need to recompute here.
   final listDecoder = isNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
 
   // Unwrap alias to get the underlying model

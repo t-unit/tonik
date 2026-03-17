@@ -35,7 +35,11 @@ class Generator {
     final fullPackage = 'package:$package/$package.dart';
 
     final nameGenerator = NameGenerator();
-    final nameManager = NameManager(generator: nameGenerator);
+    final stableModelSorter = StableModelSorter();
+    final nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: stableModelSorter,
+    );
 
     final classGenerator = ClassGenerator(
       nameManager: nameManager,
@@ -45,10 +49,12 @@ class Generator {
     final oneOfGenerator = OneOfGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      stableModelSorter: stableModelSorter,
     );
     final anyOfGenerator = AnyOfGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      stableModelSorter: stableModelSorter,
     );
     final typedefGenerator = TypedefGenerator(
       nameManager: nameManager,
@@ -57,6 +63,7 @@ class Generator {
     final allOfGenerator = AllOfGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      stableModelSorter: stableModelSorter,
     );
 
     final modelGenerator = ModelFileGenerator(

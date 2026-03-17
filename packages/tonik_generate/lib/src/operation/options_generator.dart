@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -43,7 +44,7 @@ class OptionsGenerator {
 
     final optionsExpr = refer('Options', 'package:dio/dio.dart').call([], {
       'method': literalString(methodString),
-      'headers': refer('headers'),
+      'headers': refer(r'_$headers'),
       'contentType': ?contentType,
       'responseType': refer(
         'ResponseType',
@@ -129,7 +130,7 @@ class OptionsGenerator {
     }
 
     bodyStatements.add(
-      declareFinal('contentType')
+      declareFinal(r'_$contentType')
           .assign(
             CodeExpression(
               Block.of([
@@ -141,7 +142,7 @@ class OptionsGenerator {
           )
           .statement,
     );
-    return refer('contentType');
+    return refer(r'_$contentType');
   }
 
   void _generateHeaders(
@@ -183,7 +184,7 @@ class OptionsGenerator {
         : '*/*';
 
     bodyStatements.add(
-      declareFinal('headers')
+      declareFinal(r'_$headers')
           .assign(
             literalMap(
               {},
@@ -197,8 +198,8 @@ class OptionsGenerator {
     // For required Accept header, always assign using encoder
     if (hasAcceptHeader && acceptIsRequired) {
       bodyStatements.add(
-        refer('headers')
-            .index(literalString('Accept', raw: true))
+        refer(r'_$headers')
+            .index(specLiteralString('Accept'))
             .assign(
               buildToSimpleHeaderParameterExpression(
                 acceptParamName!,
@@ -213,8 +214,8 @@ class OptionsGenerator {
       bodyStatements
         ..add(Code('if ($acceptParamName != null) {'))
         ..add(
-          refer('headers')
-              .index(literalString('Accept', raw: true))
+          refer(r'_$headers')
+              .index(specLiteralString('Accept'))
               .assign(
                 buildToSimpleHeaderParameterExpression(
                   acceptParamName!,
@@ -227,7 +228,7 @@ class OptionsGenerator {
         )
         ..add(const Code('} else {'))
         ..add(
-          refer('headers')
+          refer(r'_$headers')
               .index(literalString('Accept'))
               .assign(literalString(acceptValue))
               .statement,
@@ -236,7 +237,7 @@ class OptionsGenerator {
     } else {
       // No Accept header param, just assign default
       bodyStatements.add(
-        refer('headers')
+        refer(r'_$headers')
             .index(literalString('Accept'))
             .assign(literalString(acceptValue))
             .statement,
@@ -353,7 +354,7 @@ class OptionsGenerator {
         .toList();
 
     bodyStatements.add(
-      declareFinal('cookieParts')
+      declareFinal(r'_$cookieParts')
           .assign(
             literalList(
               [],
@@ -374,12 +375,14 @@ class OptionsGenerator {
     }
 
     bodyStatements
-      ..add(const Code('if (cookieParts.isNotEmpty) {'))
+      ..add(const Code(r'if (_$cookieParts.isNotEmpty) {'))
       ..add(
-        refer('headers')
-            .index(literalString('Cookie', raw: true))
+        refer(r'_$headers')
+            .index(specLiteralString('Cookie'))
             .assign(
-              refer('cookieParts').property('join').call([literalString('; ')]),
+              refer(r'_$cookieParts').property('join').call([
+                literalString('; '),
+              ]),
             )
             .statement,
       )
@@ -406,16 +409,16 @@ class OptionsGenerator {
           'allowEmpty': literalBool(true),
         });
         bodyStatements.add(
-          refer('cookieParts').property('add').call([
-            literalString('$rawName=', raw: true).operatorAdd(encodedValue),
+          refer(r'_$cookieParts').property('add').call([
+            specLiteralString('$rawName=').operatorAdd(encodedValue),
           ]).statement,
         );
         return;
       }
 
       bodyStatements.add(
-        refer('cookieParts').property('add').call([
-          literalString('$rawName=', raw: true).operatorAdd(
+        refer(r'_$cookieParts').property('add').call([
+          specLiteralString('$rawName=').operatorAdd(
             refer(paramName)
                 .property('map')
                 .call([
@@ -451,8 +454,8 @@ class OptionsGenerator {
       'allowEmpty': literalBool(true),
     });
     bodyStatements.add(
-      refer('cookieParts').property('add').call([
-        literalString('$rawName=', raw: true).operatorAdd(encodedValue),
+      refer(r'_$cookieParts').property('add').call([
+        specLiteralString('$rawName=').operatorAdd(encodedValue),
       ]).statement,
     );
   }
@@ -488,8 +491,8 @@ class OptionsGenerator {
       allowEmpty: resolvedParam.allowEmptyValue,
     );
 
-    return refer('headers')
-        .index(literalString(resolvedParam.rawName, raw: true))
+    return refer(r'_$headers')
+        .index(specLiteralString(resolvedParam.rawName))
         .assign(valueExpression)
         .statement;
   }

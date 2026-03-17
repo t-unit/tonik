@@ -19,10 +19,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = OneOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -220,7 +224,7 @@ void main() {
           try {
             return ResultSuccess(value.decodeFormString(context: r'Result'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid form value for Result');
+          throw SimpleDecodingException(r'Invalid form value for Result');
         }
       ''';
 
@@ -267,7 +271,7 @@ void main() {
           try {
             return ResponseUser(User.fromForm(value, explode: explode));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid form value for Response');
+          throw SimpleDecodingException(r'Invalid form value for Response');
         }
       ''';
 
@@ -324,25 +328,25 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'Choice');
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory Choice.fromForm(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
-              final pairs = value.split(',');
-              String? discriminator;
-              for (final pair in pairs) {
-                final parts = pair.split('=');
-                if (parts.length == 2) {
-                  final key = Uri.decodeComponent(parts[0]);
-                  if (key == 'type') {
-                    discriminator = parts[1];
+              final _$pairs = value.split(',');
+              String? _$discriminator;
+              for (final pair in _$pairs) {
+                final _$parts = pair.split('=');
+                if (_$parts.length == 2) {
+                  final _$key = Uri.decodeComponent(_$parts[0]);
+                  if (_$key == 'type') {
+                    _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (discriminator == 'a') {
+              if (_$discriminator == 'a') {
                 return ChoiceA(A.fromForm(value, explode: explode));
               }
-              if (discriminator == 'b') {
+              if (_$discriminator == 'b') {
                 return ChoiceB(B.fromForm(value, explode: explode));
               }
             }
@@ -352,7 +356,7 @@ void main() {
             try {
               return ChoiceB(B.fromForm(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid form value for Choice');
+            throw SimpleDecodingException(r'Invalid form value for Choice');
           }
         ''';
 
@@ -581,5 +585,38 @@ void main() {
         );
       },
     );
+
+    test('throws EncodingException for BinaryModel variant in toForm', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'WithBinary',
+        models: {
+          (
+            discriminatorValue: 'binary',
+            model: BinaryModel(context: context),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'WithBinary');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'throw EncodingException(\n'
+            "'Binary data cannot be form-encoded',\n"
+            ')',
+          ),
+        ),
+      );
+    });
   });
 }

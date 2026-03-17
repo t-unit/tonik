@@ -14,7 +14,10 @@ void main() {
   late String Function(String, {Object? uri}) format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = DataGenerator(
       nameManager: nameManager,
       package: 'test_package',
@@ -92,8 +95,8 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? _data({required TestModel? body}) { 
-          return body?.toJson(); 
+        Object? _data({TestModel? body}) {
+          return body?.toJson();
         }
       ''';
 
@@ -240,7 +243,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? _data({required Date? body}) {
+        Object? _data({Date? body}) {
           return body?.toJson();
         }
       ''';
@@ -283,7 +286,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? _data({required BigDecimal? body}) {
+        Object? _data({BigDecimal? body}) {
           return body?.toString();
         }
       ''';
@@ -391,7 +394,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? _data({required TestModel? body}) {
+        Object? _data({TestModel? body}) {
           return body?.toJson();
         }
       ''';
@@ -573,7 +576,7 @@ void main() {
         );
 
         const expectedMethod = '''
-        Object? _data({required TonikFile? body}) {
+        Object? _data({TonikFile? body}) {
           return body?.toBytes();
         }
       ''';
@@ -785,7 +788,7 @@ void main() {
       );
 
       const expectedMethod = '''
-        Object? _data({required String? body}) {
+        Object? _data({String? body}) {
           return body;
         }
       ''';
@@ -853,6 +856,64 @@ void main() {
         const expectedMethod = '''
           Object? _data({required Pet body}) {
             return body.toForm(explode: true, allowEmpty: true, useQueryComponent: true);
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates _data method for optional form request body', () {
+        final petModel = ClassModel(
+          name: 'Pet',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final operation = Operation(
+          operationId: 'updatePet',
+          path: '/pets',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'pet',
+            context: testContext,
+            description: null,
+            isRequired: false,
+            content: {
+              RequestContent(
+                model: petModel,
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+          Object? _data({Pet? body}) {
+            return body?.toForm(explode: true, allowEmpty: true, useQueryComponent: true);
           }
         ''';
 
@@ -934,14 +995,14 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<Object?> _data({required CreateUserForm body}) async {
-            final formData = FormData();
-            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
             if (body.nickname != null) {
-              formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
             }
-            return formData;
+            return _$formData;
           }
         ''';
 
@@ -1105,14 +1166,14 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Future<Object?> _data({required CreateItem body}) async {
             return switch (body) {
               final CreateItemJson value => value.value.toJson(),
               final CreateItemFormData value => await () async {
-                final formData = FormData();
-                formData.files.add(MapEntry('name', MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse('text/plain'))));
-                return formData;
+                final _$formData = FormData();
+                _$formData.files.add(MapEntry('name', MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse('text/plain'))));
+                return _$formData;
               }(),
             };
           }
@@ -1255,6 +1316,79 @@ void main() {
                 final UpdateItemJson value => value.value.toJson(),
                 final UpdateItemXWwwFormUrlencoded value => value.value.toForm(explode: true, allowEmpty: true, useQueryComponent: true),
               };
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates _data method for optional single-content multipart body',
+        () {
+          final userModel = ClassModel(
+            name: 'CreateUserForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: testContext,
+          );
+
+          final operation = Operation(
+            operationId: 'createUser',
+            path: '/users',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'createUser',
+              context: testContext,
+              description: null,
+              isRequired: false,
+              content: {
+                RequestContent(
+                  model: userModel,
+                  contentType: ContentType.multipart,
+                  rawContentType: 'multipart/form-data',
+                  encoding: {
+                    'name': const MultipartPropertyEncoding(
+                      contentType: ContentType.text,
+                      rawContentType: 'text/plain',
+                      style: MultipartEncodingStyle.form,
+                      explode: true,
+                      allowReserved: false,
+                    ),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+            Future<Object?> _data({CreateUserForm? body}) async {
+              if (body == null) return null;
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+              return _$formData;
             }
           ''';
 

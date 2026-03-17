@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 Expression buildFormParameterExpression(
   Expression valueExpression,
@@ -48,6 +49,9 @@ Expression buildFormParameterExpression(
           'allowEmpty': allowEmpty,
         },
       ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be form-encoded',
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for form encoding: $model',
     ),
@@ -119,6 +123,9 @@ Expression _buildListFormExpression(
         'explode': explode,
         'allowEmpty': allowEmpty,
       },
+    ),
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be form-encoded',
     ),
     _ => throw UnimplementedError(
       'Unsupported list content type for form encoding: $contentModel',

@@ -16,7 +16,10 @@ void main() {
 
     setUp(() {
       tempDir = Directory.systemTemp.createTempSync();
-      nameManager = NameManager(generator: NameGenerator());
+      nameManager = NameManager(
+        generator: NameGenerator(),
+        stableModelSorter: StableModelSorter(),
+      );
       final serverGenerator = ServerGenerator(
         nameManager: nameManager,
       );

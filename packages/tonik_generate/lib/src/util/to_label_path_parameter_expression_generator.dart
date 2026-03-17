@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 /// Generates an expression for encoding a path parameter using label style.
 ///
@@ -38,6 +39,12 @@ Expression buildToLabelPathParameterExpression(
         'explode': explode,
         'allowEmpty': allowEmpty,
       });
+    }
+
+    if (contentModel is BinaryModel) {
+      return generateEncodingExceptionExpression(
+        'Binary data cannot be label-encoded',
+      );
     }
 
     // For AnyModel, AnyOfModel, OneOfModel, AllOfModel content,
@@ -97,6 +104,12 @@ Expression buildToLabelPathParameterExpression(
             'alreadyEncoded': literalTrue,
           },
         );
+  }
+
+  if (model is BinaryModel) {
+    return generateEncodingExceptionExpression(
+      'Binary data cannot be label-encoded',
+    );
   }
 
   return valueRef.property('toLabel').call([], {

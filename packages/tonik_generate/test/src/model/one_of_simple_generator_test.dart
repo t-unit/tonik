@@ -19,10 +19,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = OneOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -306,7 +310,7 @@ void main() {
           try {
             return EntityPerson(Person.fromSimple(value, explode: explode));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid simple value for Entity');
+          throw SimpleDecodingException(r'Invalid simple value for Entity');
         }
       ''';
 
@@ -344,7 +348,7 @@ void main() {
           try {
             return ResultSuccess(value.decodeSimpleString(context: r'Result'));
           } on DecodingException catch (_) { } on FormatException catch (_) {}
-          throw SimpleDecodingException('Invalid simple value for Result');
+          throw SimpleDecodingException(r'Invalid simple value for Result');
         }
       ''';
 
@@ -401,25 +405,25 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory Entity.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
-              final pairs = value.split(',');
-              String? discriminator;
-              for (final pair in pairs) {
-                final parts = pair.split('=');
-                if (parts.length == 2) {
-                  final key = Uri.decodeComponent(parts[0]);
-                  if (key == 'entity_type') {
-                    discriminator = parts[1];
+              final _$pairs = value.split(',');
+              String? _$discriminator;
+              for (final pair in _$pairs) {
+                final _$parts = pair.split('=');
+                if (_$parts.length == 2) {
+                  final _$key = Uri.decodeComponent(_$parts[0]);
+                  if (_$key == 'entity_type') {
+                    _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (discriminator == 'company') {
+              if (_$discriminator == 'company') {
                 return EntityCompany(Company.fromSimple(value, explode: explode));
               }
-              if (discriminator == 'person') {
+              if (_$discriminator == 'person') {
                 return EntityPerson(Person.fromSimple(value, explode: explode));
               }
             }
@@ -429,7 +433,7 @@ void main() {
             try {
               return EntityPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid simple value for Entity');
+            throw SimpleDecodingException(r'Invalid simple value for Entity');
           }
         ''';
 
@@ -472,22 +476,22 @@ void main() {
         final classes = generator.generateClasses(model);
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory MixedEntity.fromSimple(String? value, {required bool explode}) {
             if (explode && value != null && value.isNotEmpty) {
-              final pairs = value.split(',');
-              String? discriminator;
-              for (final pair in pairs) {
-                final parts = pair.split('=');
-                if (parts.length == 2) {
-                  final key = Uri.decodeComponent(parts[0]);
-                  if (key == 'type') {
-                    discriminator = parts[1];
+              final _$pairs = value.split(',');
+              String? _$discriminator;
+              for (final pair in _$pairs) {
+                final _$parts = pair.split('=');
+                if (_$parts.length == 2) {
+                  final _$key = Uri.decodeComponent(_$parts[0]);
+                  if (_$key == 'type') {
+                    _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (discriminator == 'person') {
+              if (_$discriminator == 'person') {
                 return MixedEntityPerson(Person.fromSimple(value, explode: explode));
               }
             }
@@ -497,7 +501,7 @@ void main() {
             try {
               return MixedEntityPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid simple value for MixedEntity');
+            throw SimpleDecodingException(r'Invalid simple value for MixedEntity');
           }
         ''';
 
@@ -562,7 +566,7 @@ void main() {
             try {
               return EntityNoDiscPerson(Person.fromSimple(value, explode: explode));
             } on DecodingException catch (_) { } on FormatException catch (_) {}
-            throw SimpleDecodingException('Invalid simple value for EntityNoDisc');
+            throw SimpleDecodingException(r'Invalid simple value for EntityNoDisc');
           }
         ''';
 
@@ -572,5 +576,91 @@ void main() {
         );
       },
     );
+  });
+
+  group(r'nullable oneOf with $Raw-prefixed class name', () {
+    late OneOfModel model;
+
+    setUp(() {
+      final person = ClassModel(
+        isDeprecated: false,
+        name: 'Person',
+        properties: const [],
+        context: context,
+      );
+      final company = ClassModel(
+        isDeprecated: false,
+        name: 'Company',
+        properties: const [],
+        context: context,
+      );
+
+      model = OneOfModel(
+        isDeprecated: false,
+        name: 'Entity',
+        models: {
+          (discriminatorValue: null, model: person),
+          (discriminatorValue: null, model: company),
+        },
+        context: context,
+        isNullable: true,
+      );
+
+      nameManager.prime(
+        models: {model},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+    });
+
+    test(
+      r'fromSimple throws raw string literal for $Raw-prefixed class name',
+      () {
+        final classes = generator.generateClasses(model, r'$RawEntity');
+        final baseClass = classes.firstWhere((c) => c.name == r'$RawEntity');
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        expect(
+          generatedCode,
+          contains(r"r'Invalid simple value for $RawEntity'"),
+        );
+      },
+    );
+
+    test('throws EncodingException for BinaryModel variant in toSimple', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'WithBinary',
+        models: {
+          (
+            discriminatorValue: 'binary',
+            model: BinaryModel(context: context),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'WithBinary');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'throw EncodingException(\n'
+            "'Binary data cannot be simple-encoded',\n"
+            ')',
+          ),
+        ),
+      );
+    });
   });
 }

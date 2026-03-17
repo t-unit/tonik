@@ -19,7 +19,10 @@ void main() {
 
     setUp(() {
       nameGenerator = NameGenerator();
-      nameManager = NameManager(generator: nameGenerator);
+      nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
       generator = ClassGenerator(
         nameManager: nameManager,
         package: 'package:example',
@@ -96,9 +99,9 @@ void main() {
       final result = generator.generateClass(model);
       final generatedCode = format(result.accept(emitter).toString());
 
-      const expectedFromFormMethod = '''
+      const expectedFromFormMethod = r'''
         factory TestModel.fromForm(String? value, {required bool explode}) {
-          final values = value.decodeObject(
+          final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: '&',
             expectedKeys: {r'name', r'count'},
@@ -106,8 +109,8 @@ void main() {
             context: r'TestModel',
           );
           return TestModel(
-            name: values[r'name'].decodeFormString(context: r'TestModel.name'),
-            count: values[r'count'].decodeFormNullableInt(
+            name: _$values[r'name'].decodeFormString(context: r'TestModel.name'),
+            count: _$values[r'count'].decodeFormNullableInt(
               context: r'TestModel.count',
             ),
           );
@@ -153,9 +156,9 @@ void main() {
       final result = generator.generateClass(model);
       final generatedCode = format(result.accept(emitter).toString());
 
-      const expectedFromFormMethod = '''
+      const expectedFromFormMethod = r'''
         factory ComplexForm.fromForm(String? value, {required bool explode}) {
-          final values = value.decodeObject(
+          final _$values = value.decodeObject(
             explode: explode,
             explodeSeparator: '&',
             expectedKeys: {r'name', r'age', r'email'},
@@ -163,9 +166,9 @@ void main() {
             context: r'ComplexForm',
           );
           return ComplexForm(
-            name: values[r'name'].decodeFormString(context: r'ComplexForm.name'),
-            age: values[r'age'].decodeFormInt(context: r'ComplexForm.age'),
-            email: values[r'email'].decodeFormNullableString(
+            name: _$values[r'name'].decodeFormString(context: r'ComplexForm.name'),
+            age: _$values[r'age'].decodeFormInt(context: r'ComplexForm.age'),
+            email: _$values[r'email'].decodeFormNullableString(
               context: r'ComplexForm.email',
             ),
           );
@@ -225,9 +228,9 @@ void main() {
         final result = generator.generateClass(model);
         final generatedCode = format(result.accept(emitter).toString());
 
-        const expectedFromFormMethod = '''
+        const expectedFromFormMethod = r'''
           factory Wrapper.fromForm(String? value, {required bool explode}) {
-            final values = value.decodeObject(
+            final _$values = value.decodeObject(
               explode: explode,
               explodeSeparator: '&',
               expectedKeys: {r'data'},
@@ -235,7 +238,7 @@ void main() {
               context: r'Wrapper',
             );
             return Wrapper(
-              data: DynamicValue.fromForm(values[r'data'], explode: explode),
+              data: DynamicValue.fromForm(_$values[r'data'], explode: explode),
             );
           }
         ''';

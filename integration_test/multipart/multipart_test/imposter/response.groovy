@@ -318,6 +318,53 @@ switch (path) {
         }
         break
 
+    case '/multipart/anyof-model':
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Model', formParams.containsKey('model').toString()
+            withHeader 'X-Param-Model', (formParams['model'] ?: '')
+            withContent '{"success":true,"message":"anyof-model received"}'
+        }
+        break
+
+    case '/multipart/kitchen-sink':
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Name', formParams.containsKey('name').toString()
+            withHeader 'X-Has-Temperature', formParams.containsKey('temperature').toString()
+            withHeader 'X-Has-Active', formParams.containsKey('active').toString()
+            withHeader 'X-Has-Status', formParams.containsKey('status').toString()
+            withHeader 'X-Has-Tags', formParams.containsKey('tags').toString()
+            withHeader 'X-Has-Metadata', formParams.containsKey('metadata').toString()
+            withHeader 'X-Param-Name', (formParams['name'] ?: '')
+            withHeader 'X-Param-Temperature', (formParams['temperature'] ?: '')
+            withHeader 'X-Param-Active', (formParams['active'] ?: '')
+            withHeader 'X-Param-Status', (formParams['status'] ?: '')
+            withContent '{"success":true,"message":"kitchen-sink received"}'
+        }
+        break
+
+    case '/multipart/multi-response':
+        // Check the request to decide which response type to send.
+        // Use a custom header to signal the desired response format.
+        def wantBinary = context.request.headers['X-Want-Binary'] == 'true'
+        if (wantBinary) {
+            respond {
+                withStatusCode 200
+                withHeader 'Content-Type', 'application/octet-stream'
+                withContent 'BINARY_DATA_HERE'
+            }
+        } else {
+            respond {
+                withStatusCode 200
+                withHeader 'Content-Type', 'application/json'
+                withContent '{"success":true,"message":"multi-response json"}'
+            }
+        }
+        break
+
     default:
         respond().usingDefaultBehaviour()
         break

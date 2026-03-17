@@ -4,6 +4,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 /// Builds FormData construction statements for single-content multipart bodies.
@@ -45,7 +46,7 @@ Expression buildMultipartBodyExpression(
   }
   final bodyStatements = [
     ...statements,
-    if (model is ClassModel) refer('formData').returned.statement,
+    if (model is ClassModel) refer(r'_$formData').returned.statement,
   ];
 
   return Method(
@@ -89,7 +90,7 @@ List<Code> _buildMultipartFields(
   // FormData construction.
   statements.add(
     declareFinal(
-      'formData',
+      r'_$formData',
     ).assign(refer('FormData', 'package:dio/dio.dart').call([])).statement,
   );
 
@@ -139,7 +140,8 @@ Code? _buildFieldCode(
   final contentType = propertyEncoding?.contentType;
   final rawContentType = propertyEncoding?.rawContentType;
   final effectiveRawContentType =
-      rawContentType ?? 'text/plain'; // style-based primitives serialise as plain strings
+      rawContentType ??
+      'text/plain'; // style-based primitives serialise as plain strings
 
   // Build per-part header statements and variable name (if any).
   final headerResult = _buildHeaderMapStatements(
@@ -292,7 +294,7 @@ _HeaderMapResult? _buildHeaderMapStatements(
 
   if (filteredEntries.isEmpty) return null;
 
-  final headerVarName = '${normalizedPropertyName}Headers';
+  final headerVarName = '_\$${normalizedPropertyName}Headers';
   final statements = <Code>[
     // Declare the headers map.
     declareFinal(headerVarName)
@@ -366,7 +368,7 @@ Code _buildStringFileAddition(
     ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -393,7 +395,7 @@ Code _buildPrimitiveFileAddition(
     ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -427,7 +429,7 @@ Code _buildEnumFileAddition(
     ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -453,7 +455,7 @@ Code _buildJsonEncodeFileAddition(
     ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -484,7 +486,7 @@ Code _buildAnyModelFileAddition(
     ).property('parse').call([literalString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -564,12 +566,12 @@ Code _buildBinaryFileAddition(
       return '''
 switch ($accessor) {
   case $tonikFileBytes(:final bytes, :final fileName):
-    formData.files.add($mapEntry(
+    _\$formData.files.add($mapEntry(
       '$rawName',
       $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
     ));
   case $tonikFilePath(:final path, :final fileName):
-    formData.files.add($mapEntry(
+    _\$formData.files.add($mapEntry(
       '$rawName',
       await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
     ));
@@ -820,7 +822,7 @@ Code _buildContentBasedListAddition(
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
 
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -843,7 +845,7 @@ Code _buildListForLoop(
     const Code('for (final item in '),
     iterableExpr.code,
     const Code(') {'),
-    refer('formData').property(target).property('add').call([
+    refer(r'_$formData').property(target).property('add').call([
       refer('MapEntry', 'dart:core').call([
         literalString(rawName),
         itemExpression,
@@ -941,9 +943,9 @@ Code _binaryItemExpr(String rawName, {String? headerVarName}) {
       return '''
 switch (item) {
   case $tonikFileBytes(:final bytes, :final fileName):
-    formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $headersArg)));
+    _\$formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $headersArg)));
   case $tonikFilePath(:final path, :final fileName):
-    formData.files.add($mapEntry('$rawName', await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $headersArg)));
+    _\$formData.files.add($mapEntry('$rawName', await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $headersArg)));
 }''';
     },
   );
@@ -1029,10 +1031,12 @@ Code _buildDeepObjectFileAddition(
   String accessor, {
   String? headerVarName,
 }) {
-  final iterableExpr = refer(accessor).property('toDeepObject').call(
-    [literalString(rawName, raw: true)],
-    {'explode': literalTrue, 'allowEmpty': literalTrue},
-  );
+  final iterableExpr = refer(accessor)
+      .property('toDeepObject')
+      .call(
+        [specLiteralString(rawName)],
+        {'explode': literalTrue, 'allowEmpty': literalTrue},
+      );
 
   if (headerVarName != null) {
     // With per-part headers: each bracket-notation entry becomes a file part.
@@ -1046,7 +1050,7 @@ Code _buildDeepObjectFileAddition(
       const Code('for (final entry in '),
       iterableExpr.code,
       const Code(') {'),
-      refer('formData').property('files').property('add').call([
+      refer(r'_$formData').property('files').property('add').call([
         refer('MapEntry', 'dart:core').call([
           refer('entry').property('name'),
           fileExpr,
@@ -1061,7 +1065,7 @@ Code _buildDeepObjectFileAddition(
     const Code('for (final entry in '),
     iterableExpr.code,
     const Code(') {'),
-    refer('formData').property('fields').property('add').call([
+    refer(r'_$formData').property('fields').property('add').call([
       refer('MapEntry', 'dart:core').call([
         refer('entry').property('name'),
         refer('entry').property('value'),
@@ -1110,7 +1114,7 @@ Code _buildComplexObjectFileAddition(
     namedArgs['headers'] = refer(headerVarName);
   }
 
-  return refer('formData').property('files').property('add').call([
+  return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
       literalString(rawName),
       refer(
@@ -1144,8 +1148,9 @@ Code _buildUrlEncodedObjectFileAddition(
   final partsVarName = '${propVarName}Parts';
 
   // headers named arg placed after contentType, empty string when absent.
-  final headersLine =
-      headerVarName != null ? '\n    headers: $headerVarName,' : '';
+  final headersLine = headerVarName != null
+      ? '\n    headers: $headerVarName,'
+      : '';
 
   return Code.scope((allocate) {
     final encodingException = allocate(
@@ -1179,13 +1184,25 @@ Code _buildUrlEncodedObjectFileAddition(
     // dart:core types used bare in the raw string — must be allocated so the
     // emitter adds the correct prefix when dart:core is imported as aliased.
     final string = allocate(
-      TypeReference((b) => b..symbol = 'String'..url = 'dart:core'),
+      TypeReference(
+        (b) => b
+          ..symbol = 'String'
+          ..url = 'dart:core',
+      ),
     );
     final map = allocate(
-      TypeReference((b) => b..symbol = 'Map'..url = 'dart:core'),
+      TypeReference(
+        (b) => b
+          ..symbol = 'Map'
+          ..url = 'dart:core',
+      ),
     );
     final uri = allocate(
-      TypeReference((b) => b..symbol = 'Uri'..url = 'dart:core'),
+      TypeReference(
+        (b) => b
+          ..symbol = 'Uri'
+          ..url = 'dart:core',
+      ),
     );
 
     return '''
@@ -1213,7 +1230,7 @@ for (final entry in ($accessor.toJson() as $map).entries) {
     );
   }
 }
-formData.files.add($mapEntry(
+_\$formData.files.add($mapEntry(
   '$rawName',
   $multipartFile.fromString(
     $partsVarName.join('&'),

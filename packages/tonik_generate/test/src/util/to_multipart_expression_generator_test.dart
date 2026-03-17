@@ -16,7 +16,10 @@ void main() {
   ).format;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
@@ -89,10 +92,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -141,11 +144,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.name != null) {
-              formData.files.add(MapEntry('name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -195,11 +198,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.nickname != null) {
-              formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -249,11 +252,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.bio != null) {
-              formData.files.add(MapEntry('bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -287,9 +290,9 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
           }
         '''),
         ),
@@ -405,10 +408,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -465,10 +468,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -518,10 +521,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -570,10 +573,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -624,7 +627,7 @@ void main() {
         collapseWhitespace(
           format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             throw EncodingException(
               'Cannot encode NeverModel property \'impossible\' - this type does not permit any value.',
             );
@@ -678,10 +681,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -730,10 +733,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -782,10 +785,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -834,10 +837,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -886,10 +889,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -938,10 +941,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -990,10 +993,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
         ),
@@ -1044,10 +1047,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
           ),
@@ -1099,11 +1102,11 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.count != null) {
-              formData.files.add(MapEntry('count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -1155,10 +1158,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse('application/json'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -1208,10 +1211,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -1261,10 +1264,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse('application/json'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
         ),
@@ -1314,11 +1317,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.score != null) {
-              formData.files.add(MapEntry('score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry('score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse('application/json'))));
             }
           }
         '''),
@@ -1328,309 +1331,327 @@ void main() {
   });
 
   group('style-based encoding with null rawContentType', () {
-    test('StringModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'name',
-            model: StringModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+    test(
+      'StringModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'name': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'name': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('IntegerModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'count',
-            model: IntegerModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'count': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+    test(
+      'IntegerModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'count',
+              model: IntegerModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'count': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('BooleanModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'active',
-            model: BooleanModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'active': const MultipartPropertyEncoding(
-            allowReserved: true,
-          ),
-        },
-      );
+    test(
+      'BooleanModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'active',
+              model: BooleanModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'active': const MultipartPropertyEncoding(
+              allowReserved: true,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('DateTimeModel falls back to text/plain when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'createdAt',
-            model: DateTimeModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'createdAt': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: false,
-          ),
-        },
-      );
+    test(
+      'DateTimeModel falls back to text/plain when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'createdAt',
+              model: DateTimeModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'createdAt': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: false,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('AnyModel falls back to application/json when rawContentType is null', () {
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'value',
-            model: AnyModel(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'value': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+    test(
+      'AnyModel falls back to application/json when rawContentType is null',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'value',
+              model: AnyModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'value': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse('application/json'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
-        ),
-      );
-    });
-
-    test('EnumModel<String> falls back to text/plain when rawContentType is null', () {
-      final enumModel = EnumModel<String>(
-        name: 'Status',
-        values: {
-          const EnumEntry(value: 'active'),
-          const EnumEntry(value: 'inactive'),
-        },
-        isNullable: false,
-        isDeprecated: false,
-        context: testContext,
-      );
-
-      final model = ClassModel(
-        name: 'TestForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'status',
-            model: enumModel,
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
           ),
-        ],
-        context: testContext,
-      );
+        );
+      },
+    );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': const MultipartPropertyEncoding(
-            style: MultipartEncodingStyle.form,
-            explode: true,
-          ),
-        },
-      );
+    test(
+      'EnumModel<String> falls back to text/plain when rawContentType is null',
+      () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: testContext,
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'status',
+              model: enumModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'status': const MultipartPropertyEncoding(
+              style: MultipartEncodingStyle.form,
+              explode: true,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   });
 
   group('enum properties', () {
@@ -1689,10 +1710,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
           ),
@@ -1755,10 +1776,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('text/plain'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('text/plain'))));
           }
         '''),
           ),
@@ -1821,10 +1842,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('application/json'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
           ),
@@ -1887,10 +1908,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('application/json'))));
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('application/json'))));
           }
         '''),
           ),
@@ -1951,11 +1972,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.status != null) {
-              formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -2016,11 +2037,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.status != null) {
-              formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
             }
           }
         '''),
@@ -2072,17 +2093,17 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             switch (body.avatar) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'avatar',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'avatar',
                   await MultipartFile.fromFile(path, filename: fileName ?? 'avatar'),
                 ));
@@ -2135,18 +2156,18 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.document != null) {
               switch (body.document!) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'document',
                     MultipartFile.fromBytes(bytes, filename: fileName ?? 'document'),
                   ));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'document',
                     await MultipartFile.fromFile(path, filename: fileName ?? 'document'),
                   ));
@@ -2200,18 +2221,18 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.photo != null) {
               switch (body.photo!) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'photo',
                     MultipartFile.fromBytes(bytes, filename: fileName ?? 'photo'),
                   ));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'photo',
                     await MultipartFile.fromFile(path, filename: fileName ?? 'photo'),
                   ));
@@ -2265,12 +2286,12 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             switch (body.image) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'image',
                   MultipartFile.fromBytes(
                     bytes,
@@ -2279,7 +2300,7 @@ void main() {
                   ),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'image',
                   await MultipartFile.fromFile(
                     path,
@@ -2336,17 +2357,17 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
                   await MultipartFile.fromFile(path, filename: fileName ?? 'file'),
                 ));
@@ -2360,64 +2381,65 @@ void main() {
     test(
       'generates binary switch for Base64Model property (same as BinaryModel)',
       () {
-      final model = ClassModel(
-        name: 'UploadForm',
-        isDeprecated: false,
-        properties: [
-          Property(
-            name: 'avatar',
-            model: Base64Model(context: testContext),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-          ),
-        ],
-        context: testContext,
-      );
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'avatar',
+              model: Base64Model(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
 
-      final content = RequestContent(
-        model: model,
-        contentType: ContentType.multipart,
-        rawContentType: 'multipart/form-data',
-        encoding: {
-          'avatar': const MultipartPropertyEncoding(
-            contentType: ContentType.bytes,
-            rawContentType: 'application/octet-stream',
-          ),
-        },
-      );
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'avatar': const MultipartPropertyEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+            ),
+          },
+        );
 
-      final result = buildMultipartBodyStatements(
-        content,
-        'body',
-        nameManager,
-        'test_package',
-      );
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
 
-      final code = emitStatements(result);
-      expect(
-        collapseWhitespace(code),
-        collapseWhitespace(
-          format('''
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             switch (body.avatar) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'avatar',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'avatar',
                   await MultipartFile.fromFile(path, filename: fileName ?? 'avatar'),
                 ));
             }
           }
         '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   });
 
   group('complex object properties', () {
@@ -2472,10 +2494,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
@@ -2540,10 +2562,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
@@ -2607,10 +2629,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
@@ -2674,10 +2696,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
@@ -2739,11 +2761,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.address != null) {
-              formData.files.add(MapEntry(
+              _$formData.files.add(MapEntry(
                 'address',
                 MultipartFile.fromString(
                   jsonEncode(body.address!.toJson()),
@@ -2806,11 +2828,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.address != null) {
-              formData.files.add(MapEntry(
+              _$formData.files.add(MapEntry(
                 'address',
                 MultipartFile.fromString(
                   jsonEncode(body.address!.toJson()),
@@ -2873,10 +2895,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
@@ -2940,12 +2962,12 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
             }
           '''),
@@ -3005,13 +3027,13 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               if (body.address != null) {
                 for (final entry in body.address!
                     .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                  formData.fields.add(MapEntry(entry.name, entry.value));
+                  _$formData.fields.add(MapEntry(entry.name, entry.value));
                 }
               }
             }
@@ -3074,12 +3096,12 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
             }
           '''),
@@ -3144,12 +3166,12 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
             }
           '''),
@@ -3214,12 +3236,12 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               for (final entry in body.address
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
-                formData.fields.add(MapEntry(entry.name, entry.value));
+                _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
             }
           '''),
@@ -3283,10 +3305,10 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
@@ -3351,7 +3373,7 @@ void main() {
             collapseWhitespace(
               format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 final addressParts = <String>[];
                 for (final entry in (body.address.toJson() as Map).entries) {
                   final value = entry.value;
@@ -3376,7 +3398,7 @@ void main() {
                     );
                   }
                 }
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
@@ -3442,7 +3464,7 @@ void main() {
             collapseWhitespace(
               format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 final addressParts = <String>[];
                 for (final entry in (body.address.toJson() as Map).entries) {
                   final value = entry.value;
@@ -3467,7 +3489,7 @@ void main() {
                     );
                   }
                 }
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
@@ -3531,7 +3553,7 @@ void main() {
           collapseWhitespace(
             format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               if (body.address != null) {
                 final addressParts = <String>[];
                 for (final entry in (body.address!.toJson() as Map).entries) {
@@ -3557,7 +3579,7 @@ void main() {
                     );
                   }
                 }
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
@@ -3625,10 +3647,10 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
-                formData.files.add(MapEntry(
+                final _$formData = FormData();
+                _$formData.files.add(MapEntry(
                   'address',
                   MultipartFile.fromString(
                     jsonEncode(body.address.toJson()),
@@ -3707,9 +3729,9 @@ void main() {
             collapseWhitespace(
               format(r'''
               void test() {
-                final formData = FormData();
-                final addressHeaders = <String, List<String>>{};
-                addressHeaders['X-Custom-Header'] = [
+                final _$formData = FormData();
+                final _$addressHeaders = <String, List<String>>{};
+                _$addressHeaders['X-Custom-Header'] = [
                   addressCustomHeader.toSimple(explode: false, allowEmpty: true),
                 ];
                 final addressParts = <String>[];
@@ -3736,14 +3758,14 @@ void main() {
                     );
                   }
                 }
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
                       'application/x-www-form-urlencoded',
                     ),
-                    headers: addressHeaders,
+                    headers: _$addressHeaders,
                   ),
                 ));
               }
@@ -3803,11 +3825,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.tags) {
-              formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry('tags', item));
             }
           }
         '''),
@@ -3860,11 +3882,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.tags) {
-              formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry('tags', item));
             }
           }
         '''),
@@ -3917,11 +3939,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry('tags', item));
             }
           }
         '''),
@@ -3974,11 +3996,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
-              formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry('tags', item));
             }
           }
         '''),
@@ -4031,11 +4053,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry('tags', item));
             }
           }
         '''),
@@ -4089,9 +4111,9 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             throw EncodingException(
               'deepObject style is not supported for array multipart properties (property: tags).',
             );
@@ -4159,11 +4181,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.statuses) {
-              formData.fields.add(MapEntry('statuses', item.uriEncode(allowEmpty: true)));
+              _$formData.fields.add(MapEntry('statuses', item.uriEncode(allowEmpty: true)));
             }
           }
         '''),
@@ -4227,11 +4249,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              formData.fields.add(MapEntry('codes', item));
+              _$formData.fields.add(MapEntry('codes', item));
             }
           }
         '''),
@@ -4286,11 +4308,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.scores) {
-              formData.fields.add(MapEntry('scores', item.toString()));
+              _$formData.fields.add(MapEntry('scores', item.toString()));
             }
           }
         '''),
@@ -4343,11 +4365,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.scores) {
-              formData.fields.add(MapEntry('scores', jsonEncode(item)));
+              _$formData.fields.add(MapEntry('scores', jsonEncode(item)));
             }
           }
         '''),
@@ -4400,11 +4422,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.scores.map((item) => jsonEncode(item)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              formData.fields.add(MapEntry('scores', item));
+              _$formData.fields.add(MapEntry('scores', item));
             }
           }
         '''),
@@ -4457,11 +4479,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.dates) {
-              formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
+              _$formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
             }
           }
         '''),
@@ -4514,11 +4536,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.dates) {
-              formData.fields.add(MapEntry('dates', jsonEncode(item)));
+              _$formData.fields.add(MapEntry('dates', jsonEncode(item)));
             }
           }
         '''),
@@ -4573,15 +4595,15 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
               }
             }
           }
@@ -4635,15 +4657,15 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
               }
             }
           }
@@ -4706,11 +4728,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.addresses) {
-              formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'))));
             }
           }
         '''),
@@ -4770,11 +4792,11 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             for (final item in body.addresses) {
-              formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/xml'))));
+              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/xml'))));
             }
           }
         '''),
@@ -4829,12 +4851,12 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.tags != null) {
               for (final item in body.tags!) {
-                formData.fields.add(MapEntry('tags', item));
+                _$formData.fields.add(MapEntry('tags', item));
               }
             }
           }
@@ -4888,12 +4910,12 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.tags != null) {
               for (final item in body.tags!) {
-                formData.fields.add(MapEntry('tags', item));
+                _$formData.fields.add(MapEntry('tags', item));
               }
             }
           }
@@ -4945,10 +4967,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
-              formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
             }
           '''),
           ),
@@ -4997,10 +5019,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
-              formData.files.add(MapEntry('scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse('application/json'))));
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse('application/json'))));
             }
           '''),
           ),
@@ -5045,11 +5067,11 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               for (final item in body.tags) {
-                formData.fields.add(MapEntry('tags', item));
+                _$formData.fields.add(MapEntry('tags', item));
               }
             }
           '''),
@@ -5107,10 +5129,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
-              formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse('application/json'))));
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse('application/json'))));
             }
           '''),
           ),
@@ -5159,10 +5181,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
-              formData.files.add(MapEntry('dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse('application/json'))));
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse('application/json'))));
             }
           '''),
           ),
@@ -5211,11 +5233,11 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
+              final _$formData = FormData();
               if (body.tags != null) {
-                formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse('application/json'))));
+                _$formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse('application/json'))));
               }
             }
           '''),
@@ -5272,11 +5294,11 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 for (final item in body.tags) {
-                  formData.fields.add(MapEntry('tags', item));
+                  _$formData.fields.add(MapEntry('tags', item));
                 }
               }
             '''),
@@ -5330,11 +5352,11 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 for (final item in body.scores) {
-                  formData.fields.add(MapEntry('scores', item.toString()));
+                  _$formData.fields.add(MapEntry('scores', item.toString()));
                 }
               }
             '''),
@@ -5388,11 +5410,11 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 for (final item in body.dates) {
-                  formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
+                  _$formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
                 }
               }
             '''),
@@ -5457,11 +5479,11 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 for (final item in body.priorities) {
-                  formData.fields.add(MapEntry('priorities', item.uriEncode(allowEmpty: true)));
+                  _$formData.fields.add(MapEntry('priorities', item.uriEncode(allowEmpty: true)));
                 }
               }
             '''),
@@ -5508,12 +5530,12 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 if (body.tags != null) {
                   for (final item in body.tags!) {
-                    formData.fields.add(MapEntry('tags', item));
+                    _$formData.fields.add(MapEntry('tags', item));
                   }
                 }
               }
@@ -5577,10 +5599,10 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
             void test() {
-              final formData = FormData();
-              formData.files.add(MapEntry('priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse('application/json'))));
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse('application/json'))));
             }
           '''),
           ),
@@ -5636,15 +5658,15 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 for (final item in body.files) {
                   switch (item) {
                     case TonikFileBytes(:final bytes, :final fileName):
-                      formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                      _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
                     case TonikFilePath(:final path, :final fileName):
-                      formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                      _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
                   }
                 }
               }
@@ -5703,9 +5725,9 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 throw EncodingException(
                   'Arrays of arrays are not supported for multipart encoding (property: matrix).',
                 );
@@ -5762,9 +5784,9 @@ void main() {
           expect(
             collapseWhitespace(code),
             collapseWhitespace(
-              format('''
+              format(r'''
               void test() {
-                final formData = FormData();
+                final _$formData = FormData();
                 throw EncodingException(
                   'Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "items". Only application/json is supported for content-based array serialization.',
                 );
@@ -5820,12 +5842,12 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
             await () async {
-              final formData = FormData();
-              formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
-              return formData;
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+              return _$formData;
             }();
           }
         '''),
@@ -5921,21 +5943,21 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final fileHeaders = <String, List<String>>{};
-            fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$fileHeaders = <String, List<String>>{};
+            _$fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: fileHeaders),
+                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
                 ));
             }
           }
@@ -5995,23 +6017,23 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final fileHeaders = <String, List<String>>{};
+            final _$formData = FormData();
+            final _$fileHeaders = <String, List<String>>{};
             if (fileTag != null) {
-              fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
             }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: fileHeaders),
+                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
                 ));
             }
           }
@@ -6078,17 +6100,17 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final addressHeaders = <String, List<String>>{};
-            addressHeaders['X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$addressHeaders = <String, List<String>>{};
+            _$addressHeaders['X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
                 contentType: DioMediaType.parse('application/json'),
-                headers: addressHeaders,
+                headers: _$addressHeaders,
               ),
             ));
           }
@@ -6148,14 +6170,14 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final descriptionHeaders = <String, List<String>>{};
-            descriptionHeaders['X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$descriptionHeaders = <String, List<String>>{};
+            _$descriptionHeaders['X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'description',
-              MultipartFile.fromString(body.description, contentType: DioMediaType.parse('text/plain'), headers: descriptionHeaders),
+              MultipartFile.fromString(body.description, contentType: DioMediaType.parse('text/plain'), headers: _$descriptionHeaders),
             ));
           }
         '''),
@@ -6216,14 +6238,14 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            final countHeaders = <String, List<String>>{};
-            countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$countHeaders = <String, List<String>>{};
+            _$countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'count',
-              MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'), headers: countHeaders),
+              MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'), headers: _$countHeaders),
             ));
           }
         '''),
@@ -6294,14 +6316,14 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final statusHeaders = <String, List<String>>{};
-            statusHeaders['X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$statusHeaders = <String, List<String>>{};
+            _$statusHeaders['X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'status',
-              MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'), headers: statusHeaders),
+              MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'), headers: _$statusHeaders),
             ));
           }
         '''),
@@ -6361,17 +6383,17 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
                   await MultipartFile.fromFile(path, filename: fileName ?? 'file'),
                 ));
@@ -6443,24 +6465,24 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final fileHeaders = <String, List<String>>{};
-            fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$fileHeaders = <String, List<String>>{};
+            _$fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
             if (fileTag != null) {
-              fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
             }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: fileHeaders),
+                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
                 ));
             }
           }
@@ -6508,17 +6530,17 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
                   MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'file',
                   await MultipartFile.fromFile(path, filename: fileName ?? 'file'),
                 ));
@@ -6586,13 +6608,13 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final tagsHeaders = <String, List<String>>{};
-            tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$tagsHeaders = <String, List<String>>{};
+            _$tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags) {
-              formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: tagsHeaders)));
+              _$formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
           }
         '''),
@@ -6657,13 +6679,13 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final tagsHeaders = <String, List<String>>{};
-            tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$tagsHeaders = <String, List<String>>{};
+            _$tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: tagsHeaders)));
+              _$formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
           }
         '''),
@@ -6728,17 +6750,17 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final filesHeaders = <String, List<String>>{};
-            filesHeaders['X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$filesHeaders = <String, List<String>>{};
+            _$filesHeaders['X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files', headers: filesHeaders)));
+                  _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files', headers: _$filesHeaders)));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files', headers: filesHeaders)));
+                  _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files', headers: _$filesHeaders)));
               }
             }
           }
@@ -6811,13 +6833,13 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final addressesHeaders = <String, List<String>>{};
-            addressesHeaders['X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$addressesHeaders = <String, List<String>>{};
+            _$addressesHeaders['X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.addresses) {
-              formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'), headers: addressesHeaders)));
+              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'), headers: _$addressesHeaders)));
             }
           }
         '''),
@@ -6878,22 +6900,22 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.file != null) {
-              final fileHeaders = <String, List<String>>{};
-              fileHeaders['X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
+              final _$fileHeaders = <String, List<String>>{};
+              _$fileHeaders['X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'file',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'file',
-                    await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: fileHeaders),
+                    await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
                   ));
               }
             }
@@ -6956,22 +6978,22 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
+            final _$formData = FormData();
             if (body.file != null) {
-              final fileHeaders = <String, List<String>>{};
-              fileHeaders['X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
+              final _$fileHeaders = <String, List<String>>{};
+              _$fileHeaders['X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'file',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: fileHeaders),
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
-                  formData.files.add(MapEntry(
+                  _$formData.files.add(MapEntry(
                     'file',
-                    await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: fileHeaders),
+                    await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
                   ));
               }
             }
@@ -7035,14 +7057,14 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            final dataHeaders = <String, List<String>>{};
-            dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$dataHeaders = <String, List<String>>{};
+            _$dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'data',
-              MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'), headers: dataHeaders),
+              MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'), headers: _$dataHeaders),
             ));
           }
         '''),
@@ -7105,14 +7127,14 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            final countHeaders = <String, List<String>>{};
-            countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$countHeaders = <String, List<String>>{};
+            _$countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'count',
-              MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse('application/json'), headers: countHeaders),
+              MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse('application/json'), headers: _$countHeaders),
             ));
           }
         '''),
@@ -7175,14 +7197,14 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            final createdAtHeaders = <String, List<String>>{};
-            createdAtHeaders['X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
-            formData.files.add(MapEntry(
+            final _$formData = FormData();
+            final _$createdAtHeaders = <String, List<String>>{};
+            _$createdAtHeaders['X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
+            _$formData.files.add(MapEntry(
               'createdAt',
-              MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'), headers: createdAtHeaders),
+              MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'), headers: _$createdAtHeaders),
             ));
           }
         '''),
@@ -7250,13 +7272,13 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            format('''
+            format(r'''
           void test() {
-            final formData = FormData();
-            final datesHeaders = <String, List<String>>{};
-            datesHeaders['X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$datesHeaders = <String, List<String>>{};
+            _$datesHeaders['X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              formData.files.add(MapEntry('dates', MultipartFile.fromString(item, headers: datesHeaders)));
+              _$formData.files.add(MapEntry('dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
           }
         '''),
@@ -7324,21 +7346,21 @@ void main() {
       expect(
         collapseWhitespace(code),
         collapseWhitespace(
-          format('''
+          format(r'''
           void test() {
-            final formData = FormData();
-            final documentHeaders = <String, List<String>>{};
-            documentHeaders['X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
+            final _$formData = FormData();
+            final _$documentHeaders = <String, List<String>>{};
+            _$documentHeaders['X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
             switch (body.document) {
               case TonikFileBytes(:final bytes, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'document',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'document', headers: documentHeaders),
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'document', headers: _$documentHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
-                formData.files.add(MapEntry(
+                _$formData.files.add(MapEntry(
                   'document',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'document', headers: documentHeaders),
+                  await MultipartFile.fromFile(path, filename: fileName ?? 'document', headers: _$documentHeaders),
                 ));
             }
           }

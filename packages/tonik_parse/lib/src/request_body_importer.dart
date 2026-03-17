@@ -218,8 +218,9 @@ class RequestBodyImporter {
     for (final property in resolved.properties) {
       final existing = explicitEncoding?[property.name];
       final defaultContentType = _resolveDefaultContentType(property.model);
-      final defaultRawContentType =
-          _resolveDefaultRawContentType(property.model);
+      final defaultRawContentType = _resolveDefaultRawContentType(
+        property.model,
+      );
 
       final isStyleBased = existing?.isStyleBased ?? false;
       result[property.name] = core.MultipartPropertyEncoding(

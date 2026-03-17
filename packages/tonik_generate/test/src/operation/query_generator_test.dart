@@ -20,7 +20,10 @@ void main() {
 
     setUp(() {
       nameGenerator = NameGenerator();
-      nameManager = NameManager(generator: nameGenerator);
+      nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
       generator = QueryGenerator(
         nameManager: nameManager,
         package: 'package:api/api.dart',
@@ -49,11 +52,11 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters() {
-          final entries = <ParameterEntry>[];
-          if (entries.isEmpty) {
+          final _$entries = <ParameterEntry>[];
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -158,17 +161,17 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({AnonymousModel? filter}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.add((
+            _$entries.add((
               name: r'filter',
               value: filter.toForm(explode: false, allowEmpty: true),
             ));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -227,16 +230,16 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({AnonymousModel? filter}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.addAll(
+            _$entries.addAll(
               filter.toDeepObject(r'filter', explode: false, allowEmpty: true),
             );
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -294,19 +297,19 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({List<String>? tags}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (tags != null) {
             for (final value in tags.toSpaceDelimited(
               explode: false,
               allowEmpty: true,
             )) {
-              entries.add((name: r'tags', value: value));
+              _$entries.add((name: r'tags', value: value));
             }
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -365,16 +368,16 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({AnonymousModel? filter}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.addAll(
+            _$entries.addAll(
               filter.toDeepObject(r'filter', explode: false, allowEmpty: true),
             );
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -471,9 +474,9 @@ void main() {
           List<String>? tags,
           List<String>? sort,
         }) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.addAll(
+            _$entries.addAll(
               filter.toDeepObject(r'filter', explode: false, allowEmpty: true),
             );
           }
@@ -482,7 +485,7 @@ void main() {
               explode: false,
               allowEmpty: true,
             )) {
-              entries.add((name: r'tags', value: value));
+              _$entries.add((name: r'tags', value: value));
             }
           }
           if (sort != null) {
@@ -490,13 +493,13 @@ void main() {
               explode: false,
               allowEmpty: true,
             )) {
-              entries.add((name: r'sort', value: value));
+              _$entries.add((name: r'sort', value: value));
             }
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -574,9 +577,9 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({AnonymousModel? filter, List<String>? tags}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.add((
+            _$entries.add((
               name: r'filter',
               value: filter.toForm(explode: true, allowEmpty: true),
             ));
@@ -586,13 +589,13 @@ void main() {
               explode: true,
               allowEmpty: true,
             )) {
-              entries.add((name: r'tags', value: value));
+              _$entries.add((name: r'tags', value: value));
             }
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -652,15 +655,15 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({required AnonymousModel filter}) {
-          final entries = <ParameterEntry>[];
-          entries.add((
+          final _$entries = <ParameterEntry>[];
+          _$entries.add((
             name: r'filter',
             value: filter.toForm(explode: false, allowEmpty: false),
           ));
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -719,17 +722,17 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({AnonymousModel? filter}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.add((
+            _$entries.add((
               name: r'filter',
               value: filter.toForm(explode: false, allowEmpty: false),
             ));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -834,35 +837,35 @@ void main() {
           int? age,
           bool? active,
         }) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (name != null) {
-            entries.add((
+            _$entries.add((
               name: r'name',
               value: name.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (tags != null) {
-            entries.add((
+            _$entries.add((
               name: r'tags',
               value: tags.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (age != null) {
-            entries.add((
+            _$entries.add((
               name: r'age',
               value: age.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (active != null) {
-            entries.add((
+            _$entries.add((
               name: r'active',
               value: active.toForm(explode: false, allowEmpty: false),
             ));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -942,23 +945,23 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            entries.add((
+            _$entries.add((
               name: r'filter',
               value: filter.toForm(explode: false, allowEmpty: false),
             ));
           }
           if (range != null) {
-            entries.add((
+            _$entries.add((
               name: r'range',
               value: range.toForm(explode: false, allowEmpty: false),
             ));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1105,14 +1108,14 @@ void main() {
           List<int>? ids,
           required List<AnonymousModel2> categories,
         }) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           if (color != null) {
-            entries.add((
+            _$entries.add((
               name: r'color',
               value: color.toForm(explode: false, allowEmpty: true),
             ));
           }
-          entries.addAll(
+          _$entries.addAll(
             value.toDeepObject(r'value', explode: false, allowEmpty: true),
           );
           if (ids != null) {
@@ -1124,7 +1127,7 @@ void main() {
               allowEmpty: true,
                   alreadyEncoded: true,
                 )) {
-              entries.add((name: r'ids', value: value));
+              _$entries.add((name: r'ids', value: value));
             }
           }
           for (final value in categories
@@ -1135,12 +1138,12 @@ void main() {
             allowEmpty: true,
                 alreadyEncoded: true,
           )) {
-            entries.add((name: r'categories', value: value));
+            _$entries.add((name: r'categories', value: value));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1211,16 +1214,16 @@ void main() {
 
       const expectedMethod = r'''
          String? _queryParameters({required List<AnonymousModel> colors}) {
-            final entries = <ParameterEntry>[];
-            entries.addAll(
+            final _$entries = <ParameterEntry>[];
+            _$entries.addAll(
               colors.map(
                 (e) => (name: r'colors', value: e.toForm(explode: true, allowEmpty: false)),
               ),
             );
-            if (entries.isEmpty) {
+            if (_$entries.isEmpty) {
               return null;
             }
-            return entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1293,16 +1296,16 @@ void main() {
 
       const expectedMethod = r'''
           String? _queryParameters({required List<List<AnonymousModel>> matrix}) {
-            final entries = <ParameterEntry>[];
+            final _$entries = <ParameterEntry>[];
             if (matrix.isNotEmpty) {
               throw EncodingException(
                 'Form encoding only supports lists of simple types',
               );
             }
-            if (entries.isEmpty) {
+            if (_$entries.isEmpty) {
               return null;
             }
-            return entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1359,14 +1362,14 @@ void main() {
 
         const expectedMethod = r'''
           String? _queryParameters({required String name}) {
-            final entries = <ParameterEntry>[];
+            final _$entries = <ParameterEntry>[];
             throw EncodingException(
               r'Parameter name: spaceDelimited encoding only supports list types',
             );
-            if (entries.isEmpty) {
+            if (_$entries.isEmpty) {
               return null;
             }
-            return entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1450,7 +1453,7 @@ void main() {
 
         const expectedMethod = r'''
            String? _queryParameters({required List<MixedOneOf> values}) {
-             final entries = <ParameterEntry>[];
+             final _$entries = <ParameterEntry>[];
              for (final item in values) {
                if (item.currentEncodingShape != EncodingShape.simple) {
                  throw EncodingException(
@@ -1466,12 +1469,12 @@ void main() {
                    allowEmpty: false,
                    alreadyEncoded: true,
                  )) {
-               entries.add((name: r'values', value: value));
+               _$entries.add((name: r'values', value: value));
              }
-             if (entries.isEmpty) {
+             if (_$entries.isEmpty) {
                return null;
              }
-             return entries.map((e) => '${e.name}=${e.value}').join('&');
+             return _$entries.map((e) => '${e.name}=${e.value}').join('&');
            }
          ''';
 
@@ -1550,19 +1553,19 @@ void main() {
 
         const expectedMethod = r'''
            String? _queryParameters({required List<SimpleOneOf> items}) {
-             final entries = <ParameterEntry>[];
+             final _$entries = <ParameterEntry>[];
              for (final item in items) {
                if (item.currentEncodingShape != EncodingShape.simple) {
                  throw EncodingException(
                    r'Parameter items: spaceDelimited encoding requires simple encoding shape',
                  );
                }
-               entries.add((name: r'items', value: item.uriEncode(allowEmpty: false)));
+               _$entries.add((name: r'items', value: item.uriEncode(allowEmpty: false)));
              }
-             if (entries.isEmpty) {
+             if (_$entries.isEmpty) {
                return null;
              }
-             return entries.map((e) => '${e.name}=${e.value}').join('&');
+             return _$entries.map((e) => '${e.name}=${e.value}').join('&');
            }
          ''';
 
@@ -1633,14 +1636,14 @@ void main() {
 
         const expectedMethod = r'''
           String? _queryParameters({required List<AnonymousModel> filters}) {
-            final entries = <ParameterEntry>[];
+            final _$entries = <ParameterEntry>[];
             throw EncodingException(
               r'Parameter filters: spaceDelimited encoding does not support list content type',
             );
-            if (entries.isEmpty) {
+            if (_$entries.isEmpty) {
               return null;
             }
-            return entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1701,17 +1704,17 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({required List<String> $class}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           for (final value in $class.toSpaceDelimited(
             explode: false,
             allowEmpty: false,
           )) {
-            entries.add((name: r'class', value: value));
+            _$entries.add((name: r'class', value: value));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1780,7 +1783,7 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({required List<AnonymousModel> $enum}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           for (final value in $enum
               .map((e) => e.uriEncode(allowEmpty: false, useQueryComponent: true))
               .toList()
@@ -1789,12 +1792,12 @@ void main() {
                 allowEmpty: false,
                 alreadyEncoded: true,
               )) {
-            entries.add((name: r'enum', value: value));
+            _$entries.add((name: r'enum', value: value));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1852,14 +1855,14 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({required String $class}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           throw EncodingException(
             r'Parameter $class: spaceDelimited encoding only supports list types',
           );
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1923,14 +1926,14 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({required List<SomeClass> $void}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           throw EncodingException(
             r'Parameter $void: pipeDelimited encoding does not support list content type',
           );
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1989,17 +1992,17 @@ void main() {
 
       const expectedMethod = r'''
         String? _queryParameters({required List<String> $price}) {
-          final entries = <ParameterEntry>[];
+          final _$entries = <ParameterEntry>[];
           for (final value in $price.toSpaceDelimited(
             explode: false,
             allowEmpty: false,
           )) {
-            entries.add((name: r'$price', value: value));
+            _$entries.add((name: r'$price', value: value));
           }
-          if (entries.isEmpty) {
+          if (_$entries.isEmpty) {
             return null;
           }
-          return entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
         }
       ''';
 

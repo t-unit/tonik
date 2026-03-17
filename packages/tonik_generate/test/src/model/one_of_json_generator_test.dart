@@ -19,10 +19,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = OneOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -59,14 +63,14 @@ void main() {
         expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
         final generatedCode = format(baseClass.accept(emitter).toString());
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               ResultError(:final value) => (value, 'error'),
               ResultSuccess(:final value) => (value, 'success'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -162,18 +166,18 @@ void main() {
         final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
         expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               ResultError(:final value) => (value.toJson(), 'error'),
               ResultSuccess(:final value) => (value.toJson(), 'success'),
             };
 
-            if (discriminator != null && json is Map<String, Object?>) {
-              json.putIfAbsent('type', () => discriminator);
+            if (_$discriminator != null && _$json is Map<String, Object?>) {
+              _$json.putIfAbsent('type', () => _$discriminator);
             }
 
-            return json;
+            return _$json;
           }''';
 
         final generatedCode = format(baseClass.accept(emitter).toString());
@@ -195,18 +199,18 @@ void main() {
           'Object?',
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
-            final discriminator = json is Map<String, Object?> ? json['type'] : null;
+            final _$discriminator = json is Map<String, Object?> ? json['type'] : null;
 
-            final result = switch (discriminator) {
+            final _$result = switch (_$discriminator) {
               'error' => ResultError(Error.fromJson(json)),
               'success' => ResultSuccess(Success.fromJson(json)),
               _ => null,
             };
 
-            if (result != null) {
-              return result;
+            if (_$result != null) {
+              return _$result;
             }
 
             try {
@@ -217,7 +221,7 @@ void main() {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
 
-            throw JsonDecodingException('Invalid JSON for Result');
+            throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
 
         expect(
@@ -288,19 +292,19 @@ void main() {
           );
           expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               ResultError(:final value) => (value.toJson(), 'error'),
               ResultSuccess(:final value) => (value.toJson(), null),
               ResultString(:final value) => (value, null),
             };
 
-            if (discriminator != null && json is Map<String, Object?>) {
-              json.putIfAbsent('discriminator', () => discriminator);
+            if (_$discriminator != null && _$json is Map<String, Object?>) {
+              _$json.putIfAbsent('discriminator', () => _$discriminator);
             }
 
-            return json;
+            return _$json;
           }''';
 
           final generatedCode = format(baseClass.accept(emitter).toString());
@@ -323,17 +327,17 @@ void main() {
           'Object?',
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
-            final discriminator = json is Map<String, Object?> ? json['discriminator'] : null;
+            final _$discriminator = json is Map<String, Object?> ? json['discriminator'] : null;
 
-            final result = switch (discriminator) {
+            final _$result = switch (_$discriminator) {
               'error' => ResultError(Error.fromJson(json)),
               _ => null,
             };
 
-            if (result != null) {
-              return result;
+            if (_$result != null) {
+              return _$result;
             }
 
             if (json is String) {
@@ -348,7 +352,7 @@ void main() {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
 
-            throw JsonDecodingException('Invalid JSON for Result');
+            throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
 
         expect(
@@ -382,14 +386,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               TimestampValueString(:final value) => (value, 'string'),
               TimestampValueTimestamp(:final value) => ( value.toTimeZonedIso8601String(), 'timestamp', ),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -421,14 +425,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               DateValueDate(:final value) => (value.toJson(), 'date'),
               DateValueString(:final value) => (value, 'string'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -460,14 +464,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               NumericValueDecimal(:final value) => (value.toString(), 'decimal'),
               NumericValueInteger(:final value) => (value, 'integer'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -499,14 +503,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               UriValueString(:final value) => (value, 'string'),
               UriValueUri(:final value) => (value.toString(), 'uri'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -549,14 +553,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               StatusValueStatus(:final value) => (value.toJson(), 'status'),
               StatusValueString(:final value) => (value, 'string'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -603,14 +607,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               UserValueString(:final value) => (value, 'string'),
               UserValueUser(:final value) => (value.toJson(), 'user'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -664,14 +668,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               CombinedValueCombined(:final value) => (value.toJson(), 'combined'),
               CombinedValueString(:final value) => (value, 'string'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -710,14 +714,14 @@ void main() {
           );
           final generatedCode = format(baseClass.accept(emitter).toString());
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               ListValueList(:final value) => (value, 'list'),
               ListValueString(:final value) => (value, 'string'),
             };
 
-            return json;
+            return _$json;
           }''';
 
           expect(
@@ -772,14 +776,14 @@ void main() {
           );
           final generatedCode = format(baseClass.accept(emitter).toString());
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               ItemListValueItems(:final value) => ( value.map((e) => e.toJson()).toList(), 'items', ),
               ItemListValueString(:final value) => (value, 'string'),
             };
 
-            return json;
+            return _$json;
           }''';
 
           expect(
@@ -829,14 +833,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               FlexibleValueBoolean(:final value) => (value, 'boolean'),
               FlexibleValueFlexible(:final value) => (value.toJson(), 'flexible'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -874,14 +878,14 @@ void main() {
         );
         final generatedCode = format(baseClass.accept(emitter).toString());
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? toJson() {
-            final (dynamic json, String? discriminator) = switch (this) {
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
               IdentifierValueNumber(:final value) => (value, 'number'),
               IdentifierValueUserId(:final value) => (value, 'userId'),
             };
 
-            return json;
+            return _$json;
           }''';
 
         expect(
@@ -890,5 +894,59 @@ void main() {
         );
       });
     });
+  });
+
+  group(r'nullable oneOf with $Raw-prefixed class name', () {
+    test(
+      r'fromJson throws raw string literal for $Raw-prefixed class name',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Pet',
+          models: {
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'Cat',
+                properties: const [],
+                context: context,
+              ),
+            ),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'Dog',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+          isNullable: true,
+        );
+
+        nameManager.prime(
+          models: {model},
+          requestBodies: const [],
+          responses: const [],
+          operations: const [],
+          tags: const [],
+          servers: const [],
+        );
+
+        final generatedClasses = generator.generateClasses(model, r'$RawPet');
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == r'$RawPet',
+        );
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        expect(
+          generatedCode,
+          contains(r"r'Invalid JSON for $RawPet'"),
+        );
+      },
+    );
   });
 }

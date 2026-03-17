@@ -277,6 +277,88 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart/anyof-model:
+    post:
+      operationId: postAnyOfModel
+      tags:
+        - multipart
+      summary: Post a multipart form with an anyOf model field
+      description: >-
+        Tests anyOf model serialization inside multipart. The model field
+        is anyOf(string, enum) and must be JSON-encoded as a multipart part
+        with application/json content type.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AnyOfModelForm'
+            encoding:
+              model:
+                contentType: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart/kitchen-sink:
+    post:
+      operationId: postKitchenSink
+      tags:
+        - multipart
+      summary: Post all field types in a single multipart form
+      description: >-
+        Tests binary file + string + number + boolean + enum + array
+        all in one multipart form. This is the real-world pattern seen in
+        APIs like OpenAI where a single endpoint has many field types.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KitchenSinkForm'
+            encoding:
+              metadata:
+                contentType: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /multipart/multi-response:
+    post:
+      operationId: postMultiResponse
+      tags:
+        - multipart
+      summary: Post a form and get back JSON or binary
+      description: >-
+        Tests multiple response content types at the same 200 status.
+        Depending on the request, the server returns either application/json
+        or application/octet-stream. The generated client must handle both.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SimpleFields'
+      responses:
+        '200':
+          description: Successful response (JSON or binary)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
   /custom/multipart:
     post:
       operationId: postCustomMultipart
@@ -532,6 +614,60 @@ components:
           description: >-
             Base64-encoded binary data. Per OAS 3.0.4 §4.7.15, format:byte
             defaults to application/octet-stream in multipart encoding.
+
+    ModelType:
+      type: string
+      enum:
+        - whisper-1
+        - gpt-4o-transcribe
+        - gpt-4o-mini-transcribe
+
+    AnyOfModelChoice:
+      anyOf:
+        - type: string
+        - $ref: '#/components/schemas/ModelType'
+
+    AnyOfModelForm:
+      type: object
+      required:
+        - file
+        - model
+      properties:
+        file:
+          type: string
+          format: binary
+          description: Binary file to process
+        model:
+          $ref: '#/components/schemas/AnyOfModelChoice'
+
+    KitchenSinkForm:
+      type: object
+      required:
+        - file
+        - name
+      properties:
+        file:
+          type: string
+          format: binary
+          description: Binary file upload
+        name:
+          type: string
+          description: A string field
+        temperature:
+          type: number
+          description: A number field
+        active:
+          type: boolean
+          description: A boolean field
+        status:
+          $ref: '#/components/schemas/Status'
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array of tag strings
+        metadata:
+          $ref: '#/components/schemas/Profile'
 
     GenericResponse:
       type: object

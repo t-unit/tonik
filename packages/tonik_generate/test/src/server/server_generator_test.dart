@@ -15,7 +15,10 @@ void main() {
   late Class baseClass;
 
   setUp(() {
-    nameManager = NameManager(generator: NameGenerator());
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
     generator = ServerGenerator(nameManager: nameManager);
     emitter = DartEmitter(useNullSafetySyntax: true);
 
@@ -232,6 +235,66 @@ void main() {
 
       // Test custom server name matches naming from NameManager
       expect(generatedClasses.last.name, names.customName);
+    });
+  });
+
+  group('ServerGenerator multi-line descriptions', () {
+    test('static server with multi-line description has proper doc comments',
+        () {
+      final servers = [
+        const Server(
+          url: 'https://api.example.com',
+          description: "Production server.\nThe main server's endpoint.",
+        ),
+      ];
+
+      final classes = generator.generateClasses(servers);
+      final serverClass = classes[1]; // first server class after base
+
+      expect(serverClass.docs, [
+        '/// Production server.',
+        "/// The main server's endpoint. - https://api.example.com",
+      ]);
+    });
+
+    test('templated server with multi-line description has proper doc comments',
+        () {
+      final servers = [
+        const Server(
+          url: 'https://{env}.example.com',
+          description: "Environment server.\nThe server's URL varies.",
+          variables: [
+            ServerVariable(
+              name: 'env',
+              defaultValue: 'prod',
+              description: 'Environment',
+            ),
+          ],
+        ),
+      ];
+
+      final classes = generator.generateClasses(servers);
+      final serverClass = classes[1];
+
+      expect(serverClass.docs, [
+        '/// Environment server.',
+        "/// The server's URL varies. - https://{env}.example.com",
+      ]);
+    });
+
+    test(
+        'multi-line server description does not crash DartFormatter',
+        () {
+      final servers = [
+        const Server(
+          url: 'https://api.example.com',
+          description: "Production server.\nThe main server's endpoint.",
+        ),
+      ];
+
+      // Should not throw
+      final result = generator.generate(servers);
+      expect(result.code, contains('class'));
     });
   });
 

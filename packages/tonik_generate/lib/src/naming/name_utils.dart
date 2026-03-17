@@ -75,6 +75,24 @@ const dartKeywords = {
   'yield',
 };
 
+const _specialCharReplacements = {
+  '+': 'plus',
+  '*': 'asterisk',
+  '/': 'slash',
+  '~': 'tilde',
+  '>': 'greaterThan',
+  '<': 'lessThan',
+  '=': 'equals',
+  '!': 'exclamation',
+  '@': 'at',
+  '#': 'hash',
+  '%': 'percent',
+  '^': 'caret',
+  '&': 'ampersand',
+  '|': 'pipe',
+  r'\': 'backslash',
+};
+
 const generatedClassTokens = {
   'fromJson',
   'toJson',
@@ -199,8 +217,31 @@ String ensureNotKeyword(String name) {
 String _normalizeText(String text, {bool preserveNumbers = false}) {
   if (text.isEmpty) return '';
 
+  // Replace dots with spaces so they act as word boundaries
+  final withDotsSeparated = text.replaceAll('.', ' ');
+
+  // Replace special characters with word equivalents
+  var withSpecialCharsReplaced = withDotsSeparated;
+  for (final entry in _specialCharReplacements.entries) {
+    withSpecialCharsReplaced = withSpecialCharsReplaced.replaceAll(
+      entry.key,
+      ' ${entry.value} ',
+    );
+  }
+
+  // Replace minus sign (not hyphen separator) with "minus"
+  // Only when NOT preceded by a letter or digit (i.e., it's a sign,
+  // not a separator like "my-name" or "2-beta")
+  withSpecialCharsReplaced = withSpecialCharsReplaced.replaceAllMapped(
+    RegExp('(?<![a-zA-Z0-9])-'),
+    (m) => ' minus ',
+  );
+
   // Clean invalid characters but preserve separators for splitting
-  final cleaned = text.replaceAll(RegExp(r'[^a-zA-Z0-9_\-\s$]'), '');
+  final cleaned = withSpecialCharsReplaced.replaceAll(
+    RegExp(r'[^a-zA-Z0-9_\-\s$]'),
+    '',
+  );
 
   // Split on separators and case boundaries, but NOT on $
   final tokens = cleaned
@@ -326,6 +367,11 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
     preserveNumbers: preserveNumbers,
   );
 
+  // Safety net: if result starts with a digit, prefix with $
+  if (processedName.isNotEmpty && RegExp(r'^\d').hasMatch(processedName)) {
+    processedName = '\$$processedName';
+  }
+
   return ensureNotKeyword(processedName);
 }
 
@@ -341,6 +387,26 @@ String normalizeEnumValueName(String value) {
     return normalized.isEmpty ? defaultEnumPrefix : normalized.toCamelCase();
   }
 
+  // Handle version-like strings (e.g., 1.0.2, 2.1.0, 1.0.2-beta)
+  final versionMatch = RegExp(r'^(\d+(?:\.\d+)+)(.*)$').firstMatch(value);
+  if (versionMatch != null) {
+    final versionPart = versionMatch.group(1)!;
+    final suffix =
+        (versionMatch.group(2) ?? '').replaceFirst(RegExp('^-'), '');
+
+    final segments = versionPart.split('.');
+    final spelled = segments
+        .map((s) => _numberToWords(int.parse(s)))
+        .join(' dot ');
+
+    final fullSpelled = suffix.isNotEmpty ? '$spelled $suffix' : spelled;
+    final normalized = normalizeSingle(fullSpelled);
+
+    if (normalized.isEmpty) return defaultEnumPrefix;
+    if (normalized.startsWith(r'$')) return normalized;
+    return normalized.toCamelCase();
+  }
+
   // For values with prefixes (like ERROR_404), preserve numbers as-is
   final normalized = normalizeSingle(value, preserveNumbers: true);
   if (normalized.isEmpty) return defaultEnumPrefix;
@@ -350,7 +416,14 @@ String normalizeEnumValueName(String value) {
     return normalized;
   }
 
-  return normalized.toCamelCase();
+  final result = normalized.toCamelCase();
+
+  // Safety net: if the result still starts with a digit, prefix with $
+  if (RegExp(r'^\d').hasMatch(result)) {
+    return '\$$result';
+  }
+
+  return result;
 }
 
 /// Ensures uniqueness in a list of normalized names

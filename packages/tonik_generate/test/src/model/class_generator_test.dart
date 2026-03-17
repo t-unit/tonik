@@ -19,7 +19,10 @@ void main() {
 
     setUp(() {
       nameGenerator = NameGenerator();
-      nameManager = NameManager(generator: nameGenerator);
+      nameManager = NameManager(
+        generator: nameGenerator,
+        stableModelSorter: StableModelSorter(),
+      );
       generator = ClassGenerator(
         nameManager: nameManager,
         package: 'package:example',
@@ -809,9 +812,9 @@ void main() {
           final result = generator.generateClass(model);
           final generatedCode = format(result.accept(emitter).toString());
 
-          const expectedFromFormConstructor = '''
+          const expectedFromFormConstructor = r'''
 factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
-  final values = value.decodeObject(
+  final _$values = value.decodeObject(
     explode: explode,
     explodeSeparator: '&',
     expectedKeys: {r'items'},
@@ -819,7 +822,7 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
     context: r'ModelWithSimpleList',
   );
   return ModelWithSimpleList(
-    items: values[r'items'].decodeFormStringList(
+    items: _$values[r'items'].decodeFormStringList(
       context: r'ModelWithSimpleList.items',
     ),
   );
@@ -904,12 +907,12 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
           final result = generator.generateClass(model);
           final generatedCode = format(result.accept(emitter).toString());
 
-          const expectedFromFormConstructor = '''
+          const expectedFromFormConstructor = r'''
 factory ModelWithSimpleListRoundtrip.fromForm(
   String? value, {
   required bool explode,
 }) {
-  final values = value.decodeObject(
+  final _$values = value.decodeObject(
     explode: explode,
     explodeSeparator: '&',
     expectedKeys: {r'tags'},
@@ -917,7 +920,7 @@ factory ModelWithSimpleListRoundtrip.fromForm(
     context: r'ModelWithSimpleListRoundtrip',
   );
   return ModelWithSimpleListRoundtrip(
-    tags: values[r'tags'].decodeFormStringList(
+    tags: _$values[r'tags'].decodeFormStringList(
       context: r'ModelWithSimpleListRoundtrip.tags',
       ),
     );
@@ -942,7 +945,7 @@ useQueryComponent: useQueryComponent,
 }
           ''';
 
-          const expectedParameterPropertiesMethod = '''
+          const expectedParameterPropertiesMethod = r'''
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
@@ -951,12 +954,12 @@ Map<String, String> parameterProperties({
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
   }
-  final result = <String, String>{};
-  result[r'tags'] = tags.uriEncode(
+  final _$result = <String, String>{};
+  _$result[r'tags'] = tags.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
   );
-  return result;
+  return _$result;
 }
           ''';
 
@@ -1150,8 +1153,8 @@ Map<String, String> parameterProperties({
             'bool',
           );
           final generatedCode = result.accept(emitter).toString();
-          const expectedReturnStatement = '''
-            return UserForm(name: values[r'name'].decodeFormString(context: r'UserForm.name'), age: values[r'age'].decodeFormInt(context: r'UserForm.age'), email: values[r'email'].decodeFormNullableString(context: r'UserForm.email'), );
+          const expectedReturnStatement = r'''
+            return UserForm(name: _$values[r'name'].decodeFormString(context: r'UserForm.name'), age: _$values[r'age'].decodeFormInt(context: r'UserForm.age'), email: _$values[r'email'].decodeFormNullableString(context: r'UserForm.email'), );
           ''';
 
           expect(
@@ -1194,7 +1197,7 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'optional'].decodeFormNullableString(context: "
+                r"_$values[r'optional'].decodeFormNullableString(context: "
                 "r'OptionalForm.optional')",
               ),
             ),
@@ -1204,7 +1207,7 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'required'].decodeFormString(context: "
+                r"_$values[r'required'].decodeFormString(context: "
                 "r'OptionalForm.required')",
               ),
             ),
@@ -1253,7 +1256,7 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'required'].decodeFormStringList(context: "
+                r"_$values[r'required'].decodeFormStringList(context: "
                 "r'ListForm.required').map",
               ),
             ),
@@ -1264,7 +1267,7 @@ Map<String, String> parameterProperties({
             collapseWhitespace(generatedCode),
             contains(
               collapseWhitespace(
-                "values[r'optional'].decodeFormNullableStringList(context: "
+                r"_$values[r'optional'].decodeFormNullableStringList(context: "
                 "r'ListForm.optional')?.map",
               ),
             ),
@@ -1393,8 +1396,8 @@ Map<String, String> parameterProperties({
         expect(fromFormConstructor.requiredParameters.length, 1);
         expect(fromFormConstructor.optionalParameters.length, 1);
 
-        const expectedReturnStatement = '''
-          return AllTypesForm(text: values[r'text'].decodeFormString(context: r'AllTypesForm.text'), number: values[r'number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: values[r'decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: values[r'flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: values[r'timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: values[r'date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: values[r'precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: values[r'website'].decodeFormUri(context: r'AllTypesForm.website'), );
+        const expectedReturnStatement = r'''
+          return AllTypesForm(text: _$values[r'text'].decodeFormString(context: r'AllTypesForm.text'), number: _$values[r'number'].decodeFormInt(context: r'AllTypesForm.number'), decimal: _$values[r'decimal'].decodeFormDouble(context: r'AllTypesForm.decimal'), flag: _$values[r'flag'].decodeFormBool(context: r'AllTypesForm.flag'), timestamp: _$values[r'timestamp'].decodeFormDateTime(context: r'AllTypesForm.timestamp'), dateOnly: _$values[r'date_only'].decodeFormDate(context: r'AllTypesForm.date_only'), preciseAmount: _$values[r'precise_amount'].decodeFormBigDecimal(context: r'AllTypesForm.precise_amount'), website: _$values[r'website'].decodeFormUri(context: r'AllTypesForm.website'), );
         ''';
 
         expect(
@@ -1437,8 +1440,8 @@ Map<String, String> parameterProperties({
           expect(fromFormConstructor.requiredParameters.length, 1);
           expect(fromFormConstructor.optionalParameters.length, 1);
 
-          const expectedReturnStatement = '''
-            return NullableForm(requiredNullableName: values[r'required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: values[r'required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
+          const expectedReturnStatement = r'''
+            return NullableForm(requiredNullableName: _$values[r'required_nullable_name'].decodeFormNullableString(context: r'NullableForm.required_nullable_name'), requiredNullableCount: _$values[r'required_nullable_count'].decodeFormNullableInt(context: r'NullableForm.required_nullable_count'), );
           ''';
 
           expect(

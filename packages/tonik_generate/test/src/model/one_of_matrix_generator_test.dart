@@ -19,10 +19,14 @@ void main() {
 
   setUp(() {
     nameGenerator = NameGenerator();
-    nameManager = NameManager(generator: nameGenerator);
+    nameManager = NameManager(
+      generator: nameGenerator,
+      stableModelSorter: StableModelSorter(),
+    );
     generator = OneOfGenerator(
       nameManager: nameManager,
       package: 'package:example',
+      stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -622,7 +626,7 @@ void main() {
         }) {
           return switch (this) {
             StringOrIntListList(:final value) => value
-              .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+              .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
               .toList()
               .toMatrix(
                 paramName,
@@ -676,7 +680,7 @@ void main() {
         }) {
           return switch (this) {
             StringOrDateTimeListList(:final value) => value
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
                   paramName,
@@ -737,7 +741,7 @@ void main() {
         }) {
           return switch (this) {
             StringOrEnumListList(:final value) => value
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
                 .toList()
                 .toMatrix(
                   paramName,
@@ -758,6 +762,57 @@ void main() {
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test(
+      'generates EncodingException for OneOf with List<ClassModel> variant',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Row',
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+        final listOfClassModel = ListModel(
+          content: classModel,
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'RowsOrModel',
+          models: {
+            (discriminatorValue: null, model: listOfClassModel),
+            (discriminatorValue: null, model: classModel),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'RowsOrModel');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = '''
+        String toMatrix(String paramName, {required bool explode, required bool allowEmpty}) {
+          return switch (this) {
+            RowsOrModelRow(:final value) => value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty),
+            RowsOrModelList() => throw EncodingException('Lists with complex content cannot be matrix-encoded'),
+          };
+        }
+      ''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(format(expectedMethod))),
+        );
+      },
+    );
 
     test('generates toMatrix for OneOf with only list variants', () {
       final listStringModel = ListModel(
@@ -793,7 +848,7 @@ void main() {
         }) {
           return switch (this) {
             StringListOrIntListList(:final value) => value
-              .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+              .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
               .toList()
               .toMatrix(
                 paramName,

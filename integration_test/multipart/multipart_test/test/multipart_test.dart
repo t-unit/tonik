@@ -167,16 +167,18 @@ void main() {
         // not as a single JSON-encoded blob.
         final formData = success.response.requestOptions.data as FormData;
 
-        final tagEntries =
-            formData.fields.where((e) => e.key == 'tags').toList();
+        final tagEntries = formData.fields
+            .where((e) => e.key == 'tags')
+            .toList();
         expect(tagEntries, hasLength(3));
         expect(
           tagEntries.map((e) => e.value).toList(),
           ['dart', 'flutter', 'openapi'],
         );
 
-        final priorityEntries =
-            formData.fields.where((e) => e.key == 'priorities').toList();
+        final priorityEntries = formData.fields
+            .where((e) => e.key == 'priorities')
+            .toList();
         expect(priorityEntries, hasLength(2));
         expect(
           priorityEntries.map((e) => e.value).toList(),
@@ -406,5 +408,186 @@ void main() {
         expect(success.response.headers['x-has-data']?.first, 'false');
       },
     );
+  });
+
+  group('anyOf model in multipart', () {
+    test('sends anyOf enum variant as JSON-encoded multipart part', () async {
+      final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
+
+      final form = AnyOfModelForm(
+        file: TonikFileBytes(fileBytes, fileName: 'test.bin'),
+        model: const AnyOfModelChoice(
+          modelType: ModelType.whisper1,
+        ),
+      );
+
+      final response = await api.postAnyOfModel(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+
+      // Binary file should be in files list.
+      expect(formData.files.any((e) => e.key == 'file'), isTrue);
+      // Model should be JSON-encoded as a multipart file part.
+      expect(formData.files.any((e) => e.key == 'model'), isTrue);
+    });
+
+    test('sends anyOf string variant as JSON-encoded multipart part', () async {
+      final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
+
+      final form = AnyOfModelForm(
+        file: TonikFileBytes(fileBytes, fileName: 'test.bin'),
+        model: const AnyOfModelChoice(
+          string: 'custom-model-name',
+        ),
+      );
+
+      final response = await api.postAnyOfModel(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+
+      expect(formData.files.any((e) => e.key == 'file'), isTrue);
+      expect(formData.files.any((e) => e.key == 'model'), isTrue);
+    });
+  });
+
+  group('Kitchen sink (all field types)', () {
+    test(
+      'sends binary + string + number + bool + enum + array + object',
+      () async {
+        final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
+
+        final form = KitchenSinkForm(
+          file: TonikFileBytes(fileBytes, fileName: 'image.png'),
+          name: 'test-file',
+          temperature: 0.7,
+          active: true,
+          status: Status.active,
+          tags: const ['alpha', 'beta', 'gamma'],
+          metadata: const Profile(firstName: 'John', lastName: 'Doe'),
+        );
+
+        final response = await api.postKitchenSink(body: form);
+
+        expect(response, isA<TonikSuccess<GenericResponse>>());
+
+        final success = response as TonikSuccess<GenericResponse>;
+        final formData = success.response.requestOptions.data as FormData;
+
+        // Binary file in files.
+        expect(formData.files.any((e) => e.key == 'file'), isTrue);
+
+        // String field in files (text/plain).
+        expect(formData.files.any((e) => e.key == 'name'), isTrue);
+        expect(success.response.headers['x-param-name']?.first, 'test-file');
+
+        // Number field in files (text/plain).
+        expect(formData.files.any((e) => e.key == 'temperature'), isTrue);
+
+        // Boolean field in files (text/plain).
+        expect(formData.files.any((e) => e.key == 'active'), isTrue);
+
+        // Enum field in files.
+        expect(formData.files.any((e) => e.key == 'status'), isTrue);
+
+        // Array of strings as repeated form fields.
+        final tagFields = formData.fields
+            .where((e) => e.key == 'tags')
+            .toList();
+        expect(tagFields, hasLength(3));
+        expect(tagFields[0].value, 'alpha');
+        expect(tagFields[1].value, 'beta');
+        expect(tagFields[2].value, 'gamma');
+
+        // Complex object as JSON-encoded file part.
+        expect(formData.files.any((e) => e.key == 'metadata'), isTrue);
+      },
+    );
+
+    test('sends only required fields, omits optional', () async {
+      final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
+
+      final form = KitchenSinkForm(
+        file: TonikFileBytes(fileBytes, fileName: 'image.png'),
+        name: 'test-file',
+      );
+
+      final response = await api.postKitchenSink(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+
+      // Required fields present.
+      expect(formData.files.any((e) => e.key == 'file'), isTrue);
+      expect(formData.files.any((e) => e.key == 'name'), isTrue);
+
+      // Optional fields absent.
+      expect(
+        formData.files.any((e) => e.key == 'temperature'),
+        isFalse,
+      );
+      expect(formData.files.any((e) => e.key == 'active'), isFalse);
+      expect(formData.files.any((e) => e.key == 'status'), isFalse);
+      expect(formData.fields.any((e) => e.key == 'tags'), isFalse);
+      expect(formData.files.any((e) => e.key == 'metadata'), isFalse);
+    });
+  });
+
+  group('Multiple response content types', () {
+    test('handles JSON response at 200', () async {
+      const form = SimpleFields(name: 'test', age: 1, active: true);
+
+      // Default imposter returns JSON (no X-Want-Binary header).
+      final response = await api.postMultiResponse(body: form);
+
+      expect(
+        response,
+        isA<TonikSuccess<MultipartMultiResponsePost200Response>>(),
+      );
+      final success =
+          response as TonikSuccess<MultipartMultiResponsePost200Response>;
+      expect(success.response.statusCode, 200);
+      expect(success.value, isA<MultipartMultiResponsePost200ResponseJson>());
+    });
+
+    test('handles binary response at 200', () async {
+      const form = SimpleFields(name: 'test', age: 1, active: true);
+
+      // Use a separate API instance with X-Want-Binary header.
+      final binaryApi = MultipartApi(
+        CustomServer(
+          baseUrl: baseUrl,
+          serverConfig: ServerConfig(
+            baseOptions: BaseOptions(
+              headers: {'X-Want-Binary': 'true'},
+            ),
+          ),
+        ),
+      );
+
+      final response = await binaryApi.postMultiResponse(body: form);
+
+      expect(
+        response,
+        isA<TonikSuccess<MultipartMultiResponsePost200Response>>(),
+      );
+      final success =
+          response as TonikSuccess<MultipartMultiResponsePost200Response>;
+      expect(success.response.statusCode, 200);
+      expect(
+        success.value,
+        isA<MultipartMultiResponsePost200ResponseOctetStream>(),
+      );
+      final octetSuccess =
+          success.value as MultipartMultiResponsePost200ResponseOctetStream;
+      expect(octetSuccess.body, isA<TonikFile>());
+    });
   });
 }
