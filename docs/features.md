@@ -108,9 +108,18 @@ Error types: `encoding`, `decoding`, `network`, `other`.
 | Version | Status | Notes |
 |---------|--------|-------|
 | OpenAPI 3.0.x | ✅ Fully Supported | |
-| OpenAPI 3.1.x | Partially Supported | See [Roadmap](roadmap.md) |
+| OpenAPI 3.1.x | ✅ Supported | Advanced JSON Schema keywords on [Roadmap](roadmap.md) |
 | OpenAPI 3.2.x | Planned | See [Roadmap](roadmap.md) |
 | OpenAPI 2.0 (Swagger) | ❌ Not Supported | Use a converter like swagger2openapi |
+
+### Supported OAS 3.1 Features
+
+- `$ref` with siblings — annotation siblings (`description`, `deprecated`) and structural siblings (`properties`, `allOf`/`oneOf`/`anyOf`). See [Data Types](data_types.md#ref-with-siblings-oas-31).
+- `$defs` local definitions — inline schema definitions aligned with JSON Schema 2020-12. See [Data Types](data_types.md#defs-local-definitions-oas-31).
+- Boolean schemas — `schema: true` → `Object?`, `schema: false` → `Never`. See [Data Types](data_types.md#boolean-schemas-oas-31).
+- Nullable type arrays — `type: [string, "null"]` as the 3.1 replacement for `nullable: true`.
+- `contentEncoding` / `contentMediaType` — content-encoded strings with configurable media type mapping.
+- Version-aware multipart encoding — style-based encoding for 3.1, content-based for 3.0.
 
 ---
 

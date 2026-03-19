@@ -148,7 +148,7 @@ See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/i
 | **Multipart** | `multipart/form-data` with primitive, file, JSON, and array parts; per-part `encoding` and content types |
 | **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas |
 | **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping |
-| **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays |
+| **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays, `contentEncoding`/`contentMediaType` |
 
 ## Acknowledgments
 
