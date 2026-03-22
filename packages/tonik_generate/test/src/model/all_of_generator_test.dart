@@ -2409,7 +2409,9 @@ void main() {
     final _$additional = <String, String>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'ExtendedConfig.additionalProperties',
+        );
       }
     }
     return ExtendedConfig(
@@ -2467,7 +2469,9 @@ void main() {
     final _$additional = <String, String>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'TypedExtended.additionalProperties',
+        );
       }
     }
     return TypedExtended(
@@ -2584,7 +2588,9 @@ void main() {
     final _$additional = <String, String>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'MultiMember.additionalProperties',
+        );
       }
     }
     return MultiMember(
@@ -2644,7 +2650,9 @@ void main() {
     final _$additional = <String, String>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeFormString(
+          context: r'ExtendedConfig.additionalProperties',
+        );
       }
     }
     return ExtendedConfig(

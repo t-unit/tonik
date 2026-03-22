@@ -768,6 +768,12 @@ class ModelImporter {
     if (ap == false) return const NoAdditionalProperties();
     if (ap == true) return const UnrestrictedAdditionalProperties();
     if (ap is Schema) {
+      // An empty schema {} matches any value in JSON Schema (like true).
+      // As additionalProperties it means "any extra keys, any value type"
+      // — the same as additionalProperties: true.
+      if (_isEmptySchema(ap)) {
+        return const UnrestrictedAdditionalProperties();
+      }
       var valueModel = _resolveSchemaRef(null, ap, context);
       final isNullable = ap.isNullable ?? ap.type.contains('null');
       if (isNullable && !valueModel.isEffectivelyNullable) {
@@ -780,6 +786,24 @@ class ModelImporter {
       return TypedAdditionalProperties(valueModel: valueModel);
     }
     return null;
+  }
+
+  /// Returns `true` when the schema carries no meaningful constraints,
+  /// i.e. it is equivalent to the JSON Schema "empty schema" `{}` which
+  /// accepts any value.
+  bool _isEmptySchema(Schema schema) {
+    return schema.ref == null &&
+        schema.type.isEmpty &&
+        schema.format == null &&
+        schema.enumerated == null &&
+        schema.allOf == null &&
+        schema.anyOf == null &&
+        schema.oneOf == null &&
+        schema.not == null &&
+        schema.items == null &&
+        (schema.properties == null || schema.properties!.isEmpty) &&
+        schema.additionalProperties == null &&
+        schema.isBooleanSchema == null;
   }
 
   ClassModel _parseClassModel(String? name, Schema schema, Context context) {

@@ -1024,7 +1024,9 @@ void main() {
     final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'Config.additionalProperties',
+        );
       }
     }
     return Config(
@@ -1057,7 +1059,9 @@ void main() {
     final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeFormString(
+          context: r'Config.additionalProperties',
+        );
       }
     }
     return Config(
@@ -1157,6 +1161,76 @@ void main() {
       test('generates toJson spreading typed AP directly', () {
         const expectedMethod =
             "Object? toJson() => {r'id': id, ...additionalProperties};";
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromSimple decoding string AP values', () {
+        const expectedMethod = r'''
+  factory Labels.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'Labels',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'Labels.additionalProperties',
+        );
+      }
+    }
+    return Labels(
+      id: _$values[r'id'].decodeSimpleInt(context: r'Labels.id'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromForm decoding string AP values', () {
+        const expectedMethod = r'''
+  factory Labels.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'Labels',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeFormString(
+          context: r'Labels.additionalProperties',
+        );
+      }
+    }
+    return Labels(
+      id: _$values[r'id'].decodeFormInt(context: r'Labels.id'),
+      additionalProperties: _$additional,
+    );
+  }''';
 
         final generatedClass = generator.generateClass(model);
         expect(

@@ -83,6 +83,33 @@ void main() {
       expect(ap.valueModel.isEffectivelyNullable, isTrue);
     });
 
+    test('empty schema AP treated as unrestricted', () {
+      const spec = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Flexible': {
+              'type': 'object',
+              'properties': {
+                'name': {'type': 'string'},
+              },
+              'additionalProperties': <String, dynamic>{},
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+      final model = api.models.whereType<ClassModel>().first;
+
+      expect(
+        model.additionalProperties,
+        isA<UnrestrictedAdditionalProperties>(),
+      );
+    });
+
     test('pure map with nullable string value', () {
       const spec = {
         'openapi': '3.0.0',

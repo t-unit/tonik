@@ -2,7 +2,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 /// Creates a Code expression that correctly serializes a query parameter
 /// using deepObject encoding.
@@ -79,7 +78,7 @@ Code buildToDeepObjectQueryParameterCode(
 /// simple value types (int, bool, enum, etc.), generates a `.map()` call
 /// to convert values to URI-encoded strings first.
 ///
-/// Throws an [EncodingException] for maps with complex value types
+/// Throws an `EncodingException` for maps with complex value types
 /// (ClassModel, ListModel, nested MapModel) that can't be flattened to
 /// a single string per entry.
 Code _buildMapDeepObjectCode(

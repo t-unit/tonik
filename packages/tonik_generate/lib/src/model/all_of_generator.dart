@@ -1036,7 +1036,11 @@ class AllOfGenerator {
           .statement,
       const Code(r'for (final _$entry in _$values.entries) {'),
       const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-      const Code(r'_$additional[_$entry.key] = _$entry.value;'),
+      Code(
+        r'_$additional[_$entry.key] = _$entry.value.'
+        '${isForm ? 'decodeFormString' : 'decodeSimpleString'}'
+        "(context: r'$className.additionalProperties');",
+      ),
       const Code('}'),
       const Code('}'),
     ];

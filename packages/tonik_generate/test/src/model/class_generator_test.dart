@@ -2391,7 +2391,7 @@ Map<String, String> parameterProperties({
       });
 
       group('fromSimple', () {
-        test('captures typed string AP with direct assignment', () {
+        test('captures typed string AP with decode call', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'Labels',
@@ -2424,7 +2424,9 @@ Map<String, String> parameterProperties({
     final _$additional = <String, String>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'Labels.additionalProperties',
+        );
       }
     }
     return Labels(
@@ -2493,7 +2495,7 @@ Map<String, String> parameterProperties({
       });
 
       group('fromForm', () {
-        test('captures typed string AP with direct assignment', () {
+        test('captures typed string AP with decode call', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'Labels',
@@ -2526,7 +2528,9 @@ Map<String, String> parameterProperties({
     final _$additional = <String, String>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeFormString(
+          context: r'Labels.additionalProperties',
+        );
       }
     }
     return Labels(

@@ -69,8 +69,8 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              'throw EncodingException('
-              " 'Map types cannot be form query encoded.')",
+              "throw EncodingException('Map types cannot be"
+              " form query encoded.')",
             ),
           ),
         );

@@ -478,8 +478,7 @@ class ClassGenerator {
         const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
       ]);
 
-      if (ap is TypedAdditionalProperties &&
-          _resolvedModel(ap.valueModel) is! StringModel) {
+      if (ap is TypedAdditionalProperties) {
         final decodeExpr = buildSimpleValueExpression(
           refer(r'_$entry').property('value'),
           model: ap.valueModel,
@@ -496,9 +495,19 @@ class ClassGenerator {
           const Code(';'),
         ]);
       } else {
-        codes.add(
-          const Code(r'_$additional[_$entry.key] = _$entry.value;'),
-        );
+        codes.addAll([
+          const Code(r'_$additional[_$entry.key] = '),
+          refer(r'_$entry')
+              .property('value')
+              .property('decodeSimpleString')
+              .call([], {
+                'context': specLiteralString(
+                  '$className.additionalProperties',
+                ),
+              })
+              .code,
+          const Code(';'),
+        ]);
       }
 
       codes.addAll([
@@ -1649,8 +1658,7 @@ if ($name != null) {
         const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
       ]);
 
-      if (ap is TypedAdditionalProperties &&
-          _resolvedModel(ap.valueModel) is! StringModel) {
+      if (ap is TypedAdditionalProperties) {
         final decodeExpr = buildFromFormValueExpression(
           refer(r'_$entry').property('value'),
           model: ap.valueModel,
@@ -1667,9 +1675,19 @@ if ($name != null) {
           const Code(';'),
         ]);
       } else {
-        codes.add(
-          const Code(r'_$additional[_$entry.key] = _$entry.value;'),
-        );
+        codes.addAll([
+          const Code(r'_$additional[_$entry.key] = '),
+          refer(r'_$entry')
+              .property('value')
+              .property('decodeFormString')
+              .call([], {
+                'context': specLiteralString(
+                  '$className.additionalProperties',
+                ),
+              })
+              .code,
+          const Code(';'),
+        ]);
       }
 
       codes.addAll([
@@ -1802,12 +1820,6 @@ if ($name != null) {
             .statement,
       ]),
   );
-
-  /// Whether additional properties can be captured from string-decoded
-  /// contexts (fromSimple, fromForm). Only unrestricted APs produce a
-  /// `Map<String, String>` that is assignable to the field type.
-  Model _resolvedModel(Model model) =>
-      model is AliasModel ? model.resolved : model;
 
   bool _hasStringCapturableAP(ClassModel model) {
     final ap = model.additionalProperties;

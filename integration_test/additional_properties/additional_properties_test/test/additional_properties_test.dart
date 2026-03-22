@@ -586,9 +586,9 @@ void main() {
     test('fromJson decodes null AP values without throwing', () {
       // The schema declares additionalProperties:
       //   {type: string, nullable: true}
-      // so fromJson must accept null values in AP entries.
-      // BUG: currently throws InvalidTypeException because the
-      // generated code uses decodeJsonString (not nullable).
+      // so fromJson must accept null values in AP entries and not throw.
+      // This test guards against regressions where the generated code
+      // used a non-nullable string decoder and threw InvalidTypeException.
       final obj = MixedNullableValues.fromJson({
         'name': 'test',
         'extra': null,
