@@ -947,4 +947,620 @@ void main() {
       );
     });
   });
+
+  group('ClassGenerator additionalProperties', () {
+    group('unrestricted additionalProperties', () {
+      late ClassModel model;
+
+      setUp(() {
+        model = ClassModel(
+          isDeprecated: false,
+          name: 'Config',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: const UnrestrictedAdditionalProperties(),
+        );
+      });
+
+      test('generates fromJson with AP collection', () {
+        const expectedMethod = r'''
+  factory Config.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Config');
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, Object?>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return Config(
+      name: _$map[r'name'].decodeJsonString(context: r'Config.name'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson spreading AP into map', () {
+        const expectedMethod =
+            "Object? toJson() => {r'name': name, ...additionalProperties};";
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromSimple with AP capture', () {
+        const expectedMethod = r'''
+  factory Config.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'name'},
+      listKeys: {},
+      context: r'Config',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, Object?>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return Config(
+      name: _$values[r'name'].decodeSimpleString(context: r'Config.name'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromForm with AP capture', () {
+        const expectedMethod = r'''
+  factory Config.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'name'},
+      listKeys: {},
+      context: r'Config',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, Object?>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return Config(
+      name: _$values[r'name'].decodeFormString(context: r'Config.name'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates parameterProperties with AP loop', () {
+        const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+    bool useQueryComponent = false,
+  }) {
+    final _$result = <String, String>{};
+    _$result[r'name'] = name.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+    for (final _$e in additionalProperties.entries) {
+      _$result[_$e.key] = _$e.value?.toString() ?? '';
+    }
+    return _$result;
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('typed additionalProperties with string values', () {
+      late ClassModel model;
+
+      setUp(() {
+        model = ClassModel(
+          isDeprecated: false,
+          name: 'Labels',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: StringModel(context: context),
+          ),
+        );
+      });
+
+      test('generates fromJson decoding string AP values', () {
+        const expectedMethod = r'''
+  factory Labels.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Labels');
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeJsonString(
+          context: r'Labels.additionalProperties',
+        );
+      }
+    }
+    return Labels(
+      id: _$map[r'id'].decodeJsonInt(context: r'Labels.id'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson spreading typed AP directly', () {
+        const expectedMethod =
+            "Object? toJson() => {r'id': id, ...additionalProperties};";
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('typed additionalProperties with complex values', () {
+      late ClassModel model;
+
+      setUp(() {
+        model = ClassModel(
+          isDeprecated: false,
+          name: 'WidgetMap',
+          properties: [
+            Property(
+              name: 'version',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'Widget',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        );
+      });
+
+      test('generates fromJson decoding complex AP values', () {
+        const expectedMethod = r'''
+  factory WidgetMap.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'WidgetMap');
+    const _$knownKeys = {r'version'};
+    final _$additional = <String, Widget>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = Widget.fromJson(_$entry.value);
+      }
+    }
+    return WidgetMap(
+      version: _$map[r'version'].decodeJsonInt(context: r'WidgetMap.version'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson encoding complex AP values', () {
+        const expectedMethod = '''
+  Object? toJson() => {
+    r'version': version,
+    ...additionalProperties.map((k, v) => MapEntry(k, v.toJson())),
+  };''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromSimple without AP capture', () {
+        const expectedMethod = r'''
+  factory WidgetMap.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'version'},
+      listKeys: {},
+      context: r'WidgetMap',
+    );
+    return WidgetMap(
+      version: _$values[r'version'].decodeSimpleInt(
+        context: r'WidgetMap.version',
+      ),
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('NoAdditionalProperties', () {
+      test('generates fromJson without AP logic', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Strict',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: const NoAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  factory Strict.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Strict');
+    return Strict(
+      name: _$map[r'name'].decodeJsonString(context: r'Strict.name'),
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('AP field name collision', () {
+      test('renames AP field to additionalProperties2', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Collision',
+          properties: [
+            Property(
+              name: 'additionalProperties',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: const UnrestrictedAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  factory Collision.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Collision');
+    const _$knownKeys = {r'additionalProperties'};
+    final _$additional = <String, Object?>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return Collision(
+      additionalProperties: _$map[r'additionalProperties'].decodeJsonString(
+        context: r'Collision.additionalProperties',
+      ),
+      additionalProperties2: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('nullable typed additionalProperties', () {
+      test('generates fromJson with nullable AP value decoding', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'MixedNullable',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: AliasModel(
+              name: 'NullableString',
+              model: StringModel(context: context),
+              context: context,
+              isNullable: true,
+            ),
+          ),
+        );
+
+        const expectedMethod = r'''
+  factory MixedNullable.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'MixedNullable');
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, NullableString>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeJsonNullableString(
+          context: r'MixedNullable.additionalProperties',
+        );
+      }
+    }
+    return MixedNullable(
+      name: _$map[r'name'].decodeJsonNullableString(
+        context: r'MixedNullable.name',
+      ),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('typed primitive AP captures in fromSimple/fromForm', () {
+      test('generates fromSimple with AP capture for int values', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'IntTyped',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: IntegerModel(context: context),
+          ),
+        );
+
+        const expectedMethod = r'''
+  factory IntTyped.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'name'},
+      listKeys: {},
+      context: r'IntTyped',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, int>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleInt(
+          context: r'IntTyped.additionalProperties',
+        );
+      }
+    }
+    return IntTyped(
+      name: _$values[r'name'].decodeSimpleString(context: r'IntTyped.name'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromForm with AP capture for int values', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'IntTyped',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: IntegerModel(context: context),
+          ),
+        );
+
+        const expectedMethod = r'''
+  factory IntTyped.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'name'},
+      listKeys: {},
+      context: r'IntTyped',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, int>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeFormInt(
+          context: r'IntTyped.additionalProperties',
+        );
+      }
+    }
+    return IntTyped(
+      name: _$values[r'name'].decodeFormString(context: r'IntTyped.name'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromSimple with AP capture for bool values', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'BoolTyped',
+          properties: [
+            Property(
+              name: 'label',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: BooleanModel(context: context),
+          ),
+        );
+
+        const expectedMethod = r'''
+  factory BoolTyped.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'label'},
+      listKeys: {},
+      context: r'BoolTyped',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'label'};
+    final _$additional = <String, bool>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleBool(
+          context: r'BoolTyped.additionalProperties',
+        );
+      }
+    }
+    return BoolTyped(
+      label: _$values[r'label'].decodeSimpleString(context: r'BoolTyped.label'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+  });
 }

@@ -232,7 +232,8 @@ Code? _buildFieldCode(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => _buildComplexObjectFileAddition(
+    AnyOfModel() ||
+    MapModel() => _buildComplexObjectFileAddition(
       rawName,
       accessor,
       encoding: encoding,

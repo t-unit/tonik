@@ -29,6 +29,9 @@ Expression buildFormParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
+    MapModel() => generateEncodingExceptionExpression(
+      'Form encoding not supported for map types.',
+    ),
     ListModel(:final content) => _buildListFormExpression(
       valueExpression,
       content,

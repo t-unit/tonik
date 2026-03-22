@@ -52,6 +52,9 @@ Expression buildSimpleParameterExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
     ),
+    MapModel() => generateEncodingExceptionExpression(
+      'Map types cannot be simple-encoded.',
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for simple encoding: $model',
     ),

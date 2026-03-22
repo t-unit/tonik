@@ -92,6 +92,7 @@ add_dependency_overrides_recursive() {
 
 # Remove existing generated API projects before regenerating
 echo "Cleaning up existing generated API projects..."
+rm -rf additional_properties/additional_properties_api
 rm -rf petstore/petstore_api
 rm -rf petstore_config/petstore_api
 rm -rf petstore_config/petstore_filtering_api
@@ -127,6 +128,9 @@ rm -rf twilio/twilio_api
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
 # Generate all API packages first
+$TONIK_BINARY -p additional_properties_api -s additional_properties/openapi.yaml -o additional_properties
+add_dependency_overrides_recursive "additional_properties/additional_properties_api"
+
 $TONIK_BINARY --config petstore/tonik.yaml
 add_dependency_overrides_recursive "petstore/petstore_api"
 
@@ -237,6 +241,7 @@ fi
 # Run dart pub get for all generated packages in parallel
 echo "Running dart pub get for all generated packages in parallel..."
 (
+  cd additional_properties/additional_properties_api && dart pub get &
   cd petstore/petstore_api && dart pub get &
   cd petstore_config/petstore_api && dart pub get &
   cd petstore_config/petstore_filtering_api && dart pub get &
@@ -292,6 +297,7 @@ fi
 # This ensures test packages use local tonik_util during development
 # (reverts any changes made by verify_published_version.sh)
 echo "Restoring local dependency overrides in test packages..."
+restore_test_package_overrides "additional_properties/additional_properties_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "petstore/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "petstore_config/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "music_streaming/music_streaming_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -322,6 +328,7 @@ restore_test_package_overrides "asana/asana_test/pubspec.yaml" "../../../package
 # Run dart pub get for all test packages in parallel
 echo "Running dart pub get for all test packages in parallel..."
 (
+  cd additional_properties/additional_properties_test && dart pub get &
   cd petstore/petstore_test && dart pub get &
   cd petstore_config/petstore_test && dart pub get &
   cd music_streaming/music_streaming_test && dart pub get &

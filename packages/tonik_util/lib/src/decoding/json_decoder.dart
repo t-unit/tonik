@@ -514,4 +514,28 @@ extension JsonDecoder on Object? {
     }
     return decodeJsonBase64(context: context);
   }
+
+  /// Decodes a JSON value to a `Map<String, T>`.
+  ///
+  /// Uses [decodeValue] to convert each map value to type [T].
+  /// Throws [InvalidTypeException] if the value is not a map or is null.
+  Map<String, T> decodeJsonMap<T>(
+    T Function(Object?) decodeValue, {
+    String? context,
+  }) {
+    final map = decodeMap(context: context);
+    return map.map((k, v) => MapEntry(k, decodeValue(v)));
+  }
+
+  /// Decodes a JSON value to a nullable `Map<String, T>`.
+  ///
+  /// Returns null if the value is null.
+  /// Throws [InvalidTypeException] if the value is not a map.
+  Map<String, T>? decodeJsonNullableMap<T>(
+    T Function(Object?) decodeValue, {
+    String? context,
+  }) {
+    if (this == null) return null;
+    return decodeJsonMap(decodeValue, context: context);
+  }
 }

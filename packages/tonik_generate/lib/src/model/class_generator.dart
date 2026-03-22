@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
@@ -112,6 +113,8 @@ class ClassGenerator {
     Method? copyWithGetter,
   }) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
+    final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
+    final apFieldName = pickAdditionalPropertiesFieldName(normalizedProperties);
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
@@ -134,6 +137,21 @@ class ClassGenerator {
             normalizedProperties.indexOf(b);
       });
 
+    // Build equality/hashCode property tuples including additional properties.
+    final equalityProps = normalizedProperties
+        .map(
+          (prop) => (
+            normalizedName: prop.normalizedName,
+            hasCollectionValue: isCollectionModel(prop.property.model),
+          ),
+        )
+        .toList();
+    if (hasAP) {
+      equalityProps.add(
+        (normalizedName: apFieldName, hasCollectionValue: true),
+      );
+    }
+
     return Class(
       (b) {
         b
@@ -154,22 +172,36 @@ class ClassGenerator {
 
         b.constructors.addAll([
           Constructor(
-            (b) => b
-              ..constant = true
-              ..optionalParameters.addAll(
-                sortedProperties.map(
-                  (prop) => Parameter(
+            (b) {
+              b
+                ..constant = true
+                ..optionalParameters.addAll(
+                  sortedProperties.map(
+                    (prop) => Parameter(
+                      (b) => b
+                        ..name = prop.normalizedName
+                        ..named = true
+                        ..required =
+                            prop.property.isRequired &&
+                            !prop.property.isReadOnly &&
+                            !model.isReadOnly
+                        ..toThis = true,
+                    ),
+                  ),
+                );
+              if (hasAP) {
+                b.optionalParameters.add(
+                  Parameter(
                     (b) => b
-                      ..name = prop.normalizedName
+                      ..name = apFieldName
                       ..named = true
-                      ..required =
-                          prop.property.isRequired &&
-                          !prop.property.isReadOnly &&
-                          !model.isReadOnly
+                      ..required = false
+                      ..defaultTo = const Code('const {}')
                       ..toThis = true,
                   ),
-                ),
-              ),
+                );
+              }
+            },
           ),
           _buildFromSimpleConstructor(className, model),
           _buildFromJsonConstructor(className, model),
@@ -179,8 +211,11 @@ class ClassGenerator {
         b.methods.addAll([
           _buildToJsonMethod(model),
           ?effectiveCopyWithGetter,
-          _buildEqualsMethod(className, normalizedProperties),
-          _buildHashCodeMethod(normalizedProperties),
+          generateEqualsMethod(
+            className: className,
+            properties: equalityProps,
+          ),
+          generateHashCodeMethod(properties: equalityProps),
           _buildCurrentEncodingShapeGetter(),
           _buildParameterPropertiesMethod(
             model,
@@ -202,6 +237,21 @@ class ClassGenerator {
             ),
           ),
         );
+
+        if (hasAP) {
+          b.fields.add(
+            Field(
+              (b) => b
+                ..name = apFieldName
+                ..modifier = FieldModifier.final$
+                ..type = additionalPropertiesType(
+                  model.additionalProperties,
+                  nameManager,
+                  package,
+                ),
+            ),
+          );
+        }
       },
     );
   }
@@ -211,53 +261,38 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> properties,
     ClassModel model,
   ) {
+    final copyWithProps = properties.map(
+      (prop) {
+        final propModel = prop.property.model;
+        final resolvedModel = propModel is AliasModel
+            ? propModel.resolved
+            : propModel;
+        return (
+          normalizedName: prop.normalizedName,
+          typeRef: _getSchemaAwareTypeReference(prop.property, model),
+          skipCast: resolvedModel is AnyModel,
+        );
+      },
+    ).toList();
+
+    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+      final apFieldName = pickAdditionalPropertiesFieldName(properties);
+      copyWithProps.add(
+        (
+          normalizedName: apFieldName,
+          typeRef: additionalPropertiesType(
+            model.additionalProperties,
+            nameManager,
+            package,
+          ),
+          skipCast: false,
+        ),
+      );
+    }
+
     return generateCopyWith(
       className: className,
-      properties: properties.map(
-        (prop) {
-          final propModel = prop.property.model;
-          final resolvedModel = propModel is AliasModel
-              ? propModel.resolved
-              : propModel;
-          return (
-            normalizedName: prop.normalizedName,
-            typeRef: _getSchemaAwareTypeReference(prop.property, model),
-            skipCast: resolvedModel is AnyModel,
-          );
-        },
-      ).toList(),
-    );
-  }
-
-  Method _buildEqualsMethod(
-    String className,
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return generateEqualsMethod(
-      className: className,
-      properties: properties
-          .map(
-            (prop) => (
-              normalizedName: prop.normalizedName,
-              hasCollectionValue: prop.property.model is ListModel,
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Method _buildHashCodeMethod(
-    List<({String normalizedName, Property property})> properties,
-  ) {
-    return generateHashCodeMethod(
-      properties: properties
-          .map(
-            (p) => (
-              normalizedName: p.normalizedName,
-              hasCollectionValue: p.property.model is ListModel,
-            ),
-          )
-          .toList(),
+      properties: copyWithProps,
     );
   }
 
@@ -331,6 +366,7 @@ class ClassGenerator {
           model.properties.isNotEmpty,
           allProperties,
           writeOnlyRequiredNames,
+          model,
         ),
     );
   }
@@ -342,6 +378,7 @@ class ClassGenerator {
     bool hasAnyProperties,
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
+    ClassModel classModel,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
@@ -401,25 +438,81 @@ class ClassGenerator {
         .map((p) => p.property.name)
         .toSet();
 
-    return Block.of([
+    final captureAP = _hasStringCapturableAP(classModel);
+    final decodeObjectArgs = <String, Expression>{
+      'explode': refer('explode'),
+      'explodeSeparator': literalString(','),
+      'expectedKeys': literalSet(expectedKeys.map(specLiteralString)),
+      'listKeys': literalSet(listKeys.map(specLiteralString)),
+      'context': specLiteralString(className),
+    };
+    if (captureAP) {
+      decodeObjectArgs['captureAdditionalKeys'] = literalTrue;
+    }
+
+    final codes = <Code>[
       declareFinal(r'_$values')
           .assign(
-            refer('value').property('decodeObject').call([], {
-              'explode': refer('explode'),
-              'explodeSeparator': literalString(','),
-              'expectedKeys': literalSet(
-                expectedKeys.map(specLiteralString),
-              ),
-              'listKeys': literalSet(
-                listKeys.map(specLiteralString),
-              ),
-              'context': specLiteralString(className),
-            }),
+            refer('value').property('decodeObject').call([], decodeObjectArgs),
           )
           .statement,
+    ];
 
+    final ap = classModel.additionalProperties;
+    if (captureAP && ap != null) {
+      final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
+      final knownKeySet = expectedKeys.map((k) => "r'$k'").join(', ');
+      final mapType = additionalPropertiesType(ap, nameManager, package);
+      codes.addAll([
+        Code('const _\$knownKeys = {$knownKeySet};'),
+        declareFinal(r'_$additional')
+            .assign(
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                mapType.types.last,
+              ),
+            )
+            .statement,
+        const Code(r'for (final _$entry in _$values.entries) {'),
+        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
+      ]);
+
+      if (ap is TypedAdditionalProperties &&
+          _resolvedModel(ap.valueModel) is! StringModel) {
+        final decodeExpr = buildSimpleValueExpression(
+          refer(r'_$entry').property('value'),
+          model: ap.valueModel,
+          isRequired: true,
+          nameManager: nameManager,
+          explode: refer('explode'),
+          package: package,
+          contextClass: className,
+          contextProperty: 'additionalProperties',
+        );
+        codes.addAll([
+          const Code(r'_$additional[_$entry.key] = '),
+          decodeExpr.code,
+          const Code(';'),
+        ]);
+      } else {
+        codes.add(
+          const Code(r'_$additional[_$entry.key] = _$entry.value;'),
+        );
+      }
+
+      codes.addAll([
+        const Code('}'),
+        const Code('}'),
+      ]);
+      constructorArgs[apFieldName] = refer(r'_$additional');
+    }
+
+    codes.add(
       refer(className, package).call([], constructorArgs).returned.statement,
-    ]);
+    );
+
+    return Block.of(codes);
   }
 
   Constructor _buildFromJsonConstructor(String className, ClassModel model) {
@@ -463,9 +556,16 @@ class ClassGenerator {
     final normalizedProperties = normalizeProperties(
       model.properties.where((p) => !p.isWriteOnly).toList(),
     );
+    final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
+    final apFieldName = hasAP
+        ? pickAdditionalPropertiesFieldName(
+            normalizeProperties(model.properties.toList()),
+          )
+        : null;
 
-    // If there are no readable properties, return an empty model.
-    if (normalizedProperties.isEmpty) {
+    // If there are no readable properties and no additional properties,
+    // return an empty model.
+    if (normalizedProperties.isEmpty && !hasAP) {
       if (model.properties.isNotEmpty) {
         final constructorArgs = <String, Expression>{
           for (final prop in normalizeProperties(model.properties.toList()))
@@ -525,6 +625,63 @@ class ClassGenerator {
         ..add(Code('${prop.normalizedName}: '))
         ..add(literalNull.code)
         ..add(const Code(','));
+    }
+
+    // Collect additional properties from the JSON map.
+    if (hasAP) {
+      final knownKeys = model.properties.map((p) => "r'${p.name}'").join(', ');
+      codes.add(Code('const _\$knownKeys = {$knownKeys};'));
+
+      final ap = model.additionalProperties;
+      final mapType = additionalPropertiesType(
+        model.additionalProperties,
+        nameManager,
+        package,
+      );
+
+      codes.addAll([
+        declareFinal(r'_$additional')
+            .assign(
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                mapType.types.last,
+              ),
+            )
+            .statement,
+        const Code(r'for (final _$entry in _$map.entries) {'),
+        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
+      ]);
+
+      if (ap is TypedAdditionalProperties) {
+        final decodeExpr = buildFromJsonValueExpression(
+          r'_$entry.value',
+          model: ap.valueModel,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          contextProperty: 'additionalProperties',
+        );
+        codes.addAll([
+          const Code(r'_$additional[_$entry.key] = '),
+          decodeExpr.code,
+          const Code(';'),
+        ]);
+      } else {
+        // Unrestricted: Map<String, Object?>
+        codes.add(
+          const Code(r'_$additional[_$entry.key] = _$entry.value;'),
+        );
+      }
+
+      codes.addAll([
+        const Code('}'),
+        const Code('}'),
+      ]);
+
+      propertyAssignments
+        ..add(Code('$apFieldName: '))
+        ..add(const Code(r'_$additional,'));
     }
 
     codes
@@ -590,6 +747,32 @@ class ClassGenerator {
           ..add(Code("r'${property.name}': "))
           ..add(valueExpr.code)
           ..add(const Code(','));
+      }
+    }
+
+    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+      final allNormalized = normalizeProperties(model.properties.toList());
+      final apFieldName = pickAdditionalPropertiesFieldName(allNormalized);
+      final ap = model.additionalProperties;
+      if (ap is TypedAdditionalProperties) {
+        final valueModel = ap.valueModel;
+        // For complex types, encode each value via toJson.
+        // For simple/primitive types, pass through.
+        if (valueModel.encodingShape == EncodingShape.complex) {
+          mapEntries.add(
+            Code.scope(
+              (a) =>
+                  '...$apFieldName.map('
+                  '(k, v) => ${a(refer('MapEntry', 'dart:core'))}'
+                  '(k, v.toJson())),',
+            ),
+          );
+        } else {
+          mapEntries.add(Code('...$apFieldName,'));
+        }
+      } else {
+        // Unrestricted: values are already Object?
+        mapEntries.add(Code('...$apFieldName,'));
       }
     }
 
@@ -736,7 +919,11 @@ class ClassGenerator {
     );
 
     if (hasOnlySimpleProperties) {
-      return _buildSimpleParameterPropertiesMethod(className, properties);
+      return _buildSimpleParameterPropertiesMethod(
+        className,
+        properties,
+        model,
+      );
     }
 
     final hasComplexProperties = properties.any(
@@ -753,13 +940,64 @@ class ClassGenerator {
           );
 
       if (allComplexAreSimpleLists) {
-        return _buildListParameterPropertiesMethod(className, properties);
+        return _buildListParameterPropertiesMethod(
+          className,
+          properties,
+          model,
+        );
       }
 
       return _buildComplexParameterPropertiesMethod(className, properties);
     }
 
-    return _buildMixedParameterPropertiesMethod(className, properties);
+    return _buildMixedParameterPropertiesMethod(
+      className,
+      properties,
+      model,
+    );
+  }
+
+  List<Code> _buildAdditionalPropertiesParameterLoop(ClassModel model) {
+    if (!hasActiveAdditionalProperties(model.additionalProperties)) return [];
+
+    final allNormalized = normalizeProperties(model.properties.toList());
+    final apFieldName = pickAdditionalPropertiesFieldName(allNormalized);
+    final ap = model.additionalProperties;
+
+    if (ap is TypedAdditionalProperties &&
+        ap.valueModel.encodingShape == EncodingShape.simple) {
+      final uriEncodeCall = ap.valueModel.isEffectivelyNullable
+          ? r'_$e.value?.uriEncode(allowEmpty: allowEmpty, '
+                "useQueryComponent: useQueryComponent) ?? ''"
+          : r'_$e.value.uriEncode(allowEmpty: allowEmpty, '
+                'useQueryComponent: useQueryComponent)';
+      return [
+        Code('''
+for (final _\$e in $apFieldName.entries) {
+  _\$result[_\$e.key] = $uriEncodeCall;
+}'''),
+      ];
+    } else if (ap is UnrestrictedAdditionalProperties) {
+      return [
+        Code(
+          'for (final _\$e in $apFieldName.entries) { '
+          r"_$result[_$e.key] = _$e.value?.toString() ?? ''; }",
+        ),
+      ];
+    } else {
+      // Typed with complex value model — throw
+      return [
+        Code(
+          'if ($apFieldName.isNotEmpty) {',
+        ),
+        generateEncodingExceptionExpression(
+          'Additional properties with complex types cannot be parameter '
+          'encoded.',
+          raw: true,
+        ).statement,
+        const Code('}'),
+      ];
+    }
   }
 
   List<Parameter> _buildParameterPropertiesParameters() {
@@ -794,6 +1032,7 @@ class ClassGenerator {
   Method _buildSimpleParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
+    ClassModel model,
   ) {
     if (properties.isEmpty) {
       return Method(
@@ -880,6 +1119,7 @@ if ($name != null) {
       const Code(r'final _$result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
+      ..._buildAdditionalPropertiesParameterLoop(model),
       const Code(r'return _$result;'),
     ];
 
@@ -895,6 +1135,7 @@ if ($name != null) {
   Method _buildListParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
+    ClassModel model,
   ) {
     final listProperties = properties
         .where(
@@ -1032,6 +1273,7 @@ if ($name != null) {
       const Code(r'final _$result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
+      ..._buildAdditionalPropertiesParameterLoop(model),
       const Code(r'return _$result;'),
     ]);
 
@@ -1064,6 +1306,7 @@ if ($name != null) {
   Method _buildMixedParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> properties,
+    ClassModel model,
   ) {
     final propertyAssignments = <Code>[];
 
@@ -1192,6 +1435,7 @@ if ($name != null) {
       const Code(r'final _$result = '),
       buildEmptyMapStringString().statement,
       ...propertyAssignments,
+      ..._buildAdditionalPropertiesParameterLoop(model),
       const Code(r'return _$result;'),
     ];
 
@@ -1294,6 +1538,7 @@ if ($name != null) {
           model.properties.isNotEmpty,
           allProperties,
           writeOnlyRequiredNames,
+          model,
         ),
     );
   }
@@ -1305,6 +1550,7 @@ if ($name != null) {
     bool hasAnyProperties,
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
+    ClassModel classModel,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
@@ -1363,25 +1609,81 @@ if ($name != null) {
         .map((p) => p.property.name)
         .toSet();
 
-    return Block.of([
+    final captureAP = _hasStringCapturableAP(classModel);
+    final decodeObjectArgs = <String, Expression>{
+      'explode': refer('explode'),
+      'explodeSeparator': literalString('&'),
+      'expectedKeys': literalSet(expectedKeys.map(specLiteralString)),
+      'listKeys': literalSet(listKeys.map(specLiteralString)),
+      'context': specLiteralString(className),
+    };
+    if (captureAP) {
+      decodeObjectArgs['captureAdditionalKeys'] = literalTrue;
+    }
+
+    final codes = <Code>[
       declareFinal(r'_$values')
           .assign(
-            refer('value').property('decodeObject').call([], {
-              'explode': refer('explode'),
-              'explodeSeparator': literalString('&'),
-              'expectedKeys': literalSet(
-                expectedKeys.map(specLiteralString),
-              ),
-              'listKeys': literalSet(
-                listKeys.map(specLiteralString),
-              ),
-              'context': specLiteralString(className),
-            }),
+            refer('value').property('decodeObject').call([], decodeObjectArgs),
           )
           .statement,
+    ];
 
+    final ap = classModel.additionalProperties;
+    if (captureAP && ap != null) {
+      final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
+      final knownKeySet = expectedKeys.map((k) => "r'$k'").join(', ');
+      final mapType = additionalPropertiesType(ap, nameManager, package);
+      codes.addAll([
+        Code('const _\$knownKeys = {$knownKeySet};'),
+        declareFinal(r'_$additional')
+            .assign(
+              literalMap(
+                {},
+                refer('String', 'dart:core'),
+                mapType.types.last,
+              ),
+            )
+            .statement,
+        const Code(r'for (final _$entry in _$values.entries) {'),
+        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
+      ]);
+
+      if (ap is TypedAdditionalProperties &&
+          _resolvedModel(ap.valueModel) is! StringModel) {
+        final decodeExpr = buildFromFormValueExpression(
+          refer(r'_$entry').property('value'),
+          model: ap.valueModel,
+          isRequired: true,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          contextProperty: 'additionalProperties',
+          explode: refer('explode'),
+        );
+        codes.addAll([
+          const Code(r'_$additional[_$entry.key] = '),
+          decodeExpr.code,
+          const Code(';'),
+        ]);
+      } else {
+        codes.add(
+          const Code(r'_$additional[_$entry.key] = _$entry.value;'),
+        );
+      }
+
+      codes.addAll([
+        const Code('}'),
+        const Code('}'),
+      ]);
+      constructorArgs[apFieldName] = refer(r'_$additional');
+    }
+
+    codes.add(
       refer(className, package).call([], constructorArgs).returned.statement,
-    ]);
+    );
+
+    return Block.of(codes);
   }
 
   Method _buildToFormMethod() => Method(
@@ -1500,4 +1802,30 @@ if ($name != null) {
             .statement,
       ]),
   );
+
+  /// Whether additional properties can be captured from string-decoded
+  /// contexts (fromSimple, fromForm). Only unrestricted APs produce a
+  /// `Map<String, String>` that is assignable to the field type.
+  Model _resolvedModel(Model model) =>
+      model is AliasModel ? model.resolved : model;
+
+  bool _hasStringCapturableAP(ClassModel model) {
+    final ap = model.additionalProperties;
+    if (ap is UnrestrictedAdditionalProperties) return true;
+    if (ap is TypedAdditionalProperties) {
+      final resolved = ap.valueModel is AliasModel
+          ? (ap.valueModel as AliasModel).resolved
+          : ap.valueModel;
+      return resolved is StringModel ||
+          resolved is IntegerModel ||
+          resolved is NumberModel ||
+          resolved is DoubleModel ||
+          resolved is BooleanModel ||
+          resolved is DecimalModel ||
+          resolved is DateTimeModel ||
+          resolved is DateModel ||
+          resolved is UriModel;
+    }
+    return false;
+  }
 }

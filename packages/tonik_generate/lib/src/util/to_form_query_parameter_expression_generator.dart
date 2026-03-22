@@ -29,6 +29,14 @@ List<Code> buildToFormQueryParameterCode(
     ];
   }
 
+  if (model is MapModel) {
+    return [
+      generateEncodingExceptionExpression(
+        'Map types cannot be form query encoded.',
+      ).statement,
+    ];
+  }
+
   if (model is AnyModel) {
     return [
       const Code(r'_$entries.add(('),

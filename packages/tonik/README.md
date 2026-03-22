@@ -94,6 +94,7 @@ Generated packages are pure Dart with no platform dependencies. Use them in Flut
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md) – OpenAPI to Dart type mappings
 - [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md) – `oneOf`, `anyOf`, `allOf` usage
 - [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Interceptor patterns for auth
+- [Additional Properties](https://github.com/t-unit/tonik/blob/main/docs/additional_properties.md) – `additionalProperties` support and pure maps
 - [URI Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md) – Dart URI class constraints
 
 ## Quick Start
@@ -146,7 +147,7 @@ See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/i
 | **Parameters** | Path, query, header; all encoding styles (`form`, `simple`, `label`, `matrix`, `deepObject`, etc.) |
 | **Request Bodies** | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` |
 | **Multipart** | `multipart/form-data` with primitive, file, JSON, and array parts; per-part `encoding` and content types |
-| **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas |
+| **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas, `additionalProperties` |
 | **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping |
 | **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays, `contentEncoding`/`contentMediaType` |
 

@@ -103,6 +103,11 @@ Expression _buildSimpleSerializationExpression(
     OneOfModel() ||
     AnyOfModel() => callToSimple(receiver),
 
+    // MapModel cannot be simple-encoded
+    MapModel() => generateEncodingExceptionExpression(
+      'Map types cannot be simple-encoded.',
+    ),
+
     // Lists need special handling
     ListModel() => _handleListExpression(
       receiver,

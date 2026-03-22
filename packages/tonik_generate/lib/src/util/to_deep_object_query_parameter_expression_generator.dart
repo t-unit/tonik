@@ -1,6 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 /// Creates a Code expression that correctly serializes a query parameter
 /// using deepObject encoding.
@@ -32,6 +34,20 @@ Code buildToDeepObjectQueryParameterCode(
         .code;
   }
 
+  // Handle MapModel (including aliases to MapModel) before the general
+  // object path, since maps are typedefs and don't implement
+  // ParameterEncodable.
+  final resolvedModel = _resolveModel(model);
+  if (resolvedModel is MapModel) {
+    return _buildMapDeepObjectCode(
+      parameterName,
+      rawName,
+      resolvedModel,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    );
+  }
+
   if (_isValidDeepObjectModel(model)) {
     return refer(parameterName)
         .property('toDeepObject')
@@ -54,6 +70,115 @@ Code buildToDeepObjectQueryParameterCode(
       ])
       .thrown
       .code;
+}
+
+/// Builds deep-object encoding code for a [MapModel] parameter.
+///
+/// For `Map<String, String>`, delegates directly to the
+/// `Map<String, String>.toDeepObject()` extension. For maps with other
+/// simple value types (int, bool, enum, etc.), generates a `.map()` call
+/// to convert values to URI-encoded strings first.
+///
+/// Throws an [EncodingException] for maps with complex value types
+/// (ClassModel, ListModel, nested MapModel) that can't be flattened to
+/// a single string per entry.
+Code _buildMapDeepObjectCode(
+  String parameterName,
+  String rawName,
+  MapModel model, {
+  required bool explode,
+  required bool allowEmpty,
+}) {
+  final valueModel = model.valueModel;
+  final resolvedValueModel = _resolveModel(valueModel);
+
+  // For Map<String, String>, the extension handles encoding directly.
+  if (resolvedValueModel is StringModel) {
+    return refer(parameterName)
+        .property('toDeepObject')
+        .call(
+          [specLiteralString(rawName)],
+          {
+            'explode': literalBool(explode),
+            'allowEmpty': literalBool(allowEmpty),
+          },
+        )
+        .code;
+  }
+
+  // For maps with simple value types, convert values to URI-encoded strings
+  // then use the Map<String, String>.toDeepObject() extension.
+  if (_isSimpleMapValueModel(resolvedValueModel)) {
+    final uriEncodeExpr = buildUriEncodeExpression(
+      refer('v'),
+      valueModel,
+      allowEmpty: literalBool(allowEmpty),
+    );
+
+    final mapEntryClosure = Method(
+      (b) => b
+        ..requiredParameters.addAll([
+          Parameter((p) => p..name = 'k'),
+          Parameter((p) => p..name = 'v'),
+        ])
+        ..body = refer(
+          'MapEntry',
+          'dart:core',
+        ).newInstance([refer('k'), uriEncodeExpr]).code,
+    ).closure;
+
+    return refer(parameterName)
+        .property('map')
+        .call([mapEntryClosure])
+        .property('toDeepObject')
+        .call(
+          [specLiteralString(rawName)],
+          {
+            'explode': literalBool(explode),
+            'allowEmpty': literalBool(allowEmpty),
+            'alreadyEncoded': literalBool(true),
+          },
+        )
+        .code;
+  }
+
+  // Complex value types (ClassModel, ListModel, nested MapModel) can't be
+  // flattened to a single string per entry.
+  return refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+      .call([
+        specLiteralString(
+          'deepObject encoding is not supported for Map types with '
+          'complex values. Parameter "$rawName" cannot be encoded.',
+        ),
+      ])
+      .thrown
+      .code;
+}
+
+/// Whether [model] can be converted to a single URI-encoded string.
+bool _isSimpleMapValueModel(Model model) {
+  return switch (model) {
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    DateModel() ||
+    BinaryModel() ||
+    Base64Model() ||
+    EnumModel() => true,
+    AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() => true,
+    AliasModel() => _isSimpleMapValueModel(model.model),
+    _ => false,
+  };
+}
+
+/// Unwraps [AliasModel] layers to find the underlying model.
+Model _resolveModel(Model model) {
+  if (model is AliasModel) return _resolveModel(model.model);
+  return model;
 }
 
 bool _isValidDeepObjectModel(Model model) {

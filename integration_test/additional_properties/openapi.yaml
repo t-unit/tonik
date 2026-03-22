@@ -1,0 +1,287 @@
+openapi: 3.0.4
+info:
+  title: Additional Properties API
+  description: >-
+    OpenAPI specification covering all possible additionalProperties
+    definitions for integration testing.
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: additional-properties
+    description: Operations demonstrating additionalProperties support
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      tags:
+        - additional-properties
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+components:
+  schemas:
+    # ---------------------------------------------------------------
+    # 1. Pure map: additionalProperties with NO named properties
+    # ---------------------------------------------------------------
+
+    # Pure map with typed string values
+    StringMap:
+      type: object
+      additionalProperties:
+        type: string
+
+    # Pure map with typed integer values
+    IntegerMap:
+      type: object
+      additionalProperties:
+        type: integer
+
+    # Pure map with typed number values
+    NumberMap:
+      type: object
+      additionalProperties:
+        type: number
+
+    # Pure map with typed boolean values
+    BooleanMap:
+      type: object
+      additionalProperties:
+        type: boolean
+
+    # Pure map with untyped values (additionalProperties: true)
+    UntypedMap:
+      type: object
+      additionalProperties: true
+
+    # Pure map with complex object values ($ref)
+    ObjectValueMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Address'
+
+    # Pure map with array values
+    ArrayValueMap:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+
+    # Pure map with nested map values (recursive map)
+    NestedMap:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: string
+
+    # Pure map with enum values
+    EnumValueMap:
+      type: object
+      additionalProperties:
+        type: string
+        enum:
+          - low
+          - medium
+          - high
+
+    # ---------------------------------------------------------------
+    # 2. Mixed: named properties + additionalProperties
+    # ---------------------------------------------------------------
+
+    # Named properties + additionalProperties: true
+    MixedUntyped:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      additionalProperties: true
+
+    # Named properties + typed additionalProperties
+    MixedTypedString:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+      additionalProperties:
+        type: string
+
+    # Named properties + complex additionalProperties ($ref)
+    MixedTypedObject:
+      type: object
+      required:
+        - primaryAddress
+      properties:
+        primaryAddress:
+          $ref: '#/components/schemas/Address'
+      additionalProperties:
+        $ref: '#/components/schemas/Address'
+
+    # Named properties + additionalProperties with nullable values
+    MixedNullableValues:
+      type: object
+      properties:
+        name:
+          type: string
+      additionalProperties:
+        type: string
+        nullable: true
+
+    # ---------------------------------------------------------------
+    # 3. additionalProperties: false (no-op)
+    # ---------------------------------------------------------------
+
+    StrictObject:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      additionalProperties: false
+
+    # ---------------------------------------------------------------
+    # 4. Field name collision: property literally named
+    #    "additionalProperties"
+    # ---------------------------------------------------------------
+
+    CollisionModel:
+      type: object
+      required:
+        - additionalProperties
+      properties:
+        additionalProperties:
+          type: string
+        name:
+          type: string
+      additionalProperties:
+        type: integer
+
+    # ---------------------------------------------------------------
+    # 5. allOf with additionalProperties
+    # ---------------------------------------------------------------
+
+    # allOf combining two schemas with additionalProperties on the
+    # allOf itself
+    ExtendedPerson:
+      allOf:
+        - $ref: '#/components/schemas/Person'
+        - type: object
+          properties:
+            email:
+              type: string
+      additionalProperties:
+        type: string
+
+    # ---------------------------------------------------------------
+    # 6. Nested: property whose type has additionalProperties
+    # ---------------------------------------------------------------
+
+    Config:
+      type: object
+      required:
+        - settings
+        - metadata
+      properties:
+        settings:
+          $ref: '#/components/schemas/MixedUntyped'
+        metadata:
+          $ref: '#/components/schemas/StringMap'
+        tags:
+          $ref: '#/components/schemas/MixedTypedString'
+
+    # ---------------------------------------------------------------
+    # 7. oneOf variant with additionalProperties on a variant
+    # ---------------------------------------------------------------
+
+    EventPayload:
+      oneOf:
+        - $ref: '#/components/schemas/MixedUntyped'
+        - $ref: '#/components/schemas/StrictObject'
+      discriminator:
+        propertyName: type
+
+    # ---------------------------------------------------------------
+    # 8. Schemas for runtime error testing
+    # ---------------------------------------------------------------
+
+    # Class with a MapModel property — encoding the map property via
+    # form/simple/label/matrix should throw at runtime.
+    ClassWithMapProperty:
+      type: object
+      required:
+        - id
+        - metadata
+      properties:
+        id:
+          type: integer
+        metadata:
+          $ref: '#/components/schemas/StringMap'
+
+    # Class with complex-typed additionalProperties — encoding via
+    # parameterProperties should throw for AP entries at runtime.
+    MixedComplexAP:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+      additionalProperties:
+        $ref: '#/components/schemas/Address'
+
+    # ---------------------------------------------------------------
+    # Helper schemas (used by the above)
+    # ---------------------------------------------------------------
+
+    Address:
+      type: object
+      required:
+        - street
+        - city
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        zipCode:
+          type: string
+
+    Person:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string

@@ -100,6 +100,12 @@ Expression _buildSerializationExpression(
       isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
     ),
+    MapModel() => _handleMapExpression(
+      receiver,
+      model.valueModel,
+      isNullable || model.isNullable,
+      forceNonNullReceiver: forceNonNullReceiver,
+    ),
     AliasModel() => _buildSerializationExpression(
       receiver,
       model.model,
@@ -161,6 +167,45 @@ Expression _handleListExpression(
   }
 }
 
+Expression _handleMapExpression(
+  Expression receiver,
+  Model valueModel,
+  bool isNullable, {
+  bool forceNonNullReceiver = false,
+}) {
+  if (!_needsTransformation(valueModel)) {
+    return forceNonNullReceiver ? receiver.nullChecked : receiver;
+  }
+
+  final isValueNullable = valueModel.isEffectivelyNullable ||
+      (valueModel is AliasModel && valueModel.isNullable);
+
+  final innerExpr = _buildSerializationExpression(
+    refer('v'),
+    valueModel,
+    isValueNullable,
+  );
+
+  final mapClosure = Method(
+    (b) => b
+      ..requiredParameters.addAll([
+        Parameter((p) => p..name = 'k'),
+        Parameter((p) => p..name = 'v'),
+      ])
+      ..body = refer('MapEntry', 'dart:core')
+          .call([refer('k'), innerExpr])
+          .code,
+  ).closure;
+
+  if (forceNonNullReceiver) {
+    return receiver.nullChecked.property('map').call([mapClosure]);
+  } else if (isNullable) {
+    return receiver.nullSafeProperty('map').call([mapClosure]);
+  } else {
+    return receiver.property('map').call([mapClosure]);
+  }
+}
+
 /// Calls `.toBytes().methodName()` on a `TonikFile` receiver.
 Expression _callToBytesMethod(
   Expression receiver,
@@ -205,6 +250,8 @@ bool _needsTransformation(Model model) {
     AliasModel() => _needsTransformation(model.model),
     // Lists delegate to their content model
     ListModel() => _needsTransformation(model.content),
+    // Maps delegate to their value model
+    MapModel() => _needsTransformation(model.valueModel),
     // Complex types always need transformation
     _ => true,
   };

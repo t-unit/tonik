@@ -282,7 +282,7 @@ void main() {
               u: Uri.parse('https://example.com/'),
               p: true,
               q: false,
-              d: const EventLoadDModel(),
+              d: const {},
             ),
           ),
         );
@@ -398,7 +398,7 @@ void main() {
 
         final response = await api.postEventHit(
           body: const EventHitEventCustom(
-            EventCustom(g: 'example.com', d: EventCustomDModel()),
+            EventCustom(g: 'example.com', d: {}),
           ),
         );
 
@@ -413,7 +413,7 @@ void main() {
 
         final response = await api.postEventHit(
           body: const EventHitEventCustom(
-            EventCustom(g: 'shop.example.com', d: EventCustomDModel()),
+            EventCustom(g: 'shop.example.com', d: {}),
           ),
         );
 
@@ -428,7 +428,7 @@ void main() {
 
         final response = await api.postEventHit(
           body: const EventHitEventCustom(
-            EventCustom(g: 'example.com', d: EventCustomDModel()),
+            EventCustom(g: 'example.com', d: {}),
           ),
         );
 
@@ -449,7 +449,7 @@ void main() {
             EventCustom(
               b: 'optional-beacon-id',
               g: 'example.com',
-              d: EventCustomDModel(),
+              d: {},
             ),
           ),
         );
@@ -465,7 +465,7 @@ void main() {
 
         final response = await api.postEventHit(
           body: const EventHitEventCustom(
-            EventCustom(g: 'example.com', d: EventCustomDModel()),
+            EventCustom(g: 'example.com', d: {}),
           ),
         );
 

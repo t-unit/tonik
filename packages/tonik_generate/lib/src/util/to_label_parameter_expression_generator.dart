@@ -49,6 +49,9 @@ Expression buildLabelParameterExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be label-encoded',
     ),
+    MapModel() => generateEncodingExceptionExpression(
+      'Map types cannot be label-encoded.',
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for label encoding: $model',
     ),

@@ -645,6 +645,146 @@ void main() {
       });
     });
 
+    group('generateMapTypedef', () {
+      test('generates typedef for map with string values', () {
+        final model = MapModel(
+          name: 'StringMap',
+          valueModel: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef StringMap = Map<String,String>;',
+        );
+      });
+
+      test('generates typedef for map with integer values', () {
+        final model = MapModel(
+          name: 'IntMap',
+          valueModel: IntegerModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef IntMap = Map<String,int>;',
+        );
+      });
+
+      test('generates typedef for map with class values', () {
+        final userModel = ClassModel(
+          name: 'User',
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+        );
+
+        final model = MapModel(
+          name: 'UserMap',
+          valueModel: userModel,
+          context: context,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef UserMap = Map<String,User>;',
+        );
+      });
+
+      test('generates nullable typedef for nullable map', () {
+        final model = MapModel(
+          name: 'NullableStringMap',
+          valueModel: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableStringMap = Map<String,String>?;',
+        );
+      });
+
+      test('generates non-nullable typedef for non-nullable map', () {
+        final model = MapModel(
+          name: 'RegularMap',
+          valueModel: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef RegularMap = Map<String,String>;',
+        );
+      });
+
+      test('generates correct filename via generateMap', () {
+        final model = MapModel(
+          name: 'UserSettings',
+          valueModel: StringModel(context: context),
+          context: context,
+        );
+
+        final result = generator.generateMap(model);
+
+        expect(result.filename, 'user_settings.dart');
+      });
+
+      test('generates typedef for map with enum values', () {
+        final enumModel = EnumModel(
+          isDeprecated: false,
+          name: 'Status',
+          values: {const EnumEntry(value: 'active')},
+          isNullable: false,
+          context: context,
+        );
+
+        final model = MapModel(
+          name: 'StatusMap',
+          valueModel: enumModel,
+          context: context,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef StatusMap = Map<String,Status>;',
+        );
+      });
+
+      test('generates typedef for map with alias values', () {
+        final aliasModel = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final model = MapModel(
+          name: 'UserIdMap',
+          valueModel: aliasModel,
+          context: context,
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+        final result = typedef.accept(emitter).toString().trim();
+
+        expect(result, contains('typedef UserIdMap = Map<String,'));
+        expect(result, contains('UserId'));
+      });
+    });
+
     group('description and deprecated', () {
       test('generates typedef with description', () {
         final model = AliasModel(

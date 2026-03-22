@@ -849,6 +849,201 @@ void main() {
     });
   });
 
+  group('buildToJsonPropertyExpression for MapModel', () {
+    test('for Map<String, String> passes through without transformation', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      final property = Property(
+        name: 'metadata',
+        model: mapModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(buildToJsonPropertyExpression('metadata', property)),
+        'metadata',
+      );
+    });
+
+    test('for Map<String, int> passes through without transformation', () {
+      final mapModel = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      final property = Property(
+        name: 'counts',
+        model: mapModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(buildToJsonPropertyExpression('counts', property)),
+        'counts',
+      );
+    });
+
+    test('for Map<String, ClassModel> transforms values via .map()', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: classModel,
+        context: context,
+      );
+      final property = Property(
+        name: 'addresses',
+        model: mapModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final result = emit(
+        buildToJsonPropertyExpression('addresses', property),
+      );
+      expect(result, contains('addresses.map('));
+      expect(result, contains('MapEntry(k'));
+      expect(result, contains('v.toJson()'));
+    });
+
+    test('for nullable Map<String, ClassModel> uses null-safe map', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: classModel,
+        context: context,
+      );
+      final property = Property(
+        name: 'addresses',
+        model: mapModel,
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      final result = emit(
+        buildToJsonPropertyExpression('addresses', property),
+      );
+      expect(result, contains('addresses?.map('));
+      expect(result, contains('v.toJson()'));
+    });
+
+    test('for nullable MapModel uses null-safe map', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: classModel,
+        context: context,
+        isNullable: true,
+      );
+      final property = Property(
+        name: 'addresses',
+        model: mapModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final result = emit(
+        buildToJsonPropertyExpression('addresses', property),
+      );
+      expect(result, contains('addresses?.map('));
+      expect(result, contains('v.toJson()'));
+    });
+
+    test('for Map<String, DateTime> transforms values', () {
+      final mapModel = MapModel(
+        valueModel: DateTimeModel(context: context),
+        context: context,
+      );
+      final property = Property(
+        name: 'timestamps',
+        model: mapModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final result = emit(
+        buildToJsonPropertyExpression('timestamps', property),
+      );
+      expect(result, contains('timestamps.map('));
+      expect(result, contains('v.toTimeZonedIso8601String()'));
+    });
+
+    test('for Map<String, EnumModel> transforms values', () {
+      final enumModel = EnumModel<String>(
+        isDeprecated: false,
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: enumModel,
+        context: context,
+      );
+      final property = Property(
+        name: 'statuses',
+        model: mapModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final result = emit(
+        buildToJsonPropertyExpression('statuses', property),
+      );
+      expect(result, contains('statuses.map('));
+      expect(result, contains('v.toJson()'));
+    });
+
+    test(
+      'for Map<String, ClassModel> with forceNonNullReceiver uses !',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Address',
+          properties: const [],
+          context: context,
+        );
+        final mapModel = MapModel(
+          valueModel: classModel,
+          context: context,
+        );
+        final property = Property(
+          name: 'addresses',
+          model: mapModel,
+          isRequired: false,
+          isNullable: true,
+          isDeprecated: false,
+        );
+        final result = emit(
+          buildToJsonPropertyExpression(
+            'addresses',
+            property,
+            forceNonNullReceiver: true,
+          ),
+        );
+        expect(result, contains('addresses!.map('));
+        expect(result, contains('v.toJson()'));
+      },
+    );
+  });
+
   group('buildToJsonPathParameterExpression', () {
     test('for String parameter', () {
       final parameter = PathParameterObject(

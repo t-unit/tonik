@@ -1222,7 +1222,7 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  List<ApiV1InferListConnectorsGet200BodyArrayModel>
+                  List<Map<String, Object?>>
                 >;
         expect(
           success.response.requestOptions.path,
@@ -1239,7 +1239,7 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  List<ApiV1InferListConnectorsGet200BodyArrayModel>
+                  List<Map<String, Object?>>
                 >;
         expect(success.response.requestOptions.method, 'GET');
       });
@@ -1253,7 +1253,7 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  List<ApiV1InferListConnectorsGet200BodyArrayModel>
+                  List<Map<String, Object?>>
                 >;
         expect(success.response.requestOptions.data, isNull);
       });
@@ -1269,18 +1269,18 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<List<ApiV1InferListConnectorsGet200BodyArrayModel>>
+            TonikSuccess<List<Map<String, Object?>>>
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  List<ApiV1InferListConnectorsGet200BodyArrayModel>
+                  List<Map<String, Object?>>
                 >;
         expect(success.response.statusCode, 200);
         expect(
           success.value,
-          isA<List<ApiV1InferListConnectorsGet200BodyArrayModel>>(),
+          isA<List<Map<String, Object?>>>(),
         );
       });
     });

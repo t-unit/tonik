@@ -2032,4 +2032,798 @@ void main() {
       },
     );
   });
+
+  group('AllOfGenerator additionalProperties', () {
+    group('unrestricted additionalProperties', () {
+      late AllOfModel model;
+
+      setUp(() {
+        model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedConfig',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties:
+              const UnrestrictedAdditionalProperties(),
+        );
+      });
+
+      test('generates fromJson with AP collection', () {
+        const expectedMethod = r'''
+  factory ExtendedConfig.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'ExtendedConfig');
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, Object?>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return ExtendedConfig(
+      $base: Base.fromJson(json),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson merging member JSON and spreading AP', () {
+        const expectedMethod = r'''
+  @override
+  Object? toJson() {
+    final _$map = <String, Object?>{};
+    final _$$baseJson = $base.toJson();
+    if (_$$baseJson is! Map<String, Object?>) {
+      throw EncodingException(
+        'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+      );
+    }
+    _$map.addAll(_$$baseJson);
+    _$map.addAll(additionalProperties);
+    return _$map;
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('typed additionalProperties with string values', () {
+      late AllOfModel model;
+
+      setUp(() {
+        model = AllOfModel(
+          isDeprecated: false,
+          name: 'TypedExtended',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: StringModel(context: context),
+          ),
+        );
+      });
+
+      test('generates fromJson decoding string AP values', () {
+        const expectedMethod = r'''
+  factory TypedExtended.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'TypedExtended');
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeJsonString(
+          context: r'TypedExtended.additionalProperties',
+        );
+      }
+    }
+    return TypedExtended(
+      $base: Base.fromJson(json),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('typed additionalProperties with complex values', () {
+      late AllOfModel model;
+
+      setUp(() {
+        model = AllOfModel(
+          isDeprecated: false,
+          name: 'ComplexExtended',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'Widget',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        );
+      });
+
+      test('generates fromJson decoding complex AP values', () {
+        const expectedMethod = r'''
+  factory ComplexExtended.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'ComplexExtended');
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, Widget>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = Widget.fromJson(_$entry.value);
+      }
+    }
+    return ComplexExtended(
+      $base: Base.fromJson(json),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson encoding complex AP values', () {
+        const expectedMethod = r'''
+  @override
+  Object? toJson() {
+    final _$map = <String, Object?>{};
+    final _$$baseJson = $base.toJson();
+    if (_$$baseJson is! Map<String, Object?>) {
+      throw EncodingException(
+        'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+      );
+    }
+    _$map.addAll(_$$baseJson);
+    for (final _$e in additionalProperties.entries) {
+      _$map[_$e.key] = _$e.value.toJson();
+    }
+    return _$map;
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('NoAdditionalProperties', () {
+      test('generates fromJson without AP logic', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'StrictAllOf',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: const NoAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  factory StrictAllOf.fromJson(Object? json) {
+    return StrictAllOf($base: Base.fromJson(json));
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('known keys across multiple members', () {
+      test('collects keys from all member classes', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'MultiMember',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'First',
+              context: context,
+              properties: [
+                Property(
+                  name: 'alpha',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+            ClassModel(
+              isDeprecated: false,
+              name: 'Second',
+              context: context,
+              properties: [
+                Property(
+                  name: 'beta',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties:
+              const UnrestrictedAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  factory MultiMember.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'MultiMember');
+    const _$knownKeys = {r'alpha', r'beta'};
+    final _$additional = <String, Object?>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return MultiMember(
+      first: First.fromJson(json),
+      second: Second.fromJson(json),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('fromSimple with additionalProperties', () {
+      test('generates fromSimple capturing unrestricted AP', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedConfig',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: const UnrestrictedAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  factory ExtendedConfig.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'ExtendedConfig',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return ExtendedConfig(
+      $base: Base.fromSimple(value, explode: explode),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromSimple capturing typed string AP', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'TypedExtended',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: StringModel(context: context),
+          ),
+        );
+
+        const expectedMethod = r'''
+  factory TypedExtended.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'name'},
+      listKeys: {},
+      context: r'TypedExtended',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'name'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return TypedExtended(
+      $base: Base.fromSimple(value, explode: explode),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates fromSimple without AP for typed complex AP', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ComplexExtended',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'Widget',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        );
+
+        const expectedMethod = r'''
+  factory ComplexExtended.fromSimple(String? value, {required bool explode}) {
+    return ComplexExtended($base: Base.fromSimple(value, explode: explode));
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test(
+        'generates fromSimple with AP collecting keys from multiple members',
+        () {
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'MultiMember',
+            models: {
+              ClassModel(
+                isDeprecated: false,
+                name: 'First',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'alpha',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+              ),
+              ClassModel(
+                isDeprecated: false,
+                name: 'Second',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'beta',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+              ),
+            },
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          const expectedMethod = r'''
+  factory MultiMember.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'alpha', r'beta'},
+      listKeys: {},
+      context: r'MultiMember',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'alpha', r'beta'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return MultiMember(
+      first: First.fromSimple(value, explode: explode),
+      second: Second.fromSimple(value, explode: explode),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+          final combinedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(combinedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+    });
+
+    group('fromForm with additionalProperties', () {
+      test('generates fromForm capturing unrestricted AP', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedConfig',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: const UnrestrictedAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  factory ExtendedConfig.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'ExtendedConfig',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value;
+      }
+    }
+    return ExtendedConfig(
+      $base: Base.fromForm(value, explode: explode),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('parameterProperties with additionalProperties', () {
+      test('generates parameterProperties with unrestricted AP loop', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedConfig',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: const UnrestrictedAdditionalProperties(),
+        );
+
+        const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+  }) {
+    final _$mergedProperties = <String, String>{};
+    _$mergedProperties.addAll(
+      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    );
+    for (final _$e in additionalProperties.entries) {
+      _$mergedProperties[_$e.key] = _$e.value?.toString() ?? '';
+    }
+    return _$mergedProperties;
+  }''';
+
+        final combinedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(combinedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test(
+        'generates parameterProperties with typed simple AP uriEncode loop',
+        () {
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'TypedExtended',
+            models: {
+              ClassModel(
+                isDeprecated: false,
+                name: 'Base',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'name',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+              ),
+            },
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: StringModel(context: context),
+            ),
+          );
+
+          const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+  }) {
+    final _$mergedProperties = <String, String>{};
+    _$mergedProperties.addAll(
+      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    );
+    for (final _$e in additionalProperties.entries) {
+      _$mergedProperties[_$e.key] = _$e.value.uriEncode(allowEmpty: allowEmpty);
+    }
+    return _$mergedProperties;
+  }''';
+
+          final combinedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(combinedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates parameterProperties with typed complex AP throwing',
+        () {
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'ComplexExtended',
+            models: {
+              ClassModel(
+                isDeprecated: false,
+                name: 'Base',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+              ),
+            },
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: ClassModel(
+                isDeprecated: false,
+                name: 'Widget',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          );
+
+          const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+  }) {
+    final _$mergedProperties = <String, String>{};
+    _$mergedProperties.addAll(
+      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    );
+    if (additionalProperties.isNotEmpty) {
+      throw EncodingException(
+        r'Additional properties with complex types cannot be parameter encoded.',
+      );
+    }
+    return _$mergedProperties;
+  }''';
+
+          final combinedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(combinedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+    });
+  });
 }

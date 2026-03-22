@@ -107,6 +107,16 @@ Expression buildFromJsonValueExpression(
         contextProperty: contextProperty,
         isNullable: isNullable,
       );
+    case MapModel():
+      return _buildMapFromJsonExpression(
+        value,
+        model,
+        nameManager,
+        package: package,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
+        isNullable: nullable,
+      );
     case ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel():
       final className = nameManager.modelName(model);
       final expr = refer(
@@ -322,6 +332,40 @@ Expression _buildListFromJsonExpression(
         value,
       ).property(listDecoder).call([], contextParam, [typeArg]);
   }
+}
+
+Expression _buildMapFromJsonExpression(
+  String value,
+  MapModel model,
+  NameManager nameManager, {
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  bool isNullable = false,
+}) {
+  final contextParam = _buildContextParam(contextClass, contextProperty);
+  final valueModel = model.valueModel;
+
+  // Build a decoder closure for map values.
+  final decoderClosure = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((p) => p..name = 'v'))
+      ..body = buildFromJsonValueExpression(
+        'v',
+        model: valueModel,
+        nameManager: nameManager,
+        package: package ?? '',
+        contextClass: contextClass,
+        contextProperty: contextProperty,
+      ).code,
+  ).closure;
+
+  final mapDecoder = isNullable ? 'decodeJsonNullableMap' : 'decodeJsonMap';
+
+  return refer(value).property(mapDecoder).call(
+    [decoderClosure],
+    contextParam,
+  );
 }
 
 String? _decodeMethodForPrimitive(Model model) {
