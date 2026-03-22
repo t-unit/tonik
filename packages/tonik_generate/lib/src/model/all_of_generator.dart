@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
+import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
@@ -13,6 +14,8 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/known_keys_collector.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
@@ -115,7 +118,10 @@ class AllOfGenerator {
     }).toList();
 
     final normalizedProperties = _normalizeModelProperties(pseudoProperties);
-    final properties = _buildPropertiesFromNormalized(normalizedProperties);
+    final properties = _buildPropertiesFromNormalized(
+      normalizedProperties,
+      model,
+    );
 
     final effectiveCopyWithGetter =
         copyWithGetter ??
@@ -176,6 +182,7 @@ class AllOfGenerator {
               _buildFromJsonConstructor(
                 actualClassName,
                 normalizedProperties,
+                model,
               ),
           ])
           ..methods.addAll([
@@ -281,7 +288,7 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    return normalizedProperties.map((normalized) {
+    final fields = normalizedProperties.map((normalized) {
       final typeRef = typeReference(
         normalized.property.model,
         nameManager,
@@ -295,18 +302,51 @@ class AllOfGenerator {
           ..type = typeRef,
       );
     }).toList();
+
+    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+      final apFieldName = pickAdditionalPropertiesFieldName(
+        normalizedProperties,
+      );
+      fields.add(
+        Field(
+          (b) => b
+            ..name = apFieldName
+            ..modifier = FieldModifier.final$
+            ..type = additionalPropertiesType(
+              model.additionalProperties,
+              nameManager,
+              package,
+            ),
+        ),
+      );
+    }
+
+    return fields;
   }
 
   List<({String normalizedName, bool hasCollectionValue})>
   _buildPropertiesFromNormalized(
-    List<({String normalizedName, Property property})> normalizedProperties,
-  ) {
-    return normalizedProperties.map((normalized) {
+    List<({String normalizedName, Property property})> normalizedProperties, [
+    AllOfModel? model,
+  ]) {
+    final props = normalizedProperties.map((normalized) {
       return (
         normalizedName: normalized.normalizedName,
-        hasCollectionValue: normalized.property.model is ListModel,
+        hasCollectionValue: isCollectionModel(normalized.property.model),
       );
     }).toList();
+
+    if (model != null &&
+        hasActiveAdditionalProperties(model.additionalProperties)) {
+      final apFieldName = pickAdditionalPropertiesFieldName(
+        normalizedProperties,
+      );
+      props.add(
+        (normalizedName: apFieldName, hasCollectionValue: true),
+      );
+    }
+
+    return props;
   }
 
   Constructor _buildDefaultConstructor(
@@ -314,25 +354,43 @@ class AllOfGenerator {
     AllOfModel model,
   ) {
     return Constructor(
-      (b) => b
-        ..constant = true
-        ..optionalParameters.addAll(
-          normalizedProperties.map((normalized) {
-            return Parameter(
+      (b) {
+        b
+          ..constant = true
+          ..optionalParameters.addAll(
+            normalizedProperties.map((normalized) {
+              return Parameter(
+                (b) => b
+                  ..name = normalized.normalizedName
+                  ..named = true
+                  ..required = !model.isReadOnly
+                  ..toThis = true,
+              );
+            }),
+          );
+        if (hasActiveAdditionalProperties(model.additionalProperties)) {
+          final apFieldName = pickAdditionalPropertiesFieldName(
+            normalizedProperties,
+          );
+          b.optionalParameters.add(
+            Parameter(
               (b) => b
-                ..name = normalized.normalizedName
+                ..name = apFieldName
                 ..named = true
-                ..required = !model.isReadOnly
+                ..required = false
+                ..defaultTo = const Code('const {}')
                 ..toThis = true,
-            );
-          }),
-        ),
+            ),
+          );
+        }
+      },
     );
   }
 
   Constructor _buildFromJsonConstructor(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
+    AllOfModel model,
   ) {
     final fromJsonParams = <Expression>[];
     final fieldNames = <String>[];
@@ -349,6 +407,112 @@ class AllOfGenerator {
       );
     }
 
+    final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
+
+    if (!hasAP) {
+      return Constructor(
+        (b) => b
+          ..factory = true
+          ..name = 'fromJson'
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'json'
+                ..type = refer('Object?', 'dart:core'),
+            ),
+          )
+          ..body = refer(className)
+              .call(
+                [],
+                Map.fromEntries(
+                  List.generate(
+                    fromJsonParams.length,
+                    (i) => MapEntry(
+                      fieldNames[i],
+                      fromJsonParams[i],
+                    ),
+                  ),
+                ),
+              )
+              .returned
+              .statement,
+      );
+    }
+
+    // With additional properties: decode map, collect unknown keys
+    final apFieldName = pickAdditionalPropertiesFieldName(normalizedProperties);
+    final knownKeys = collectKnownKeys(model);
+    final knownKeysLiteral = knownKeys.map((k) => "r'$k'").join(', ');
+
+    final ap = model.additionalProperties;
+    final codes = <Code>[
+      Code(
+        r"final _$map = json.decodeMap(context: r'"
+        "$className');",
+      ),
+      Code(
+        'const _\$knownKeys = {$knownKeysLiteral};',
+      ),
+    ];
+
+    final mapType = additionalPropertiesType(
+      model.additionalProperties,
+      nameManager,
+      package,
+    );
+
+    codes.add(
+      declareFinal(r'_$additional')
+          .assign(
+            literalMap(
+              {},
+              refer('String', 'dart:core'),
+              mapType.types.last,
+            ),
+          )
+          .statement,
+    );
+
+    if (ap is TypedAdditionalProperties) {
+      final decodeExpr = buildFromJsonValueExpression(
+        r'_$entry.value',
+        model: ap.valueModel,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        contextProperty: 'additionalProperties',
+      );
+      codes.addAll([
+        const Code(r'for (final _$entry in _$map.entries) {'),
+        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
+        const Code(r'_$additional[_$entry.key] = '),
+        decodeExpr.code,
+        const Code(';'),
+        const Code('}'),
+        const Code('}'),
+      ]);
+    } else {
+      codes.addAll([
+        const Code(r'for (final _$entry in _$map.entries) {'),
+        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
+        const Code(r'_$additional[_$entry.key] = _$entry.value;'),
+        const Code('}'),
+        const Code('}'),
+      ]);
+    }
+
+    final constructorArgs = Map.fromEntries(
+      List.generate(
+        fromJsonParams.length,
+        (i) => MapEntry(fieldNames[i], fromJsonParams[i]),
+      ),
+    );
+    constructorArgs[apFieldName] = refer(r'_$additional');
+
+    codes.add(
+      refer(className).call([], constructorArgs).returned.statement,
+    );
+
     return Constructor(
       (b) => b
         ..factory = true
@@ -360,18 +524,7 @@ class AllOfGenerator {
               ..type = refer('Object?', 'dart:core'),
           ),
         )
-        ..body = refer(className)
-            .call(
-              [],
-              Map.fromEntries(
-                List.generate(
-                  fromJsonParams.length,
-                  (i) => MapEntry(fieldNames[i], fromJsonParams[i]),
-                ),
-              ),
-            )
-            .returned
-            .statement,
+        ..body = Block.of(codes),
     );
   }
 
@@ -616,6 +769,29 @@ class AllOfGenerator {
         }
       }
 
+      if (hasActiveAdditionalProperties(model.additionalProperties)) {
+        final apFieldName = pickAdditionalPropertiesFieldName(
+          normalizedProperties,
+        );
+        final ap = model.additionalProperties;
+        if (ap is TypedAdditionalProperties &&
+            ap.valueModel.encodingShape == EncodingShape.complex) {
+          bodyCode.add(
+            Code(
+              'for (final _\$e in $apFieldName.entries) '
+              r'{ _$map[_$e.key] = _$e.value.toJson(); }',
+            ),
+          );
+        } else {
+          bodyCode.add(
+            Code(
+              r'_$map.addAll('
+              '$apFieldName);',
+            ),
+          );
+        }
+      }
+
       bodyCode.add(const Code(r'return _$map;'));
 
       return Method(
@@ -707,6 +883,29 @@ class AllOfGenerator {
           }
         }
 
+        if (hasActiveAdditionalProperties(model.additionalProperties)) {
+          final apFieldName = pickAdditionalPropertiesFieldName(
+            normalizedProperties,
+          );
+          final ap = model.additionalProperties;
+          if (ap is TypedAdditionalProperties &&
+              ap.valueModel.encodingShape == EncodingShape.complex) {
+            mapParts.addAll([
+              Code(
+                'for (final _\$e in $apFieldName.entries) '
+                r'{ _$map[_$e.key] = _$e.value.toJson(); }',
+              ),
+            ]);
+          } else {
+            mapParts.add(
+              Code(
+                r'_$map.addAll('
+                '$apFieldName);',
+              ),
+            );
+          }
+        }
+
         mapParts.add(const Code(r'return _$map;'));
 
         return Method(
@@ -749,7 +948,7 @@ class AllOfGenerator {
       );
     }
 
-    final propertyAssignments = <MapEntry<String, Expression>>[];
+    final constructorArgs = <String, Expression>{};
 
     for (final normalized in normalizedProperties) {
       final name = normalized.normalizedName;
@@ -777,8 +976,80 @@ class AllOfGenerator {
               explode: refer('explode'),
             );
 
-      propertyAssignments.add(MapEntry(name, expression));
+      constructorArgs[name] = expression;
     }
+
+    final captureAP = _hasStringCapturableAP(model);
+
+    if (!captureAP) {
+      return Constructor(
+        (b) => b
+          ..factory = true
+          ..name = constructorName
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'value'
+                ..type = refer('String?', 'dart:core'),
+            ),
+          )
+          ..optionalParameters.add(
+            buildBoolParameter('explode', required: true),
+          )
+          ..body = refer(className, package)
+              .call([], constructorArgs)
+              .returned
+              .statement,
+      );
+    }
+
+    final apFieldName = pickAdditionalPropertiesFieldName(
+      normalizedProperties,
+    );
+    final knownKeys = collectKnownKeys(model);
+    final listKeys = collectListKeys(model);
+    final separator = isForm ? '&' : ',';
+
+    final knownKeysLiteral = knownKeys.map((k) => "r'$k'").join(', ');
+    final expectedKeysExpr =
+        literalSet(knownKeys.map(specLiteralString));
+    final listKeysExpr = literalSet(listKeys.map(specLiteralString));
+
+    final strRef = refer('String', 'dart:core');
+
+    final codes = <Code>[
+      declareFinal(r'_$values')
+          .assign(
+            refer('value').property('decodeObject').call([], {
+              'explode': refer('explode'),
+              'explodeSeparator': literalString(separator),
+              'expectedKeys': expectedKeysExpr,
+              'listKeys': listKeysExpr,
+              'context': specLiteralString(className),
+              'captureAdditionalKeys': literalTrue,
+            }),
+          )
+          .statement,
+      Code('const _\$knownKeys = {$knownKeysLiteral};'),
+      declareFinal(r'_$additional')
+          .assign(literalMap({}, strRef, strRef))
+          .statement,
+      const Code(r'for (final _$entry in _$values.entries) {'),
+      const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
+      Code(
+        r'_$additional[_$entry.key] = _$entry.value.'
+        '${isForm ? 'decodeFormString' : 'decodeSimpleString'}'
+        "(context: r'$className.additionalProperties');",
+      ),
+      const Code('}'),
+      const Code('}'),
+    ];
+
+    constructorArgs[apFieldName] = refer(r'_$additional');
+
+    codes.add(
+      refer(className, package).call([], constructorArgs).returned.statement,
+    );
 
     return Constructor(
       (b) => b
@@ -794,13 +1065,25 @@ class AllOfGenerator {
         ..optionalParameters.add(
           buildBoolParameter('explode', required: true),
         )
-        ..body = refer(className, package)
-            .call([], {
-              for (final entry in propertyAssignments) entry.key: entry.value,
-            })
-            .returned
-            .statement,
+        ..body = Block.of(codes),
     );
+  }
+
+  /// Whether the allOf model has additional properties that can be captured
+  /// from string-based encodings (simple/form).
+  ///
+  /// Only unrestricted AP or typed AP with string values can be captured,
+  /// since simple/form encoding produces string key-value pairs.
+  bool _hasStringCapturableAP(AllOfModel model) {
+    final ap = model.additionalProperties;
+    if (ap is UnrestrictedAdditionalProperties) return true;
+    if (ap is TypedAdditionalProperties) {
+      final resolved = ap.valueModel is AliasModel
+          ? (ap.valueModel as AliasModel).resolved
+          : ap.valueModel;
+      return resolved is StringModel;
+    }
+    return false;
   }
 
   Method _buildParameterPropertiesMethod(
@@ -914,9 +1197,13 @@ class AllOfGenerator {
       }
     }
 
-    propertyMergingLines.add(
-      refer(r'_$mergedProperties').returned.statement,
-    );
+    propertyMergingLines
+      ..addAll(
+        _buildAdditionalPropertiesParameterLoop(model, normalizedProperties),
+      )
+      ..add(
+        refer(r'_$mergedProperties').returned.statement,
+      );
 
     return Method(
       (b) => b
@@ -928,6 +1215,53 @@ class AllOfGenerator {
         ])
         ..body = Block.of(propertyMergingLines),
     );
+  }
+
+  /// Builds the AP loop for parameterProperties in allOf models.
+  List<Code> _buildAdditionalPropertiesParameterLoop(
+    AllOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    if (!hasActiveAdditionalProperties(model.additionalProperties)) return [];
+
+    final apFieldName = pickAdditionalPropertiesFieldName(
+      normalizedProperties,
+    );
+    final ap = model.additionalProperties;
+
+    if (ap is TypedAdditionalProperties &&
+        ap.valueModel.encodingShape == EncodingShape.simple) {
+      final uriEncodeCall = ap.valueModel.isEffectivelyNullable
+          ? r'_$e.value?.uriEncode(allowEmpty: allowEmpty) '
+                "?? ''"
+          : r'_$e.value.uriEncode(allowEmpty: allowEmpty)';
+      return [
+        Code('''
+for (final _\$e in $apFieldName.entries) {
+  _\$mergedProperties[_\$e.key] = $uriEncodeCall;
+}'''),
+      ];
+    } else if (ap is UnrestrictedAdditionalProperties) {
+      return [
+        Code(
+          'for (final _\$e in $apFieldName.entries) { '
+          r"_$mergedProperties[_$e.key] = _$e.value?.toString() ?? ''; }",
+        ),
+      ];
+    } else {
+      // Typed with complex value model — throw
+      return [
+        Code(
+          'if ($apFieldName.isNotEmpty) {',
+        ),
+        generateEncodingExceptionExpression(
+          'Additional properties with complex types cannot be parameter '
+          'encoded.',
+          raw: true,
+        ).statement,
+        const Code('}'),
+      ];
+    }
   }
 
   Method _buildToSimpleMethod(
@@ -2336,30 +2670,48 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
+    final copyWithProps = normalizedProperties.map((normalized) {
+      final typeRef = typeReference(
+        normalized.property.model,
+        nameManager,
+        package,
+        isNullableOverride:
+            normalized.property.isNullable ||
+            !normalized.property.isRequired ||
+            model.isReadOnly,
+      );
+      final propModel = normalized.property.model;
+      final resolvedModel = propModel is AliasModel
+          ? propModel.resolved
+          : propModel;
+      return (
+        normalizedName: normalized.normalizedName,
+        typeRef: typeRef,
+        // Skip cast for AnyModel since its typedef is Object?
+        skipCast: resolvedModel is AnyModel,
+      );
+    }).toList();
+
+    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+      final apFieldName = pickAdditionalPropertiesFieldName(
+        normalizedProperties,
+      );
+      copyWithProps.add(
+        (
+          normalizedName: apFieldName,
+          typeRef: additionalPropertiesType(
+            model.additionalProperties,
+            nameManager,
+            package,
+          ),
+          skipCast: false,
+        ),
+      );
+    }
+
     return generateCopyWith(
       className: className,
-      properties: normalizedProperties.map((normalized) {
-        final typeRef = typeReference(
-          normalized.property.model,
-          nameManager,
-          package,
-          isNullableOverride:
-              normalized.property.isNullable ||
-              !normalized.property.isRequired ||
-              model.isReadOnly,
-        );
-        final propModel = normalized.property.model;
-        final resolvedModel = propModel is AliasModel
-            ? propModel.resolved
-            : propModel;
-        return (
-          normalizedName: normalized.normalizedName,
-          typeRef: typeRef,
-          // Skip cast for AnyModel since its typedef is Object?
-          skipCast: resolvedModel is AnyModel,
-        );
-      }).toList(),
+      properties: copyWithProps,
     );
   }
-
 }

@@ -705,6 +705,46 @@ void main() {
     );
   });
 
+  group('MapModel stable key', () {
+    test('generates stable key for MapModel', () {
+      final mapModel = MapModel(
+        name: 'Tags',
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+
+      final key = sorter.stableKeyOf(mapModel);
+      expect(key, contains('MapModel'));
+      expect(key, contains('Tags'));
+    });
+
+    test('generates stable key for unnamed MapModel', () {
+      final mapModel = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+
+      final key = sorter.stableKeyOf(mapModel);
+      expect(key, contains('MapModel'));
+    });
+
+    test('generates different keys for MapModels with different value types',
+        () {
+      final stringMap = MapModel(
+        name: 'StringMap',
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      final intMap = MapModel(
+        name: 'IntMap',
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+
+      expect(sorter.stableKeyOf(stringMap), isNot(sorter.stableKeyOf(intMap)));
+    });
+  });
+
   group('sortDiscriminatedModels', () {
     test('returns consistently ordered list', () {
       final sharedContext = context.push('Test');

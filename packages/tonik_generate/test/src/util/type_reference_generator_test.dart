@@ -249,6 +249,69 @@ void main() {
           expect(innerType.url, 'package:tonik_util/tonik_util.dart');
         },
       );
+
+      test(
+        'returns nullable List TypeReference when ListModel has '
+        'isNullable true',
+        () {
+          final model = ListModel(
+            content: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isTrue);
+        },
+      );
+
+      test(
+        'returns Map with nullable List value type when MapModel '
+        'valueModel is a nullable ListModel',
+        () {
+          final listModel = ListModel(
+            content: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          );
+          final model = MapModel(
+            valueModel: listModel,
+            context: context,
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'Map');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isFalse);
+          expect(result.types, hasLength(2));
+
+          final valueType = result.types[1] as TypeReference;
+          expect(valueType.symbol, 'List');
+          expect(valueType.isNullable, isTrue);
+        },
+      );
+
+      test(
+        'returns nullable Map TypeReference when MapModel has '
+        'isNullable true',
+        () {
+          final model = MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'Map');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isTrue);
+        },
+      );
     });
   });
 }

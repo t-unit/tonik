@@ -57,6 +57,11 @@ jobs:
         run: ./scripts/setup_integration_tests.sh
         shell: bash
 
+      - name: Run additional properties integration tests
+        run: |
+          cd integration_test/additional_properties/additional_properties_test
+          dart test --concurrency=2
+
       - name: Run petstore integration tests
         run: |
           cd integration_test/petstore/petstore_test

@@ -137,6 +137,10 @@ Expression buildFromFormValueExpression(
 
     AnyModel() => value,
 
+    MapModel() => generateFormDecodingExceptionExpression(
+      'Map types cannot be form-decoded.',
+    ),
+
     _ => throw UnimplementedError('Unsupported model type: $model'),
   };
 }

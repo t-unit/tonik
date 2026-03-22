@@ -67,6 +67,8 @@ class ModelFileGenerator {
           result = typedefGenerator.generateAlias(model);
         case ListModel():
           result = typedefGenerator.generateList(model);
+        case MapModel():
+          result = typedefGenerator.generateMap(model);
         default:
           log.fine('Ignoring model: $model');
           continue;

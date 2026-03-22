@@ -167,7 +167,7 @@ These spec features are explicitly ignored or throw errors in tonik. Do not assu
 | `links` | Ignored | `components.dart` ~L37, `response.dart` ~L23 |
 | `examples` (object) | Ignored | `components.dart` ~L37, `media_type.dart` ~L18 |
 | `example` field | Ignored | `header.dart` ~L33, `parameter.dart` ~L46 |
-| `additionalProperties` | Ignored | `schema.dart` ~L150 |
+| `additionalProperties` on `oneOf`/`anyOf` | Ignored | Not supported on these composition types |
 | Validation keywords | Ignored | `schema.dart` ~L150 (`pattern`, `minLength`, `maxItems`, `minProperties`, etc.) |
 | `xml` | Ignored | `schema.dart` ~L150 |
 | `externalDocs` | Ignored | `operation.dart` ~L43, `tag.dart` ~L17 |

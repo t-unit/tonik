@@ -2463,4 +2463,249 @@ void main() {
       },
     );
   });
+
+  group('MapModel in OneOf', () {
+    test('currentEncodingShape returns complex for MapModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: IntegerModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere(
+        (c) => c.name == 'Value',
+      );
+      final generated = format(
+        baseClass.accept(emitter).toString(),
+      );
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            EncodingShape get currentEncodingShape {
+              return switch (this) {
+                ValueInt() => EncodingShape.simple,
+                ValueTags() => EncodingShape.complex,
+              };
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('toSimple throws EncodingException for MapModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere(
+        (c) => c.name == 'Value',
+      );
+      final generated = format(
+        baseClass.accept(emitter).toString(),
+      );
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueTags() => throw EncodingException(
+              'Map types cannot be simple-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toForm throws EncodingException for MapModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere(
+        (c) => c.name == 'Value',
+      );
+      final generated = format(
+        baseClass.accept(emitter).toString(),
+      );
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueTags() => throw EncodingException(
+              'Map types cannot be form-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('parameterProperties throws for MapModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere(
+        (c) => c.name == 'Value',
+      );
+      final generated = format(
+        baseClass.accept(emitter).toString(),
+      );
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueTags() => throw EncodingException(
+              'Map types cannot be parameter encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toLabel throws EncodingException for MapModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere(
+        (c) => c.name == 'Value',
+      );
+      final generated = format(
+        baseClass.accept(emitter).toString(),
+      );
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueTags() => throw EncodingException(
+              'Map types cannot be label-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('fromJson uses decodeJsonMap for MapModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere(
+        (c) => c.name == 'Value',
+      );
+      final generated = format(
+        baseClass.accept(emitter).toString(),
+      );
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace('decodeJsonMap')),
+      );
+    });
+  });
 }

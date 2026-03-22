@@ -28,6 +28,7 @@ class Schema {
     required this.contentEncoding,
     required this.contentMediaType,
     required this.contentSchema,
+    this.additionalProperties,
     this.isReadOnly,
     this.isWriteOnly,
     this.isBooleanSchema,
@@ -134,6 +135,9 @@ class Schema {
   @SchemaConverter()
   @JsonKey(name: 'contentSchema')
   final Schema? contentSchema;
+  @_AdditionalPropertiesConverter()
+  final Object? additionalProperties; // bool | Schema | null
+
   @JsonKey(name: 'readOnly')
   final bool? isReadOnly;
   @JsonKey(name: 'writeOnly')
@@ -149,7 +153,7 @@ class Schema {
 
   // We ignore example, externalDocs, xml, default, title, multipleOf, maximum,
   // exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern,
-  // maxItems, minItems, maxProperties, minProperties, additionalProperties.
+  // maxItems, minItems, maxProperties, minProperties.
   @override
   String toString() =>
       'Schema{ref: $ref, type: $type, format: $format, required: $required, '
@@ -159,8 +163,26 @@ class Schema {
       'isDeprecated: $isDeprecated, uniqueItems: $uniqueItems, '
       'xDartName: $xDartName, xDartEnum: $xDartEnum, '
       'contentEncoding: $contentEncoding, contentMediaType: $contentMediaType, '
-      'contentSchema: $contentSchema, isReadOnly: $isReadOnly, '
+      'contentSchema: $contentSchema, '
+      'additionalProperties: $additionalProperties, '
+      'isReadOnly: $isReadOnly, '
       'isWriteOnly: $isWriteOnly, isBooleanSchema: $isBooleanSchema}';
+}
+
+class _AdditionalPropertiesConverter
+    implements JsonConverter<Object?, Object?> {
+  const _AdditionalPropertiesConverter();
+
+  @override
+  Object? fromJson(Object? json) {
+    if (json == null) return null;
+    if (json is bool) return json;
+    if (json is Map<String, dynamic>) return Schema.fromJson(json);
+    throw FormatException('Invalid additionalProperties value: $json');
+  }
+
+  @override
+  Object? toJson(Object? object) => throw UnimplementedError();
 }
 
 class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {

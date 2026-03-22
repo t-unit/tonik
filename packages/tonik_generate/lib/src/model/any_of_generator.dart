@@ -202,7 +202,8 @@ class AnyOfGenerator {
         .map(
           (n) => (
             normalizedName: n.normalizedName,
-            hasCollectionValue: n.property.model is ListModel,
+            hasCollectionValue: n.property.model is ListModel ||
+                n.property.model is MapModel,
           ),
         )
         .toList();
@@ -353,6 +354,13 @@ class AnyOfGenerator {
               .thrown
               .statement,
         );
+      } else if (fieldModel is MapModel) {
+        // Map types cannot be simple/form-encoded
+        codes.add(
+          generateEncodingExceptionExpression(
+            'Map types cannot be ${isForm ? 'form' : 'simple'}-encoded',
+          ).statement,
+        );
       } else {
         // For complex types (classes, composites), use parameterProperties
         codes.add(
@@ -482,6 +490,13 @@ class AnyOfGenerator {
               ])
               .thrown
               .statement,
+        );
+      } else if (fieldModel is MapModel) {
+        // Map types cannot be label-encoded
+        codes.add(
+          generateEncodingExceptionExpression(
+            'Map types cannot be label-encoded',
+          ).statement,
         );
       } else {
         // For complex types (classes, composites), use parameterProperties
@@ -985,7 +1000,8 @@ class AnyOfGenerator {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
-      if (modelType is ListModel && !modelType.hasSimpleContent) {
+      if ((modelType is ListModel && !modelType.hasSimpleContent) ||
+          modelType is MapModel) {
         nonDecodableProperties.add(n);
       } else {
         decodableProperties.add(n);
@@ -1099,6 +1115,7 @@ class AnyOfGenerator {
       final fieldModel = n.property.model;
       final isSimple = fieldModel.encodingShape == EncodingShape.simple;
       final isList = fieldModel is ListModel;
+      final isMap = fieldModel is MapModel;
 
       body.add(Code('if ($name != null) {'));
       if (isSimple) {
@@ -1107,7 +1124,7 @@ class AnyOfGenerator {
           encodingShapeType.property('simple').code,
           const Code(');'),
         ]);
-      } else if (isList) {
+      } else if (isList || isMap) {
         body.addAll([
           const Code(r'  _$shapes.add('),
           encodingShapeType.property('complex').code,
@@ -1505,6 +1522,13 @@ class AnyOfGenerator {
                 .thrown
                 .statement,
           );
+      } else if (fieldModel is MapModel) {
+        // Map types cannot use parameterProperties
+        codes.add(
+          generateEncodingExceptionExpression(
+            'Map types cannot be parameter encoded',
+          ).statement,
+        );
       } else {
         codes.add(
           Code(
@@ -2034,6 +2058,13 @@ class AnyOfGenerator {
               ])
               .thrown
               .statement,
+        );
+      } else if (fieldModel is MapModel) {
+        // Map types cannot be matrix-encoded
+        codes.add(
+          generateEncodingExceptionExpression(
+            'Map types cannot be matrix-encoded',
+          ).statement,
         );
       } else {
         // For complex types (classes, composites), use parameterProperties

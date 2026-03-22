@@ -2,6 +2,26 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
 
+sealed class AdditionalProperties {
+  const AdditionalProperties();
+}
+
+/// `additionalProperties: true` or `{}` → `Map<String, Object?>`
+class UnrestrictedAdditionalProperties extends AdditionalProperties {
+  const UnrestrictedAdditionalProperties();
+}
+
+/// `additionalProperties: {schema}` → `Map<String, T>`
+class TypedAdditionalProperties extends AdditionalProperties {
+  const TypedAdditionalProperties({required this.valueModel});
+  final Model valueModel;
+}
+
+/// additionalProperties: false → no-op (no map field, no validation)
+class NoAdditionalProperties extends AdditionalProperties {
+  const NoAdditionalProperties();
+}
+
 sealed class Model {
   Model({required this.context});
 
@@ -16,6 +36,7 @@ sealed class Model {
     ClassModel(:final isNullable) => isNullable,
     EnumModel(:final isNullable) => isNullable,
     ListModel(:final isNullable) => isNullable,
+    MapModel(:final isNullable) => isNullable,
     AllOfModel(:final isNullable) => isNullable,
     OneOfModel(:final isNullable) => isNullable,
     AnyOfModel(:final isNullable) => isNullable,
@@ -26,6 +47,7 @@ sealed class Model {
   String get _ref => switch (this) {
     AliasModel(:final name) => 'AliasModel($name)',
     ListModel(:final name) => 'ListModel($name)',
+    MapModel(:final name) => 'MapModel($name)',
     ClassModel(:final name) => 'ClassModel($name)',
     EnumModel(:final name) => 'EnumModel($name)',
     AllOfModel(:final name) => 'AllOfModel($name)',
@@ -93,6 +115,35 @@ mixin CompositeModel on Model {
   bool get cannotBeSimplyEncoded {
     return hasMixedTypes || (hasComplexTypes && hasSimpleTypes);
   }
+}
+
+class MapModel extends Model with NamedModel {
+  MapModel({
+    required this.valueModel,
+    required super.context,
+    this.name,
+    this.nameOverride,
+    this.isNullable = false,
+    this.isReadOnly = false,
+    this.isWriteOnly = false,
+  });
+
+  @override
+  final String? name;
+  @override
+  String? nameOverride;
+  final Model valueModel;
+  bool isNullable;
+  bool isReadOnly;
+  bool isWriteOnly;
+
+  @override
+  EncodingShape get encodingShape => EncodingShape.complex;
+
+  @override
+  String toString() =>
+      'MapModel{name: $name, nameOverride: $nameOverride, '
+      'valueModel: ${valueModel._ref}}';
 }
 
 class AliasModel extends Model with NamedModel {
@@ -174,6 +225,7 @@ class ClassModel extends Model with NamedModel {
     this.name,
     this.nameOverride,
     this.description,
+    this.additionalProperties,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
@@ -186,6 +238,7 @@ class ClassModel extends Model with NamedModel {
   String? nameOverride;
   List<Property> properties;
   String? description;
+  AdditionalProperties? additionalProperties;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
@@ -198,6 +251,7 @@ class ClassModel extends Model with NamedModel {
   String toString() =>
       'ClassModel{name: $name, nameOverride: $nameOverride, '
       'properties: [${properties.map((p) => p.name).join(', ')}], '
+      'additionalProperties: $additionalProperties, '
       'description: $description, isDeprecated: $isDeprecated}';
 }
 
@@ -273,6 +327,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     this.name,
     this.nameOverride,
     this.description,
+    this.additionalProperties,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
@@ -284,6 +339,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   @override
   String? nameOverride;
   String? description;
+  AdditionalProperties? additionalProperties;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
@@ -297,6 +353,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   String toString() =>
       'AllOfModel{name: $name, nameOverride: $nameOverride, '
       'models: {${models.map((m) => m._ref).join(', ')}}, '
+      'additionalProperties: $additionalProperties, '
       'description: $description, isDeprecated: $isDeprecated}';
 }
 

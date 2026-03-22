@@ -393,6 +393,44 @@ class ModelImporter {
       return _parseMultiType(types, schema, hasNullType, context, name);
     }
 
+    // Pure map detection: schema with no named properties and
+    // additionalProperties set to true or a schema.
+    if ((schema.properties == null || schema.properties!.isEmpty) &&
+        schema.additionalProperties != null &&
+        schema.additionalProperties != false) {
+      final ap = schema.additionalProperties;
+      final mapContext = context.push(name ?? 'map');
+      Model valueModel;
+      if (ap == true) {
+        valueModel = AnyModel(context: mapContext);
+      } else {
+        final apSchema = ap! as Schema;
+        valueModel = _resolveSchemaRef(null, apSchema, mapContext);
+        final apNullable =
+            apSchema.isNullable ?? apSchema.type.contains('null');
+        if (apNullable && !valueModel.isEffectivelyNullable) {
+          valueModel = AliasModel(
+            model: valueModel,
+            context: mapContext,
+            isNullable: true,
+          );
+        }
+      }
+      final model = MapModel(
+        valueModel: valueModel,
+        context: context,
+        name: name,
+        isNullable: schema.isNullable ?? hasNullType,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      if (name != null) {
+        _logModelAdded(model);
+        models.add(model);
+      }
+      return model;
+    }
+
     var model = switch (types.firstOrNull) {
       'string' when schema.format == 'date-time' => DateTimeModel(
         context: context,
@@ -503,6 +541,7 @@ class ModelImporter {
         contentEncoding: schema.contentEncoding,
         contentMediaType: schema.contentMediaType,
         contentSchema: schema.contentSchema,
+        additionalProperties: schema.additionalProperties,
         isReadOnly: schema.isReadOnly,
         isWriteOnly: schema.isWriteOnly,
       );
@@ -557,6 +596,7 @@ class ModelImporter {
       context: modelContext,
       name: name,
       description: schema.description,
+      additionalProperties: _resolveAdditionalProperties(schema, modelContext),
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
@@ -719,6 +759,53 @@ class ModelImporter {
     return null;
   }
 
+  AdditionalProperties? _resolveAdditionalProperties(
+    Schema schema,
+    Context context,
+  ) {
+    final ap = schema.additionalProperties;
+    if (ap == null) return null;
+    if (ap == false) return const NoAdditionalProperties();
+    if (ap == true) return const UnrestrictedAdditionalProperties();
+    if (ap is Schema) {
+      // An empty schema {} matches any value in JSON Schema (like true).
+      // As additionalProperties it means "any extra keys, any value type"
+      // — the same as additionalProperties: true.
+      if (_isEmptySchema(ap)) {
+        return const UnrestrictedAdditionalProperties();
+      }
+      var valueModel = _resolveSchemaRef(null, ap, context);
+      final isNullable = ap.isNullable ?? ap.type.contains('null');
+      if (isNullable && !valueModel.isEffectivelyNullable) {
+        valueModel = AliasModel(
+          model: valueModel,
+          context: context,
+          isNullable: true,
+        );
+      }
+      return TypedAdditionalProperties(valueModel: valueModel);
+    }
+    return null;
+  }
+
+  /// Returns `true` when the schema carries no meaningful constraints,
+  /// i.e. it is equivalent to the JSON Schema "empty schema" `{}` which
+  /// accepts any value.
+  bool _isEmptySchema(Schema schema) {
+    return schema.ref == null &&
+        schema.type.isEmpty &&
+        schema.format == null &&
+        schema.enumerated == null &&
+        schema.allOf == null &&
+        schema.anyOf == null &&
+        schema.oneOf == null &&
+        schema.not == null &&
+        schema.items == null &&
+        (schema.properties == null || schema.properties!.isEmpty) &&
+        schema.additionalProperties == null &&
+        schema.isBooleanSchema == null;
+  }
+
   ClassModel _parseClassModel(String? name, Schema schema, Context context) {
     final schemaProperties = schema.properties ?? {};
     final properties = <Property>[];
@@ -729,6 +816,7 @@ class ModelImporter {
       properties: properties,
       context: context,
       description: schema.description,
+      additionalProperties: _resolveAdditionalProperties(schema, context),
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
@@ -900,6 +988,11 @@ class ModelImporter {
 
     if (schema.not != null) {
       _collectDefs(schema.not!, '$currentPath/not');
+    }
+
+    final ap = schema.additionalProperties;
+    if (ap is Schema) {
+      _collectDefs(ap, '$currentPath/additionalProperties');
     }
   }
 }

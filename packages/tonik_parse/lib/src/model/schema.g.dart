@@ -39,6 +39,9 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   contentEncoding: json['contentEncoding'] as String?,
   contentMediaType: json['contentMediaType'] as String?,
   contentSchema: const SchemaConverter().fromJson(json['contentSchema']),
+  additionalProperties: const _AdditionalPropertiesConverter().fromJson(
+    json['additionalProperties'],
+  ),
   isReadOnly: json['readOnly'] as bool?,
   isWriteOnly: json['writeOnly'] as bool?,
 );

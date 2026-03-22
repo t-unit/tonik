@@ -85,6 +85,7 @@ class StableModelSorter {
         EnumModel(:final name) => 'EnumModel{$name}',
         AliasModel(:final name) => 'AliasModel{$name}',
         ListModel(:final name) => 'ListModel{$name}',
+        MapModel(:final name) => 'MapModel{$name}',
         _ => model.runtimeType.toString(),
       };
     }
@@ -114,6 +115,9 @@ class StableModelSorter {
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
       AliasModel(:final name, :final model) =>
         'AliasModel{$name,${_computeStableKey(model, visited, depth + 1)}}',
+      MapModel(:final name, :final valueModel) =>
+        'MapModel{$name,'
+            '${_computeStableKey(valueModel, visited, depth + 1)}}',
       StringModel() => 'StringModel',
       IntegerModel() => 'IntegerModel',
       BooleanModel() => 'BooleanModel',

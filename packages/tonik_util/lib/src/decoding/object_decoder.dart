@@ -83,6 +83,7 @@ extension ObjectDecoder on String? {
     required String explodeSeparator,
     required Set<String> expectedKeys,
     required Set<String> listKeys,
+    bool captureAdditionalKeys = false,
     String? context,
   }) {
     if (this == null || this!.isEmpty) {
@@ -103,6 +104,7 @@ extension ObjectDecoder on String? {
         listKeys,
         values,
         context,
+        captureAdditionalKeys,
       );
     } else {
       _parseNonExploded(
@@ -111,6 +113,7 @@ extension ObjectDecoder on String? {
         listKeys,
         values,
         context,
+        captureAdditionalKeys,
       );
     }
 
@@ -133,6 +136,7 @@ extension ObjectDecoder on String? {
     Set<String> listKeys,
     Map<String, String> result,
     String? context,
+    bool captureAdditionalKeys,
   ) {
     final pairs = value.split(separator);
 
@@ -156,6 +160,9 @@ extension ObjectDecoder on String? {
       final key = Uri.decodeComponent(parts[0]);
 
       if (!expectedKeys.contains(key)) {
+        if (captureAdditionalKeys) {
+          result[key] = parts[1];
+        }
         i++;
         continue;
       }
@@ -202,6 +209,7 @@ extension ObjectDecoder on String? {
     Set<String> listKeys,
     Map<String, String> result,
     String? context,
+    bool captureAdditionalKeys,
   ) {
     final parts = value.split(',');
 
@@ -211,6 +219,9 @@ extension ObjectDecoder on String? {
       final key = Uri.decodeComponent(rawKey);
 
       if (!expectedKeys.contains(key)) {
+        if (captureAdditionalKeys && i + 1 < parts.length) {
+          result[key] = parts[i + 1];
+        }
         i += 2;
         continue;
       }

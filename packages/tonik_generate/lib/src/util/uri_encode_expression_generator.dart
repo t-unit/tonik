@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 Expression buildUriEncodeExpression(
   Expression valueExpression,
@@ -37,6 +38,9 @@ Expression buildUriEncodeExpression(
           'useQueryComponent': ?useQueryComponent,
         },
       ),
+    MapModel() => generateEncodingExceptionExpression(
+      'Map types cannot be URI-encoded.',
+    ),
     ListModel(:final content) => _buildListUriEncodeExpression(
       valueExpression,
       content,

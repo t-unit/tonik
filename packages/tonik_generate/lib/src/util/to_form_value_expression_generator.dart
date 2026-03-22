@@ -107,6 +107,10 @@ Expression _buildFormSerializationExpression(
     AnyOfModel() ||
     ListModel() => callToForm(receiver, nullAware: isNullable),
 
+    MapModel() => generateEncodingExceptionExpression(
+      'Form encoding not supported for map types.',
+    ),
+
     AliasModel() => _buildFormSerializationExpression(
       receiver,
       model.model,

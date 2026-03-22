@@ -1836,5 +1836,820 @@ Map<String, String> parameterProperties({
         );
       });
     });
+
+    group('additionalProperties', () {
+      group('constructor', () {
+        test(
+          'includes AP parameter with const {} default for unrestricted',
+          () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Config',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          final result = generator.generateClass(model);
+          final constructor = result.constructors.first;
+
+          final apParam = constructor.optionalParameters.firstWhere(
+            (p) => p.name == 'additionalProperties',
+          );
+          expect(apParam.named, isTrue);
+          expect(apParam.required, isFalse);
+          expect(apParam.toThis, isTrue);
+          expect(
+            apParam.defaultTo?.accept(emitter).toString(),
+            'const {}',
+          );
+        });
+
+        test('includes AP parameter with const {} default for typed', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Labels',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: StringModel(context: context),
+            ),
+          );
+
+          final result = generator.generateClass(model);
+          final constructor = result.constructors.first;
+
+          final apParam = constructor.optionalParameters.firstWhere(
+            (p) => p.name == 'additionalProperties',
+          );
+          expect(apParam.named, isTrue);
+          expect(apParam.required, isFalse);
+          expect(apParam.toThis, isTrue);
+          expect(
+            apParam.defaultTo?.accept(emitter).toString(),
+            'const {}',
+          );
+        });
+
+        test('omits AP parameter for NoAdditionalProperties', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Strict',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const NoAdditionalProperties(),
+          );
+
+          final result = generator.generateClass(model);
+          final constructor = result.constructors.first;
+
+          final apParams = constructor.optionalParameters.where(
+            (p) => p.name == 'additionalProperties',
+          );
+          expect(apParams, isEmpty);
+        });
+
+        test('omits AP parameter when additionalProperties is null', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Plain',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final constructor = result.constructors.first;
+
+          final apParams = constructor.optionalParameters.where(
+            (p) => p.name == 'additionalProperties',
+          );
+          expect(apParams, isEmpty);
+        });
+      });
+
+      group('field', () {
+        test('generates Map<String, Object?> field for unrestricted', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Config',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          final result = generator.generateClass(model);
+          final apField = result.fields.firstWhere(
+            (f) => f.name == 'additionalProperties',
+          );
+
+          expect(
+            apField.type?.accept(emitter).toString(),
+            'Map<String,Object?>',
+          );
+          expect(apField.modifier, FieldModifier.final$);
+        });
+
+        test('generates Map<String, String> field for typed string', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Labels',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: StringModel(context: context),
+            ),
+          );
+
+          final result = generator.generateClass(model);
+          final apField = result.fields.firstWhere(
+            (f) => f.name == 'additionalProperties',
+          );
+
+          expect(
+            apField.type?.accept(emitter).toString(),
+            'Map<String,String>',
+          );
+        });
+
+        test('generates Map<String, Widget> field for typed complex', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'WidgetMap',
+            properties: [
+              Property(
+                name: 'version',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: ClassModel(
+                isDeprecated: false,
+                name: 'Widget',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          );
+
+          final result = generator.generateClass(model);
+          final apField = result.fields.firstWhere(
+            (f) => f.name == 'additionalProperties',
+          );
+
+          expect(
+            apField.type?.accept(emitter).toString(),
+            'Map<String,Widget>',
+          );
+        });
+
+        test('omits AP field for NoAdditionalProperties', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Strict',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const NoAdditionalProperties(),
+          );
+
+          final result = generator.generateClass(model);
+          final apFields = result.fields.where(
+            (f) => f.name == 'additionalProperties',
+          );
+          expect(apFields, isEmpty);
+        });
+      });
+
+      group('collision renaming', () {
+        test('renames AP field when property named additionalProperties exists',
+            () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Collision',
+            properties: [
+              Property(
+                name: 'additionalProperties',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          final result = generator.generateClass(model);
+
+          // The regular property keeps its name
+          final regularField = result.fields.firstWhere(
+            (f) => f.name == 'additionalProperties',
+          );
+          expect(
+            regularField.type?.accept(emitter).toString(),
+            'String',
+          );
+
+          // AP field is renamed to additionalProperties2
+          final apField = result.fields.firstWhere(
+            (f) => f.name == 'additionalProperties2',
+          );
+          expect(
+            apField.type?.accept(emitter).toString(),
+            'Map<String,Object?>',
+          );
+        });
+
+        test('renames AP constructor param when collision exists', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Collision',
+            properties: [
+              Property(
+                name: 'additionalProperties',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          final result = generator.generateClass(model);
+          final constructor = result.constructors.first;
+
+          final apParam = constructor.optionalParameters.firstWhere(
+            (p) => p.name == 'additionalProperties2',
+          );
+          expect(apParam.named, isTrue);
+          expect(apParam.required, isFalse);
+          expect(apParam.toThis, isTrue);
+        });
+      });
+
+      group('equality', () {
+        test('includes AP in equals for unrestricted', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Config',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          const expectedMethod = r'''
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    const _$deepEquals = DeepCollectionEquality();
+    return other is Config &&
+        other.name == this.name &&
+        _$deepEquals.equals(
+          other.additionalProperties,
+          this.additionalProperties,
+        );
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test('includes AP in hashCode for unrestricted', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Config',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const UnrestrictedAdditionalProperties(),
+          );
+
+          const expectedMethod = '''
+  @override
+  int get hashCode {
+    const deepEquals = DeepCollectionEquality();
+    return Object.hashAll([name, deepEquals.hash(additionalProperties)]);
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test('excludes AP from equals for NoAdditionalProperties', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Strict',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const NoAdditionalProperties(),
+          );
+
+          const expectedMethod = '''
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Strict && other.name == this.name;
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test('excludes AP from hashCode for NoAdditionalProperties', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Strict',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: const NoAdditionalProperties(),
+          );
+
+          const expectedMethod = '''
+  @override
+  int get hashCode => name.hashCode;''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+      });
+
+      group('parameterProperties', () {
+        test('generates AP loop with uriEncode for typed simple values', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Counts',
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: IntegerModel(context: context),
+            ),
+          );
+
+          const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+    bool useQueryComponent = false,
+  }) {
+    final _$result = <String, String>{};
+    _$result[r'name'] = name.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+    for (final _$e in additionalProperties.entries) {
+      _$result[_$e.key] = _$e.value.uriEncode(
+        allowEmpty: allowEmpty,
+        useQueryComponent: useQueryComponent,
+      );
+    }
+    return _$result;
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test(
+          'generates AP loop with EncodingException for typed complex values',
+          () {
+            final model = ClassModel(
+              isDeprecated: false,
+              name: 'WidgetMap',
+              properties: [
+                Property(
+                  name: 'version',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              additionalProperties: TypedAdditionalProperties(
+                valueModel: ClassModel(
+                  isDeprecated: false,
+                  name: 'Widget',
+                  properties: const [],
+                  context: context,
+                ),
+              ),
+            );
+
+            const expectedMethod = r"""
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+    bool useQueryComponent = false,
+  }) {
+    final _$result = <String, String>{};
+    _$result[r'version'] = version.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+    if (additionalProperties.isNotEmpty) {
+      throw EncodingException(
+        r'Additional properties with complex types cannot be parameter encoded.',
+      );
+    }
+    return _$result;
+  }""";
+
+            final generatedClass = generator.generateClass(model);
+            expect(
+              collapseWhitespace(
+                format(generatedClass.accept(emitter).toString()),
+              ),
+              contains(collapseWhitespace(expectedMethod)),
+            );
+          },
+        );
+      });
+
+      group('fromSimple', () {
+        test('captures typed string AP with decode call', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Labels',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: StringModel(context: context),
+            ),
+          );
+
+          const expectedMethod = r'''
+  factory Labels.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'Labels',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
+          context: r'Labels.additionalProperties',
+        );
+      }
+    }
+    return Labels(
+      id: _$values[r'id'].decodeSimpleInt(context: r'Labels.id'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test('does not capture complex typed AP', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'WidgetMap',
+            properties: [
+              Property(
+                name: 'version',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: ClassModel(
+                isDeprecated: false,
+                name: 'Widget',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          );
+
+          const expectedMethod = r'''
+  factory WidgetMap.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'version'},
+      listKeys: {},
+      context: r'WidgetMap',
+    );
+    return WidgetMap(
+      version: _$values[r'version'].decodeSimpleInt(
+        context: r'WidgetMap.version',
+      ),
+    );
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+      });
+
+      group('fromForm', () {
+        test('captures typed string AP with decode call', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Labels',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: StringModel(context: context),
+            ),
+          );
+
+          const expectedMethod = r'''
+  factory Labels.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'Labels',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, String>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeFormString(
+          context: r'Labels.additionalProperties',
+        );
+      }
+    }
+    return Labels(
+      id: _$values[r'id'].decodeFormInt(context: r'Labels.id'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test('captures typed bool AP with decode call', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'Flags',
+            properties: [
+              Property(
+                name: 'label',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: BooleanModel(context: context),
+            ),
+          );
+
+          const expectedMethod = r'''
+  factory Flags.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'label'},
+      listKeys: {},
+      context: r'Flags',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'label'};
+    final _$additional = <String, bool>{};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _$entry.value.decodeFormBool(
+          context: r'Flags.additionalProperties',
+        );
+      }
+    }
+    return Flags(
+      label: _$values[r'label'].decodeFormString(context: r'Flags.label'),
+      additionalProperties: _$additional,
+    );
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+
+        test('does not capture complex typed AP', () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'WidgetMap',
+            properties: [
+              Property(
+                name: 'version',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: ClassModel(
+                isDeprecated: false,
+                name: 'Widget',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          );
+
+          const expectedMethod = r'''
+  factory WidgetMap.fromForm(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: '&',
+      expectedKeys: {r'version'},
+      listKeys: {},
+      context: r'WidgetMap',
+    );
+    return WidgetMap(
+      version: _$values[r'version'].decodeFormInt(
+        context: r'WidgetMap.version',
+      ),
+    );
+  }''';
+
+          final generatedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(generatedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        });
+      });
+    });
   });
 }

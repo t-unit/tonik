@@ -24,6 +24,9 @@ class TypedefGenerator {
   ({String code, String filename}) generateList(ListModel model) =>
       _generateFile(generateListTypedef(model));
 
+  ({String code, String filename}) generateMap(MapModel model) =>
+      _generateFile(generateMapTypedef(model));
+
   @visibleForTesting
   TypeDef generateAliasTypedef(AliasModel model) {
     final isNullable = model.isNullable;
@@ -62,6 +65,28 @@ class TypedefGenerator {
       nameManager,
       package,
       isNullableOverride: isNullable,
+    );
+
+    return TypeDef(
+      (b) => b
+        ..name = nameManager.modelName(model)
+        ..definition = baseType,
+    );
+  }
+
+  @visibleForTesting
+  TypeDef generateMapTypedef(MapModel model) {
+    final isNullable = model.isNullable;
+
+    final baseType = TypeReference(
+      (b) => b
+        ..symbol = 'Map'
+        ..url = 'dart:core'
+        ..types.addAll([
+          refer('String', 'dart:core'),
+          typeReference(model.valueModel, nameManager, package),
+        ])
+        ..isNullable = isNullable,
     );
 
     return TypeDef(

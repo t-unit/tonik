@@ -2242,4 +2242,254 @@ Map<String, String> parameterProperties({
       );
     });
   });
+
+  group('MapModel in AnyOf', () {
+    test('generates encoding exception for MapModel in toSimple', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'toSimple',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException('Map types cannot be simple-encoded')",
+          ),
+        ),
+      );
+    });
+
+    test('generates encoding exception for MapModel in toForm', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'toForm',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException('Map types cannot be form-encoded')",
+          ),
+        ),
+      );
+    });
+
+    test('generates encoding exception for MapModel in toLabel', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'toLabel',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException('Map types cannot be label-encoded')",
+          ),
+        ),
+      );
+    });
+
+    test('generates encoding exception for MapModel in parameterProperties',
+        () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException('Map types cannot be parameter encoded')",
+          ),
+        ),
+      );
+    });
+
+    test('generates encoding exception for MapModel in toMatrix', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'toMatrix',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw EncodingException('Map types cannot be matrix-encoded')",
+          ),
+        ),
+      );
+    });
+
+    test('treats MapModel as non-decodable from string encodings', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              name: 'Tags',
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final generated = format(
+        klass.accept(emitter).toString(),
+      );
+
+      // MapModel should NOT be attempted in fromSimple decoding
+      expect(
+        collapseWhitespace(generated),
+        isNot(contains('decodeSimpleMap')),
+      );
+    });
+
+    test('currentEncodingShape returns complex for MapModel property', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'map',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+
+      final generated = format(method.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace('EncodingShape.complex')),
+      );
+    });
+  });
 }

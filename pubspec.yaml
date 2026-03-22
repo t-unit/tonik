@@ -49,6 +49,11 @@ melos:
     generate-integration-tests:
       run: ./scripts/setup_integration_tests.sh
 
+    test-integration-additional-properties:
+      run: |
+        cd integration_test/additional_properties/additional_properties_test
+        dart test
+
     test-integration-petstore:
       run: |
         cd integration_test/petstore/petstore_test
@@ -182,6 +187,7 @@ melos:
     test-integration-all:
       run: |
         set -e
+        melos run test-integration-additional-properties
         melos run test-integration-petstore
         melos run test-integration-petstore-config
         melos run test-integration-music-streaming

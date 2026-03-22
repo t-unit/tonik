@@ -381,5 +381,316 @@ void main() {
         ),
       );
     });
+
+    group('MapModel', () {
+      test('generates direct toDeepObject for Map<String, String>', () {
+        final parameter = createParameter(
+          name: 'filter',
+          rawName: 'filter',
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'filter',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "filter.toDeepObject(r'filter', "
+            'explode: true, allowEmpty: false, )',
+          ),
+        );
+      });
+
+      test('generates direct toDeepObject for Map<String, String> '
+          'with allowEmpty', () {
+        final parameter = createParameter(
+          name: 'filter',
+          rawName: 'filter',
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: true,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'filter',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "filter.toDeepObject(r'filter', "
+            'explode: true, allowEmpty: true, )',
+          ),
+        );
+      });
+
+      test('generates map + toDeepObject for Map<String, int>', () {
+        final parameter = createParameter(
+          name: 'counts',
+          rawName: 'counts',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'counts',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            'counts.map((k, v, ) => MapEntry(k, '
+            "v.uriEncode(allowEmpty: false), )).toDeepObject(r'counts', "
+            'explode: true, allowEmpty: false, '
+            'alreadyEncoded: true, )',
+          ),
+        );
+      });
+
+      test('generates map + toDeepObject for Map<String, bool>', () {
+        final parameter = createParameter(
+          name: 'flags',
+          rawName: 'flags',
+          model: MapModel(
+            valueModel: BooleanModel(context: context),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'flags',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            'flags.map((k, v, ) => MapEntry(k, '
+            "v.uriEncode(allowEmpty: false), )).toDeepObject(r'flags', "
+            'explode: true, allowEmpty: false, '
+            'alreadyEncoded: true, )',
+          ),
+        );
+      });
+
+      test('generates map + toDeepObject for Map<String, Enum>', () {
+        final parameter = createParameter(
+          name: 'statuses',
+          rawName: 'statuses',
+          model: MapModel(
+            valueModel: EnumModel(
+              isDeprecated: false,
+              name: 'Status',
+              values: {
+                const EnumEntry(value: 'active'),
+                const EnumEntry(value: 'inactive'),
+              },
+              isNullable: false,
+              context: context,
+            ),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'statuses',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            'statuses.map((k, v, ) => MapEntry(k, '
+            "v.uriEncode(allowEmpty: false), )).toDeepObject(r'statuses', "
+            'explode: true, allowEmpty: false, '
+            'alreadyEncoded: true, )',
+          ),
+        );
+      });
+
+      test('generates map + toDeepObject for Map<String, AnyModel>', () {
+        final parameter = createParameter(
+          name: 'meta',
+          rawName: 'meta',
+          model: MapModel(
+            valueModel: AnyModel(context: context),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'meta',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            'meta.map((k, v, ) => MapEntry(k, '
+            "encodeAnyToUri(v, allowEmpty: false, ), )).toDeepObject(r'meta', "
+            'explode: true, allowEmpty: false, '
+            'alreadyEncoded: true, )',
+          ),
+        );
+      });
+
+      test('generates throw for Map with complex value type', () {
+        final parameter = createParameter(
+          name: 'nested',
+          rawName: 'nested',
+          model: MapModel(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'Inner',
+              properties: const [],
+              context: context,
+            ),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'nested',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          contains('throw EncodingException('),
+        );
+        expect(
+          collapseWhitespace(code),
+          contains('deepObject encoding is not supported for Map types'),
+        );
+        expect(
+          collapseWhitespace(code),
+          contains('nested'),
+        );
+      });
+
+      test('generates throw for Map with list value type', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: MapModel(
+            valueModel: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'tags',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          contains('throw EncodingException('),
+        );
+      });
+
+      test('handles alias wrapping MapModel with string values', () {
+        final parameter = createParameter(
+          name: 'aliasedMap',
+          rawName: 'aliased_map',
+          model: AliasModel(
+            name: 'FilterMap',
+            model: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'aliasedMap',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "aliasedMap.toDeepObject(r'aliased_map', "
+            'explode: true, allowEmpty: false, )',
+          ),
+        );
+      });
+
+      test('handles alias wrapping MapModel with int values', () {
+        final parameter = createParameter(
+          name: 'aliasedCounts',
+          rawName: 'aliased_counts',
+          model: AliasModel(
+            name: 'CountMap',
+            model: MapModel(
+              valueModel: IntegerModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'aliasedCounts',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            'aliasedCounts.map((k, v, ) => '
+            'MapEntry(k, v.uriEncode(allowEmpty: '
+            "false), )).toDeepObject(r'aliased_counts', "
+            'explode: true, allowEmpty: false, '
+            'alreadyEncoded: true, )',
+          ),
+        );
+      });
+    });
   });
 }

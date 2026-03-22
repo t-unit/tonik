@@ -37,6 +37,7 @@
 /integration_test/openai/openai_full_api
 /integration_test/asana/asana_api
 /integration_test/twilio/twilio_api
+/integration_test/additional_properties/additional_properties_api
 
 # Dependencies
 /pubspec.lock

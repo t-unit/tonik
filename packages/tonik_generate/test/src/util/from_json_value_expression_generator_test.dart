@@ -1053,6 +1053,140 @@ void main() {
     });
   });
 
+  group('buildFromJsonValueExpression for MapModel', () {
+    test('generates for map with string values', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonMap((v) => v.decodeJsonString())',
+      );
+    });
+
+    test('generates for nullable map with string values', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableMap((v) => v.decodeJsonString())',
+      );
+    });
+
+    test('generates for map with isNullable parameter', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          isNullable: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableMap((v) => v.decodeJsonString())',
+      );
+    });
+
+    test('generates for map with class values', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'User',
+        properties: const [],
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: classModel,
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonMap((v) => User.fromJson(v))',
+      );
+    });
+
+    test('generates for map with integer values', () {
+      final mapModel = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonMap((v) => v.decodeJsonInt())',
+      );
+    });
+
+    test('passes context parameter to map decoder', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: mapModel,
+        nameManager: nameManager,
+        package: 'package:my_package/my_package.dart',
+        contextClass: 'Config',
+        contextProperty: 'settings',
+      ).accept(emitter).toString();
+
+      expect(result, contains('decodeJsonMap'));
+      expect(result, contains("context: r'Config.settings'"));
+    });
+
+    test('generates for map with enum values', () {
+      final enumModel = EnumModel(
+        isDeprecated: false,
+        context: context,
+        name: 'Status',
+        values: {
+          const EnumEntry(value: 'active'),
+          const EnumEntry(value: 'inactive'),
+        },
+        isNullable: false,
+      );
+      final mapModel = MapModel(
+        valueModel: enumModel,
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonMap((v) => Status.fromJson(v))',
+      );
+    });
+  });
+
   group('buildFromJsonValueExpression for NeverModel', () {
     late Context context;
     late NameManager nameManager;

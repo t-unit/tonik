@@ -27,6 +27,7 @@ String? getSimpleDecodingUnsupportedReason(Model model) {
     NeverModel() => 'NeverModel does not permit any value',
     ListModel(:final content) => _getListContentUnsupportedReason(content),
     AliasModel(:final model) => getSimpleDecodingUnsupportedReason(model),
+    MapModel() => 'Map types cannot be simple-decoded',
     NamedModel() || CompositeModel() => 'Unsupported model type: $model',
   };
 }
@@ -167,6 +168,9 @@ Expression buildSimpleValueExpression(
     ),
     NeverModel() => _buildNeverModelExpression(value, isRequired),
     AnyModel() => value,
+    MapModel() => generateSimpleDecodingExceptionExpression(
+      'Map types cannot be simple-decoded.',
+    ),
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$model is not supported'),
   };

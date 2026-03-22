@@ -580,4 +580,72 @@ void main() {
       expect(result, <int>[]);
     });
   });
+
+  group('Map', () {
+    test('decodes JSON map with string values', () {
+      final json = <String, dynamic>{
+        'a': 'hello',
+        'b': 'world',
+      };
+      final result = (json as Object?).decodeJsonMap<String>(
+        (v) => v! as String,
+      );
+
+      expect(result, {'a': 'hello', 'b': 'world'});
+    });
+
+    test('decodes JSON map with int values', () {
+      final json = <String, dynamic>{'x': 1, 'y': 2};
+      final result = (json as Object?).decodeJsonMap<int>(
+        (v) => v! as int,
+      );
+
+      expect(result, {'x': 1, 'y': 2});
+    });
+
+    test('throws InvalidTypeException for non-map value', () {
+      const value = 'not a map';
+      expect(
+        () => value.decodeJsonMap<String>((v) => v! as String),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws InvalidTypeException for null value', () {
+      const Object? value = null;
+      expect(
+        () => value.decodeJsonMap<String>((v) => v! as String),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('decodes nullable map with valid map', () {
+      final json = <String, dynamic>{'a': 'hello'};
+      final result = (json as Object?).decodeJsonNullableMap<String>(
+        (v) => v! as String,
+      );
+
+      expect(result, {'a': 'hello'});
+    });
+
+    test('decodes nullable map returns null for null', () {
+      const Object? value = null;
+      final result = value.decodeJsonNullableMap<String>(
+        (v) => v! as String,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('decodes JSON map with context parameter', () {
+      const value = 'not a map';
+      expect(
+        () => value.decodeJsonMap<String>(
+          (v) => v! as String,
+          context: 'test field',
+        ),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+  });
 }

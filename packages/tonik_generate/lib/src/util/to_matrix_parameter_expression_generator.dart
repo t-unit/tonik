@@ -56,6 +56,9 @@ Expression buildMatrixParameterExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),
+    MapModel() => generateEncodingExceptionExpression(
+      'Map types cannot be matrix-encoded.',
+    ),
     _ => throw UnimplementedError(
       'Unsupported model type for matrix encoding: $model',
     ),
@@ -68,7 +71,7 @@ Expression buildMatrixParameterExpression(
 /// Used by OneOf/AnyOf generators to decide whether to destructure the variant.
 bool matrixParameterExpressionUsesValue(Model model) {
   return switch (model) {
-    BinaryModel() => false,
+    BinaryModel() || MapModel() => false,
     ListModel(:final content) => _listMatrixContentUsesValue(content),
     _ => true,
   };

@@ -209,7 +209,9 @@ class OneOfGenerator {
         isNullableOverride: discriminatedModel.model.isEffectivelyNullable,
       );
 
-      final hasCollectionValue = discriminatedModel.model is ListModel;
+      final hasCollectionValue =
+          discriminatedModel.model is ListModel ||
+          discriminatedModel.model is MapModel;
 
       classes.add(
         Class(
@@ -343,6 +345,7 @@ class OneOfGenerator {
                     m.discriminatorValue != null &&
                     m.model is! PrimitiveModel &&
                     m.model is! ListModel &&
+                    m.model is! MapModel &&
                     model is! EnumModel,
               )) {
         final variantName = variantNames[m]!;
@@ -439,7 +442,7 @@ class OneOfGenerator {
       final modelName = nameManager.modelName(modelType);
       final variantName = variantNames[m]!;
 
-      if (modelType is ListModel) {
+      if (modelType is ListModel || modelType is MapModel) {
         final decodeExpr = buildFromJsonValueExpression(
           'json',
           model: modelType,
@@ -499,7 +502,8 @@ class OneOfGenerator {
         (m) =>
             m.discriminatorValue != null &&
             m.model is! PrimitiveModel &&
-            m.model is! ListModel,
+            m.model is! ListModel &&
+            m.model is! MapModel,
       );
 
       if (hasDiscriminatedComplexTypes) {
@@ -530,7 +534,8 @@ class OneOfGenerator {
                   (m) =>
                       m.discriminatorValue != null &&
                       m.model is! PrimitiveModel &&
-                      m.model is! ListModel,
+                      m.model is! ListModel &&
+                      m.model is! MapModel,
                 )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
@@ -609,7 +614,7 @@ class OneOfGenerator {
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
         );
-      } else if (modelType is ListModel) {
+      } else if (modelType is ListModel || modelType is MapModel) {
         continue;
       } else {
         final innerDecode =
@@ -676,7 +681,8 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model is! ListModel) {
+          m.model is! ListModel &&
+          m.model is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -787,6 +793,17 @@ class OneOfGenerator {
           ).code,
           const Code(','),
         ]);
+      } else if (m.model is MapModel) {
+        // Map types cannot be simple-encoded
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Map types cannot be simple-encoded',
+          ).code,
+          const Code(','),
+        ]);
       } else {
         final isNullable = m.model.isEffectivelyNullable;
 
@@ -845,7 +862,8 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model is! ListModel) {
+          m.model is! ListModel &&
+          m.model is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -958,6 +976,17 @@ class OneOfGenerator {
           ).code,
           const Code(','),
         ]);
+      } else if (m.model is MapModel) {
+        // Map types cannot be form-encoded
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Map types cannot be form-encoded',
+          ).code,
+          const Code(','),
+        ]);
       } else {
         final isNullable = m.model.isEffectivelyNullable;
 
@@ -1019,6 +1048,7 @@ class OneOfGenerator {
       final variantName = variantNames[m]!;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
       final isList = m.model is ListModel;
+      final isMap = m.model is MapModel;
 
       if (isSimple) {
         caseCodes.addAll([
@@ -1029,8 +1059,8 @@ class OneOfGenerator {
           ).property('simple').code,
           const Code(','),
         ]);
-      } else if (isList) {
-        // Lists always have complex encoding shape
+      } else if (isList || isMap) {
+        // Lists and maps always have complex encoding shape
         caseCodes.addAll([
           Code('$variantName() => '),
           refer(
@@ -1187,6 +1217,14 @@ class OneOfGenerator {
                 'Lists are not supported in parameterProperties',
               ).code,
             );
+        } else if (m.model is MapModel) {
+          caseCodes
+            ..add(Code('$variantName() => '))
+            ..add(
+              generateEncodingExceptionExpression(
+                'Map types cannot be parameter encoded',
+              ).code,
+            );
         } else {
           final isNullable = m.model.isEffectivelyNullable;
 
@@ -1260,7 +1298,8 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model is! ListModel) {
+          m.model is! ListModel &&
+          m.model is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -1367,6 +1406,17 @@ class OneOfGenerator {
           ),
           generateEncodingExceptionExpression(
             'Binary data cannot be label-encoded',
+          ).code,
+          const Code(','),
+        ]);
+      } else if (m.model is MapModel) {
+        // Map types cannot be label-encoded
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            'Map types cannot be label-encoded',
           ).code,
           const Code(','),
         ]);
