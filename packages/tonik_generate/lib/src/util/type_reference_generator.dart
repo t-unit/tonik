@@ -15,7 +15,7 @@ TypeReference typeReference(
         ..symbol = 'List'
         ..url = 'dart:core'
         ..types.add(typeReference(m.content, nameManager, package))
-        ..isNullable = isNullableOverride,
+        ..isNullable = isNullableOverride || m.isNullable,
     ),
     MapModel(:final valueModel) when model.name == null => TypeReference(
       (b) => b
@@ -25,7 +25,7 @@ TypeReference typeReference(
           refer('String', 'dart:core'),
           typeReference(valueModel, nameManager, package),
         ])
-        ..isNullable = isNullableOverride,
+        ..isNullable = isNullableOverride || model.isNullable,
     ),
     final AliasModel m when m.name == null => typeReference(
       m.model,

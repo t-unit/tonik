@@ -752,5 +752,58 @@ void main() {
         },
       );
     });
+
+    group('decodeObject with captureAdditionalKeys', () {
+      test('captures additional keys with explode=true', () {
+        final result = 'name=John&age=30&extra=value'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'name', 'age'},
+          listKeys: {},
+          captureAdditionalKeys: true,
+        );
+
+        expect(result, {'name': 'John', 'age': '30', 'extra': 'value'});
+      });
+
+      test('ignores additional keys when captureAdditionalKeys is false', () {
+        final result = 'name=John&extra=value'.decodeObject(
+          explode: true,
+          explodeSeparator: '&',
+          expectedKeys: {'name'},
+          listKeys: {},
+        );
+
+        expect(result, {'name': 'John'});
+        expect(result.containsKey('extra'), isFalse);
+      });
+
+      test('captures additional keys with explode=false (non-exploded)', () {
+        final result = 'name,John,extra,value'.decodeObject(
+          explode: false,
+          explodeSeparator: '&',
+          expectedKeys: {'name'},
+          listKeys: {},
+          captureAdditionalKeys: true,
+        );
+
+        expect(result['name'], 'John');
+        expect(result['extra'], 'value');
+      });
+
+      test(
+          'ignores additional keys in non-exploded when '
+          'captureAdditionalKeys is false', () {
+        final result = 'name,John,extra,value'.decodeObject(
+          explode: false,
+          explodeSeparator: '&',
+          expectedKeys: {'name'},
+          listKeys: {},
+        );
+
+        expect(result, {'name': 'John'});
+        expect(result.containsKey('extra'), isFalse);
+      });
+    });
   });
 }
