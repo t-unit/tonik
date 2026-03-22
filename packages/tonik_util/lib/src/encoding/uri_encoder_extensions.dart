@@ -156,9 +156,11 @@ extension StringMapUriEncoder on Map<String, String> {
       return '';
     }
 
-    final encodeKey = encodeKeys
-        ? (useQueryComponent ? Uri.encodeQueryComponent : Uri.encodeComponent)
-        : (String key) => key;
+    String encodeKey(String key) => encodeKeys
+        ? (useQueryComponent
+            ? Uri.encodeQueryComponent(key)
+            : Uri.encodeComponent(key))
+        : key;
     final encodeValue = useQueryComponent
         ? Uri.encodeQueryComponent
         : Uri.encodeComponent;

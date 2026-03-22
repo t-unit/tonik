@@ -18,7 +18,7 @@ dev_dependencies:
   test: ^1.25.15
   test_helpers:
     path: ../../test_helpers
-  very_good_analysis: ^10.0.0
+  very_good_analysis: ^10.2.0
 
 
 

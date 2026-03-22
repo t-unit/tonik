@@ -13,7 +13,7 @@ dependencies:
 
 dev_dependencies:
   test: ^1.25.15
-  very_good_analysis: ^10.0.0
+  very_good_analysis: ^10.2.0
 
 dependency_overrides:
   tonik_util:

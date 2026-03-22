@@ -379,14 +379,15 @@ class NameGenerator {
     cleaned = cleaned
         .split(RegExp(r'[_\s]+'))
         .map((part) {
+          var p = part;
           if (!isPathComponent) {
-            part = part.replaceFirst(RegExp(r'^\d+'), '');
+            p = p.replaceFirst(RegExp(r'^\d+'), '');
           }
-          if (part.isEmpty) return '';
+          if (p.isEmpty) return '';
 
           // Extract $ characters before toPascalCase (which strips them)
-          final dollars = part.replaceAll(RegExp(r'[^$]'), '');
-          final partWithoutDollars = part.replaceAll(r'$', '');
+          final dollars = p.replaceAll(RegExp(r'[^$]'), '');
+          final partWithoutDollars = p.replaceAll(r'$', '');
 
           if (partWithoutDollars.isEmpty) {
             return dollars; // Just return the $ characters
