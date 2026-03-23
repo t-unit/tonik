@@ -588,15 +588,11 @@ void main() {
         final code = result.accept(emitter).toString();
         expect(
           collapseWhitespace(code),
-          contains('throw EncodingException('),
-        );
-        expect(
-          collapseWhitespace(code),
-          contains('deepObject encoding is not supported for Map types'),
-        );
-        expect(
-          collapseWhitespace(code),
-          contains('nested'),
+          collapseWhitespace(
+            "throw EncodingException(r'deepObject encoding is not "
+            'supported for Map types with complex values. '
+            "Parameter \"nested\" cannot be encoded.')",
+          ),
         );
       });
 
@@ -623,7 +619,11 @@ void main() {
         final code = result.accept(emitter).toString();
         expect(
           collapseWhitespace(code),
-          contains('throw EncodingException('),
+          collapseWhitespace(
+            "throw EncodingException(r'deepObject encoding is not "
+            'supported for Map types with complex values. '
+            "Parameter \"tags\" cannot be encoded.')",
+          ),
         );
       });
 

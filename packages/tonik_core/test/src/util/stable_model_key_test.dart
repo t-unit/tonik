@@ -714,8 +714,7 @@ void main() {
       );
 
       final key = sorter.stableKeyOf(mapModel);
-      expect(key, contains('MapModel'));
-      expect(key, contains('Tags'));
+      expect(key, 'MapModel{Tags,StringModel}');
     });
 
     test('generates stable key for unnamed MapModel', () {
@@ -725,7 +724,7 @@ void main() {
       );
 
       final key = sorter.stableKeyOf(mapModel);
-      expect(key, contains('MapModel'));
+      expect(key, 'MapModel{null,IntegerModel}');
     });
 
     test('generates different keys for MapModels with different value types',

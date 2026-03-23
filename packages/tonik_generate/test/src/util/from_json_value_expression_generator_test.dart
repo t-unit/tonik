@@ -1156,8 +1156,12 @@ void main() {
         contextProperty: 'settings',
       ).accept(emitter).toString();
 
-      expect(result, contains('decodeJsonMap'));
-      expect(result, contains("context: r'Config.settings'"));
+      expect(
+        result,
+        'value.decodeJsonMap('
+        "(v) => v.decodeJsonString(context: r'Config.settings'), "
+        "context: r'Config.settings', )",
+      );
     });
 
     test('generates for map with enum values', () {

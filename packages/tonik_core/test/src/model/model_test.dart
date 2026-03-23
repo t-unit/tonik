@@ -55,9 +55,10 @@ void main() {
         context: context,
       );
 
-      final str = mapModel.toString();
-      expect(str, contains('MapModel'));
-      expect(str, contains('Tags'));
+      expect(
+        mapModel.toString(),
+        'MapModel{name: Tags, nameOverride: null, valueModel: StringModel}',
+      );
     });
   });
 
@@ -102,7 +103,12 @@ void main() {
         additionalProperties: const UnrestrictedAdditionalProperties(),
       );
 
-      expect(model.toString(), contains('additionalProperties'));
+      expect(
+        model.toString(),
+        'ClassModel{name: Test, nameOverride: null, properties: [], '
+        "additionalProperties: Instance of 'UnrestrictedAdditionalProperties', "
+        'description: null, isDeprecated: false}',
+      );
     });
   });
 
@@ -127,7 +133,12 @@ void main() {
         additionalProperties: const UnrestrictedAdditionalProperties(),
       );
 
-      expect(model.toString(), contains('additionalProperties'));
+      expect(
+        model.toString(),
+        'AllOfModel{name: Test, nameOverride: null, models: {StringModel}, '
+        "additionalProperties: Instance of 'UnrestrictedAdditionalProperties', "
+        'description: null, isDeprecated: false}',
+      );
     });
   });
 }

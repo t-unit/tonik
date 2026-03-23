@@ -907,9 +907,10 @@ void main() {
       final result = emit(
         buildToJsonPropertyExpression('addresses', property),
       );
-      expect(result, contains('addresses.map('));
-      expect(result, contains('MapEntry(k'));
-      expect(result, contains('v.toJson()'));
+      expect(
+        result,
+        'addresses.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
     });
 
     test('for nullable Map<String, ClassModel> uses null-safe map', () {
@@ -933,8 +934,10 @@ void main() {
       final result = emit(
         buildToJsonPropertyExpression('addresses', property),
       );
-      expect(result, contains('addresses?.map('));
-      expect(result, contains('v.toJson()'));
+      expect(
+        result,
+        'addresses?.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
     });
 
     test('for nullable MapModel uses null-safe map', () {
@@ -959,8 +962,10 @@ void main() {
       final result = emit(
         buildToJsonPropertyExpression('addresses', property),
       );
-      expect(result, contains('addresses?.map('));
-      expect(result, contains('v.toJson()'));
+      expect(
+        result,
+        'addresses?.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
     });
 
     test('for Map<String, DateTime> transforms values', () {
@@ -978,8 +983,11 @@ void main() {
       final result = emit(
         buildToJsonPropertyExpression('timestamps', property),
       );
-      expect(result, contains('timestamps.map('));
-      expect(result, contains('v.toTimeZonedIso8601String()'));
+      expect(
+        result,
+        'timestamps.map((k, v, ) => '
+        'MapEntry(k, v.toTimeZonedIso8601String(), ))',
+      );
     });
 
     test('for Map<String, EnumModel> transforms values', () {
@@ -1007,8 +1015,10 @@ void main() {
       final result = emit(
         buildToJsonPropertyExpression('statuses', property),
       );
-      expect(result, contains('statuses.map('));
-      expect(result, contains('v.toJson()'));
+      expect(
+        result,
+        'statuses.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
     });
 
     test(
@@ -1038,8 +1048,10 @@ void main() {
             forceNonNullReceiver: true,
           ),
         );
-        expect(result, contains('addresses!.map('));
-        expect(result, contains('v.toJson()'));
+        expect(
+          result,
+          'addresses!.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+        );
       },
     );
   });

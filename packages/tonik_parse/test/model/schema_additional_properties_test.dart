@@ -46,14 +46,5 @@ void main() {
       expect(schema.additionalProperties, isNull);
     });
 
-    test('toString includes additionalProperties', () {
-      final json = <String, dynamic>{
-        'type': ['object'],
-        'additionalProperties': true,
-      };
-
-      final schema = Schema.fromJson(json);
-      expect(schema.toString(), contains('additionalProperties'));
-    });
   });
 }

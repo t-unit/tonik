@@ -350,7 +350,7 @@ void main() {
       expect(requestBody, isNotNull);
 
       final jsonContent = requestBody!.resolvedContent.firstWhere(
-        (RequestContent c) => c.contentType == ContentType.json,
+        (c) => c.contentType == ContentType.json,
       );
       expect(jsonContent.model, isA<ClassModel>());
 
@@ -416,7 +416,7 @@ void main() {
       expect(response.bodies, isNotEmpty);
 
       final jsonBody = response.bodies.firstWhere(
-        (ResponseBody b) => b.contentType == ContentType.json,
+        (b) => b.contentType == ContentType.json,
       );
       expect(jsonBody.model, isA<ClassModel>());
 
