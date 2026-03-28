@@ -39,9 +39,11 @@ Map<String, dynamic> loadOpenApiDocument(String path) {
     logger.fine('Parsed OpenAPI document as ${extension.toUpperCase()}');
 
     return apiSpec;
+  } on OpenApiLoaderException {
+    rethrow;
   } on Object catch (e) {
     logger.fine('Failed to parse OpenAPI document. $e');
-    throw OpenApiLoaderException('Failed to parse OpenAPI document.');
+    throw OpenApiLoaderException('Failed to parse OpenAPI document: $e');
   }
 }
 

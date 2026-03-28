@@ -87,7 +87,7 @@ info:
           isA<OpenApiLoaderException>().having(
             (e) => e.toString(),
             'message',
-            'Failed to parse OpenAPI document.',
+            startsWith('Failed to parse OpenAPI document:'),
           ),
         ),
       );
