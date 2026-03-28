@@ -23,5 +23,14 @@ String specLiteralStringCode(String value) {
   if (!value.contains('"')) {
     return 'r"$value"';
   }
-  return 'r"""$value"""';
+  if (!value.contains('"""')) {
+    return 'r"""$value"""';
+  }
+  // Value contains both quote styles and triple-double-quotes.
+  // Fall back to a regular single-quoted string with escaping.
+  final escaped = value
+      .replaceAll(r'\', r'\\')
+      .replaceAll("'", r"\'")
+      .replaceAll(r'$', r'\$');
+  return "'$escaped'";
 }
