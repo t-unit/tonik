@@ -66,7 +66,7 @@ class ResponseHeaderAlias extends ResponseHeader {
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, header, description);
+  int get hashCode => Object.hash(name, header, description, context);
 }
 
 class ResponseHeaderObject extends ResponseHeader {

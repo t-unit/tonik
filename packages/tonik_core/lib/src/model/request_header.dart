@@ -73,7 +73,7 @@ class RequestHeaderAlias extends RequestHeader {
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, header, description);
+  int get hashCode => Object.hash(name, header, description, context);
 }
 
 class RequestHeaderObject extends RequestHeader {

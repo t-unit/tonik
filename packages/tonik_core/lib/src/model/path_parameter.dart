@@ -81,7 +81,7 @@ class PathParameterAlias extends PathParameter {
           context == other.context;
 
   @override
-  int get hashCode => Object.hash(name, parameter, description);
+  int get hashCode => Object.hash(name, parameter, description, context);
 }
 
 class PathParameterObject extends PathParameter {
