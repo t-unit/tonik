@@ -16,7 +16,14 @@ Map<String, dynamic> loadOpenApiDocument(String path) {
     throw OpenApiLoaderException('OpenAPI document not found');
   }
 
-  final content = file.readAsStringSync();
+  final String content;
+  try {
+    content = file.readAsStringSync();
+  } on Object catch (e) {
+    logger.fine('Failed to read OpenAPI document. $e');
+    throw OpenApiLoaderException('Failed to read OpenAPI document: $e');
+  }
+
   final extension = path.toLowerCase().split('.').last;
 
   try {
