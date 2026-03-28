@@ -9,11 +9,19 @@ import 'package:code_builder/code_builder.dart';
 /// - Has `'` but no `"` → `r"value"`
 /// - Has both `'` and `"` → `r"""value"""`
 Expression specLiteralString(String value) {
+  return CodeExpression(Code(specLiteralStringCode(value)));
+}
+
+/// Returns a raw string literal source code snippet for [value].
+///
+/// Same quoting logic as [specLiteralString] but returns a plain [String]
+/// that can be embedded directly in [Code] templates.
+String specLiteralStringCode(String value) {
   if (!value.contains("'")) {
-    return literalString(value, raw: true);
+    return "r'$value'";
   }
   if (!value.contains('"')) {
-    return CodeExpression(Code('r"$value"'));
+    return 'r"$value"';
   }
-  return CodeExpression(Code('r"""$value"""'));
+  return 'r"""$value"""';
 }

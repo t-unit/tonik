@@ -847,14 +847,14 @@ void main() {
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
               ),
-              'type': 'company',
+              r'type': r'company',
             },
             EntityUser(:final value) => {
               ...value.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
               ),
-              'type': 'person',
+              r'type': r'person',
             },
           };
         }
@@ -970,7 +970,7 @@ void main() {
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
               ),
-              'type': 'user',
+              r'type': r'user',
             },
           };
         }
@@ -1105,7 +1105,7 @@ void main() {
                     allowEmpty: allowEmpty,
                     allowLists: allowLists,
                   ),
-                  'type': 'inner',
+                  r'type': r'inner',
                 }
               : throw EncodingException(
                   r'parameterProperties not supported for Outer: cannot determine properties at runtime',

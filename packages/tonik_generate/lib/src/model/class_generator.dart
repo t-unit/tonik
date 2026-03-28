@@ -638,7 +638,8 @@ class ClassGenerator {
 
     // Collect additional properties from the JSON map.
     if (hasAP) {
-      final knownKeys = model.properties.map((p) => "r'${p.name}'").join(', ');
+      final knownKeys =
+          model.properties.map((p) => specLiteralStringCode(p.name)).join(', ');
       codes.add(Code('const _\$knownKeys = {$knownKeys};'));
 
       final ap = model.additionalProperties;
@@ -746,14 +747,15 @@ class ClassGenerator {
         forceNonNullReceiver: forceNonNullReceiver,
       );
 
+      final keyLiteral = specLiteralStringCode(property.name);
       if (!requiredInRequest && !property.isNullable) {
         mapEntries
-          ..add(Code("if ($name != null) r'${property.name}': "))
+          ..add(Code('if ($name != null) $keyLiteral: '))
           ..add(valueExpr.code)
           ..add(const Code(','));
       } else {
         mapEntries
-          ..add(Code("r'${property.name}': "))
+          ..add(Code('$keyLiteral: '))
           ..add(valueExpr.code)
           ..add(const Code(','));
       }

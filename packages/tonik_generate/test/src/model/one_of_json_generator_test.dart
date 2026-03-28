@@ -201,7 +201,7 @@ void main() {
 
         const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
-            final _$discriminator = json is Map<String, Object?> ? json['type'] : null;
+            final _$discriminator = json is Map<String, Object?> ? json[r'type'] : null;
 
             final _$result = switch (_$discriminator) {
               'error' => ResultError(Error.fromJson(json)),
@@ -329,7 +329,7 @@ void main() {
 
         const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
-            final _$discriminator = json is Map<String, Object?> ? json['discriminator'] : null;
+            final _$discriminator = json is Map<String, Object?> ? json[r'discriminator'] : null;
 
             final _$result = switch (_$discriminator) {
               'error' => ResultError(Error.fromJson(json)),

@@ -15,6 +15,7 @@ import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.d
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -331,7 +332,7 @@ class OneOfGenerator {
         const Code(r'final _$discriminator = json is '),
         buildMapStringObjectType().code,
         const Code(' ? '),
-        Code("json['${model.discriminator}']"),
+        Code('json[${specLiteralStringCode(model.discriminator!)}]'),
         const Code(' : null;'),
       ];
 
@@ -709,7 +710,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('}'),
             const Code(
               '.toSimple(explode: explode, allowEmpty: allowEmpty, '
@@ -741,7 +742,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('}'),
             const Code(
               '.toSimple(explode: '
@@ -890,7 +891,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('}'),
             const Code(
               '.toForm(explode: explode, allowEmpty: allowEmpty, '
@@ -923,7 +924,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('}'),
             const Code(
               '.toForm(explode: '
@@ -1166,7 +1167,7 @@ class OneOfGenerator {
           ]);
         }
 
-        if (discriminatorValue != null) {
+        if (model.discriminator != null && discriminatorValue != null) {
           caseCodes.addAll([
             const Code('value.currentEncodingShape == '),
             refer(
@@ -1180,7 +1181,7 @@ class OneOfGenerator {
               'allowLists': refer('allowLists'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('} : '),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1238,7 +1239,7 @@ class OneOfGenerator {
             ]);
           }
 
-          if (discriminatorValue != null) {
+          if (model.discriminator != null && discriminatorValue != null) {
             caseCodes.addAll([
               const Code('{'),
               const Code('...'),
@@ -1247,7 +1248,7 @@ class OneOfGenerator {
                 'allowLists': refer('allowLists'),
               }).code,
               const Code(','),
-              Code("'${model.discriminator}': '$discriminatorValue',"),
+              Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
               const Code('}'),
             ]);
           } else {
@@ -1326,7 +1327,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('}'),
             const Code(
               '.toLabel(explode: explode, allowEmpty: allowEmpty, '
@@ -1357,7 +1358,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code("'${model.discriminator}': '$discriminatorValue',"),
+            Code('${specLiteralStringCode(model.discriminator!)}: ${specLiteralStringCode(discriminatorValue)},'),
             const Code('}'),
             const Code(
               '.toLabel(explode: explode, allowEmpty: allowEmpty, '

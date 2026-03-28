@@ -113,7 +113,7 @@ void main() {
             ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
             ResponseUser(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
-              'type': 'user',
+              r'type': r'user',
             }.toSimple( 
               explode: explode, 
               allowEmpty: allowEmpty, 
@@ -183,11 +183,11 @@ void main() {
         return switch (this) {
           EntityCompany(:final value) => {
             ...value.parameterProperties(allowEmpty: allowEmpty),
-            'entity_type': 'company',
+            r'entity_type': r'company',
           }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
           EntityPerson(:final value) => {
             ...value.parameterProperties(allowEmpty: allowEmpty),
-            'entity_type': 'person',
+            r'entity_type': r'person',
           }.toSimple( 
             explode: explode, 
             allowEmpty: allowEmpty, 
@@ -243,7 +243,7 @@ void main() {
           MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
           MixedEntityPerson(:final value) => {
             ...value.parameterProperties(allowEmpty: allowEmpty),
-            'type': 'person',
+            r'type': r'person',
           }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
         };
       }

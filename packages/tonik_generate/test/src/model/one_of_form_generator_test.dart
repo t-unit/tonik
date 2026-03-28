@@ -110,7 +110,7 @@ void main() {
             ResponseMessage(:final value) => value.toForm( explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ),
             ResponseUser(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
-              'type': 'user',
+              r'type': r'user',
             }.toForm(
               explode: explode,
               allowEmpty: allowEmpty,
@@ -466,7 +466,7 @@ void main() {
             OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
-                  'type': 'inner',
+                  r'type': r'inner',
                 }.toForm(
                   explode: explode,
                   allowEmpty: allowEmpty,
@@ -558,7 +558,7 @@ void main() {
             OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
-                  'type': 'a',
+                  r'type': r'a',
                 }.toForm(
                   explode: explode,
                   allowEmpty: allowEmpty,
@@ -568,7 +568,7 @@ void main() {
             OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
-                  'type': 'b',
+                  r'type': r'b',
                 }.toForm(
                   explode: explode,
                   allowEmpty: allowEmpty,

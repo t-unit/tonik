@@ -110,7 +110,7 @@ void main() {
           return switch (this) {
             ChoiceA(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
-              'type': 'a',
+              r'type': r'a',
             }.toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true),
           };
         }
@@ -157,7 +157,7 @@ void main() {
           return switch (this) {
             MixedChoiceM(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
-              'kind': 'm',
+              r'kind': r'm',
             }.toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true),
             MixedChoiceS(:final value) => value.toLabel(explode: explode, allowEmpty: allowEmpty),
           };
@@ -268,7 +268,7 @@ void main() {
             OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
-                  'type': 'inner',
+                  r'type': r'inner',
                 }.toLabel(
                   explode: explode,
                   allowEmpty: allowEmpty,
@@ -360,7 +360,7 @@ void main() {
             OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
-                  'type': 'a',
+                  r'type': r'a',
                 }.toLabel(
                   explode: explode,
                   allowEmpty: allowEmpty,
@@ -370,7 +370,7 @@ void main() {
             OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? {
                   ...value.parameterProperties(allowEmpty: allowEmpty),
-                  'type': 'b',
+                  r'type': r'b',
                 }.toLabel(
                   explode: explode,
                   allowEmpty: allowEmpty,
