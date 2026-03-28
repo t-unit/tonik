@@ -38,7 +38,9 @@ class Date {
       final day = int.parse(parts[2]);
       final date = Date(year, month, day).._validate();
       return date;
-    } on Object {
+    } on FormatException {
+      throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
+    } on RangeError {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
     }
   }
