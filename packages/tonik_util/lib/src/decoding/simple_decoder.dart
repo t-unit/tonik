@@ -19,7 +19,16 @@ extension SimpleDecoder on String? {
         context: context,
       );
     }
-    return Uri.decodeComponent(this!);
+
+    try {
+      return Uri.decodeComponent(this!);
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: String,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a string to a nullable string.
