@@ -121,6 +121,19 @@ class SecuritySchemeImporter {
   }
 
   core.OAuth2Flow _parseOAuth2Flow(parse.OAuth2Flow flow) {
+    if (flow.authorizationUrl == null) {
+      log.warning(
+        'OAuth2 flow is missing authorizationUrl. '
+        'This field is required for implicit and authorizationCode flows.',
+      );
+    }
+    if (flow.tokenUrl == null) {
+      log.warning(
+        'OAuth2 flow is missing tokenUrl. '
+        'This field is required for password, clientCredentials, '
+        'and authorizationCode flows.',
+      );
+    }
     return core.OAuth2Flow(
       authorizationUrl: flow.authorizationUrl ?? '',
       tokenUrl: flow.tokenUrl ?? '',
