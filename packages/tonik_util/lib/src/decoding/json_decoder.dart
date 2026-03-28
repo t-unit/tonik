@@ -283,7 +283,7 @@ extension JsonDecoder on Object? {
 
   /// Decodes a JSON value to a nullable List of type [T].
   ///
-  /// Returns null if the value is null or an empty list.
+  /// Returns null if the value is null.
   /// Throws [InvalidTypeException] if the value is not a list of the
   /// expected type.
   List<T>? decodeJsonNullableList<T>({String? context}) {
