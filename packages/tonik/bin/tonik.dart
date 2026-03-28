@@ -195,7 +195,6 @@ void main(List<String> arguments) {
       ..fine('Failed to parse OpenAPI document', e, s)
       ..severe(
         'Unexpected error while parsing OpenAPI document. '
-        'Unexpected error while parsing OpenAPI document. '
         'If you think your document is valid, please run '
         'with verbose logging and report this issue at $issueUrl',
       );
