@@ -40,8 +40,6 @@ class Date {
       return date;
     } on FormatException {
       throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
-    } on RangeError {
-      throw const FormatException('Invalid date format. Expected YYYY-MM-DD');
     }
   }
 

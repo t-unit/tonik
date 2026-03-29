@@ -8,18 +8,6 @@ class Tag {
   String? nameOverride;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Tag &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          description == other.description &&
-          nameOverride == other.nameOverride;
-
-  @override
-  int get hashCode => Object.hash(name, description, nameOverride);
-
-  @override
   String toString() =>
       'Tag{name: $name, nameOverride: $nameOverride, '
       'description: $description}';
