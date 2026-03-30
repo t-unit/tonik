@@ -206,19 +206,17 @@ add_dependency_overrides_recursive "multipart/multipart_api"
 $TONIK_BINARY --config multipart/tonik_3_1.yaml
 add_dependency_overrides_recursive "multipart/multipart_3_1_api"
 
-# Figma generation may fail due to a known bug (circular model references).
-# See docs/integration-test-plans/bugs/figma-bugs.md for details.
-$TONIK_BINARY --config figma/tonik.yaml || echo "WARNING: Figma generation failed (known bug - circular model references). See docs/integration-test-plans/bugs/figma-bugs.md"
+$TONIK_BINARY --config figma/tonik.yaml || echo "WARNING: Figma generation failed."
 if [ -d "figma/figma_api" ]; then
     add_dependency_overrides_recursive "figma/figma_api"
 fi
 
-$TONIK_BINARY --config stripe/tonik.yaml || echo "WARNING: Stripe generation failed. See docs/integration-test-plans/bugs/stripe-bugs.md"
+$TONIK_BINARY --config stripe/tonik.yaml || echo "WARNING: Stripe generation failed."
 if [ -d "stripe/stripe_api" ]; then
     add_dependency_overrides_recursive "stripe/stripe_api"
 fi
 
-$TONIK_BINARY --config github/tonik.yaml || echo "WARNING: GitHub generation failed. See docs/integration-test-plans/bugs/github-bugs.md"
+$TONIK_BINARY --config github/tonik.yaml || echo "WARNING: GitHub generation failed."
 if [ -d "github/github_api" ]; then
     add_dependency_overrides_recursive "github/github_api"
 fi

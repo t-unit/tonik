@@ -27,7 +27,7 @@ class PathGenerator {
       final pathSegments = operation.path
           .split('/')
           .where((s) => s.isNotEmpty)
-          .map((s) => "r'$s'")
+          .map(specLiteralStringCode)
           .join(', ');
 
       return Method(

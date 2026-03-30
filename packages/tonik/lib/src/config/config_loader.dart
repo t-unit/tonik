@@ -43,9 +43,9 @@ extension ConfigLoader on CliConfig {
 
   static CliConfig _parseConfig(YamlMap yaml) {
     return CliConfig(
-      spec: yaml['spec'] as String?,
-      outputDir: yaml['outputDir'] as String?,
-      packageName: yaml['packageName'] as String?,
+      spec: _parseString(yaml['spec'], 'spec'),
+      outputDir: _parseString(yaml['outputDir'], 'outputDir'),
+      packageName: _parseString(yaml['packageName'], 'packageName'),
       logLevel: _parseLogLevel(yaml['logLevel']),
       nameOverrides: _parseNameOverrides(yaml['nameOverrides']),
       contentTypes: _parseContentTypes(yaml['contentTypes']),
@@ -54,6 +54,16 @@ extension ConfigLoader on CliConfig {
       deprecated: _parseDeprecated(yaml['deprecated']),
       enums: _parseEnums(yaml['enums']),
     );
+  }
+
+  static String? _parseString(dynamic value, String fieldName) {
+    if (value == null) return null;
+    if (value is! String) {
+      throw ConfigLoaderException(
+        'Invalid config: "$fieldName" must be a string',
+      );
+    }
+    return value;
   }
 
   static NameOverridesConfig _parseNameOverrides(dynamic value) {

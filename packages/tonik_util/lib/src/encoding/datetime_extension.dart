@@ -24,13 +24,16 @@ extension DateTimeEncodingExtension on DateTime {
     final minute = _twoDigits(this.minute);
     final second = _twoDigits(this.second);
 
-    // Add milliseconds if present
-    final millisecondString = millisecond > 0
-        ? '.${_threeDigits(millisecond)}'
-        : '';
-
-    // Add microseconds if present
-    final microsecondString = microsecond > 0 ? _threeDigits(microsecond) : '';
+    // Combine milliseconds and microseconds into a single fractional part
+    final String fractionalString;
+    if (millisecond == 0 && microsecond == 0) {
+      fractionalString = '';
+    } else if (microsecond == 0) {
+      fractionalString = '.${_threeDigits(millisecond)}';
+    } else {
+      fractionalString =
+          '.${_threeDigits(millisecond)}${_threeDigits(microsecond)}';
+    }
 
     // Get the timezone offset in hours and minutes
     final offset = timeZoneOffset;
@@ -44,7 +47,7 @@ extension DateTimeEncodingExtension on DateTime {
         '${_twoDigits(offsetHours)}:${_twoDigits(offsetMinutes)}';
 
     return '$year-$month-${day}T$hour:$minute:$second'
-        '$millisecondString$microsecondString$offsetString';
+        '$fractionalString$offsetString';
   }
 
   /// Formats a number as two digits with leading zero if needed.

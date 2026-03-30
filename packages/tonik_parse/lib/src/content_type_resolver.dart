@@ -14,7 +14,7 @@ core.ContentType resolveContentType(
     return contentTypes[mediaType]!;
   }
 
-  final lowerMediaType = mediaType.toLowerCase();
+  final lowerMediaType = mediaType.toLowerCase().split(';').first.trim();
   switch (lowerMediaType) {
     case 'application/json':
       return core.ContentType.json;

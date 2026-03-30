@@ -220,14 +220,14 @@ extension JsonDecoder on Object? {
         context: context,
       );
     }
-    if (this is! double) {
+    if (this is! num) {
       throw InvalidTypeException(
         value: toString(),
         targetType: double,
         context: context,
       );
     }
-    return this! as double;
+    return (this! as num).toDouble();
   }
 
   /// Decodes a JSON value to a nullable double.
@@ -238,14 +238,14 @@ extension JsonDecoder on Object? {
     if (this == null) {
       return null;
     }
-    if (this is! double) {
+    if (this is! num) {
       throw InvalidTypeException(
         value: toString(),
         targetType: double,
         context: context,
       );
     }
-    return this! as double;
+    return (this! as num).toDouble();
   }
 
   /// Decodes a JSON value to a List of type [T].

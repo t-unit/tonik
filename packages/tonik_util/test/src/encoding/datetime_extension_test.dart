@@ -148,6 +148,26 @@ void main() {
         expect(result, '2023-12-25T18:30:45.123456-08:00');
       });
 
+      test('encodes with only microseconds (no milliseconds) in timezone', () {
+        final estLocation = tz.getLocation('America/New_York');
+        final estDateTime = tz.TZDateTime(
+          estLocation,
+          2023,
+          1,
+          1,
+          12,
+          0,
+          0,
+          0, // milliseconds = 0
+          456, // microseconds = 456
+        );
+
+        final result = estDateTime.toTimeZonedIso8601String();
+
+        // Must include decimal point before fractional digits
+        expect(result, '2023-01-01T12:00:00.000456-05:00');
+      });
+
       test('encodes in JST (UTC+9:00)', () {
         final jstLocation = tz.getLocation('Asia/Tokyo');
         final jstDateTime = tz.TZDateTime(jstLocation, 2009, 6, 30, 18, 30);

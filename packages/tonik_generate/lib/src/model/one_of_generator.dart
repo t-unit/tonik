@@ -615,8 +615,26 @@ class OneOfGenerator {
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
         );
-      } else if (modelType is ListModel || modelType is MapModel) {
-        continue;
+      } else if (modelType is ListModel) {
+        final message = modelType.hasSimpleContent
+            ? 'List decoding from $encodingStyleName encoding '
+                'is not supported in $className'
+            : 'List types with complex content cannot be decoded '
+                'from $encodingStyleName encoding in $className';
+        tryBody.add(
+          generateSimpleDecodingExceptionExpression(
+            message,
+            raw: true,
+          ).statement,
+        );
+      } else if (modelType is MapModel) {
+        tryBody.add(
+          generateSimpleDecodingExceptionExpression(
+            'Map types cannot be decoded from '
+            '$encodingStyleName encoding in $className',
+            raw: true,
+          ).statement,
+        );
       } else {
         final innerDecode =
             refer(

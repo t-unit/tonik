@@ -215,6 +215,15 @@ void main() {
           throwsA(isA<InvalidTypeException>()),
         );
       });
+
+      test('decodes integer JSON value as double', () {
+        // Use Object? to simulate jsonDecode returning int for whole numbers
+        expect((5 as Object?).decodeJsonDouble(), 5.0);
+      });
+
+      test('decodes nullable integer JSON value as double', () {
+        expect((42 as Object?).decodeJsonNullableDouble(), 42.0);
+      });
     });
 
     group('bool', () {

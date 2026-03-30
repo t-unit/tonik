@@ -40,6 +40,57 @@ void main() {
       );
     }
 
+    group('rawName with special characters', () {
+      test('generates valid code when rawName contains single quote', () {
+        final parameter = createParameter(
+          name: 'filterParam',
+          rawName: "filter's",
+          model: StringModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'filterParam',
+          parameter,
+        );
+
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = Block.of(codes),
+        );
+
+        // Should not throw when formatting (valid Dart syntax)
+        final generated = format(method.accept(emitter).toString());
+        expect(generated, contains("filter's"));
+      });
+
+      test('generates valid code when rawName contains double quote', () {
+        final parameter = createParameter(
+          name: 'filterParam',
+          rawName: 'filter"s',
+          model: StringModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'filterParam',
+          parameter,
+        );
+
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = Block.of(codes),
+        );
+
+        final generated = format(method.accept(emitter).toString());
+        expect(generated, contains('filter"s'));
+      });
+    });
+
     group('MapModel', () {
       test('generates encoding exception for MapModel', () {
         final parameter = createParameter(

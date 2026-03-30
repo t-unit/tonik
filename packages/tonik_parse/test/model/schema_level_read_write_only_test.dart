@@ -377,4 +377,72 @@ void main() {
       expect(secretProp.isReadOnly, isFalse);
     });
   });
+
+  group(r'readOnly/writeOnly on $ref with structural siblings', () {
+    test('readOnly propagated through ref with properties sibling', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Base': {
+              'type': 'object',
+              'properties': {
+                'id': {'type': 'integer'},
+              },
+            },
+            'ReadOnlyExtended': {
+              r'$ref': '#/components/schemas/Base',
+              'readOnly': true,
+              'properties': {
+                'extra': {'type': 'string'},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'ReadOnlyExtended',
+      );
+      expect(model, isA<AllOfModel>());
+      expect((model as AllOfModel).isReadOnly, isTrue);
+      expect(model.isWriteOnly, isFalse);
+    });
+
+    test('writeOnly propagated through ref with properties sibling', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Base': {
+              'type': 'object',
+              'properties': {
+                'id': {'type': 'integer'},
+              },
+            },
+            'WriteOnlyExtended': {
+              r'$ref': '#/components/schemas/Base',
+              'writeOnly': true,
+              'properties': {
+                'secret': {'type': 'string'},
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'WriteOnlyExtended',
+      );
+      expect(model, isA<AllOfModel>());
+      expect((model as AllOfModel).isWriteOnly, isTrue);
+      expect(model.isReadOnly, isFalse);
+    });
+  });
 }

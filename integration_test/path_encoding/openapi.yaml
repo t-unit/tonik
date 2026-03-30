@@ -16,6 +16,8 @@ tags:
     description: Operations testing label-style path parameters (RFC 6570 Section 3.2.5)
   - name: matrix
     description: Operations testing matrix-style path parameters (RFC 6570 Section 3.2.7)
+  - name: simple
+    description: Operations testing simple-style path parameters (RFC 6570 Section 3.2.2)
 
 paths:
   /label/primitive/string/{value}:
@@ -342,6 +344,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  /label/special-keys/{value}:
+    get:
+      operationId: testLabelSpecialKeys
+      tags: [label]
+      summary: Label-style object with special characters in property names (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            $ref: '#/components/schemas/SpecialKeyObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/special-keys/explode/{value}:
+    get:
+      operationId: testLabelSpecialKeysExplode
+      tags: [label]
+      summary: Label-style object with special characters in property names (explode=true)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SpecialKeyObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
   /matrix/primitive/string/{value}:
     get:
       operationId: testMatrixPrimitiveString
@@ -655,6 +699,90 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/ComplexObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/special-keys/{value}:
+    get:
+      operationId: testMatrixSpecialKeys
+      tags: [matrix]
+      summary: Matrix-style object with special characters in property names (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            $ref: '#/components/schemas/SpecialKeyObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/special-keys/explode/{value}:
+    get:
+      operationId: testMatrixSpecialKeysExplode
+      tags: [matrix]
+      summary: Matrix-style object with special characters in property names (explode=true)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: matrix
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SpecialKeyObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/special-keys/{value}:
+    get:
+      operationId: testSimpleSpecialKeys
+      tags: [simple]
+      summary: Simple-style object with special characters in property names (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/SpecialKeyObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/special-keys/explode/{value}:
+    get:
+      operationId: testSimpleSpecialKeysExplode
+      tags: [simple]
+      summary: Simple-style object with special characters in property names (explode=true)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: simple
+          explode: true
+          schema:
+            $ref: '#/components/schemas/SpecialKeyObject'
       responses:
         '200':
           description: OK
@@ -1069,6 +1197,17 @@ components:
           properties:
             extra:
               type: string
+
+    SpecialKeyObject:
+      type: object
+      required:
+        - 'my.field'
+        - 'a=b'
+      properties:
+        'my.field':
+          type: string
+        'a=b':
+          type: integer
 
     EchoResponse:
       type: object
