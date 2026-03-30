@@ -616,25 +616,29 @@ class OneOfGenerator {
           refer(variantName).call([decodeExpr]).returned.statement,
         );
       } else if (modelType is ListModel) {
+        // Add throw directly to bodyBlocks (not tryBody) so it is NOT
+        // wrapped in the try/catch that swallows DecodingException.
         final message = modelType.hasSimpleContent
             ? 'List decoding from $encodingStyleName encoding '
                 'is not supported in $className'
             : 'List types with complex content cannot be decoded '
                 'from $encodingStyleName encoding in $className';
-        tryBody.add(
+        bodyBlocks.add(
           generateSimpleDecodingExceptionExpression(
             message,
             raw: true,
           ).statement,
         );
+        continue;
       } else if (modelType is MapModel) {
-        tryBody.add(
+        bodyBlocks.add(
           generateSimpleDecodingExceptionExpression(
             'Map types cannot be decoded from '
             '$encodingStyleName encoding in $className',
             raw: true,
           ).statement,
         );
+        continue;
       } else {
         final innerDecode =
             refer(

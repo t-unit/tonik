@@ -749,5 +749,41 @@ void main() {
         ),
       );
     });
+
+    test('fromSimple throws for simple-content ListModel variant '
+        'that is not decodable', () {
+      // A ListModel with simple content that is NOT a list of primitives
+      // (e.g. list of enums) — the hasSimpleContent branch
+      final listVariant = ListModel(
+        content: StringModel(context: context),
+        context: context,
+        name: 'Tags',
+        isNullable: true,
+      );
+
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Payload',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: listVariant),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // Simple-content list should be decodable via try/catch path
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'return PayloadTags(value.decodeSimpleStringList(',
+          ),
+        ),
+      );
+    });
   });
 }

@@ -247,12 +247,11 @@ class ModelImporter {
     return Context.initial().pushAll(parts);
   }
 
-  /// Resolves a schema ref with cycle detection for pure alias chains.
+  /// Resolves a schema ref with cycle detection.
   ///
-  /// Only detects cycles when the target schema is itself a bare `$ref`
-  /// (creating an alias chain like A→B→C→A). Schemas with structural content
-  /// (type, properties, oneOf, etc.) are allowed to recurse because
-  /// [_parseClassModel] registers models early to break recursion.
+  /// Only tracks resolution for schemas whose definition is itself a `$ref`
+  /// (i.e. alias chains like A→B→C→A). Schemas with structural content
+  /// handle recursion via early model registration in [_parseClassModel].
   Model _resolveWithCycleCheck(String refName, Schema refSchema) {
     // Only track cycles for schemas that are bare $ref aliases.
     // Schemas with structural content handle recursion via early

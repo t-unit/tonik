@@ -43,6 +43,28 @@ void main() {
       expect(result, core.ContentType.text);
     });
 
+    test('config override matches with parameters stripped', () {
+      final result = resolveContentType(
+        'application/vnd.custom+json; charset=utf-8',
+        contentTypes: {
+          'application/vnd.custom+json': core.ContentType.json,
+        },
+        log: log,
+      );
+      expect(result, core.ContentType.json);
+    });
+
+    test('config override matches raw media type exactly', () {
+      final result = resolveContentType(
+        'application/vnd.custom+json',
+        contentTypes: {
+          'application/vnd.custom+json': core.ContentType.json,
+        },
+        log: log,
+      );
+      expect(result, core.ContentType.json);
+    });
+
     test('resolves plain media types without parameters', () {
       expect(
         resolveContentType('application/json', contentTypes: {}, log: log),
