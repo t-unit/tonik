@@ -1359,4 +1359,38 @@ void main() {
       collapseWhitespace(expectedMethod),
     );
   });
+
+  test(
+      'generates valid code when path segment contains single quote '
+      'and no path parameters exist', () {
+    final operation = Operation(
+      operationId: 'getQuoted',
+      context: context,
+      summary: 'Get quoted',
+      description: 'Path with single quote',
+      tags: const {},
+      isDeprecated: false,
+      path: "/it's/here",
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: const {},
+      cookieParameters: const {},
+      responses: const {},
+      securitySchemes: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path() {
+          return [r"it's", r'here'];
+        }
+      ''';
+
+    final method = generator.generatePathMethod(operation, []);
+
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
 }

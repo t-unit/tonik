@@ -454,4 +454,78 @@ void main() {
       },
     );
   });
+
+  group('Grandparent discriminator via nested allOf', () {
+    const fileContent = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          // Grandparent with discriminator
+          'Vehicle': {
+            'type': 'object',
+            'required': ['vehicleType'],
+            'properties': {
+              'vehicleType': {'type': 'string'},
+            },
+            'discriminator': {
+              'propertyName': 'vehicleType',
+            },
+          },
+          // Intermediate parent (no discriminator)
+          'MotorVehicle': {
+            'allOf': [
+              {r'$ref': '#/components/schemas/Vehicle'},
+              {
+                'type': 'object',
+                'properties': {
+                  'engineSize': {'type': 'integer'},
+                },
+              },
+            ],
+          },
+          // Children inherit from MotorVehicle (2 levels deep)
+          'Car': {
+            'allOf': [
+              {r'$ref': '#/components/schemas/MotorVehicle'},
+              {
+                'type': 'object',
+                'properties': {
+                  'doors': {'type': 'integer'},
+                },
+              },
+            ],
+          },
+          'Truck': {
+            'allOf': [
+              {r'$ref': '#/components/schemas/MotorVehicle'},
+              {
+                'type': 'object',
+                'properties': {
+                  'payload': {'type': 'integer'},
+                },
+              },
+            ],
+          },
+          // oneOf references children — should find grandparent discriminator
+          'VehicleChoice': {
+            'oneOf': [
+              {r'$ref': '#/components/schemas/Car'},
+              {r'$ref': '#/components/schemas/Truck'},
+            ],
+          },
+        },
+      },
+    };
+
+    test('finds discriminator from grandparent allOf chain', () {
+      final api = Importer().import(fileContent);
+      final vehicleChoice = api.models.whereType<OneOfModel>().firstWhere(
+            (m) => m.name == 'VehicleChoice',
+          );
+
+      expect(vehicleChoice.discriminator, 'vehicleType');
+    });
+  });
 }

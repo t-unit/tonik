@@ -613,5 +613,61 @@ nameOverrides:
         expect(merged.enums.generateUnknownCase, isTrue);
       });
     });
+
+    group('type validation for string fields', () {
+      test('throws meaningful error when spec is not a string', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+spec:
+  - a
+  - b
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('"spec" must be a string'),
+            ),
+          ),
+        );
+      });
+
+      test('throws meaningful error when outputDir is not a string', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+outputDir:
+  nested: value
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('"outputDir" must be a string'),
+            ),
+          ),
+        );
+      });
+
+      test('throws meaningful error when packageName is not a string', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+packageName: 42
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('"packageName" must be a string'),
+            ),
+          ),
+        );
+      });
+    });
   });
 }

@@ -125,7 +125,7 @@ extension LabelStringMapEncoder on Map<String, String> {
           final value = alreadyEncoded
               ? entry.value
               : entry.value.uriEncode(allowEmpty: allowEmpty);
-          return '.${entry.key}=$value';
+          return '.${Uri.encodeComponent(entry.key)}=$value';
         },
       ).join();
     } else {

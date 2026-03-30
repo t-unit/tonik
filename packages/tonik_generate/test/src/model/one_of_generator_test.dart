@@ -1620,7 +1620,7 @@ void main() {
       );
     });
 
-    test('excludes ListModel with complex content from simple encoding', () {
+    test('throws for ListModel with complex content in simple encoding', () {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
@@ -1646,18 +1646,16 @@ void main() {
 
       final generated = format(baseClass.accept(emitter).toString());
 
+      // Complex ListModel variant should throw SimpleDecodingException
+      // instead of being silently excluded
       expect(
         collapseWhitespace(generated),
         contains(
-          collapseWhitespace('''
-            factory Value.fromSimple(String? value, {required bool explode}) {
-              try {
-                return ValueString(value.decodeSimpleString(context: r'Value'));
-              } on DecodingException catch (_) {
-              } on FormatException catch (_) {}
-              throw SimpleDecodingException(r'Invalid simple value for Value');
-            }
-          '''),
+          collapseWhitespace(
+            'throw SimpleDecodingException(\n'
+            "r'List types with complex content cannot be decoded "
+            "from simple encoding in Value',\n);",
+          ),
         ),
       );
     });

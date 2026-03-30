@@ -245,6 +245,16 @@ void main() {
       );
     });
 
+    test('encodes special characters in map keys with explode=true', () {
+      expect(
+        {'a=b': '1', 'c&d': '2'}.toLabel(
+          explode: true,
+          allowEmpty: true,
+        ),
+        '.a%3Db=1.c%26d=2',
+      );
+    });
+
     test('encodes empty object when allowEmpty is true', () {
       expect(
         <String, String>{}.toLabel(explode: false, allowEmpty: true),

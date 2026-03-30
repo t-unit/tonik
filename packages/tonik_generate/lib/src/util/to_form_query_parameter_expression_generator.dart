@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// Creates code blocks that serialize a query parameter to its form-encoded
@@ -40,7 +41,7 @@ List<Code> buildToFormQueryParameterCode(
   if (model is AnyModel) {
     return [
       const Code(r'_$entries.add(('),
-      Code("name: r'${parameter.rawName}', "),
+      Code('name: ${specLiteralStringCode(parameter.rawName)}, '),
       const Code('value: '),
       refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart')
           .call(
@@ -79,7 +80,7 @@ List<Code> buildToFormQueryParameterCode(
         contentModel is AnyOfModel) {
       return [
         const Code(r'_$entries.add(('),
-        Code("name: r'${parameter.rawName}', "),
+        Code('name: ${specLiteralStringCode(parameter.rawName)}, '),
         const Code('value: '),
         refer(parameterName).code,
         const Code('.map((e) => '),
@@ -105,7 +106,7 @@ List<Code> buildToFormQueryParameterCode(
         const Code('}'),
         Code(
           r'_$entries'
-          ".add((name: r'${parameter.rawName}', value: <",
+          '.add((name: ${specLiteralStringCode(parameter.rawName)}, value: <',
         ),
         refer('String', 'dart:core').code,
         Code(
@@ -137,7 +138,7 @@ List<Code> buildToFormQueryParameterCode(
         Code(
           r'_$entries'
           '.add(('
-          "name: r'${parameter.rawName}', "
+          'name: ${specLiteralStringCode(parameter.rawName)}, '
           'value: $valueExpression, '
           '),);',
         ),
@@ -159,7 +160,7 @@ List<Code> buildToFormQueryParameterCode(
     Code(
       r'_$entries'
       '.add(('
-      "name: r'${parameter.rawName}', "
+      'name: ${specLiteralStringCode(parameter.rawName)}, '
       'value: $valueExpression, '
       '),);',
     ),
@@ -279,7 +280,7 @@ List<Code> _buildExplodedListCode(
   EncodingShape contentShape, {
   required bool allowEmpty,
 }) {
-  final rawName = parameter.rawName;
+  final nameCode = specLiteralStringCode(parameter.rawName);
 
   if (contentShape == EncodingShape.complex) {
     return [
@@ -300,7 +301,7 @@ List<Code> _buildExplodedListCode(
         r'_$entries'
         '.addAll($parameterName.map((e) => (',
       ),
-      Code("name: r'$rawName', "),
+      Code('name: $nameCode, '),
       const Code('value: '),
       refer(
         'encodeAnyToUri',
@@ -325,7 +326,7 @@ List<Code> _buildExplodedListCode(
         r'_$entries'
         '.addAll($parameterName.map((e) => (',
       ),
-      Code("name: r'$rawName', "),
+      Code('name: $nameCode, '),
       Code(
         'value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);',
       ),
@@ -337,7 +338,7 @@ List<Code> _buildExplodedListCode(
       r'_$entries'
       '.addAll($parameterName.map((e) => (',
     ),
-    Code("name: r'$rawName', "),
+    Code('name: $nameCode, '),
     Code('value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);'),
   ];
 }

@@ -663,4 +663,127 @@ void main() {
       );
     });
   });
+
+  group('fromSimple with List/Map variants', () {
+    test('fromSimple throws for MapModel variant', () {
+      final mapVariant = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        name: 'Tags',
+      );
+
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Payload',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: mapVariant),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // Map variant should throw SimpleDecodingException, not be silently
+      // skipped
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'throw SimpleDecodingException(\n'
+            "r'Map types cannot be decoded from simple encoding "
+            "in Payload',\n);",
+          ),
+        ),
+      );
+    });
+
+    test('fromSimple throws for complex ListModel variant', () {
+      final innerClass = ClassModel(
+        isDeprecated: false,
+        name: 'Item',
+        properties: [
+          Property(
+            name: 'id',
+            model: IntegerModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final listVariant = ListModel(
+        content: innerClass,
+        context: context,
+        name: 'Items',
+      );
+
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Payload',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: listVariant),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // Complex List variant should throw SimpleDecodingException, not be
+      // silently skipped
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'throw SimpleDecodingException(\n'
+            "r'List types with complex content cannot be decoded "
+            "from simple encoding in Payload',\n);",
+          ),
+        ),
+      );
+    });
+
+    test('fromSimple throws for simple-content ListModel variant '
+        'that is not decodable', () {
+      // A ListModel with simple content that is NOT a list of primitives
+      // (e.g. list of enums) — the hasSimpleContent branch
+      final listVariant = ListModel(
+        content: StringModel(context: context),
+        context: context,
+        name: 'Tags',
+        isNullable: true,
+      );
+
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Payload',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: listVariant),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // Simple-content list should be decodable via try/catch path
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'return PayloadTags(value.decodeSimpleStringList(',
+          ),
+        ),
+      );
+    });
+  });
 }

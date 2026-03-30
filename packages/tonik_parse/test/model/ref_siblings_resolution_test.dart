@@ -1144,5 +1144,44 @@ void main() {
         throwsArgumentError,
       );
     });
+
+    test('indirect circular reference (A -> B -> C -> A) throws', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'A': {r'$ref': '#/components/schemas/B'},
+            'B': {r'$ref': '#/components/schemas/C'},
+            'C': {r'$ref': '#/components/schemas/A'},
+          },
+        },
+      };
+
+      expect(
+        () => Importer().import(fileContent),
+        throwsArgumentError,
+      );
+    });
+
+    test('indirect circular reference (A -> B -> A) throws', () {
+      const fileContent = {
+        'openapi': '3.1.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'A': {r'$ref': '#/components/schemas/B'},
+            'B': {r'$ref': '#/components/schemas/A'},
+          },
+        },
+      };
+
+      expect(
+        () => Importer().import(fileContent),
+        throwsArgumentError,
+      );
+    });
   });
 }

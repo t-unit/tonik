@@ -140,6 +140,58 @@ void main() {
           throwsA(isA<InvalidTypeException>()),
         );
       });
+
+      test('decodes scientific notation doubles', () {
+        expect('1.5e%2B10'.decodeFormDouble(), 1.5e+10);
+        expect('2E%2B3'.decodeFormDouble(), 2e+3);
+      });
+    });
+
+    group('form decoding with e+ in value', () {
+      test(
+          'decodeFormDouble decodes properly form-encoded '
+          'scientific notation', () {
+        // Properly encoded 1.5e+10: the + is encoded as %2B
+        expect('1.5e%2B10'.decodeFormDouble(), 1.5e+10);
+      });
+
+      test(
+          'decodeFormDouble decodes properly percent-encoded '
+          'scientific notation', () {
+        // Properly encoded: + is %2B in scientific notation
+        expect('1e%2B100'.decodeFormDouble(), 1e+100);
+        expect('1.5E%2B10'.decodeFormDouble(), 1.5e+10);
+        expect('-2.5e%2B3'.decodeFormDouble(), -2.5e+3);
+      });
+
+      test(
+          'decodeFormDouble treats + as space in '
+          'non-numeric values containing e+', () {
+        // 'e+notation' is not a valid numeric pattern,
+        // so + should be decoded as space
+        expect(
+          () => 'e+notation'.decodeFormDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        // 'some+value+with+e+inside' has multiple +'s; not numeric
+        expect(
+          () => 'some+value+with+e+inside'.decodeFormDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test(
+          'decodeFormDouble rejects ambiguous form-encoded value '
+          'where + means space', () {
+        // In form encoding, '5e+7' means '5e 7' (+ is space).
+        // Without the fix, the code incorrectly parses this as 5e+7 = 50000000.
+        // The correct behavior is to decode '+' as space, producing '5e 7',
+        // which is not a valid double and should throw.
+        expect(
+          () => '5e+7'.decodeFormDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
     });
 
     group('decodeFormNullableDouble', () {

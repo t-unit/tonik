@@ -388,11 +388,6 @@ extension FormDecoder on String? {
       throw ArgumentError('Cannot decode null string');
     }
 
-    // For numeric values with scientific notation, preserve + signs
-    if (this!.contains('e+') || this!.contains('E+')) {
-      return Uri.decodeComponent(this!);
-    } else {
-      return Uri.decodeQueryComponent(this!);
-    }
+    return Uri.decodeQueryComponent(this!);
   }
 }

@@ -15,6 +15,7 @@ class ModelImporter {
   final Map<String, Schema> _schemas;
   final Map<String, SchemaContentType> _contentMediaTypes;
   final Map<String, Schema> _defs = {};
+  final Set<String> _resolving = {};
 
   late Set<Model> models;
   final log = Logger('ModelImporter');
@@ -192,8 +193,22 @@ class ModelImporter {
     }
 
     final defName = ref.split('/').last;
-    final defsContext = _contextFromDefsPath(ref);
-    final refModel = _resolveSchemaRef(defName, defSchema, defsContext);
+    final isBareRef = defSchema.ref != null;
+
+    if (isBareRef && _resolving.contains(ref)) {
+      throw ArgumentError(
+        'Circular reference detected: $ref is part of a reference cycle',
+      );
+    }
+
+    if (isBareRef) _resolving.add(ref);
+    final Model refModel;
+    try {
+      final defsContext = _contextFromDefsPath(ref);
+      refModel = _resolveSchemaRef(defName, defSchema, defsContext);
+    } finally {
+      if (isBareRef) _resolving.remove(ref);
+    }
 
     if (_hasStructuralSiblings(schema)) {
       return _mergeRefWithStructuralSiblings(name, refModel, schema, context);
@@ -215,7 +230,7 @@ class ModelImporter {
         context: context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
-        isNullable: schema.type.contains('null'),
+        isNullable: schema.isNullable ?? schema.type.contains('null'),
       );
 
       _logModelAdded(aliasModel);
@@ -232,9 +247,36 @@ class ModelImporter {
     return Context.initial().pushAll(parts);
   }
 
+  /// Resolves a schema ref with cycle detection.
+  ///
+  /// Only tracks resolution for schemas whose definition is itself a `$ref`
+  /// (i.e. alias chains like A→B→C→A). Schemas with structural content
+  /// handle recursion via early model registration in [_parseClassModel].
+  Model _resolveWithCycleCheck(String refName, Schema refSchema) {
+    // Only track cycles for schemas that are bare $ref aliases.
+    // Schemas with structural content handle recursion via early
+    // model registration in _parseClassModel.
+    final isBareRef = refSchema.ref != null;
+
+    if (isBareRef && _resolving.contains(refName)) {
+      throw ArgumentError(
+        'Circular reference detected: '
+        '$refName is part of a reference cycle',
+      );
+    }
+
+    if (isBareRef) _resolving.add(refName);
+    try {
+      return _resolveSchemaRef(refName, refSchema, rootContext);
+    } finally {
+      if (isBareRef) _resolving.remove(refName);
+    }
+  }
+
   bool _hasAnnotationSiblings(Schema schema) {
     return schema.description != null ||
         (schema.isDeprecated ?? false) ||
+        (schema.isNullable ?? false) ||
         schema.type.contains('null');
   }
 
@@ -277,7 +319,7 @@ class ModelImporter {
         models.firstWhereOrNull(
           (model) => model is NamedModel && model.name == refName,
         ) ??
-        _resolveSchemaRef(refName, refSchema, rootContext);
+        _resolveWithCycleCheck(refName, refSchema);
 
     if (_hasStructuralSiblings(schema)) {
       return _mergeRefWithStructuralSiblings(
@@ -304,7 +346,7 @@ class ModelImporter {
         context: context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
-        isNullable: schema.type.contains('null'),
+        isNullable: schema.isNullable ?? schema.type.contains('null'),
       );
 
       _logModelAdded(aliasModel);
@@ -352,7 +394,9 @@ class ModelImporter {
       context: modelContext,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
-      isNullable: schema.type.contains('null'),
+      isNullable: schema.isNullable ?? schema.type.contains('null'),
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
     );
 
     _addModelToSet(allOfModel);
@@ -724,6 +768,9 @@ class ModelImporter {
   }
 
   /// Walks an allOf chain to find a parent schema with a discriminator.
+  ///
+  /// Recursively descends into allOf members so that discriminators on
+  /// grandparent (or deeper) schemas are found.
   parse.Discriminator? _findDiscriminatorInAllOfChain(Schema schema) {
     final resolvedSchema = _resolveSchemaToSchema(schema);
     if (resolvedSchema == null) return null;
@@ -738,6 +785,10 @@ class ModelImporter {
       if (memberSchema.discriminator != null) {
         return memberSchema.discriminator;
       }
+
+      // Recurse into the member's own allOf chain.
+      final inherited = _findDiscriminatorInAllOfChain(memberSchema);
+      if (inherited != null) return inherited;
     }
 
     return null;

@@ -770,4 +770,99 @@ void main() {
       expect(refModel.isNullable, isTrue);
     });
   });
+
+  group(r'nullable $ref with annotation siblings (OAS 3.0)', () {
+    const spec = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Base': {
+            'type': 'object',
+            'properties': {
+              'id': {'type': 'integer'},
+            },
+          },
+          'NullableRefWithDescription': {
+            r'$ref': '#/components/schemas/Base',
+            'nullable': true,
+            'description': 'A nullable reference with description',
+          },
+        },
+      },
+    };
+
+    test('parses nullable flag on ref with description sibling', () {
+      final api = Importer().import(spec);
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NullableRefWithDescription',
+      );
+      expect(model, isA<AliasModel>());
+      expect((model as AliasModel).isNullable, isTrue);
+    });
+
+    test('parses nullable flag as sole annotation sibling on ref', () {
+      const soloNullableSpec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Base': {
+              'type': 'object',
+              'properties': {
+                'id': {'type': 'integer'},
+              },
+            },
+            'NullableRefOnly': {
+              r'$ref': '#/components/schemas/Base',
+              'nullable': true,
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(soloNullableSpec);
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NullableRefOnly',
+      );
+      expect(model, isA<AliasModel>());
+      expect((model as AliasModel).isNullable, isTrue);
+    });
+  });
+
+  group(r'nullable $ref with structural siblings (OAS 3.0)', () {
+    const spec = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Base': {
+            'type': 'object',
+            'properties': {
+              'id': {'type': 'integer'},
+            },
+          },
+          'NullableRefWithAllOf': {
+            r'$ref': '#/components/schemas/Base',
+            'nullable': true,
+            'properties': {
+              'extra': {'type': 'string'},
+            },
+          },
+        },
+      },
+    };
+
+    test('parses nullable flag on ref with structural siblings', () {
+      final api = Importer().import(spec);
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NullableRefWithAllOf',
+      );
+      expect(model, isA<AllOfModel>());
+      expect((model as AllOfModel).isNullable, isTrue);
+    });
+  });
 }

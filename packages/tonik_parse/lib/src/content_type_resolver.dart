@@ -10,11 +10,16 @@ core.ContentType resolveContentType(
   required Map<String, core.ContentType> contentTypes,
   required Logger log,
 }) {
+  final lowerMediaType = mediaType.toLowerCase().split(';').first.trim();
+
+  // Check config overrides with both the raw media type and the
+  // normalized (parameter-stripped) form.
   if (contentTypes.containsKey(mediaType)) {
     return contentTypes[mediaType]!;
   }
-
-  final lowerMediaType = mediaType.toLowerCase();
+  if (contentTypes.containsKey(lowerMediaType)) {
+    return contentTypes[lowerMediaType]!;
+  }
   switch (lowerMediaType) {
     case 'application/json':
       return core.ContentType.json;
