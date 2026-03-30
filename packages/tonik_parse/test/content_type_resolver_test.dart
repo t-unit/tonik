@@ -43,7 +43,7 @@ void main() {
       expect(result, core.ContentType.text);
     });
 
-    test('config override matches with parameters stripped', () {
+    test('config override matches when input has parameters', () {
       final result = resolveContentType(
         'application/vnd.custom+json; charset=utf-8',
         contentTypes: {
@@ -54,7 +54,7 @@ void main() {
       expect(result, core.ContentType.json);
     });
 
-    test('config override matches raw media type exactly', () {
+    test('config override matches when input has no parameters', () {
       final result = resolveContentType(
         'application/vnd.custom+json',
         contentTypes: {
