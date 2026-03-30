@@ -97,7 +97,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
