@@ -83,9 +83,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -135,9 +135,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -189,9 +189,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -243,9 +243,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -281,9 +281,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -308,9 +308,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -342,9 +342,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -399,9 +399,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -459,9 +459,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -512,9 +512,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -564,9 +564,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -616,9 +616,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -672,9 +672,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -724,9 +724,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -776,9 +776,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -828,9 +828,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -880,9 +880,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -932,9 +932,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -984,9 +984,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -1038,9 +1038,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1093,9 +1093,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1149,9 +1149,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -1202,9 +1202,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -1255,9 +1255,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -1308,9 +1308,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -1363,9 +1363,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1415,9 +1415,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1466,9 +1466,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1518,9 +1518,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1570,9 +1570,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1633,9 +1633,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1701,9 +1701,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1767,9 +1767,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1833,9 +1833,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1899,9 +1899,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -1963,9 +1963,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2028,9 +2028,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2084,9 +2084,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2147,9 +2147,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2212,9 +2212,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2277,9 +2277,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2348,9 +2348,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2410,9 +2410,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -2485,9 +2485,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -2553,9 +2553,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2620,9 +2620,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2687,9 +2687,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2752,9 +2752,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2819,9 +2819,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2886,9 +2886,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -2953,9 +2953,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -3018,9 +3018,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -3087,9 +3087,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -3157,9 +3157,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -3227,9 +3227,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -3296,9 +3296,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -3362,9 +3362,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -3403,7 +3403,7 @@ void main() {
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-      'application/x-www-form-urlencoded',
+                      'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3453,9 +3453,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -3494,7 +3494,7 @@ void main() {
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-      'application/x-www-form-urlencoded',
+                      'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3542,9 +3542,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -3584,7 +3584,7 @@ void main() {
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-      'application/x-www-form-urlencoded',
+                      'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3638,9 +3638,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -3655,7 +3655,7 @@ void main() {
                   MultipartFile.fromString(
                     jsonEncode(body.address.toJson()),
                     contentType: DioMediaType.parse(
-      r'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3668,7 +3668,7 @@ void main() {
 
       test(
         'URL-encoded property with per-part headers passes headers to '
-        r'MultipartFile',
+        'MultipartFile',
         () {
           final innerClass = ClassModel(
             name: 'Address',
@@ -3718,9 +3718,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -3763,7 +3763,7 @@ void main() {
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-      'application/x-www-form-urlencoded',
+                      'application/x-www-form-urlencoded',
                     ),
                     headers: _$addressHeaders,
                   ),
@@ -3816,9 +3816,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -3873,9 +3873,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -3930,9 +3930,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -3987,9 +3987,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4044,9 +4044,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4102,9 +4102,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4172,9 +4172,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4240,9 +4240,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4299,9 +4299,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4356,9 +4356,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4413,9 +4413,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4470,9 +4470,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4527,9 +4527,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4586,9 +4586,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4648,9 +4648,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4719,9 +4719,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4783,9 +4783,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4842,9 +4842,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4901,9 +4901,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -4958,9 +4958,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -5010,9 +5010,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -5058,9 +5058,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5120,9 +5120,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -5172,9 +5172,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -5224,9 +5224,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -5285,9 +5285,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5343,9 +5343,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5401,9 +5401,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5470,9 +5470,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5521,9 +5521,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5590,9 +5590,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -5649,9 +5649,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5716,9 +5716,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5775,9 +5775,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            r'body',
+            'body',
             nameManager,
-            r'test_package',
+            'test_package',
           );
 
           final code = emitStatements(result);
@@ -5833,9 +5833,9 @@ void main() {
 
       final result = buildMultipartBodyExpression(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitExpressionAsMethod(result);
@@ -5864,9 +5864,9 @@ void main() {
 
       final result = buildMultipartBodyExpression(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitExpressionAsMethod(result);
@@ -5934,9 +5934,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6008,9 +6008,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6091,9 +6091,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6161,9 +6161,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6229,9 +6229,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -6307,9 +6307,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6373,9 +6373,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6456,9 +6456,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6521,9 +6521,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6599,9 +6599,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6670,9 +6670,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6741,9 +6741,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6824,9 +6824,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6889,9 +6889,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);
@@ -6969,9 +6969,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -7048,9 +7048,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -7118,9 +7118,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -7188,9 +7188,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -7263,9 +7263,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          r'body',
+          'body',
           nameManager,
-          r'test_package',
+          'test_package',
         );
 
         final code = emitStatements(result);
@@ -7336,9 +7336,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        r'body',
+        'body',
         nameManager,
-        r'test_package',
+        'test_package',
       );
 
       final code = emitStatements(result);

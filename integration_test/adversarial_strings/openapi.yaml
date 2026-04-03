@@ -232,6 +232,26 @@ components:
         'field"name':
           type: string
 
+    # Discriminator values with dollar sign (raw strings handle $ naturally)
+    DollarOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/SuccessResult'
+        - $ref: '#/components/schemas/ErrorResult'
+      discriminator:
+        propertyName: type
+        mapping:
+          "$success": '#/components/schemas/SuccessResult'
+          "$error": '#/components/schemas/ErrorResult'
+
+    # Property name with backslash
+    ObjectWithBackslashProp:
+      type: object
+      properties:
+        id:
+          type: string
+        'path\\to':
+          type: string
+
     # 1e. Discriminator field name with single quote
     QuotedDiscriminatorField:
       anyOf:

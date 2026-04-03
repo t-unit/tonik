@@ -23,7 +23,7 @@ void main() {
 
   group('oneOf with quoted discriminator values', () {
     test('toJson includes quoted discriminator value', () {
-      final result = QuotedOneOfSuccessResult(
+      const result = QuotedOneOfSuccessResult(
         SuccessResult(value: 'ok'),
       );
       final json = result.toJson()! as Map<String, Object?>;
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('json round-trip preserves quoted discriminator', () {
-      final original = QuotedOneOfErrorResult(
+      const original = QuotedOneOfErrorResult(
         ErrorResult(message: 'fail'),
       );
       final json = original.toJson();
@@ -56,24 +56,26 @@ void main() {
 
   group('anyOf with quoted discriminator values', () {
     test('toJson includes quoted discriminator value in map', () {
-      final model = QuotedAnyOf(personModel: PersonModel(name: 'Alice'));
+      const model = QuotedAnyOf(personModel: PersonModel(name: 'Alice'));
       final json = model.toJson()! as Map<String, Object?>;
       expect(json['kind'], "it's-person");
       expect(json['name'], 'Alice');
     });
 
-    test('toJson includes different quoted discriminator for other variant',
-        () {
-      final model = QuotedAnyOf(companyModel: CompanyModel(title: 'Acme'));
-      final json = model.toJson()! as Map<String, Object?>;
-      expect(json['kind'], "it's-company");
-      expect(json['title'], 'Acme');
-    });
+    test(
+      'toJson includes different quoted discriminator for other variant',
+      () {
+        const model = QuotedAnyOf(companyModel: CompanyModel(title: 'Acme'));
+        final json = model.toJson()! as Map<String, Object?>;
+        expect(json['kind'], "it's-company");
+        expect(json['title'], 'Acme');
+      },
+    );
   });
 
   group('anyOf with quoted discriminator field name', () {
     test('toJson uses quoted field name as map key', () {
-      final model = QuotedDiscriminatorField(
+      const model = QuotedDiscriminatorField(
         personModel: PersonModel(name: 'Bob'),
       );
       final json = model.toJson()! as Map<String, Object?>;
@@ -82,7 +84,7 @@ void main() {
     });
 
     test('toJson uses quoted field name for other variant', () {
-      final model = QuotedDiscriminatorField(
+      const model = QuotedDiscriminatorField(
         companyModel: CompanyModel(title: 'Corp'),
       );
       final json = model.toJson()! as Map<String, Object?>;
@@ -93,7 +95,7 @@ void main() {
 
   group('oneOf with both single and double quotes in discriminator', () {
     test('toJson includes discriminator with both quote types', () {
-      final result = BothQuotesOneOfSuccessResult(
+      const result = BothQuotesOneOfSuccessResult(
         SuccessResult(value: 'ok'),
       );
       final json = result.toJson()! as Map<String, Object?>;
@@ -110,7 +112,7 @@ void main() {
     });
 
     test('json round-trip with both quote types', () {
-      final original = BothQuotesOneOfErrorResult(
+      const original = BothQuotesOneOfErrorResult(
         ErrorResult(message: 'fail'),
       );
       final json = original.toJson();
@@ -121,7 +123,7 @@ void main() {
 
   group('oneOf with triple-double-quotes in discriminator', () {
     test('toJson includes discriminator with triple quotes', () {
-      final result = TripleQuoteOneOfSuccessResult(
+      const result = TripleQuoteOneOfSuccessResult(
         SuccessResult(value: 'ok'),
       );
       final json = result.toJson()! as Map<String, Object?>;
@@ -140,7 +142,7 @@ void main() {
 
   group('object with double-quote in property name', () {
     test('toJson uses double-quoted property key', () {
-      final obj = ObjectWithDoubleQuoteProp(id: 'x', fieldname: 'val');
+      const obj = ObjectWithDoubleQuoteProp(id: 'x', fieldname: 'val');
       final json = obj.toJson()! as Map<String, Object?>;
       expect(json['id'], 'x');
       expect(json['field"name'], 'val');
@@ -154,7 +156,7 @@ void main() {
     });
 
     test('json round-trip with double-quoted property key', () {
-      final original = ObjectWithDoubleQuoteProp(
+      const original = ObjectWithDoubleQuoteProp(
         id: 'rt',
         fieldname: 'test',
       );
@@ -165,9 +167,70 @@ void main() {
     });
   });
 
+  group('oneOf with dollar sign in discriminator values', () {
+    test('toJson includes dollar-sign discriminator value', () {
+      const result = DollarOneOfSuccessResult(
+        SuccessResult(value: 'ok'),
+      );
+      final json = result.toJson()! as Map<String, Object?>;
+      expect(json['type'], r'$success');
+      expect(json['value'], 'ok');
+    });
+
+    test('fromJson dispatches on dollar-sign discriminator value', () {
+      final json = <String, Object?>{
+        'type': r'$success',
+        'value': 'ok',
+      };
+      final result = DollarOneOf.fromJson(json);
+      expect(result, isA<DollarOneOfSuccessResult>());
+    });
+
+    test('json round-trip with dollar-sign discriminator', () {
+      const original = DollarOneOfErrorResult(
+        ErrorResult(message: 'fail'),
+      );
+      final json = original.toJson();
+      final reconstructed = DollarOneOf.fromJson(json);
+      expect(reconstructed, isA<DollarOneOfErrorResult>());
+      final error = (reconstructed as DollarOneOfErrorResult).value;
+      expect(error.message, 'fail');
+    });
+  });
+
+  group('object with backslash in property name', () {
+    test('toJson uses backslash property key', () {
+      const obj = ObjectWithBackslashProp(
+        id: 'x',
+        pathBackslashBackslashTo: 'val',
+      );
+      final json = obj.toJson()! as Map<String, Object?>;
+      expect(json['id'], 'x');
+      expect(json[r'path\\to'], 'val');
+    });
+
+    test('fromJson reads backslash property key', () {
+      final json = <String, Object?>{'id': 'x', r'path\\to': 'val'};
+      final obj = ObjectWithBackslashProp.fromJson(json);
+      expect(obj.id, 'x');
+      expect(obj.pathBackslashBackslashTo, 'val');
+    });
+
+    test('json round-trip with backslash property key', () {
+      const original = ObjectWithBackslashProp(
+        id: 'rt',
+        pathBackslashBackslashTo: 'test',
+      );
+      final json = original.toJson();
+      final reconstructed = ObjectWithBackslashProp.fromJson(json);
+      expect(reconstructed.id, 'rt');
+      expect(reconstructed.pathBackslashBackslashTo, 'test');
+    });
+  });
+
   group('object with quoted property name', () {
     test('toJson uses quoted property key', () {
-      final obj = ObjectWithQuotedProp(id: 'x');
+      const obj = ObjectWithQuotedProp(id: 'x');
       final json = obj.toJson()! as Map<String, Object?>;
       expect(json['id'], 'x');
     });
@@ -179,7 +242,7 @@ void main() {
     });
 
     test('json round-trip preserves id through quoted schema', () {
-      final original = ObjectWithQuotedProp(id: 'round-trip');
+      const original = ObjectWithQuotedProp(id: 'round-trip');
       final json = original.toJson();
       final reconstructed = ObjectWithQuotedProp.fromJson(json);
       expect(reconstructed.id, 'round-trip');

@@ -1842,36 +1842,37 @@ Map<String, String> parameterProperties({
         test(
           'includes AP parameter with const {} default for unrestricted',
           () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'Config',
-            properties: [
-              Property(
-                name: 'name',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
-          );
+            final model = ClassModel(
+              isDeprecated: false,
+              name: 'Config',
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              additionalProperties: const UnrestrictedAdditionalProperties(),
+            );
 
-          final result = generator.generateClass(model);
-          final constructor = result.constructors.first;
+            final result = generator.generateClass(model);
+            final constructor = result.constructors.first;
 
-          final apParam = constructor.optionalParameters.firstWhere(
-            (p) => p.name == 'additionalProperties',
-          );
-          expect(apParam.named, isTrue);
-          expect(apParam.required, isFalse);
-          expect(apParam.toThis, isTrue);
-          expect(
-            apParam.defaultTo?.accept(emitter).toString(),
-            'const {}',
-          );
-        });
+            final apParam = constructor.optionalParameters.firstWhere(
+              (p) => p.name == 'additionalProperties',
+            );
+            expect(apParam.named, isTrue);
+            expect(apParam.required, isFalse);
+            expect(apParam.toThis, isTrue);
+            expect(
+              apParam.defaultTo?.accept(emitter).toString(),
+              'const {}',
+            );
+          },
+        );
 
         test('includes AP parameter with const {} default for typed', () {
           final model = ClassModel(
@@ -2080,44 +2081,46 @@ Map<String, String> parameterProperties({
       });
 
       group('collision renaming', () {
-        test('renames AP field when property named additionalProperties exists',
-            () {
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'Collision',
-            properties: [
-              Property(
-                name: 'additionalProperties',
-                model: StringModel(context: context),
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
-          );
+        test(
+          'renames AP field when property named additionalProperties exists',
+          () {
+            final model = ClassModel(
+              isDeprecated: false,
+              name: 'Collision',
+              properties: [
+                Property(
+                  name: 'additionalProperties',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              additionalProperties: const UnrestrictedAdditionalProperties(),
+            );
 
-          final result = generator.generateClass(model);
+            final result = generator.generateClass(model);
 
-          // The regular property keeps its name
-          final regularField = result.fields.firstWhere(
-            (f) => f.name == 'additionalProperties',
-          );
-          expect(
-            regularField.type?.accept(emitter).toString(),
-            'String',
-          );
+            // The regular property keeps its name
+            final regularField = result.fields.firstWhere(
+              (f) => f.name == 'additionalProperties',
+            );
+            expect(
+              regularField.type?.accept(emitter).toString(),
+              'String',
+            );
 
-          // AP field is renamed to additionalProperties2
-          final apField = result.fields.firstWhere(
-            (f) => f.name == 'additionalProperties2',
-          );
-          expect(
-            apField.type?.accept(emitter).toString(),
-            'Map<String,Object?>',
-          );
-        });
+            // AP field is renamed to additionalProperties2
+            final apField = result.fields.firstWhere(
+              (f) => f.name == 'additionalProperties2',
+            );
+            expect(
+              apField.type?.accept(emitter).toString(),
+              'Map<String,Object?>',
+            );
+          },
+        );
 
         test('renames AP constructor param when collision exists', () {
           final model = ClassModel(
@@ -2684,7 +2687,7 @@ Map<String, String> parameterProperties({
           );
 
           const expectedToJson =
-              r'''Object? toJson() => {r'id': id, r"it's-field": encodeAnyToJson(itsField)};''';
+              '''Object? toJson() => {r'id': id, r"it's-field": encodeAnyToJson(itsField)};''';
 
           expect(
             collapseWhitespace(generated),

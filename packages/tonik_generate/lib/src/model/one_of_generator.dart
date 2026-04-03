@@ -519,7 +519,10 @@ class OneOfGenerator {
           refer('Uri', 'dart:core').property('decodeComponent').call([
             refer(r'_$parts').index(literalNum(0)),
           ]).statement,
-          Code('if (_\$key == ${specLiteralStringCode(model.discriminator!)}) {'),
+          Code(
+            r'if (_$key == '
+            '${specLiteralStringCode(model.discriminator!)}) {',
+          ),
           const Code(r'_$discriminator = _$parts[1];'),
           const Code('break;'),
           const Code('}'),
@@ -542,7 +545,8 @@ class OneOfGenerator {
 
           bodyBlocks.addAll([
             Code(
-              'if (_\$discriminator == ${specLiteralStringCode(m.discriminatorValue!)}) {',
+              r'if (_$discriminator == '
+              '${specLiteralStringCode(m.discriminatorValue!)}) {',
             ),
             const Code('return '),
             refer(variantName).call([

@@ -55,11 +55,11 @@ void main() {
         );
 
         generatedClasses = generator.generateClasses(model);
-        baseClass = generatedClasses.firstWhere((c) => c.name == r'Result');
+        baseClass = generatedClasses.firstWhere((c) => c.name == 'Result');
       });
 
       test('toJson method handles primitive values', () {
-        final toJson = baseClass.methods.firstWhere((m) => m.name == r'toJson');
+        final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
         expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
         final generatedCode = format(baseClass.accept(emitter).toString());
@@ -159,11 +159,11 @@ void main() {
         );
 
         generatedClasses = generator.generateClasses(model);
-        baseClass = generatedClasses.firstWhere((c) => c.name == r'Result');
+        baseClass = generatedClasses.firstWhere((c) => c.name == 'Result');
       });
 
       test('toJson method includes discriminator for complex types', () {
-        final toJson = baseClass.methods.firstWhere((m) => m.name == r'toJson');
+        final toJson = baseClass.methods.firstWhere((m) => m.name == 'toJson');
         expect(toJson.returns?.accept(emitter).toString(), 'Object?');
 
         const expectedMethod = r'''
@@ -281,7 +281,7 @@ void main() {
         );
 
         generatedClasses = generator.generateClasses(model);
-        baseClass = generatedClasses.firstWhere((c) => c.name == r'Result');
+        baseClass = generatedClasses.firstWhere((c) => c.name == 'Result');
       });
 
       test(

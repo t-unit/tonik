@@ -257,7 +257,7 @@ class ServerGenerator {
                 ),
               )
               ..initializers.add(
-                Code("super(baseUrl: ${specLiteralStringCode(server.url)})"),
+                Code('super(baseUrl: ${specLiteralStringCode(server.url)})'),
               ),
           ),
         ),
@@ -371,8 +371,7 @@ class ServerGenerator {
   ) {
     // Split the template at variable placeholders so each literal segment
     // can be escaped independently, preserving Dart interpolation expressions.
-    final variablePlaceholders =
-        variables.map((v) => '{${v.name}}').toList();
+    final variablePlaceholders = variables.map((v) => '{${v.name}}').toList();
     final parts = <String>[];
     var remaining = urlTemplate;
 
@@ -390,19 +389,20 @@ class ServerGenerator {
 
       if (earliestVariable == null) {
         // No more placeholders — escape and append the rest.
-        parts.add(_escapeForDartString(remaining));
+        parts.add(escapeForSingleQuotedDartString(remaining));
         break;
       }
 
       // Escape the literal segment before this placeholder.
       final literal = remaining.substring(0, earliestIndex);
       if (literal.isNotEmpty) {
-        parts.add(_escapeForDartString(literal));
+        parts.add(escapeForSingleQuotedDartString(literal));
       }
 
       // Append the Dart interpolation expression (unescaped).
       final placeholder = '{${earliestVariable.name}}';
-      final hasEnum = earliestVariable.enumValues != null &&
+      final hasEnum =
+          earliestVariable.enumValues != null &&
           earliestVariable.enumValues!.isNotEmpty;
       parts.add(
         hasEnum
@@ -410,20 +410,10 @@ class ServerGenerator {
             : '\${${earliestVariable.name}}',
       );
 
-      remaining =
-          remaining.substring(earliestIndex + placeholder.length);
+      remaining = remaining.substring(earliestIndex + placeholder.length);
     }
 
     return "'${parts.join()}'";
-  }
-
-  /// Escapes a literal string segment for embedding inside a Dart
-  /// single-quoted (non-raw) string.
-  static String _escapeForDartString(String value) {
-    return value
-        .replaceAll(r'\', r'\\')
-        .replaceAll("'", r"\'")
-        .replaceAll(r'$', r'\$');
   }
 
   Class _generateCustomServerClass(String className, String baseClassName) {

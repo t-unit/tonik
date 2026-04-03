@@ -51,7 +51,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Result');
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
@@ -102,7 +102,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Response');
+      final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
@@ -137,7 +137,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Test');
+      final baseClass = classes.firstWhere((c) => c.name == 'Test');
       final toFormMethod = baseClass.methods.firstWhere(
         (m) => m.name == 'toForm',
       );
@@ -171,7 +171,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Test');
+      final baseClass = classes.firstWhere((c) => c.name == 'Test');
       final fromFormConstructor = baseClass.constructors.firstWhere(
         (c) => c.name == 'fromForm',
       );
@@ -214,7 +214,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Result');
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
         factory Result.fromForm(String? value, {required bool explode}) {
@@ -261,7 +261,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Response');
+      final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
       const expectedMethod = '''
         factory Response.fromForm(String? value, {required bool explode}) {
@@ -326,7 +326,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'Choice');
+        final baseClass = classes.firstWhere((c) => c.name == 'Choice');
 
         const expectedMethod = r'''
           factory Choice.fromForm(String? value, {required bool explode}) {
@@ -404,7 +404,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Outer');
+      final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
@@ -458,7 +458,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Outer');
+      final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
@@ -550,7 +550,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'Outer');
+        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
@@ -604,7 +604,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'WithBinary');
+      final baseClass = classes.firstWhere((c) => c.name == 'WithBinary');
       final generated = format(baseClass.accept(emitter).toString());
 
       expect(

@@ -561,7 +561,8 @@ Code _buildBinaryFileAddition(
                     ..url = 'package:dio/dio.dart',
                 ),
               );
-              return 'contentType: $dioMediaType.parse(${specLiteralStringCode(rawContentType)}), ';
+              final ct = specLiteralStringCode(rawContentType);
+              return 'contentType: $dioMediaType.parse($ct), ';
             }();
 
       final escapedName = specLiteralStringCode(rawName);

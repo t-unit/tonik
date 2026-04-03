@@ -94,7 +94,10 @@ void main() {
       'path 4: triple-double-quotes uses escaped single-quoted string',
       () {
         // Build a string containing ', ", and """
-        final value = "it's" '"""' 'test';
+        const value =
+            "it's"
+            '"""'
+            'test';
         final result = specLiteralStringCode(value);
         expect(result, isNot(startsWith('r')));
         expect(result, startsWith("'"));
@@ -105,14 +108,20 @@ void main() {
 
     test('escapes backslash in fallback path', () {
       // Build a string with ', ", and """ plus backslash
-      final value = "it's" '"""' r'te\st';
+      const value =
+          "it's"
+          '"""'
+          r'te\st';
       final result = specLiteralStringCode(value);
       expect(result, contains(r'\\'));
     });
 
-    test(r'escapes dollar sign in fallback path', () {
+    test('escapes dollar sign in fallback path', () {
       // Build a string with ', ", and """ plus dollar
-      final value = "it's" '"""' r'te$st';
+      const value =
+          "it's"
+          '"""'
+          r'te$st';
       final result = specLiteralStringCode(value);
       expect(result, contains(r'\$'));
     });

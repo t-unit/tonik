@@ -51,7 +51,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Result');
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
@@ -105,7 +105,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'Response');
+        final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
         const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
@@ -176,7 +176,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'Entity');
+        final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
         const expectedMethod = '''
       String toSimple({required bool explode, required bool allowEmpty}) {
@@ -235,7 +235,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'MixedEntity');
+        final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
         const expectedMethod = '''
       String toSimple({required bool explode, required bool allowEmpty}) {
@@ -300,7 +300,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Entity');
+      final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
       const expectedMethod = '''
         factory Entity.fromSimple(String? value, {required bool explode}) {
@@ -338,7 +338,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Result');
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
         factory Result.fromSimple(String? value, {required bool explode}) {
@@ -403,7 +403,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'Entity');
+        final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
         const expectedMethod = r'''
           factory Entity.fromSimple(String? value, {required bool explode}) {
@@ -474,7 +474,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'MixedEntity');
+        final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
         const expectedMethod = r'''
           factory MixedEntity.fromSimple(String? value, {required bool explode}) {
@@ -556,7 +556,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == r'EntityNoDisc');
+        final baseClass = classes.firstWhere((c) => c.name == 'EntityNoDisc');
 
         const expectedMethod = '''
           factory EntityNoDisc.fromSimple(String? value, {required bool explode}) {
@@ -648,7 +648,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'WithBinary');
+      final baseClass = classes.firstWhere((c) => c.name == 'WithBinary');
       final generated = format(baseClass.accept(emitter).toString());
 
       expect(
@@ -683,7 +683,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Payload');
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
       final generated = format(baseClass.accept(emitter).toString());
 
       // Map variant should throw SimpleDecodingException, not be silently
@@ -733,7 +733,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Payload');
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
       final generated = format(baseClass.accept(emitter).toString());
 
       // Complex List variant should throw SimpleDecodingException, not be
@@ -772,7 +772,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == r'Payload');
+      final baseClass = classes.firstWhere((c) => c.name == 'Payload');
       final generated = format(baseClass.accept(emitter).toString());
 
       // Simple-content list should be decodable via try/catch path
