@@ -75,7 +75,7 @@ void main() {
       const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/json'):
+    case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
       return _$body;
@@ -137,7 +137,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         AnonymousModel _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = AnonymousModel.fromJson(_$json);
               return _$body;
@@ -203,7 +203,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         User _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return _$body;
@@ -258,7 +258,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         List<int> _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonList<int>();
               return _$body;
@@ -325,7 +325,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         List<User> _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonList<Object?>()
                 .map(User.fromJson)
@@ -405,7 +405,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         Pet _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = Pet.fromJson(_$json);
               return _$body;
@@ -457,7 +457,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         String _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (var status, 'application/json') when status != null && status >= 200 && status <= 299:
+            case (var status, r'application/json') when status != null && status >= 200 && status <= 299:
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
               return _$body;
@@ -509,7 +509,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         String _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (_, 'application/json'):
+            case (_, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
               return _$body;
@@ -582,7 +582,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         MultiStatusOpResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return MultiStatusOpResponse200(body: _$body);
@@ -672,7 +672,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         AnonymousResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return AnonymousResponse(
@@ -789,7 +789,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         CombinedOpResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return CombinedOpResponse200(
@@ -800,7 +800,7 @@ String _parseResponse(Response<List<int>> response) {
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
                 ),
               );
-            case (var status, 'application/json') when status != null && status >= 400 && status <= 499:
+            case (var status, r'application/json') when status != null && status >= 400 && status <= 499:
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = AnonymousModel.fromJson(_$json);
               return CombinedOpResponse4XX(body: _$body);
@@ -888,7 +888,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         BaseResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return BaseResponse(
@@ -976,7 +976,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         HeaderAliasResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return HeaderAliasResponse(
@@ -1056,7 +1056,7 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         BodyHeaderResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return BodyHeaderResponse(
@@ -1123,11 +1123,11 @@ String _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
         UserResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
               return UserResponseJson(body: _$body);
-            case (200, 'application/xml'):
+            case (200, r'application/xml'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonInt();
               return UserResponseXml(body: _$body);
@@ -1200,11 +1200,11 @@ String _parseResponse(Response<List<int>> response) {
       const expectedMethod = r'''
         GetUserResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
               return GetUserResponse200(body: _$body);
-            case (400, 'application/json'):
+            case (400, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonInt();
               return GetUserResponse400(body: _$body);
@@ -1347,7 +1347,7 @@ String _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'text/plain'):
+    case (200, r'text/plain'):
       final _$body = decodeResponseText(response.data);
       return _$body;
     default:
@@ -1400,7 +1400,7 @@ String _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 TonikFile _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/octet-stream'):
+    case (200, r'application/octet-stream'):
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
@@ -1451,7 +1451,7 @@ TonikFile _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 TonikFile _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'image/png'):
+    case (200, r'image/png'):
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return _$body;
     default:
@@ -1514,14 +1514,14 @@ TonikFile _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 AnonymousResponse _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/json'):
+    case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
       final _$body = _$json.decodeJsonString();
       return AnonymousResponseJson(body: _$body);
-    case (200, 'text/plain'):
+    case (200, r'text/plain'):
       final _$body = decodeResponseText(response.data);
       return AnonymousResponsePlain(body: _$body);
-    case (200, 'application/octet-stream'):
+    case (200, r'application/octet-stream'):
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));
       return AnonymousResponseOctetStream(body: _$body);
     default:
@@ -1574,7 +1574,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/x-www-form-urlencoded'):
+    case (200, r'application/x-www-form-urlencoded'):
       final _$formString = decodeResponseText(response.data);
       final _$body = _$formString.decodeFormString();
       return _$body;
@@ -1648,7 +1648,7 @@ String _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 FormData _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/x-www-form-urlencoded'):
+    case (200, r'application/x-www-form-urlencoded'):
       final _$formString = decodeResponseText(response.data);
       final _$body = FormData.fromForm(_$formString, explode: true);
       return _$body;
@@ -1700,7 +1700,7 @@ FormData _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 int _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/x-www-form-urlencoded'):
+    case (200, r'application/x-www-form-urlencoded'):
       final _$formString = decodeResponseText(response.data);
       final _$body = _$formString.decodeFormInt();
       return _$body;
@@ -1752,7 +1752,7 @@ int _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
 DateTime _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'application/x-www-form-urlencoded'):
+    case (200, r'application/x-www-form-urlencoded'):
       final _$formString = decodeResponseText(response.data);
       final _$body = _$formString.decodeFormDateTime();
       return _$body;
@@ -1845,7 +1845,7 @@ DateTime _parseResponse(Response<List<int>> response) {
         const expectedMethod = r'''
         AnonymousResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               if (response.headers.value(r'X-Never-Header') != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
@@ -1950,7 +1950,7 @@ DateTime _parseResponse(Response<List<int>> response) {
           const expectedMethod = r'''
         MultiNeverOpResponse _parseResponse(Response<List<int>> response) {
           switch ((response.statusCode, response.headers.value('content-type'))) {
-            case (200, 'application/json'):
+            case (200, r'application/json'):
               if (response.headers.value(r'X-Never-Header') != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
@@ -1959,7 +1959,7 @@ DateTime _parseResponse(Response<List<int>> response) {
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return MultiNeverOpResponse200(body: AnonymousResponse(body: _$body));
-            case (404, 'application/json'):
+            case (404, r'application/json'):
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = _$json.decodeJsonString();
               return MultiNeverOpResponse404(body: _$body);
@@ -2074,7 +2074,7 @@ DateTime _parseResponse(Response<List<int>> response) {
           const expectedMethod = r'''
 String _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
-    case (200, 'multipart/form-data'):
+    case (200, r'multipart/form-data'):
       throw ResponseDecodingException(
         'Multipart response body decoding is not supported.',
       );
@@ -2153,6 +2153,67 @@ String _parseResponse(Response<List<int>> response) {
                 ');',
               ),
             ),
+          );
+        },
+      );
+    });
+
+    group('special characters in content type', () {
+      test(
+        'generates valid code when content type contains single quote',
+        () {
+          final operation = Operation(
+            operationId: 'specialContentTypeOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/test',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: "application/vnd.it's+json",
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateParseResponseMethod(operation);
+
+          const expectedMethod = r'''
+String _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r"application/vnd.it's+json"):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(
+              format(method.accept(emitter).toString()),
+            ),
+            collapseWhitespace(format(expectedMethod)),
           );
         },
       );

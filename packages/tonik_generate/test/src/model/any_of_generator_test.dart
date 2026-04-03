@@ -649,7 +649,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
-    _$map.putIfAbsent('type', () => _$discValue);
+    _$map.putIfAbsent(r'type', () => _$discValue);
   }
   return _$map.toSimple(
     explode: explode,
@@ -767,7 +767,7 @@ String toForm({
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
-    _$map.putIfAbsent('type', () => _$discValue);
+    _$map.putIfAbsent(r'type', () => _$discValue);
   }
   return _$map.toForm(
     explode: explode,
@@ -922,7 +922,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     }
     final _$discValue = _$discriminatorValue;
     if (_$discValue != null) {
-      _$map.putIfAbsent('type', () => _$discValue);
+      _$map.putIfAbsent(r'type', () => _$discValue);
     }
     return _$map.toSimple(
       explode: explode,
@@ -1145,7 +1145,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
-    _$map.putIfAbsent('type', () => _$discValue);
+    _$map.putIfAbsent(r'type', () => _$discValue);
   }
   return _$map;
 }
@@ -1299,7 +1299,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
-    _$map.putIfAbsent('type', () => _$discValue);
+    _$map.putIfAbsent(r'type', () => _$discValue);
   }
   return _$map;
 }
@@ -2491,5 +2491,134 @@ Map<String, String> parameterProperties({
         contains(collapseWhitespace('EncodingShape.complex')),
       );
     });
+  });
+
+  group('special characters in discriminator', () {
+    test(
+      'toJson escapes discriminator value containing single quote',
+      () {
+        final personModel = ClassModel(
+          isDeprecated: false,
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'EntityChoice',
+          models: {
+            (discriminatorValue: "it's-a-person", model: personModel),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final generated = format(klass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Object? toJson() {
+  final _$values = <Object?>{};
+  final _$mapValues = <Map<String, Object?>>[];
+  String? _$discriminatorValue;
+  if (person != null) {
+    final Object? _$personJson = person!.toJson();
+    if (_$personJson is Map<String, Object?>) {
+      _$mapValues.add(_$personJson);
+      _$discriminatorValue ??= r"it's-a-person";
+    } else {
+      _$values.add(_$personJson);
+    }
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+  if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+    throw EncodingException(
+      r'Mixed encoding not supported for EntityChoice: cannot encode both simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf encoding for EntityChoice: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  }
+  if (_$mapValues.isNotEmpty) {
+    final _$map = <String, Object?>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    final _$discValue = _$discriminatorValue;
+    if (_$discValue != null) {
+      _$map.putIfAbsent(r'type', () => _$discValue);
+    }
+    return _$map;
+  }
+  return null;
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toJson escapes discriminator field name containing single quote',
+      () {
+        final personModel = ClassModel(
+          isDeprecated: false,
+          name: 'Person',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'EntityChoice',
+          models: {
+            (discriminatorValue: 'person', model: personModel),
+          },
+          discriminator: "it's-a-type",
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final generated = format(klass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+    final _$discValue = _$discriminatorValue;
+    if (_$discValue != null) {
+      _$map.putIfAbsent(r"it's-a-type", () => _$discValue);
+    }
+    return _$map;
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 }

@@ -83,9 +83,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -95,7 +95,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -135,9 +135,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -148,7 +148,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.name != null) {
-              _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
             }
           }
         '''),
@@ -189,9 +189,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -202,7 +202,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.nickname != null) {
-              _$formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
             }
           }
         '''),
@@ -243,9 +243,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -256,7 +256,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.bio != null) {
-              _$formData.files.add(MapEntry('bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse(r'text/plain'))));
             }
           }
         '''),
@@ -281,9 +281,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -308,9 +308,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -342,9 +342,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -399,9 +399,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -411,7 +411,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -459,9 +459,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -471,7 +471,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -512,9 +512,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -524,7 +524,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -564,9 +564,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -576,7 +576,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -616,9 +616,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -672,9 +672,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -684,7 +684,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -724,9 +724,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -736,7 +736,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -776,9 +776,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -788,7 +788,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -828,9 +828,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -840,7 +840,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -880,9 +880,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -892,7 +892,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -932,9 +932,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -944,7 +944,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -984,9 +984,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -996,7 +996,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
         ),
@@ -1038,9 +1038,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1050,7 +1050,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1093,9 +1093,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1106,7 +1106,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.count != null) {
-              _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
           }
         '''),
@@ -1149,9 +1149,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -1161,7 +1161,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse('application/json'))));
+            _$formData.files.add(MapEntry(r'age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse(r'application/json'))));
           }
         '''),
         ),
@@ -1202,9 +1202,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -1214,7 +1214,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'))));
+            _$formData.files.add(MapEntry(r'createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'))));
           }
         '''),
         ),
@@ -1255,9 +1255,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -1267,7 +1267,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse('application/json'))));
+            _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse(r'application/json'))));
           }
         '''),
         ),
@@ -1308,9 +1308,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -1321,7 +1321,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.score != null) {
-              _$formData.files.add(MapEntry('score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
             }
           }
         '''),
@@ -1363,9 +1363,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1375,7 +1375,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1415,9 +1415,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1427,7 +1427,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1466,9 +1466,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1478,7 +1478,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1518,9 +1518,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1530,7 +1530,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1570,9 +1570,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1582,7 +1582,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse('application/json'))));
+            _$formData.files.add(MapEntry(r'value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse(r'application/json'))));
           }
         '''),
           ),
@@ -1633,9 +1633,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1645,7 +1645,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1701,9 +1701,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1713,7 +1713,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1767,9 +1767,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1779,7 +1779,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
           }
         '''),
           ),
@@ -1833,9 +1833,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1845,7 +1845,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('application/json'))));
+            _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
           }
         '''),
           ),
@@ -1899,9 +1899,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -1911,7 +1911,7 @@ void main() {
             format(r'''
           void test() {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse('application/json'))));
+            _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
           }
         '''),
           ),
@@ -1963,9 +1963,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -1976,7 +1976,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.status != null) {
-              _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
           }
         '''),
@@ -2028,9 +2028,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2041,7 +2041,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             if (body.status != null) {
-              _$formData.files.add(MapEntry('status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
           }
         '''),
@@ -2084,9 +2084,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2099,13 +2099,13 @@ void main() {
             switch (body.avatar) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'avatar',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
+                  r'avatar',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'avatar'),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'avatar',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'avatar'),
+                  r'avatar',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'avatar'),
                 ));
             }
           }
@@ -2147,9 +2147,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2163,13 +2163,13 @@ void main() {
               switch (body.document!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'document',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'document'),
+                    r'document',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'document'),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'document',
-                    await MultipartFile.fromFile(path, filename: fileName ?? 'document'),
+                    r'document',
+                    await MultipartFile.fromFile(path, filename: fileName ?? r'document'),
                   ));
               }
             }
@@ -2212,9 +2212,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2228,13 +2228,13 @@ void main() {
               switch (body.photo!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'photo',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'photo'),
+                    r'photo',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'photo'),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'photo',
-                    await MultipartFile.fromFile(path, filename: fileName ?? 'photo'),
+                    r'photo',
+                    await MultipartFile.fromFile(path, filename: fileName ?? r'photo'),
                   ));
               }
             }
@@ -2277,9 +2277,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2292,20 +2292,20 @@ void main() {
             switch (body.image) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'image',
+                  r'image',
                   MultipartFile.fromBytes(
                     bytes,
-                    filename: fileName ?? 'image',
-                    contentType: DioMediaType.parse('image/png'),
+                    filename: fileName ?? r'image',
+                    contentType: DioMediaType.parse(r'image/png'),
                   ),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'image',
+                  r'image',
                   await MultipartFile.fromFile(
                     path,
-                    filename: fileName ?? 'image',
-                    contentType: DioMediaType.parse('image/png'),
+                    filename: fileName ?? r'image',
+                    contentType: DioMediaType.parse(r'image/png'),
                   ),
                 ));
             }
@@ -2348,9 +2348,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2363,13 +2363,13 @@ void main() {
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
+                  r'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file'),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file'),
+                  r'file',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
                 ));
             }
           }
@@ -2410,9 +2410,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -2425,13 +2425,13 @@ void main() {
             switch (body.avatar) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'avatar',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'avatar'),
+                  r'avatar',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'avatar'),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'avatar',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'avatar'),
+                  r'avatar',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'avatar'),
                 ));
             }
           }
@@ -2485,9 +2485,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -2498,10 +2498,10 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/json'),
+                contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
           }
@@ -2553,9 +2553,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2566,10 +2566,10 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/json'),
+                contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
           }
@@ -2620,9 +2620,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2633,10 +2633,10 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/json'),
+                contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
           }
@@ -2687,9 +2687,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2700,10 +2700,10 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/json'),
+                contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
           }
@@ -2752,9 +2752,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2766,10 +2766,10 @@ void main() {
             final _$formData = FormData();
             if (body.address != null) {
               _$formData.files.add(MapEntry(
-                'address',
+                r'address',
                 MultipartFile.fromString(
                   jsonEncode(body.address!.toJson()),
-                  contentType: DioMediaType.parse('application/json'),
+                  contentType: DioMediaType.parse(r'application/json'),
                 ),
               ));
             }
@@ -2819,9 +2819,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2833,10 +2833,10 @@ void main() {
             final _$formData = FormData();
             if (body.address != null) {
               _$formData.files.add(MapEntry(
-                'address',
+                r'address',
                 MultipartFile.fromString(
                   jsonEncode(body.address!.toJson()),
-                  contentType: DioMediaType.parse('application/json'),
+                  contentType: DioMediaType.parse(r'application/json'),
                 ),
               ));
             }
@@ -2886,9 +2886,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -2899,10 +2899,10 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/xml'),
+                contentType: DioMediaType.parse(r'application/xml'),
               ),
             ));
           }
@@ -2953,9 +2953,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -3018,9 +3018,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -3087,9 +3087,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -3157,9 +3157,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -3227,9 +3227,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -3296,9 +3296,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -3309,10 +3309,10 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/json'),
+                contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
           }
@@ -3362,9 +3362,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -3399,11 +3399,11 @@ void main() {
                   }
                 }
                 _$formData.files.add(MapEntry(
-                  'address',
+                  r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+      'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3453,9 +3453,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -3490,11 +3490,11 @@ void main() {
                   }
                 }
                 _$formData.files.add(MapEntry(
-                  'address',
+                  r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+      'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3542,9 +3542,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -3580,11 +3580,11 @@ void main() {
                   }
                 }
                 _$formData.files.add(MapEntry(
-                  'address',
+                  r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+      'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3638,9 +3638,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -3651,11 +3651,11 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 _$formData.files.add(MapEntry(
-                  'address',
+                  r'address',
                   MultipartFile.fromString(
                     jsonEncode(body.address.toJson()),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+      r'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3668,7 +3668,7 @@ void main() {
 
       test(
         'URL-encoded property with per-part headers passes headers to '
-        'MultipartFile',
+        r'MultipartFile',
         () {
           final innerClass = ClassModel(
             name: 'Address',
@@ -3718,9 +3718,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -3759,11 +3759,11 @@ void main() {
                   }
                 }
                 _$formData.files.add(MapEntry(
-                  'address',
+                  r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+      'application/x-www-form-urlencoded',
                     ),
                     headers: _$addressHeaders,
                   ),
@@ -3816,9 +3816,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -3829,7 +3829,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.tags) {
-              _$formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry(r'tags', item));
             }
           }
         '''),
@@ -3873,9 +3873,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -3886,7 +3886,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.tags) {
-              _$formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry(r'tags', item));
             }
           }
         '''),
@@ -3930,9 +3930,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -3943,7 +3943,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry(r'tags', item));
             }
           }
         '''),
@@ -3987,9 +3987,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4000,7 +4000,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
-              _$formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry(r'tags', item));
             }
           }
         '''),
@@ -4044,9 +4044,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4057,7 +4057,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.fields.add(MapEntry('tags', item));
+              _$formData.fields.add(MapEntry(r'tags', item));
             }
           }
         '''),
@@ -4102,9 +4102,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4172,9 +4172,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4185,7 +4185,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.statuses) {
-              _$formData.fields.add(MapEntry('statuses', item.uriEncode(allowEmpty: true)));
+              _$formData.fields.add(MapEntry(r'statuses', item.uriEncode(allowEmpty: true)));
             }
           }
         '''),
@@ -4240,9 +4240,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4253,7 +4253,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.fields.add(MapEntry('codes', item));
+              _$formData.fields.add(MapEntry(r'codes', item));
             }
           }
         '''),
@@ -4299,9 +4299,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4312,7 +4312,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.scores) {
-              _$formData.fields.add(MapEntry('scores', item.toString()));
+              _$formData.fields.add(MapEntry(r'scores', item.toString()));
             }
           }
         '''),
@@ -4356,9 +4356,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4369,7 +4369,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.scores) {
-              _$formData.fields.add(MapEntry('scores', jsonEncode(item)));
+              _$formData.fields.add(MapEntry(r'scores', jsonEncode(item)));
             }
           }
         '''),
@@ -4413,9 +4413,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4426,7 +4426,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.scores.map((item) => jsonEncode(item)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.fields.add(MapEntry('scores', item));
+              _$formData.fields.add(MapEntry(r'scores', item));
             }
           }
         '''),
@@ -4470,9 +4470,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4483,7 +4483,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.dates) {
-              _$formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
+              _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
             }
           }
         '''),
@@ -4527,9 +4527,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4540,7 +4540,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.dates) {
-              _$formData.fields.add(MapEntry('dates', jsonEncode(item)));
+              _$formData.fields.add(MapEntry(r'dates', jsonEncode(item)));
             }
           }
         '''),
@@ -4586,9 +4586,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4601,9 +4601,9 @@ void main() {
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files')));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
               }
             }
           }
@@ -4648,9 +4648,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4663,9 +4663,9 @@ void main() {
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files')));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                  _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
               }
             }
           }
@@ -4719,9 +4719,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4732,7 +4732,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             }
           }
         '''),
@@ -4783,9 +4783,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4796,7 +4796,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/xml'))));
+              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
             }
           }
         '''),
@@ -4842,9 +4842,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4856,7 +4856,7 @@ void main() {
             final _$formData = FormData();
             if (body.tags != null) {
               for (final item in body.tags!) {
-                _$formData.fields.add(MapEntry('tags', item));
+                _$formData.fields.add(MapEntry(r'tags', item));
               }
             }
           }
@@ -4901,9 +4901,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -4915,7 +4915,7 @@ void main() {
             final _$formData = FormData();
             if (body.tags != null) {
               for (final item in body.tags!) {
-                _$formData.fields.add(MapEntry('tags', item));
+                _$formData.fields.add(MapEntry(r'tags', item));
               }
             }
           }
@@ -4958,9 +4958,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -4970,7 +4970,7 @@ void main() {
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse(r'application/json'))));
             }
           '''),
           ),
@@ -5010,9 +5010,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -5022,7 +5022,7 @@ void main() {
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse(r'application/json'))));
             }
           '''),
           ),
@@ -5058,9 +5058,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5071,7 +5071,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               for (final item in body.tags) {
-                _$formData.fields.add(MapEntry('tags', item));
+                _$formData.fields.add(MapEntry(r'tags', item));
               }
             }
           '''),
@@ -5120,9 +5120,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -5132,7 +5132,7 @@ void main() {
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
             }
           '''),
           ),
@@ -5172,9 +5172,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -5184,7 +5184,7 @@ void main() {
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse(r'application/json'))));
             }
           '''),
           ),
@@ -5224,9 +5224,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -5237,7 +5237,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               if (body.tags != null) {
-                _$formData.files.add(MapEntry('tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse('application/json'))));
+                _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse(r'application/json'))));
               }
             }
           '''),
@@ -5285,9 +5285,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5298,7 +5298,7 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 for (final item in body.tags) {
-                  _$formData.fields.add(MapEntry('tags', item));
+                  _$formData.fields.add(MapEntry(r'tags', item));
                 }
               }
             '''),
@@ -5343,9 +5343,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5356,7 +5356,7 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 for (final item in body.scores) {
-                  _$formData.fields.add(MapEntry('scores', item.toString()));
+                  _$formData.fields.add(MapEntry(r'scores', item.toString()));
                 }
               }
             '''),
@@ -5401,9 +5401,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5414,7 +5414,7 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 for (final item in body.dates) {
-                  _$formData.fields.add(MapEntry('dates', item.toTimeZonedIso8601String()));
+                  _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
                 }
               }
             '''),
@@ -5470,9 +5470,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5483,7 +5483,7 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 for (final item in body.priorities) {
-                  _$formData.fields.add(MapEntry('priorities', item.uriEncode(allowEmpty: true)));
+                  _$formData.fields.add(MapEntry(r'priorities', item.uriEncode(allowEmpty: true)));
                 }
               }
             '''),
@@ -5521,9 +5521,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5535,7 +5535,7 @@ void main() {
                 final _$formData = FormData();
                 if (body.tags != null) {
                   for (final item in body.tags!) {
-                    _$formData.fields.add(MapEntry('tags', item));
+                    _$formData.fields.add(MapEntry(r'tags', item));
                   }
                 }
               }
@@ -5590,9 +5590,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -5602,7 +5602,7 @@ void main() {
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse('application/json'))));
+              _$formData.files.add(MapEntry(r'priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse(r'application/json'))));
             }
           '''),
           ),
@@ -5649,9 +5649,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5664,9 +5664,9 @@ void main() {
                 for (final item in body.files) {
                   switch (item) {
                     case TonikFileBytes(:final bytes, :final fileName):
-                      _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files')));
+                      _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files')));
                     case TonikFilePath(:final path, :final fileName):
-                      _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files')));
+                      _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
                   }
                 }
               }
@@ -5716,9 +5716,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5775,9 +5775,9 @@ void main() {
 
           final result = buildMultipartBodyStatements(
             content,
-            'body',
+            r'body',
             nameManager,
-            'test_package',
+            r'test_package',
           );
 
           final code = emitStatements(result);
@@ -5833,9 +5833,9 @@ void main() {
 
       final result = buildMultipartBodyExpression(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitExpressionAsMethod(result);
@@ -5846,7 +5846,7 @@ void main() {
           void test() {
             await () async {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
               return _$formData;
             }();
           }
@@ -5864,9 +5864,9 @@ void main() {
 
       final result = buildMultipartBodyExpression(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitExpressionAsMethod(result);
@@ -5934,9 +5934,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -5951,13 +5951,13 @@ void main() {
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
+                  r'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
+                  r'file',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
             }
           }
@@ -6008,9 +6008,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6027,13 +6027,13 @@ void main() {
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
+                  r'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
+                  r'file',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
             }
           }
@@ -6091,9 +6091,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6106,10 +6106,10 @@ void main() {
             final _$addressHeaders = <String, List<String>>{};
             _$addressHeaders['X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'address',
+              r'address',
               MultipartFile.fromString(
                 jsonEncode(body.address.toJson()),
-                contentType: DioMediaType.parse('application/json'),
+                contentType: DioMediaType.parse(r'application/json'),
                 headers: _$addressHeaders,
               ),
             ));
@@ -6161,9 +6161,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6176,8 +6176,8 @@ void main() {
             final _$descriptionHeaders = <String, List<String>>{};
             _$descriptionHeaders['X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'description',
-              MultipartFile.fromString(body.description, contentType: DioMediaType.parse('text/plain'), headers: _$descriptionHeaders),
+              r'description',
+              MultipartFile.fromString(body.description, contentType: DioMediaType.parse(r'text/plain'), headers: _$descriptionHeaders),
             ));
           }
         '''),
@@ -6229,9 +6229,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -6244,8 +6244,8 @@ void main() {
             final _$countHeaders = <String, List<String>>{};
             _$countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'count',
-              MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse('text/plain'), headers: _$countHeaders),
+              r'count',
+              MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'), headers: _$countHeaders),
             ));
           }
         '''),
@@ -6307,9 +6307,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6322,8 +6322,8 @@ void main() {
             final _$statusHeaders = <String, List<String>>{};
             _$statusHeaders['X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'status',
-              MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse('text/plain'), headers: _$statusHeaders),
+              r'status',
+              MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'), headers: _$statusHeaders),
             ));
           }
         '''),
@@ -6373,9 +6373,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6389,13 +6389,13 @@ void main() {
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
+                  r'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file'),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file'),
+                  r'file',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
                 ));
             }
           }
@@ -6456,9 +6456,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6476,13 +6476,13 @@ void main() {
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
+                  r'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
+                  r'file',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
             }
           }
@@ -6521,9 +6521,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6536,13 +6536,13 @@ void main() {
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'file'),
+                  r'file',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'file'),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'file',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'file'),
+                  r'file',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
                 ));
             }
           }
@@ -6599,9 +6599,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6614,7 +6614,7 @@ void main() {
             final _$tagsHeaders = <String, List<String>>{};
             _$tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags) {
-              _$formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
+              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
           }
         '''),
@@ -6670,9 +6670,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6685,7 +6685,7 @@ void main() {
             final _$tagsHeaders = <String, List<String>>{};
             _$tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.files.add(MapEntry('tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
+              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
           }
         '''),
@@ -6741,9 +6741,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6758,9 +6758,9 @@ void main() {
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
-                  _$formData.files.add(MapEntry('files', MultipartFile.fromBytes(bytes, filename: fileName ?? 'files', headers: _$filesHeaders)));
+                  _$formData.files.add(MapEntry(r'files', MultipartFile.fromBytes(bytes, filename: fileName ?? r'files', headers: _$filesHeaders)));
                 case TonikFilePath(:final path, :final fileName):
-                  _$formData.files.add(MapEntry('files', await MultipartFile.fromFile(path, filename: fileName ?? 'files', headers: _$filesHeaders)));
+                  _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files', headers: _$filesHeaders)));
               }
             }
           }
@@ -6824,9 +6824,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6839,7 +6839,7 @@ void main() {
             final _$addressesHeaders = <String, List<String>>{};
             _$addressesHeaders['X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.addresses) {
-              _$formData.files.add(MapEntry('addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse('application/json'), headers: _$addressesHeaders)));
+              _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
             }
           }
         '''),
@@ -6889,9 +6889,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -6909,13 +6909,13 @@ void main() {
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'file',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
+                    r'file',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'file',
-                    await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
+                    r'file',
+                    await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                   ));
               }
             }
@@ -6969,9 +6969,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -6987,13 +6987,13 @@ void main() {
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'file',
-                    MultipartFile.fromBytes(bytes, filename: fileName ?? 'file', headers: _$fileHeaders),
+                    r'file',
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? r'file', headers: _$fileHeaders),
                   ));
                 case TonikFilePath(:final path, :final fileName):
                   _$formData.files.add(MapEntry(
-                    'file',
-                    await MultipartFile.fromFile(path, filename: fileName ?? 'file', headers: _$fileHeaders),
+                    r'file',
+                    await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                   ));
               }
             }
@@ -7048,9 +7048,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -7063,8 +7063,8 @@ void main() {
             final _$dataHeaders = <String, List<String>>{};
             _$dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'data',
-              MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse('text/plain'), headers: _$dataHeaders),
+              r'data',
+              MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'), headers: _$dataHeaders),
             ));
           }
         '''),
@@ -7118,9 +7118,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -7133,8 +7133,8 @@ void main() {
             final _$countHeaders = <String, List<String>>{};
             _$countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'count',
-              MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse('application/json'), headers: _$countHeaders),
+              r'count',
+              MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse(r'application/json'), headers: _$countHeaders),
             ));
           }
         '''),
@@ -7188,9 +7188,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -7203,8 +7203,8 @@ void main() {
             final _$createdAtHeaders = <String, List<String>>{};
             _$createdAtHeaders['X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
-              'createdAt',
-              MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse('application/json'), headers: _$createdAtHeaders),
+              r'createdAt',
+              MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
             ));
           }
         '''),
@@ -7263,9 +7263,9 @@ void main() {
 
         final result = buildMultipartBodyStatements(
           content,
-          'body',
+          r'body',
           nameManager,
-          'test_package',
+          r'test_package',
         );
 
         final code = emitStatements(result);
@@ -7278,7 +7278,7 @@ void main() {
             final _$datesHeaders = <String, List<String>>{};
             _$datesHeaders['X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
-              _$formData.files.add(MapEntry('dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
+              _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
           }
         '''),
@@ -7336,9 +7336,9 @@ void main() {
 
       final result = buildMultipartBodyStatements(
         content,
-        'body',
+        r'body',
         nameManager,
-        'test_package',
+        r'test_package',
       );
 
       final code = emitStatements(result);
@@ -7354,13 +7354,13 @@ void main() {
             switch (body.document) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'document',
-                  MultipartFile.fromBytes(bytes, filename: fileName ?? 'document', headers: _$documentHeaders),
+                  r'document',
+                  MultipartFile.fromBytes(bytes, filename: fileName ?? r'document', headers: _$documentHeaders),
                 ));
               case TonikFilePath(:final path, :final fileName):
                 _$formData.files.add(MapEntry(
-                  'document',
-                  await MultipartFile.fromFile(path, filename: fileName ?? 'document', headers: _$documentHeaders),
+                  r'document',
+                  await MultipartFile.fromFile(path, filename: fileName ?? r'document', headers: _$documentHeaders),
                 ));
             }
           }
@@ -7368,5 +7368,128 @@ void main() {
         ),
       );
     });
+  });
+
+  group('special characters in multipart field names and content types', () {
+    test(
+      'generates valid code when rawContentType contains single quote',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'name': const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: "text/it's-plain",
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates valid code when field name contains single quote',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: "it's-field",
+              model: BinaryModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            "it's-field": const MultipartPropertyEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              switch (body.itsField) {
+                case TonikFileBytes(:final bytes, :final fileName):
+                  _$formData.files.add(MapEntry(
+                    r"it's-field",
+                    MultipartFile.fromBytes(bytes, filename: fileName ?? r"it's-field"),
+                  ));
+                case TonikFilePath(:final path, :final fileName):
+                  _$formData.files.add(MapEntry(
+                    r"it's-field",
+                    await MultipartFile.fromFile(path, filename: fileName ?? r"it's-field"),
+                  ));
+              }
+            }
+          '''),
+          ),
+        );
+      },
+    );
   });
 }

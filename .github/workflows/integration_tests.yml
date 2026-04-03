@@ -162,6 +162,11 @@ jobs:
           cd integration_test/cookies/cookies_test
           dart test --concurrency=2
 
+      - name: Run adversarial strings integration tests
+        run: |
+          cd integration_test/adversarial_strings/adversarial_strings_test
+          dart test --concurrency=2
+
       - name: Run multipart integration tests
         run: |
           cd integration_test/multipart/multipart_test

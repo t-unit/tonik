@@ -38,6 +38,7 @@
 /integration_test/asana/asana_api
 /integration_test/twilio/twilio_api
 /integration_test/additional_properties/additional_properties_api
+/integration_test/adversarial_strings/adversarial_strings_api
 
 # Dependencies
 /pubspec.lock

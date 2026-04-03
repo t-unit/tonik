@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Generates server classes for API client.
 class ServerGenerator {
@@ -256,7 +257,7 @@ class ServerGenerator {
                 ),
               )
               ..initializers.add(
-                Code("super(baseUrl: '${server.url}')"),
+                Code("super(baseUrl: ${specLiteralStringCode(server.url)})"),
               ),
           ),
         ),
@@ -368,19 +369,61 @@ class ServerGenerator {
     String urlTemplate,
     List<ServerVariable> variables,
   ) {
-    var result = urlTemplate;
+    // Split the template at variable placeholders so each literal segment
+    // can be escaped independently, preserving Dart interpolation expressions.
+    final variablePlaceholders =
+        variables.map((v) => '{${v.name}}').toList();
+    final parts = <String>[];
+    var remaining = urlTemplate;
 
-    for (final variable in variables) {
-      final hasEnum =
-          variable.enumValues != null && variable.enumValues!.isNotEmpty;
-      final replacement = hasEnum
-          ? '\${${variable.name}.value}'
-          : '\${${variable.name}}';
+    while (remaining.isNotEmpty) {
+      // Find the earliest placeholder in the remaining string.
+      var earliestIndex = remaining.length;
+      ServerVariable? earliestVariable;
+      for (var i = 0; i < variables.length; i++) {
+        final idx = remaining.indexOf(variablePlaceholders[i]);
+        if (idx != -1 && idx < earliestIndex) {
+          earliestIndex = idx;
+          earliestVariable = variables[i];
+        }
+      }
 
-      result = result.replaceAll('{${variable.name}}', replacement);
+      if (earliestVariable == null) {
+        // No more placeholders — escape and append the rest.
+        parts.add(_escapeForDartString(remaining));
+        break;
+      }
+
+      // Escape the literal segment before this placeholder.
+      final literal = remaining.substring(0, earliestIndex);
+      if (literal.isNotEmpty) {
+        parts.add(_escapeForDartString(literal));
+      }
+
+      // Append the Dart interpolation expression (unescaped).
+      final placeholder = '{${earliestVariable.name}}';
+      final hasEnum = earliestVariable.enumValues != null &&
+          earliestVariable.enumValues!.isNotEmpty;
+      parts.add(
+        hasEnum
+            ? '\${${earliestVariable.name}.value}'
+            : '\${${earliestVariable.name}}',
+      );
+
+      remaining =
+          remaining.substring(earliestIndex + placeholder.length);
     }
 
-    return "'$result'";
+    return "'${parts.join()}'";
+  }
+
+  /// Escapes a literal string segment for embedding inside a Dart
+  /// single-quoted (non-raw) string.
+  static String _escapeForDartString(String value) {
+    return value
+        .replaceAll(r'\', r'\\')
+        .replaceAll("'", r"\'")
+        .replaceAll(r'$', r'\$');
   }
 
   Class _generateCustomServerClass(String className, String baseClassName) {

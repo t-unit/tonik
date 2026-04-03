@@ -366,12 +366,12 @@ Code _buildStringFileAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -393,12 +393,12 @@ Code _buildPrimitiveFileAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -427,12 +427,12 @@ Code _buildEnumFileAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -453,12 +453,12 @@ Code _buildJsonEncodeFileAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -484,12 +484,12 @@ Code _buildAnyModelFileAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -561,20 +561,21 @@ Code _buildBinaryFileAddition(
                     ..url = 'package:dio/dio.dart',
                 ),
               );
-              return "contentType: $dioMediaType.parse('$rawContentType'), ";
+              return 'contentType: $dioMediaType.parse(${specLiteralStringCode(rawContentType)}), ';
             }();
 
+      final escapedName = specLiteralStringCode(rawName);
       return '''
 switch ($accessor) {
   case $tonikFileBytes(:final bytes, :final fileName):
     _\$formData.files.add($mapEntry(
-      '$rawName',
-      $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
+      $escapedName,
+      $multipartFile.fromBytes(bytes, filename: fileName ?? $escapedName, $contentTypeArg$headersArg),
     ));
   case $tonikFilePath(:final path, :final fileName):
     _\$formData.files.add($mapEntry(
-      '$rawName',
-      await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $contentTypeArg$headersArg),
+      $escapedName,
+      await $multipartFile.fromFile(path, filename: fileName ?? $escapedName, $contentTypeArg$headersArg),
     ));
 }''';
     },
@@ -819,13 +820,13 @@ Code _buildContentBasedListAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
 
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -848,7 +849,7 @@ Code _buildListForLoop(
     const Code(') {'),
     refer(r'_$formData').property(target).property('add').call([
       refer('MapEntry', 'dart:core').call([
-        literalString(rawName),
+        specLiteralString(rawName),
         itemExpression,
       ]),
     ]).statement,
@@ -941,12 +942,13 @@ Code _binaryItemExpr(String rawName, {String? headerVarName}) {
             ..url = 'dart:core',
         ),
       );
+      final escapedName = specLiteralStringCode(rawName);
       return '''
 switch (item) {
   case $tonikFileBytes(:final bytes, :final fileName):
-    _\$formData.files.add($mapEntry('$rawName', $multipartFile.fromBytes(bytes, filename: fileName ?? '$rawName', $headersArg)));
+    _\$formData.files.add($mapEntry($escapedName, $multipartFile.fromBytes(bytes, filename: fileName ?? $escapedName, $headersArg)));
   case $tonikFilePath(:final path, :final fileName):
-    _\$formData.files.add($mapEntry('$rawName', await $multipartFile.fromFile(path, filename: fileName ?? '$rawName', $headersArg)));
+    _\$formData.files.add($mapEntry($escapedName, await $multipartFile.fromFile(path, filename: fileName ?? $escapedName, $headersArg)));
 }''';
     },
   );
@@ -964,7 +966,7 @@ Expression _complexItemExpr(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
   };
   if (headerVarName != null) {
     namedArgs['headers'] = refer(headerVarName);
@@ -1108,7 +1110,7 @@ Code _buildComplexObjectFileAddition(
     'contentType': refer(
       'DioMediaType',
       'package:dio/dio.dart',
-    ).property('parse').call([literalString(rawContentType)]),
+    ).property('parse').call([specLiteralString(rawContentType)]),
   };
 
   if (headerVarName != null) {
@@ -1117,7 +1119,7 @@ Code _buildComplexObjectFileAddition(
 
   return refer(r'_$formData').property('files').property('add').call([
     refer('MapEntry', 'dart:core').call([
-      literalString(rawName),
+      specLiteralString(rawName),
       refer(
         'MultipartFile',
         'package:dio/dio.dart',
@@ -1232,7 +1234,7 @@ for (final entry in ($accessor.toJson() as $map).entries) {
   }
 }
 _\$formData.files.add($mapEntry(
-  '$rawName',
+  ${specLiteralStringCode(rawName)},
   $multipartFile.fromString(
     $partsVarName.join('&'),
     contentType: $dioMediaType.parse('application/x-www-form-urlencoded'),$headersLine

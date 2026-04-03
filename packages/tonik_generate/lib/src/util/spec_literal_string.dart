@@ -23,7 +23,7 @@ String specLiteralStringCode(String value) {
   if (!value.contains('"')) {
     return 'r"$value"';
   }
-  if (!value.contains('"""')) {
+  if (!value.contains('"""') && !value.endsWith('"')) {
     return 'r"""$value"""';
   }
   // Value contains both quote styles and triple-double-quotes.

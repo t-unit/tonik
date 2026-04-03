@@ -276,7 +276,7 @@ void main() {
           for (final _$m in _$mapValues) { _$map.addAll(_$m); }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
-            _$map.putIfAbsent('disc', () => _$discValue);
+            _$map.putIfAbsent(r'disc', () => _$discValue);
           }
           return _$map.toSimple(
             explode: explode,
@@ -500,7 +500,7 @@ void main() {
             }
             final _$discValue = _$discriminatorValue;
             if (_$discValue != null) {
-              _$map.putIfAbsent('disc', () => _$discValue);
+              _$map.putIfAbsent(r'disc', () => _$discValue);
             }
             return _$map.toSimple(
               explode: explode,

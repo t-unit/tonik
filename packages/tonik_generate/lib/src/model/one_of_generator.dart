@@ -278,7 +278,7 @@ class OneOfGenerator {
       );
       final jsonValueExpr = buildToJsonPropertyExpression('value', property);
       final discriminatorValue = discriminatedModel.discriminatorValue != null
-          ? "'${discriminatedModel.discriminatorValue}'"
+          ? specLiteralStringCode(discriminatedModel.discriminatorValue!)
           : 'null';
 
       caseCodes
@@ -307,9 +307,8 @@ class OneOfGenerator {
         buildMapStringObjectType().code,
         const Code(') {'),
         Code(
-          r"_$json.putIfAbsent('" +
-              model.discriminator! +
-              r"', () => _$discriminator);",
+          '_\$json.putIfAbsent(${specLiteralStringCode(model.discriminator!)}'
+          r', () => _$discriminator);',
         ),
         const Code('}'),
       ]);
@@ -352,7 +351,7 @@ class OneOfGenerator {
         final variantName = variantNames[m]!;
 
         resultCases.addAll([
-          Code("'${m.discriminatorValue}' => "),
+          Code('${specLiteralStringCode(m.discriminatorValue!)} => '),
           refer(variantName).call([
             refer(
               nameManager.modelName(m.model),
@@ -520,7 +519,7 @@ class OneOfGenerator {
           refer('Uri', 'dart:core').property('decodeComponent').call([
             refer(r'_$parts').index(literalNum(0)),
           ]).statement,
-          Code("if (_\$key == '${model.discriminator!}') {"),
+          Code('if (_\$key == ${specLiteralStringCode(model.discriminator!)}) {'),
           const Code(r'_$discriminator = _$parts[1];'),
           const Code('break;'),
           const Code('}'),
@@ -543,7 +542,7 @@ class OneOfGenerator {
 
           bodyBlocks.addAll([
             Code(
-              "if (_\$discriminator == '${m.discriminatorValue!}') {",
+              'if (_\$discriminator == ${specLiteralStringCode(m.discriminatorValue!)}) {',
             ),
             const Code('return '),
             refer(variantName).call([

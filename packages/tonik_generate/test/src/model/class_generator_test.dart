@@ -2651,5 +2651,47 @@ Map<String, String> parameterProperties({
         });
       });
     });
+
+    group('special characters in property names', () {
+      test(
+        'toJson escapes property name containing single quote',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'FlexibleData',
+            properties: [
+              Property(
+                name: 'id',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: "it's-field",
+                model: AnyModel(context: context),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final generatedClass = generator.generateClass(model);
+          final generated = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedToJson =
+              r'''Object? toJson() => {r'id': id, r"it's-field": encodeAnyToJson(itsField)};''';
+
+          expect(
+            collapseWhitespace(generated),
+            contains(collapseWhitespace(expectedToJson)),
+          );
+        },
+      );
+    });
   });
 }

@@ -44,7 +44,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final baseClass = classes.firstWhere((c) => c.name == r'Value');
     final generated = format(baseClass.accept(emitter).toString());
 
     const expectedGetter = '''
@@ -87,7 +87,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final baseClass = classes.firstWhere((c) => c.name == r'Value');
     final generated = format(baseClass.accept(emitter).toString());
 
     const expectedGetter = '''
@@ -119,7 +119,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       expect(
         baseClass.docs,
@@ -140,7 +140,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       expect(baseClass.docs, [
         '/// A flexible value type.',
@@ -162,7 +162,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
         expect(baseClass.docs, isEmpty);
       },
@@ -183,7 +183,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
         expect(baseClass.docs, isEmpty);
       },
@@ -204,7 +204,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       expect(baseClass.implements.length, 2);
       expect(
@@ -233,7 +233,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'Value');
+    final baseClass = classes.firstWhere((c) => c.name == r'Value');
     final generated = format(baseClass.accept(emitter).toString());
 
     const expectedGetter = '''
@@ -267,7 +267,7 @@ void main() {
     expect(classes, hasLength(2));
 
     // Check base class
-    final baseClass = classes.firstWhere((c) => c.name == 'Result');
+    final baseClass = classes.firstWhere((c) => c.name == r'Result');
     expect(baseClass.sealed, isTrue);
 
     // Base class should have a default const constructor,
@@ -294,7 +294,7 @@ void main() {
     );
 
     // Check success subclass
-    final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+    final successClass = classes.firstWhere((c) => c.name == r'ResultSuccess');
     expect(successClass.extend?.symbol, 'Result');
 
     // Success subclass should have one constructor
@@ -328,7 +328,7 @@ void main() {
     expect(classes, hasLength(3));
 
     // Check base class
-    final baseClass = classes.firstWhere((c) => c.name == 'Result');
+    final baseClass = classes.firstWhere((c) => c.name == r'Result');
     expect(baseClass.sealed, isTrue);
     expect(baseClass.constructors.length, 4);
     expect(
@@ -336,12 +336,12 @@ void main() {
       isTrue,
     );
     expect(
-      baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
+      baseClass.constructors.firstWhere((c) => c.name == r'fromSimple').factory,
       isTrue,
     );
 
     // Check success subclass
-    final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+    final successClass = classes.firstWhere((c) => c.name == r'ResultSuccess');
     expect(successClass.extend?.symbol, 'Result');
     expect(successClass.constructors, hasLength(1));
     expect(successClass.constructors.first.constant, isTrue);
@@ -353,7 +353,7 @@ void main() {
     );
 
     // Check error subclass
-    final errorClass = classes.firstWhere((c) => c.name == 'ResultError');
+    final errorClass = classes.firstWhere((c) => c.name == r'ResultError');
     expect(errorClass.extend?.symbol, 'Result');
     expect(errorClass.constructors, hasLength(1));
     expect(errorClass.constructors.first.constant, isTrue);
@@ -395,7 +395,7 @@ void main() {
     expect(classes, hasLength(3));
 
     // Check base class
-    final baseClass = classes.firstWhere((c) => c.name == 'Result');
+    final baseClass = classes.firstWhere((c) => c.name == r'Result');
     expect(baseClass.sealed, isTrue);
     expect(baseClass.constructors.length, 4);
     expect(
@@ -403,17 +403,17 @@ void main() {
       isTrue,
     );
     expect(
-      baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
+      baseClass.constructors.firstWhere((c) => c.name == r'fromSimple').factory,
       isTrue,
     );
 
     // Check success subclass (should be named after the model)
-    final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+    final successClass = classes.firstWhere((c) => c.name == r'ResultSuccess');
     expect(successClass.extend?.symbol, 'Result');
     expect(successClass.constructors, hasLength(1));
 
     // Check error subclass (should be named after the model)
-    final errorClass = classes.firstWhere((c) => c.name == 'ResultError');
+    final errorClass = classes.firstWhere((c) => c.name == r'ResultError');
     expect(errorClass.extend?.symbol, 'Result');
     expect(errorClass.constructors, hasLength(1));
   });
@@ -440,7 +440,7 @@ void main() {
     expect(classes, hasLength(2));
 
     // Check base class
-    final baseClass = classes.firstWhere((c) => c.name == 'Result');
+    final baseClass = classes.firstWhere((c) => c.name == r'Result');
     expect(baseClass.sealed, isTrue);
     expect(baseClass.constructors.length, 4);
     expect(
@@ -448,12 +448,12 @@ void main() {
       isTrue,
     );
     expect(
-      baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
+      baseClass.constructors.firstWhere((c) => c.name == r'fromSimple').factory,
       isTrue,
     );
 
     // Check data subclass with proper list type
-    final dataClass = classes.firstWhere((c) => c.name == 'ResultData');
+    final dataClass = classes.firstWhere((c) => c.name == r'ResultData');
     expect(dataClass.extend?.symbol, 'Result');
     expect(dataClass.constructors, hasLength(1));
     expect(dataClass.constructors.first.constant, isTrue);
@@ -484,7 +484,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'TestOneOf');
+    final baseClass = classes.firstWhere((c) => c.name == r'TestOneOf');
     final generatedCode = format(baseClass.accept(emitter).toString());
     expect(
       collapseWhitespace(generatedCode),
@@ -508,7 +508,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
+      final successClass = classes.firstWhere((c) => c.name == r'ResultSuccess');
 
       const expectedClass = '''
         @immutable
@@ -551,7 +551,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final listClass = classes.firstWhere((c) => c.name == 'ResultStrings');
+      final listClass = classes.firstWhere((c) => c.name == r'ResultStrings');
 
       const expectedMethod = r'''
         @immutable
@@ -670,7 +670,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final method = baseClass.methods.firstWhere(
         (m) => m.name == 'parameterProperties',
@@ -725,7 +725,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -769,7 +769,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Response');
+      final baseClass = classes.firstWhere((c) => c.name == r'Response');
 
       const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -834,7 +834,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Entity');
+      final baseClass = classes.firstWhere((c) => c.name == r'Entity');
 
       const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -895,7 +895,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
         const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -954,7 +954,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Response');
+        final baseClass = classes.firstWhere((c) => c.name == r'Response');
 
         const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -1023,7 +1023,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+        final baseClass = classes.firstWhere((c) => c.name == r'Outer');
 
         const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -1091,7 +1091,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Outer');
+        final baseClass = classes.firstWhere((c) => c.name == r'Outer');
 
         const expectedMethod = '''
         Map<String, String> parameterProperties({
@@ -1329,7 +1329,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-    final baseClass = classes.firstWhere((c) => c.name == 'TestOneOf');
+    final baseClass = classes.firstWhere((c) => c.name == r'TestOneOf');
 
     final encodingMethods = [
       'toSimple',
@@ -1378,7 +1378,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'StringOrNumber');
+      final baseClass = classes.firstWhere((c) => c.name == r'StringOrNumber');
       final uriEncodeMethod = baseClass.methods.firstWhere(
         (m) => m.name == 'uriEncode',
       );
@@ -1393,7 +1393,7 @@ void main() {
       expect(allowEmptyParam.required, isTrue);
 
       final useQueryComponentParam = uriEncodeMethod.optionalParameters
-          .firstWhere((p) => p.name == 'useQueryComponent');
+          .firstWhere((p) => p.name == r'useQueryComponent');
       expect(
         useQueryComponentParam.type?.accept(DartEmitter()).toString(),
         'bool',
@@ -1420,7 +1420,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final toFormMethod = baseClass.methods.firstWhere(
         (m) => m.name == 'toForm',
@@ -1477,7 +1477,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final generated = format(baseClass.accept(emitter).toString());
 
@@ -1514,7 +1514,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final generated = format(baseClass.accept(emitter).toString());
 
@@ -1556,7 +1556,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final generated = format(baseClass.accept(emitter).toString());
 
@@ -1598,7 +1598,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final generated = format(baseClass.accept(emitter).toString());
 
@@ -1642,7 +1642,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final generated = format(baseClass.accept(emitter).toString());
 
@@ -1678,7 +1678,7 @@ void main() {
       );
 
       final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final baseClass = classes.firstWhere((c) => c.name == r'Value');
 
       final generated = format(baseClass.accept(emitter).toString());
 
@@ -1729,7 +1729,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         // ListModel should NOT appear in the discriminator dispatch block
@@ -1780,7 +1780,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -1829,7 +1829,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -1884,7 +1884,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -1934,7 +1934,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -1994,7 +1994,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -2049,7 +2049,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -2104,7 +2104,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -2154,7 +2154,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -2216,7 +2216,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         const expectedGetter = '''
@@ -2270,7 +2270,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         expect(
@@ -2316,7 +2316,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final baseClass = classes.firstWhere((c) => c.name == r'Value');
         final generated = format(baseClass.accept(emitter).toString());
 
         const expectedMethod = '''
@@ -2375,7 +2375,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final subclass = classes.firstWhere((c) => c.name == 'ValueDetails');
+        final subclass = classes.firstWhere((c) => c.name == r'ValueDetails');
         final valueField = subclass.fields.firstWhere(
           (f) => f.name == 'value',
         );
@@ -2409,7 +2409,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final subclass = classes.firstWhere((c) => c.name == 'ValueItems');
+        final subclass = classes.firstWhere((c) => c.name == r'ValueItems');
         final valueField = subclass.fields.firstWhere(
           (f) => f.name == 'value',
         );
@@ -2451,7 +2451,7 @@ void main() {
         );
 
         final classes = generator.generateClasses(model);
-        final subclass = classes.firstWhere((c) => c.name == 'ValueDetails');
+        final subclass = classes.firstWhere((c) => c.name == r'ValueDetails');
         final valueField = subclass.fields.firstWhere(
           (f) => f.name == 'value',
         );

@@ -1,0 +1,244 @@
+openapi: 3.0.4
+info:
+  title: Adversarial Strings API
+  description: >-
+    Tests that spec-derived strings containing special characters
+    (single quotes, double quotes, dollar signs, backslashes) produce
+    valid generated Dart code.
+  version: 1.0.0
+
+servers:
+  # 1a. Static server URL with single quote
+  - url: "https://api.o'reilly.example.com/v1"
+    description: "O'Reilly server"
+
+  # 1b. Templated server URL with single quote
+  - url: "https://it's-a-{env}.example.com/v1"
+    description: "Templated server with quote in URL"
+    variables:
+      env:
+        default: prod
+        description: Environment
+
+tags:
+  - name: adversarial
+    description: Operations with adversarial strings
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+        - adversarial
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+
+  # 1c. Content-type with single quote in response
+  /quoted-content-type:
+    get:
+      operationId: getQuotedContentType
+      tags:
+        - adversarial
+      summary: Response with adversarial content type
+      responses:
+        '200':
+          description: OK
+          content:
+            "application/vnd.o'reilly+json":
+              schema:
+                $ref: '#/components/schemas/BasicObject'
+
+  # 1i. Multipart with adversarial field name
+  /upload:
+    post:
+      operationId: uploadFile
+      tags:
+        - adversarial
+      summary: Upload with adversarial field names
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - "it's-a-file"
+              properties:
+                "it's-a-file":
+                  type: string
+                  format: binary
+            encoding:
+              "it's-a-file":
+                contentType: application/octet-stream
+      responses:
+        '200':
+          description: OK
+
+  # 1h. Multipart with adversarial content type in encoding
+  /upload-quoted-ct:
+    post:
+      operationId: uploadQuotedCt
+      tags:
+        - adversarial
+      summary: Upload with adversarial content type encoding
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - document
+              properties:
+                document:
+                  type: string
+            encoding:
+              document:
+                contentType: "text/it's-plain"
+      responses:
+        '200':
+          description: OK
+
+  # 1j. Query parameters with adversarial rawName (delimited encoding)
+  /search:
+    get:
+      operationId: search
+      tags:
+        - adversarial
+      summary: Search with adversarial query parameter names
+      parameters:
+        - name: "filter's"
+          in: query
+          required: false
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    BasicObject:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    # 1g. Property name with single quote on an any-typed property
+    # The class needs a mix of simple + mixed encoding shapes to trigger
+    # _buildMixedParameterPropertiesMethod
+    ObjectWithQuotedProp:
+      type: object
+      properties:
+        id:
+          type: string
+        "it's-field":
+          description: A property with a quote in its name
+          # no type constraint = any
+
+    # Models for discriminated oneOf (1f)
+    SuccessResult:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+
+    ErrorResult:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    # 1f. OneOf with discriminator values containing single quotes
+    QuotedOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/SuccessResult'
+        - $ref: '#/components/schemas/ErrorResult'
+      discriminator:
+        propertyName: type
+        mapping:
+          "it's-success": '#/components/schemas/SuccessResult'
+          "it's-error": '#/components/schemas/ErrorResult'
+
+    # 1d/1e. AnyOf with discriminator values and field name containing
+    # single quotes
+    PersonModel:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    CompanyModel:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+
+    # 1d. Discriminator values with single quotes
+    QuotedAnyOf:
+      anyOf:
+        - $ref: '#/components/schemas/PersonModel'
+        - $ref: '#/components/schemas/CompanyModel'
+      discriminator:
+        propertyName: kind
+        mapping:
+          "it's-person": '#/components/schemas/PersonModel'
+          "it's-company": '#/components/schemas/CompanyModel'
+
+    # Both quotes: triggers r"""...""" path in specLiteralStringCode
+    BothQuotesOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/SuccessResult'
+        - $ref: '#/components/schemas/ErrorResult'
+      discriminator:
+        propertyName: type
+        mapping:
+          "it's a \"success\"": '#/components/schemas/SuccessResult'
+          "it's a \"failure\"": '#/components/schemas/ErrorResult'
+
+    # Triple-double-quotes: triggers escaped fallback in specLiteralStringCode
+    TripleQuoteOneOf:
+      oneOf:
+        - $ref: '#/components/schemas/SuccessResult'
+        - $ref: '#/components/schemas/ErrorResult'
+      discriminator:
+        propertyName: type
+        mapping:
+          'it''s a """success"""': '#/components/schemas/SuccessResult'
+          "normal": '#/components/schemas/ErrorResult'
+
+    # Property name with double quote (tests r'...' path for property keys)
+    ObjectWithDoubleQuoteProp:
+      type: object
+      properties:
+        id:
+          type: string
+        'field"name':
+          type: string
+
+    # 1e. Discriminator field name with single quote
+    QuotedDiscriminatorField:
+      anyOf:
+        - $ref: '#/components/schemas/PersonModel'
+        - $ref: '#/components/schemas/CompanyModel'
+      discriminator:
+        propertyName: "it's-type"
+        mapping:
+          person: '#/components/schemas/PersonModel'
+          company: '#/components/schemas/CompanyModel'

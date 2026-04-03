@@ -998,9 +998,9 @@ void main() {
         const expectedMethod = r'''
           Future<Object?> _data({required CreateUserForm body}) async {
             final _$formData = FormData();
-            _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+            _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
             if (body.nickname != null) {
-              _$formData.files.add(MapEntry('nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
             }
             return _$formData;
           }
@@ -1172,7 +1172,7 @@ void main() {
               final CreateItemJson value => value.value.toJson(),
               final CreateItemFormData value => await () async {
                 final _$formData = FormData();
-                _$formData.files.add(MapEntry('name', MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse('text/plain'))));
+                _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(value.value.name, contentType: DioMediaType.parse(r'text/plain'))));
                 return _$formData;
               }(),
             };
@@ -1387,7 +1387,7 @@ void main() {
             Future<Object?> _data({CreateUserForm? body}) async {
               if (body == null) return null;
               final _$formData = FormData();
-              _$formData.files.add(MapEntry('name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse('text/plain'))));
+              _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
               return _$formData;
             }
           ''';

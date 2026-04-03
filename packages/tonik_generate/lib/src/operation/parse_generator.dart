@@ -113,7 +113,8 @@ class ParseGenerator {
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
-    final contentTypePattern = contentType != null ? "'$contentType'" : '_';
+    final contentTypePattern =
+        contentType != null ? specLiteralStringCode(contentType) : '_';
     switch (status) {
       case ExplicitResponseStatus():
         return Code('case (${status.statusCode}, $contentTypePattern):');

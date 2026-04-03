@@ -118,6 +118,7 @@ rm -rf cookies/cookies_api
 rm -rf read_write_only/read_write_only_api
 rm -rf multipart/multipart_api
 rm -rf multipart/multipart_3_1_api
+rm -rf adversarial_strings/adversarial_strings_api
 rm -rf figma/figma_api
 rm -rf stripe/stripe_api
 rm -rf github/github_api
@@ -206,6 +207,9 @@ add_dependency_overrides_recursive "multipart/multipart_api"
 $TONIK_BINARY --config multipart/tonik_3_1.yaml
 add_dependency_overrides_recursive "multipart/multipart_3_1_api"
 
+$TONIK_BINARY -p adversarial_strings_api -s adversarial_strings/openapi.yaml -o adversarial_strings
+add_dependency_overrides_recursive "adversarial_strings/adversarial_strings_api"
+
 $TONIK_BINARY --config figma/tonik.yaml || echo "WARNING: Figma generation failed."
 if [ -d "figma/figma_api" ]; then
     add_dependency_overrides_recursive "figma/figma_api"
@@ -265,6 +269,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd read_write_only/read_write_only_api && dart pub get &
   cd multipart/multipart_api && dart pub get &
   cd multipart/multipart_3_1_api && dart pub get &
+  cd adversarial_strings/adversarial_strings_api && dart pub get &
   ([ -d "figma/figma_api" ] && cd figma/figma_api && dart pub get) &
   ([ -d "stripe/stripe_api" ] && cd stripe/stripe_api && dart pub get) &
   ([ -d "github/github_api" ] && cd github/github_api && dart pub get) &
@@ -317,6 +322,7 @@ restore_test_package_overrides "server_variables/server_variables_test/pubspec.y
 restore_test_package_overrides "cookies/cookies_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "read_write_only/read_write_only_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "multipart/multipart_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "adversarial_strings/adversarial_strings_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "figma/figma_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "stripe/stripe_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "github/github_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -348,6 +354,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd cookies/cookies_test && dart pub get &
   cd read_write_only/read_write_only_test && dart pub get &
   cd multipart/multipart_test && dart pub get &
+  cd adversarial_strings/adversarial_strings_test && dart pub get &
   cd figma/figma_test && dart pub get &
   cd stripe/stripe_test && dart pub get &
   cd github/github_test && dart pub get &

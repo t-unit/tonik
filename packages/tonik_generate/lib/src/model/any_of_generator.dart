@@ -17,6 +17,7 @@ import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.d
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -375,7 +376,7 @@ class AnyOfGenerator {
 
         if (discriminatorValue != null) {
           codes.add(
-            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+            Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
           );
         }
       }
@@ -416,7 +417,7 @@ class AnyOfGenerator {
 
       if (discriminatorValue != null) {
         codes.add(
-          Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+          Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
         );
       }
 
@@ -512,7 +513,7 @@ class AnyOfGenerator {
 
         if (discriminatorValue != null) {
           codes.add(
-            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+            Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
           );
         }
       }
@@ -552,7 +553,7 @@ class AnyOfGenerator {
 
       if (discriminatorValue != null) {
         codes.add(
-          Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+          Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
         );
       }
 
@@ -715,7 +716,7 @@ class AnyOfGenerator {
       ];
       final addMap = Code('_\$mapValues.add(_\$${name}Json);');
       final maybeDisc = hasDiscriminator && discValue != null
-          ? Code("_\$discriminatorValue ??= r'$discValue';")
+          ? Code('_\$discriminatorValue ??= ${specLiteralStringCode(discValue)};')
           : const Code('');
 
       blocks
@@ -780,7 +781,7 @@ class AnyOfGenerator {
         Code(
           r'final _$discValue = _$discriminatorValue; '
           r'if (_$discValue != null) { '
-          "_\$map.putIfAbsent('${model.discriminator}', "
+          '_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}, '
           r'() => _$discValue); }',
         ),
       );
@@ -911,7 +912,7 @@ class AnyOfGenerator {
       mergeBlocks.addAll([
         const Code(r'final _$discValue = _$discriminatorValue; '),
         const Code(r'if (_$discValue != null) { '),
-        Code("_\$map.putIfAbsent('${model.discriminator}', () => "),
+        Code('_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}, () => '),
         const Code(r'_$discValue'),
         const Code(');'),
         const Code(' }'),
@@ -1256,7 +1257,7 @@ class AnyOfGenerator {
       mergeBlocks.addAll([
         const Code(r'final _$discValue = _$discriminatorValue; '),
         const Code(r'if (_$discValue != null) { '),
-        Code("_\$map.putIfAbsent('${model.discriminator}', () => "),
+        Code('_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}, () => '),
         const Code(r'_$discValue'),
         const Code(');'),
         const Code(' }'),
@@ -1465,7 +1466,7 @@ class AnyOfGenerator {
       mergeBlocks.addAll([
         const Code(r'final _$discValue = _$discriminatorValue; '),
         const Code(r'if (_$discValue != null) { '),
-        Code("_\$map.putIfAbsent('${model.discriminator}', () => "),
+        Code('_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}, () => '),
         const Code(r'_$discValue'),
         const Code(');'),
         const Code(' }'),
@@ -1540,7 +1541,7 @@ class AnyOfGenerator {
 
         if (discriminatorValue != null) {
           codes.add(
-            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+            Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
           );
         }
       }
@@ -1569,7 +1570,7 @@ class AnyOfGenerator {
 
       if (discriminatorValue != null) {
         switchBody.add(
-          Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+          Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
         );
       }
 
@@ -1689,7 +1690,7 @@ class AnyOfGenerator {
       mergeBlocks.addAll([
         const Code(r'final _$discValue = _$discriminatorValue; '),
         const Code(r'if (_$discValue != null) { '),
-        Code("_\$map.putIfAbsent('${model.discriminator}', () => "),
+        Code('_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}, () => '),
         const Code(r'_$discValue'),
         const Code(');'),
         const Code(' }'),
@@ -1857,7 +1858,7 @@ class AnyOfGenerator {
       mergeBlocks.addAll([
         const Code(r'final _$discValue = _$discriminatorValue; '),
         const Code(r'if (_$discValue != null) { '),
-        Code("_\$map.putIfAbsent('${model.discriminator}', () => "),
+        Code('_\$map.putIfAbsent(${specLiteralStringCode(model.discriminator!)}, () => '),
         const Code(r'_$discValue'),
         const Code(');'),
         const Code(' }'),
@@ -2080,7 +2081,7 @@ class AnyOfGenerator {
 
         if (discriminatorValue != null) {
           codes.add(
-            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+            Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
           );
         }
       }
@@ -2145,7 +2146,7 @@ class AnyOfGenerator {
 
         if (discriminatorValue != null) {
           codes.add(
-            Code("_\$discriminatorValue ??= r'$discriminatorValue';"),
+            Code('_\$discriminatorValue ??= ${specLiteralStringCode(discriminatorValue)};'),
           );
         }
 

@@ -139,7 +139,7 @@ void main() {
       final initializer = productionConstructor.initializers.first;
       expect(
         initializer.accept(emitter).toString(),
-        "super(baseUrl: 'https://production.example.com')",
+        "super(baseUrl: r'https://production.example.com')",
       );
     });
 
@@ -173,7 +173,7 @@ void main() {
       final initializer = stagingConstructor.initializers.first;
       expect(
         initializer.accept(emitter).toString(),
-        "super(baseUrl: 'https://staging.example.com')",
+        "super(baseUrl: r'https://staging.example.com')",
       );
     });
   });
@@ -320,5 +320,44 @@ void main() {
         contains("import 'package:tonik_util/tonik_util.dart'"),
       );
     });
+  });
+
+  group('special characters in server URL', () {
+    test(
+      'generates valid code when static server URL contains single quote',
+      () {
+        final servers = [
+          const Server(
+            url: "https://it's-a-server.example.com",
+            description: 'Test server',
+          ),
+        ];
+
+        final result = generator.generate(servers);
+        expect(result.code, contains("it's-a-server"));
+      },
+    );
+
+    test(
+      'generates valid code when templated server URL contains single quote',
+      () {
+        final servers = [
+          const Server(
+            url: "https://it's-a-{env}.example.com",
+            description: 'Templated server',
+            variables: [
+              ServerVariable(
+                name: 'env',
+                defaultValue: 'prod',
+                description: 'Environment',
+              ),
+            ],
+          ),
+        ];
+
+        final result = generator.generate(servers);
+        expect(result.code, contains("it's-a-"));
+      },
+    );
   });
 }
