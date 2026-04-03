@@ -3731,7 +3731,7 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 final _$addressHeaders = <String, List<String>>{};
-                _$addressHeaders['X-Custom-Header'] = [
+                _$addressHeaders[r'X-Custom-Header'] = [
                   addressCustomHeader.toSimple(explode: false, allowEmpty: true),
                 ];
                 final addressParts = <String>[];
@@ -5947,7 +5947,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$fileHeaders = <String, List<String>>{};
-            _$fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(
@@ -6022,7 +6022,7 @@ void main() {
             final _$formData = FormData();
             final _$fileHeaders = <String, List<String>>{};
             if (fileTag != null) {
-              _$fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
             }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
@@ -6104,7 +6104,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$addressHeaders = <String, List<String>>{};
-            _$addressHeaders['X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
+            _$addressHeaders[r'X-Custom'] = [addressCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'address',
               MultipartFile.fromString(
@@ -6174,7 +6174,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$descriptionHeaders = <String, List<String>>{};
-            _$descriptionHeaders['X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
+            _$descriptionHeaders[r'X-Language'] = [descriptionLanguage.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'description',
               MultipartFile.fromString(body.description, contentType: DioMediaType.parse(r'text/plain'), headers: _$descriptionHeaders),
@@ -6242,7 +6242,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$countHeaders = <String, List<String>>{};
-            _$countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'count',
               MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'), headers: _$countHeaders),
@@ -6320,7 +6320,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$statusHeaders = <String, List<String>>{};
-            _$statusHeaders['X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
+            _$statusHeaders[r'X-Custom'] = [statusCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'status',
               MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'), headers: _$statusHeaders),
@@ -6469,9 +6469,9 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$fileHeaders = <String, List<String>>{};
-            _$fileHeaders['X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
+            _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit.toSimple(explode: false, allowEmpty: true)];
             if (fileTag != null) {
-              _$fileHeaders['X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Tag'] = [fileTag.toSimple(explode: false, allowEmpty: true)];
             }
             switch (body.file) {
               case TonikFileBytes(:final bytes, :final fileName):
@@ -6612,7 +6612,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
-            _$tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags) {
               _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
@@ -6683,7 +6683,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
-            _$tagsHeaders['X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
@@ -6754,7 +6754,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$filesHeaders = <String, List<String>>{};
-            _$filesHeaders['X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
+            _$filesHeaders[r'X-Checksum'] = [filesChecksum.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.files) {
               switch (item) {
                 case TonikFileBytes(:final bytes, :final fileName):
@@ -6837,7 +6837,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$addressesHeaders = <String, List<String>>{};
-            _$addressesHeaders['X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
+            _$addressesHeaders[r'X-Custom'] = [addressesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
             }
@@ -6905,7 +6905,7 @@ void main() {
             final _$formData = FormData();
             if (body.file != null) {
               final _$fileHeaders = <String, List<String>>{};
-              _$fileHeaders['X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Rate-Limit'] = [fileRateLimit!.toSimple(explode: false, allowEmpty: true)];
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
@@ -6983,7 +6983,7 @@ void main() {
             final _$formData = FormData();
             if (body.file != null) {
               final _$fileHeaders = <String, List<String>>{};
-              _$fileHeaders['X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
+              _$fileHeaders[r'X-Checksum'] = [fileChecksum!.toSimple(explode: false, allowEmpty: true)];
               switch (body.file!) {
                 case TonikFileBytes(:final bytes, :final fileName):
                   _$formData.files.add(MapEntry(
@@ -7061,7 +7061,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$dataHeaders = <String, List<String>>{};
-            _$dataHeaders['X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
+            _$dataHeaders[r'X-Custom'] = [dataCustom.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'data',
               MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'), headers: _$dataHeaders),
@@ -7131,7 +7131,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$countHeaders = <String, List<String>>{};
-            _$countHeaders['X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
+            _$countHeaders[r'X-Source'] = [countSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'count',
               MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse(r'application/json'), headers: _$countHeaders),
@@ -7201,7 +7201,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$createdAtHeaders = <String, List<String>>{};
-            _$createdAtHeaders['X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
+            _$createdAtHeaders[r'X-Source'] = [createdAtSource.toSimple(explode: false, allowEmpty: true)];
             _$formData.files.add(MapEntry(
               r'createdAt',
               MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
@@ -7276,7 +7276,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$datesHeaders = <String, List<String>>{};
-            _$datesHeaders['X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
+            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
@@ -7350,7 +7350,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             final _$documentHeaders = <String, List<String>>{};
-            _$documentHeaders['X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
+            _$documentHeaders[r'X-Trace-Id'] = [documentTraceId.toSimple(explode: false, allowEmpty: true)];
             switch (body.document) {
               case TonikFileBytes(:final bytes, :final fileName):
                 _$formData.files.add(MapEntry(

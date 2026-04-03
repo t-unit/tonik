@@ -77,16 +77,16 @@ void main() {
 
     test('generates enum values with raw value arguments', () {
       final usEast = regionEnum.values.firstWhere((v) => v.name == 'usEast');
-      expect(usEast.arguments.first.accept(emitter).toString(), "'us-east'");
+      expect(usEast.arguments.first.accept(emitter).toString(), "r'us-east'");
     });
 
     test('generates complete enum', () {
       const expectedEnum = '''
         /// Allowed values for the region variable.
         enum RegionalServerRegion {
-          usEast('us-east'),
-          usWest('us-west'),
-          euCentral('eu-central');
+          usEast(r'us-east'),
+          usWest(r'us-west'),
+          euCentral(r'eu-central');
 
           const RegionalServerRegion(this.value);
           final String value;
@@ -192,7 +192,7 @@ void main() {
       );
       expect(envParam.toThis, isTrue);
       expect(envParam.named, isTrue);
-      expect(envParam.defaultTo?.accept(emitter).toString(), "'prod'");
+      expect(envParam.defaultTo?.accept(emitter).toString(), "r'prod'");
     });
 
     test('generates constructor with URL using string interpolation', () {
@@ -211,7 +211,7 @@ void main() {
         /// Environment server - https://environment.example.com/{env}
         class EnvironmentServer extends Server {
           EnvironmentServer({
-            this.env = 'prod',
+            this.env = r'prod',
             super.serverConfig = const ServerConfig(),
           }) : super(baseUrl: 'https://environment.example.com/${env}');
 
@@ -287,7 +287,7 @@ void main() {
         (p) => p.name == 'host',
       );
       expect(hostParam.toThis, isTrue);
-      expect(hostParam.defaultTo?.accept(emitter).toString(), "'localhost'");
+      expect(hostParam.defaultTo?.accept(emitter).toString(), "r'localhost'");
 
       final portParam = constructor.optionalParameters.firstWhere(
         (p) => p.name == 'port',
@@ -315,7 +315,7 @@ void main() {
         /// Configurable server - https://configurable.example.com/{host}:{port}/api
         class ConfigurableServer extends Server {
           ConfigurableServer({
-            this.host = 'localhost',
+            this.host = r'localhost',
             this.port = ConfigurableServerPort.eightThousandEighty,
             super.serverConfig = const ServerConfig(),
           }) : super(
@@ -419,9 +419,9 @@ void main() {
 
       // Verify enum declaration is present.
       expect(result.code, contains('enum RegionalServerRegion'));
-      expect(result.code, contains("usEast('us-east')"));
-      expect(result.code, contains("usWest('us-west')"));
-      expect(result.code, contains("euCentral('eu-central')"));
+      expect(result.code, contains("usEast(r'us-east')"));
+      expect(result.code, contains("usWest(r'us-west')"));
+      expect(result.code, contains("euCentral(r'eu-central')"));
       expect(result.code, contains('const RegionalServerRegion(this.value)'));
 
       // Verify server class declaration is present.
@@ -430,7 +430,7 @@ void main() {
         result.code,
         contains('this.region = RegionalServerRegion.usEast'),
       );
-      expect(result.code, contains("this.port = '443'"));
+      expect(result.code, contains("this.port = r'443'"));
       expect(result.code, contains('final RegionalServerRegion region'));
 
       // Verify URL interpolation.

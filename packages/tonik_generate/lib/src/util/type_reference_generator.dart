@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Generates a TypeReference from a model.
 TypeReference typeReference(
@@ -188,7 +189,7 @@ Parameter buildStringParameter(
     ..required = required
     ..defaultTo = required || defaultValue == null
         ? null
-        : literalString(defaultValue).code,
+        : specLiteralString(defaultValue).code,
 );
 
 /// Returns a list of common encoding parameters (explode and allowEmpty).

@@ -90,7 +90,7 @@ class OptionsGenerator {
       if (singleContent.contentType == ContentType.multipart) {
         return literalNull;
       }
-      return literalString(singleContent.rawContentType);
+      return specLiteralString(singleContent.rawContentType);
     }
 
     final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
@@ -118,7 +118,7 @@ class OptionsGenerator {
         if (content.contentType == ContentType.multipart)
           literalNull.code
         else
-          literalString(content.rawContentType).code,
+          specLiteralString(content.rawContentType).code,
         const Code(',\n'),
       ];
       cases.addAll(caseCode);
@@ -230,7 +230,7 @@ class OptionsGenerator {
         ..add(
           refer(r'_$headers')
               .index(literalString('Accept'))
-              .assign(literalString(acceptValue))
+              .assign(specLiteralString(acceptValue))
               .statement,
         )
         ..add(const Code('}'));
@@ -239,7 +239,7 @@ class OptionsGenerator {
       bodyStatements.add(
         refer(r'_$headers')
             .index(literalString('Accept'))
-            .assign(literalString(acceptValue))
+            .assign(specLiteralString(acceptValue))
             .statement,
       );
     }

@@ -337,7 +337,7 @@ _HeaderMapResult? _buildHeaderMapStatements(
     );
 
     final assignStatement = refer(headerVarName)
-        .index(literalString(rawHeaderName))
+        .index(specLiteralString(rawHeaderName))
         .assign(literalList([serializeExpr]))
         .statement;
 

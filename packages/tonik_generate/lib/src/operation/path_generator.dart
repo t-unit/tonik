@@ -141,7 +141,7 @@ class PathGenerator {
         final matrixExpression = buildMatrixParameterExpression(
           refer(param.normalizedName),
           param.parameter.model,
-          paramName: literalString(param.parameter.rawName),
+          paramName: specLiteralString(param.parameter.rawName),
           explode: literalBool(param.parameter.explode),
           allowEmpty: literalBool(param.parameter.allowEmptyValue),
         );

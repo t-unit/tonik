@@ -53,7 +53,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = '*/*';
+          _$headers['Accept'] = r'*/*';
           return Options(
             method: 'GET',
             headers: _$headers,
@@ -97,7 +97,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = '*/*';
+          _$headers['Accept'] = r'*/*';
           return Options(
             method: 'POST',
             headers: _$headers,
@@ -141,7 +141,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = '*/*';
+          _$headers['Accept'] = r'*/*';
           return Options(
             method: 'PUT',
             headers: _$headers,
@@ -185,7 +185,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = '*/*';
+          _$headers['Accept'] = r'*/*';
           return Options(
             method: 'DELETE',
             headers: _$headers,
@@ -242,7 +242,7 @@ void main() {
       const expectedMethod = r'''
           Options _options({required String xMyHeader}) {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             _$headers[r'X-My-Header'] =
                 xMyHeader.toSimple(explode: false, allowEmpty: false);
             return Options(
@@ -380,7 +380,7 @@ void main() {
             List<String>? xOptionalList,
           }) {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             _$headers[r'X-Required-String'] =
                 xRequiredString.toSimple(explode: false, allowEmpty: false);
             _$headers[r'X-Required-Date'] =
@@ -455,7 +455,7 @@ void main() {
       const expectedMethod = r'''
         Options _options({required String xMyHeader}) {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = '*/*';
+          _$headers['Accept'] = r'*/*';
           _$headers[r'X-My-Header'] = xMyHeader.toSimple(explode: true, allowEmpty: true);
           return Options(
             method: 'GET',
@@ -526,7 +526,7 @@ void main() {
       const expectedMethod = r'''
           Options _options({required List<AnonymousModel> xColors}) {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             _$headers[r'X-Colors'] = xColors
                 .map((e) => e.toSimple(explode: true, allowEmpty: false))
                 .toList()
@@ -601,7 +601,7 @@ void main() {
       const expectedMethod = r'''
           Options _options({required List<List<AnonymousModel>> xMatrix}) {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             throw EncodingException('Simple encoding does not support list with complex elements for header X-Matrix');
             return Options(
               method: 'GET',
@@ -649,7 +649,7 @@ void main() {
       const expectedMethod = r'''
           Options _options() {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             return Options(
               method: 'POST',
               headers: _$headers,
@@ -705,11 +705,11 @@ void main() {
         const expectedMethod = r'''
           Options _options() {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             return Options(
               method: 'POST',
               headers: _$headers,
-              contentType: 'application/json',
+              contentType: r'application/json',
               responseType: ResponseType.bytes,
               validateStatus: (_) => true,
             );
@@ -768,11 +768,11 @@ void main() {
         const expectedMethod = r'''
           Options _options({required MultiContent body}) {
             final _$contentType = switch (body) {
-              MultiContentJson _ => 'application/json',
-              MultiContentFormData _ => 'multipart/form-data',
+              MultiContentJson _ => r'application/json',
+              MultiContentFormData _ => r'multipart/form-data',
             };
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             return Options(
               method: 'POST',
               headers: _$headers,
@@ -832,7 +832,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = 'application/json,application/xml';
+          _$headers['Accept'] = r'application/json,application/xml';
           return Options(
             method: 'GET',
             headers: _$headers,
@@ -879,7 +879,7 @@ void main() {
       const expectedMethod = r'''
         Options _options() {
           final _$headers = <String, dynamic>{};
-          _$headers['Accept'] = '*/*';
+          _$headers['Accept'] = r'*/*';
           return Options(
             method: 'GET',
             headers: _$headers,
@@ -1021,7 +1021,7 @@ void main() {
           if (accept != null) {
             _$headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
           } else {
-            _$headers['Accept'] = 'application/json,application/xml';
+            _$headers['Accept'] = r'application/json,application/xml';
           }
           return Options(
             method: 'GET',
@@ -1350,7 +1350,7 @@ void main() {
         const expectedMethod = r'''
           Options _options() {
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             return Options(
               method: 'POST',
               headers: _$headers,
@@ -1417,11 +1417,11 @@ void main() {
           const expectedMethod = r'''
           Options _options({required MixedBody body}) {
             final _$contentType = switch (body) {
-              MixedBodyJson _ => 'application/json',
+              MixedBodyJson _ => r'application/json',
               MixedBodyFormData _ => null,
             };
             final _$headers = <String, dynamic>{};
-            _$headers['Accept'] = '*/*';
+            _$headers['Accept'] = r'*/*';
             return Options(
               method: 'POST',
               headers: _$headers,

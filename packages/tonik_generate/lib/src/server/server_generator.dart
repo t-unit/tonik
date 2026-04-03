@@ -110,7 +110,7 @@ class ServerGenerator {
             (normalized) => EnumValue(
               (v) => v
                 ..name = normalized.normalizedName
-                ..arguments.add(literalString(normalized.originalValue)),
+                ..arguments.add(specLiteralString(normalized.originalValue)),
             ),
           ),
         ),
@@ -312,7 +312,7 @@ class ServerGenerator {
               ..name = variable.name
               ..named = true
               ..toThis = true
-              ..defaultTo = literalString(variable.defaultValue).code,
+              ..defaultTo = specLiteralString(variable.defaultValue).code,
           ),
         );
 
