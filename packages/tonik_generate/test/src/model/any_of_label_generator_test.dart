@@ -149,7 +149,7 @@ void main() {
           }
           final _$discValue = _$discriminatorValue;
           if (_$discValue != null) {
-            _$map.putIfAbsent('type', () => _$discValue);
+            _$map.putIfAbsent(r'type', () => _$discValue);
           }
           return _$map.toLabel(
             explode: explode,
@@ -233,7 +233,7 @@ void main() {
             }
             final _$discValue = _$discriminatorValue;
             if (_$discValue != null) {
-              _$map.putIfAbsent('type', () => _$discValue);
+              _$map.putIfAbsent(r'type', () => _$discValue);
             }
             return _$map.toLabel(
               explode: explode,

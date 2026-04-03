@@ -414,16 +414,16 @@ void main() {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
-                  if (_$key == 'entity_type') {
+                  if (_$key == r'entity_type') {
                     _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (_$discriminator == 'company') {
+              if (_$discriminator == r'company') {
                 return EntityCompany(Company.fromSimple(value, explode: explode));
               }
-              if (_$discriminator == 'person') {
+              if (_$discriminator == r'person') {
                 return EntityPerson(Person.fromSimple(value, explode: explode));
               }
             }
@@ -485,13 +485,13 @@ void main() {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
-                  if (_$key == 'type') {
+                  if (_$key == r'type') {
                     _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (_$discriminator == 'person') {
+              if (_$discriminator == r'person') {
                 return MixedEntityPerson(Person.fromSimple(value, explode: explode));
               }
             }
@@ -785,5 +785,137 @@ void main() {
         ),
       );
     });
+  });
+
+  group('special characters in discriminator', () {
+    test(
+      'fromSimple escapes discriminator value containing single quote',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Result',
+          models: {
+            (
+              discriminatorValue: "it's-success",
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'Success',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: 'type',
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Result');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+          factory Result.fromSimple(String? value, {required bool explode}) {
+            if (explode && value != null && value.isNotEmpty) {
+              final _$pairs = value.split(',');
+              String? _$discriminator;
+              for (final pair in _$pairs) {
+                final _$parts = pair.split('=');
+                if (_$parts.length == 2) {
+                  final _$key = Uri.decodeComponent(_$parts[0]);
+                  if (_$key == r'type') {
+                    _$discriminator = _$parts[1];
+                    break;
+                  }
+                }
+              }
+              if (_$discriminator == r"it's-success") {
+                return ResultSuccess(Success.fromSimple(value, explode: explode));
+              }
+            }
+            try {
+              return ResultSuccess(Success.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException(r'Invalid simple value for Result');
+          }''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'fromSimple escapes discriminator field name containing single quote',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Result',
+          models: {
+            (
+              discriminatorValue: 'success',
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'Success',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          discriminator: "it's-type",
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Result');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+          factory Result.fromSimple(String? value, {required bool explode}) {
+            if (explode && value != null && value.isNotEmpty) {
+              final _$pairs = value.split(',');
+              String? _$discriminator;
+              for (final pair in _$pairs) {
+                final _$parts = pair.split('=');
+                if (_$parts.length == 2) {
+                  final _$key = Uri.decodeComponent(_$parts[0]);
+                  if (_$key == r"it's-type") {
+                    _$discriminator = _$parts[1];
+                    break;
+                  }
+                }
+              }
+              if (_$discriminator == r'success') {
+                return ResultSuccess(Success.fromSimple(value, explode: explode));
+              }
+            }
+            try {
+              return ResultSuccess(Success.fromSimple(value, explode: explode));
+            } on DecodingException catch (_) { } on FormatException catch (_) {}
+            throw SimpleDecodingException(r'Invalid simple value for Result');
+          }''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
   });
 }

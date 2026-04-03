@@ -337,16 +337,16 @@ void main() {
                 final _$parts = pair.split('=');
                 if (_$parts.length == 2) {
                   final _$key = Uri.decodeComponent(_$parts[0]);
-                  if (_$key == 'type') {
+                  if (_$key == r'type') {
                     _$discriminator = _$parts[1];
                     break;
                   }
                 }
               }
-              if (_$discriminator == 'a') {
+              if (_$discriminator == r'a') {
                 return ChoiceA(A.fromForm(value, explode: explode));
               }
-              if (_$discriminator == 'b') {
+              if (_$discriminator == r'b') {
                 return ChoiceB(B.fromForm(value, explode: explode));
               }
             }

@@ -1,0 +1,22 @@
+name: adversarial_strings_test
+description: >-
+  Integration tests verifying that OpenAPI specs with special characters
+  (single quotes, etc.) in spec-derived strings produce valid generated code.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  adversarial_strings_api:
+    path: ../adversarial_strings_api
+  tonik_util: ^0.1.0
+
+dev_dependencies:
+  test: ^1.25.15
+  very_good_analysis: ^10.2.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

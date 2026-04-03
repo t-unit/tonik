@@ -416,7 +416,7 @@ class ClassGenerator {
           prop.property.isNullable || modelType.isEffectivelyNullable;
 
       constructorArgs[normalizedName] = buildSimpleValueExpression(
-        refer("_\$values[r'$propertyName']"),
+        refer('_\$values[${specLiteralStringCode(propertyName)}]'),
         model: modelType,
         isRequired: isRequired && !isNullable,
         nameManager: nameManager,
@@ -461,7 +461,7 @@ class ClassGenerator {
     final ap = classModel.additionalProperties;
     if (captureAP && ap != null) {
       final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
-      final knownKeySet = expectedKeys.map((k) => "r'$k'").join(', ');
+      final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
       final mapType = additionalPropertiesType(ap, nameManager, package);
       codes.addAll([
         Code('const _\$knownKeys = {$knownKeySet};'),
@@ -497,15 +497,13 @@ class ClassGenerator {
       } else {
         codes.addAll([
           const Code(r'_$additional[_$entry.key] = '),
-          refer(r'_$entry')
-              .property('value')
-              .property('decodeSimpleString')
-              .call([], {
-                'context': specLiteralString(
-                  '$className.additionalProperties',
-                ),
-              })
-              .code,
+          refer(
+            r'_$entry',
+          ).property('value').property('decodeSimpleString').call([], {
+            'context': specLiteralString(
+              '$className.additionalProperties',
+            ),
+          }).code,
           const Code(';'),
         ]);
       }
@@ -607,7 +605,7 @@ class ClassGenerator {
       final requiredInResponse = property.isRequired && !property.isWriteOnly;
 
       final valueExpr = buildFromJsonValueExpression(
-        "_\$map[r'$jsonKey']",
+        '_\$map[${specLiteralStringCode(jsonKey)}]',
         model: property.model,
         nameManager: nameManager,
         package: package,
@@ -638,8 +636,9 @@ class ClassGenerator {
 
     // Collect additional properties from the JSON map.
     if (hasAP) {
-      final knownKeys =
-          model.properties.map((p) => specLiteralStringCode(p.name)).join(', ');
+      final knownKeys = model.properties
+          .map((p) => specLiteralStringCode(p.name))
+          .join(', ');
       codes.add(Code('const _\$knownKeys = {$knownKeys};'));
 
       final ap = model.additionalProperties;
@@ -1091,7 +1090,7 @@ for (final _\$e in $apFieldName.entries) {
             ..add(const Code('}'))
             ..add(
               Code(
-                "_\$result[r'$propertyName'] = "
+                '_\$result[${specLiteralStringCode(propertyName)}] = '
                 '$name!.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
@@ -1099,7 +1098,7 @@ for (final _\$e in $apFieldName.entries) {
         } else {
           propertyAssignments.add(
             Code(
-              "_\$result[r'$propertyName'] = "
+              '_\$result[${specLiteralStringCode(propertyName)}] = '
               '$name.uriEncode(allowEmpty: allowEmpty, '
               'useQueryComponent: useQueryComponent);',
             ),
@@ -1109,18 +1108,18 @@ for (final _\$e in $apFieldName.entries) {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  _\$result[r'$propertyName'] = '';
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
         );
       } else {
         propertyAssignments.add(
           Code('''
 if ($name != null) {
-  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  _\$result[r'$propertyName'] = '';
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
         );
       }
@@ -1201,7 +1200,7 @@ if ($name != null) {
               ..add(const Code('}'))
               ..add(
                 Code(
-                  "_\$result[r'$propertyName'] = "
+                  '_\$result[${specLiteralStringCode(propertyName)}] = '
                   '$name!.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent);',
                 ),
@@ -1209,7 +1208,7 @@ if ($name != null) {
           } else {
             propertyAssignments.add(
               Code(
-                "_\$result[r'$propertyName'] = "
+                '_\$result[${specLiteralStringCode(propertyName)}] = '
                 '$name.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
@@ -1219,9 +1218,9 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  _\$result[r'$propertyName'] = '';
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
           );
         }
@@ -1273,7 +1272,7 @@ if ($name != null) {
             ..add(
               Code('''
 } else if (allowEmpty) {
-  _\$result[r'$propertyName'] = '';
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
             );
         }
@@ -1333,7 +1332,10 @@ if ($name != null) {
 
       if (resolvedModel is AnyModel) {
         propertyAssignments.add(
-          Code("_\$result[r'$propertyName'] = $name?.toString() ?? '';"),
+          Code(
+            '_\$result[${specLiteralStringCode(propertyName)}] = '
+            "$name?.toString() ?? '';",
+          ),
         );
         continue;
       }
@@ -1363,7 +1365,7 @@ if ($name != null) {
               ..add(const Code('}'))
               ..add(
                 Code(
-                  "_\$result[r'$propertyName'] = "
+                  '_\$result[${specLiteralStringCode(propertyName)}] = '
                   '$name!.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent);',
                 ),
@@ -1371,7 +1373,7 @@ if ($name != null) {
           } else {
             propertyAssignments.add(
               Code(
-                "_\$result[r'$propertyName'] = "
+                '_\$result[${specLiteralStringCode(propertyName)}] = '
                 '$name.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
@@ -1381,18 +1383,18 @@ if ($name != null) {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  _\$result[r'$propertyName'] = '';
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
           );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  _\$result[r'$propertyName'] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
-  _\$result[r'$propertyName'] = '';
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
           );
         }
@@ -1410,7 +1412,7 @@ if ($name != null) {
             encodingShapeRef.property('simple').code,
             const Code(') {'),
             Code(
-              "    _\$result[r'$propertyName'] = "
+              '    _\$result[${specLiteralStringCode(propertyName)}] = '
               '$name!.toSimple(explode: false, allowEmpty: allowEmpty);',
             ),
             const Code('} else {'),
@@ -1427,7 +1429,7 @@ if ($name != null) {
             encodingShapeRef.property('simple').code,
             const Code(') {'),
             Code(
-              "  _\$result[r'$propertyName'] = "
+              '  _\$result[${specLiteralStringCode(propertyName)}] = '
               '$name.toSimple(explode: false, allowEmpty: allowEmpty);',
             ),
             const Code('} else {'),
@@ -1598,7 +1600,7 @@ if ($name != null) {
           prop.property.isNullable || modelType.isEffectivelyNullable;
 
       constructorArgs[normalizedName] = buildFromFormValueExpression(
-        refer("_\$values[r'$propertyName']"),
+        refer('_\$values[${specLiteralStringCode(propertyName)}]'),
         model: modelType,
         isRequired: isRequired && !isNullable,
         nameManager: nameManager,
@@ -1643,7 +1645,7 @@ if ($name != null) {
     final ap = classModel.additionalProperties;
     if (captureAP && ap != null) {
       final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
-      final knownKeySet = expectedKeys.map((k) => "r'$k'").join(', ');
+      final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
       final mapType = additionalPropertiesType(ap, nameManager, package);
       codes.addAll([
         Code('const _\$knownKeys = {$knownKeySet};'),
@@ -1679,15 +1681,14 @@ if ($name != null) {
       } else {
         codes.addAll([
           const Code(r'_$additional[_$entry.key] = '),
-          refer(r'_$entry')
-              .property('value')
-              .property('decodeFormString')
-              .call([], {
-                'context': specLiteralString(
-                  '$className.additionalProperties',
-                ),
-              })
-              .code,
+          refer(r'_$entry').property('value').property('decodeFormString').call(
+            [],
+            {
+              'context': specLiteralString(
+                '$className.additionalProperties',
+              ),
+            },
+          ).code,
           const Code(';'),
         ]);
       }

@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Creates code blocks that serialize a query parameter to its delimited
 /// representation (space or pipe delimited).
@@ -130,7 +131,7 @@ List<Code> _buildForLoop(
     Code('for (final value in $baseExpression) {'),
     Code(
       r'_$entries'
-      ".add((name: r'$rawName', value: value));",
+      '.add((name: ${specLiteralStringCode(rawName)}, value: value));',
     ),
     const Code('}'),
   ];
@@ -161,7 +162,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       const Code('}'),
       Code(
         r'_$entries'
-        ".add((name: r'$rawName', value: "
+        '.add((name: ${specLiteralStringCode(rawName)}, value: '
         'item.uriEncode(allowEmpty: $allowEmpty)));',
       ),
       const Code('}'),
@@ -190,7 +191,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       ),
       Code(
         r'_$entries'
-        ".add((name: r'$rawName', value: value));",
+        '.add((name: ${specLiteralStringCode(rawName)}, value: value));',
       ),
       const Code('}'),
     ];

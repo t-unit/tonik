@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Creates a Dart expression that correctly deserializes a JSON value
@@ -400,11 +401,10 @@ Map<String, Expression> _buildContextParam(
 ) {
   if (contextClass != null || contextProperty != null) {
     return {
-      'context': literalString(
+      'context': specLiteralString(
         (contextClass != null && contextProperty != null)
             ? '$contextClass.$contextProperty'
             : contextClass ?? contextProperty!,
-        raw: true,
       ),
     };
   }

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Returns the reason why simple decoding is not supported for the given model,
 /// or `null` if simple decoding is supported.
@@ -72,11 +73,10 @@ Expression buildSimpleValueExpression(
 }) {
   final contextParam = (contextClass != null || contextProperty != null)
       ? {
-          'context': literalString(
+          'context': specLiteralString(
             (contextClass != null && contextProperty != null)
                 ? '$contextClass.$contextProperty'
                 : contextClass ?? contextProperty!,
-            raw: true,
           ),
         }
       : <String, Expression>{};
@@ -238,11 +238,10 @@ Expression _buildListFromSimpleExpression(
   final content = model.content;
   final contextParam = (contextClass != null || contextProperty != null)
       ? {
-          'context': literalString(
+          'context': specLiteralString(
             (contextClass != null && contextProperty != null)
                 ? '$contextClass.$contextProperty'
                 : contextClass ?? contextProperty!,
-            raw: true,
           ),
         }
       : <String, Expression>{};
