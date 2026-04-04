@@ -3,14 +3,18 @@ import 'package:code_builder/code_builder.dart';
 /// Generates a string literal [Expression] for a value from an OpenAPI spec.
 ///
 /// Prefers raw strings to prevent `$` from being interpreted as Dart
-/// interpolation. Falls back to an escaped non-raw string when the value
-/// contains both quote styles and triple-double-quotes (or ends with `"`).
+/// interpolation. When the value contains newline characters (`\n` or `\r`),
+/// single-line raw strings are avoided because they cannot represent literal
+/// newlines. Falls back to an escaped non-raw string when no raw quoting style
+/// is viable.
 ///
 /// Quoting strategy:
-/// - No single quotes → `r'value'`
-/// - Has `'` but no `"` → `r"value"`
-/// - Has both `'` and `"` (not ending in `"`, no `"""`) → `r"""value"""`
-/// - Otherwise → `'escaped value'` (non-raw, with `\`, `'`, `$` escaped)
+/// - No newlines, no single quotes → `r'value'`
+/// - No newlines, has `'` but no `"` → `r"value"`
+/// - Can use triple-double-quotes (no `"""`, doesn't end with `"`) →
+///   `r"""value"""`
+/// - Otherwise → `'escaped value'` (non-raw, with `\`, `'`, `$`, `\n`, `\r`
+///   escaped)
 Expression specLiteralString(String value) {
   return CodeExpression(Code(specLiteralStringCode(value)));
 }

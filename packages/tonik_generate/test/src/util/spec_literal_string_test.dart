@@ -220,4 +220,25 @@ void main() {
       );
     });
   });
+
+  group('escapeForSingleQuotedDartString', () {
+    test(r'escapes \n to literal \n', () {
+      expect(escapeForSingleQuotedDartString('hello\nworld'), r'hello\nworld');
+    });
+
+    test(r'escapes \r to literal \r', () {
+      expect(escapeForSingleQuotedDartString('hello\rworld'), r'hello\rworld');
+    });
+
+    test(
+      r'escapes combined \n, \r, single quote, dollar, and backslash',
+      () {
+        const input = "a\\b'c\$d\ne\rf";
+        final result = escapeForSingleQuotedDartString(input);
+        // Backslash must be escaped first to avoid double-escaping.
+        // Then single quote, dollar, \n, and \r.
+        expect(result, r"a\\b\'c\$d\ne\rf");
+      },
+    );
+  });
 }
