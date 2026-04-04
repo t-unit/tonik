@@ -11,7 +11,7 @@ import 'package:code_builder/code_builder.dart';
 /// Quoting strategy:
 /// - No newlines, no single quotes → `r'value'`
 /// - No newlines, has `'` but no `"` → `r"value"`
-/// - Can use triple-double-quotes (no `"""`, doesn't end with `"`) →
+/// - No `\r`, can use triple-double-quotes (no `"""`, doesn't end with `"`) →
 ///   `r"""value"""`
 /// - Otherwise → `'escaped value'` (non-raw, with `\`, `'`, `$`, `\n`, `\r`
 ///   escaped)
@@ -26,11 +26,13 @@ Expression specLiteralString(String value) {
 /// but falls back to an escaped non-raw string for edge cases.
 ///
 /// When [value] contains newline characters (`\n` or `\r`), single-line raw
-/// strings are avoided because they cannot contain literal newlines. Instead
-/// a triple-quoted raw string is used when possible, or the escaped fallback
-/// path handles the newlines.
+/// strings are avoided because they cannot contain literal newlines.
+/// Values with `\n` (but no `\r`) use triple-quoted raw strings.
+/// Values with `\r` always use the escaped fallback to avoid embedding
+/// literal carriage-return bytes in generated source files.
 String specLiteralStringCode(String value) {
   final hasNewline = value.contains('\n') || value.contains('\r');
+  final hasCarriageReturn = value.contains('\r');
 
   if (!hasNewline) {
     // Single-line raw strings are safe when there are no newlines.
@@ -42,10 +44,10 @@ String specLiteralStringCode(String value) {
     }
   }
 
-  // Use raw triple-double-quoted string when possible.
-  // This handles both newline and non-newline cases where single-line raw
-  // strings were not viable.
-  if (!value.contains('"""') && !value.endsWith('"')) {
+  // Use raw triple-double-quoted string when possible. Avoid this for values
+  // containing \r — literal CR bytes in source files cause issues with
+  // formatters, diffs, and editors.
+  if (!hasCarriageReturn && !value.contains('"""') && !value.endsWith('"')) {
     return 'r"""$value"""';
   }
 

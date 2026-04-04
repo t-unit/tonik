@@ -137,18 +137,18 @@ world''';
         expect(result, 'r"""hello\nworld"""');
       });
 
-      test(r'value with \r uses raw triple-quoted string', () {
+      test(r'value with \r uses escaped fallback to avoid literal CR', () {
         final result = specLiteralStringCode('hello\rworld');
-        expect(result, startsWith('r"""'));
-        expect(result, endsWith('"""'));
-        expect(result, 'r"""hello\rworld"""');
+        expect(result, isNot(startsWith('r')));
+        expect(result, startsWith("'"));
+        expect(result, endsWith("'"));
+        expect(result, r"'hello\rworld'");
       });
 
-      test(r'value with \r\n uses raw triple-quoted string', () {
+      test(r'value with \r\n uses escaped fallback to avoid literal CR', () {
         final result = specLiteralStringCode('hello\r\nworld');
-        expect(result, startsWith('r"""'));
-        expect(result, endsWith('"""'));
-        expect(result, 'r"""hello\r\nworld"""');
+        expect(result, isNot(startsWith('r')));
+        expect(result, r"'hello\r\nworld'");
       });
 
       test(
