@@ -125,5 +125,99 @@ void main() {
       final result = specLiteralStringCode(value);
       expect(result, contains(r'\$'));
     });
+
+    group('newline handling', () {
+      test(r'value with \n uses raw triple-quoted string', () {
+        final result = specLiteralStringCode('hello\nworld');
+        expect(result, startsWith('r"""'));
+        expect(result, endsWith('"""'));
+        expect(result, 'r"""hello\nworld"""');
+      });
+
+      test(r'value with \r uses raw triple-quoted string', () {
+        final result = specLiteralStringCode('hello\rworld');
+        expect(result, startsWith('r"""'));
+        expect(result, endsWith('"""'));
+        expect(result, 'r"""hello\rworld"""');
+      });
+
+      test(r'value with \r\n uses raw triple-quoted string', () {
+        final result = specLiteralStringCode('hello\r\nworld');
+        expect(result, startsWith('r"""'));
+        expect(result, endsWith('"""'));
+        expect(result, 'r"""hello\r\nworld"""');
+      });
+
+      test(
+        r'value with \n and single quotes uses raw triple-quoted string',
+        () {
+          final result = specLiteralStringCode("it's\nnew");
+          expect(result, startsWith('r"""'));
+          expect(result, endsWith('"""'));
+          expect(result, 'r"""it\'s\nnew"""');
+        },
+      );
+
+      test(
+        r'value with \n and double quotes uses raw triple-quoted string',
+        () {
+          final result = specLiteralStringCode('say "hi"\nthere');
+          expect(result, startsWith('r"""'));
+          expect(result, endsWith('"""'));
+          expect(result, 'r"""say "hi"\nthere"""');
+        },
+      );
+
+      test(
+        r'value with \n and both quotes uses raw triple-quoted string',
+        () {
+          final result = specLiteralStringCode('it\'s "here"\nok');
+          expect(result, startsWith('r"""'));
+          expect(result, endsWith('"""'));
+          expect(result, 'r"""it\'s "here"\nok"""');
+        },
+      );
+
+      test(
+        r'value with \n and triple-double-quotes falls back to escaped '
+        'single-quoted string with escaped newline',
+        () {
+          // Contains ', ", """, and \n — must use escaped fallback
+          const value = "it's\"\"\"\ntest";
+          final result = specLiteralStringCode(value);
+          expect(result, isNot(startsWith('r')));
+          expect(result, startsWith("'"));
+          expect(result, endsWith("'"));
+          // \n must be escaped as literal \n in the output
+          expect(result, contains(r'\n'));
+          // single quote must be escaped
+          expect(result, contains(r"\'"));
+        },
+      );
+
+      test(
+        r'value with \r in fallback path is escaped as literal \r',
+        () {
+          // Contains ', ", """, and \r — must use escaped fallback
+          const value = "it's\"\"\"\rtest";
+          final result = specLiteralStringCode(value);
+          expect(result, isNot(startsWith('r')));
+          expect(result, contains(r'\r'));
+        },
+      );
+
+      test(
+        r'value with \n ending in double quote uses escaped '
+        'single-quoted string',
+        () {
+          // Has both quotes, ends in ", and has \n
+          final result = specLiteralStringCode('it\'s "here"\n"end"');
+          expect(result, isNot(startsWith('r')));
+          expect(result, startsWith("'"));
+          expect(result, endsWith("'"));
+          expect(result, contains(r'\n'));
+        },
+      );
+    });
   });
 }
