@@ -125,5 +125,139 @@ void main() {
       final result = specLiteralStringCode(value);
       expect(result, contains(r'\$'));
     });
+
+    group('newline handling', () {
+      test('multiline value uses raw triple-quoted string', () {
+        const value = '''
+hello
+world''';
+        final result = specLiteralStringCode(value);
+        expect(result, startsWith('r"""'));
+        expect(result, endsWith('"""'));
+        expect(result, 'r"""hello\nworld"""');
+      });
+
+      test(r'value with \r uses escaped fallback to avoid literal CR', () {
+        final result = specLiteralStringCode('hello\rworld');
+        expect(result, isNot(startsWith('r')));
+        expect(result, startsWith("'"));
+        expect(result, endsWith("'"));
+        expect(result, r"'hello\rworld'");
+      });
+
+      test(r'value with \r\n uses escaped fallback to avoid literal CR', () {
+        final result = specLiteralStringCode('hello\r\nworld');
+        expect(result, isNot(startsWith('r')));
+        expect(result, r"'hello\r\nworld'");
+      });
+
+      test(
+        'multiline value with single quotes uses raw triple-quoted string',
+        () {
+          const value = '''
+it's
+new''';
+          final result = specLiteralStringCode(value);
+          expect(result, startsWith('r"""'));
+          expect(result, endsWith('"""'));
+          expect(result, 'r"""it\'s\nnew"""');
+        },
+      );
+
+      test(
+        'multiline value with double quotes uses raw triple-quoted string',
+        () {
+          const value = '''
+say "hi"
+there''';
+          final result = specLiteralStringCode(value);
+          expect(result, startsWith('r"""'));
+          expect(result, endsWith('"""'));
+          expect(result, 'r"""say "hi"\nthere"""');
+        },
+      );
+
+      test(
+        'multiline value with both quotes uses raw triple-quoted string',
+        () {
+          const value = '''
+it's "here"
+ok''';
+          final result = specLiteralStringCode(value);
+          expect(result, startsWith('r"""'));
+          expect(result, endsWith('"""'));
+          expect(result, 'r"""it\'s "here"\nok"""');
+        },
+      );
+
+      test(
+        'multiline value with triple-double-quotes falls back to escaped '
+        'single-quoted string with escaped newline',
+        () {
+          // Contains ', ", """, and a newline — must use escaped fallback
+          const value = "it's\"\"\"\ntest";
+          final result = specLiteralStringCode(value);
+          expect(result, isNot(startsWith('r')));
+          expect(result, startsWith("'"));
+          expect(result, endsWith("'"));
+          expect(result, contains(r'\n'));
+          expect(result, contains(r"\'"));
+        },
+      );
+
+      test(
+        r'value with \r in fallback path is escaped as literal \r',
+        () {
+          // Contains ', ", """, and \r — must use escaped fallback
+          const value = "it's\"\"\"\rtest";
+          final result = specLiteralStringCode(value);
+          expect(result, isNot(startsWith('r')));
+          expect(result, contains(r'\r'));
+        },
+      );
+
+      test(
+        'multiline value ending in double quote uses escaped '
+        'single-quoted string',
+        () {
+          // Has both quotes, ends in ", and has a newline
+          const value = '''
+it's "here"
+"end"''';
+          final result = specLiteralStringCode(value);
+          expect(result, isNot(startsWith('r')));
+          expect(result, startsWith("'"));
+          expect(result, endsWith("'"));
+          expect(result, contains(r'\n'));
+        },
+      );
+    });
+  });
+
+  group('escapeForSingleQuotedDartString', () {
+    test('escapes newline to literal backslash-n', () {
+      const input = '''
+hello
+world''';
+      expect(
+        escapeForSingleQuotedDartString(input),
+        r'hello\nworld',
+      );
+    });
+
+    test(r'escapes \r to literal backslash-r', () {
+      expect(escapeForSingleQuotedDartString('hello\rworld'), r'hello\rworld');
+    });
+
+    test(
+      'escapes combined newlines, single quote, dollar, and backslash',
+      () {
+        const input = "a\\b'c\$d\ne\rf";
+        final result = escapeForSingleQuotedDartString(input);
+        // Backslash must be escaped first to avoid double-escaping.
+        // Then single quote, dollar, \n, and \r.
+        expect(result, r"a\\b\'c\$d\ne\rf");
+      },
+    );
   });
 }
