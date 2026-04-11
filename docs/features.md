@@ -13,6 +13,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 | **All encoding styles** | `simple`, `label`, `matrix`, `form`, `deepObject`, `spaceDelimited`, `pipeDelimited` |
 | **readOnly / writeOnly** | Properties excluded from the correct serialization direction automatically |
 | **Server variables** | URL templating with enum constraints and runtime substitution |
+| **Immutable collections** | Optional `IList`/`IMap` from [fast_immutable_collections](https://pub.dev/packages/fast_immutable_collections) with automatic serialization |
 | **Pure Dart** | No Java, no Docker, no external tooling |
 
 ## Table of Contents
