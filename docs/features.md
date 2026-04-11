@@ -25,6 +25,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
     - [Custom Encoding \& Scoped Emission](#custom-encoding--scoped-emission)
     - [Naming Resolution](#naming-resolution)
     - [Response Handling](#response-handling)
+    - [Request Cancellation](#request-cancellation)
   - [OpenAPI Version Support](#openapi-version-support)
   - [Schema Types](#schema-types)
   - [Schema Features](#schema-features)
@@ -117,7 +118,33 @@ This means:
 - Add or remove a response in your spec, regenerate, and the compiler flags every call site that needs updating
 - Different content types on the same status code (e.g. JSON vs plain text) each get their own typed variant
 
-Error types on `TonikError`: `encoding`, `decoding`, `network`, `other`.
+Error types on `TonikError`: `encoding`, `decoding`, `network`, `cancelled`, `other`.
+
+### Request Cancellation
+
+Every generated operation accepts an optional `CancelToken` parameter, letting you cancel in-flight requests:
+
+```dart
+final cancelToken = CancelToken();
+
+// Start the request
+final future = api.getUsers(cancelToken: cancelToken);
+
+// Cancel it (e.g. when the user navigates away)
+cancelToken.cancel();
+
+final result = await future;
+switch (result) {
+  case TonikSuccess(:final value):
+    print('Got users: $value');
+  case TonikError(:final type) when type == TonikErrorType.cancelled:
+    print('Request was cancelled');
+  case TonikError(:final error):
+    print('Failed: $error');
+}
+```
+
+Cancelled requests return `TonikError` with `type: TonikErrorType.cancelled`, distinct from network errors.
 
 ---
 
