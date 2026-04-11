@@ -6,7 +6,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
 
 | Capability | What Tonik Does |
 |------------|-----------------|
-| **Multiple response types** | Generates distinct classes per status code (200, 400, 404) and content type—use pattern matching to handle each |
+| **Multiple response types** | Generates a sealed class with a variant per status code and content type — the compiler enforces exhaustive handling, unlike generators that pick one success/error type and discard the rest |
 | **Type composition** | `oneOf` → sealed class (switch on variants), `anyOf` → nullable fields, `allOf` → fields per member |
 | **No name conflicts** | Schema names like `Error`, `Response`, `List` work without collisions |
 | **Integer enums** | Full support, with optional unknown-value handling |
@@ -87,19 +87,37 @@ Override any generated name via `x-dart-name` or `tonik.yaml`. See [Configuratio
 
 ### Response Handling
 
-All API calls return a discriminated union (`TonikResult`) for type-safe error handling:
+Most OpenAPI code generators model responses as a single success type and a single error type — typically picking the 200 schema and the first error schema, discarding everything else. If your endpoint defines different bodies for 200, 201, 400, 404, and 500, those generators return something like `Result<Pet, ApiError>` and the caller has no typed access to the other response bodies.
+
+Tonik takes a different approach: it generates a **sealed response class with a variant for every status code and content type** defined in the spec. The compiler enforces exhaustive handling, so you can't accidentally ignore a response case.
 
 ```dart
-final response = await api.getPetById(petId: 1);
+final response = await api.updatePet(body: pet);
+
 switch (response) {
+  // Network-level result
   case TonikSuccess(:final value):
-    print('Pet: ${value.name}');
+    // Application-level response — every status code is a distinct type
+    switch (value) {
+      case UpdatePetResponse200(:final body):
+        print('Updated: ${body.name}');
+      case UpdatePetResponse400(:final body):
+        print('Validation error: ${body.message}');
+      case UpdatePetResponse404(:final body):
+        print('Not found: ${body.detail}');
+    }
   case TonikError(:final error, :final type):
     print('Failed: $type - $error');
 }
 ```
 
-Error types: `encoding`, `decoding`, `network`, `other`.
+This means:
+- Every response body is deserialized into the correct type for its status code
+- No casting, no runtime type checks, no untyped error strings
+- Add or remove a response in your spec, regenerate, and the compiler flags every call site that needs updating
+- Different content types on the same status code (e.g. JSON vs plain text) each get their own typed variant
+
+Error types on `TonikError`: `encoding`, `decoding`, `network`, `other`.
 
 ---
 
@@ -228,14 +246,16 @@ See [Data Types](data_types.md#form-url-encoded-bodies) for examples.
 
 ## Responses
 
+Each operation generates a sealed response class. Every status code and content type combination in the spec becomes a distinct subclass with its own typed body. This gives you compile-time exhaustiveness — the Dart analyzer will warn you if you don't handle a response case.
+
 | Feature | Status |
 |---------|--------|
-| Explicit status codes | ✅ |
+| Distinct type per status code | ✅ |
+| Distinct type per content type | ✅ |
+| Exhaustive pattern matching | ✅ |
 | Range codes (`2XX`, `4XX`) | ✅ |
-| Multiple status codes | ✅ |
 | `default` response | ✅ |
 | Response headers | ✅ |
-| Multiple content types | ✅ |
 
 ---
 
