@@ -53,7 +53,7 @@ When in doubt, classify higher.
 - Missing entire test categories the issue requires
 - OpenAPI spec compliance violations in parser code
 
-**Important (does not block PASS if <= 3):**
+**Important (blocks PASS):**
 - Incomplete test coverage within a category
 - Tests using fragments instead of full method bodies
 - Tests using bare `contains()` without `collapseWhitespace()`
@@ -67,4 +67,4 @@ When in doubt, classify higher.
 - ALL sprint contract criteria must PASS
 - ALL analysis and tests must PASS
 - ZERO critical findings
-- Important findings acceptable if <= 3
+- ZERO important findings
