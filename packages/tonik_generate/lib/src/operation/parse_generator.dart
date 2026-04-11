@@ -10,10 +10,15 @@ import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 class ParseGenerator {
-  const ParseGenerator({required this.nameManager, required this.package});
+  const ParseGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   /// Generates the _parseResponse method for the operation.
   Method generateParseResponseMethod(Operation operation) {
@@ -224,6 +229,7 @@ class ParseGenerator {
       model: responseBody.model,
       nameManager: nameManager,
       package: package,
+      useImmutableCollections: useImmutableCollections,
     );
     statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
 

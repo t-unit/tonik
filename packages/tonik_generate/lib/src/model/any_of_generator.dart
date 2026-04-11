@@ -28,11 +28,13 @@ class AnyOfGenerator {
     required this.nameManager,
     required this.package,
     required this.stableModelSorter,
+    this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
   final StableModelSorter stableModelSorter;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(AnyOfModel model) {
     return generateCompositeLibrary(
@@ -55,6 +57,7 @@ class AnyOfGenerator {
             discriminated.model,
             nameManager,
             package,
+            useImmutableCollections: useImmutableCollections,
           );
           return Property(
             name: typeRef.symbol,
@@ -97,6 +100,7 @@ class AnyOfGenerator {
               package,
               isNullableOverride:
                   n.property.isNullable || !n.property.isRequired,
+              useImmutableCollections: useImmutableCollections,
             ),
             skipCast: resolvedModel is AnyModel,
           );
@@ -133,6 +137,7 @@ class AnyOfGenerator {
             discriminated.model,
             nameManager,
             package,
+            useImmutableCollections: useImmutableCollections,
           );
           return Property(
             name: typeRef.symbol,
@@ -155,6 +160,7 @@ class AnyOfGenerator {
         nameManager,
         package,
         isNullableOverride: true,
+        useImmutableCollections: useImmutableCollections,
       );
       return Field(
         (b) => b
@@ -203,8 +209,8 @@ class AnyOfGenerator {
         .map(
           (n) => (
             normalizedName: n.normalizedName,
-            hasCollectionValue:
-                n.property.model is ListModel || n.property.model is MapModel,
+            hasCollectionValue: !useImmutableCollections &&
+                (n.property.model is ListModel || n.property.model is MapModel),
           ),
         )
         .toList();
@@ -293,6 +299,7 @@ class AnyOfGenerator {
     nameManager,
     package,
     isNullableOverride: true,
+    useImmutableCollections: useImmutableCollections,
   );
   List<Code> _generateFieldEncoding({
     required String fieldName,
@@ -625,6 +632,7 @@ class AnyOfGenerator {
         nameManager: nameManager,
         package: package,
         contextClass: className,
+        useImmutableCollections: useImmutableCollections,
       );
 
       localDecls.add(
@@ -702,6 +710,7 @@ class AnyOfGenerator {
         name,
         n.property,
         forceNonNullReceiver: true,
+        useImmutableCollections: useImmutableCollections,
       );
 
       final discValue = discMap[n.property.model];

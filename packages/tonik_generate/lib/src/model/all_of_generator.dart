@@ -31,11 +31,13 @@ class AllOfGenerator {
     required this.nameManager,
     required this.package,
     required this.stableModelSorter,
+    this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
   final StableModelSorter stableModelSorter;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(AllOfModel model) {
     return generateCompositeLibrary(
@@ -54,7 +56,12 @@ class AllOfGenerator {
     final models = stableModelSorter.sortModels(model.models);
 
     final pseudoProperties = models.map((m) {
-      final typeRef = typeReference(m, nameManager, package);
+      final typeRef = typeReference(
+        m,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       final isNullable = m.isEffectivelyNullable;
       return Property(
         name: typeRef.symbol,
@@ -106,7 +113,12 @@ class AllOfGenerator {
     final models = stableModelSorter.sortModels(model.models);
 
     final pseudoProperties = models.map((m) {
-      final typeRef = typeReference(m, nameManager, package);
+      final typeRef = typeReference(
+        m,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       final isNullable = m.isEffectivelyNullable;
       return Property(
         name: typeRef.symbol,
@@ -294,6 +306,7 @@ class AllOfGenerator {
         nameManager,
         package,
         isNullableOverride: model.isReadOnly,
+        useImmutableCollections: useImmutableCollections,
       );
       return Field(
         (b) => b
@@ -332,7 +345,8 @@ class AllOfGenerator {
     final props = normalizedProperties.map((normalized) {
       return (
         normalizedName: normalized.normalizedName,
-        hasCollectionValue: isCollectionModel(normalized.property.model),
+        hasCollectionValue: !useImmutableCollections &&
+            isCollectionModel(normalized.property.model),
       );
     }).toList();
 
@@ -342,7 +356,10 @@ class AllOfGenerator {
         normalizedProperties,
       );
       props.add(
-        (normalizedName: apFieldName, hasCollectionValue: true),
+        (
+          normalizedName: apFieldName,
+          hasCollectionValue: !useImmutableCollections,
+        ),
       );
     }
 
@@ -396,15 +413,15 @@ class AllOfGenerator {
     final fieldNames = <String>[];
     for (final normalized in normalizedProperties) {
       fieldNames.add(normalized.normalizedName);
-      fromJsonParams.add(
-        buildFromJsonValueExpression(
-          'json',
-          model: normalized.property.model,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-        ),
+      final expr = buildFromJsonValueExpression(
+        'json',
+        model: normalized.property.model,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        useImmutableCollections: useImmutableCollections,
       );
+      fromJsonParams.add(expr);
     }
 
     final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
@@ -481,6 +498,7 @@ class AllOfGenerator {
         package: package,
         contextClass: className,
         contextProperty: 'additionalProperties',
+        useImmutableCollections: useImmutableCollections,
       );
       codes.addAll([
         const Code(r'for (final _$entry in _$map.entries) {'),
@@ -663,6 +681,7 @@ class AllOfGenerator {
           buildToJsonPropertyExpression(
             fieldName,
             normalized.property,
+            useImmutableCollections: useImmutableCollections,
           ).code,
           const Code(';'),
           refer(
@@ -837,6 +856,7 @@ class AllOfGenerator {
                 isNullable: false,
                 isDeprecated: false,
               ),
+              useImmutableCollections: useImmutableCollections,
             ).code,
         );
 
@@ -2679,6 +2699,7 @@ for (final _\$e in $apFieldName.entries) {
             normalized.property.isNullable ||
             !normalized.property.isRequired ||
             model.isReadOnly,
+        useImmutableCollections: useImmutableCollections,
       );
       final propModel = normalized.property.model;
       final resolvedModel = propModel is AliasModel

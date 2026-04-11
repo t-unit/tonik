@@ -19,30 +19,39 @@ import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 /// Generator for creating callable operation classes
 /// from Operation definitions.
 class OperationGenerator {
-  OperationGenerator({required this.nameManager, required this.package})
-    : _optionsGenerator = OptionsGenerator(
+  OperationGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  }) : _optionsGenerator = OptionsGenerator(
         nameManager: nameManager,
         package: package,
+        useImmutableCollections: useImmutableCollections,
       ),
       _queryParametersGenerator = QueryGenerator(
         nameManager: nameManager,
         package: package,
+        useImmutableCollections: useImmutableCollections,
       ),
       _pathGenerator = PathGenerator(
         nameManager: nameManager,
         package: package,
+        useImmutableCollections: useImmutableCollections,
       ),
       _dataGenerator = DataGenerator(
         nameManager: nameManager,
         package: package,
+        useImmutableCollections: useImmutableCollections,
       ),
       _parseGenerator = ParseGenerator(
         nameManager: nameManager,
         package: package,
+        useImmutableCollections: useImmutableCollections,
       );
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   final OptionsGenerator _optionsGenerator;
   final QueryGenerator _queryParametersGenerator;

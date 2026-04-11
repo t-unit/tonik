@@ -33,30 +33,44 @@ String pickAdditionalPropertiesFieldName(
   return candidate;
 }
 
+const _ficUrl =
+    'package:fast_immutable_collections/fast_immutable_collections.dart';
+
 /// Builds the `TypeReference` for the additional-properties map field.
 ///
 /// - Typed AP → `Map<String, T>` where `T` comes from the value model.
 /// - Unrestricted AP → `Map<String, Object?>`.
+///
+/// When [useImmutableCollections] is `true`, `IMap` is used instead of `Map`.
 TypeReference additionalPropertiesType(
   AdditionalProperties? additionalProperties,
   NameManager nameManager,
-  String package,
-) {
+  String package, {
+  bool useImmutableCollections = false,
+}) {
+  final mapSymbol = useImmutableCollections ? 'IMap' : 'Map';
+  final mapUrl = useImmutableCollections ? _ficUrl : 'dart:core';
+
   if (additionalProperties is TypedAdditionalProperties) {
     return TypeReference(
       (b) => b
-        ..symbol = 'Map'
-        ..url = 'dart:core'
+        ..symbol = mapSymbol
+        ..url = mapUrl
         ..types.addAll([
           refer('String', 'dart:core'),
-          typeReference(additionalProperties.valueModel, nameManager, package),
+          typeReference(
+            additionalProperties.valueModel,
+            nameManager,
+            package,
+            useImmutableCollections: useImmutableCollections,
+          ),
         ]),
     );
   }
   return TypeReference(
     (b) => b
-      ..symbol = 'Map'
-      ..url = 'dart:core'
+      ..symbol = mapSymbol
+      ..url = mapUrl
       ..types.addAll([
         refer('String', 'dart:core'),
         refer('Object?', 'dart:core'),

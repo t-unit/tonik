@@ -47,6 +47,13 @@ ArgParser buildParser() {
       'log-level',
       help: 'Set the logging level (verbose, info, warn, silent).',
       allowed: ['verbose', 'info', 'warn', 'silent'],
+    )
+    ..addFlag(
+      'immutable-collections',
+      help:
+          'Use IList/IMap from fast_immutable_collections '
+          'instead of List/Map.',
+      negatable: false,
     );
 }
 
@@ -64,6 +71,7 @@ void main(List<String> arguments) {
   String? openApiPathArg;
   String? outputDirArg;
   String? configPathArg;
+  var immutableCollectionsArg = false;
 
   try {
     final results = argParser.parse(arguments);
@@ -78,6 +86,7 @@ void main(List<String> arguments) {
     openApiPathArg = results['spec'] as String?;
     outputDirArg = results['output-dir'] as String?;
     configPathArg = results['config'] as String?;
+    immutableCollectionsArg = results.flag('immutable-collections');
   } on FormatException catch (formatException) {
     print(formatException.message);
     printUsage(argParser);
@@ -110,6 +119,8 @@ void main(List<String> arguments) {
     outputDir: outputDirArg,
     packageName: packageNameArg,
     logLevel: cliLogLevel,
+    useImmutableCollections:
+        immutableCollectionsArg ? true : null,
   );
 
   final packageName = mergedConfig.packageName;
@@ -234,6 +245,7 @@ void main(List<String> arguments) {
       apiDocument: apiDocument,
       outputDirectory: outputDir ?? '.',
       package: packageName,
+      config: mergedConfig.toTonikConfig(),
     );
     logger.info('Successfully generated code');
   } on Object catch (e, s) {

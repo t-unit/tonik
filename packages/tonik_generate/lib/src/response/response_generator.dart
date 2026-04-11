@@ -16,10 +16,15 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// from Response definitions.
 @immutable
 class ResponseGenerator {
-  const ResponseGenerator({required this.nameManager, required this.package});
+  const ResponseGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(Response response) {
     if (!response.hasHeaders && response.bodyCount <= 1) {
@@ -102,6 +107,7 @@ class ResponseGenerator {
               package,
               isNullableOverride:
                   prop.property.isNullable || !prop.property.isRequired,
+              useImmutableCollections: useImmutableCollections,
             ),
             skipCast: resolvedModel is AnyModel,
           );
@@ -128,7 +134,8 @@ class ResponseGenerator {
           .map(
             (prop) => (
               normalizedName: prop.normalizedName,
-              hasCollectionValue: prop.property.model is ListModel,
+              hasCollectionValue: !useImmutableCollections &&
+                  prop.property.model is ListModel,
             ),
           )
           .toList(),
@@ -139,7 +146,8 @@ class ResponseGenerator {
           .map(
             (p) => (
               normalizedName: p.normalizedName,
-              hasCollectionValue: p.property.model is ListModel,
+              hasCollectionValue: !useImmutableCollections &&
+                  p.property.model is ListModel,
             ),
           )
           .toList(),
@@ -183,6 +191,7 @@ class ResponseGenerator {
                     nameManager,
                     package,
                     isNullableOverride: !prop.property.isRequired,
+                    useImmutableCollections: useImmutableCollections,
                   );
 
                 if (prop.property.isDeprecated) {
@@ -239,6 +248,7 @@ class ResponseGenerator {
                     nameManager,
                     package,
                     isNullableOverride: !prop.property.isRequired,
+                    useImmutableCollections: useImmutableCollections,
                   );
 
                 if (prop.property.isDeprecated) {
@@ -283,7 +293,8 @@ class ResponseGenerator {
             .map(
               (prop) => (
                 normalizedName: prop.normalizedName,
-                hasCollectionValue: prop.property.model is ListModel,
+                hasCollectionValue: !useImmutableCollections &&
+                  prop.property.model is ListModel,
               ),
             )
             .toList(),
@@ -294,7 +305,8 @@ class ResponseGenerator {
             .map(
               (p) => (
                 normalizedName: p.normalizedName,
-                hasCollectionValue: p.property.model is ListModel,
+                hasCollectionValue: !useImmutableCollections &&
+                    p.property.model is ListModel,
               ),
             )
             .toList(),
@@ -360,6 +372,7 @@ class ResponseGenerator {
                     body.model,
                     nameManager,
                     package,
+                    useImmutableCollections: useImmutableCollections,
                   ),
               ),
             ),

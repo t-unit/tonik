@@ -53,6 +53,10 @@ extension ConfigLoader on CliConfig {
       filter: _parseFilter(yaml['filter']),
       deprecated: _parseDeprecated(yaml['deprecated']),
       enums: _parseEnums(yaml['enums']),
+      useImmutableCollections: _parseBool(
+        yaml['immutableCollections'],
+        'immutableCollections',
+      ),
     );
   }
 
@@ -61,6 +65,16 @@ extension ConfigLoader on CliConfig {
     if (value is! String) {
       throw ConfigLoaderException(
         'Invalid config: "$fieldName" must be a string',
+      );
+    }
+    return value;
+  }
+
+  static bool _parseBool(dynamic value, String fieldName) {
+    if (value == null) return false;
+    if (value is! bool) {
+      throw ConfigLoaderException(
+        'Invalid config: "$fieldName" must be a boolean',
       );
     }
     return value;
@@ -308,6 +322,7 @@ extension ConfigLoader on CliConfig {
     String? outputDir,
     String? packageName,
     LogLevel? logLevel,
+    bool? useImmutableCollections,
   }) {
     return CliConfig(
       spec: spec ?? this.spec,
@@ -320,6 +335,8 @@ extension ConfigLoader on CliConfig {
       filter: filter,
       deprecated: this.deprecated,
       enums: enums,
+      useImmutableCollections:
+          useImmutableCollections ?? this.useImmutableCollections,
     );
   }
 }

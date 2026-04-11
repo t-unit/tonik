@@ -3,28 +3,44 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
+const _ficUrl =
+    'package:fast_immutable_collections/fast_immutable_collections.dart';
+
 /// Generates a TypeReference from a model.
 TypeReference typeReference(
   Model model,
   NameManager nameManager,
   String package, {
   bool isNullableOverride = false,
+  bool useImmutableCollections = false,
 }) {
   return switch (model) {
     final ListModel m => TypeReference(
       (b) => b
-        ..symbol = 'List'
-        ..url = 'dart:core'
-        ..types.add(typeReference(m.content, nameManager, package))
+        ..symbol = useImmutableCollections ? 'IList' : 'List'
+        ..url = useImmutableCollections ? _ficUrl : 'dart:core'
+        ..types.add(
+          typeReference(
+            m.content,
+            nameManager,
+            package,
+            useImmutableCollections: useImmutableCollections,
+          ),
+        )
         ..isNullable = isNullableOverride || m.isNullable,
     ),
     MapModel(:final valueModel) when model.name == null => TypeReference(
       (b) => b
-        ..symbol = 'Map'
-        ..url = 'dart:core'
+        ..symbol = useImmutableCollections ? 'IMap' : 'Map'
+        ..url = useImmutableCollections ? _ficUrl : 'dart:core'
         ..types.addAll([
           refer('String', 'dart:core'),
-          typeReference(valueModel, nameManager, package),
+          typeReference(
+            valueModel,
+            nameManager,
+            package,
+            useImmutableCollections: useImmutableCollections,
+          ),
         ])
         ..isNullable = isNullableOverride || model.isNullable,
     ),
@@ -33,6 +49,7 @@ TypeReference typeReference(
       nameManager,
       package,
       isNullableOverride: m.isNullable || isNullableOverride,
+      useImmutableCollections: useImmutableCollections,
     ),
     final NamedModel m => TypeReference(
       (b) => b

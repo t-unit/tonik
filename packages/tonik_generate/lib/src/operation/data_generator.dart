@@ -8,10 +8,15 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generator for creating data method for operations.
 class DataGenerator {
-  const DataGenerator({required this.nameManager, required this.package});
+  const DataGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   /// Generates a data expression for the operation.
   Method generateDataMethod(Operation operation) {
@@ -135,6 +140,7 @@ class DataGenerator {
                     nameManager,
                     package,
                     isNullableOverride: !info.isRequired,
+                    useImmutableCollections: useImmutableCollections,
                   )
                   ..named = true
                   ..required = info.isRequired,
@@ -183,6 +189,7 @@ class DataGenerator {
       nameManager,
       package,
       isNullableOverride: !isRequired,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final property = Property(

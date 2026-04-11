@@ -31,7 +31,9 @@ class Generator {
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
+    TonikConfig config = const TonikConfig(),
   }) {
+    final useImmutableCollections = config.useImmutableCollections;
     final fullPackage = 'package:$package/$package.dart';
 
     final nameGenerator = NameGenerator();
@@ -44,26 +46,31 @@ class Generator {
     final classGenerator = ClassGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      useImmutableCollections: useImmutableCollections,
     );
     final enumGenerator = EnumGenerator(nameManager: nameManager);
     final oneOfGenerator = OneOfGenerator(
       nameManager: nameManager,
       package: fullPackage,
       stableModelSorter: stableModelSorter,
+      useImmutableCollections: useImmutableCollections,
     );
     final anyOfGenerator = AnyOfGenerator(
       nameManager: nameManager,
       package: fullPackage,
       stableModelSorter: stableModelSorter,
+      useImmutableCollections: useImmutableCollections,
     );
     final typedefGenerator = TypedefGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      useImmutableCollections: useImmutableCollections,
     );
     final allOfGenerator = AllOfGenerator(
       nameManager: nameManager,
       package: fullPackage,
       stableModelSorter: stableModelSorter,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final modelGenerator = ModelFileGenerator(
@@ -78,6 +85,7 @@ class Generator {
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final operationFileGenerator = OperationFileGenerator(
@@ -87,6 +95,7 @@ class Generator {
     final requestBodyGenerator = RequestBodyGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final requestBodyFileGenerator = RequestBodyFileGenerator(
@@ -96,6 +105,7 @@ class Generator {
     final responseGenerator = ResponseGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final responseFileGenerator = ResponseFileGenerator(
@@ -105,6 +115,7 @@ class Generator {
     final responseWrapperGenerator = ResponseWrapperGenerator(
       nameManager: nameManager,
       package: fullPackage,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final responseWrapperFileGenerator = ResponseWrapperFileGenerator(
@@ -141,6 +152,7 @@ class Generator {
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
+      useImmutableCollections: useImmutableCollections,
     );
 
     generateAnalysisOptions(

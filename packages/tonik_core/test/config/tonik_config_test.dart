@@ -12,6 +12,7 @@ void main() {
       expect(config.filter, const FilterConfig());
       expect(config.deprecated, const DeprecatedConfig());
       expect(config.enums, const EnumConfig());
+      expect(config.useImmutableCollections, isFalse);
     });
 
     test('stores contentMediaTypes configuration', () {
@@ -43,6 +44,21 @@ void main() {
       const config3 = TonikConfig(
         contentMediaTypes: {'image/png': SchemaContentType.text},
       );
+
+      expect(config1, equals(config2));
+      expect(config1, isNot(equals(config3)));
+    });
+
+    test('stores useImmutableCollections configuration', () {
+      const config = TonikConfig(useImmutableCollections: true);
+
+      expect(config.useImmutableCollections, isTrue);
+    });
+
+    test('equality includes useImmutableCollections', () {
+      const config1 = TonikConfig(useImmutableCollections: true);
+      const config2 = TonikConfig(useImmutableCollections: true);
+      const config3 = TonikConfig();
 
       expect(config1, equals(config2));
       expect(config1, isNot(equals(config3)));

@@ -35,6 +35,7 @@ void generatePubspec({
   required ApiDocument apiDocument,
   required String outputDirectory,
   required String package,
+  bool useImmutableCollections = false,
 }) {
   final pubspecDir = path.join(outputDirectory, package);
   final pubspecFile = File(path.join(pubspecDir, 'pubspec.yaml'));
@@ -44,6 +45,9 @@ void generatePubspec({
   }
 
   final version = sanitizeVersion(apiDocument.version);
+  final ficDependency = useImmutableCollections
+      ? '\n  fast_immutable_collections: ^11.0.0'
+      : '';
   final content =
       '''
 name: $package
@@ -55,7 +59,7 @@ environment:
 dependencies:
   big_decimal: ^0.7.0
   collection: ^1.17.0
-  dio: ^5.8.0+1
+  dio: ^5.8.0+1$ficDependency
   meta: ^1.16.0
   tonik_util: ^0.6.0
 

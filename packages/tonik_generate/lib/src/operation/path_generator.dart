@@ -12,10 +12,15 @@ import 'package:tonik_util/tonik_util.dart';
 
 /// Generator for creating path method for operations.
 class PathGenerator {
-  const PathGenerator({required this.nameManager, required this.package});
+  const PathGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   /// Generates the path method for the operation.
   Method generatePathMethod(
@@ -56,6 +61,7 @@ class PathGenerator {
         nameManager,
         package,
         isNullableOverride: !resolvedParam.isRequired,
+        useImmutableCollections: useImmutableCollections,
       );
 
       parameters.add(

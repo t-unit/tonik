@@ -8,6 +8,7 @@ Expression buildToJsonPropertyExpression(
   String propertyName,
   Property property, {
   bool forceNonNullReceiver = false,
+  bool useImmutableCollections = false,
 }) {
   final model = property.model;
   final isNullable = property.isNullable || !property.isRequired;
@@ -16,6 +17,7 @@ Expression buildToJsonPropertyExpression(
     model,
     isNullable,
     forceNonNullReceiver: forceNonNullReceiver,
+    useImmutableCollections: useImmutableCollections,
   );
 }
 
@@ -52,6 +54,7 @@ Expression _buildSerializationExpression(
   Model model,
   bool isNullable, {
   bool forceNonNullReceiver = false,
+  bool useImmutableCollections = false,
 }) {
   final directReceiver = forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
@@ -99,18 +102,21 @@ Expression _buildSerializationExpression(
       model.content,
       isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
+      useImmutableCollections: useImmutableCollections,
     ),
     MapModel() => _handleMapExpression(
       receiver,
       model.valueModel,
       isNullable || model.isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
+      useImmutableCollections: useImmutableCollections,
     ),
     AliasModel() => _buildSerializationExpression(
       receiver,
       model.model,
       isNullable || model.isNullable,
       forceNonNullReceiver: forceNonNullReceiver,
+      useImmutableCollections: useImmutableCollections,
     ),
     PrimitiveModel() => directReceiver,
     AnyModel() => refer(
@@ -126,8 +132,22 @@ Expression _handleListExpression(
   Model contentModel,
   bool isNullable, {
   bool forceNonNullReceiver = false,
+  bool useImmutableCollections = false,
 }) {
-  if (!_needsTransformation(contentModel)) {
+  if (!_needsTransformation(
+    contentModel,
+    useImmutableCollections: useImmutableCollections,
+  )) {
+    if (useImmutableCollections) {
+      // IList must be converted to List for JSON serialization.
+      if (forceNonNullReceiver) {
+        return receiver.nullChecked.property('unlock');
+      } else if (isNullable) {
+        return receiver.nullSafeProperty('unlock');
+      } else {
+        return receiver.property('unlock');
+      }
+    }
     return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
@@ -138,6 +158,7 @@ Expression _handleListExpression(
     refer('e'),
     contentModel,
     isContentNullable,
+    useImmutableCollections: useImmutableCollections,
   );
 
   final mapClosure = Method(
@@ -145,6 +166,32 @@ Expression _handleListExpression(
       ..requiredParameters.add(Parameter((p) => p..name = 'e'))
       ..body = innerExpr.code,
   ).closure;
+
+  if (useImmutableCollections) {
+    // Unlock the outer IList first so .map() returns an Iterable, not IList.
+    if (forceNonNullReceiver) {
+      return receiver.nullChecked
+          .property('unlock')
+          .property('map')
+          .call([mapClosure])
+          .property('toList')
+          .call([]);
+    } else if (isNullable) {
+      return receiver
+          .nullSafeProperty('unlock')
+          .property('map')
+          .call([mapClosure])
+          .property('toList')
+          .call([]);
+    } else {
+      return receiver
+          .property('unlock')
+          .property('map')
+          .call([mapClosure])
+          .property('toList')
+          .call([]);
+    }
+  }
 
   if (forceNonNullReceiver) {
     return receiver.nullChecked
@@ -172,8 +219,22 @@ Expression _handleMapExpression(
   Model valueModel,
   bool isNullable, {
   bool forceNonNullReceiver = false,
+  bool useImmutableCollections = false,
 }) {
-  if (!_needsTransformation(valueModel)) {
+  if (!_needsTransformation(
+    valueModel,
+    useImmutableCollections: useImmutableCollections,
+  )) {
+    if (useImmutableCollections) {
+      // IMap must be converted to Map for JSON serialization.
+      if (forceNonNullReceiver) {
+        return receiver.nullChecked.property('unlock');
+      } else if (isNullable) {
+        return receiver.nullSafeProperty('unlock');
+      } else {
+        return receiver.property('unlock');
+      }
+    }
     return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
@@ -184,6 +245,7 @@ Expression _handleMapExpression(
     refer('v'),
     valueModel,
     isValueNullable,
+    useImmutableCollections: useImmutableCollections,
   );
 
   final mapClosure = Method(
@@ -196,6 +258,27 @@ Expression _handleMapExpression(
           .call([refer('k'), innerExpr])
           .code,
   ).closure;
+
+  // When using immutable collections, unlock to regular Map first
+  // so that Map.map() returns a Map (not IMap).
+  if (useImmutableCollections) {
+    if (forceNonNullReceiver) {
+      return receiver.nullChecked
+          .property('unlock')
+          .property('map')
+          .call([mapClosure]);
+    } else if (isNullable) {
+      return receiver
+          .nullSafeProperty('unlock')
+          .property('map')
+          .call([mapClosure]);
+    } else {
+      return receiver
+          .property('unlock')
+          .property('map')
+          .call([mapClosure]);
+    }
+  }
 
   if (forceNonNullReceiver) {
     return receiver.nullChecked.property('map').call([mapClosure]);
@@ -230,7 +313,10 @@ Expression _callToBytesMethod(
   }
 }
 
-bool _needsTransformation(Model model) {
+bool _needsTransformation(
+  Model model, {
+  bool useImmutableCollections = false,
+}) {
   return switch (model) {
     // These primitive types serialize as-is
     StringModel() ||
@@ -247,7 +333,14 @@ bool _needsTransformation(Model model) {
     Base64Model() ||
     DateModel() => true,
     // Aliases delegate to their underlying model
-    AliasModel() => _needsTransformation(model.model),
+    AliasModel() => _needsTransformation(
+      model.model,
+      useImmutableCollections: useImmutableCollections,
+    ),
+    // When using immutable collections, lists and maps always need
+    // transformation to unlock inner immutable collections.
+    ListModel() when useImmutableCollections => true,
+    MapModel() when useImmutableCollections => true,
     // Lists delegate to their content model
     ListModel() => _needsTransformation(model.content),
     // Maps delegate to their value model
