@@ -37,10 +37,10 @@ melos:
         melos run test-integration-all
 
     coverage:
-      run: ./scripts/coverage.sh
+      run: bash scripts/coverage.sh
 
     coverage-diff:
-      run: ./scripts/coverage.sh --diff main
+      run: bash scripts/coverage.sh --diff main
         
     generate:
       run: flutter pub run build_runner build --delete-conflicting-outputs
