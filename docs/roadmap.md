@@ -18,7 +18,6 @@
   - `patternProperties` for regex-matched property schemas
   - `propertyNames` for property name validation
 - Default values
-- Optionally generate code with https://pub.dev/packages/fast_immutable_collections
 - Supporting the `not` keyword
 - Example values generation from `example`/`examples`
 
