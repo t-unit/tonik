@@ -38,6 +38,13 @@ if [ -n "$SINGLE_PACKAGE" ]; then
   PACKAGES=("$SINGLE_PACKAGE")
 fi
 
+# Use fvm dart if available, otherwise plain dart
+if command -v fvm &> /dev/null; then
+  DART="fvm dart"
+else
+  DART="dart"
+fi
+
 COMBINED_LCOV="$REPO_ROOT/coverage/lcov.info"
 mkdir -p "$REPO_ROOT/coverage"
 rm -f "$COMBINED_LCOV"
@@ -51,7 +58,7 @@ for pkg in "${PACKAGES[@]}"; do
     continue
   fi
   echo "  $pkg..."
-  TEST_OUTPUT=$(cd "$PKG_DIR" && fvm dart test --coverage-path=coverage/lcov.info --coverage-package="$pkg" 2>&1) || {
+  TEST_OUTPUT=$(cd "$PKG_DIR" && $DART test --coverage-path=coverage/lcov.info --coverage-package="$pkg" 2>&1) || {
     echo "$TEST_OUTPUT"
     echo "ERROR: Tests failed for $pkg"
     exit 1
